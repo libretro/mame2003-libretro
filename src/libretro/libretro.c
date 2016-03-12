@@ -130,8 +130,10 @@ extern struct osd_create_params videoConfig;
 
 unsigned retroColorMode;
 int16_t XsoundBuffer[2048];
-char* systemDir;
-char* romDir;
+char *fallbackDir;
+char *systemDir;
+char *romDir;
+char *saveDir;
 
 unsigned retro_api_version(void)
 {
@@ -223,7 +225,7 @@ void retro_init (void)
 #ifdef LOG_PERFORMANCE
    environ_cb(RETRO_ENVIRONMENT_GET_PERF_INTERFACE, &perf_cb);
 #endif
-    
+
    update_variables();
    check_system_specs();
 }
@@ -281,18 +283,37 @@ bool retro_load_game(const struct retro_game_info *game)
     
     if(driverIndex)
     {
+        fallbackDir = strdup(game->path);
+        //const char *fallbackDir = game->path;
         int orientation;
         unsigned rotateMode;
         static const int uiModes[] = {ROT0, ROT90, ROT180, ROT270};
-
-        // Get MAME Directory
-        systemDir = normalizePath(strdup(game->path));
+        
+        /* Get system directory from frontend */
+        environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&systemDir);
+        if (systemDir == NULL || systemDir[0] == 0)
+        {
+            /* if non set, use old method */
+            systemDir = normalizePath(fallbackDir);
+            systemDir = peelPathItem(systemDir);
+        }
+        /* remove trailing slash */
         systemDir = peelPathItem(systemDir);
-        systemDir = peelPathItem(systemDir);       
+        
+        /* Get save directory from frontend */
+        environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&saveDir);
+        if (saveDir == NULL || saveDir[0] == 0)
+        {
+            /* if non set, use old method */
+            saveDir = normalizePath(fallbackDir);
+            saveDir = peelPathItem(saveDir);
+        }
+        /* remove trailing slash */
+        saveDir = peelPathItem(saveDir);
 
         // Get ROM directory
-        romDir    = normalizePath(strdup(game->path));
-        romDir    = peelPathItem(romDir);
+        romDir = normalizePath(fallbackDir);
+        romDir = peelPathItem(romDir);
 
         // Setup Rotation
         orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
@@ -309,6 +330,7 @@ bool retro_load_game(const struct retro_game_info *game)
         options.ui_orientation = uiModes[rotateMode];
         options.vector_intensity = 1.5f;
         options.skip_disclaimer = skip_disclaimer;
+        options.use_samples = 1;
 
         // Boot the emulator
         return run_game(driverIndex) == 0;
@@ -323,7 +345,7 @@ void retro_unload_game(void)
 {
     mame_done();
     
-    free(systemDir);
+    free(fallbackDir);
     systemDir = 0;
 }
 

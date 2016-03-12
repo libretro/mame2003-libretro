@@ -20,6 +20,7 @@
 
 extern int16_t XsoundBuffer[2048];
 extern char* systemDir;
+extern char* saveDir;
 extern char* romDir;
 extern retro_log_printf_t log_cb;
 
@@ -200,6 +201,7 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
 osd_file *osd_fopen(int pathtype, int pathindex, const char *filename, const char *mode)
 {
    char buffer[1024];
+   char* currDir;
    osd_file *out;
 #if defined(_WIN32)
    char slash = '\\';
@@ -211,14 +213,28 @@ osd_file *osd_fopen(int pathtype, int pathindex, const char *filename, const cha
    {
       case 1: /* ROM */
          /* removes the stupid restriction where we need to have roms in a 'rom' folder */
+         currDir = romDir;
          snprintf(buffer, 1024, "%s%c%s", romDir, slash, filename);
          break;
+      case 6: /* NVRAM */
+      case 7: /* HIGHSCORE */
+      case 8: /* HIGHSCORE DB */
+      case 9: /* CONFIG */
+      case 10: /* INPUT LOG */
+      case 11: /* MEMORY CARD */
+      case 12: /* SAVE STATE */
+         /* user generated content goes in Retroarch save directory */
+         currDir = saveDir;
+         snprintf(buffer, 1024, "%s%c%s%c%s", currDir, slash, paths[pathtype], slash, filename);
+         break;
       default:
-         snprintf(buffer, 1024, "%s%c%s%c%s", systemDir, slash, paths[pathtype], slash, filename);
+         /* additonal core content goes in Retroarch system directory */
+         currDir = systemDir;
+         snprintf(buffer, 1024, "%s%c%s%c%s", currDir, slash, paths[pathtype], slash, filename);
    }
 
    if (log_cb)
-      log_cb(RETRO_LOG_INFO, "osd_fopen (buffer = [%s]), (systemDir: [%s]), (path type dir: [%s]), (path: [%d]), (filename: [%s]) \n", buffer, systemDir, paths[pathtype], pathtype, filename);
+      log_cb(RETRO_LOG_INFO, "osd_fopen (buffer = [%s]), (directory: [%s]), (path type dir: [%s]), (path: [%d]), (filename: [%s]) \n", buffer, currDir, paths[pathtype], pathtype, filename);
 
    out = (osd_file*)malloc(sizeof(osd_file));
     
@@ -226,7 +242,7 @@ osd_file *osd_fopen(int pathtype, int pathindex, const char *filename, const cha
    {
        /* if path not found, create */
        char newPath[1024];
-       snprintf(newPath, sizeof(newPath), "%s%c%s", systemDir, slash, paths[pathtype]);
+       snprintf(newPath, sizeof(newPath), "%s%c%s", currDir, slash, paths[pathtype]);
        mkdir(newPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
    }
     
