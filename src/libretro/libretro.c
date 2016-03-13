@@ -297,8 +297,6 @@ bool retro_load_game(const struct retro_game_info *game)
             systemDir = normalizePath(fallbackDir);
             systemDir = peelPathItem(systemDir);
         }
-        /* remove trailing slash */
-        systemDir = peelPathItem(systemDir);
         
         /* Get save directory from frontend */
         environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&saveDir);
@@ -308,8 +306,6 @@ bool retro_load_game(const struct retro_game_info *game)
             saveDir = normalizePath(fallbackDir);
             saveDir = peelPathItem(saveDir);
         }
-        /* remove trailing slash */
-        saveDir = peelPathItem(saveDir);
 
         // Get ROM directory
         romDir = normalizePath(fallbackDir);

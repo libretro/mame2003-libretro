@@ -8,6 +8,7 @@
 #endif
 #include <sys/stat.h>
 #include <assert.h>
+#include <errno.h>
 
 #include "libretro.h"
 #include "osdepend.h"
@@ -22,6 +23,8 @@ extern int16_t XsoundBuffer[2048];
 extern char* systemDir;
 extern char* saveDir;
 extern char* romDir;
+char* currDir;
+const char* parentDir = "mame2003"; /* groups mame dirs together to avoid conflicts in shared dirs */
 extern retro_log_printf_t log_cb;
 
 #if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
@@ -167,6 +170,20 @@ int osd_get_path_count(int pathtype)
     return 1;
 }
 
+int osd_create_directory(const char *newPath)
+{
+    log_cb(RETRO_LOG_WARN, "Directory %s not found - creating\n", newPath);
+    int status;
+    status = mkdir(newPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (status < 0 && errno != 17)
+    {
+      /* don't care about 17 (directory already exists) */
+      log_cb(RETRO_LOG_WARN, "Error creating directory %s ERRNO %d (%s)\n", newPath, errno, strerror(errno));
+      return 0;
+    }
+    return 1;
+}
+
 int osd_get_path_info(int pathtype, int pathindex, const char *filename)
 {
     char buffer[1024];
@@ -182,14 +199,28 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
        case FILETYPE_ROM: /* ROM */
        case FILETYPE_IMAGE:
           /* removes the stupid restriction where we need to have roms in a 'rom' folder */
+          currDir = romDir;
           snprintf(buffer, 1024, "%s%c%s", romDir, slash, filename);
           break;
+       case FILETYPE_NVRAM:
+       case FILETYPE_HIGHSCORE:
+       case FILETYPE_HIGHSCORE_DB:
+       case FILETYPE_CONFIG:
+       case FILETYPE_INPUTLOG:
+       case FILETYPE_MEMCARD:
+       case FILETYPE_SCREENSHOT:
+          /* user generated content goes in Retroarch save directory */
+          currDir = saveDir;
+          snprintf(buffer, 1024, "%s%c%s%c%s%c%s", currDir, slash, parentDir, slash, paths[pathtype], slash, filename);
+          break;
        default:
-          snprintf(buffer, 1024, "%s%c%s%c%s", systemDir, slash, paths[pathtype], slash, filename);
+          /* additonal core content goes in Retroarch system directory */
+          currDir = systemDir;
+          snprintf(buffer, 1024, "%s%c%s%c%s%c%s", currDir, slash, parentDir, slash, paths[pathtype], slash, filename);
     }
  
 #ifdef DEBUG_LOG
-    fprintf(stderr, "osd_get_path_info (buffer = [%s]), (systemDir: [%s]), (path type dir: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, systemDir, paths[pathtype], pathtype, filename);
+    fprintf(stderr, "osd_get_path_info (buffer = [%s]), (directory: [%s]), (path type dir: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, paths[pathtype], pathtype, filename);
 #endif
 
     if(stat(buffer, &statbuf) == 0)
@@ -201,7 +232,6 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
 osd_file *osd_fopen(int pathtype, int pathindex, const char *filename, const char *mode)
 {
    char buffer[1024];
-   char* currDir;
    osd_file *out;
 #if defined(_WIN32)
    char slash = '\\';
@@ -222,28 +252,34 @@ osd_file *osd_fopen(int pathtype, int pathindex, const char *filename, const cha
       case 9: /* CONFIG */
       case 10: /* INPUT LOG */
       case 11: /* MEMORY CARD */
-      case 12: /* SAVE STATE */
+      case 12: /* SCREENSHOT */
          /* user generated content goes in Retroarch save directory */
          currDir = saveDir;
-         snprintf(buffer, 1024, "%s%c%s%c%s", currDir, slash, paths[pathtype], slash, filename);
+         snprintf(buffer, 1024, "%s%c%s%c%s%c%s", currDir, slash, parentDir, slash, paths[pathtype], slash, filename);
          break;
       default:
          /* additonal core content goes in Retroarch system directory */
          currDir = systemDir;
-         snprintf(buffer, 1024, "%s%c%s%c%s", currDir, slash, paths[pathtype], slash, filename);
+         snprintf(buffer, 1024, "%s%c%s%c%s%c%s", currDir, slash, parentDir, slash, paths[pathtype], slash, filename);
    }
 
    if (log_cb)
-      log_cb(RETRO_LOG_INFO, "osd_fopen (buffer = [%s]), (directory: [%s]), (path type dir: [%s]), (path: [%d]), (filename: [%s]) \n", buffer, currDir, paths[pathtype], pathtype, filename);
+      log_cb(RETRO_LOG_INFO, "osd_fopen (buffer = [%s]), (directory: [%s]), (path type dir: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, paths[pathtype], pathtype, filename);
 
    out = (osd_file*)malloc(sizeof(osd_file));
     
    if (osd_get_path_info(pathtype, pathindex, filename) == PATH_NOT_FOUND)
    {
-       /* if path not found, create */
-       char newPath[1024];
-       snprintf(newPath, sizeof(newPath), "%s%c%s", currDir, slash, paths[pathtype]);
-       mkdir(newPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      /* if path not found, create */
+      char newPath[1024];
+      /* first make sure parentDir exists */
+      snprintf(newPath, sizeof(newPath), "%s%c%s", currDir, slash, parentDir);
+      if (osd_create_directory(newPath))
+      {
+         /* create new directory */
+         snprintf(newPath, sizeof(newPath), "%s%c%s%c%s", currDir, slash, parentDir, slash, paths[pathtype]);
+         osd_create_directory(newPath);
+      }
    }
     
    out->file = fopen(buffer, mode);
