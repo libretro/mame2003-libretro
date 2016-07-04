@@ -128,8 +128,9 @@ static int driverIndex; //< Index of mame game loaded
 
 extern const struct KeyboardInfo retroKeys[];
 extern int retroKeyState[512];
-
 extern int retroJsState[64];
+extern int16_t mouse_x;
+extern int16_t mouse_y;
 extern struct osd_create_params videoConfig;
 
 unsigned retroColorMode;
@@ -302,12 +303,12 @@ void retro_run (void)
    int i, j;
    int *jsState;
    const struct KeyboardInfo *thisInput;
-	bool updated = false;
+   bool updated = false;
 
    poll_cb();
 
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
-		update_variables();
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
+      update_variables();
 
    // Keyboard
    thisInput = retroKeys;
@@ -324,7 +325,17 @@ void retro_run (void)
       for (j = 0; j < 16; j ++)
          *jsState++ = input_cb(i, RETRO_DEVICE_JOYPAD, 0, j);
    }
-
+    
+   // Mouse
+   mouse_x = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
+   mouse_y = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
+   bool mouse_l = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
+   bool mouse_r = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
+   // for now, bind mouse L and R to joystick buttons 1 and 2 of joystick in port 1
+   if (mouse_l)
+      retroJsState[0] = 1;
+   if (mouse_r)
+      retroJsState[1] = 1;
    mame_frame();
 
    audio_batch_cb(XsoundBuffer, Machine->sample_rate / Machine->drv->frames_per_second);
