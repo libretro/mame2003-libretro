@@ -45,6 +45,8 @@ struct JoystickInfo jsItems[] =
 ******************************************************************************/
 
 int retroJsState[64];
+int16_t mouse_x;
+int16_t mouse_y;
 
 const struct JoystickInfo *osd_get_joy_list(void)
 {
@@ -53,7 +55,18 @@ const struct JoystickInfo *osd_get_joy_list(void)
 
 int osd_is_joy_pressed(int joycode)
 {
-    return (joycode >= 0) ? retroJsState[joycode] : 0;
+    if (joycode >= 0)
+    {
+        if (retroJsState[joycode] > 0) {
+            printf("joycode: %d pressed: %d\n",joycode,retroJsState[joycode]);
+        }
+        return retroJsState[joycode];
+    }
+    else
+    {
+        return 0;
+    }
+    //return (joycode >= 0) ? retroJsState[joycode] : 0;
 }
 
 int osd_is_joystick_axis_code(int joycode)
@@ -68,7 +81,8 @@ void osd_lightgun_read(int player, int *deltax, int *deltay)
 
 void osd_trak_read(int player, int *deltax, int *deltay)
 {
-
+    *deltax = mouse_x;
+    *deltay = mouse_y;
 }
 
 void osd_analogjoy_read(int player,int analog_axis[MAX_ANALOG_AXES], InputCode analogjoy_input[MAX_ANALOG_AXES])
