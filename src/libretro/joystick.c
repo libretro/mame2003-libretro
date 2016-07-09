@@ -78,8 +78,8 @@ void osd_trak_read(int player, int *deltax, int *deltay)
 
 int convert_analog_scale(int input)
 {
-    int libretro_analog_range = LIBRETRO_ANALOG_MAX - LIBRETRO_ANALOG_MIN;
-    int analog_range = ANALOG_MAX - ANALOG_MIN;
+    static int libretro_analog_range = LIBRETRO_ANALOG_MAX - LIBRETRO_ANALOG_MIN;
+    static int analog_range = ANALOG_MAX - ANALOG_MIN;
 
     return (input - LIBRETRO_ANALOG_MIN)*analog_range / libretro_analog_range + ANALOG_MIN;
 }
