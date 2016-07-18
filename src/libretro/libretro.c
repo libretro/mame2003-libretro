@@ -328,7 +328,7 @@ void retro_run (void)
    {
       /* Joystick */
       for (j = 0; j < 16; j ++)
-         *jsState++ = input_cb(i, RETRO_DEVICE_JOYPAD, 0, j);
+         *jsState[j] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, j);
 
       /* Mouse
        * Currently libretro only supports 1 mouse, so port is hard-coded.
@@ -336,8 +336,8 @@ void retro_run (void)
        * in the future. */
       if (i == 0)
       {
-         *jsState++ = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
-         *jsState++ = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
+         *jsState[16] = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
+         *jsState[17] = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
          mouse_x[i] = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
          mouse_y[i] = input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
       }
@@ -348,7 +348,7 @@ void retro_run (void)
       //analogjoy[i][2] = input_cb(i, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X);
       //analogjoy[i][3] = input_cb(i, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y);
    }
-   
+
    mame_frame();
 
    audio_batch_cb(XsoundBuffer, Machine->sample_rate / Machine->drv->frames_per_second);
