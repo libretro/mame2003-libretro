@@ -1274,4 +1274,4 @@ GAME (1996, cookbib2, 0,        hyperpac, cookbib2, cookbib2, ROT0, "SemiCom", "
 GAMEX(199?, moremorp, 0,        hyperpac, hyperpac, 0,        ROT0, "SemiCom", "More More +", GAME_UNEMULATED_PROTECTION | GAME_NOT_WORKING )
 GAMEX(1997, 3in1semi, 0,        hyperpac, hyperpac, 0,        ROT0, "SemiCom", "3-in-1 (SemiCom)", GAME_UNEMULATED_PROTECTION | GAME_NOT_WORKING )
 /* bad dump */
-GAMEX(199?, 4in1boot, 0,        _4in1,    snowbros, 4in1boot, ROT0, "bootleg", "4-in-1 bootleg", GAME_NOT_WORKING ) // gfx rom is half the size it should be, pacman 2 and snowbros are playable tho
+GAMEX(199?, 4in1boot, 0,        _4in1,    snowbros, 4in1boot, ROT0, "bootleg", "4-in-1 bootleg" ) // gfx rom is half the size it should be, pacman 2 and snowbros are playable tho
