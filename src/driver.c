@@ -4344,7 +4344,6 @@ BOMULEUL CHAJARA SEGA ST-V  1997/04/11
 	DRIVER( nouryoku )	/* (c) 1995 Tecmo */
 	DRIVER( manybloc )	/* (c) 1991 Bee-Oh */
 	DRIVER( ssmissin )	/* (c) 1992 Comad */
-	DRIVER( ssmissin )	/* (c) 1992 Comad */
 	DRIVER( airattck )	/* (c) 1996 Comad */
 	DRIVER( airattcka )	/* (c) 1996 Comad */
 	DRIVER( raphero )	/* (c) 1994 Media Trading Corp */
