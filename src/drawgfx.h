@@ -270,7 +270,6 @@ void mdrawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 		const struct rectangle *clip,int transparency,int transparent_color,int scalex,int scaley,
 		UINT32 priority_mask);
 
-void drawgfx_toggle_crosshair(void);
 void draw_crosshair(struct mame_bitmap *bitmap,int x,int y,const struct rectangle *clip);
 
 INLINE void sect_rect(struct rectangle *dst, const struct rectangle *src)
