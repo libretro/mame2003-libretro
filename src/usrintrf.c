@@ -3930,12 +3930,6 @@ int handle_user_interface(struct mame_bitmap *bitmap)
 		osd_sound_enable(1);
 	}
 
-	/* if the user pressed F1 and this is a lightgun game, toggle the crosshair */
-	if (input_ui_pressed(IPT_UI_TOGGLE_CROSSHAIR))
-	{
-		drawgfx_toggle_crosshair();
-	}
-
 	return 0;
 }
 
