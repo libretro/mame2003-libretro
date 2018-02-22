@@ -216,6 +216,7 @@ else ifeq ($(platform), ps3)
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    PLATCFLAGS += -D__CELLOS_LV2__ -D__ppc__ -D__POWERPC__ -Dstricmp=strcasecmp
    STATIC_LINKING = 1
+   SPLIT_UP_LINK=1
 else ifeq ($(platform), sncps3)
    TARGET = $(TARGET_NAME)_libretro_ps3.a
    BIGENDIAN = 1
