@@ -19,7 +19,7 @@
 #include "mame.h"
 #include "driver.h"
 
-
+static float delta_samples;
 int samples_per_frame = 0;
 short *samples_buffer;
 short *conversion_buffer;
@@ -104,6 +104,7 @@ static float delta_samples;
 
 int osd_start_audio_stream(int stereo)
 {
+	delta_samples = 0.0f;
 	usestereo = stereo ? 1 : 0;
 
 	/* determine the number of samples per frame */
@@ -115,12 +116,20 @@ int osd_start_audio_stream(int stereo)
 	if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame, 4);
 	
 	return samples_per_frame;
+
+
 }
 
 int osd_update_audio_stream(INT16 *buffer)
 {
 	memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
-   
+   	delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
+	if (delta_samples >= 1.0f)
+	{
+		int integer_delta = (int)delta_samples;
+		samples_per_frame += integer_delta;
+		delta_samples -= integer_delta;
+	}
 
 	return samples_per_frame;
 }
