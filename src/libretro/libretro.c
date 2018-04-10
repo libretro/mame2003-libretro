@@ -37,6 +37,11 @@ char *saveDir;
 
 int16_t XsoundBuffer[2048];
 
+extern int samples_per_frame;
+extern short *samples_buffer;
+extern short *conversion_buffer;
+extern int usestereo;
+
 int sample_rate;
 extern int frameskip;
 unsigned skip_disclaimer = 0;
@@ -470,7 +475,7 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
 
 void retro_run (void)
 {
-   int i;
+   int i, j;
    bool pointer_pressed;
    const struct KeyboardInfo *thisInput;
    bool updated = false;
@@ -560,7 +565,20 @@ void retro_run (void)
 
    mame_frame();
 
-   audio_batch_cb(XsoundBuffer, Machine->sample_rate / Machine->drv->frames_per_second);
+      if (samples_per_frame)
+   {
+      if (usestereo)
+         audio_batch_cb(samples_buffer, samples_per_frame);
+      else
+      {
+         for (i = 0, j = 0; i < samples_per_frame; i++)
+         {
+            conversion_buffer[j++] = samples_buffer[i];
+            conversion_buffer[j++] = samples_buffer[i];
+         }
+         audio_batch_cb(conversion_buffer, samples_per_frame);
+      }
+}
 
 }
 
