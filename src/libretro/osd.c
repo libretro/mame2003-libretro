@@ -19,6 +19,11 @@
 #include "mame.h"
 #include "driver.h"
 
+
+int samples_per_frame = 0;
+short *samples_buffer;
+short *conversion_buffer;
+int usestereo = 1;
 extern int16_t XsoundBuffer[2048];
 
 extern char* systemDir;
@@ -97,40 +102,27 @@ Sound
 static bool stereo;
 static float delta_samples;
 
-int osd_start_audio_stream(int aStereo)
+int osd_start_audio_stream(int stereo)
 {
-	stereo = (aStereo != 0);
+
 	delta_samples = 0.0f;
-	return (Machine->sample_rate / Machine->drv->frames_per_second);
+	usestereo = stereo ? 1 : 0;
+
+	/* determine the number of samples per frame */
+	samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
+
+	if (Machine->sample_rate == 0) return 0;
+
+	samples_buffer = (short *) calloc(samples_per_frame, 2 + usestereo * 2);
+	if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame, 4);
+	
+	return samples_per_frame;
+
+
 }
 
-int osd_update_audio_stream(INT16 *buffer)
-{
-	int i;
-	int samplerate_buffer_size = (Machine->sample_rate / Machine->drv->frames_per_second);
 
-	if (stereo)
-		memcpy(XsoundBuffer, buffer, samplerate_buffer_size * 4);
-	else
-	{
-		for (i = 0; i < samplerate_buffer_size; i++)
-		{
-			XsoundBuffer[i * 2 + 0] = buffer[i];
-			XsoundBuffer[i * 2 + 1] = buffer[i];
-		}
-	}
 
-	// Take care of fractional part
-	delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samplerate_buffer_size;
-	if (delta_samples >= 1.0f)
-	{
-		int integer_delta = (int)delta_samples;
-		samplerate_buffer_size += integer_delta;
-		delta_samples -= integer_delta;
-	}
-
-	return samplerate_buffer_size;
-}
 
 void osd_stop_audio_stream(void)
 {
