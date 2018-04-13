@@ -37,6 +37,7 @@ char *saveDir;
 
 int16_t XsoundBuffer[2048];
 
+static float delta_samples;
 extern int samples_per_frame;
 extern short *samples_buffer;
 extern short *conversion_buffer;
@@ -565,7 +566,8 @@ void retro_run (void)
 
    mame_frame();
 
-      if (samples_per_frame)
+/*
+   if (samples_per_frame)
    {
       if (usestereo)
          audio_batch_cb(samples_buffer, samples_per_frame);
@@ -578,9 +580,64 @@ void retro_run (void)
          }
          audio_batch_cb(conversion_buffer, samples_per_frame);
       }
+   }
+*/
 }
 
+int osd_update_audio_stream(INT16 *buffer)
+{
+	int i,j;
+
+/* sample rate will mess timming up if its above the fps we require. If you dont want to do it this way we will have will just 
+  have too make the audio a streamed buffer that just updates with this function */
+
+
+	if ( (  Machine->drv->frames_per_second < 47 ) && (Machine->sample_rate >= 30000) )
+	{ 
+		struct retro_system_av_info info;
+		retro_get_system_av_info(&info);
+		info.timing.sample_rate= 22050;
+		Machine->sample_rate=22050;
+		samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
+		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
+	}	
+
+
+
+	if ( Machine->sample_rate !=0 && buffer )
+	{
+
+   		memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
+
+		if (usestereo)
+			audio_batch_cb(samples_buffer, samples_per_frame);
+
+		else
+		{
+
+			for (i = 0, j = 0; i < samples_per_frame; i++)
+        		{
+				conversion_buffer[j++] = samples_buffer[i];
+				conversion_buffer[j++] = samples_buffer[i];
+		        }
+
+         		audio_batch_cb(conversion_buffer,samples_per_frame);
+		}	
+
+   		delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
+
+		if (delta_samples >= 1.0f)
+		{
+			int integer_delta = (int)delta_samples;
+			samples_per_frame += integer_delta;
+			delta_samples -= integer_delta;
+		}
+
+	}
+	return samples_per_frame;
 }
+
+
 
 
 bool retro_load_game(const struct retro_game_info *game)
