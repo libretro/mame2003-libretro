@@ -145,7 +145,7 @@ void osd_sound_enable(int enable)
 File I/O
 
 ******************************************************************************/
-static const char* const paths[] = { "raw", "rom", "image", "diff", "samples", "artwork", "nvram", "hi", "hsdb", "cfg", "inp", "memcard", "snap", "history", "cheat", "lang", "ctrlr" };
+static const char* const paths[] = { "raw", "rom", "image", "diff", "samples", "artwork", "nvram", "hi", "hsdb", "cfg", "inp", "memcard", "history", "cheat", "lang", "ctrlr" };
 
 int osd_get_path_count(int pathtype)
 {
@@ -170,7 +170,7 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
       case FILETYPE_CONFIG:
       case FILETYPE_INPUTLOG:
       case FILETYPE_MEMCARD:
-      case FILETYPE_SCREENSHOT:
+      case FILETYPE_SAMPLE:
          /* user generated content goes in mam2003 save directory subfolders */
          snprintf(currDir, 1024, "%s%c%s%c%s", options.libretro_save_path, slash, APPNAME, slash, paths[pathtype]);
          break;
@@ -209,7 +209,7 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
       case FILETYPE_CONFIG:
       case FILETYPE_INPUTLOG:
       case FILETYPE_MEMCARD:
-      case FILETYPE_SCREENSHOT:
+      case FILETYPE_SAMPLE:
          /* user generated content goes in mam2003 save directory subfolders */
          snprintf(currDir, 1024, "%s%c%s%c%s", options.libretro_save_path, slash, APPNAME, slash, paths[pathtype]);
          break;
@@ -231,21 +231,6 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
    return out;
 }
 
-int osd_fseek(FILE* file, INT64 offset, int whence)
-{
-	return fseek(file, offset, whence);
-}
-
-UINT64 osd_ftell(FILE* file)
-{
-	return ftell(file);
-}
-
-int osd_feof(FILE* file)
-{
-	return feof(file);
-}
-
 UINT32 osd_fread(FILE* file, void *buffer, UINT32 length)
 {
 	return fread(buffer, 1, length, file);
@@ -254,11 +239,6 @@ UINT32 osd_fread(FILE* file, void *buffer, UINT32 length)
 UINT32 osd_fwrite(FILE* file, const void *buffer, UINT32 length)
 {
 	return fwrite(buffer, 1, length, file);
-}
-
-void osd_fclose(FILE* file)
-{
-	fclose(file);
 }
 
 
