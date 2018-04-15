@@ -6,23 +6,14 @@
     
 *********************************************************************/    
 
-<<<<<<< HEAD:src/libretro/libretro.c
-#include "libretro.h"
-=======
 #include <stdint.h>
 #include <libretro.h>
 #include <file_path.h>
->>>>>>> 3ea1d28... use libretro-common/file functions - more refactor:src/libretro/mame2003.c
 
 #include "mame.h"
 #include "driver.h"
 #include "state.h"
 
-<<<<<<< HEAD:src/libretro/libretro.c
-static int driverIndex; // Index of mame game loaded
-extern struct osd_create_params videoConfig;
-
-=======
 
 extern int framerate_test;
 
@@ -35,7 +26,6 @@ short *samples_buffer;
 short *conversion_buffer;
 int usestereo = 1;
 
->>>>>>> 3ea1d28... use libretro-common/file functions - more refactor:src/libretro/mame2003.c
 extern const struct KeyboardInfo retroKeys[];
 extern int retroKeyState[512];
 extern int retroJsState[72];
@@ -243,33 +233,28 @@ void retro_set_input_state(retro_input_state_t cb) { input_cb = cb; }
 void retro_set_environment(retro_environment_t cb)
 {
    static const struct retro_variable vars[] = {
-      { "mame2003-frameskip", "Frameskip; 0|1|2|3|4|5" },
-      { "mame2003-dcs-speedhack",
-#if defined(__CELLOS_LV2__) || defined(GEKKO) || defined(_XBOX)
-         "MK2/MK3 DCS Speedhack; disabled|enabled"
-#else
-         "MK2/MK3 DCS Speedhack; enabled|disabled"
-#endif
-      },
-      { "mame2003-skip_warnings", "Skip Warnings; disabled|enabled" },
-      { "mame2003-sample_rate", "Sample Rate (Hz); 48000|8000|11025|22050|44100" },
-      { "mame2003-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
-      { "mame2003-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
+      { APPNAME"-frameskip", "Frameskip; 0|1|2|3|4|5" },
+      { APPNAME"-dcs-speedhack","MK2/MK3 DCS Speedhack; enabled|disabled"},
+      { APPNAME"-skip_disclaimer", "Skip Disclaimer; enabled|disabled" },
+      { APPNAME"-skip_warnings", "Skip Warnings; disabled|enabled" },
+      { APPNAME"-sample_rate", "Sample Rate (KHz); 48000|8000|11025|22050|44100" },
+      { APPNAME"-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
+      { APPNAME"-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
 #if defined(__IOS__)
-      { "mame2003-mouse_device", "Mouse Device; pointer|mouse|disabled" },
+      { APPNAME"-mouse_device", "Mouse Device; pointer|mouse|disabled" },
 #else
-      { "mame2003-mouse_device", "Mouse Device; mouse|pointer|disabled" },
+      { APPNAME"-mouse_device", "Mouse Device; mouse|pointer|disabled" },
 #endif
-      { "mame2003-plus-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
-      { "mame2003-plus-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
-      { "mame2003-plus-tate_mode", "TATE Mode; disabled|enabled" },
-      { "mame2003-plus-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" }, 
-      { "mame2003-plus-vector-resolution-multiplier", "EXPERIMENTAL: Vector resolution multiplier; 1|2|3|4|5|6" },      
-      { "mame2003-plus-vector-antialias", "EXPERIMENTAL: Vector antialias; disabled" },
-      { "mame2003-plus-vector-translucency", "Vector translucency; enabled|disabled" },
-      { "mame2003-plus-vector-beam-width", "Vector beam width; 1|2|3|4|5" },
-      { "mame2003-plus-vector-flicker", "Vector flicker; 20|0|10|20|30|40|50|60|70|80|90|100" },
-      { "mame2003-plus-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
+      { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
+      { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
+      { APPNAME"-tate_mode", "TATE Mode; disabled|enabled" },
+      { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" }, 
+      { APPNAME"-vector-resolution-multiplier", "EXPERIMENTAL: Vector resolution multiplier; 1|2|3|4|5|6" },      
+      { APPNAME"-vector-antialias", "EXPERIMENTAL: Vector antialias; disabled" },
+      { APPNAME"-vector-translucency", "Vector translucency; enabled|disabled" },
+      { APPNAME"-vector-beam-width", "Vector beam width; 1|2|3|4|5" },
+      { APPNAME"-vector-flicker", "Vector flicker; 20|0|10|20|30|40|50|60|70|80|90|100" },
+      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
       { NULL, NULL },
    };
    environ_cb = cb;
@@ -361,14 +346,15 @@ static void update_variables(void)
    struct retro_variable var;
    
    var.value = NULL;
-   var.key = "mame2003-frameskip";
+
+   var.key = APPNAME"-frameskip";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       options.frameskip = atoi(var.value);
 
    var.value = NULL;
-   var.key = "mame2003-dcs-speedhack";
-   
+
+   var.key = APPNAME"-dcs-speedhack"; 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -380,7 +366,7 @@ static void update_variables(void)
       options.activate_dcs_speedhack = 0;
 
    var.value = NULL;
-   var.key = "mame2003-plus-skip_disclaimer";
+   var.key = APPNAME"-skip_disclaimer";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
@@ -393,8 +379,8 @@ static void update_variables(void)
       options.skip_disclaimer = 0;
 
    var.value = NULL;
-   var.key = "mame2003-skip_warnings";
 
+   var.key = APPNAME"-skip_warnings";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -406,16 +392,16 @@ static void update_variables(void)
       options.skip_warnings = 0;
    
    var.value = NULL;
-   var.key = "mame2003-sample_rate";
-   
+
+   var.key = APPNAME"-sample_rate"; 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       options.samplerate = atoi(var.value);
    else
       options.samplerate = 48000;
 
    var.value = NULL;
-   var.key = "mame2003-external_hiscore";
-   
+
+   var.key = APPNAME"-external_hiscore";  
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -441,7 +427,7 @@ static void update_variables(void)
    
    var.value = NULL;
    
-   var.key = "mame2003-plus-dialsharexy";
+   var.key = APPNAME"-dialsharexy";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -454,7 +440,7 @@ static void update_variables(void)
 
    var.value = NULL;
    
-   var.key = "mame2003-plus-mouse_device";
+   var.key = APPNAME"-mouse_device";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
    {
       if(strcmp(var.value, "pointer") == 0)
@@ -469,7 +455,7 @@ static void update_variables(void)
 
    var.value = NULL;
    
-   var.key = "mame2003-plus-crosshair_enabled";
+   var.key = APPNAME"-crosshair_enabled";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -482,7 +468,7 @@ static void update_variables(void)
 
    var.value = NULL;
    
-   var.key = "mame2003-plus-rstick_to_btns";  
+   var.key = APPNAME"-rstick_to_btns";  
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -495,7 +481,7 @@ static void update_variables(void)
 
    var.value = NULL;
    
-   var.key = "mame2003-plus-tate_mode";
+   var.key = APPNAME"-tate_mode";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -508,7 +494,7 @@ static void update_variables(void)
 
    var.value = NULL;
    
-   var.key = "mame2003-plus-skip-rom-verify"; 
+   var.key = APPNAME"-skip-rom-verify"; 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 1)
@@ -521,13 +507,13 @@ static void update_variables(void)
 
    var.value = NULL;
    
-   var.key = "mame2003-plus-vector-resolution-multiplier";
+   var.key = APPNAME"-vector-resolution-multiplier";
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       options.vector_resolution_multiplier = atoi(var.value);
  
    var.value = NULL;
    
-   var.key = "mame2003-plus-vector-antialias";
+   var.key = APPNAME"-vector-antialias";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -538,7 +524,7 @@ static void update_variables(void)
   
    var.value = NULL;
    
-   var.key = "mame2003-plus-vector-translucency";
+   var.key = APPNAME"-vector-translucency";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -549,7 +535,7 @@ static void update_variables(void)
   
    var.value = NULL;
    
-   var.key = "mame2003-plus-vector-beam-width";
+   var.key = APPNAME"-vector-beam-width";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       options.beam = atoi(var.value); /* integer: vector beam width */
@@ -557,7 +543,7 @@ static void update_variables(void)
  
    var.value = NULL;
    
-   var.key = "mame2003-plus-vector-flicker"; 
+   var.key = APPNAME"-vector-flicker"; 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       options.vector_flicker = atof(var.value); /* float: vector beam flicker effect control */
@@ -565,6 +551,7 @@ static void update_variables(void)
 
    var.value = NULL;
 
+   var.key = APPNAME"-vector-intensity";   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       options.vector_intensity = atof(var.value); /* float: vector beam intensity */
