@@ -1,7 +1,7 @@
 /* Copyright  (C) 2010-2017 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
- * The following license statement only applies to this file (retro_inline.h).
+ * The following license statement only applies to this file (compat_snprintf.c).
  * ---------------------------------------------------------------------------------------
  *
  * Permission is hereby granted, free of charge,
@@ -20,20 +20,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __LIBRETRO_SDK_INLINE_H
-#define __LIBRETRO_SDK_INLINE_H
+/* THIS FILE HAS NOT BEEN VALIDATED ON PLATFORMS BESIDES MSVC */
+#ifdef _MSC_VER
 
-#ifndef INLINE
+#include <retro_common.h>
 
-#if defined(_WIN32) || defined(__INTEL_COMPILER)
-#define INLINE __inline
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__>=199901L
-#define INLINE inline
-#elif defined(__GNUC__)
-#define INLINE __inline__
+#include <stdio.h> /* added for _vsnprintf_s and _vscprintf on VS2015 and VS2017 */
+#include <stdarg.h>
+
+#if _MSC_VER < 1800
+#define va_copy(dst, src) ((dst) = (src))
+#endif
+
+#if _MSC_VER < 1300
+#define _vscprintf c89_vscprintf_retro__
+
+static int c89_vscprintf_retro__(const char *format, va_list pargs)
+{
+   int retval;
+   va_list argcopy;
+   va_copy(argcopy, pargs);
+   retval = vsnprintf(NULL, 0, format, argcopy);
+   va_end(argcopy);
+   return retval;
+}
+#endif
+
+/* http://stackoverflow.com/questions/2915672/snprintf-and-visual-studio-2010 */
+
+int c99_vsnprintf_retro__(char *outBuf, size_t size, const char *format, va_list ap)
+{
+   int count = -1;
+
+   if (size != 0)
+#if (_MSC_VER <= 1310)
+       count = _vsnprintf(outBuf, size, format, ap);
 #else
-#define INLINE
+       count = _vsnprintf_s(outBuf, size, _TRUNCATE, format, ap);
 #endif
+   if (count == -1)
+       count = _vscprintf(format, ap);
 
-#endif
+   return count;
+}
+
+int c99_snprintf_retro__(char *outBuf, size_t size, const char *format, ...)
+{
+   int count;
+   va_list ap;
+
+   va_start(ap, format);
+   count = c99_vsnprintf_retro__(outBuf, size, format, ap);
+   va_end(ap);
+
+   return count;
+}
 #endif
