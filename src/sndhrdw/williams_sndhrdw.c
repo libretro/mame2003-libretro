@@ -283,10 +283,10 @@ MACHINE_DRIVER_END
 
 
 /***************************************************************************
-	INLINES
+static INLINES
 ****************************************************************************/
 
-INLINE UINT8 *get_cvsd_bank_base(int data)
+static INLINE UINT8 *get_cvsd_bank_base(int data)
 {
 	UINT8 *RAM = memory_region(REGION_CPU1 + sound_cpunum);
 	int bank = data & 3;
@@ -296,7 +296,7 @@ INLINE UINT8 *get_cvsd_bank_base(int data)
 }
 
 
-INLINE UINT8 *get_adpcm_bank_base(int data)
+static INLINE UINT8 *get_adpcm_bank_base(int data)
 {
 	UINT8 *RAM = memory_region(REGION_CPU1 + sound_cpunum);
 	int bank = data & 7;
@@ -304,7 +304,7 @@ INLINE UINT8 *get_adpcm_bank_base(int data)
 }
 
 
-INLINE UINT8 *get_narc_master_bank_base(int data)
+static INLINE UINT8 *get_narc_master_bank_base(int data)
 {
 	UINT8 *RAM = memory_region(REGION_CPU1 + sound_cpunum);
 	int bank = data & 3;
@@ -313,7 +313,7 @@ INLINE UINT8 *get_narc_master_bank_base(int data)
 }
 
 
-INLINE UINT8 *get_narc_slave_bank_base(int data)
+static INLINE UINT8 *get_narc_slave_bank_base(int data)
 {
 	UINT8 *RAM = memory_region(REGION_CPU1 + soundalt_cpunum);
 	int bank = data & 7;

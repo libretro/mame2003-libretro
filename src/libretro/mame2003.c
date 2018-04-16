@@ -1,13 +1,30 @@
-#include <stdint.h>
+/*********************************************************************
 
-#include "libretro.h"
+	mame2003.c
+    
+    a port of mame 0.78 to the libretro API
+    
+*********************************************************************/    
+
+#include <stdint.h>
+#include <libretro.h>
+#include <file_path.h>
 
 #include "mame.h"
 #include "driver.h"
 #include "state.h"
 
-static int driverIndex; // Index of mame game loaded
+
+extern int framerate_test;
+
+static int driverIndex; /* Index of mame game loaded */
 extern struct osd_create_params videoConfig;
+
+static float delta_samples;
+int samples_per_frame = 0;
+short *samples_buffer;
+short *conversion_buffer;
+int usestereo = 1;
 
 extern const struct KeyboardInfo retroKeys[];
 extern int retroKeyState[512];
@@ -27,53 +44,70 @@ retro_video_refresh_t video_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
 static retro_input_state_t input_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
+
 unsigned long lastled = 0;
 retro_set_led_state_t led_state_cb = NULL;
 
-char *fallbackDir;
-char *systemDir;
-char *romDir;
-char *saveDir;
-
 int16_t XsoundBuffer[2048];
 
-static float delta_samples;
-extern int samples_per_frame;
-extern short *samples_buffer;
-extern short *conversion_buffer;
-extern int usestereo;
 
-int sample_rate;
-extern int frameskip;
-unsigned skip_disclaimer = 0;
-unsigned skip_warnings = 0;
-unsigned use_external_hiscore = 0;
-unsigned dial_share_xy = 0;
-unsigned mouse_device = 0;
-unsigned rstick_to_btns = 0;
-unsigned tate_mode = 0;
-unsigned skip_rom_verify = 0;
-unsigned vector_resolution_multiplier = 1;
-unsigned vector_antialias = 0;
-unsigned vector_translucency = 1;
-unsigned vector_beam_width = 1;
-float vector_flicker = 20.0f;      /* float: vector beam flicker effect control */
-float vector_intensity = 1.5f;     /* float: vector beam intensity */
-
-extern int crosshair_enable;
-
-#if defined(__CELLOS_LV2__) || defined(GEKKO) || defined(_XBOX)
-unsigned activate_dcs_speedhack = 1;
-#else
-unsigned activate_dcs_speedhack = 0;
-#endif
-
-#ifdef _3DS
+#ifdef _3DS /* TODO: convert this strcasecmp wrapper to libretro-common/compat functions */
 int stricmp(const char *string1, const char *string2)
 {
-    return strcasecmp(string1, string2); // Wrapper to build MAME on 3DS. It doesn't have stricmp.
+    return strcasecmp(string1, string2); /* Wrapper to build MAME on 3DS. It doesn't have stricmp. */
 }
 #endif
+
+/******************************************************************************
+
+Sound
+
+******************************************************************************/
+
+int osd_start_audio_stream(int stereo)
+{
+	delta_samples = 0.0f;
+	usestereo = stereo ? 1 : 0;
+
+	/* determine the number of samples per frame */
+	samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
+
+	if (Machine->sample_rate == 0) return 0;
+
+	samples_buffer = (short *) calloc(samples_per_frame, 2 + usestereo * 2);
+	if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame, 4);
+	
+	return samples_per_frame;
+
+
+}
+
+int osd_update_audio_stream(INT16 *buffer)
+{
+	memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
+   	delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
+	if (delta_samples >= 1.0f)
+	{
+		int integer_delta = (int)delta_samples;
+		samples_per_frame += integer_delta;
+		delta_samples -= integer_delta;
+	}
+
+	return samples_per_frame;
+}
+
+
+
+void osd_stop_audio_stream(void)
+{
+}
+
+
+/******************************************************************************
+
+Miscellaneous
+
+******************************************************************************/
 
 void mame_frame(void);
 void mame_done(void);
@@ -94,33 +128,28 @@ void retro_set_input_state(retro_input_state_t cb) { input_cb = cb; }
 void retro_set_environment(retro_environment_t cb)
 {
    static const struct retro_variable vars[] = {
-      { "mame2003-frameskip", "Frameskip; 0|1|2|3|4|5" },
-      { "mame2003-dcs-speedhack",
-#if defined(__CELLOS_LV2__) || defined(GEKKO) || defined(_XBOX)
-         "MK2/MK3 DCS Speedhack; disabled|enabled"
-#else
-         "MK2/MK3 DCS Speedhack; enabled|disabled"
-#endif
-      },
-      { "mame2003-skip_warnings", "Skip Warnings; disabled|enabled" },
-      { "mame2003-sample_rate", "Sample Rate (Hz); 48000|8000|11025|22050|44100" },
-      { "mame2003-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
-      { "mame2003-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
+      { APPNAME"-frameskip", "Frameskip; 0|1|2|3|4|5" },
+      { APPNAME"-dcs-speedhack","MK2/MK3 DCS Speedhack; enabled|disabled"},
+      { APPNAME"-skip_disclaimer", "Skip Disclaimer; enabled|disabled" },
+      { APPNAME"-skip_warnings", "Skip Warnings; disabled|enabled" },
+      { APPNAME"-sample_rate", "Sample Rate (KHz); 48000|8000|11025|22050|44100" },
+      { APPNAME"-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
+      { APPNAME"-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
 #if defined(__IOS__)
-      { "mame2003-mouse_device", "Mouse Device; pointer|mouse|disabled" },
+      { APPNAME"-mouse_device", "Mouse Device; pointer|mouse|disabled" },
 #else
-      { "mame2003-mouse_device", "Mouse Device; mouse|pointer|disabled" },
+      { APPNAME"-mouse_device", "Mouse Device; mouse|pointer|disabled" },
 #endif
-      { "mame2003-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
-      { "mame2003-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
-      { "mame2003-tate_mode", "TATE Mode; disabled|enabled" },
-      { "mame2003-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" }, 
-      { "mame2003-vector-resolution-multiplier", "EXPERIMENTAL: Vector resolution multiplier; 1|2|3|4|5|6" },      
-      { "mame2003-vector-antialias", "EXPERIMENTAL: Vector antialias; disabled" },
-      { "mame2003-vector-translucency", "Vector translucency; enabled|disabled" },
-      { "mame2003-vector-beam-width", "Vector beam width; 1|2|3|4|5" },
-      { "mame2003-vector-flicker", "Vector flicker; 20|0|10|20|30|40|50|60|70|80|90|100" },
-      { "mame2003-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
+      { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
+      { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
+      { APPNAME"-tate_mode", "TATE Mode; disabled|enabled" },
+      { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" }, 
+      { APPNAME"-vector-resolution-multiplier", "EXPERIMENTAL: Vector resolution multiplier; 1|2|3|4|5|6" },      
+      { APPNAME"-vector-antialias", "EXPERIMENTAL: Vector antialias; disabled" },
+      { APPNAME"-vector-translucency", "Vector translucency; enabled|disabled" },
+      { APPNAME"-vector-beam-width", "Vector beam width; 1|2|3|4|5" },
+      { APPNAME"-vector-flicker", "Vector flicker; 20|0|10|20|30|40|50|60|70|80|90|100" },
+      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
       { NULL, NULL },
    };
    environ_cb = cb;
@@ -154,20 +183,20 @@ static int getDriverIndex(const char* aPath)
     char *firstDot;
     int i;
 
-    // Get all chars after the last slash
+    /* Get all chars after the last slash */
     path = normalizePath(strdup(aPath ? aPath : "."));
     last = strrchr(path, PATH_SEPARATOR);
     memset(driverName, 0, sizeof(driverName));
     strncpy(driverName, last ? last + 1 : path, sizeof(driverName) - 1);
     free(path);
     
-    // Remove extension    
+    /* Remove extension */
     firstDot = strchr(driverName, '.');
 
     if(firstDot)
        *firstDot = 0;
 
-    // Search list
+    /* Search list */
     for (i = 0; drivers[i]; i++)
     {
        if(strcmp(driverName, drivers[i]->name) == 0)
@@ -197,7 +226,7 @@ unsigned retro_api_version(void)
 
 void retro_get_system_info(struct retro_system_info *info)
 {
-   info->library_name = "MAME 2003";
+   info->library_name = "MAME 2003-plus";
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
@@ -209,188 +238,207 @@ void retro_get_system_info(struct retro_system_info *info)
 
 static void update_variables(void)
 {
+   struct retro_led_interface ledintf;
    struct retro_variable var;
-   
+
    var.value = NULL;
-   var.key = "mame2003-frameskip";
+   var.key = APPNAME"-frameskip";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      frameskip = atoi(var.value);
+      options.frameskip = atoi(var.value);
 
    var.value = NULL;
-   var.key = "mame2003-dcs-speedhack";
+   var.key = APPNAME"-dcs-speedhack";
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         activate_dcs_speedhack = 1;
+         options.activate_dcs_speedhack = 1;
       else
-         activate_dcs_speedhack = 0;
+         options.activate_dcs_speedhack = 0;
    }
    else
-      activate_dcs_speedhack = 0;
-   
+      options.activate_dcs_speedhack = 0;
+
    var.value = NULL;
-   var.key = "mame2003-skip_warnings";
+   var.key = APPNAME"-skip_disclaimer";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         skip_warnings = 1;
+         options.skip_disclaimer = 1;
       else
-         skip_warnings = 0;
+         options.skip_disclaimer = 0;
    }
    else
-      skip_warnings = 0;
+      options.skip_disclaimer = 0;
+
+   var.value = NULL;
+   var.key = APPNAME"-skip_warnings";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if(strcmp(var.value, "enabled") == 0)
+         options.skip_warnings = 1;
+      else
+         options.skip_warnings = 0;
+   }
+   else
+      options.skip_warnings = 0;
    
    var.value = NULL;
-   var.key = "mame2003-sample_rate";
+   var.key = APPNAME"-sample_rate";
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      sample_rate = atoi(var.value);
+      options.samplerate = atoi(var.value);
    else
-      sample_rate = 48000;
-   
+      options.samplerate = 48000;
+
    var.value = NULL;
-   var.key = "mame2003-external_hiscore";
+   var.key = APPNAME"-external_hiscore";
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         use_external_hiscore = 1;
+         options.use_external_hiscore = 1;
       else
-         use_external_hiscore = 0;
+         options.use_external_hiscore = 0;
    }
    else
-      use_external_hiscore = 0;  
+      options.use_external_hiscore = 0;  
 
-    var.value = NULL;
-    var.key = "mame2003-dialsharexy";
-    
-    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-    {
-        if(strcmp(var.value, "enabled") == 0)
-            dial_share_xy = 1;
-        else
-            dial_share_xy = 0;
-    }
-    else
-        dial_share_xy = 0;
-   
+
    var.value = NULL;
-   var.key = "mame2003-mouse_device";
    
+   var.key = APPNAME"-dialsharexy";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if(strcmp(var.value, "enabled") == 0)
+         options.dial_share_xy = 1;
+      else
+         options.dial_share_xy = 0;
+   }
+   else
+      options.dial_share_xy = 0;
+
+   var.value = NULL;
+   
+   var.key = APPNAME"-mouse_device";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
    {
       if(strcmp(var.value, "pointer") == 0)
-         mouse_device = RETRO_DEVICE_POINTER;
+         options.mouse_device = RETRO_DEVICE_POINTER;
       else if(strcmp(var.value, "mouse") == 0)
-         mouse_device = RETRO_DEVICE_MOUSE;
+         options.mouse_device = RETRO_DEVICE_MOUSE;
       else
-         mouse_device = 0;
+         options.mouse_device = 0;
    }
    else
-      mouse_device = 0;
+      options.mouse_device = 0;
 
    var.value = NULL;
-   var.key = "mame2003-crosshair_enabled";
-
+   
+   var.key = APPNAME"-crosshair_enabled";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         crosshair_enable = 1;
+         options.crosshair_enable = 1;
       else
-         crosshair_enable = 0;
+         options.crosshair_enable = 0;
    }
    else
-      crosshair_enable = 0;
+      options.crosshair_enable = 0;
 
    var.value = NULL;
-   var.key = "mame2003-rstick_to_btns";
    
+   var.key = APPNAME"-rstick_to_btns";  
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         rstick_to_btns = 1;
+         options.rstick_to_btns = 1;
       else
-         rstick_to_btns = 0;
+         options.rstick_to_btns = 0;
    }
    else
-      rstick_to_btns = 0;
-   
+      options.rstick_to_btns = 0;
+
    var.value = NULL;
-   var.key = "mame2003-tate_mode";
    
+   var.key = APPNAME"-tate_mode";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         tate_mode = 1;
+         options.tate_mode = 1;
       else
-         tate_mode = 0;
+         options.tate_mode = 0;
    }
    else
-      tate_mode = 0;
+      options.tate_mode = 0;
 
    var.value = NULL;
-   var.key = "mame2003-skip-rom-verify";
    
+   var.key = APPNAME"-skip-rom-verify"; 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 1)
-         skip_rom_verify = 1;
+         options.skip_rom_verify = 1;
       else
-         skip_rom_verify = 0;
+         options.skip_rom_verify = 0;
    }
    else
-      skip_rom_verify = 0;  
+      options.skip_rom_verify = 0;  
 
    var.value = NULL;
-   var.key = "mame2003-vector-resolution-multiplier";
    
+   var.key = APPNAME"-vector-resolution-multiplier";
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      vector_resolution_multiplier = atoi(var.value);
+      options.vector_resolution_multiplier = atoi(var.value);
  
    var.value = NULL;
-   var.key = "mame2003-vector-antialias";
    
+   var.key = APPNAME"-vector-antialias";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         vector_antialias = 1;
+         options.antialias = 1; /* integer: 1 to enable antialiasing on vectors */
       else
-         vector_antialias = 0;
+         options.antialias = 0;
    }
   
    var.value = NULL;
-   var.key = "mame2003-vector-translucency";
    
+   var.key = APPNAME"-vector-translucency";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
-         vector_translucency = 1;
+         options.translucency = 1; /* integer: 1 to enable translucency on vectors */
       else 
-         vector_translucency = 0;          
+         options.translucency = 0;          
    }
   
    var.value = NULL;
-   var.key = "mame2003-vector-beam-width";
    
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      vector_beam_width = atoi(var.value);
- 
-   var.value = NULL;
-   var.key = "mame2003-vector-flicker";
-   
+   var.key = APPNAME"-vector-beam-width";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      vector_flicker = atof(var.value);
+      options.beam = atoi(var.value); /* integer: vector beam width */
+   }
+ 
+   var.value = NULL;
+   
+   var.key = APPNAME"-vector-flicker"; 
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      options.vector_flicker = atof(var.value); /* float: vector beam flicker effect control */
    }   
 
    var.value = NULL;
-   var.key = "mame2003-vector-intensity";
-   
+
+   var.key = APPNAME"-vector-intensity";   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      vector_intensity = atof(var.value);
+   {
+      options.vector_intensity = atof(var.value); /* float: vector beam intensity */
+   }
     
    {
        struct retro_led_interface ledintf;
@@ -413,15 +461,15 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.base_height = height;
    info->geometry.max_width = width;
    info->geometry.max_height = height;
-   info->geometry.aspect_ratio = (rotated && !tate_mode) ? (float)videoConfig.aspect_y / (float)videoConfig.aspect_x : (float)videoConfig.aspect_x / (float)videoConfig.aspect_y;
-   info->timing.fps = Machine->drv->frames_per_second;
-   info->timing.sample_rate = sample_rate;
+   info->geometry.aspect_ratio = (rotated && !options.tate_mode) ? (float)videoConfig.aspect_y / (float)videoConfig.aspect_x : (float)videoConfig.aspect_x / (float)videoConfig.aspect_y;
+   info->timing.fps = Machine->drv->frames_per_second; /* sets the core timing does any game go above 60fps? */
+   info->timing.sample_rate = options.samplerate;  /* please note if you want bally games to work properly set the sample rate to 22050 you cant go below 48 frames with the default that is set you will need to restart the core */
 }
 
 static void check_system_specs(void)
 {
-   // TODO - set variably
-   // Midway DCS - Mortal Kombat/NBA Jam etc. require level 9
+   /* TODO - set variably */
+   /* Midway DCS - Mortal Kombat/NBA Jam etc. require level 9 */
    unsigned level = 10;
    environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
 }
@@ -476,7 +524,7 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
 
 void retro_run (void)
 {
-   int i, j;
+   int i,j;
    bool pointer_pressed;
    const struct KeyboardInfo *thisInput;
    bool updated = false;
@@ -505,7 +553,7 @@ void retro_run (void)
       analogjoy[i][3] = input_cb(i, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y);
       
       /* Joystick */
-      if (rstick_to_btns)
+      if (options.rstick_to_btns)
       {
          /* if less than 0.5 force, ignore and read buttons as usual */
          retroJsState[0 + offset] = analogjoy[i][3] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
@@ -522,7 +570,7 @@ void retro_run (void)
       retroJsState[5 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN);
       retroJsState[6 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
       retroJsState[7 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
-      if (rstick_to_btns)
+      if (options.rstick_to_btns)
       {
          retroJsState[8 + offset] = analogjoy[i][2] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
          retroJsState[9 + offset] = analogjoy[i][3] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
@@ -539,20 +587,20 @@ void retro_run (void)
       retroJsState[14 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
       retroJsState[15 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
       
-      if (mouse_device)
+      if (options.mouse_device)
       {
-         if (mouse_device == RETRO_DEVICE_MOUSE)
+         if (options.mouse_device == RETRO_DEVICE_MOUSE)
          {
             retroJsState[16 + offset] = input_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
             retroJsState[17 + offset] = input_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
             mouse_x[i] = input_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
             mouse_y[i] = input_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
          }
-         else // RETRO_DEVICE_POINTER
+         else /* RETRO_DEVICE_POINTER */
          {
             pointer_pressed = input_cb(i, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_PRESSED);
             retroJsState[16 + offset] = pointer_pressed;
-            retroJsState[17 + offset] = 0; // padding
+            retroJsState[17 + offset] = 0; /* padding */
             mouse_x[i] = pointer_pressed ? get_pointer_delta(input_cb(i, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X), &prev_pointer_x) : 0;
             mouse_y[i] = pointer_pressed ? get_pointer_delta(input_cb(i, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y), &prev_pointer_y) : 0;
          }
@@ -564,9 +612,18 @@ void retro_run (void)
       }
    }
 
-   mame_frame();
+	if (framerate_test == 1)
+	{
+		struct retro_system_av_info info;
+		retro_get_system_av_info(&info);
+		printf("timing %d\n", (int) info.timing.sample_rate);
+		info.timing.sample_rate=22050;
+		
+		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
+		framerate_test = 0;
+	}
 
-/*
+   mame_frame();
    if (samples_per_frame)
    {
       if (usestereo)
@@ -581,63 +638,9 @@ void retro_run (void)
          audio_batch_cb(conversion_buffer, samples_per_frame);
       }
    }
-*/
+   
+
 }
-
-int osd_update_audio_stream(INT16 *buffer)
-{
-	int i,j;
-
-/* sample rate will mess timming up if its above the fps we require. If you dont want to do it this way we will have will just 
-  have too make the audio a streamed buffer that just updates with this function */
-
-
-	if ( (  Machine->drv->frames_per_second < 47 ) && (Machine->sample_rate >= 30000) )
-	{ 
-		struct retro_system_av_info info;
-		retro_get_system_av_info(&info);
-		info.timing.sample_rate= 22050;
-		Machine->sample_rate=22050;
-		samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
-		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
-	}	
-
-
-
-	if ( Machine->sample_rate !=0 && buffer )
-	{
-
-   		memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
-
-		if (usestereo)
-			audio_batch_cb(samples_buffer, samples_per_frame);
-
-		else
-		{
-
-			for (i = 0, j = 0; i < samples_per_frame; i++)
-        		{
-				conversion_buffer[j++] = samples_buffer[i];
-				conversion_buffer[j++] = samples_buffer[i];
-		        }
-
-         		audio_batch_cb(conversion_buffer,samples_per_frame);
-		}	
-
-   		delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
-
-		if (delta_samples >= 1.0f)
-		{
-			int integer_delta = (int)delta_samples;
-			samples_per_frame += integer_delta;
-			delta_samples -= integer_delta;
-		}
-
-	}
-	return samples_per_frame;
-}
-
-
 
 
 bool retro_load_game(const struct retro_game_info *game)
@@ -645,7 +648,7 @@ bool retro_load_game(const struct retro_game_info *game)
    if (!game)
       return false;
 
-    // Find game index
+    /* Find game index */
     driverIndex = getDriverIndex(game->path);
     
     if(driverIndex)
@@ -654,22 +657,22 @@ bool retro_load_game(const struct retro_game_info *game)
         unsigned rotateMode;
         static const int uiModes[] = {ROT0, ROT90, ROT180, ROT270};
         #define describe_buttons(INDEX) \
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,  "Joystick Left" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Joystick Right" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,    "Joystick Up" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,  "Joystick Down" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "Button 1" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,     "Button 2" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,     "Button 3" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "Button 4" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,     "Button 5" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "Button 6" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,   "Insert Coin" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Start" },
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
+        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
 
         struct retro_input_descriptor desc[] = {
             describe_buttons(0)
@@ -680,32 +683,28 @@ bool retro_load_game(const struct retro_game_info *game)
             };
 
         environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
-            
-        fallbackDir = strdup(game->path);
         
+        options.libretro_content_path = peelPathItem(normalizePath(strdup(game->path)));
+
         /* Get system directory from frontend */
-        environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&systemDir);
-        if (systemDir == NULL || systemDir[0] == '\0')
+        environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
+        if (options.libretro_system_path == NULL || options.libretro_system_path[0] == '\0')
         {
-            /* if non set, use old method */
-            systemDir = normalizePath(fallbackDir);
-            systemDir = peelPathItem(systemDir);
+            /* error if not set */
+            log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro system path not set!\n");
+            options.libretro_system_path = options.libretro_content_path;
         }
         
         /* Get save directory from frontend */
-        environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&saveDir);
-        if (saveDir == NULL || saveDir[0] == '\0')
+        environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
+        if (options.libretro_save_path == NULL || options.libretro_save_path[0] == '\0')
         {
-            /* if non set, use old method */
-            saveDir = normalizePath(fallbackDir);
-            saveDir = peelPathItem(saveDir);
+            /* error if not set */
+            log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro save path not set!\n");
+            options.libretro_save_path = options.libretro_content_path;
         }
 
-        // Get ROM directory
-        romDir = normalizePath(fallbackDir);
-        romDir = peelPathItem(romDir);
-
-        // Setup Rotation
+        /* Setup Rotation */
         orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
         rotateMode = 0;
         
@@ -715,22 +714,13 @@ bool retro_load_game(const struct retro_game_info *game)
         
         environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode);
 
-        // Set all options before starting the game
-        options.samplerate = sample_rate;
+        /* Set all remaining options before starting the game */
         options.ui_orientation = uiModes[rotateMode];
         
-        options.antialias = vector_antialias;        /* integer: 1 to enable antialiasing on vectors */
-        options.translucency = vector_translucency;  /* integer: 1 to enable translucency on vectors */
-        options.beam = vector_beam_width;            /* integer: vector beam width */
-        options.vector_flicker = vector_flicker ;    /* float: vector beam flicker effect control */
-        options.vector_intensity = vector_intensity; /* float: vector beam intensity */
-        
-        options.skip_disclaimer = 1;
-        options.skip_warnings = skip_warnings;
         options.use_samples = 1;
         options.cheat = 1;
 
-        // Boot the emulator
+        /* Boot the emulator */
         return run_game(driverIndex) == 0;
     }
     else
@@ -743,8 +733,9 @@ void retro_unload_game(void)
 {
     mame_done();
     
-    free(fallbackDir);
-    systemDir = 0;
+    /*free(fallbackDir);
+    systemDir = 0;*/
+    /* do we need to be freeing things here? */
 }
 
 size_t retro_serialize_size(void)

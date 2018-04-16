@@ -26,17 +26,19 @@
 #define OSD_CPU_H
 
 #include <stdint.h>
+#include <libretro.h>
+#include <retro_inline.h>
+
+
+#if 0
+#define DEBUG_LOG 1
+#endif
 
 #ifdef __MWERKS__
-#define INLINE static inline
 #define __extension__
 #endif
 
 #ifdef _MSC_VER
-#if 0
-#undef INLINE
-#define INLINE static inline
-#endif
 #define strcasecmp stricmp
 #define snprintf _snprintf
 
@@ -49,6 +51,7 @@
 #endif
 #endif
 
+extern struct retro_perf_callback perf_cb;
 
 typedef uint8_t						UINT8;
 typedef int8_t 						INT8;
@@ -98,13 +101,5 @@ typedef union {
 #endif
 	UINT32 d;
 }	PAIR;
-
-#if 0
-#define DEBUG_LOG 1
-#endif
-
-#include "libretro.h"
-
-extern struct retro_perf_callback perf_cb;
 
 #endif	/* defined OSD_CPU_H */

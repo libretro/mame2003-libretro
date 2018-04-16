@@ -33,9 +33,8 @@
 #if !(defined xgl)
 
 #include <math.h>
-#include "osinline.h"
+#include "osd_cpu.h"
 #include "driver.h"
-#include "osdepend.h"
 #include "vector.h"
 #include "artwork.h"
 
@@ -100,10 +99,10 @@ void vector_register_aux_renderer(int (*aux_renderer)(point *start, int num_poin
 
 /*
  * multiply and divide routines for drawing lines
- * can be be replaced by an assembly routine in osinline.h
+ * can be be replaced by an assembly routine in osd_cpu.h
  */
 #ifndef vec_mult
-INLINE int vec_mult(int parm1, int parm2)
+static INLINE int vec_mult(int parm1, int parm2)
 {
 	int temp,result;
 
@@ -122,9 +121,9 @@ INLINE int vec_mult(int parm1, int parm2)
 }
 #endif
 
-/* can be be replaced by an assembly routine in osinline.h */
+/* can be be replaced by an assembly routine in osd_cpu.h */
 #ifndef vec_div
-INLINE int vec_div(int parm1, int parm2)
+static INLINE int vec_div(int parm1, int parm2)
 {
 	if( (parm2>>12) )
 	{

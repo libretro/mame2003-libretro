@@ -103,9 +103,9 @@
 
 ***************************************************************************/
 
-#include "driver.h"
 #include <ctype.h>
 #include <stdarg.h>
+#include <file_path.h>
 #include "ui_text.h"
 #include "mamedbg.h"
 #include "artwork.h"
@@ -114,7 +114,8 @@
 #include "vidhrdw/vector.h"
 #include "palette.h"
 #include "harddisk.h"
-
+#include "driver.h"
+#include "mame.h"
 
 /***************************************************************************
 
@@ -133,10 +134,13 @@
 ***************************************************************************/
 
 /* handy globals for other parts of the system */
+int framerate_test = 0;
 void *record;	/* for -record */
 void *playback; /* for -playback */
 int mame_debug; /* !0 when -debug option is specified */
 int bailing;	/* set to 1 if the startup is aborted to prevent multiple error messages */
+
+extern int16_t XsoundBuffer[2048];
 
 /* the active machine */
 static struct RunningMachine active_machine;
@@ -165,13 +169,11 @@ static int settingsloaded;
 static int leds_status;
 
 /* artwork callbacks */
-#ifndef MESS
 static struct artwork_callbacks mame_artwork_callbacks =
 {
 	NULL,
 	artwork_load_artwork_file
 };
-#endif
 
 static int game_loaded;
 
@@ -223,11 +225,6 @@ static void compute_aspect_ratio(const struct InternalMachineDriver *drv, int *a
 static void scale_vectorgames(int gfx_width, int gfx_height, int *width, int *height);
 static int init_buffered_spriteram(void);
 
-#ifdef MESS
-#include "mesintrf.h"
-#define handle_user_interface	handle_mess_user_interface
-#endif
-
 
 /***************************************************************************
 
@@ -241,7 +238,7 @@ static int init_buffered_spriteram(void);
 	printed
 -------------------------------------------------*/
 
-INLINE void bail_and_print(const char *message)
+static INLINE void bail_and_print(const char *message)
 {
 	if (!bailing)
 	{
@@ -265,6 +262,7 @@ INLINE void bail_and_print(const char *message)
 
 int run_game(int game)
 {
+    char buffer[1024];
 	int err = 1;
 
 	begin_resource_tracking();
@@ -273,13 +271,10 @@ int run_game(int game)
 	/* validity checks -- debug build only */
 	if (validitychecks())
 		return 1;
-	#ifdef MESS
-	if (messvaliditychecks()) return 1;
-	#endif
 #endif
 
 	/* first give the machine a good cleaning */
-	memset(Machine, 0, sizeof(Machine));
+	memset(Machine, 0, sizeof(*Machine));
 
 	/* initialize the driver-related variables in the Machine */
 	Machine->gamedrv = gamedrv = drivers[game];
@@ -294,44 +289,41 @@ int run_game(int game)
 	bailing = 0;
 
 	/* let the OSD layer start up first */
-	if (osd_init())
-		bail_and_print("Unable to initialize system");
-	else
-	{
-		begin_resource_tracking();
+	/* ensure parent dir for various mame dirs is created */
+	snprintf(buffer, 1024, "%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME);
+	path_mkdir(buffer);
+	snprintf(buffer, 1024, "%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME);
+	path_mkdir(buffer);
+    
+    begin_resource_tracking();
 
-		/* then finish setting up our local machine */
-		if (init_machine())
-			bail_and_print("Unable to initialize machine emulation");
-		else
-		{
-			/* then run it */
-			if (run_machine())
-				bail_and_print("Unable to start machine emulation");
-			else
-			{
-			    game_loaded = 1;
-				return 0;
-			}
+    /* then finish setting up our local machine */
+    if (init_machine())
+        bail_and_print("Unable to initialize machine emulation");
+    else
+    {
+        /* then run it */
+        if (run_machine())
+            bail_and_print("Unable to start machine emulation");
+        else
+        {
+            game_loaded = 1;
+            return 0;
+        }
 
-			/* shutdown the local machine */
-			shutdown_machine();
-		}
+        /* shutdown the local machine */
+        shutdown_machine();
+    }
 
-		/* stop tracking resources and exit the OSD layer */
-		end_resource_tracking();
-		osd_exit();
-	}
-
-	end_resource_tracking();
+    /* stop tracking resources and exit the OSD layer */
+    end_resource_tracking();
+    
 	return err;
 }
 
 void run_game_done(void)
 {
 	shutdown_machine();
-	end_resource_tracking();
-	osd_exit();
 	end_resource_tracking();
 }
 
@@ -394,15 +386,6 @@ static int init_machine(void)
 	/* now set up all the CPUs */
 	cpu_init();
 
-#ifdef MESS
-	/* initialize the devices */
-	if (devices_init(gamedrv) || devices_initialload(gamedrv, TRUE))
-	{
-		logerror("devices_init failed\n");
-		goto cant_load_roms;
-	}
-#endif
-
 	/* load input ports settings (keys, dip switches, and so on) */
 	settingsloaded = load_input_port_settings();
 
@@ -419,15 +402,6 @@ static int init_machine(void)
 	/* call the game driver's init function */
 	if (gamedrv->driver_init)
 		(*gamedrv->driver_init)();
-
-#ifdef MESS
-	/* initialize the devices */
-	if (devices_initialload(gamedrv, FALSE))
-	{
-		logerror("devices_initialload failed\n");
-		goto cant_load_roms;
-	}
-#endif
 
 	return 0;
 
@@ -537,9 +511,7 @@ void pause_action_start_emulator(void)
     /* disable cheat if no roms */
     if (!gamedrv->rom)
         options.cheat = 0;
-
-    /* start the cheat engine */
-    if (options.cheat)
+    else
         InitCheat();
 
     /* load the NVRAM now */
@@ -612,11 +584,6 @@ static void shutdown_machine(void)
 {
 	int i;
 
-#ifdef MESS
-	/* close down any devices */
-	devices_exit();
-#endif
-
 	/* release any allocated memory */
 	memory_shutdown();
 
@@ -649,8 +616,7 @@ static void shutdown_machine(void)
 
 void mame_pause(int pause)
 {
-	osd_pause(pause);
-	osd_sound_enable(!pause);
+	memset(XsoundBuffer, 0, sizeof(XsoundBuffer));
 	palette_set_global_brightness_adjust(pause ? options.pause_bright : 1.00);
 	schedule_full_refresh();
 }
@@ -695,8 +661,8 @@ static int vh_open(void)
 	/* if we're a vector game, override the screen width and height */
 	if (Machine->drv->video_attributes & VIDEO_TYPE_VECTOR)
     {
-		//scale_vectorgames(options.vector_width, options.vector_height, &bmwidth, &bmheight);       
-       // Hack to avoid segfault: leave vector resolution to its default the first time scale_vectorgames is caused        
+       /*scale_vectorgames(options.vector_width, options.vector_height, &bmwidth, &bmheight);*/      
+       /*Hack to avoid segfault: leave vector resolution to its default the first time scale_vectorgames is caused*/
     }
 	/* compute the visible area for raster games */
 	if (!(Machine->drv->video_attributes & VIDEO_TYPE_VECTOR))
@@ -717,12 +683,7 @@ static int vh_open(void)
 	params.fps = Machine->drv->frames_per_second;
 	params.video_attributes = Machine->drv->video_attributes;
 	params.orientation = Machine->orientation;
-
-#ifdef MESS
-	artcallbacks = &mess_artwork_callbacks;
-#else
 	artcallbacks = &mame_artwork_callbacks;
-#endif
 
 	/* initialize the display through the artwork (and eventually the OSD) layer */
 	if (artwork_create_display(&params, direct_rgb_components, artcallbacks))
@@ -731,9 +692,9 @@ static int vh_open(void)
 	/* the create display process may update the vector width/height, so recompute */
 	if (Machine->drv->video_attributes & VIDEO_TYPE_VECTOR)
     {
-        //scale_vectorgames((vector_resolution_multiplier * Machine->drv->screen_width), (vector_resolution_multiplier * Machine->drv->screen_height), &bmwidth, &bmheight);
-        bmwidth = Machine->drv->screen_width * vector_resolution_multiplier;
-        bmheight = Machine->drv->screen_height * vector_resolution_multiplier;
+        //scale_vectorgames((options.vector_resolution_multiplier * Machine->drv->screen_width), (options.vector_resolution_multiplier * Machine->drv->screen_height), &bmwidth, &bmheight);
+        bmwidth = Machine->drv->screen_width * options.vector_resolution_multiplier;
+        bmheight = Machine->drv->screen_height * options.vector_resolution_multiplier;
     }
     
     
@@ -908,6 +869,13 @@ static int init_game_options(void)
 	if (options.vector_height == 0) options.vector_height = 480;
 
 	/* initialize the samplerate */
+        if ( (  Machine->drv->frames_per_second < 47 ) && (options.samplerate >= 30000) )	
+        {	
+                printf("sample rate too high\n");	
+                framerate_test =1;	
+                options.samplerate=22050;	
+                framerate_test =1;	
+        }        
 	Machine->sample_rate = options.samplerate;
 
 	/* get orientation right */
@@ -1613,7 +1581,7 @@ UINT64 mame_chd_length(struct chd_interface_file *file)
 
 #ifdef MAME_DEBUG
 
-INLINE int my_stricmp(const char *dst, const char *src)
+static INLINE int my_stricmp(const char *dst, const char *src)
 {
 	while (*src && *dst)
 	{
@@ -1691,7 +1659,6 @@ static int validitychecks(void)
 				printf("%s: %s is a duplicate description (%s, %s)\n",drivers[i]->description,drivers[i]->source_file,drivers[i]->name,drivers[j]->name);
 				error = 1;
 			}
-#ifndef MESS
 			if (drivers[i]->rom && drivers[i]->rom == drivers[j]->rom
 					&& (drivers[i]->flags & NOT_A_DRIVER) == 0
 					&& (drivers[j]->flags & NOT_A_DRIVER) == 0)
@@ -1699,10 +1666,8 @@ static int validitychecks(void)
 				printf("%s: %s and %s use the same ROM set\n",drivers[i]->source_file,drivers[i]->name,drivers[j]->name);
 				error = 1;
 			}
-#endif
 		}
 
-#ifndef MESS
 		if ((drivers[i]->flags & NOT_A_DRIVER) == 0)
 		{
 			if (drv.sound[0].sound_type == 0 && (drivers[i]->flags & GAME_NO_SOUND) == 0 &&
@@ -1712,7 +1677,6 @@ static int validitychecks(void)
 				error = 1;
 			}
 		}
-#endif
 
 		romp = drivers[i]->rom;
 

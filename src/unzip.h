@@ -2,7 +2,7 @@
 #define __UNZIP_H
 
 #include "osd_cpu.h"
-#include "osdepend.h"
+#include "mame2003.h"
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -38,7 +38,7 @@ struct zipent {
 
 typedef struct _ZIP {
 	char* zip; /* zip name */
-	osd_file* fp; /* zip handler */
+	FILE* fp; /* zip handler */
 	int pathtype,pathindex;	/* additional path info */
 	long length; /* length of zip file */
 

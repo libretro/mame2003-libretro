@@ -8,20 +8,16 @@
 /* ======================================================================== */
 /* ================================ INCLUDES ============================== */
 /* ======================================================================== */
-
-#include <limits.h>
-#include "g65816.h"
 #include <stdio.h>
+#include <limits.h>
 
+#include <retro_inline.h>
+
+#include "g65816.h"
 
 /* ======================================================================== */
 /* ================================ GENERAL =============================== */
 /* ======================================================================== */
-
-/* Fallback on static if we don't have inline */
-#ifndef INLINE
-#define INLINE static
-#endif
 
 /* This should be set to the default size of your processor (min 16 bit) */
 #undef uint
@@ -38,7 +34,7 @@
 #define MAKE_INT_8(A) (int8)((A)&0xff)
 #else
 #define int8   int
-INLINE int MAKE_INT_8(int A) {return (A & 0x80) ? A | ~0xff : A & 0xff;}
+static INLINE int MAKE_INT_8(int A) {return (A & 0x80) ? A | ~0xff : A & 0xff;}
 #endif /* UCHAR_MAX == 0xff */
 
 #define MAKE_UINT_8(A) ((A)&0xff)
@@ -151,7 +147,7 @@ extern int (*g65816i_execute[])(int cycles);
 #define EXECUTION_MODE_M1X1	3
 #define EXECUTION_MODE_E	4
 
-INLINE void g65816i_set_execution_mode(uint mode)
+static INLINE void g65816i_set_execution_mode(uint mode)
 {
 	FTABLE_OPCODES = g65816i_opcodes[mode];
 	FTABLE_GET_REG = g65816i_get_reg[mode];

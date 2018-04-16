@@ -19,7 +19,7 @@
 #include <ctype.h>
 #include "mame.h"
 #include "driver.h"
-#include "osdepend.h"
+#include "mame2003.h"
 
 static int interrupt_enable;
 
@@ -152,11 +152,11 @@ unsigned jrpacman_decode_roms(int address)
 	return RAM[address]; // this should never happen!
 }
 #else
-INLINE WordBit(word theWord, int theBit)
+static INLINE WordBit(word theWord, int theBit)
 {
 	return (theWord >> theBit)&1;
 }
-INLINE ByteBit(byte theByte, int theBit)
+static INLINE ByteBit(byte theByte, int theBit)
 {
 	return (theByte >> theBit)&1;
 }

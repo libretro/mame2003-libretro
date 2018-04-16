@@ -19,10 +19,8 @@ author (Karl Stenerud) at karl@higashiyama-unet.ocn.ne.jp.
 #include "spc700ds.h"
 #include <stdio.h>
 
+#include <retro_inline.h>
 
-#ifndef INLINE
-#define INLINE static
-#endif
 
 
 typedef struct
@@ -330,13 +328,13 @@ static opcode_struct g_opcodes[256] =
 
 static unsigned int g_pc;
 
-INLINE unsigned int read_8_immediate(void)
+static INLINE unsigned int read_8_immediate(void)
 {
 	g_pc++;
 	return spc700_read_8_disassembler(g_pc-1);
 }
 
-INLINE unsigned int read_16_immediate(void)
+static INLINE unsigned int read_16_immediate(void)
 {
 	g_pc += 2;
 	return	spc700_read_8_disassembler(g_pc-2) |

@@ -7,12 +7,12 @@
 #include <zlib.h>
 
 #include <assert.h>
+
+#include <streams/file_stream.h>
+
 #include "driver.h"
 #include "unzip.h"
-
-#ifdef MESS
-#include "image.h"
-#endif
+#include "fileio.h"
 
 
 /***************************************************************************
@@ -47,13 +47,6 @@
 #define FILEFLAG_VERIFY_ONLY	0x10
 #define FILEFLAG_NOZIP			0x20
 
-#ifdef MESS
-#define FILEFLAG_ALLOW_ABSOLUTE	0x40
-#define FILEFLAG_ZIP_PATHS		0x80
-#define FILEFLAG_CREATE_GAMEDIR	0x100
-#define FILEFLAG_MUST_EXIST		0x200
-#endif
-
 #ifdef MAME_DEBUG
 #define DEBUG_COOKIE			0xbaadf00d
 #endif
@@ -67,7 +60,7 @@ struct _mame_file
 #ifdef DEBUG_COOKIE
 	UINT32 debug_cookie;
 #endif
-	osd_file *file;
+	FILE *file;
 	UINT8 *data;
 	UINT64 offset;
 	UINT64 length;
@@ -98,9 +91,7 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 	{
 		/* read-only cases */
 		case FILETYPE_ROM:
-#ifndef MESS
 		case FILETYPE_IMAGE:
-#endif
 		case FILETYPE_SAMPLE:
 		case FILETYPE_HIGHSCORE_DB:
 		case FILETYPE_ARTWORK:
@@ -113,14 +104,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 			}
 			break;
 
-		/* write-only cases */
-		case FILETYPE_SCREENSHOT:
-			if (!openforwrite)
-			{
-				logerror("mame_fopen: type %02x read not supported\n", filetype);
-				return NULL;
-			}
-			break;
 	}
 
 	/* now open the file appropriately */
@@ -132,28 +115,7 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* read-only disk images */
 		case FILETYPE_IMAGE:
-#ifndef MESS
 			return generic_fopen(filetype, gamename, filename, 0, FILEFLAG_OPENREAD | FILEFLAG_NOZIP);
-#else
-			{
-				int flags = FILEFLAG_ALLOW_ABSOLUTE;
-				switch(openforwrite) {
-				case OSD_FOPEN_READ:   
-					flags |= FILEFLAG_OPENREAD | FILEFLAG_ZIP_PATHS;
-					break;   
-				case OSD_FOPEN_WRITE:   
-					flags |= FILEFLAG_OPENWRITE;   
-					break;
-				case OSD_FOPEN_RW:   
-					flags |= FILEFLAG_OPENREAD | FILEFLAG_OPENWRITE | FILEFLAG_MUST_EXIST;   
-					break;   
-				case OSD_FOPEN_RW_CREATE:
-					flags |= FILEFLAG_OPENREAD | FILEFLAG_OPENWRITE;
-					break;
-				} 
-				return generic_fopen(filetype, gamename, filename, 0, flags);
-			}
-#endif
 
 		/* differencing disk images */
 		case FILETYPE_IMAGE_DIFF:
@@ -169,10 +131,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* NVRAM files */
 		case FILETYPE_NVRAM:
-#ifdef MESS
-			if (filename)
-				return generic_fopen(filetype, gamename, filename, 0, openforwrite ? FILEFLAG_OPENWRITE | FILEFLAG_CREATE_GAMEDIR : FILEFLAG_OPENREAD);
-#endif
 			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
 		/* high score files */
@@ -197,10 +155,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 		case FILETYPE_MEMCARD:
 			return generic_fopen(filetype, NULL, filename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
-		/* screenshot files */
-		case FILETYPE_SCREENSHOT:
-			return generic_fopen(filetype, NULL, filename, 0, FILEFLAG_OPENWRITE);
-
 		/* history files */
 		case FILETYPE_HISTORY:
 			return generic_fopen(filetype, NULL, filename, 0, FILEFLAG_OPENREAD);
@@ -217,12 +171,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 		case FILETYPE_CTRLR:
 			return generic_fopen(filetype, gamename, filename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
-#ifdef MESS
-		/* CRC files */
-		case FILETYPE_CRC:
-			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
-#endif
-
 		/* anything else */
 		default:
 			logerror("mame_fopen(): unknown filetype %02x\n", filetype);
@@ -230,6 +178,96 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 	}
 	return NULL;
 }
+
+
+/******************************************************************************
+
+File I/O
+
+******************************************************************************/
+static const char* const paths[] = { "raw", "rom", "image", "diff", "samples", "artwork", "nvram", "hi", "hsdb", "cfg", "inp", "memcard", "history", "cheat", "lang", "ctrlr" };
+
+int osd_get_path_count(int pathtype)
+{
+	return 1;
+}
+
+int osd_get_path_info(int pathtype, int pathindex, const char *filename)
+{
+   char buffer[1024];
+   char currDir[1024];
+
+   switch (pathtype)
+   {
+      case FILETYPE_ROM:
+      case FILETYPE_IMAGE:
+         strcpy(currDir, options.libretro_content_path);
+         break;
+      case FILETYPE_IMAGE_DIFF:
+      case FILETYPE_NVRAM:
+      case FILETYPE_HIGHSCORE:
+      case FILETYPE_CONFIG:
+      case FILETYPE_INPUTLOG:
+      case FILETYPE_MEMCARD:
+      case FILETYPE_SAMPLE:
+         /* user generated content goes in mam2003 save directory subfolders */
+         snprintf(currDir, 1024, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), paths[pathtype]);
+         break;
+      default:
+         /* .dat files and additional core content goes in mame2003 system directory */
+         snprintf(currDir, 1024, "%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME);
+   }
+
+   snprintf(buffer, 1024, "%s%s%s", currDir, path_default_slash(), filename);
+
+#ifdef DEBUG_LOG
+   fprintf(stderr, "osd_get_path_info (buffer = [%s]), (directory: [%s]), (path type dir: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, paths[pathtype], pathtype, filename);
+#endif
+
+   if (path_is_directory(buffer))
+      return PATH_IS_DIRECTORY;
+   else if (filestream_exists(buffer))
+      return PATH_IS_FILE;
+
+   return PATH_NOT_FOUND;
+}
+
+FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *mode)
+{
+   char buffer[1024];
+   char currDir[1024];
+   FILE* out;
+
+   switch (pathtype)
+   {
+      case FILETYPE_ROM:
+      case FILETYPE_IMAGE:
+         strcpy(currDir, options.libretro_content_path);
+         break;
+      case FILETYPE_IMAGE_DIFF:
+      case FILETYPE_NVRAM:
+      case FILETYPE_HIGHSCORE:
+      case FILETYPE_CONFIG:
+      case FILETYPE_INPUTLOG:
+      case FILETYPE_MEMCARD:
+      case FILETYPE_SAMPLE:
+         /* user generated content goes in mam2003 save directory subfolders */
+         snprintf(currDir, 1024, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), paths[pathtype]);
+         break;
+      default:
+         /* .dat files and additional core content goes in mame2003 system directory */
+         snprintf(currDir, 1024, "%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME);
+   }
+
+   snprintf(buffer, 1024, "%s%s%s", currDir, path_default_slash(), filename);
+
+   path_mkdir(currDir);
+
+   out = fopen(buffer, mode);
+
+   return out;
+}
+
 
 
 /***************************************************************************
@@ -259,7 +297,7 @@ void mame_fclose(mame_file *file)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			osd_fclose(file->file);
+			fclose(file->file);
 			break;
 
 		case ZIPPED_FILE:
@@ -340,7 +378,7 @@ UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			return osd_fread(file->file, buffer, length);
+			return fread(buffer, 1, length, file->file);
 
 		case ZIPPED_FILE:
 		case RAM_FILE:
@@ -373,7 +411,7 @@ UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			return osd_fwrite(file->file, buffer, length);
+			return fwrite(buffer, 1, length, file->file);
 	}
 
 	return 0;
@@ -393,7 +431,7 @@ int mame_fseek(mame_file *file, INT64 offset, int whence)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			return osd_fseek(file->file, offset, whence);
+			return fseek(file->file, offset, whence);
 
 		case ZIPPED_FILE:
 		case RAM_FILE:
@@ -455,10 +493,10 @@ UINT64 mame_fsize(mame_file *file)
 		case PLAIN_FILE:
 		{
 			int size, offs;
-			offs = osd_ftell(file->file);
-			osd_fseek(file->file, 0, SEEK_END);
-			size = osd_ftell(file->file);
-			osd_fseek(file->file, offs, SEEK_SET);
+			offs = ftell(file->file);
+			fseek(file->file, 0, SEEK_END);
+			size = ftell(file->file);
+			fseek(file->file, offs, SEEK_SET);
 			return size;
 		}
 
@@ -495,7 +533,7 @@ int mame_fgetc(mame_file *file)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			if (osd_fread(file->file, &buffer, 1) == 1)
+			if (fread(&buffer, 1, 1, file->file) == 1)
 				return buffer;
 			return EOF;
 
@@ -522,14 +560,14 @@ int mame_ungetc(int c, mame_file *file)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			if (osd_feof(file->file))
+			if (feof(file->file))
 			{
-				if (osd_fseek(file->file, 0, SEEK_CUR))
+				if (fseek(file->file, 0, SEEK_CUR))
 					return c;
 			}
 			else
 			{
-				if (osd_fseek(file->file, -1, SEEK_CUR))
+				if (fseek(file->file, -1, SEEK_CUR))
 					return c;
 			}
 			return EOF;
@@ -611,7 +649,7 @@ int mame_feof(mame_file *file)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			return osd_feof(file->file);
+			return feof(file->file);
 
 		case RAM_FILE:
 		case ZIPPED_FILE:
@@ -633,7 +671,7 @@ UINT64 mame_ftell(mame_file *file)
 	switch (file->type)
 	{
 		case PLAIN_FILE:
-			return osd_ftell(file->file);
+			return ftell(file->file);
 
 		case RAM_FILE:
 		case ZIPPED_FILE:
@@ -711,18 +749,10 @@ UINT32 mame_fwrite_swap(mame_file *file, const void *buffer, UINT32 length)
 	compose_path
 ***************************************************************************/
 
-INLINE void compose_path(char *output, const char *gamename, const char *filename, const char *extension)
+static INLINE void compose_path(char *output, const char *gamename, const char *filename, const char *extension)
 {
 	char *filename_base = output;
 	*output = 0;
-
-#ifdef MESS
-	if (filename && osd_is_absolute_path(filename))
-	{
-		strcpy(output, filename);
-		return;
-	}
-#endif
 
 	/* if there's a gamename, add that; only add a '/' if there is a filename as well */
 	if (gamename)
@@ -769,11 +799,9 @@ static const char *get_extension_for_filetype(int filetype)
 			extension = NULL;
 			break;
 
-#ifndef MESS
 		case FILETYPE_IMAGE:		/* disk image files */
 			extension = "chd";
 			break;
-#endif
 
 		case FILETYPE_IMAGE_DIFF:	/* differencing drive images */
 			extension = "dif";
@@ -784,7 +812,6 @@ static const char *get_extension_for_filetype(int filetype)
 			break;
 
 		case FILETYPE_ARTWORK:		/* artwork files */
-		case FILETYPE_SCREENSHOT:	/* screenshot files */
 			extension = "png";
 			break;
 
@@ -816,11 +843,6 @@ static const char *get_extension_for_filetype(int filetype)
 			extension = "ini";
 			break;
 
-#ifdef MESS
-		case FILETYPE_CRC:
-			extension = "crc";
-			break;
-#endif
 	}
 	return extension;
 }
@@ -839,16 +861,6 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 	int pathindex, pathstart, pathstop, pathinc;
 	mame_file file, *newfile;
 	char tempname[256];
-
-#ifdef MESS
-	int is_absolute_path = osd_is_absolute_path(filename);
-	if (is_absolute_path)
-	{
-		if ((flags & FILEFLAG_ALLOW_ABSOLUTE) == 0)
-			return NULL;
-		pathcount = 1;
-	}
-#endif
 
 	LOG(("generic_fopen(%d, %s, %s, %s, %X)\n", pathc, gamename, filename, extension, flags));
 
@@ -884,17 +896,6 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 		compose_path(name, gamename, NULL, NULL);
 		LOG(("Trying %s\n", name));
 
-#ifdef MESS
-		if (is_absolute_path)
-		{
-			*name = 0;
-		}
-		else if (flags & FILEFLAG_CREATE_GAMEDIR)
-		{
-			if (osd_get_path_info(pathtype, pathindex, name) == PATH_NOT_FOUND)
-				osd_create_directory(pathtype, pathindex, name);
-		}
-#endif
 
 		/* if the directory exists, proceed */
 		if (*name == 0 || osd_get_path_info(pathtype, pathindex, name) == PATH_IS_DIRECTORY)
@@ -912,13 +913,6 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 				}
 			}
 
-#ifdef MESS
-			else if ((flags & FILEFLAG_MUST_EXIST) && (osd_get_path_info(pathtype, pathindex, name) == PATH_NOT_FOUND))
-			{
-				/* if FILEFLAG_MUST_EXIST is set and the file isn't there, don't open it */
-			}
-#endif
-
 			/* otherwise, just open it straight */
 			else
 			{
@@ -930,62 +924,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 					break;
 			}
 
-#ifdef MESS
-			if (flags & FILEFLAG_ZIP_PATHS)
-			{
-				int path_info = PATH_NOT_FOUND;
-				const char *oldname = name;
-				const char *zipentryname;
-				char *newname = NULL;
-				char *oldnewname = NULL;
-				char *s;
-				UINT32 ziplength;
 
-				while ((oldname[0]) && ((path_info = osd_get_path_info(pathtype, pathindex, oldname)) == PATH_NOT_FOUND))
-				{
-					/* get name of parent directory into newname & oldname */
-					newname = osd_dirname(oldname);
-
-					/* if we are at a "blocking point", break out now */
-					if (newname && !strcmp(oldname, newname))
-						newname = NULL;
-
-					if (oldnewname)
-						free(oldnewname);
-					oldname = oldnewname = newname;
-					if (!newname)
-						break;
-
-					/* remove any trailing path separator if needed */
-					for (s = newname + strlen(newname) - 1; s >= newname && osd_is_path_separator(*s); s--)
-						*s = '\0';
-				}
-
-				if (newname)
-				{
-					if ((oldname[0]) &&(path_info == PATH_IS_FILE))
-					{
-						zipentryname = name + strlen(newname);
-						while(osd_is_path_separator(*zipentryname))
-							zipentryname++;
-
-						if (load_zipped_file(pathtype, pathindex, newname, zipentryname, &file.data, &ziplength) == 0)
-						{
-							unsigned functions;
-							functions = hash_data_used_functions(hash);
-							LOG(("Using (mame_fopen) zip file for %s\n", filename));
-							file.length = ziplength;
-							file.type = ZIPPED_FILE;
-							hash_compute(file.hash, file.data, file.length, functions);
-							break;
-						}
-					}
-					free(newname);
-				}
-			}
-			if (is_absolute_path)
-				continue;
-#endif
 		}
 
 		/* ----------------- STEP 2: OPEN THE FILE IN A ZIP -------------------- */
@@ -1113,7 +1052,7 @@ static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **
 {
 	UINT64 length;
 	UINT8 *data;
-	osd_file *f;
+	FILE *f;
 	unsigned int functions;
 
 	/* open the file */
@@ -1122,16 +1061,16 @@ static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **
 		return -1;
 
 	/* determine length of file */
-	if (osd_fseek(f, 0L, SEEK_END) != 0)
+	if (fseek(f, 0L, SEEK_END) != 0)
 	{
-		osd_fclose(f);
+		fclose(f);
 		return -1;
 	}
 
-	length = osd_ftell(f);
+	length = ftell(f);
 	if (length == -1L)
 	{
-		osd_fclose(f);
+		fclose(f);
 		return -1;
 	}
 
@@ -1139,22 +1078,22 @@ static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **
 	data = malloc(length);
 	if (!data)
 	{
-		osd_fclose(f);
+		fclose(f);
 		return -1;
 	}
 
 	/* read entire file into memory */
-	if (osd_fseek(f, 0L, SEEK_SET) != 0)
+	if (fseek(f, 0L, SEEK_SET) != 0)
 	{
 		free(data);
-		osd_fclose(f);
+		fclose(f);
 		return -1;
 	}
 
-	if (osd_fread(f, data, length) != length)
+	if (fread(data, 1, length, f) != length)
 	{
 		free(data);
-		osd_fclose(f);
+		fclose(f);
 		return -1;
 	}
 
@@ -1176,7 +1115,7 @@ static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **
 		free(data);
 
 	/* close the file */
-	osd_fclose(f);
+	fclose(f);
 	return 0;
 }
 

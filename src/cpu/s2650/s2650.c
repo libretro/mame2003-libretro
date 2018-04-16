@@ -8,11 +8,15 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#include <retro_inline.h>
+
 #include "driver.h"
 #include "state.h"
 #include "mamedbg.h"
 #include "s2650.h"
 #include "s2650cpu.h"
+
 
 /* define this to have some interrupt information logged */
 #define VERBOSE 0
@@ -161,7 +165,7 @@ static	UINT8 ccc[0x200] = {
  * ROP
  * read next opcode
  ***************************************************************/
-INLINE UINT8 ROP(void)
+static INLINE UINT8 ROP(void)
 {
 	UINT8 result = cpu_readop(S.page + S.iar);
 	S.iar = (S.iar + 1) & PMSK;
@@ -172,7 +176,7 @@ INLINE UINT8 ROP(void)
  * ARG
  * read next opcode argument
  ***************************************************************/
-INLINE UINT8 ARG(void)
+static INLINE UINT8 ARG(void)
 {
 	UINT8 result = cpu_readop_arg(S.page + S.iar);
 	S.iar = (S.iar + 1) & PMSK;

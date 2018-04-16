@@ -14,9 +14,6 @@
 #include <ctype.h>
 
 
-//#define LOG_LOAD
-
-
 
 /***************************************************************************
 
@@ -1082,9 +1079,6 @@ static int display_rom_load_results(struct rom_load_data *romdata)
 {
 	int region;
 
-	/* final status display */
-	osd_display_loading_rom_message(NULL, romdata);
-
 	/* only display if we have warnings or errors */
 	if (romdata->warnings || romdata->errors)
 	{
@@ -1102,25 +1096,6 @@ static int display_rom_load_results(struct rom_load_data *romdata)
 		/* display the result */
 		printf("%s", romdata->errorbuf);
 
-		/* if we're not getting out of here, wait for a keypress */
-		if (!options.gui_host && !bailing)
-		{
-#if 0
-			int k;
-
-			/* loop until we get one */
-			printf ("Press any key to continue\n");
-			do
-			{
-				k = code_read_async();
-			}
-			while (k == CODE_NONE || k == KEYCODE_LCONTROL);
-#endif
-
-			/* bail on a control + C */
-			if (keyboard_pressed(KEYCODE_LCONTROL) && keyboard_pressed(KEYCODE_C))
-				return 1;
-		}
 	}
 
 	/* clean up any regions */
@@ -1197,10 +1172,6 @@ static int open_rom_file(struct rom_load_data *romdata, const struct RomModule *
 	const struct GameDriver *drv;
 
 	++romdata->romsloaded;
-
-	/* update status display */
-	if (osd_display_loading_rom_message(ROM_GETNAME(romp), romdata))
-       return 0;
 
 	/* Attempt reading up the chain through the parents. It automatically also
 	   attempts any kind of load by checksum supported by the archives. */
@@ -1506,7 +1477,7 @@ static int process_rom_entries(struct rom_load_data *romdata, const struct RomMo
 					while (ROMENTRY_ISCONTINUE(romp));
 
 					/* if this was the first use of this file, verify the length and CRC */
-					if (baserom && !skip_rom_verify)
+					if (baserom && !options.skip_rom_verify)
 					{
 						debugload("Verifying length (%X) and checksums\n", explength);
                         verify_length_and_hash(romdata, ROM_GETNAME(baserom), explength, ROM_GETHASHDATA(baserom));

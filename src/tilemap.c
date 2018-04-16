@@ -17,7 +17,7 @@
 #if !defined(DECLARE) && !defined(TRANSP)
 
 #include "driver.h"
-#include "osinline.h"
+#include "osd_cpu.h"
 #include "tilemap.h"
 #include "state.h"
 
@@ -1560,7 +1560,7 @@ L_Skip:
    } /* not totally clipped */
 }
 
-INLINE tilemap_draw_func pick_draw_func( struct mame_bitmap *dest )
+static INLINE tilemap_draw_func pick_draw_func( struct mame_bitmap *dest )
 {
 	switch (dest ? dest->depth : Machine->scrbitmap->depth)
 	{

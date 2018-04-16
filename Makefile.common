@@ -2,27 +2,26 @@ LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro/libretro-common
 
 INCFLAGS := -I$(CORE_DIR) \
 				-I$(CORE_DIR)/includes \
-				-I$(CORE_DIR)/libretro \
-				-I$(CORE_DIR)/libretro/includes/zlib \
 				-I$(CORE_DIR)/cpu/m68000
+
+INCFLAGS += -I$(CORE_DIR)/libretro \
+				-I$(CORE_DIR)/libretro/includes/zlib \
+				-I$(LIBRETRO_COMM_DIR)/include \
+				-I$(LIBRETRO_COMM_DIR)/include/file \
+				-I$(LIBRETRO_COMM_DIR)/include/compat
 
 ifneq (,$(findstring msvc2003,$(platform)))
 INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
 endif
 
-ifneq (,$(findstring msvc,$(platform)))
-COREDEFINES := -DINLINE="static _inline"
-else
-COREDEFINES := -DINLINE="static __inline__"
-endif
 COREDEFINES += -D__LIBRETRO__ -DPI=3.1415927 -DM_PI=3.1415927
 
-SOURCES_C := $(CORE_DIR)/libretro/libretro.c \
-				 $(CORE_DIR)/libretro/osd.c \
-				 $(CORE_DIR)/libretro/keyboard.c \
-				 $(CORE_DIR)/libretro/joystick.c \
-				 $(CORE_DIR)/libretro/video.c
+SOURCES_C := $(CORE_DIR)/libretro/mame2003.c \
+	$(CORE_DIR)/libretro/keyboard.c \
+	$(CORE_DIR)/libretro/joystick.c \
+	$(CORE_DIR)/libretro/video.c
 
+                 
 SOURCES_C += $(CORE_DIR)/mame.c \
 				 $(CORE_DIR)/drawgfx.c \
 				 $(CORE_DIR)/common.c \
@@ -2602,4 +2601,16 @@ SOURCES_C += $(CORE_DIR)/../deps/zlib/adler32.c \
 				 $(CORE_DIR)/../deps/zlib/zutil.c \
 				 $(CORE_DIR)/../deps/zlib/ioapi.c \
 				 $(CORE_DIR)/../deps/zlib/unzip.c
+
+SOURCES_C +=  \
+	      $(LIBRETRO_COMM_DIR)/compat/compat_strcasestr.c \
+	      $(LIBRETRO_COMM_DIR)/compat/compat_strl.c \
+	      $(LIBRETRO_COMM_DIR)/compat/compat_posix_string.c \
+	      $(LIBRETRO_COMM_DIR)/compat/compat_snprintf.c \
+	      $(LIBRETRO_COMM_DIR)/compat/fopen_utf8.c \
+			$(LIBRETRO_COMM_DIR)/encodings/encoding_utf.c \
+			$(LIBRETRO_COMM_DIR)/string/stdstring.c \
+			$(LIBRETRO_COMM_DIR)/streams/file_stream.c \
+			$(LIBRETRO_COMM_DIR)/vfs/vfs_implementation.c \
+			$(LIBRETRO_COMM_DIR)/file/file_path.c
 endif

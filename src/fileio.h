@@ -10,7 +10,8 @@
 #define FILEIO_H
 
 #include <stdarg.h>
-#include "osdepend.h"
+#include <file_path.h>
+#include "mame2003.h"
 #include "hash.h"
 
 #ifdef __cplusplus
@@ -33,24 +34,39 @@ enum
 	FILETYPE_CONFIG,
 	FILETYPE_INPUTLOG,
 	FILETYPE_MEMCARD,
-	FILETYPE_SCREENSHOT,
 	FILETYPE_HISTORY,
 	FILETYPE_CHEAT,
 	FILETYPE_LANGUAGE,
 	FILETYPE_CTRLR,
-#ifdef MESS
-	FILETYPE_CRC,
-#endif
-    FILETYPE_XML_DAT,
+	FILETYPE_XML_DAT,
 	FILETYPE_end /* dummy last entry */
 };
 
+/* These values are returned by osd_get_path_info */
+enum
+{
+	PATH_NOT_FOUND,
+	PATH_IS_FILE,
+	PATH_IS_DIRECTORY
+};
 
 /* gamename holds the driver name, filename is only used for ROMs and    */
 /* samples. If 'write' is not 0, the file is opened for write. Otherwise */
 /* it is opened for read. */
 
 typedef struct _mame_file mame_file;
+
+
+/* Return the number of paths for a given type */
+int osd_get_path_count(int pathtype);
+
+/* Get information on the existence of a file */
+int osd_get_path_info(int pathtype, int pathindex, const char *filename);
+
+/* Attempt to open a file with the given name and mode using the specified path type */
+FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *mode);
+
+int osd_create_directory(const char *dir);
 
 int mame_faccess(const char *filename, int filetype);
 mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, int openforwrite);
