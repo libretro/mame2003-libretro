@@ -42,12 +42,7 @@ const char *vanguard_sample_names[] =
 	0
 };
 
-<<<<<<< HEAD
-int rockola_sh_start(const struct MachineSound *msound)
-=======
-
 static INLINE void validate_tone_channel(int channel)
->>>>>>> e4d7c20... add more static INLINE
 {
 	int vol[3];
 
