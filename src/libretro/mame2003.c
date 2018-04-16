@@ -50,11 +50,6 @@ retro_set_led_state_t led_state_cb = NULL;
 
 int16_t XsoundBuffer[2048];
 
-static float delta_samples;
-extern int samples_per_frame;
-extern short *samples_buffer;
-extern short *conversion_buffer;
-extern int usestereo;
 
 #ifdef _3DS /* TODO: convert this strcasecmp wrapper to libretro-common/compat functions */
 int stricmp(const char *string1, const char *string2)
@@ -231,7 +226,7 @@ unsigned retro_api_version(void)
 
 void retro_get_system_info(struct retro_system_info *info)
 {
-   info->library_name = "MAME 2003";
+   info->library_name = "MAME 2003-plus";
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
@@ -243,18 +238,18 @@ void retro_get_system_info(struct retro_system_info *info)
 
 static void update_variables(void)
 {
+   struct retro_led_interface ledintf;
    struct retro_variable var;
-   
-   var.value = NULL;
 
+   var.value = NULL;
    var.key = APPNAME"-frameskip";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       options.frameskip = atoi(var.value);
 
    var.value = NULL;
-
-   var.key = APPNAME"-dcs-speedhack"; 
+   var.key = APPNAME"-dcs-speedhack";
+   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -279,8 +274,8 @@ static void update_variables(void)
       options.skip_disclaimer = 0;
 
    var.value = NULL;
-
    var.key = APPNAME"-skip_warnings";
+
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -292,16 +287,16 @@ static void update_variables(void)
       options.skip_warnings = 0;
    
    var.value = NULL;
-
-   var.key = APPNAME"-sample_rate"; 
+   var.key = APPNAME"-sample_rate";
+   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       options.samplerate = atoi(var.value);
    else
       options.samplerate = 48000;
 
    var.value = NULL;
-
-   var.key = APPNAME"-external_hiscore";  
+   var.key = APPNAME"-external_hiscore";
+   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
@@ -312,19 +307,7 @@ static void update_variables(void)
    else
       options.use_external_hiscore = 0;  
 
-    var.value = NULL;
-    
-    var.key = "mame2003-plus-dialsharexy";
-    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-    {
-        if(strcmp(var.value, "enabled") == 0)
-            options.dial_share_xy = 1;
-        else
-            options.dial_share_xy = 0;
-    }
-    else
-        options.dial_share_xy = 0;
-   
+
    var.value = NULL;
    
    var.key = APPNAME"-dialsharexy";
@@ -541,7 +524,7 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
 
 void retro_run (void)
 {
-   int i, j;
+   int i,j;
    bool pointer_pressed;
    const struct KeyboardInfo *thisInput;
    bool updated = false;
@@ -629,9 +612,18 @@ void retro_run (void)
       }
    }
 
-   mame_frame();
+	if (framerate_test == 1)
+	{
+		struct retro_system_av_info info;
+		retro_get_system_av_info(&info);
+		printf("timing %d\n", (int) info.timing.sample_rate);
+		info.timing.sample_rate=22050;
+		
+		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
+		framerate_test = 0;
+	}
 
-/*
+   mame_frame();
    if (samples_per_frame)
    {
       if (usestereo)
@@ -646,63 +638,9 @@ void retro_run (void)
          audio_batch_cb(conversion_buffer, samples_per_frame);
       }
    }
-*/
+   
+
 }
-
-int osd_update_audio_stream(INT16 *buffer)
-{
-	int i,j;
-
-/* sample rate will mess timming up if its above the fps we require. If you dont want to do it this way we will have will just 
-  have too make the audio a streamed buffer that just updates with this function */
-
-
-	if ( (  Machine->drv->frames_per_second < 47 ) && (Machine->sample_rate >= 30000) )
-	{ 
-		struct retro_system_av_info info;
-		retro_get_system_av_info(&info);
-		info.timing.sample_rate= 22050;
-		Machine->sample_rate=22050;
-		samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
-		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
-	}	
-
-
-
-	if ( Machine->sample_rate !=0 && buffer )
-	{
-
-   		memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
-
-		if (usestereo)
-			audio_batch_cb(samples_buffer, samples_per_frame);
-
-		else
-		{
-
-			for (i = 0, j = 0; i < samples_per_frame; i++)
-        		{
-				conversion_buffer[j++] = samples_buffer[i];
-				conversion_buffer[j++] = samples_buffer[i];
-		        }
-
-         		audio_batch_cb(conversion_buffer,samples_per_frame);
-		}	
-
-   		delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
-
-		if (delta_samples >= 1.0f)
-		{
-			int integer_delta = (int)delta_samples;
-			samples_per_frame += integer_delta;
-			delta_samples -= integer_delta;
-		}
-
-	}
-	return samples_per_frame;
-}
-
-
 
 
 bool retro_load_game(const struct retro_game_info *game)
