@@ -288,10 +288,10 @@ cycles_t osd_profiling_ticks(void);
 ******************************************************************************/
 
 #ifdef __GNUC__
-INLINE void CLIB_DECL logerror(const char *text,...) __attribute__ ((format (printf, 1, 2)));
+static INLINE void CLIB_DECL logerror(const char *text,...) __attribute__ ((format (printf, 1, 2)));
 #endif
 
-INLINE void CLIB_DECL logerror(const char *text,...)
+static INLINE void CLIB_DECL logerror(const char *text,...)
 {
 #ifdef DEBUG_LOG
     va_list args;
