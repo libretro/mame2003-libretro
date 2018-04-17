@@ -226,7 +226,7 @@ unsigned retro_api_version(void)
 
 void retro_get_system_info(struct retro_system_info *info)
 {
-   info->library_name = "MAME 2003-plus";
+   info->library_name = APPNAME;
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
