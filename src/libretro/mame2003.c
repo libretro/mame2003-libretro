@@ -324,7 +324,7 @@ static void update_variables(void)
    var.value = NULL;
    
    var.key = APPNAME"-mouse_device";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "pointer") == 0)
          options.mouse_device = RETRO_DEVICE_POINTER;
