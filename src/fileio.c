@@ -93,7 +93,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 		case FILETYPE_ROM:
 		case FILETYPE_IMAGE:
 		case FILETYPE_SAMPLE:
-		case FILETYPE_HIGHSCORE_DB:
 		case FILETYPE_ARTWORK:
 		case FILETYPE_HISTORY:
 		case FILETYPE_LANGUAGE:
@@ -135,13 +134,11 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* high score files */
 		case FILETYPE_HIGHSCORE:
-			if (!mame_highscore_enabled())
-				return NULL;
 			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
 		/* highscore database */
 		case FILETYPE_HIGHSCORE_DB:
-			return generic_fopen(filetype, NULL, filename, 0, FILEFLAG_OPENREAD);
+			return generic_fopen(filetype, NULL, filename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
 		/* config files */
 		case FILETYPE_CONFIG:

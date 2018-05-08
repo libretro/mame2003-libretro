@@ -5,6 +5,7 @@
 #include <libretro.h>
 #include "osd_cpu.h"
 #include "inptport.h"
+#include "log.h"
 
 #ifdef __cplusplus
 extern "C" {
