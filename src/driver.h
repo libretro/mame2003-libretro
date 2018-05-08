@@ -561,4 +561,6 @@ extern const struct GameDriver *test_drivers[];
 
 extern unsigned activate_dcs_speedhack;
 
+extern const int total_drivers;
+
 #endif

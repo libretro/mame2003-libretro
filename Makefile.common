@@ -5,7 +5,7 @@ INCFLAGS := -I$(CORE_DIR) \
 				-I$(CORE_DIR)/cpu/m68000
 
 INCFLAGS += -I$(CORE_DIR)/libretro \
-				-I$(CORE_DIR)/libretro/includes/zlib \
+				-I$(LIBRETRO_COMM_DIR)/zlib \
 				-I$(LIBRETRO_COMM_DIR)/include \
 				-I$(LIBRETRO_COMM_DIR)/include/file \
 				-I$(LIBRETRO_COMM_DIR)/include/compat
@@ -2585,22 +2585,22 @@ endif
 
 ifeq ($(STATIC_LINKING),1)
 else
-SOURCES_C += $(CORE_DIR)/../deps/zlib/adler32.c \
-				 $(CORE_DIR)/../deps/zlib/compress.c \
-				 $(CORE_DIR)/../deps/zlib/crc32.c \
-				 $(CORE_DIR)/../deps/zlib/deflate.c \
-				 $(CORE_DIR)/../deps/zlib/gzclose.c \
-				 $(CORE_DIR)/../deps/zlib/gzlib.c \
-				 $(CORE_DIR)/../deps/zlib/gzread.c \
-				 $(CORE_DIR)/../deps/zlib/gzwrite.c \
-				 $(CORE_DIR)/../deps/zlib/inffast.c \
-				 $(CORE_DIR)/../deps/zlib/inflate.c \
-				 $(CORE_DIR)/../deps/zlib/inftrees.c \
-				 $(CORE_DIR)/../deps/zlib/trees.c \
-				 $(CORE_DIR)/../deps/zlib/uncompr.c \
-				 $(CORE_DIR)/../deps/zlib/zutil.c \
-				 $(CORE_DIR)/../deps/zlib/ioapi.c \
-				 $(CORE_DIR)/../deps/zlib/unzip.c
+SOURCES_C += $(LIBRETRO_COMM_DIR)/zlib/adler32.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/compress.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/crc32.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/deflate.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/gzclose.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/gzlib.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/gzread.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/gzwrite.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/inffast.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/inflate.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/inftrees.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/trees.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/uncompr.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/zutil.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/ioapi.c \
+				 $(LIBRETRO_COMM_DIR)/zlib/unzip.c
 
 SOURCES_C +=  \
 	      $(LIBRETRO_COMM_DIR)/compat/compat_strcasestr.c \

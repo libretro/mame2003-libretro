@@ -133,7 +133,6 @@ void retro_set_environment(retro_environment_t cb)
       { APPNAME"-skip_disclaimer", "Skip Disclaimer; enabled|disabled" },
       { APPNAME"-skip_warnings", "Skip Warnings; disabled|enabled" },
       { APPNAME"-sample_rate", "Sample Rate (KHz); 48000|8000|11025|22050|44100" },
-      { APPNAME"-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
       { APPNAME"-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
 #if defined(__IOS__)
       { APPNAME"-mouse_device", "Mouse Device; pointer|mouse|disabled" },
@@ -164,60 +163,6 @@ void retro_set_environment(retro_environment_t cb)
 #  define PATH_SEPARATOR '/'
 # endif
 #endif
-
-static char* normalizePath(char* aPath)
-{
-   char *tok;
-   static const char replaced = (PATH_SEPARATOR == '\\') ? '/' : '\\';
-
-   for (tok = strchr(aPath, replaced); tok; tok = strchr(aPath, replaced))
-      *tok = PATH_SEPARATOR;
-
-   return aPath;
-}
-
-static int getDriverIndex(const char* aPath)
-{
-    char driverName[128];
-    char *path, *last;
-    char *firstDot;
-    int i;
-
-    /* Get all chars after the last slash */
-    path = normalizePath(strdup(aPath ? aPath : "."));
-    last = strrchr(path, PATH_SEPARATOR);
-    memset(driverName, 0, sizeof(driverName));
-    strncpy(driverName, last ? last + 1 : path, sizeof(driverName) - 1);
-    free(path);
-    
-    /* Remove extension */
-    firstDot = strchr(driverName, '.');
-
-    if(firstDot)
-       *firstDot = 0;
-
-    /* Search list */
-    for (i = 0; drivers[i]; i++)
-    {
-       if(strcmp(driverName, drivers[i]->name) == 0)
-       {
-          if (log_cb)
-             log_cb(RETRO_LOG_INFO, "Found game: %s [%s].\n", driverName, drivers[i]->name);
-          return i;
-       }
-    }
-    
-    return -1;
-}
-
-static char* peelPathItem(char* aPath)
-{
-    char* last = strrchr(aPath, PATH_SEPARATOR);
-    if(last)
-       *last = 0;
-    
-    return aPath;
-}
 
 unsigned retro_api_version(void)
 {
@@ -293,20 +238,6 @@ static void update_variables(void)
       options.samplerate = atoi(var.value);
    else
       options.samplerate = 48000;
-
-   var.value = NULL;
-   var.key = APPNAME"-external_hiscore";
-   
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.use_external_hiscore = 1;
-      else
-         options.use_external_hiscore = 0;
-   }
-   else
-      options.use_external_hiscore = 0;  
-
 
    var.value = NULL;
    
@@ -439,14 +370,12 @@ static void update_variables(void)
    {
       options.vector_intensity = atof(var.value); /* float: vector beam intensity */
    }
-    
-   {
-       struct retro_led_interface ledintf;
-       ledintf.set_led_state = NULL;
-       
-       environ_cb(RETRO_ENVIRONMENT_GET_LED_INTERFACE, &ledintf);
-       led_state_cb = ledintf.set_led_state;
-   }
+
+   ledintf.set_led_state = NULL;
+   
+   environ_cb(RETRO_ENVIRONMENT_GET_LED_INTERFACE, &ledintf);
+   led_state_cb = ledintf.set_led_state;
+
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
@@ -645,88 +574,102 @@ void retro_run (void)
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-   if (!game)
+    char            *driver_lookup;
+    int             orientation;
+    unsigned        rotateMode;
+    static const int uiModes[] = {ROT0, ROT90, ROT180, ROT270};
+   
+    log_cb(RETRO_LOG_INFO, LOGPRE "game->path: [%s].\n", game->path);
+
+    driver_lookup = path_remove_extension(strdup(path_basename(game->path)));
+    log_cb(RETRO_LOG_INFO, LOGPRE "Content lookup name: [%s].\n", driver_lookup);
+
+    if (string_is_empty(driver_lookup))
+    {
+      log_cb(RETRO_LOG_ERROR, LOGPRE "Content does not exist or lacks a file extension. Exiting!\n");
       return false;
-
-    /* Find game index */
-    driverIndex = getDriverIndex(game->path);
-    
-    if(driverIndex)
-    {
-        int orientation;
-        unsigned rotateMode;
-        static const int uiModes[] = {ROT0, ROT90, ROT180, ROT270};
-        #define describe_buttons(INDEX) \
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
-
-        struct retro_input_descriptor desc[] = {
-            describe_buttons(0)
-            describe_buttons(1)
-            describe_buttons(2)
-            describe_buttons(3)
-            { 0, 0, 0, 0, NULL }
-            };
-
-        environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
-        
-        options.libretro_content_path = peelPathItem(normalizePath(strdup(game->path)));
-
-        /* Get system directory from frontend */
-        environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
-        if (options.libretro_system_path == NULL || options.libretro_system_path[0] == '\0')
-        {
-            /* error if not set */
-            log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro system path not set!\n");
-            options.libretro_system_path = options.libretro_content_path;
-        }
-        
-        /* Get save directory from frontend */
-        environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
-        if (options.libretro_save_path == NULL || options.libretro_save_path[0] == '\0')
-        {
-            /* error if not set */
-            log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro save path not set!\n");
-            options.libretro_save_path = options.libretro_content_path;
-        }
-
-        /* Setup Rotation */
-        orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
-        rotateMode = 0;
-        
-        rotateMode = (orientation == ROT270) ? 1 : rotateMode;
-        rotateMode = (orientation == ROT180) ? 2 : rotateMode;
-        rotateMode = (orientation == ROT90) ? 3 : rotateMode;
-        
-        environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode);
-
-        /* Set all remaining options before starting the game */
-        options.ui_orientation = uiModes[rotateMode];
-        
-        options.use_samples = 1;
-        options.cheat = 1;
-
-        /* Boot the emulator */
-        return run_game(driverIndex) == 0;
     }
-    else
+
+
+    /* Search list */
+    for (driverIndex = 0; driverIndex < total_drivers; driverIndex++)
     {
+       if ( (strcasecmp(driver_lookup, drivers[driverIndex]->description) == 0) || ( strcasecmp(driver_lookup, drivers[driverIndex]->name) == 0) )
+       {
+          log_cb(RETRO_LOG_INFO, LOGPRE "Total MAME drivers: %i. Matched game driver: [%s].\n", (int) total_drivers, drivers[driverIndex]->name);
+          break;          
+       }
+    }
+
+    if(driverIndex == total_drivers)
+    {
+        log_cb(RETRO_LOG_ERROR, LOGPRE "Total MAME drivers: %i. MAME driver not found for selected game!", (int) total_drivers);
         return false;
     }
+    
+  #define describe_buttons(INDEX) \
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
+
+    struct retro_input_descriptor desc[] = {
+        describe_buttons(0)
+        describe_buttons(1)
+        describe_buttons(2)
+        describe_buttons(3)
+        { 0, 0, 0, 0, NULL }
+        };
+
+    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);    
+
+    options.libretro_content_path = strdup(game->path);
+    path_basedir(options.libretro_content_path);
+
+    /* Get system directory from frontend */
+    options.libretro_system_path = NULL;
+    environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
+    if (options.libretro_system_path == NULL || options.libretro_system_path[0] == '\0')
+    {
+        log_cb(RETRO_LOG_INFO, LOGPRE "libretro system path not set by frontend, using content path\n");
+        options.libretro_system_path = options.libretro_content_path;
+    }
+    
+    /* Get save directory from frontend */
+    options.libretro_save_path = NULL;
+    environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
+    if (options.libretro_save_path == NULL || options.libretro_save_path[0] == '\0')
+    {
+        log_cb(RETRO_LOG_INFO,  LOGPRE "libretro save path not set by frontent, using content path\n");
+        options.libretro_save_path = options.libretro_content_path;
+    }
+    
+    /* Setup Rotation */
+    rotateMode = 0;        
+    orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
+    
+    rotateMode = (orientation == ROT270) ? 1 : rotateMode;
+    rotateMode = (orientation == ROT180) ? 2 : rotateMode;
+    rotateMode = (orientation == ROT90) ? 3 : rotateMode;
+    
+    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode);
+    options.ui_orientation = uiModes[rotateMode];
+    
+    free(driver_lookup);
+
+    return run_game(driverIndex) == 0; /* Boot the emulator with run_game in mame.c */
 }
 
 void retro_unload_game(void)
