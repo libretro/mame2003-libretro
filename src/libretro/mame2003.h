@@ -6,6 +6,7 @@
 #include "osd_cpu.h"
 #include "inptport.h"
 #include "log.h"
+#include "string/stdstring.h"
 
 #ifdef __cplusplus
 extern "C" {
