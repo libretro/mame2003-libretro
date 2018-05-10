@@ -135,6 +135,8 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* high score files */
 		case FILETYPE_HIGHSCORE:
+			if (!mame_highscore_enabled())
+				return NULL;
 			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
 		/* highscore database */
