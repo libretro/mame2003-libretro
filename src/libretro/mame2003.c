@@ -688,7 +688,7 @@ bool retro_load_game(const struct retro_game_info *game)
 
         /* Get system directory from frontend */
         environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
-        if (options.libretro_system_path == NULL || options.libretro_system_path[0] == '\0')
+        if ( (options.libretro_system_path == NULL) || (options.libretro_system_path[0] == '\0') )
         {
             /* error if not set */
             log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro system path not set!\n");
@@ -697,7 +697,7 @@ bool retro_load_game(const struct retro_game_info *game)
         
         /* Get save directory from frontend */
         environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
-        if (options.libretro_save_path == NULL || options.libretro_save_path[0] == '\0')
+        if ( (options.libretro_save_path == NULL) || (options.libretro_save_path[0] == '\0') )
         {
             /* error if not set */
             log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro save path not set!\n");
@@ -748,7 +748,7 @@ size_t retro_serialize_size(void)
 bool retro_serialize(void *data, size_t size)
 {
    int cpunum;
-	if(retro_serialize_size() && data && size)
+	if( (retro_serialize_size()) && (data) && (size) )
 	{
 		/* write the save state */
 		state_save_save_begin(data);
@@ -789,7 +789,7 @@ bool retro_unserialize(const void * data, size_t size)
 {
     int cpunum;
 	/* if successful, load it */
-	if (retro_serialize_size() && data && size && !state_save_load_begin((void*)data, size))
+	if ( (retro_serialize_size() ) && ( data ) && ( size ) && ( !state_save_load_begin((void*)data, size) ) )
 	{
         /* read tag 0 */
         state_save_set_current_tag(0);
