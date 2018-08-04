@@ -22,6 +22,8 @@ extern struct osd_create_params videoConfig;
 
 static float delta_samples;
 int samples_per_frame = 0;
+int orig_samples_per_frame = 0;
+
 short *samples_buffer;
 short *conversion_buffer;
 int usestereo = 1;
@@ -66,35 +68,70 @@ Sound
 
 int osd_start_audio_stream(int stereo)
 {
+ 
 	delta_samples = 0.0f;
 	usestereo = stereo ? 1 : 0;
-
-	/* determine the number of samples per frame */
+       	/* determine the number of samples per frame */
 	samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
+	orig_samples_per_frame = samples_per_frame;
 
 	if (Machine->sample_rate == 0) return 0;
 
-	samples_buffer = (short *) calloc(samples_per_frame, 2 + usestereo * 2);
-	if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame, 4);
+	samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
+	if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
 	
 	return samples_per_frame;
-
-
 }
 
 int osd_update_audio_stream(INT16 *buffer)
 {
-	memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
-   	delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
-	if (delta_samples >= 1.0f)
-	{
-		int integer_delta = (int)delta_samples;
-		samples_per_frame += integer_delta;
-		delta_samples -= integer_delta;
-	}
+	int i,j;
 
-	return samples_per_frame;
+	if ( Machine->sample_rate !=0 && buffer )
+	{
+   		memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
+		if (usestereo)
+			audio_batch_cb(samples_buffer, samples_per_frame);
+		else
+		{
+			for (i = 0, j = 0; i < samples_per_frame; i++)
+        		{
+				conversion_buffer[j++] = samples_buffer[i];
+				conversion_buffer[j++] = samples_buffer[i];
+		        }
+         		audio_batch_cb(conversion_buffer,samples_per_frame);
+		}	
+		
+			
+		if ( samples_per_frame  != orig_samples_per_frame ) 
+
+
+		{
+			log_cb(RETRO_LOG_INFO,"sound(delta) current spf: %d\n",samples_per_frame);
+		
+			samples_per_frame = orig_samples_per_frame;
+		
+			log_cb(RETRO_LOG_INFO,"sound(delta)  reset spf to default: %d\n",samples_per_frame);
+		}
+
+   		delta_samples = (Machine->sample_rate / Machine->drv->frames_per_second) - samples_per_frame;
+		if ( delta_samples >= 1.0f )
+		{
+		
+			int integer_delta = (int)delta_samples;
+			if (integer_delta <= 16 )
+                        { 
+				log_cb(RETRO_LOG_INFO,"sound: Delta added value to samples per frame integer_delta:%d spf:%d\n",integer_delta, samples_per_frame);
+				samples_per_frame += integer_delta;
+			}
+			else if(integer_delta >= 16) log_cb(RETRO_LOG_INFO, "sound: Delta not added to samples_per_frame too large integer_delta:%d spf:%d\n", integer_delta ,samples_per_frame);
+			else log_cb(RETRO_LOG_INFO,"sound(delta) no contitions met\n");	
+			delta_samples -= integer_delta;
+		}
+	}
+return samples_per_frame;
 }
+
 
 
 
@@ -624,20 +661,7 @@ void retro_run (void)
 	}
 
    mame_frame();
-   if (samples_per_frame)
-   {
-      if (usestereo)
-         audio_batch_cb(samples_buffer, samples_per_frame);
-      else
-      {
-         for (i = 0, j = 0; i < samples_per_frame; i++)
-         {
-            conversion_buffer[j++] = samples_buffer[i];
-            conversion_buffer[j++] = samples_buffer[i];
-         }
-         audio_batch_cb(conversion_buffer, samples_per_frame);
-      }
-   }
+   
    
 
 }
