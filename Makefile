@@ -416,10 +416,16 @@ endif
 endif
 
 ifeq ($(DEBUG), 1)
-   CFLAGS += -fsanitize=address -fno-omit-frame-pointer -g -O0
-   LDFLAGS += -fsanitize=address 
+   CFLAGS += -fno-omit-frame-pointer -g -O0
+   LDFLAGS +=
 else
    CFLAGS += -O2 -DNDEBUG
+endif
+
+ifneq ($(SANITIZER),)
+   CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
+   CXXFLAGS := -fsanitize=$(SANITIZER) $(CXXFLAGS)
+   LDFLAGS  := -fsanitize=$(SANITIZER) $(LDFLAGS)
 endif
 
 ifeq (,$(findstring msvc,$(platform)))
