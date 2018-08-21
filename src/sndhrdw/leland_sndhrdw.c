@@ -451,8 +451,9 @@ static void leland_i186_dma_update(int param, INT16 *buffer, int length)
 					d->finished = 1;
 				}
 
-				if (LOG_DMA) logerror("DMA Generated %d samples - new count = %04X, source = %04X\n", j, d->count, d->source);
-
+#if LOG_DMA 
+            logerror("DMA Generated %d samples - new count = %04X, source = %04X\n", j, d->count, d->source);
+#endif
 				/* update the DAC state */
 				dac[which].fraction = frac;
 			}
@@ -1029,7 +1030,9 @@ static void dma_timer_callback(int which)
 	/* check for interrupt generation */
 	if (d->control & 0x0100)
 	{
-		if (LOG_DMA) logerror("DMA%d timer callback - requesting interrupt: count = %04X, source = %04X\n", which, d->count, d->source);
+#if LOG_DMA
+      logerror("DMA%d timer callback - requesting interrupt: count = %04X, source = %04X\n", which, d->count, d->source);
+#endif      
 		i186.intr.request |= 0x04 << which;
 		update_interrupt_state();
 	}
@@ -1083,7 +1086,9 @@ static void update_dma_control(int which, int new_control)
 				dac[dacnum].volume = (d->dest & 0x1fe) / 2 / DAC_VOLUME_SCALE;
 			}
 
-			if (LOG_DMA) logerror("Initiated DMA %d - count = %04X, source = %04X, dest = %04X\n", which, d->count, d->source, d->dest);
+#if LOG_DMA 
+         logerror("Initiated DMA %d - count = %04X, source = %04X, dest = %04X\n", which, d->count, d->source, d->dest);
+#endif
 
 			d->finished = 0;
 			timer_adjust(d->finish_timer, TIME_IN_HZ(dac[dacnum].frequency) * (double)count, which, 0);

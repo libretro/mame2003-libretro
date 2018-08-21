@@ -449,8 +449,9 @@ static void perform_dma(int which)
 		case 2:		dstinc = 0;		break;
 	}
 
-	if (LOG_DMA)
-		logerror("Performing DMA%d: src=%08X dst=%08X bytes=%04X sinc=%d dinc=%d\n", which, srcaddr, dstaddr, bytesleft, srcinc, dstinc);
+#if LOG_DMA
+   logerror("Performing DMA%d: src=%08X dst=%08X bytes=%04X sinc=%d dinc=%d\n", which, srcaddr, dstaddr, bytesleft, srcinc, dstinc);
+#endif
 
 	/* special case: transfer ram to voodoo */
 	if (bytesleft % 4 == 0 && srcaddr % 4 == 0 && srcaddr < 0x007fffff && dstaddr >= 0x08000000 && dstaddr < 0x09000000)
