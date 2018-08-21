@@ -664,7 +664,7 @@ WRITE16_HANDLER( midyunit_dma_w )
 	}
 
 	/* signal we're done */
-#ifdef FAST_DMA
+#if FAST_DMA
 		dma_callback(1);
 #else
 		timer_set(TIME_IN_NSEC(41 * dma_state.width * dma_state.height), 0, dma_callback);
