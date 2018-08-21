@@ -915,7 +915,7 @@ static void print_game_info(int OUTPUT_XML, FILE* out, const struct GameDriver* 
 		fprintf(out, SELECT(L1N, "</manufacturer>\n"));
 	}
 
-	print_game_history(OUTPUT_XML, out, game);
+	if(0) print_game_history(OUTPUT_XML, out, game);
 	print_game_bios(OUTPUT_XML, out, game);
 	print_game_rom(OUTPUT_XML, out, game);
 	print_game_sample(OUTPUT_XML, out, game);
