@@ -263,7 +263,9 @@ unsigned retro_api_version(void)
 
 void retro_get_system_info(struct retro_system_info *info)
 {
-   info->library_name = APPNAME;
+   /* this must match the 'corename' field in mame2003_libretro.info
+    * in order for netplay to work. */
+   info->library_name = "MAME 2003 (0.78)";
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
