@@ -181,7 +181,7 @@ void retro_set_environment(retro_environment_t cb)
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
       { APPNAME"-tate_mode", "TATE Mode; disabled|enabled" },
       { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
-      { APPNAME"-vector-resolution-multiplier (requires restart)", "Vector resolution multiplier; 1|2|3|4|5|6|7|8|9|10" },
+      { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (requires restart); 1|2|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
       { APPNAME"-vector-translucency", "Vector translucency; enabled|disabled" },
       { APPNAME"-vector-beam-width", "Vector beam width (AA only); 1|1.5|2|2.5|3|4|5|6|7|8|9|10" },
