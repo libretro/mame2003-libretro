@@ -179,6 +179,20 @@ float vector_get_intensity(void)
 	return intensity_correction;
 }
 
+static void update_options(void)
+{
+	antialias = options.antialias;
+	translucency = options.translucency;
+	vector_set_flicker(options.vector_flicker);
+	vector_set_intensity(options.vector_intensity);
+	
+	/* Beam width is encoded as fixed point */
+	beam = (int)(options.beam * 0x00010000);
+	beam = beam > 0x00100000 ? 0x00100000 : beam;
+	beam = beam < 0x00010000 ? 0x00010000 : beam;
+	beam_diameter_is_one = beam == 0x00010000;
+}
+
 /*
  * Initializes vector game video emulation
  */
@@ -187,18 +201,8 @@ VIDEO_START( vector )
 {
 	int i;
 
-	/* Grab the settings for this session */
-	antialias = options.antialias;
-	translucency = options.translucency;
-	vector_set_flicker(options.vector_flicker);
-	vector_set_intensity(options.vector_intensity);
-	beam = options.beam;
-
-
-	if (beam == 0x00010000)
-		beam_diameter_is_one = 1;
-	else
-		beam_diameter_is_one = 0;
+	/* Set initial rendering options */
+	update_options();
 
 	p_index = 0;
 
@@ -759,6 +763,9 @@ VIDEO_UPDATE( vector )
 
 	/* clear ALL pixels in the hidden map */
 	vector_clear_pixels();
+
+	/* Update rendering options once the screen is clear */
+	update_options();
 
 	/* Draw ALL lines into the hidden map. Mark only those lines with */
 	/* new->dirty = 1 as dirty. Remember the pixel start/end indices  */

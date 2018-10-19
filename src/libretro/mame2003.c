@@ -180,13 +180,13 @@ void retro_set_environment(retro_environment_t cb)
       { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
       { APPNAME"-tate_mode", "TATE Mode; disabled|enabled" },
-      { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" }, 
-      { APPNAME"-vector-resolution-multiplier", "EXPERIMENTAL: Vector resolution multiplier; 1|2|3|4|5|6" },      
-      { APPNAME"-vector-antialias", "EXPERIMENTAL: Vector antialias; disabled" },
+      { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
+      { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (requires restart); 1|2|3|4|5|6|7|8|9|10" },
+      { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
       { APPNAME"-vector-translucency", "Vector translucency; enabled|disabled" },
-      { APPNAME"-vector-beam-width", "Vector beam width; 1|2|3|4|5" },
+      { APPNAME"-vector-beam-width", "Vector beam width (AA only); 1|1.5|2|2.5|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-flicker", "Vector flicker; 20|0|10|20|30|40|50|60|70|80|90|100" },
-      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
+      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|1.5|2|2.5|3" },
       { NULL, NULL },
    };
    environ_cb = cb;
@@ -460,7 +460,7 @@ static void update_variables(void)
    var.key = APPNAME"-vector-beam-width";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      options.beam = atoi(var.value); /* integer: vector beam width */
+      options.beam = atof(var.value); /* float: vector beam width */
    }
  
    var.value = NULL;
