@@ -181,12 +181,12 @@ void retro_set_environment(retro_environment_t cb)
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
       { APPNAME"-tate_mode", "TATE Mode; disabled|enabled" },
       { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
-      { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (requires restart); 1|2|3|4|5|6|7|8|9|10" },
+      { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
+      { APPNAME"-vector-beam-width", "Vector beam width (only with antialiasing); 1.2|1|1.4|1.6|1.8|2|2.5|3|4|5|6|7|8|9|10|11|12" },
       { APPNAME"-vector-translucency", "Vector translucency; enabled|disabled" },
-      { APPNAME"-vector-beam-width", "Vector beam width (AA only); 1|1.5|2|2.5|3|4|5|6|7|8|9|10" },
-      { APPNAME"-vector-flicker", "Vector flicker; 20|0|10|20|30|40|50|60|70|80|90|100" },
-      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|1.5|2|2.5|3" },
+      { APPNAME"-vector-flicker", "Vector flicker; 20|0|10|30|40|50|60|70|80|90|100" },
+      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
       { NULL, NULL },
    };
    environ_cb = cb;
@@ -443,7 +443,15 @@ static void update_variables(void)
       else
          options.antialias = 0;
    }
-  
+
+   var.value = NULL;
+   
+   var.key = APPNAME"-vector-beam-width";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      options.beam = atof(var.value); /* float: vector beam width */
+   }
+
    var.value = NULL;
    
    var.key = APPNAME"-vector-translucency";
@@ -453,14 +461,6 @@ static void update_variables(void)
          options.translucency = 1; /* integer: 1 to enable translucency on vectors */
       else 
          options.translucency = 0;          
-   }
-  
-   var.value = NULL;
-   
-   var.key = APPNAME"-vector-beam-width";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      options.beam = atof(var.value); /* float: vector beam width */
    }
  
    var.value = NULL;
