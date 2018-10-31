@@ -18,171 +18,233 @@ static unsigned long prev_led_state = 0;
 
 uint16_t *videoBuffer;
 struct osd_create_params videoConfig;
+extern unsigned retroOrientation;
+extern unsigned retroColorMode;
 int gotFrame;
 
-// TODO: This seems to work so far, but could be better
+/* Various conversion/transformation settings */
+struct {
+   const rgb_t *palette;
+   bool flip_x, flip_y, swap_xy;
+   ptrdiff_t stride_in, stride_out;
+   void (*pix_convert)(void *from, void *to);
+} videoConversion;
 
-extern unsigned retroColorMode;
+/* Single pixel conversion functions */
+static void pix_convert_pass8888(void *from, void *to);
+static void pix_convert_1555to565(void *from, void *to);
+static void pix_convert_passpal(void *from, void *to);
+static void pix_convert_palto565(void *from, void *to);
 
-int osd_create_display(const struct osd_create_params *params, UINT32 *rgb_components)
+
+int osd_create_display(
+   const struct osd_create_params *params, UINT32 *rgb_components)
 {
    memcpy(&videoConfig, params, sizeof(videoConfig));    
 
-   if(Machine->color_depth == 16)
+   /* Case I: 16-bit indexed palette */
+   if (videoConfig.depth == 16)
    {
-      retroColorMode = RETRO_PIXEL_FORMAT_RGB565;
-      environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &retroColorMode);
+      /* If a 6+ bits per color channel palette is used, do 32-bit XRGB8888 */
+      if (videoConfig.video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
+      {
+         retroColorMode = RETRO_PIXEL_FORMAT_XRGB8888;
 
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "game bpp: [%d], system bpp: [16], color format [RGB565] : SUPPORTED, enabling it.\n", Machine->color_depth);
+         videoConversion.stride_in = 2;
+         videoConversion.stride_out = 4;
+         videoConversion.pix_convert = &pix_convert_passpal;
+      }
+      /* Otherwise 16-bit 0RGB1555 will suffice */
+      else
+      {
+         retroColorMode = RETRO_PIXEL_FORMAT_RGB565;
+
+         videoConversion.stride_in = 2;
+         videoConversion.stride_out = 2;
+         videoConversion.pix_convert = &pix_convert_palto565;
+      }
    }
+
+   /* Case II: 32-bit XRGB8888, pass it through */
+   else if (videoConfig.depth == 32)
+   {
+      retroColorMode = RETRO_PIXEL_FORMAT_XRGB8888;
+
+      rgb_components[0] = 0x00FF0000;
+      rgb_components[1] = 0x0000FF00;
+      rgb_components[2] = 0x000000FF;
+
+      videoConversion.stride_in = 4;
+      videoConversion.stride_out = 4;
+      videoConversion.pix_convert = &pix_convert_pass8888;
+   }
+
+   /* Case III: 16-bit 0RGB1555, convert it to RGB565 */
    else
    {
-      // Assume 32bit color by default
-      retroColorMode = RETRO_PIXEL_FORMAT_XRGB8888;
-      environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &retroColorMode);
+      /* Complain if got here by default */
+      if (videoConfig.depth != 15) {
+         if (log_cb)
+            log_cb(RETRO_LOG_ERROR, "Invalid videoConfig.depth (%u)", videoConfig.depth);
+         else
+            fprintf(stderr, "Invalid videoConfig.depth (%u)\n", videoConfig.depth);
+      }
 
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "game bpp: [%d], system bpp: [32], color format [XRGB8888] : SUPPORTED, enabling it.\n", Machine->color_depth);
+      retroColorMode = RETRO_PIXEL_FORMAT_RGB565;
+
+      rgb_components[0] = 0x00007C00;
+      rgb_components[1] = 0x000003E0;
+      rgb_components[2] = 0x0000001F;
+
+      videoConversion.stride_in = 2;
+      videoConversion.stride_out = 2;
+      videoConversion.pix_convert = &pix_convert_1555to565;
    }
 
-   if(Machine->color_depth == 15)
-   {
-      /* 32bpp only */
-      rgb_components[0] = 0x7C00;
-      rgb_components[1] = 0x03E0;
-      rgb_components[2] = 0x001F;
+   /* Set up software rotation flags that aren't handled by libretro */
+   videoConversion.flip_x = (bool)(retroOrientation & ORIENTATION_FLIP_X);
+   videoConversion.flip_y = (bool)(retroOrientation & ORIENTATION_FLIP_Y);
+   videoConversion.swap_xy = (bool)(retroOrientation & ORIENTATION_SWAP_XY);
 
-      /* 16bpp - just in case we ever do anything with this -
-       * r - (0x1F << 11) 
-       * g - (0x3F << 5)
-       * b - Ox1F
-       */
-   }
-   else if(Machine->color_depth == 32)
-   {
-      rgb_components[0] = 0xFF0000;
-      rgb_components[1] = 0x00FF00;
-      rgb_components[2] = 0x0000FF;
-   }
+   /* Allocate an output video buffer */
+   videoBuffer = malloc(videoConfig.width * videoConfig.height * videoConversion.stride_out);
+   if (!videoBuffer)
+      return 1;
 
-   /* allocate a buffer for color conversion from non-32bpp modes */
-   if (Machine->color_depth != 32) {
-       videoBuffer = malloc(params->width * params->height * 4);
-   }
+   environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &retroColorMode);
 
    return 0;
 }
 
 void osd_close_display(void)
 {
-   if (videoBuffer != 0)
+   free(videoBuffer);
+   videoBuffer = NULL;
+}
+
+static void pix_convert_pass8888(void *from, void *to)
+{
+   *((uint32_t*)to) = *((uint32_t*)from);
+}
+
+static void pix_convert_1555to565(void *from, void *to)
+{
+   const uint16_t color = *((uint16_t*)from);
+   *((uint16_t*)to) = (color & 0xFFE0) << 1 | /* red, green */
+                      (color & 0x001F) << 0;  /* blue */
+}
+
+static void pix_convert_passpal(void *from, void *to)
+{
+   const uint32_t color = videoConversion.palette[*((uint16_t*)from)];
+   *((uint32_t*)to) = color;
+}
+
+static void pix_convert_palto565(void *from, void *to)
+{
+   const uint32_t color = videoConversion.palette[*((uint16_t*)from)];
+   *((uint16_t*)to) = (color & 0x00F80000) >> 8 | /* red */
+                      (color & 0x0000FC00) >> 5 | /* green */
+                      (color & 0x000000F8) >> 3;  /* blue */
+}
+
+static void frame_convert(struct mame_display *display)
+{
+   size_t x, y, swap_temp;
+
+   char **lines = (char **) display->game_bitmap->line;
+
+   /* Initial (default) orientation */
+   const bool flip_x = videoConversion.flip_x;
+   const bool flip_y = videoConversion.flip_y;
+   size_t x0 = display->game_visible_area.min_x;
+   size_t y0 = display->game_visible_area.min_y;
+   size_t x1 = display->game_visible_area.max_x + 1;
+   size_t y1 = display->game_visible_area.max_y + 1;
+ 
+   /* Now do the conversion, accounting for x/y swap */
+   if (!videoConversion.swap_xy)
    {
-      free(videoBuffer);
-      videoBuffer = 0;
+      /* Non-swapped */
+      char *output = (char*)videoBuffer;
+      for (y = flip_y ? y1 : y0; y != (flip_y ? y0 : y1); y += flip_y ? -1 : 1)
+         for (x = flip_x ? x1 : x0; x != (flip_x ? x0 : x1); x += flip_x ? -1 : 1)
+         {
+            videoConversion.pix_convert(
+               &lines[y][x * videoConversion.stride_in], output);
+            output += videoConversion.stride_out;
+         }
+   }
+   else
+   {
+      /* Swapped */
+      char *output = (char *) videoBuffer;
+      for (x = flip_y ? x1 : x0; x != (flip_y ? x0 : x1); x += flip_y ? -1 : 1)
+         for (y = flip_x ? y1 : y0; y != (flip_x ? y0 : y1); y += flip_x ? -1 : 1)
+         {
+            videoConversion.pix_convert(
+               &lines[y][x * videoConversion.stride_in], output);
+            output += videoConversion.stride_out;
+         }
    }
 }
 
-static const int frameskip_table[12][12] = { { 0,0,0,0,0,0,0,0,0,0,0,0 },
-	                                                                    { 0,0,0,0,0,0,0,0,0,0,0,1 },
-	                                                                    { 0,0,0,0,0,1,0,0,0,0,0,1 },
-	                                                                    { 0,0,0,1,0,0,0,1,0,0,0,1 },
-	                                                                    { 0,0,1,0,0,1,0,0,1,0,0,1 },
-	                                                                    { 0,1,0,0,1,0,1,0,0,1,0,1 },
-	                                                                    { 0,1,0,1,0,1,0,1,0,1,0,1 },
-	                                                                    { 0,1,0,1,1,0,1,0,1,1,0,1 },
-	                                                                    { 0,1,1,0,1,1,0,1,1,0,1,1 },
-	                                                                    { 0,1,1,1,0,1,1,1,0,1,1,1 },
-	                                                                    { 0,1,1,1,1,1,0,1,1,1,1,1 },
-	                                                                    { 0,1,1,1,1,1,1,1,1,1,1,1 } };
-static unsigned frameskip_counter = 0;
+
+static const int frameskip_table[12][12] =
+   { { 0,0,0,0,0,0,0,0,0,0,0,0 },
+     { 0,0,0,0,0,0,0,0,0,0,0,1 },
+     { 0,0,0,0,0,1,0,0,0,0,0,1 },
+     { 0,0,0,1,0,0,0,1,0,0,0,1 },
+     { 0,0,1,0,0,1,0,0,1,0,0,1 },
+     { 0,1,0,0,1,0,1,0,0,1,0,1 },
+     { 0,1,0,1,0,1,0,1,0,1,0,1 },
+     { 0,1,0,1,1,0,1,0,1,1,0,1 },
+     { 0,1,1,0,1,1,0,1,1,0,1,1 },
+     { 0,1,1,1,0,1,1,1,0,1,1,1 },
+     { 0,1,1,1,1,1,0,1,1,1,1,1 },
+     { 0,1,1,1,1,1,1,1,1,1,1,1 } };
 
 int osd_skip_this_frame(void)
 {
-   int ret;
-   if (frameskip_counter >= 11)
-      frameskip_counter = 0;
-
-   ret = frameskip_table[options.frameskip][frameskip_counter];
-
-   frameskip_counter++;
-
-   return ret;
+   static unsigned frameskip_counter = 0;
+   return frameskip_table[options.frameskip][frameskip_counter++ % 12];
 }
 
 void osd_update_video_and_audio(struct mame_display *display)
 {
-   uint32_t width, height;
    RETRO_PERFORMANCE_INIT(perf_cb, update_video_and_audio);
    RETRO_PERFORMANCE_START(perf_cb, update_video_and_audio);
 
-   width = videoConfig.width;
-   height = videoConfig.height;
-
-   if(display->changed_flags & 0xF)
+   if(display->changed_flags & 
+      ( GAME_BITMAP_CHANGED | GAME_PALETTE_CHANGED
+      | GAME_VISIBLE_AREA_CHANGED | VECTOR_PIXELS_CHANGED))
    {
-      int i, j;
+      size_t width, height;
+      width = videoConfig.width;
+      height = videoConfig.height;
 
-      // Update UI area
+      /* Update the UI area */
       if (display->changed_flags & GAME_VISIBLE_AREA_CHANGED)
       {
-         set_ui_visarea(display->game_visible_area.min_x, display->game_visible_area.min_y, display->game_visible_area.max_x, display->game_visible_area.max_y);
+         set_ui_visarea(
+               display->game_visible_area.min_x, display->game_visible_area.min_y,
+               display->game_visible_area.max_x, display->game_visible_area.max_y);
       }
 
+      /* Update the palette */
+      videoConversion.palette = display->game_palette;
+
+      /* Update the game bitmap */
       if (video_cb && display->changed_flags & GAME_BITMAP_CHANGED && (osd_skip_this_frame() == 0))
       {
-         // Cache some values used in the below macros
-         const uint32_t x = display->game_visible_area.min_x;
-         const uint32_t y = display->game_visible_area.min_y;
-         const uint32_t pitch = display->game_bitmap->rowpixels;
-
-         // Copy pixels
-         if(display->game_bitmap->depth == 16)
-         {
-            uint16_t* output = (uint16_t*)videoBuffer;
-            const uint16_t* input = &((uint16_t*)display->game_bitmap->base)[y * pitch + x];
-
-            for(i = 0; i < height; i ++)
-            {
-               for (j = 0; j < width; j ++)
-               {
-                  const uint32_t color = display->game_palette[*input++];
-                  *output++ = (((color >> 19) & 0x1f) << 11) | (((color >> 11) & 0x1f) << 6) |
-                     ((color >> 3) & 0x1f);
-               }
-               input += pitch - width;
-            }
-
-            video_cb(videoBuffer, width, height, width * 2);
-         }
-         else if(display->game_bitmap->depth == 32)
-         {
-            const uint32_t* const input = &((const uint32_t*)display->game_bitmap->base)[y * pitch + x];
-            video_cb(input, width, height, pitch * 4);
-         }
-         else if(display->game_bitmap->depth == 15)
-         {
-            uint32_t* output = (uint32_t*)videoBuffer;
-            const uint16_t* input = &((const uint16_t*)display->game_bitmap->base)[y * pitch + x];
-
-            for(i = 0; i < height; i ++)
-            {
-               for(j = 0; j < width; j ++)
-               {
-                  const uint32_t color = *input ++;
-                  *output++ = (((color >> 10) & 0x1f) << 19) | (((color >> 5) & 0x1f) << 11) |
-                     (((color) & 0x1f) << 3);
-               }
-               input += pitch - width;
-            }
-
-            video_cb(videoBuffer, width, height, width * 4);
-         }
+         frame_convert(display);
+         video_cb(videoBuffer, width, height, width * videoConversion.stride_out);
       }
       else
-         video_cb(NULL, width, height, width * 2);
+         video_cb(NULL, width, height, width * videoConversion.stride_out);
    }
 
+   /* Update LED indicators state */
    if (display->changed_flags & LED_STATE_CHANGED)
    {
        if(led_state_cb != NULL)
