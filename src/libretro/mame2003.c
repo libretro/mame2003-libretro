@@ -37,9 +37,11 @@ int16_t prev_pointer_x;
 int16_t prev_pointer_y;
 extern int16_t analogjoy[4][4];
 
-struct retro_perf_callback perf_cb;
+bool retroHardwareRotation;
+unsigned retroOrientation;
 unsigned retroColorMode;
 
+struct retro_perf_callback perf_cb;
 retro_environment_t environ_cb = NULL;
 retro_log_printf_t log_cb = NULL;
 retro_video_refresh_t video_cb = NULL;
@@ -278,7 +280,6 @@ void retro_get_system_info(struct retro_system_info *info)
 
 static void update_variables(void)
 {
-   struct retro_led_interface ledintf;
    struct retro_variable var;
 
    var.value = NULL;
@@ -492,10 +493,17 @@ static void update_variables(void)
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
    const int orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
-   const bool rotated = ((orientation == ROT90) || (orientation == ROT270));
+   const bool rotated = (bool)(orientation & ORIENTATION_SWAP_XY);
    
    const int width = rotated ? videoConfig.height : videoConfig.width;
    const int height = rotated ? videoConfig.width : videoConfig.height;
+
+   /* Libretro's hardware rotation doesn't resize the framebuffer */
+   if (!retroHardwareRotation)
+   {
+      videoConfig.width = width;
+      videoConfig.height = height;
+   }
    
    info->geometry.base_width = width;
    info->geometry.base_height = height;
@@ -564,7 +572,7 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
 
 void retro_run (void)
 {
-   int i,j;
+   int i;
    bool pointer_pressed;
    const struct KeyboardInfo *thisInput;
    bool updated = false;
@@ -664,9 +672,6 @@ void retro_run (void)
 	}
 
    mame_frame();
-   
-   
-
 }
 
 
@@ -680,9 +685,8 @@ bool retro_load_game(const struct retro_game_info *game)
     
     if(driverIndex)
     {
-        int orientation;
         unsigned rotateMode;
-        static const int uiModes[] = {ROT0, ROT90, ROT180, ROT270};
+        
         #define describe_buttons(INDEX) \
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
@@ -731,29 +735,51 @@ bool retro_load_game(const struct retro_game_info *game)
             options.libretro_save_path = options.libretro_content_path;
         }
 
-        /* Setup Rotation */
-        orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
+        /* Set up screen orientation */
+        retroOrientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
+
         rotateMode = 0;
+        rotateMode = (retroOrientation == ROT270) ? 1 : rotateMode;
+        rotateMode = (retroOrientation == ROT180) ? 2 : rotateMode;
+        rotateMode = (retroOrientation == ROT90) ? 3 : rotateMode;
         
-        rotateMode = (orientation == ROT270) ? 1 : rotateMode;
-        rotateMode = (orientation == ROT180) ? 2 : rotateMode;
-        rotateMode = (orientation == ROT90) ? 3 : rotateMode;
+        /* Set proper UI orientation */
+        if (retroOrientation & ORIENTATION_SWAP_XY)
+        {
+            /* We rotate the bitmap, so X and Y flips are swapped */
+            unsigned temp = ORIENTATION_SWAP_XY;
+            if (retroOrientation & ORIENTATION_FLIP_X) temp |= ORIENTATION_FLIP_Y;
+            if (retroOrientation & ORIENTATION_FLIP_Y) temp |= ORIENTATION_FLIP_X;
+            options.ui_orientation = temp;
+        }
+        else
+            options.ui_orientation = retroOrientation;
+
+        /* Try to use libretro to do rotation */
+        if (rotateMode != 0 && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode))
+        {
+           retroHardwareRotation = true;
+           retroOrientation = 0;
+        }
         
-        environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode);
+        /* Otherwise try to use it to do a transpose */
+        rotateMode = 1;
+        if (retroOrientation == ORIENTATION_SWAP_XY
+              && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode))
+        {
+           retroHardwareRotation = true;
+           retroOrientation = ORIENTATION_FLIP_X;
+        }
 
         /* Set all remaining options before starting the game */
-        options.ui_orientation = uiModes[rotateMode];
-        
         options.use_samples = 1;
         options.cheat = 1;
 
         /* Boot the emulator */
         return run_game(driverIndex) == 0;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 void retro_unload_game(void)

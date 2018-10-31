@@ -666,7 +666,8 @@ static int vh_open(void)
 	params.colors = palette_get_total_colors_with_ui();
 	params.fps = Machine->drv->frames_per_second;
 	params.video_attributes = Machine->drv->video_attributes;
-	params.orientation = Machine->orientation;
+	params.orientation = Machine->gamedrv->flags & ORIENTATION_MASK;
+
 	artcallbacks = &mame_artwork_callbacks;
 
 	/* initialize the display through the artwork (and eventually the OSD) layer */
