@@ -832,14 +832,15 @@ static int init_game_options(void)
 	alpha_active = 0;
 	if (Machine->drv->video_attributes & VIDEO_RGB_DIRECT)
 	{
-		/* first pick a default
-		if (Machine->drv->video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
-			Machine->color_depth = 32;
-		else
-			Machine->color_depth = 15;*/
-
-		/* use 32-bit color output as default to skip color conversions */
-		Machine->color_depth = 32;
+    /* first pick a default */
+    if (Machine->drv->video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
+      Machine->color_depth = 32;
+    else
+      Machine->color_depth = 15;
+    
+    /* use 32-bit color output as default to skip color conversions */
+	  if (Machine->drv->video_attributes & VIDEO_TYPE_VECTOR)
+      Machine->color_depth = 32;
 
 		/* now allow overrides */
 		if (options.color_depth == 15 || options.color_depth == 32)
