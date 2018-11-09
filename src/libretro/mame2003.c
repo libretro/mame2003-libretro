@@ -14,11 +14,10 @@
 #include "driver.h"
 #include "state.h"
 
+/* Part of libretro's API */
+int gotFrame;
 
 extern int framerate_test;
-
-static int driverIndex; /* Index of mame game loaded */
-extern struct osd_create_params videoConfig;
 
 static float delta_samples;
 int samples_per_frame = 0;
@@ -37,10 +36,6 @@ int16_t prev_pointer_x;
 int16_t prev_pointer_y;
 extern int16_t analogjoy[4][4];
 
-bool retroHardwareRotation;
-unsigned retroOrientation;
-unsigned retroColorMode;
-
 struct retro_perf_callback perf_cb;
 retro_environment_t environ_cb = NULL;
 retro_log_printf_t log_cb = NULL;
@@ -54,6 +49,7 @@ retro_set_led_state_t led_state_cb = NULL;
 
 int16_t XsoundBuffer[2048];
 
+void mame2003_video_get_geometry(unsigned *width, unsigned *height);
 
 #ifdef _3DS /* TODO: convert this strcasecmp wrapper to libretro-common/compat functions */
 int stricmp(const char *string1, const char *string2)
@@ -182,7 +178,7 @@ void retro_set_environment(retro_environment_t cb)
 #endif
       { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
-      { APPNAME"-tate_mode", "TATE Mode; disabled|enabled" },
+      { APPNAME"-tate_mode", "TATE Mode (90° CCW screen rotate); disabled|enabled" },
       { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
       { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
@@ -492,24 +488,13 @@ static void update_variables(void)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   const int orientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
-   const bool rotated = (bool)(orientation & ORIENTATION_SWAP_XY);
-   
-   const int width = rotated ? videoConfig.height : videoConfig.width;
-   const int height = rotated ? videoConfig.width : videoConfig.height;
+   unsigned width, height;
+   mame2003_video_get_geometry(&width, &height);
 
-   /* Libretro's hardware rotation doesn't resize the framebuffer */
-   if (!retroHardwareRotation)
-   {
-      videoConfig.width = width;
-      videoConfig.height = height;
-   }
-   
    info->geometry.base_width = width;
    info->geometry.base_height = height;
    info->geometry.max_width = width;
    info->geometry.max_height = height;
-   info->geometry.aspect_ratio = (rotated && !options.tate_mode) ? (float)videoConfig.aspect_y / (float)videoConfig.aspect_x : (float)videoConfig.aspect_x / (float)videoConfig.aspect_y;
    info->timing.fps = Machine->drv->frames_per_second; /* sets the core timing does any game go above 60fps? */
    info->timing.sample_rate = options.samplerate;  /* please note if you want bally games to work properly set the sample rate to 22050 you cant go below 48 frames with the default that is set you will need to restart the core */
 }
@@ -677,6 +662,8 @@ void retro_run (void)
 
 bool retro_load_game(const struct retro_game_info *game)
 {
+   int driverIndex;
+
    if (!game)
       return false;
 
@@ -685,8 +672,6 @@ bool retro_load_game(const struct retro_game_info *game)
     
     if(driverIndex)
     {
-        unsigned rotateMode;
-        
         #define describe_buttons(INDEX) \
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
         { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
@@ -733,42 +718,6 @@ bool retro_load_game(const struct retro_game_info *game)
             /* error if not set */
             log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro save path not set!\n");
             options.libretro_save_path = options.libretro_content_path;
-        }
-
-        /* Set up screen orientation */
-        retroOrientation = drivers[driverIndex]->flags & ORIENTATION_MASK;
-
-        rotateMode = 0;
-        rotateMode = (retroOrientation == ROT270) ? 1 : rotateMode;
-        rotateMode = (retroOrientation == ROT180) ? 2 : rotateMode;
-        rotateMode = (retroOrientation == ROT90) ? 3 : rotateMode;
-        
-        /* Set proper UI orientation */
-        if (retroOrientation & ORIENTATION_SWAP_XY)
-        {
-            /* We rotate the bitmap, so X and Y flips are swapped */
-            unsigned temp = ORIENTATION_SWAP_XY;
-            if (retroOrientation & ORIENTATION_FLIP_X) temp |= ORIENTATION_FLIP_Y;
-            if (retroOrientation & ORIENTATION_FLIP_Y) temp |= ORIENTATION_FLIP_X;
-            options.ui_orientation = temp;
-        }
-        else
-            options.ui_orientation = retroOrientation;
-
-        /* Try to use libretro to do rotation */
-        if (rotateMode != 0 && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode))
-        {
-           retroHardwareRotation = true;
-           retroOrientation = 0;
-        }
-        
-        /* Otherwise try to use it to do a transpose */
-        rotateMode = 1;
-        if (retroOrientation == ORIENTATION_SWAP_XY
-              && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotateMode))
-        {
-           retroHardwareRotation = true;
-           retroOrientation = ORIENTATION_FLIP_X;
         }
 
         /* Set all remaining options before starting the game */
