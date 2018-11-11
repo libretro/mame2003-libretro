@@ -49,7 +49,7 @@ retro_set_led_state_t led_state_cb = NULL;
 
 int16_t XsoundBuffer[2048];
 
-void mame2003_video_get_geometry(unsigned *width, unsigned *height);
+extern void mame2003_video_get_geometry(struct retro_game_geometry *geom);
 
 #ifdef _3DS /* TODO: convert this strcasecmp wrapper to libretro-common/compat functions */
 int stricmp(const char *string1, const char *string2)
@@ -488,13 +488,8 @@ static void update_variables(void)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   unsigned width, height;
-   mame2003_video_get_geometry(&width, &height);
-
-   info->geometry.base_width = width;
-   info->geometry.base_height = height;
-   info->geometry.max_width = width;
-   info->geometry.max_height = height;
+   mame2003_video_get_geometry(&info->geometry);
+   
    info->timing.fps = Machine->drv->frames_per_second; /* sets the core timing does any game go above 60fps? */
    info->timing.sample_rate = options.samplerate;  /* please note if you want bally games to work properly set the sample rate to 22050 you cant go below 48 frames with the default that is set you will need to restart the core */
 }

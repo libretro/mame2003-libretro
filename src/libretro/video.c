@@ -20,8 +20,11 @@ extern int gotFrame;
 
 extern struct RunningMachine *Machine;
 
-/* Native output bitmap conversion/transformation related vars */
+/* Output bitmap settings */
 struct osd_create_params video_config;
+unsigned vis_width, vis_height;
+
+/* Output bitmap native conversion/transformation related vars */
 void (*video_pix_convert)(void *from, void *to);
 unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
@@ -51,11 +54,52 @@ static unsigned reverse_orientation(unsigned orientation)
 }
 
 /* Retrieve output geometry (i.e. window dimensions) */
-void mame2003_video_get_geometry(unsigned *width, unsigned *height)
+void mame2003_video_get_geometry(struct retro_game_geometry *geom)
 {
-   *width = video_hw_rotate ? video_config.height : video_config.width;
-   *height = video_hw_rotate ? video_config.width : video_config.height;
+   geom->base_width =
+      (vis_width && vis_height) ? vis_width : video_config.width;
+   geom->base_height =
+      (vis_width && vis_height) ? vis_height : video_config.height;
+
+   /* Adjust for libretro's rotation not resizing output geometry */
+   if (video_hw_rotate)
+   {
+      unsigned temp;
+      temp = geom->base_width; geom->base_width = geom->base_height; geom->base_height = temp;
+   }
+
+   geom->max_width = geom->base_width;
+   geom->max_height = geom->base_height;
+
+   geom->aspect_ratio =
+      (float)geom->max_width / (float)geom->max_height;
 }
+
+void mame2003_video_update_visible_area(struct mame_display *display)
+{
+   struct retro_game_geometry geom = { 0 };
+   
+   struct rectangle visible_area = display->game_visible_area;
+   vis_width = visible_area.max_x - visible_area.min_x + 1;
+   vis_height = visible_area.max_y - visible_area.min_y + 1;
+
+   /* Account for native XY swap */
+   if (video_swap_xy)
+   {
+      unsigned temp;
+      temp = vis_width; vis_width = vis_height; vis_height = temp;
+   }
+
+   /* Update MAME's own UI visible area */
+   set_ui_visarea(
+      visible_area.min_x, visible_area.min_y,
+      visible_area.max_x, visible_area.max_y);
+   
+   /* Notify libretro of the change */
+   mame2003_video_get_geometry(&geom);
+   environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &geom);
+}
+
 
 /* Init orientation and geometry */
 void mame2003_video_init_orientation(void)
@@ -87,7 +131,7 @@ void mame2003_video_init_orientation(void)
 
    /* Try to use libretro to do a rotation */
    if (rotate_mode != 0
-         && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
+      && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
    {
       video_hw_rotate = orientation & ORIENTATION_SWAP_XY;
       orientation = 0;
@@ -99,16 +143,6 @@ void mame2003_video_init_orientation(void)
    video_swap_xy = orientation & ORIENTATION_SWAP_XY;
 
    Machine->ui_orientation = options.ui_orientation;
-
-   /* Adjust for libretro's rotation not resizing output geometry */
-   if (orientation & ORIENTATION_SWAP_XY)
-   {
-      int width = video_config.width;
-      int height = video_config.height;
-      
-      video_config.width = height;
-      video_config.height = width;
-   }
 }
 
 void mame2003_video_init_conversion(UINT32 *rgb_components)
@@ -283,22 +317,9 @@ void osd_update_video_and_audio(struct mame_display *display)
       ( GAME_BITMAP_CHANGED | GAME_PALETTE_CHANGED
       | GAME_VISIBLE_AREA_CHANGED | VECTOR_PIXELS_CHANGED))
    {
-      struct rectangle visible_area = display->game_visible_area;
-      unsigned width = visible_area.max_x - visible_area.min_x + 1;
-      unsigned height = visible_area.max_y - visible_area.min_y + 1;
-
-      /* Account for native XY swap */
-      if (video_swap_xy)
-      {
-         unsigned temp;
-         temp = width; width = height; height = temp;
-      }
-
-      /* Update the UI area */
+      /* Update the visible area */
       if (display->changed_flags & GAME_VISIBLE_AREA_CHANGED)
-         set_ui_visarea(
-            visible_area.min_x, visible_area.min_y,
-            visible_area.max_x, visible_area.max_y);
+         mame2003_video_update_visible_area(display);
 
       /* Update the palette */
       if (display->changed_flags & GAME_PALETTE_CHANGED)
@@ -308,10 +329,10 @@ void osd_update_video_and_audio(struct mame_display *display)
       if (video_cb && !osd_skip_this_frame())
       {
          frame_convert(display);
-         video_cb(video_buffer, width, height, width * video_stride_out);
+         video_cb(video_buffer, vis_width, vis_height, vis_width * video_stride_out);
       }
       else
-         video_cb(NULL, width, height, width * video_stride_out);
+         video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
    }
 
    /* Update LED indicators state */
