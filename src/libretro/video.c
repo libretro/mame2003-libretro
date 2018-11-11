@@ -283,15 +283,22 @@ void osd_update_video_and_audio(struct mame_display *display)
       ( GAME_BITMAP_CHANGED | GAME_PALETTE_CHANGED
       | GAME_VISIBLE_AREA_CHANGED | VECTOR_PIXELS_CHANGED))
    {
-      size_t width, height;
-      width = video_config.width;
-      height = video_config.height;
+      struct rectangle visible_area = display->game_visible_area;
+      unsigned width = visible_area.max_x - visible_area.min_x + 1;
+      unsigned height = visible_area.max_y - visible_area.min_y + 1;
+
+      /* Account for native XY swap */
+      if (video_swap_xy)
+      {
+         unsigned temp;
+         temp = width; width = height; height = temp;
+      }
 
       /* Update the UI area */
       if (display->changed_flags & GAME_VISIBLE_AREA_CHANGED)
          set_ui_visarea(
-            display->game_visible_area.min_x, display->game_visible_area.min_y,
-            display->game_visible_area.max_x, display->game_visible_area.max_y);
+            visible_area.min_x, visible_area.min_y,
+            visible_area.max_x, visible_area.max_y);
 
       /* Update the palette */
       if (display->changed_flags & GAME_PALETTE_CHANGED)
