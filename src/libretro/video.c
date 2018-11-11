@@ -15,19 +15,18 @@ extern retro_environment_t environ_cb;
 extern retro_video_refresh_t video_cb;
 extern retro_set_led_state_t led_state_cb;
 
-extern struct RunningMachine *Machine;
-
-struct osd_create_params video_config;
-
 /* Part of libretro's API */
 extern int gotFrame;
 
-/* Native frame conversion/transformation related vars */
-const rgb_t *video_palette;
+extern struct RunningMachine *Machine;
+
+/* Native output bitmap conversion/transformation related vars */
+struct osd_create_params video_config;
 void (*video_pix_convert)(void *from, void *to);
 unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
 bool video_hw_rotate;
+const rgb_t *video_palette;
 uint16_t *video_buffer;
 
 /* Single pixel conversion functions */
@@ -255,7 +254,7 @@ static void frame_convert(struct mame_display *display)
 }
 
 
-static const int frameskip_table[12][12] =
+const int frameskip_table[12][12] =
    { { 0,0,0,0,0,0,0,0,0,0,0,0 },
      { 0,0,0,0,0,0,0,0,0,0,0,1 },
      { 0,0,0,0,0,1,0,0,0,0,0,1 },
@@ -290,17 +289,16 @@ void osd_update_video_and_audio(struct mame_display *display)
 
       /* Update the UI area */
       if (display->changed_flags & GAME_VISIBLE_AREA_CHANGED)
-      {
          set_ui_visarea(
-               display->game_visible_area.min_x, display->game_visible_area.min_y,
-               display->game_visible_area.max_x, display->game_visible_area.max_y);
-      }
+            display->game_visible_area.min_x, display->game_visible_area.min_y,
+            display->game_visible_area.max_x, display->game_visible_area.max_y);
 
       /* Update the palette */
-      video_palette = display->game_palette;
+      if (display->changed_flags & GAME_PALETTE_CHANGED)
+         video_palette = display->game_palette;
 
       /* Update the game bitmap */
-      if (video_cb && display->changed_flags & GAME_BITMAP_CHANGED && (osd_skip_this_frame() == 0))
+      if (video_cb && !osd_skip_this_frame())
       {
          frame_convert(display);
          video_cb(video_buffer, width, height, width * video_stride_out);
