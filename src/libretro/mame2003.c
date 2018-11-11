@@ -178,7 +178,7 @@ void retro_set_environment(retro_environment_t cb)
 #endif
       { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
-      { APPNAME"-tate_mode", "TATE Mode (90° CCW screen rotate); disabled|enabled" },
+      { APPNAME"-tate_mode", "TATE Mode (vertical games 90° CCW screen rotation); disabled|enabled" },
       { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
       { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
@@ -489,7 +489,7 @@ static void update_variables(void)
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
    mame2003_video_get_geometry(&info->geometry);
-   
+
    info->timing.fps = Machine->drv->frames_per_second; /* sets the core timing does any game go above 60fps? */
    info->timing.sample_rate = options.samplerate;  /* please note if you want bally games to work properly set the sample rate to 22050 you cant go below 48 frames with the default that is set you will need to restart the core */
 }

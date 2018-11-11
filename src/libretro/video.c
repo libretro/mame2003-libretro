@@ -56,23 +56,20 @@ static unsigned reverse_orientation(unsigned orientation)
 /* Retrieve output geometry (i.e. window dimensions) */
 void mame2003_video_get_geometry(struct retro_game_geometry *geom)
 {
-   geom->base_width =
-      (vis_width && vis_height) ? vis_width : video_config.width;
-   geom->base_height =
-      (vis_width && vis_height) ? vis_height : video_config.height;
+   geom->max_width = video_config.width;
+   geom->max_height = video_config.height;
+   geom->base_width = (vis_width && vis_height) ? vis_width : geom->max_width;
+   geom->base_height = (vis_width && vis_height) ? vis_height : geom->max_height;
 
    /* Adjust for libretro's rotation not resizing output geometry */
    if (video_hw_rotate)
    {
       unsigned temp;
       temp = geom->base_width; geom->base_width = geom->base_height; geom->base_height = temp;
+      temp = geom->max_width; geom->max_width = geom->max_height; geom->max_height = temp;
    }
 
-   geom->max_width = geom->base_width;
-   geom->max_height = geom->base_height;
-
-   geom->aspect_ratio =
-      (float)geom->max_width / (float)geom->max_height;
+   geom->aspect_ratio = (float)geom->max_width / (float)geom->max_height;
 }
 
 void mame2003_video_update_visible_area(struct mame_display *display)
@@ -113,8 +110,8 @@ void mame2003_video_init_orientation(void)
    */
    options.ui_orientation = reverse_orientation(orientation);
 
-   /* TATE mode (90 degree CCW rotation), however, isn't countered */
-   if (options.tate_mode)
+   /* Do a 90 degree CCW rotation for vertical games in TATE mode */
+   if (options.tate_mode && orientation & ORIENTATION_SWAP_XY)
    {
       if ((orientation & ROT180) == ORIENTATION_FLIP_X ||
 	    (orientation & ROT180) == ORIENTATION_FLIP_Y)
