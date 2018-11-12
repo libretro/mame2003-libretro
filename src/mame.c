@@ -832,14 +832,11 @@ static int init_game_options(void)
 	alpha_active = 0;
 	if (Machine->drv->video_attributes & VIDEO_RGB_DIRECT)
 	{
-		/* first pick a default
+		/* first pick a default */
 		if (Machine->drv->video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
 			Machine->color_depth = 32;
 		else
-			Machine->color_depth = 15;*/
-
-		/* use 32-bit color output as default to skip color conversions */
-		Machine->color_depth = 32;
+			Machine->color_depth = 15;
 
 		/* now allow overrides */
 		if (options.color_depth == 15 || options.color_depth == 32)
@@ -851,21 +848,23 @@ static int init_game_options(void)
 	}
 
 	/* update the vector width/height with defaults */
-	if (options.vector_width == 0) options.vector_width = Machine->drv->screen_width;
-	if (options.vector_height == 0) options.vector_height = Machine->drv->screen_height;
+	if (options.vector_width == 0)
+		options.vector_width = Machine->drv->screen_width;
+	if (options.vector_height == 0)
+		options.vector_height = Machine->drv->screen_height;
 
 	/* apply the vector resolution multiplier */
 	options.vector_width *= options.vector_resolution_multiplier;
 	options.vector_height *= options.vector_resolution_multiplier;
 
 	/* initialize the samplerate */
-        if ( (  Machine->drv->frames_per_second < 47 ) && (options.samplerate >= 30000) )	
-        {	
-                printf("sample rate too high\n");	
-                framerate_test =1;	
-                options.samplerate=22050;	
-                framerate_test =1;	
-        }        
+	if ( (  Machine->drv->frames_per_second < 47 ) && (options.samplerate >= 30000) )	
+	{	
+		printf("sample rate too high\n");	
+		framerate_test =1;	
+		options.samplerate=22050;	
+		framerate_test =1;	
+	}        
 	Machine->sample_rate = options.samplerate;
 
 	/* get orientation right */
