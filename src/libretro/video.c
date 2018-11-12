@@ -8,7 +8,7 @@
 #include "usrintrf.h"
 #include "driver.h"
 
-#define MAX_LED 16
+#define MAX_LED 8
 
 extern retro_log_printf_t log_cb;
 extern retro_environment_t environ_cb;
@@ -56,20 +56,21 @@ static unsigned reverse_orientation(unsigned orientation)
 /* Retrieve output geometry (i.e. window dimensions) */
 void mame2003_video_get_geometry(struct retro_game_geometry *geom)
 {
-   geom->max_width = video_config.width;
-   geom->max_height = video_config.height;
-   geom->base_width = (vis_width && vis_height) ? vis_width : geom->max_width;
-   geom->base_height = (vis_width && vis_height) ? vis_height : geom->max_height;
+   /* Shorter variable names, for readability */
+   unsigned max_w = video_config.width;
+   unsigned max_h = video_config.height;
+   unsigned vis_w = vis_width > 0 ? vis_width : max_w;
+   unsigned vis_h = vis_height > 0 ? vis_height : max_h;
 
-   /* Adjust for libretro's rotation not resizing output geometry */
-   if (video_hw_rotate)
-   {
-      unsigned temp;
-      temp = geom->base_width; geom->base_width = geom->base_height; geom->base_height = temp;
-      temp = geom->max_width; geom->max_width = geom->max_height; geom->max_height = temp;
-   }
+   /* Maximum dimensions must accomodate all image orientations */
+   unsigned max_dim = max_w > max_h ? max_w : max_h;
+   geom->max_width = geom->max_height = max_dim;
 
-   geom->aspect_ratio = (float)geom->max_width / (float)geom->max_height;
+   /* Hardware rotations don't resize the framebuffer, adjust for that */
+   geom->base_width = video_hw_rotate ? vis_h : vis_w;
+   geom->base_height = video_hw_rotate ? vis_w : vis_h;
+
+   geom->aspect_ratio = (float)geom->base_width / (float)geom->base_height;
 }
 
 void mame2003_video_update_visible_area(struct mame_display *display)
@@ -80,7 +81,7 @@ void mame2003_video_update_visible_area(struct mame_display *display)
    vis_width = visible_area.max_x - visible_area.min_x + 1;
    vis_height = visible_area.max_y - visible_area.min_y + 1;
 
-   /* Account for native XY swap */
+   /* Adjust for native XY swap */
    if (video_swap_xy)
    {
       unsigned temp;
@@ -98,7 +99,7 @@ void mame2003_video_update_visible_area(struct mame_display *display)
 }
 
 
-/* Init orientation and geometry */
+/* Init video orientation and geometry */
 void mame2003_video_init_orientation(void)
 {
    unsigned orientation = Machine->gamedrv->flags & ORIENTATION_MASK;
@@ -114,7 +115,7 @@ void mame2003_video_init_orientation(void)
    if (options.tate_mode && orientation & ORIENTATION_SWAP_XY)
    {
       if ((orientation & ROT180) == ORIENTATION_FLIP_X ||
-	    (orientation & ROT180) == ORIENTATION_FLIP_Y)
+          (orientation & ROT180) == ORIENTATION_FLIP_Y)
          orientation ^= ROT180;
       orientation ^= ROT270;
    }
@@ -142,6 +143,7 @@ void mame2003_video_init_orientation(void)
    Machine->ui_orientation = options.ui_orientation;
 }
 
+/* Init video format conversion settings */
 void mame2003_video_init_conversion(UINT32 *rgb_components)
 {
    unsigned color_mode;
@@ -194,12 +196,20 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
    environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &color_mode);
 }
 
+/* Do a soft reinit to process new video output parameters */
+void mame2003_video_reinit(void)
+{
+   UINT32 rgb_components;
+   struct osd_create_params old_params = video_config;
+   osd_close_display();
+   osd_create_display(&old_params, &rgb_components);
+}
+
 int osd_create_display(
    const struct osd_create_params *params, UINT32 *rgb_components)
 {
-   memcpy(&video_config, params, sizeof(video_config));    
+   memcpy(&video_config, params, sizeof(video_config));
 
-   /* Determine video orientation and pixel format conversion settings */
    mame2003_video_init_orientation();
    mame2003_video_init_conversion(rgb_components);
 
@@ -314,6 +324,15 @@ void osd_update_video_and_audio(struct mame_display *display)
       ( GAME_BITMAP_CHANGED | GAME_PALETTE_CHANGED
       | GAME_VISIBLE_AREA_CHANGED | VECTOR_PIXELS_CHANGED))
    {
+      /* Reinit video output on TATE mode toggle */
+      static int tate_mode = 0;
+      if (options.tate_mode != tate_mode)
+      {
+         tate_mode = options.tate_mode;
+         mame2003_video_reinit();
+         mame2003_video_update_visible_area(display);
+      }
+
       /* Update the visible area */
       if (display->changed_flags & GAME_VISIBLE_AREA_CHANGED)
          mame2003_video_update_visible_area(display);
@@ -333,26 +352,21 @@ void osd_update_video_and_audio(struct mame_display *display)
    }
 
    /* Update LED indicators state */
-   if (display->changed_flags & LED_STATE_CHANGED)
+   if (led_state_cb && display->changed_flags & LED_STATE_CHANGED)
    {
-       if(led_state_cb != NULL)
-       {
-           /* Set each changed LED */
-           static unsigned long prev_led_state = 0;
-           unsigned long o = prev_led_state;
-           unsigned long n = display->led_state;
-           int led;
-           for(led=0;led<MAX_LED;led++)
-           {
-               if((o & 0x01) != (n & 0x01))
-               {
-                 led_state_cb(led,n&0x01);
-               }
-               o >>= 1;
-               n >>= 1;
-           }
-           prev_led_state = display->led_state;
-       }
+      static unsigned long prev_led_state = 0;
+      unsigned long o = prev_led_state;
+      unsigned long n = display->led_state;
+      int led;
+      for(led=0;led<MAX_LED;led++)
+      {
+         if((o & 0x01) != (n & 0x01))
+         {
+            led_state_cb(led,n&0x01);
+         }
+         o >>= 1; n >>= 1;
+      }
+      prev_led_state = display->led_state;
    }
    
    gotFrame = 1;
