@@ -23,6 +23,7 @@ extern struct RunningMachine *Machine;
 /* Output bitmap settings */
 struct osd_create_params video_config;
 unsigned vis_width, vis_height;
+unsigned tate_mode;
 
 /* Output bitmap native conversion/transformation related vars */
 void (*video_pix_convert)(void *from, void *to);
@@ -103,7 +104,10 @@ void mame2003_video_update_visible_area(struct mame_display *display)
 void mame2003_video_init_orientation(void)
 {
    unsigned orientation = Machine->gamedrv->flags & ORIENTATION_MASK;
-   unsigned rotate_mode = 0;
+   unsigned rotate_mode;
+
+   /* Acknowledge that the TATE mode is handled */
+   tate_mode = options.tate_mode;
 
    /*
       The UI is always oriented properly at start, but the externally applied
@@ -112,7 +116,7 @@ void mame2003_video_init_orientation(void)
    options.ui_orientation = reverse_orientation(orientation);
 
    /* Do a 90 degree CCW rotation for vertical games in TATE mode */
-   if (options.tate_mode && orientation & ORIENTATION_SWAP_XY)
+   if (tate_mode && (orientation & ORIENTATION_SWAP_XY))
    {
       if ((orientation & ROT180) == ORIENTATION_FLIP_X ||
           (orientation & ROT180) == ORIENTATION_FLIP_Y)
@@ -121,6 +125,8 @@ void mame2003_video_init_orientation(void)
    }
 
    /* Try to match orientation to a supported libretro rotation */
+   rotate_mode = 4; /* Known invalid value */
+   rotate_mode = (orientation == ROT0) ? 0 : rotate_mode;
    rotate_mode = (orientation == ROT270) ? 1 : rotate_mode;
    rotate_mode = (orientation == ROT180) ? 2 : rotate_mode;
    rotate_mode = (orientation == ROT90) ? 3 : rotate_mode;
@@ -128,7 +134,7 @@ void mame2003_video_init_orientation(void)
    video_hw_rotate = false;
 
    /* Try to use libretro to do a rotation */
-   if (rotate_mode != 0
+   if (rotate_mode != 4 /* Known invalid value */
       && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
    {
       video_hw_rotate = orientation & ORIENTATION_SWAP_XY;
@@ -325,12 +331,11 @@ void osd_update_video_and_audio(struct mame_display *display)
       | GAME_VISIBLE_AREA_CHANGED | VECTOR_PIXELS_CHANGED))
    {
       /* Reinit video output on TATE mode toggle */
-      static int tate_mode = 0;
       if (options.tate_mode != tate_mode)
       {
-         tate_mode = options.tate_mode;
          mame2003_video_reinit();
-         mame2003_video_update_visible_area(display);
+         display->changed_flags |= GAME_VISIBLE_AREA_CHANGED;
+         tate_mode = options.tate_mode;
       }
 
       /* Update the visible area */
