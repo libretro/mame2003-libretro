@@ -178,7 +178,7 @@ void retro_set_environment(retro_environment_t cb)
 #endif
       { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
-      { APPNAME"-tate_mode", "TATE Mode (vertical games 90° CCW screen rotation); disabled|enabled" },
+      { APPNAME"-tate_mode", "TATE Mode (rotate vertical games by 90 degree CCW); disabled|enabled" },
       { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
       { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
