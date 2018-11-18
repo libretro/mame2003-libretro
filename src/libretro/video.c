@@ -362,25 +362,27 @@ void osd_update_video_and_audio(struct mame_display *display)
          video_palette = display->game_palette;
 
       /* Update the game bitmap */
-      if (video_cb && !osd_skip_this_frame())
+      if (video_cb)
       {
-         if (video_do_bypass)
+         if (!osd_skip_this_frame())
          {
-            unsigned min_y = display->game_visible_area.min_y;
-            unsigned min_x = display->game_visible_area.min_x;
-            unsigned pitch = display->game_bitmap->rowbytes;
-            char *base = &((char **)display->game_bitmap->line)[min_y][min_x];
-            video_cb(base, vis_width, vis_height, pitch);
+            if (video_do_bypass)
+            {
+               unsigned min_y = display->game_visible_area.min_y;
+               unsigned min_x = display->game_visible_area.min_x;
+               unsigned pitch = display->game_bitmap->rowpixels * video_stride_out;
+               char *base = &((char*)display->game_bitmap->base)[min_y*pitch + min_x*video_stride_out];
+               video_cb(base, vis_width, vis_height, pitch);
+            }
+            else
+            {
+               frame_convert(display);
+               video_cb(video_buffer, vis_width, vis_height, vis_width * video_stride_out);
+            }
          }
          else
-         {
-            frame_convert(display);
-            video_cb(video_buffer, vis_width, vis_height, vis_width * video_stride_out);
-         }
-
+            video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
       }
-      else
-         video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
    }
 
    /* Update LED indicators state */
