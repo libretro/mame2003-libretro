@@ -30,7 +30,7 @@ void (*video_pix_convert)(void *from, void *to);
 unsigned video_do_bypass;
 unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
-bool video_hw_rotate;
+bool video_hw_transpose;
 const rgb_t *video_palette;
 uint16_t *video_buffer;
 
@@ -39,21 +39,6 @@ static void pix_convert_pass8888(void *from, void *to);
 static void pix_convert_pass1555(void *from, void *to);
 static void pix_convert_passpal(void *from, void *to);
 static void pix_convert_palto565(void *from, void *to);
-
-/* Compute a reverse of a given orientation, accounting for XY swaps */
-static unsigned reverse_orientation(unsigned orientation)
-{
-   int result = orientation;
-   if (orientation & ORIENTATION_SWAP_XY)
-   {
-      result = ORIENTATION_SWAP_XY;
-      if (orientation & ORIENTATION_FLIP_X)
-         result ^= ORIENTATION_FLIP_Y;
-      if (orientation & ORIENTATION_FLIP_Y)
-         result ^= ORIENTATION_FLIP_X;
-   }
-   return result;
-}
 
 /* Retrieve output geometry (i.e. window dimensions) */
 void mame2003_video_get_geometry(struct retro_game_geometry *geom)
@@ -69,8 +54,8 @@ void mame2003_video_get_geometry(struct retro_game_geometry *geom)
    geom->max_width = geom->max_height = max_dim;
 
    /* Hardware rotations don't resize the framebuffer, adjust for that */
-   geom->base_width = video_hw_rotate ? vis_h : vis_w;
-   geom->base_height = video_hw_rotate ? vis_w : vis_h;
+   geom->base_width = video_hw_transpose ? vis_h : vis_w;
+   geom->base_height = video_hw_transpose ? vis_w : vis_h;
 
    geom->aspect_ratio = (float)geom->base_width / (float)geom->base_height;
 }
@@ -100,6 +85,20 @@ void mame2003_video_update_visible_area(struct mame_display *display)
    environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &geom);
 }
 
+/* Compute a reverse of a given orientation, accounting for XY swaps */
+static unsigned reverse_orientation(unsigned orientation)
+{
+   int result = orientation;
+   if (orientation & ORIENTATION_SWAP_XY)
+   {
+      result = ORIENTATION_SWAP_XY;
+      if (orientation & ORIENTATION_FLIP_X)
+         result ^= ORIENTATION_FLIP_Y;
+      if (orientation & ORIENTATION_FLIP_Y)
+         result ^= ORIENTATION_FLIP_X;
+   }
+   return result;
+}
 
 /* Init video orientation and geometry */
 void mame2003_video_init_orientation(void)
@@ -118,28 +117,35 @@ void mame2003_video_init_orientation(void)
 
    /* Do a 90 degree CCW rotation for vertical games in TATE mode */
    if (tate_mode && (orientation & ORIENTATION_SWAP_XY))
-   {
-      if ((orientation & ROT180) == ORIENTATION_FLIP_X ||
-          (orientation & ROT180) == ORIENTATION_FLIP_Y)
-         orientation ^= ROT180;
-      orientation ^= ROT270;
-   }
+      orientation = reverse_orientation(orientation) ^ ROT270;
+
+   /* Try to reset libretro orientation */
+   rotate_mode = 0;
+   environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode);
 
    /* Try to match orientation to a supported libretro rotation */
-   rotate_mode = 4; /* Known invalid value */
-   rotate_mode = (orientation == ROT0) ? 0 : rotate_mode;
+   rotate_mode = 0; /* Known invalid value */
    rotate_mode = (orientation == ROT270) ? 1 : rotate_mode;
    rotate_mode = (orientation == ROT180) ? 2 : rotate_mode;
    rotate_mode = (orientation == ROT90) ? 3 : rotate_mode;
 
-   video_hw_rotate = false;
+   video_hw_transpose = false;
 
    /* Try to use libretro to do a rotation */
-   if (rotate_mode != 4 /* Known invalid value */
+   if (rotate_mode != 0 /* Known invalid value */
       && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
    {
-      video_hw_rotate = orientation & ORIENTATION_SWAP_XY;
+      video_hw_transpose = orientation & ORIENTATION_SWAP_XY;
       orientation = 0;
+   }
+
+   /* Otherwise try to use it to do a transpose */
+   rotate_mode = 3; /* ROT90 */
+   if (orientation & ORIENTATION_SWAP_XY
+      && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
+   {
+      video_hw_transpose = true;
+      orientation = reverse_orientation(orientation ^ ROT270);
    }
 
    /* Set up native orientation flags that aren't handled by libretro */
