@@ -27,6 +27,7 @@ unsigned tate_mode;
 
 /* Output bitmap native conversion/transformation related vars */
 void (*video_pix_convert)(void *from, void *to);
+unsigned video_do_bypass;
 unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
 bool video_hw_rotate;
@@ -35,7 +36,7 @@ uint16_t *video_buffer;
 
 /* Single pixel conversion functions */
 static void pix_convert_pass8888(void *from, void *to);
-static void pix_convert_1555to565(void *from, void *to);
+static void pix_convert_pass1555(void *from, void *to);
 static void pix_convert_passpal(void *from, void *to);
 static void pix_convert_palto565(void *from, void *to);
 
@@ -186,17 +187,25 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
       rgb_components[2] = 0x000000FF;
    }
 
-   /* Case III: 16-bit 0RGB1555, convert it to RGB565 */
-   else
+   /* Case III: 16-bit 0RGB1555, pass it through */
+   else if (video_config.depth == 15)
    {
       video_stride_in = 2; video_stride_out = 2;
-      video_pix_convert = &pix_convert_1555to565;
-      color_mode = RETRO_PIXEL_FORMAT_RGB565;
+      video_pix_convert = &pix_convert_pass1555;
+      color_mode = RETRO_PIXEL_FORMAT_0RGB1555;
 
       /* TODO: figure those out */
       rgb_components[0] = 0x00007C00;
       rgb_components[1] = 0x000003E0;
       rgb_components[2] = 0x0000001F;
+   }
+
+   /* Otherwise bail out on unknown video mode */
+   else
+   {
+      if (log_cb)
+         log_cb(RETRO_LOG_ERROR, "Unsupported color depth: %u\n", video_config.depth);
+      abort();
    }
 
    environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &color_mode);
@@ -219,10 +228,18 @@ int osd_create_display(
    mame2003_video_init_orientation();
    mame2003_video_init_conversion(rgb_components);
 
-   /* Allocate an output video buffer */
-   video_buffer = malloc(video_config.width * video_config.height * video_stride_out);
-   if (!video_buffer)
-      return 1;
+   /* Check if a framebuffer conversion can be bypassed */
+   video_do_bypass =
+      !video_flip_x && !video_flip_y && !video_swap_xy &&
+      ((video_config.depth == 15) || (video_config.depth == 32));
+
+   /* Allocate an output video buffer, if necessary */
+   if (!video_do_bypass)
+   {
+      video_buffer = malloc(video_config.width * video_config.height * video_stride_out);
+      if (!video_buffer)
+         return 1;
+   }
 
    return 0;
 }
@@ -238,11 +255,9 @@ static void pix_convert_pass8888(void *from, void *to)
    *((uint32_t*)to) = *((uint32_t*)from);
 }
 
-static void pix_convert_1555to565(void *from, void *to)
+static void pix_convert_pass1555(void *from, void *to)
 {
-   const uint16_t color = *((uint16_t*)from);
-   *((uint16_t*)to) = (color & 0xFFE0) << 1 | /* red, green */
-                      (color & 0x001F) << 0;  /* blue */
+   *((uint16_t*)to) = *((uint16_t*)from);
 }
 
 static void pix_convert_passpal(void *from, void *to)
@@ -349,8 +364,20 @@ void osd_update_video_and_audio(struct mame_display *display)
       /* Update the game bitmap */
       if (video_cb && !osd_skip_this_frame())
       {
-         frame_convert(display);
-         video_cb(video_buffer, vis_width, vis_height, vis_width * video_stride_out);
+         if (video_do_bypass)
+         {
+            unsigned min_y = display->game_visible_area.min_y;
+            unsigned min_x = display->game_visible_area.min_x;
+            unsigned pitch = display->game_bitmap->rowbytes;
+            char *base = &((char **)display->game_bitmap->line)[min_y][min_x];
+            video_cb(base, vis_width, vis_height, pitch);
+         }
+         else
+         {
+            frame_convert(display);
+            video_cb(video_buffer, vis_width, vis_height, vis_width * video_stride_out);
+         }
+
       }
       else
          video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
