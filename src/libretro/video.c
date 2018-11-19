@@ -1,5 +1,6 @@
 #include "libretro.h"
 #include "libretro_perf.h"
+#include "retro_inline.h"
 #include "mame2003.h"
 #include "palette.h"
 #include "fileio.h"
@@ -26,7 +27,7 @@ unsigned vis_width, vis_height;
 unsigned tate_mode;
 
 /* Output bitmap native conversion/transformation related vars */
-void (*video_pix_convert)(void *from, void *to);
+unsigned video_conversion_type;
 unsigned video_do_bypass;
 unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
@@ -34,11 +35,14 @@ bool video_hw_transpose;
 const rgb_t *video_palette;
 uint16_t *video_buffer;
 
-/* Single pixel conversion functions */
-static void pix_convert_pass8888(void *from, void *to);
-static void pix_convert_pass1555(void *from, void *to);
-static void pix_convert_passpal(void *from, void *to);
-static void pix_convert_palto565(void *from, void *to);
+/* Possible pixel conversions (see corresponding function far below) */
+enum
+{
+   VCT_PASS8888,
+   VCT_PASS1555,
+   VCT_PASSPAL,
+   VCT_PALTO565
+};
 
 /* Retrieve output geometry (i.e. window dimensions) */
 void mame2003_video_get_geometry(struct retro_game_geometry *geom)
@@ -168,14 +172,14 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
       if (video_config.video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
       {
          video_stride_in = 2; video_stride_out = 4;
-         video_pix_convert = &pix_convert_passpal;
+         video_conversion_type = VCT_PASSPAL;
          color_mode = RETRO_PIXEL_FORMAT_XRGB8888;
       }
       /* Otherwise 16-bit RGB565 will suffice */
       else
       {
          video_stride_in = 2; video_stride_out = 2;
-         video_pix_convert = &pix_convert_palto565;
+         video_conversion_type = VCT_PALTO565;
          color_mode = RETRO_PIXEL_FORMAT_RGB565;
       }
    }
@@ -184,7 +188,7 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
    else if (video_config.depth == 32)
    {
       video_stride_in = 4; video_stride_out = 4;
-      video_pix_convert = &pix_convert_pass8888;
+      video_conversion_type = VCT_PASS8888;
       color_mode = RETRO_PIXEL_FORMAT_XRGB8888;
 
       /* TODO: figure those out */
@@ -197,7 +201,7 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
    else if (video_config.depth == 15)
    {
       video_stride_in = 2; video_stride_out = 2;
-      video_pix_convert = &pix_convert_pass1555;
+      video_conversion_type = VCT_PASS1555;
       color_mode = RETRO_PIXEL_FORMAT_0RGB1555;
 
       /* TODO: figure those out */
@@ -256,23 +260,23 @@ void osd_close_display(void)
    video_buffer = NULL;
 }
 
-static void pix_convert_pass8888(void *from, void *to)
+static INLINE void pix_convert_pass8888(void *from, void *to)
 {
    *((uint32_t*)to) = *((uint32_t*)from);
 }
 
-static void pix_convert_pass1555(void *from, void *to)
+static INLINE void pix_convert_pass1555(void *from, void *to)
 {
    *((uint16_t*)to) = *((uint16_t*)from);
 }
 
-static void pix_convert_passpal(void *from, void *to)
+static INLINE void pix_convert_passpal(void *from, void *to)
 {
    const uint32_t color = video_palette[*((uint16_t*)from)];
    *((uint32_t*)to) = color;
 }
 
-static void pix_convert_palto565(void *from, void *to)
+static INLINE void pix_convert_palto565(void *from, void *to)
 {
    const uint32_t color = video_palette[*((uint16_t*)from)];
    *((uint16_t*)to) = (color & 0x00F80000) >> 8 | /* red */
@@ -288,36 +292,53 @@ static void frame_convert(struct mame_display *display)
    bool flip_y = video_flip_y;
 
    struct rectangle visible_area = display->game_visible_area;
-   int x0 = visible_area.min_x;
-   int y0 = visible_area.min_y;
-   int x1 = visible_area.max_x;
-   int y1 = visible_area.max_y;
+   int x0 = visible_area.min_x, y0 = visible_area.min_y;
+   int x1 = visible_area.max_x, y1 = visible_area.max_y;
  
-   char *output = (char*)video_buffer;
    char **lines = (char**)display->game_bitmap->line;
+   char *output = (char*)video_buffer;
 
-   /* Now do the conversion, accounting for x/y swaps */
-   if (!video_swap_xy)
-   {
-      /* Non-swapped */
-      for (y = flip_y ? y1 : y0; flip_y ? y >= y0 : y <= y1; y += flip_y ? -1 : 1)
-         for (x = flip_x ? x1 : x0; flip_x ? x >= x0 : x <= x1; x += flip_x ? -1 : 1)
-         {
-            video_pix_convert(
-               &lines[y][x * video_stride_in], output);
-            output += video_stride_out;
+   /* Do pixel conversion, using 4-element lines */
+   #define CONVERT_NOSWAP(CONVERSION_FUNC)\
+      for (y = flip_y ? y1 : y0; flip_y ? y >= y0 : y <= y1; y += flip_y ? -1 : 1)\
+         for (x = flip_x ? x1 : x0; flip_x ? x >= x0 : x <= x1; x += flip_x ? -1 : 1)\
+         {\
+            CONVERSION_FUNC(\
+               &lines[y][x * video_stride_in], output);\
+            output += video_stride_out;\
          }
-   }
-   else
-   {
-      /* Swapped */
-      for (x = flip_y ? x1 : x0; flip_y ? x >= x0 : x <= x1; x += flip_y ? -1 : 1)
-         for (y = flip_x ? y1 : y0; flip_x ? y >= y0 : y <= y1; y += flip_x ? -1 : 1)
-         {
-            video_pix_convert(
-               &lines[y][x * video_stride_in], output);
-            output += video_stride_out;
+
+   /* Do pixel conversion, transposing the image  */
+   #define CONVERT_SWAP(CONVERSION_FUNC)\
+      for (x = flip_y ? x1 : x0; flip_y ? x >= x0 : x <= x1; x += flip_y ? -1 : 1)\
+         for (y = flip_x ? y1 : y0; flip_x ? y >= y0 : y <= y1; y += flip_x ? -1 : 1)\
+         {\
+            CONVERSION_FUNC(\
+               &lines[y][x * video_stride_in], output);\
+            output += video_stride_out;\
          }
+
+   /* Do proper pixel conversion */
+   #define CONVERT(CONVERSION_FUNC)\
+      if (!video_swap_xy)\
+         CONVERT_NOSWAP(CONVERSION_FUNC)\
+      else\
+         CONVERT_SWAP(CONVERSION_FUNC)
+
+   switch (video_conversion_type)
+   {
+      case VCT_PASS8888:
+         CONVERT(pix_convert_pass8888);
+         break;
+      case VCT_PASS1555:
+         CONVERT(pix_convert_pass1555);
+         break;
+      case VCT_PASSPAL:
+         CONVERT(pix_convert_passpal);
+         break;
+      case VCT_PALTO565:
+         CONVERT(pix_convert_palto565);
+         break;
    }
 }
 
