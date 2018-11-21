@@ -260,28 +260,27 @@ void osd_close_display(void)
    video_buffer = NULL;
 }
 
-static INLINE void pix_convert_pass8888(void *from, void *to)
+static INLINE void pix_convert_pass8888(uint32_t *from, uint32_t *to)
 {
-   *((uint32_t*)to) = *((uint32_t*)from);
+   *to = *from;
 }
 
-static INLINE void pix_convert_pass1555(void *from, void *to)
+static INLINE void pix_convert_pass1555(uint16_t *from, uint16_t *to)
 {
-   *((uint16_t*)to) = *((uint16_t*)from);
+   *to = *from;
 }
 
-static INLINE void pix_convert_passpal(void *from, void *to)
+static INLINE void pix_convert_passpal(uint16_t *from, uint32_t *to)
 {
-   const uint32_t color = video_palette[*((uint16_t*)from)];
-   *((uint32_t*)to) = color;
+   *to = video_palette[*from];
 }
 
-static INLINE void pix_convert_palto565(void *from, void *to)
+static INLINE void pix_convert_palto565(uint16_t *from, uint16_t *to)
 {
-   const uint32_t color = video_palette[*((uint16_t*)from)];
-   *((uint16_t*)to) = (color & 0x00F80000) >> 8 | /* red */
-                      (color & 0x0000FC00) >> 5 | /* green */
-                      (color & 0x000000F8) >> 3;  /* blue */
+   const uint32_t color = video_palette[*from];
+   *to = (color & 0x00F80000) >> 8 | /* red */
+         (color & 0x0000FC00) >> 5 | /* green */
+         (color & 0x000000F8) >> 3;  /* blue */
 }
 
 static void frame_convert(struct mame_display *display)
@@ -294,50 +293,80 @@ static void frame_convert(struct mame_display *display)
    struct rectangle visible_area = display->game_visible_area;
    int x0 = visible_area.min_x, y0 = visible_area.min_y;
    int x1 = visible_area.max_x, y1 = visible_area.max_y;
+   int w = x1 - x0 + 1, h = y1 - y0 + 1;
  
-   char **lines = (char**)display->game_bitmap->line;
+   signed pitch = display->game_bitmap->rowpixels;
+   char *input = (char*)display->game_bitmap->base;
    char *output = (char*)video_buffer;
 
-   /* Do pixel conversion, using 4-element lines */
-   #define CONVERT_NOSWAP(CONVERSION_FUNC)\
-      for (y = flip_y ? y1 : y0; flip_y ? y >= y0 : y <= y1; y += flip_y ? -1 : 1)\
-         for (x = flip_x ? x1 : x0; flip_x ? x >= x0 : x <= x1; x += flip_x ? -1 : 1)\
+   /* Pixel conversion loop macro for best possible inlining, w/o XY swap */
+   #define CONVERT_NOSWAP(CONVERT_FUNC, TYPE_IN, TYPE_OUT, FLIP_X, FLIP_Y)\
+      {\
+         signed skip;\
+         TYPE_IN *in = (TYPE_IN*)input;\
+         TYPE_OUT *out = (TYPE_OUT*)output;\
+         \
+         /* Swaps are handled by iterating over input backwards */\
+         in += (!FLIP_X ? x0 : x1) + (!FLIP_Y ? y0 * pitch : y1 * pitch);\
+         /* After each line, reset the pointer to start, then to next line */\
+         skip = (!FLIP_X ? -w : w) + (!FLIP_Y ? pitch : -pitch);\
+         \
+         for (y = 0; y < h; y++)\
          {\
-            CONVERSION_FUNC(\
-               &lines[y][x * video_stride_in], output);\
-            output += video_stride_out;\
-         }
+            if (!FLIP_X)\
+               for (x = 0; x < w; x++)\
+                  CONVERT_FUNC(in++, out++);\
+            else\
+               for (x = 0; x < w; x++)\
+                  CONVERT_FUNC(in--, out++);\
+            in += skip;\
+         }\
+      }
+   
+   /* A much less optimized pixel conversion loop macro, with XY swap */
+   #define CONVERT_SWAP(CONVERT_FUNC, TYPE_IN, TYPE_OUT, FLIP_X, FLIP_Y)\
+      {\
+         TYPE_IN *in = (TYPE_IN*)input;\
+         TYPE_OUT *out = (TYPE_OUT*)output;\
+         \
+         for (x = FLIP_Y ? x1 : x0; FLIP_Y ? x >= x0 : x <= x1; x += FLIP_Y ? -1 : 1)\
+            for (y = FLIP_X ? y1 : y0; FLIP_X ? y >= y0 : y <= y1; y += FLIP_X ? -1 : 1)\
+               CONVERT_FUNC(&in[y * pitch + x], out++);\
+      }
 
-   /* Do pixel conversion, transposing the image  */
-   #define CONVERT_SWAP(CONVERSION_FUNC)\
-      for (x = flip_y ? x1 : x0; flip_y ? x >= x0 : x <= x1; x += flip_y ? -1 : 1)\
-         for (y = flip_x ? y1 : y0; flip_x ? y >= y0 : y <= y1; y += flip_x ? -1 : 1)\
-         {\
-            CONVERSION_FUNC(\
-               &lines[y][x * video_stride_in], output);\
-            output += video_stride_out;\
-         }
+   /* Do a conversion accounting for XY flips */
+   #define CONVERT_CHOOSE(CONVERT_MACRO, CONVERT_FUNC, TYPE_IN, TYPE_OUT)\
+      {\
+         if (!flip_x && !flip_y)\
+            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, false, false)\
+         else if (!flip_x && flip_y)\
+            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, false, true)\
+         else if (flip_x && !flip_y)\
+            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, true, false)\
+         else if (flip_x && flip_y)\
+            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, true, true);\
+      }
 
-   /* Do proper pixel conversion */
-   #define CONVERT(CONVERSION_FUNC)\
+   /* Do a conversion accounting for XY swap */
+   #define CONVERT(CONVERT_FUNC, TYPE_IN, TYPE_OUT)\
       if (!video_swap_xy)\
-         CONVERT_NOSWAP(CONVERSION_FUNC)\
+         CONVERT_CHOOSE(CONVERT_NOSWAP, CONVERT_FUNC, TYPE_IN, TYPE_OUT)\
       else\
-         CONVERT_SWAP(CONVERSION_FUNC)
+         CONVERT_CHOOSE(CONVERT_SWAP, CONVERT_FUNC, TYPE_IN, TYPE_OUT)
 
    switch (video_conversion_type)
    {
       case VCT_PASS8888:
-         CONVERT(pix_convert_pass8888);
+         CONVERT(pix_convert_pass8888, uint32_t, uint32_t);
          break;
       case VCT_PASS1555:
-         CONVERT(pix_convert_pass1555);
+         CONVERT(pix_convert_pass1555, uint16_t, uint16_t);
          break;
       case VCT_PASSPAL:
-         CONVERT(pix_convert_passpal);
+         CONVERT(pix_convert_passpal, uint16_t, uint32_t);
          break;
       case VCT_PALTO565:
-         CONVERT(pix_convert_palto565);
+         CONVERT(pix_convert_palto565, uint16_t, uint16_t);
          break;
    }
 }
