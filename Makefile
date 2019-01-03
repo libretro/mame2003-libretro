@@ -442,7 +442,7 @@ else
    TARGET := $(TARGET_NAME)_libretro.dll
    CC = gcc
    LDFLAGS += -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=link.T
-   CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__ -Wno-missing-field-initializers
+   CFLAGS += -D__WIN32__ -Wno-missing-field-initializers
 endif
 
 ifeq ($(BIGENDIAN), 1)
@@ -542,7 +542,6 @@ endef
 
 all:	$(TARGET)
 $(TARGET): $(OBJECTS)
-	@echo "** BUILDING $(TARGET) FOR PLATFORM $(platform) **"
 ifeq ($(STATIC_LINKING),1)
 	@echo Archiving $@...
 ifeq ($(SPLIT_UP_LINK), 1)
@@ -562,7 +561,6 @@ else
 	$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 endif
-	@echo "** BUILD SUCCESSFUL! GG NO RE **"
 
 %.o: %.c
 	$(CC) $(CDEFS) $(CFLAGS) $(PLATCFLAGS) -c $(OBJOUT)$@ $<
