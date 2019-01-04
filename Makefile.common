@@ -3,86 +3,84 @@ LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro/libretro-common
 INCFLAGS := -I$(CORE_DIR) \
 				-I$(CORE_DIR)/includes \
 				-I$(CORE_DIR)/cpu/m68000
-
-INCFLAGS += -I$(CORE_DIR)/libretro \
+				-I$(CORE_DIR)/libretro \
 				-I$(CORE_DIR)/libretro/includes/zlib \
 				-I$(LIBRETRO_COMM_DIR)/include \
 				-I$(LIBRETRO_COMM_DIR)/include/file \
 				-I$(LIBRETRO_COMM_DIR)/include/compat
 
-ifneq (,$(findstring msvc2003,$(platform)))
+ifneq (,$(findstring msvc20,$(platform)))
 INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
 endif
 
 COREDEFINES += -D__LIBRETRO__ -DPI=3.1415927 -DM_PI=3.1415927
 
-SOURCES_C := $(CORE_DIR)/libretro/mame2003.c \
+SOURCES_C := \
+	$(CORE_DIR)/libretro/mame2003.c \
 	$(CORE_DIR)/libretro/keyboard.c \
 	$(CORE_DIR)/libretro/joystick.c \
-	$(CORE_DIR)/libretro/video.c
-
-                 
-SOURCES_C += $(CORE_DIR)/mame.c \
-				 $(CORE_DIR)/drawgfx.c \
-				 $(CORE_DIR)/common.c \
-				 $(CORE_DIR)/usrintrf.c \
-				 $(CORE_DIR)/ui_text.c \
-				 $(CORE_DIR)/cpuintrf.c \
-				 $(CORE_DIR)/cpuexec.c \
-				 $(CORE_DIR)/cpuint.c \
-				 $(CORE_DIR)/mame-memory.c \
-				 $(CORE_DIR)/timer.c \
-				 $(CORE_DIR)/palette.c \
-				 $(CORE_DIR)/input.c \
-				 $(CORE_DIR)/inptport.c \
-				 $(CORE_DIR)/config.c \
-				 $(CORE_DIR)/mame_unzip.c \
-				 $(CORE_DIR)/audit.c \
-				 $(CORE_DIR)/info.c \
-				 $(CORE_DIR)/png.c \
-				 $(CORE_DIR)/artwork.c \
-				 $(CORE_DIR)/tilemap.c \
-				 $(CORE_DIR)/fileio.c \
-				 $(CORE_DIR)/state.c \
-				 $(CORE_DIR)/datafile.c \
-				 $(CORE_DIR)/hiscore.c \
-				 $(CORE_DIR)/sndintrf.c \
-				 $(CORE_DIR)/sound/streams.c \
-				 $(CORE_DIR)/sound/mixer.c \
-				 $(CORE_DIR)/sound/filter.c \
-				 $(CORE_DIR)/sound/votrax.c \
-				 $(CORE_DIR)/machine/tmp68301.c \
-				 $(CORE_DIR)/machine/6532riot.c \
-				 $(CORE_DIR)/machine/z80fmly.c \
-				 $(CORE_DIR)/machine/6821pia.c \
-				 $(CORE_DIR)/machine/8255ppi.c \
-				 $(CORE_DIR)/machine/7474.c \
-				 $(CORE_DIR)/machine/74123.c \
-				 $(CORE_DIR)/machine/74153.c \
-				 $(CORE_DIR)/machine/74148.c \
-				 $(CORE_DIR)/vidhrdw/generic.c \
-				 $(CORE_DIR)/vidhrdw/vector.c \
-				 $(CORE_DIR)/vidhrdw/avgdvg_vidhrdw.c \
-				 $(CORE_DIR)/machine/mathbox.c \
-				 $(CORE_DIR)/vidhrdw/poly.c \
-				 $(CORE_DIR)/vidhrdw/matrix3d.c \
-				 $(CORE_DIR)/vidhrdw/tlc34076.c \
-				 $(CORE_DIR)/machine/ticket.c \
-				 $(CORE_DIR)/machine/eeprom.c \
-				 $(CORE_DIR)/machine/6522via.c \
-				 $(CORE_DIR)/machine/mb87078.c \
-				 $(CORE_DIR)/machine/random.c \
-				 $(CORE_DIR)/mamedbg.c \
-				 $(CORE_DIR)/window.c \
-				 $(CORE_DIR)/profiler.c \
-				 $(CORE_DIR)/hash.c \
-				 $(CORE_DIR)/sha1.c \
-				 $(CORE_DIR)/chd.c \
-				 $(CORE_DIR)/harddisk.c \
-				 $(CORE_DIR)/md5.c \
-				 $(CORE_DIR)/machine/idectrl.c \
-				 $(CORE_DIR)/sound/wavwrite.c \
-				 $(CORE_DIR)/x86drc.c \
+	$(CORE_DIR)/libretro/video.c \
+	$(CORE_DIR)/mame.c \
+	$(CORE_DIR)/drawgfx.c \
+	$(CORE_DIR)/common.c \
+	$(CORE_DIR)/usrintrf.c \
+	$(CORE_DIR)/ui_text.c \
+	$(CORE_DIR)/cpuintrf.c \
+	$(CORE_DIR)/cpuexec.c \
+	$(CORE_DIR)/cpuint.c \
+	$(CORE_DIR)/mame-memory.c \
+	$(CORE_DIR)/timer.c \
+	$(CORE_DIR)/palette.c \
+	$(CORE_DIR)/input.c \
+	$(CORE_DIR)/inptport.c \
+	$(CORE_DIR)/config.c \
+	$(CORE_DIR)/mame_unzip.c \
+	$(CORE_DIR)/audit.c \
+	$(CORE_DIR)/info.c \
+	$(CORE_DIR)/png.c \
+	$(CORE_DIR)/artwork.c \
+	$(CORE_DIR)/tilemap.c \
+	$(CORE_DIR)/fileio.c \
+	$(CORE_DIR)/state.c \
+	$(CORE_DIR)/datafile.c \
+	$(CORE_DIR)/hiscore.c \
+	$(CORE_DIR)/sndintrf.c \
+	$(CORE_DIR)/sound/streams.c \
+	$(CORE_DIR)/sound/mixer.c \
+	$(CORE_DIR)/sound/filter.c \
+	$(CORE_DIR)/sound/votrax.c \
+	$(CORE_DIR)/machine/tmp68301.c \
+	$(CORE_DIR)/machine/6532riot.c \
+	$(CORE_DIR)/machine/z80fmly.c \
+	$(CORE_DIR)/machine/6821pia.c \
+	$(CORE_DIR)/machine/8255ppi.c \
+	$(CORE_DIR)/machine/7474.c \
+	$(CORE_DIR)/machine/74123.c \
+	$(CORE_DIR)/machine/74153.c \
+	$(CORE_DIR)/machine/74148.c \
+	$(CORE_DIR)/vidhrdw/generic.c \
+	$(CORE_DIR)/vidhrdw/vector.c \
+	$(CORE_DIR)/vidhrdw/avgdvg_vidhrdw.c \
+	$(CORE_DIR)/machine/mathbox.c \
+	$(CORE_DIR)/vidhrdw/poly.c \
+	$(CORE_DIR)/vidhrdw/matrix3d.c \
+	$(CORE_DIR)/vidhrdw/tlc34076.c \
+	$(CORE_DIR)/machine/ticket.c \
+	$(CORE_DIR)/machine/eeprom.c \
+	$(CORE_DIR)/machine/6522via.c \
+	$(CORE_DIR)/machine/mb87078.c \
+	$(CORE_DIR)/machine/random.c \
+	$(CORE_DIR)/mamedbg.c \
+	$(CORE_DIR)/window.c \
+	$(CORE_DIR)/profiler.c \
+	$(CORE_DIR)/hash.c \
+	$(CORE_DIR)/sha1.c \
+	$(CORE_DIR)/chd.c \
+	$(CORE_DIR)/harddisk.c \
+	$(CORE_DIR)/md5.c \
+	$(CORE_DIR)/machine/idectrl.c \
+	$(CORE_DIR)/sound/wavwrite.c \
+	$(CORE_DIR)/x86drc.c \
 
 # the core object files (without target specific objects;
 # those are added in the target.mak files)
@@ -260,11 +258,18 @@ SOURCES_C += $(CORE_DIR)/drivers/pacman.c \
 				 $(CORE_DIR)/sndhrdw/cclimber_sndhrdw.c \
 				 $(CORE_DIR)/drivers/cclimber.c \
 				 $(CORE_DIR)/drivers/yamato.c \
-				 $(CORE_DIR)/vidhrdw/gomoku_vidhrdw.c $(CORE_DIR)/sndhrdw/gomoku_sndhrdw.c $(CORE_DIR)/drivers/gomoku.c \
-				 $(CORE_DIR)/vidhrdw/wiping_vidhrdw.c $(CORE_DIR)/sndhrdw/wiping_sndhrdw.c $(CORE_DIR)/drivers/wiping.c \
-				 $(CORE_DIR)/vidhrdw/seicross_vidhrdw.c $(CORE_DIR)/drivers/seicross.c \
-				 $(CORE_DIR)/vidhrdw/clshroad_vidhrdw.c $(CORE_DIR)/drivers/clshroad.c \
-				 $(CORE_DIR)/vidhrdw/tubep_vidhrdw.c $(CORE_DIR)/drivers/tubep.c \
+				 $(CORE_DIR)/vidhrdw/gomoku_vidhrdw.c \
+				 $(CORE_DIR)/sndhrdw/gomoku_sndhrdw.c \
+				 $(CORE_DIR)/drivers/gomoku.c \
+				 $(CORE_DIR)/vidhrdw/wiping_vidhrdw.c \
+				 $(CORE_DIR)/sndhrdw/wiping_sndhrdw.c \
+				 $(CORE_DIR)/drivers/wiping.c \
+				 $(CORE_DIR)/vidhrdw/seicross_vidhrdw.c \
+				 $(CORE_DIR)/drivers/seicross.c \
+				 $(CORE_DIR)/vidhrdw/clshroad_vidhrdw.c \
+				 $(CORE_DIR)/drivers/clshroad.c \
+				 $(CORE_DIR)/vidhrdw/tubep_vidhrdw.c \
+				 $(CORE_DIR)/drivers/tubep.c \
 				 $(CORE_DIR)/vidhrdw/magmax_vidhrdw.c $(CORE_DIR)/drivers/magmax.c \
 				 $(CORE_DIR)/vidhrdw/cop01_vidhrdw.c $(CORE_DIR)/drivers/cop01.c \
 				 $(CORE_DIR)/vidhrdw/terracre_vidhrdw.c $(CORE_DIR)/drivers/terracre.c \
