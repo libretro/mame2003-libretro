@@ -50,7 +50,6 @@ ifeq ($(system_platform), win)
    SPLIT_UP_LINK=1
 endif
 
-
 X86_ASM_68000 = # don't use x86 Assembler 68000 engine by default; set to 1 to enable
 X86_ASM_68020 = # don't use x86 Assembler 68020 engine by default; set to 1 to enable
 X86_MIPS3_DRC = # don't use x86 DRC MIPS3 engine by default;       set to 1 to enable
