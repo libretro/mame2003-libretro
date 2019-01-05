@@ -3,7 +3,6 @@ DEBUGGER=0
 SPLIT_UP_LINK=0
 CORE_DIR := src
 TARGET_NAME := mame2003
-BUILD_BIN2C ?= 0
 
 GIT_VERSION ?= " $(shell git rev-parse --short HEAD || echo unknown)"
 ifneq ($(GIT_VERSION)," unknown")
@@ -55,15 +54,20 @@ X86_ASM_68020 = # don't use x86 Assembler 68020 engine by default; set to 1 to e
 X86_MIPS3_DRC = # don't use x86 DRC MIPS3 engine by default;       set to 1 to enable
 
 ifeq ($(ARCH),)
-	# no architecture value passed make; try to determine host platform
-	UNAME_P = $(shell uname -p)
-	ifneq ($(findstring powerpc,$(UNAME_P)),)
-		ARCH = ppc
-	else ifneq ($(findstring x86_64,$(UNAME_P)),)
-		# catch "x86_64" first, but no commands for x86_x64 only at this point
-	else ifneq ($(findstring 86,$(UNAME_P)),)
-		ARCH = x86 # if "86" is found now it must be i386 or i686
-	endif
+   # no architecture value passed make; try to determine host platform
+   UNAME_P = $(shell uname -p)
+ifneq ($(findstring powerpc,$(UNAME_P)),)
+   ARCH = ppc
+else ifneq ($(findstring x86_64,$(UNAME_P)),)
+   # catch "x86_64" first to avoid 64-bit architecture being caught by our next search for "86"
+	 # no commands for x86_x64 only at this point
+else ifneq ($(findstring 86,$(UNAME_P)),)
+   ARCH = x86 # if "86" is found now it must be i386 or i686
+endif
+endif
+
+ifeq ($(ARCH), x86)
+   X86_MIPS3_DRC = 1
 endif
 
 ifeq ($(ARCH), x86)
@@ -624,18 +628,6 @@ else
 endif
 else
 	LD = $(CC)
-endif
-
-ifeq ($(BUILD_BIN2C),1)
-# compile bin2c
-$(info creating bin2c working folder and compiling bin2c executable tool...)
-	DUMMY_RESULT:=$(shell mkdir -p ./precompile)
-	DUMMY_RESULT:=$(shell gcc -o ./precompile/bin2c deps/bin2c/bin2c.c)
-# compile hiscore.dat into a fresh header file for embedding
-	DUMMY_RESULT:=$(shell ./precompile/bin2c ./metadata/hiscore.dat ./precompile/hiscore_dat.h hiscoredat)
-    DUMMY_RESULT:=$(shell rm ./precompile/bin2c*)
-else
-$(info echo BUILD_BIN2C==0 - use the precompiled hiscore_dat.h from the github repo)
 endif
 
 define NEWLINE
