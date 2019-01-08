@@ -569,7 +569,7 @@ endif
 
 # we actually code to c89 but in order to allow // comments in c source, gnu90 is the closest standard
 # beware that gnu90 does still allow some code through that will not compile for msvc or emscripten though
-CFLAGS += -std=gnu90
+#CFLAGS += -std=gnu90
 
 # explictly use -fsigned-char on all platforms to solve problems with code written/tested on x86 but used on ARM
 # for example, audio on rtype leo is wrong on ARM without this flag
