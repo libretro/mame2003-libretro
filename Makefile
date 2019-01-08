@@ -1,22 +1,31 @@
-DEBUG=0
-DEBUGGER=0
-SPLIT_UP_LINK=0
-CORE_DIR := src
 TARGET_NAME := mame2003
+CORE_DIR    := src
+
+DEBUG         ?=0
+DEBUGGER      ?=0
+SPLIT_UP_LINK ?=0
+ARM           ?= 0 # set to 0 or 1 to indicate ARM or not
+CPU_ARCH      ?= 0 # as of November 2018 this flag doesn't seem to be used but is being set to either arm or arm64 for some platforms
+
+ifneq ($(SANITIZER),)
+   CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
+   CXXFLAGS := -fsanitize=$(SANITIZER) $(CXXFLAGS)
+   LDFLAGS  := -fsanitize=$(SANITIZER) $(LDFLAGS)
+endif
 
 GIT_VERSION ?= " $(shell git rev-parse --short HEAD || echo unknown)"
 ifneq ($(GIT_VERSION)," unknown")
 	CFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
 endif
 
-SPACE :=
-SPACE := $(SPACE) $(SPACE)
-BACKSLASH :=
-BACKSLASH := \$(BACKSLASH)
-filter_out1 = $(filter-out $(firstword $1),$1)
-filter_out2 = $(call filter_out1,$(call filter_out1,$1))
-unixpath = $(subst \,/,$1)
-unixcygpath = /$(subst :,,$(call unixpath,$1))
+SPACE       :=
+SPACE       := $(SPACE) $(SPACE)
+BACKSLASH   :=
+BACKSLASH   := \$(BACKSLASH)
+filter_out1  = $(filter-out $(firstword $1),$1)
+filter_out2  = $(call filter_out1,$(call filter_out1,$1))
+unixpath     = $(subst \,/,$1)
+unixcygpath  = /$(subst :,,$(call unixpath,$1))
 
 ifeq ($(platform),)
 	system_platform = unix
@@ -49,6 +58,7 @@ ifeq ($(system_platform), win)
    SPLIT_UP_LINK=1
 endif
 
+
 X86_ASM_68000 = # don't use x86 Assembler 68000 engine by default; set to 1 to enable
 X86_ASM_68020 = # don't use x86 Assembler 68020 engine by default; set to 1 to enable
 X86_MIPS3_DRC = # don't use x86 DRC MIPS3 engine by default;       set to 1 to enable
@@ -70,9 +80,6 @@ ifeq ($(ARCH), x86)
    X86_MIPS3_DRC = 1
 endif
 
-ifeq ($(ARCH), x86)
-	X86_MIPS3_DRC = 1
-endif
 
 LIBS :=
 
@@ -251,23 +258,21 @@ else ifeq ($(platform), wiiu)
 
 # Nintendo Switch (libnx)
 else ifeq ($(platform), libnx)
-include $(DEVKITPRO)/libnx/switch_rules
-    EXT=a
-    TARGET := $(TARGET_NAME)_libretro_$(platform).$(EXT)
-    DEFINES := -DSWITCH=1 -U__linux__ -U__linux -DRARCH_INTERNAL
-    CFLAGS := $(DEFINES) -g -O3 -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
-    CFLAGS += $(INCDIRS)
-    CFLAGS	+=	$(INCLUDE)  -D__SWITCH__
-    CXXFLAGS := $(ASFLAGS) $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
-    CFLAGS += -std=gnu11
-    PLATCFLAGS += -Dstricmp=strcasecmp
-    STATIC_LINKING = 1
+  include $(DEVKITPRO)/libnx/switch_rules
+  EXT=a
+  TARGET := $(TARGET_NAME)_libretro_$(platform).$(EXT)
+  DEFINES := -DSWITCH=1 -U__linux__ -U__linux -DRARCH_INTERNAL -DHAVE_LIBNX
+  CFLAGS := $(DEFINES) -g -O3 -ffast-math -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
+  CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+  PLATCFLAGS += -D__SWITCH__ -march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
+  CPU_ARCH := arm64
+  STATIC_LINKING = 1
 
 # Nintendo Switch (libtransistor)
 else ifeq ($(platform), switch)
 	EXT=a
 	TARGET := $(TARGET_NAME)_libretro_$(platform).$(EXT)
-	PLATCFLAGS += -Dstricmp=strcasecmp -D__SWITCH__
+	PLATCFLAGS += -D__SWITCH__
 	include $(LIBTRANSISTOR_HOME)/libtransistor.mk
 	STATIC_LINKING=1
 
@@ -552,24 +557,35 @@ else
    CFLAGS += -D__WIN32__ -Wno-missing-field-initializers
 endif
 
+# Architecture-specific flags #############################
+
 ifeq ($(BIGENDIAN), 1)
 	PLATCFLAGS += -DMSB_FIRST
 endif
 
-# use -fsigned-char on ARM to solve potential problems with code written/tested on x86
-# eg on mame2003 audio on rtype leo is wrong without it.
-ifeq ($(ARM), 1)
-   PLATCFLAGS += -fsigned-char
-endif
+# End of architecture-specific flags ######################
 
-PLATCFLAGS += $(fpic)
+# Compiler flags for all platforms #############################
+
+# we actually code to c89 but in order to allow // comments in c source, gnu90 is the closest standard
+# beware that gnu90 does still allow some code through that will not compile for msvc or emscripten though
+CFLAGS += -std=gnu90
+
+# explictly use -fsigned-char on all platforms to solve problems with code written/tested on x86 but used on ARM
+# for example, audio on rtype leo is wrong on ARM without this flag
+CFLAGS += -fsigned-char
+
+# Use position-independent code for all platforms
+CFLAGS += $(fpic)
+
+CFLAGS += -DFLAC__NO_ASM -DHAVE_INTTYPES_H -DHAVE_ICONV -DHAVE_LANGINFO_CODESET -DHAVE_SOCKLEN_T -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 RETRO_PROFILE = 0
 CFLAGS += -DRETRO_PROFILE=$(RETRO_PROFILE)
 
 ifneq ($(platform), sncps3)
 ifeq (,$(findstring msvc,$(platform)))
-CFLAGS += -Wall -Wno-sign-compare -Wunused \
+CFLAGS += -Wall -Wunused \
 	-Wpointer-arith -Wbad-function-cast -Wcast-align -Waggregate-return \
 	-Wshadow -Wstrict-prototypes \
 	-Wformat-security -Wwrite-strings \
@@ -577,28 +593,21 @@ CFLAGS += -Wall -Wno-sign-compare -Wunused \
 endif
 endif
 
+ifeq (,$(findstring msvc,$(platform)))
+   CFLAGS += -D_XOPEN_SOURCE=500 -fomit-frame-pointer -fstrict-aliasing
+endif
+# End of compiler flags for all platforms ######################
+
+
+# Disable optimization when debugging #####################
 ifeq ($(DEBUG), 1)
-   CFLAGS += -fno-omit-frame-pointer -g -O0
-   LDFLAGS +=
+   CFLAGS += -O0 -g3
 else
    CFLAGS += -O2 -DNDEBUG
 endif
 
-ifneq ($(SANITIZER),)
-   CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
-   CXXFLAGS := -fsanitize=$(SANITIZER) $(CXXFLAGS)
-   LDFLAGS  := -fsanitize=$(SANITIZER) $(LDFLAGS)
-endif
-
-ifeq (,$(findstring msvc,$(platform)))
-   CFLAGS += -fomit-frame-pointer -fstrict-aliasing
-endif
-
-# extra options needed *only* for the osd files
-CFLAGSOSDEPEND = $(CFLAGS)
-
-# the windows osd code at least cannot be compiled with -pedantic
-CFLAGSPEDANTIC = $(CFLAGS) -pedantic
+# include the various .mak files
+include Makefile.common
 
 # include the various .mak files
 include Makefile.common
