@@ -49,7 +49,9 @@
 #define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
 #endif
 #else
+#if !defined(__CELLOS_LV2__)
 #include <strings.h>
+#endif
 #endif
 
 extern struct retro_perf_callback perf_cb;
