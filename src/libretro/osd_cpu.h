@@ -48,6 +48,8 @@
 #ifndef S_ISREG
 #define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
 #endif
+#else
+#include <strings.h>
 #endif
 
 extern struct retro_perf_callback perf_cb;
