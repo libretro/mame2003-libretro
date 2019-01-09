@@ -1,11 +1,13 @@
 TARGET_NAME := mame2003
 CORE_DIR    := src
 
-DEBUG         ?=0
-DEBUGGER      ?=0
-SPLIT_UP_LINK ?=0
+DEBUG         ?= 0
+DEBUGGER      ?= 0
+SPLIT_UP_LINK ?= 0
 ARM           ?= 0 # set to 0 or 1 to indicate ARM or not
 CPU_ARCH      ?= 0 # as of November 2018 this flag doesn't seem to be used but is being set to either arm or arm64 for some platforms
+
+LIBS          ?=
 
 ifneq ($(SANITIZER),)
    CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
@@ -71,6 +73,7 @@ ifneq ($(findstring powerpc,$(UNAME_P)),)
 else ifneq ($(findstring x86_64,$(UNAME_P)),)
    # catch "x86_64" first to avoid 64-bit architecture being caught by our next search for "86"
 	 # no commands for x86_x64 only at this point
+	 # we could help compile an x86_64 dynarec here or something like that
 else ifneq ($(findstring 86,$(UNAME_P)),)
    ARCH = x86 # if "86" is found now it must be i386 or i686
 endif
@@ -81,65 +84,61 @@ ifeq ($(ARCH), x86)
 endif
 
 
-LIBS :=
-
 ifeq (,$(findstring msvc,$(platform)))
-LIBS += -lm
+   LIBS += -lm
 endif
 
 ifneq (,$(findstring msvc,$(platform)))
-system_platform = win
+   system_platform = win
 endif
 
 ifeq ($(platform), unix)
    TARGET = $(TARGET_NAME)_libretro.so
    fpic = -fPIC
-
    CFLAGS += $(fpic)
    LDFLAGS += $(fpic) -shared -Wl,--version-script=link.T
+
 else ifeq ($(platform), linux-portable)
    TARGET = $(TARGET_NAME)_libretro.so
    fpic = -fPIC -nostdlib
-
    CFLAGS += $(fpic)
-	LIBS =
+   LIBS =
    LDFLAGS += $(fpic) -shared -Wl,--version-script=link.T
+
 else ifeq ($(platform), osx)
    TARGET = $(TARGET_NAME)_libretro.dylib
    fpic = -fPIC
+
 ifeq ($(ARCH),ppc)
    BIGENDIAN = 1
    PLATCFLAGS += -D__ppc__ -D__POWERPC__
 endif
-   CFLAGS += $(fpic)
    LDFLAGS += $(fpic) -dynamiclib
-OSXVER = `sw_vers -productVersion | cut -c 4`
-	fpic += -mmacosx-version-min=10.1
+   OSXVER = `sw_vers -productVersion | cut -c 4`
+   fpic += -mmacosx-version-min=10.1
 
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
-
    TARGET = $(TARGET_NAME)_libretro_ios.dylib
    fpic = -fPIC
-   CFLAGS += $(fpic)
    LDFLAGS += $(fpic) -dynamiclib
    PLATCFLAGS += -D__IOS__
 ifeq ($(IOSSDK),)
-   IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
+     IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
-
    CC = cc -arch armv7 -isysroot $(IOSSDK)
    LD = cc -arch armv7 -isysroot $(IOSSDK)
 ifeq ($(platform),ios9)
-   fpic += -miphoneos-version-min=8.0
-   CC += -miphoneos-version-min=8.0
-   LD += -miphoneos-version-min=8.0
+     fpic += -miphoneos-version-min=8.0
+     CC += -miphoneos-version-min=8.0
+     LD += -miphoneos-version-min=8.0
 else
-   fpic += -miphoneos-version-min=5.0
-   CC += -miphoneos-version-min=5.0
-   LD += -miphoneos-version-min=5.0
+     fpic += -miphoneos-version-min=5.0
+     CC += -miphoneos-version-min=5.0
+     LD += -miphoneos-version-min=5.0
 endif
 
+# 3DS
 else ifeq ($(platform), ctr)
    TARGET = $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)
@@ -152,6 +151,7 @@ else ifeq ($(platform), ctr)
    CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
    CPU_ARCH := arm
    STATIC_LINKING = 1
+
 else ifeq ($(platform), rpi2)
    TARGET = $(TARGET_NAME)_libretro.so
    fpic = -fPIC
@@ -162,6 +162,7 @@ else ifeq ($(platform), rpi2)
    CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
    CPU_ARCH := arm
    ARM = 1
+
 else ifeq ($(platform), rpi3)
    TARGET = $(TARGET_NAME)_libretro.so
    fpic = -fPIC
@@ -177,8 +178,8 @@ else ifeq ($(platform), rpi3)
 # Platform affix = classic_<ISA>_<µARCH>
 # Help at https://modmyclassic.com/comp
 
-# (armv7 a7, hard point, neon based) ### 
-# NESC, SNESC, C64 mini 
+# (armv7 a7, hard point, neon based) ###
+# NESC, SNESC, C64 mini
 else ifeq ($(platform), classic_armv7_a7)
 	TARGET := $(TARGET_NAME)_libretro.so
 	fpic := -fPIC
@@ -211,23 +212,27 @@ else ifeq ($(platform), classic_armv7_a7)
 	endif
 #######################################
 
+# generic armhf########################
+else ifeq ($(platform), armhf)
+   CFLAGS += $(fpic)
+   LDFLAGS += $(fpic) -shared -Wl,--version-script=link.T
+   PLATCFLAGS += -march=armv6 -mfloat-abi=hard -mfpu=vfp
+   PLATCFLAGS += -fomit-frame-pointer -ffast-math
+
 else ifeq ($(platform), android-armv7)
    TARGET = $(TARGET_NAME)_libretro_android.so
-
-   CFLAGS += -fPIC 
+   CFLAGS += -fPIC
    PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp
    LDFLAGS += -fPIC -shared -Wl,--version-script=link.T
-
    CC = arm-linux-androideabi-gcc
    AR = arm-linux-androideabi-ar
    LD = arm-linux-androideabi-gcc
+
 else ifeq ($(platform), qnx)
    TARGET = $(TARGET_NAME)_libretro_$(platform).so
-
-   CFLAGS += -fPIC 
+   CFLAGS += -fPIC
    PLATCFLAGS += -march=armv7-a
    LDFLAGS += -fPIC -shared -Wl,--version-script=link.T
-
    CC = qcc -Vgcc_ntoarmv7le
    AR = qcc -Vgcc_ntoarmv7le
    LD = QCC -Vgcc_ntoarmv7le
@@ -235,7 +240,6 @@ else ifeq ($(platform), qnx)
 else ifeq ($(platform), wii)
    TARGET = $(TARGET_NAME)_libretro_$(platform).a
    BIGENDIAN = 1
-    
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    PLATCFLAGS += -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -D__POWERPC__
@@ -245,7 +249,6 @@ else ifeq ($(platform), wii)
 else ifeq ($(platform), wiiu)
    TARGET = $(TARGET_NAME)_libretro_$(platform).a
    BIGENDIAN = 1
-    
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    PLATCFLAGS += -DGEKKO -DWIIU -mwup -mcpu=750 -meabi -mhard-float -D__ppc__ -D__POWERPC__
@@ -260,6 +263,7 @@ else ifeq ($(platform), libnx)
   DEFINES := -DSWITCH=1 -U__linux__ -U__linux -DRARCH_INTERNAL -DHAVE_LIBNX
   CFLAGS := $(DEFINES) -g -O3 -ffast-math -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
   CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+  CFLAGS += -std=gnu11
   PLATCFLAGS += -D__SWITCH__ -march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
   CPU_ARCH := arm64
   STATIC_LINKING = 1
@@ -275,74 +279,69 @@ else ifeq ($(platform), switch)
 else ifeq ($(platform), ps3)
    TARGET = $(TARGET_NAME)_libretro_$(platform).a
    BIGENDIAN = 1
-    
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    PLATCFLAGS += -D__CELLOS_LV2__ -D__ppc__ -D__POWERPC__
    STATIC_LINKING = 1
-	SPLIT_UP_LINK=1
+   SPLIT_UP_LINK=1
+	
 else ifeq ($(platform), sncps3)
    TARGET = $(TARGET_NAME)_libretro_ps3.a
    BIGENDIAN = 1
-    
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    PLATCFLAGS += -D__CELLOS_LV2__ -D__ppc__ -D__POWERPC__
    STATIC_LINKING = 1
-	SPLIT_UP_LINK=1
+	 SPLIT_UP_LINK=1
 else ifeq ($(platform), psl1ght)
    TARGET = $(TARGET_NAME)_libretro_$(platform).a
    BIGENDIAN = 1
-    
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$
    AR = $(PS3DEV)/ppu/bin/ppu-ar$
    PLATCFLAGS += -D__CELLOS_LV2__ -D__ppc__ -D__POWERPC__
    STATIC_LINKING = 1
-else ifeq ($(platform), psp1)
-	TARGET = $(TARGET_NAME)_libretro_$(platform).a
 
-	CC = psp-gcc$(EXE_EXT)
-	AR = psp-ar$(EXE_EXT)
-	PLATCFLAGS += -DPSP
-	CFLAGS += -G0
+else ifeq ($(platform), psp1)
+   TARGET = $(TARGET_NAME)_libretro_$(platform).a
+   CC = psp-gcc$(EXE_EXT)
+   AR = psp-ar$(EXE_EXT)
+   PLATCFLAGS += -DPSP
+   CFLAGS += -G0
    STATIC_LINKING = 1
 
 else ifeq ($(platform), vita)
-	TARGET = $(TARGET_NAME)_libretro_$(platform).a
-
-	CC = arm-vita-eabi-gcc$(EXE_EXT)
-	AR = arm-vita-eabi-ar$(EXE_EXT)
-	PLATCFLAGS += -DVITA
-	CFLAGS += -mthumb -mfloat-abi=hard -fsingle-precision-constant
-	CFLAGS += -Wall -mword-relocations
-	CFLAGS += -fomit-frame-pointer -ffast-math
-	CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables 
-	CFLAGS +=  -fno-optimize-sibling-calls
-	CFLAGS += -ftree-vectorize -funroll-loops -fno-short-enums
-	CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
-	HAVE_RZLIB := 1
-	ARM = 1
-	STATIC_LINKING := 1
-	DEBUG = 0
+   TARGET = $(TARGET_NAME)_libretro_$(platform).a
+   CC = arm-vita-eabi-gcc$(EXE_EXT)
+   AR = arm-vita-eabi-ar$(EXE_EXT)
+   PLATCFLAGS += -DVITA
+   CFLAGS += -mthumb -mfloat-abi=hard -fsingle-precision-constant
+   CFLAGS += -Wall -mword-relocations
+   CFLAGS += -fomit-frame-pointer -ffast-math
+   CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables
+   CFLAGS +=  -fno-optimize-sibling-calls
+   CFLAGS += -ftree-vectorize -funroll-loops -fno-short-enums
+   CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
+   HAVE_RZLIB := 1
+   ARM = 1
+   STATIC_LINKING := 1
 		
 else ifneq (,$(findstring armv,$(platform)))
    TARGET = $(TARGET_NAME)_libretro.so
-
    CFLAGS += -fPIC
    LDFLAGS += -fPIC -shared -Wl,--version-script=link.T
 
 # GCW0
 else ifeq ($(platform), gcw0)
-	TARGET := $(TARGET_NAME)_libretro.so
-	CC = /opt/gcw0-toolchain/usr/bin/mipsel-linux-gcc-4.9.1
-	CXX = /opt/gcw0-toolchain/usr/bin/mipsel-linux-g++
-	AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar
-	LDFLAGS += -shared -Wl,--version-script=link.T -Wl,-no-undefined
-	PLATCFLAGS += -D__GCW0__
-	LIBS := -lc -lgcc
-	fpic := -fPIC -nostdlib
-	LIBS =
-	CFLAGS += -lm -march=mips32 -mtune=mips32r2 -mhard-float
+   TARGET := $(TARGET_NAME)_libretro.so
+   CC = /opt/gcw0-toolchain/usr/bin/mipsel-linux-gcc-4.9.1
+   CXX = /opt/gcw0-toolchain/usr/bin/mipsel-linux-g++
+   AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar
+   LDFLAGS += -shared -Wl,--version-script=link.T -Wl,-no-undefined
+   PLATCFLAGS += -D__GCW0__
+   LIBS := -lc -lgcc
+   fpic := -fPIC -nostdlib
+   LIBS =
+   CFLAGS += -lm -march=mips32 -mtune=mips32r2 -mhard-float
 
 else ifeq ($(platform), emscripten)
 	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
@@ -352,33 +351,32 @@ else ifeq ($(platform), emscripten)
 
 # Windows MSVC 2003 Xbox 1
 else ifeq ($(platform), xbox1_msvc2003)
-TARGET := $(TARGET_NAME)_libretro_xdk1.lib
-MSVCBINDIRPREFIX = $(XDK)/xbox/bin/vc71
-CC  = "$(MSVCBINDIRPREFIX)/CL.exe"
-CXX  = "$(MSVCBINDIRPREFIX)/CL.exe"
-LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
+   TARGET := $(TARGET_NAME)_libretro_xdk1.lib
+   MSVCBINDIRPREFIX = $(XDK)/xbox/bin/vc71
+   CC  = "$(MSVCBINDIRPREFIX)/CL.exe"
+   CXX = "$(MSVCBINDIRPREFIX)/CL.exe"
+   LD  = "$(MSVCBINDIRPREFIX)/lib.exe"
+   export INCLUDE := $(XDK)/xbox/include
+   export LIB := $(XDK)/xbox/lib
+   PSS_STYLE :=2
+   CFLAGS   += -D_XBOX -D_XBOX1
+   CXXFLAGS += -D_XBOX -D_XBOX1
+   STATIC_LINKING=1
 
-export INCLUDE := $(XDK)/xbox/include
-export LIB := $(XDK)/xbox/lib
-PSS_STYLE :=2
-CFLAGS   += -D_XBOX -D_XBOX1
-CXXFLAGS += -D_XBOX -D_XBOX1
-STATIC_LINKING=1
 # Windows MSVC 2010 Xbox 360
 else ifeq ($(platform), xbox360_msvc2010)
-TARGET := $(TARGET_NAME)_libretro_xdk360.lib
-MSVCBINDIRPREFIX = $(XEDK)/bin/win32
-CC  = "$(MSVCBINDIRPREFIX)/cl.exe"
-CXX  = "$(MSVCBINDIRPREFIX)/cl.exe"
-LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
-
-export INCLUDE := $(XEDK)/include/xbox
-export LIB := $(XEDK)/lib/xbox
-PSS_STYLE :=2
-CFLAGS   += -D_XBOX -D_XBOX360
-CXXFLAGS += -D_XBOX -D_XBOX360
-STATIC_LINKING=1
-BIGENDIAN = 1
+   TARGET := $(TARGET_NAME)_libretro_xdk360.lib
+   MSVCBINDIRPREFIX = $(XEDK)/bin/win32
+   CC   = "$(MSVCBINDIRPREFIX)/cl.exe"
+   CXX  = "$(MSVCBINDIRPREFIX)/cl.exe"
+   LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
+   export INCLUDE := $(XEDK)/include/xbox
+   export LIB := $(XEDK)/lib/xbox
+   PSS_STYLE :=2
+   CFLAGS   += -D_XBOX -D_XBOX360
+   CXXFLAGS += -D_XBOX -D_XBOX360
+   STATIC_LINKING=1
+   BIGENDIAN = 1
 
 # Windows MSVC 2010 x64
 else ifeq ($(platform), windows_msvc2010_x64)
@@ -404,6 +402,7 @@ TARGET := $(TARGET_NAME)_libretro.dll
 PSS_STYLE :=2
 LDFLAGS += -DLL
 LIBS =
+
 # Windows MSVC 2010 x86
 else ifeq ($(platform), windows_msvc2010_x86)
 	CC  = cl.exe
@@ -431,24 +430,23 @@ LIBS =
 
 # Windows MSVC 2005 x86
 else ifeq ($(platform), windows_msvc2005_x86)
-	CC  = cl.exe
-	CXX = cl.exe
+ 	CC  = cl.exe
+ 	CXX = cl.exe
+ 	PATH := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin"):$(PATH)
+ 	PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../IDE")
+ 	INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/include")
+ 	LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS80COMNTOOLS)../../VC/lib")
+ 	BIN := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin")
 
-PATH := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin"):$(PATH)
-PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../IDE")
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/include")
-LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS80COMNTOOLS)../../VC/lib")
-BIN := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin")
+ 	WindowsSdkDir := $(INETSDK)
+ 	export INCLUDE := $(INCLUDE);$(INETSDK)/Include;src/libretro/libretro-common/include/compat/msvc
+ 	export LIB := $(LIB);$(WindowsSdkDir);$(INETSDK)/Lib
 
-WindowsSdkDir := $(INETSDK)
-
-export INCLUDE := $(INCLUDE);$(INETSDK)/Include;src/libretro/libretro-common/include/compat/msvc
-export LIB := $(LIB);$(WindowsSdkDir);$(INETSDK)/Lib
-TARGET := $(TARGET_NAME)_libretro.dll
-PSS_STYLE :=2
-LDFLAGS += -DLL
-CFLAGS += -D_CRT_SECURE_NO_DEPRECATE
-LIBS =
+ 	TARGET := $(TARGET_NAME)_libretro.dll
+ 	PSS_STYLE :=2
+ 	LDFLAGS += -DLL
+ 	CFLAGS += -D_CRT_SECURE_NO_DEPRECATE
+ 	LIBS =
 
 # Windows MSVC 2017 all architectures
 else ifneq (,$(findstring windows_msvc2017,$(platform)))
@@ -544,12 +542,13 @@ else ifneq (,$(findstring windows_msvc2017,$(platform)))
 	TARGET := $(TARGET_NAME)_libretro.dll
 	PSS_STYLE :=2
 	LDFLAGS += -DLL
+
 # Windows
 else
    TARGET := $(TARGET_NAME)_libretro.dll
    CC = gcc
    LDFLAGS += -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=link.T
-   CFLAGS += -D__WIN32__ -Wno-missing-field-initializers
+   CFLAGS += -D__WIN32__
 endif
 
 # Architecture-specific flags #############################
@@ -561,10 +560,6 @@ endif
 # End of architecture-specific flags ######################
 
 # Compiler flags for all platforms #############################
-
-# we actually code to c89 but in order to allow // comments in c source, gnu90 is the closest standard
-# beware that gnu90 does still allow some code through that will not compile for msvc or emscripten though
-#CFLAGS += -std=gnu90
 
 # explictly use -fsigned-char on all platforms to solve problems with code written/tested on x86 but used on ARM
 # for example, audio on rtype leo is wrong on ARM without this flag
@@ -604,12 +599,11 @@ endif
 # include the various .mak files
 include Makefile.common
 
-# include the various .mak files
-include Makefile.common
-
 # build the targets in different object dirs, since mess changes
 # some structures and thus they can't be linked against each other.
 DEFS = $(COREDEFINES) -Dasm=__asm__
+
+DEFS += -DFLAC__NO_DLL
 
 CFLAGS += $(INCFLAGS) $(INCFLAGS_PLATFORM)
 
@@ -619,7 +613,7 @@ CDEFS = $(DEFS) $(COREDEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS)
 OBJECTS := $(SOURCES_C:.c=.o)
 
 OBJOUT   = -o
-LINKOUT  = -o 
+LINKOUT  = -o
 
 ifneq (,$(findstring msvc,$(platform)))
 	OBJOUT = -Fo
@@ -670,8 +664,9 @@ $(OBJ)/%.a:
 	@echo Archiving $@...
 	$(RM) $@
 	$(AR) cr $@ $^
-    
-clean: 
+
+
+clean:
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
 	$(file >$@.in,$(OBJECTS))
