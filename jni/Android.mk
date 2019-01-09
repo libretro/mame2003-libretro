@@ -5,7 +5,7 @@ CORE_DIR := $(ROOT_DIR)/src
 
 include $(ROOT_DIR)/Makefile.common
 
-COREFLAGS := $(DEFS) $(COREDEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS) -ffast-math -funroll-loops -Dstricmp=strcasecmp -DINLINE="static inline" -DANDROID $(INCFLAGS)
+COREFLAGS := $(DEFS) $(COREDEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS) -ffast-math -funroll-loops -DINLINE="static inline" -DANDROID $(INCFLAGS)
 
 GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
 ifneq ($(GIT_VERSION)," unknown")

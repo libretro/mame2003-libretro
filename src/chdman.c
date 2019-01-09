@@ -810,7 +810,7 @@ static int handle_custom_chomp(const char *name, struct chd_file *chd, UINT32 *m
 		return CHDERR_OUT_OF_MEMORY;
 
 	/* check for midway */
-	if (!stricmp(name, "midway"))
+	if (!strcasecmp(name, "midway"))
 	{
 		UINT32 maxsector = 0;
 		UINT32 numparts;
@@ -841,7 +841,7 @@ static int handle_custom_chomp(const char *name, struct chd_file *chd, UINT32 *m
 	}
 
 	/* check for atari */
-	if (!stricmp(name, "atari"))
+	if (!strcasecmp(name, "atari"))
 	{
 		UINT32 sectors[4];
 		UINT8 *data;
@@ -1511,27 +1511,29 @@ int main(int argc, char **argv)
 	chd_set_interface(&chdman_interface);
 
 	/* handle the appropriate command */
-	if (!stricmp(argv[1], "-createhd"))
+	if (!strcasecmp(argv[1], "-createhd"))
 		do_createhd(argc, argv);
-//	else if (!stricmp(argv[1], "-createcd"))
-//		do_createcd(argc, argv);
-	else if (!stricmp(argv[1], "-extract"))
+#if 0
+   else if (!strcasecmp(argv[1], "-createcd"))
+      do_createcd(argc, argv);
+#endif
+	else if (!strcasecmp(argv[1], "-extract"))
 		do_extract(argc, argv);
-	else if (!stricmp(argv[1], "-verify"))
+	else if (!strcasecmp(argv[1], "-verify"))
 		do_verify(argc, argv, 0);
-	else if (!stricmp(argv[1], "-verifyfix"))
+	else if (!strcasecmp(argv[1], "-verifyfix"))
 		do_verify(argc, argv, 1);
-	else if (!stricmp(argv[1], "-update"))
+	else if (!strcasecmp(argv[1], "-update"))
 		do_merge_update_chomp(argc, argv, OPERATION_UPDATE);
-	else if (!stricmp(argv[1], "-chomp"))
+	else if (!strcasecmp(argv[1], "-chomp"))
 		do_merge_update_chomp(argc, argv, OPERATION_CHOMP);
-	else if (!stricmp(argv[1], "-info"))
+	else if (!strcasecmp(argv[1], "-info"))
 		do_info(argc, argv);
-	else if (!stricmp(argv[1], "-merge"))
+	else if (!strcasecmp(argv[1], "-merge"))
 		do_merge_update_chomp(argc, argv, OPERATION_MERGE);
-	else if (!stricmp(argv[1], "-diff"))
+	else if (!strcasecmp(argv[1], "-diff"))
 		do_diff(argc, argv);
-	else if (!stricmp(argv[1], "-setchs"))
+	else if (!strcasecmp(argv[1], "-setchs"))
 		do_setchs(argc, argv);
 	else
 		error();

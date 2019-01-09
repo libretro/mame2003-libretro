@@ -1569,7 +1569,6 @@ UINT64 mame_chd_length(struct chd_interface_file *file)
 ***************************************************************************/
 
 #ifdef MAME_DEBUG
-
 static INLINE int my_stricmp(const char *dst, const char *src)
 {
 	while (*src && *dst)
