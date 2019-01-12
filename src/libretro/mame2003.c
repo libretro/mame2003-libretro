@@ -172,7 +172,6 @@ void retro_set_environment(retro_environment_t cb)
       { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
       { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
       { APPNAME"-tate_mode", "TATE Mode (rotate vertical games by 90 degrees CCW); disabled|enabled" },
-      { APPNAME"-skip-rom-verify", "EXPERIMENTAL: Skip ROM verification; disabled|enabled" },
       { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10" },
       { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
       { APPNAME"-vector-beam-width", "Vector beam width (only with antialiasing); 1.2|1|1.4|1.6|1.8|2|2.5|3|4|5|6|7|8|9|10|11|12" },
@@ -406,20 +405,7 @@ static void update_variables(void)
       options.tate_mode = 0;
 
    var.value = NULL;
-   
-   var.key = APPNAME"-skip-rom-verify"; 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 1)
-         options.skip_rom_verify = 1;
-      else
-         options.skip_rom_verify = 0;
-   }
-   else
-      options.skip_rom_verify = 0;  
-
-   var.value = NULL;
-   
+    
    var.key = APPNAME"-vector-resolution-multiplier";
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       options.vector_resolution_multiplier = atoi(var.value);
