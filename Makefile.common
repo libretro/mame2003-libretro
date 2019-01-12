@@ -6,6 +6,7 @@ INCFLAGS := \
 	-I$(CORE_DIR)/includes \
 	-I$(CORE_DIR)/cpu/m68000 \
 	-I$(CORE_DIR)/libretro \
+	-I$(CORE_DIR)/mame2003 \
 	-I$(CORE_DIR)/libretro/includes/zlib \
 	-I$(LIBRETRO_COMM_DIR)/include \
 	-I$(LIBRETRO_COMM_DIR)/include/file \

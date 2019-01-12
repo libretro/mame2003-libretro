@@ -12,15 +12,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <compat/posix_string.h>
+#include <compat/msvc.h>
+#if defined(__EMSCRIPTEN__)
+#include <strings.h>
+#endif
 #include "fileio.h"
-#include "mame2003.h"
+#include "log.h"
 #include "drawgfx.h"
 #include "palette.h"
 
 
 extern int gbPriorityBitmapIsDirty;
-extern retro_log_printf_t log_cb;
 extern retro_environment_t environ_cb;
 
 /***************************************************************************
@@ -34,8 +37,7 @@ extern retro_environment_t environ_cb;
 #define MAX_GFX_ELEMENTS 32
 #define MAX_MEMORY_REGIONS 32
 
-#define APPNAME					"mame2003"
-
+#define APPNAME					"mame2003-plus"
 
 /***************************************************************************
 
@@ -159,67 +161,108 @@ struct RunningMachine
 #define ARTWORK_USE_OVERLAYS	0x02
 #define ARTWORK_USE_BEZELS		0x04
 
+enum /* used to index content-specific flags */
+{
+  CONTENT_NEOGEO = 0,
+  CONTENT_STV,
+  CONTENT_DIEHARD,
+  CONTENT_ALT_SOUND,
+  CONTENT_VECTOR,
+  CONTENT_DIAL,
+  CONTENT_TRACKBALL,
+  CONTENT_DUAL_JOYSTICK,
+  CONTENT_LIGHTGUN,
+  CONTENT_PADDLE,
+  CONTENT_AD_STICK,
+  CONTENT_HAS_SERVICE,
+  CONTENT_HAS_TILT,  
+  CONTENT_ALTERNATING_CTRLS,
+  CONTENT_MIRRORED_CTRLS,
+  CONTENT_ROTATE_JOY_45,
+  CONTENT_PLAYER_COUNT,
+  CONTENT_CTRL_COUNT,
+  CONTENT_BUTTON_COUNT,
+  CONTENT_JOYSTICK_DIRECTIONS,
+  CONTENT_DCS_SPEEDHACK,
+  CONTENT_NVRAM_BOOTSTRAP,
+  CONTENT_end,
+};
 
 /* The host platform should fill these fields with the preferences specified in the GUI */
 /* or on the commandline. */
 struct GameOptions
 {
-	mame_file *	record;			    /* handle to file to record input to */
-	mame_file *	playback;		    /* handle to file to playback input from */
-	mame_file *	language_file;	    /* handle to file for localization */
+  mame_file *record;			       /* handle to file to record input to */
+  mame_file *playback;		       /* handle to file to playback input from */
+  mame_file *language_file;	     /* handle to file for localization */
 
-    char *  libretro_content_path;
-    char *  libretro_system_path;
-    char *  libretro_save_path;
-    
-	int		 mame_debug;		    /* 1 to enable debugging */
-	int		 cheat;			        /* 1 to enable cheating */
-	int 	 skip_disclaimer;	    /* 1 to skip the disclaimer screen at startup */
-	int 	 skip_gameinfo;		    /* 1 to skip the game info screen at startup */
-    int      skip_warnings;         /* 1 to skip the game warning screen at startup */
-    
-    unsigned dial_share_xy;
-    unsigned mouse_device;
-    unsigned rstick_to_btns;
-    unsigned tate_mode;
+  int      content_flags[CONTENT_end];
 
-    int      crosshair_enable;
-    unsigned activate_dcs_speedhack;
+  char     *romset_filename_noext;
+  char     *libretro_content_path;
+  char     *libretro_system_path;
+  char     *libretro_save_path;
 
-	int		 samplerate;		    /* sound sample playback rate, in KHz */
-	int		 use_samples;	        /* 1 to enable external .wav samples */
-    unsigned use_external_hiscore;  /* 1 to load hiscore.dat from the libretro system folder structure rather than the compiled core */
+  int      mame_debug;		       /* 1 to enable debugging */
+	int		   cheat;			        /* 1 to enable cheating */
+  int      skip_gameinfo;		     /* 1 to skip the game info screen at startup */
+  bool 	   skip_disclaimer;	     /* 1 to skip the disclaimer screen at startup */
+  bool     skip_warnings;        /* 1 to skip the game warning screen at startup */
+  bool     display_setup;        /* the MAME setup menu */
+  bool     all_ctrls;            /* show unused controls in the frontend remapper */
 
-	float	 brightness;		    /* brightness of the display */
-	float	 pause_bright;		    /* additional brightness when in pause */
-	float	 gamma;			        /* gamma correction of the display */
-    int      frameskip;
-	int		 color_depth;	        /* valid: 15, 16, or 32. any other value means auto */
-	int		 ui_orientation;	    /* orientation of the UI relative to the video */
-        
-	int		 vector_width;	        /* requested width for vector games; 0 means default (640) */
-	int		 vector_height;	        /* requested height for vector games; 0 means default (480) */
-	float	 beam;			        /* vector beam width */
-	float	 vector_flicker;	    /* vector beam flicker effect control */
-	float	 vector_intensity;      /* vector beam intensity */
-	int		 translucency;	        /* 1 to enable translucency on vectors */
-	int 	 antialias;		        /* 1 to enable antialiasing on vectors */
-    unsigned vector_resolution_multiplier;
-    
-	int		 use_artwork;	        /* bitfield indicating which artwork pieces to use */
-	int		 artwork_res;	        /* 1 for 1x game scaling, 2 for 2x */
-	int		 artwork_crop;	        /* 1 to crop artwork to the game screen */
+  unsigned dial_share_xy;
+  unsigned mouse_device;
+  unsigned input_interface;                /* can be set to RETRO_DEVICE_JOYPAD, RETRO_DEVICE_KEYBOARD, or 0 (both simultaneously) */
+  unsigned retropad_layout[DISP_PLAYER6];  /* flags to indicate the default layout for each player */
+  bool     dual_joysticks;                 /* Player 1 uses Joystick 1 & 2, Player 2 uses Joystick 3 and 4 */
+  bool 	   restrict_4_way;                 /* simulate 4-way joystick restrictor */
+  unsigned rstick_to_btns;
+  unsigned tate_mode;
 
-	char	 savegame;		        /* character representing a savegame to load */
-	int      crc_only;              /* specify if only CRC should be used as checksum */
-    unsigned skip_rom_verify;       
-	char *	 bios;			        /* specify system bios (if used), 0 is default */
+  int      crosshair_enable;
+  unsigned activate_dcs_speedhack;
+  bool     mame_remapping;       /* display MAME input remapping menu */
 
-	int		 debug_width;	        /* requested width of debugger bitmap */
-	int		 debug_height;	        /* requested height of debugger bitmap */
-	int		 debug_depth;	        /* requested depth of debugger bitmap */
+  int      samplerate;		       /* sound sample playback rate, in KHz */
+  bool     use_samples;	         /* 1 to enable external .wav samples */
+  unsigned use_external_hiscore; /* 1 to load hiscore.dat from the libretro system folder structure rather than the compiled core */
 
-};
+  float	   brightness;		       /* brightness of the display */
+  float	   pause_bright;		     /* additional brightness when in pause */
+  float	   gamma;			           /* gamma correction of the display */
+  int      frameskip;
+  int      color_depth;	         /* valid: 15, 16, or 32. any other value means auto */
+  int      ui_orientation;	     /* orientation of the UI relative to the video */
+      
+  int      vector_width;	       /* requested width for vector games; 0 means default (640) */
+  int      vector_height;	       /* requested height for vector games; 0 means default (480) */
+  float    beam;                 /* vector beam width */
+  int      vector_flicker;	     /* vector beam flicker effect control */
+  float	   vector_intensity_correction;   
+  int      translucency;	       /* 1 to enable translucency on vectors */
+  int      antialias;		         /* 1 to enable antialiasing on vectors */
+  unsigned vector_resolution_multiplier;
+
+  int      use_artwork;	         /* bitfield indicating which artwork pieces to use */
+  int      artwork_res;	         /* 1 for 1x game scaling, 2 for 2x */
+  int      artwork_crop;	       /* 1 to crop artwork to the game screen */
+
+  char     savegame;		         /* character representing a savegame to load */
+  int      crc_only;             /* specify if only CRC should be used as checksum */
+  bool     nvram_bootstrap;
+  
+  const char *bios;			         /* specify system bios (if used), 0 is default */
+  
+  bool     system_subfolder;     /* save all system files within a subfolder of the libretro system folder rather than directly in the system folder */
+  bool     save_subfolder;       /* save all save files within a subfolder of the libretro system folder rather than directly in the system folder */  
+  
+  int      debug_width;	         /* requested width of debugger bitmap */
+  int      debug_height;	       /* requested height of debugger bitmap */
+  int      debug_depth;	         /* requested depth of debugger bitmap */
+  bool     cheat_input_ports;     /*cheat input ports enable/disable */
+  bool     machine_timing;         
+  };
 
 
 
@@ -302,8 +345,10 @@ extern struct RunningMachine *Machine;
 
 /* ----- core system management ----- */
 
+bool init_game(int game);
+
 /* execute a given game by index in the drivers[] array */
-int run_game(int game);
+bool run_game(int game);
 
 /* construct a machine driver */
 struct InternalMachineDriver;
@@ -333,12 +378,10 @@ void update_video_and_audio(void);
 /* (this calls draw_screen and update_video_and_audio) */
 int updatescreen(void);
 
+void mame_done(void);
 
 
 /* ----- miscellaneous bits & pieces ----- */
-
-/* mame_fopen() must use this to know if high score files can be used */
-int mame_highscore_enabled(void);
 
 /* set the state of a given LED */
 void set_led_status(int num, int on);
