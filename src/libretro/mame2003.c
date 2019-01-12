@@ -14,6 +14,8 @@
 #include "driver.h"
 #include "state.h"
 
+#include "log.h"
+
 /* Part of libretro's API */
 int gotFrame;
 
