@@ -18,6 +18,9 @@
 #include "drawgfx.h"
 #include "palette.h"
 
+#include "log.h"
+
+
 
 extern int gbPriorityBitmapIsDirty;
 extern retro_log_printf_t log_cb;
