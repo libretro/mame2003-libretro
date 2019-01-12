@@ -348,7 +348,7 @@ extern struct RunningMachine *Machine;
 bool init_game(int game);
 
 /* execute a given game by index in the drivers[] array */
-bool run_game(int game);
+int run_game(int game);
 
 /* construct a machine driver */
 struct InternalMachineDriver;
