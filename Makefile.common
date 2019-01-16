@@ -10,7 +10,7 @@ INCFLAGS := \
 	-I$(LIBRETRO_COMM_DIR)/include \
 	-I$(LIBRETRO_COMM_DIR)/include/file \
 	-I$(LIBRETRO_COMM_DIR)/include/compat \
-	-I$(LIBRETRO_COMM_DIR)/include/zlib
+	-I$(LIBRETRO_COMM_DIR)/zlib
 
 ifneq (,$(findstring msvc200,$(platform)))
 INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
