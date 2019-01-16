@@ -7,7 +7,7 @@
 #ifndef CHD_H
 #define CHD_H
 
-#include <formats/libchdr/coretypes.h>
+#include <libchdr/coretypes.h>
 
 
 /***************************************************************************

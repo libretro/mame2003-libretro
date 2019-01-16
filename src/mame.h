@@ -12,18 +12,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <compat/posix_string.h>
+#include <compat/msvc.h>
+#if defined(__EMSCRIPTEN__)
+#include <strings.h>
+#endif
 #include "fileio.h"
-#include "mame2003.h"
+#include "log.h"
 #include "drawgfx.h"
 #include "palette.h"
 
-#include "log.h"
-
-
 
 extern int gbPriorityBitmapIsDirty;
-extern retro_log_printf_t log_cb;
 extern retro_environment_t environ_cb;
 
 /***************************************************************************
