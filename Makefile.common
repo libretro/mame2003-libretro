@@ -77,8 +77,6 @@ SOURCES_C := \
 	$(CORE_DIR)/window.c \
 	$(CORE_DIR)/profiler.c \
 	$(CORE_DIR)/hash.c \
-	$(CORE_DIR)/sha1.c \
-	$(CORE_DIR)/chd.c \
 	$(CORE_DIR)/harddisk.c \
 	$(CORE_DIR)/md5.c \
 	$(CORE_DIR)/machine/idectrl.c \
@@ -2590,6 +2588,11 @@ SOURCES_C += $(CORE_DIR)/sound/ymf271.c
 else
 SOUNDDEFS += -DHAS_YMF271=0
 endif
+
+SOURCES_C += \
+	$(LIBRETRO_COMM_DIR)/formats/libchdr/chd.c \
+	$(LIBRETRO_COMM_DIR)/formats/libchdr/libchdr_sha1.c \
+	$(LIBRETRO_COMM_DIR)/utils/sha1.c
 
 ifeq ($(STATIC_LINKING),1)
 else
