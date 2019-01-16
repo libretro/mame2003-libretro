@@ -231,7 +231,7 @@ void hs_open (const char *name)
   {
       printf("hiscore.dat not found: generating new hiscore.dat\n");
     	db_file = mame_fopen(NULL, db_filename, FILETYPE_HIGHSCORE_DB, 1);
-			mame_fwrite(db_file, hiscoredat, hiscoredat_length); 
+			mame_fwrite(db_file, hiscoredat_bytes, hiscoredat_length); 
 			mame_fclose(db_file);
   }
   
