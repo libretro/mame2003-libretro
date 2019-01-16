@@ -191,7 +191,6 @@ struct GameOptions
 
 	int		 samplerate;		    /* sound sample playback rate, in KHz */
 	int		 use_samples;	        /* 1 to enable external .wav samples */
-    unsigned use_external_hiscore;  /* 1 to load hiscore.dat from the libretro system folder structure rather than the compiled core */
 
 	float	 brightness;		    /* brightness of the display */
 	float	 pause_bright;		    /* additional brightness when in pause */
