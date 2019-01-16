@@ -164,7 +164,6 @@ void retro_set_environment(retro_environment_t cb)
       { APPNAME"-skip_disclaimer", "Skip Disclaimer; enabled|disabled" },
       { APPNAME"-skip_warnings", "Skip Warnings; disabled|enabled" },
       { APPNAME"-sample_rate", "Sample Rate (KHz); 48000|8000|11025|22050|44100" },
-      { APPNAME"-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
       { APPNAME"-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
 #if defined(__IOS__)
       { APPNAME"-mouse_device", "Mouse Device; pointer|mouse|disabled" },
@@ -324,20 +323,6 @@ static void update_variables(void)
       options.samplerate = atoi(var.value);
    else
       options.samplerate = 48000;
-
-   var.value = NULL;
-   var.key = APPNAME"-external_hiscore";
-   
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.use_external_hiscore = 1;
-      else
-         options.use_external_hiscore = 0;
-   }
-   else
-      options.use_external_hiscore = 0;  
-
 
    var.value = NULL;
    
