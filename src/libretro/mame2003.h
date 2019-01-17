@@ -3,8 +3,21 @@
 
 #include <stdio.h>
 #include <libretro.h>
+#include <file/file_path.h>
+#include <compat/posix_string.h>
 #include "osd_cpu.h"
 #include "inptport.h"
+
+/* we can't #include <retro_miscellaneous.h> to bring in PATH_MAX_LENGTH due to namespace conflicts */
+#ifndef PATH_MAX_LENGTH
+#if defined(__CELLOS_LV2__)
+#define PATH_MAX_LENGTH CELL_FS_MAX_FS_PATH_LENGTH
+#elif defined(_XBOX1) || defined(_3DS) || defined(PSP) || defined(GEKKO)|| defined(WIIU)
+#define PATH_MAX_LENGTH 512
+#else
+#define PATH_MAX_LENGTH 4096
+#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,6 +33,56 @@ extern "C" {
 #else
 #define FPTR unsigned int
 #endif
+
+
+extern void mame2003_video_get_geometry(struct retro_game_geometry *geom);
+
+
+/******************************************************************************
+
+	Shared libretro log interface
+    set in mame2003.c 
+
+******************************************************************************/
+extern retro_log_printf_t log_cb;
+
+
+/******************************************************************************
+
+	frontend message interface
+    implemented in mame2003.c 
+
+******************************************************************************/
+extern void frontend_message_cb(const char *message_string, unsigned frames_to_display);
+
+
+struct retro_variable_default
+{
+   const char *key;
+   const char *defaults_string;
+};
+
+enum
+{
+  IDX_CLASSIC = 0,
+  IDX_MODERN,
+  IDX_8BUTTON,
+  IDX_6BUTTON,
+  IDX_PAD_end,
+};
+
+#define PLAYER_COUNT 6
+
+enum /*the "display numbers" for each player, as opposed to their array index */
+{
+  DISP_PLAYER1 = 1,
+  DISP_PLAYER2,
+  DISP_PLAYER3,
+  DISP_PLAYER4,
+  DISP_PLAYER5,
+  DISP_PLAYER6
+};
+
 
 /******************************************************************************
 
@@ -105,22 +168,6 @@ int osd_skip_this_frame(void);
   on the window title bar.
 */
 void osd_update_video_and_audio(struct mame_display *display);
-
-
-/*
-  Provides a hook to allow the OSD system to override processing of a
-  snapshot.  This function will either return a new bitmap, for which the
-  caller is responsible for freeing.
-*/
-struct mame_bitmap *osd_override_snapshot(struct mame_bitmap *bitmap, struct rectangle *bounds);
-
-/*
-  Returns a pointer to the text to display when the FPS display is toggled.
-  This normally includes information about the frameskip, FPS, and percentage
-  of full game speed.
-*/
-const char *osd_get_fps_text(const struct performance_info *performance);
-
 
 
 /******************************************************************************
@@ -244,22 +291,6 @@ void osd_analogjoy_read(int player,int analog_axis[MAX_ANALOG_AXES], InputCode a
 void osd_customize_inputport_defaults(struct ipd *defaults);
 
 
-
-/******************************************************************************
-
-	File I/O
-
-******************************************************************************/
-
-/* inp header */
-typedef struct
-{
-	char name[9];      /* 8 bytes for game->name + NUL */
-	char version[3];   /* byte[0] = 0, byte[1] = version byte[2] = beta_version */
-	char reserved[20]; /* for future use, possible store game options? */
-} INP_HEADER;
-
-
 /******************************************************************************
 
 	Timing
@@ -278,7 +309,6 @@ cycles_t osd_cycles_per_second(void);
    This call must be the fastest possible because it is called by the profiler;
    it isn't necessary to know the number of ticks per seconds. */
 cycles_t osd_profiling_ticks(void);
-
 
 
 #ifdef __cplusplus
