@@ -1,10 +1,10 @@
 /*********************************************************************
 
 	mame2003.c
-    
-    a port of mame 0.78 to the libretro API
-    
-*********************************************************************/    
+
+    a port of Xmame 0.78 to the libretro API
+
+*********************************************************************/
 
 #include <stdint.h>
 #include <string/stdstring.h>
@@ -48,7 +48,7 @@ retro_log_printf_t                 log_cb;
 static struct retro_message        frontend_message;
 
 struct                             retro_perf_callback perf_cb;
-                                                  
+
 retro_environment_t                environ_cb                    = NULL;
 retro_video_refresh_t              video_cb                      = NULL;
 static retro_input_poll_t          poll_cb                       = NULL;
@@ -80,23 +80,23 @@ enum CORE_OPTIONS/* controls the order in which core options appear. common, imp
   OPT_RSTICK_BTNS,
   OPT_VECTOR_RESOLUTION,
   OPT_VECTOR_ANTIALIAS,
-  OPT_VECTOR_BEAM,  
+  OPT_VECTOR_BEAM,
   OPT_VECTOR_TRANSLUCENCY,
   OPT_VECTOR_FLICKER,
   OPT_VECTOR_INTENSITY,
   OPT_DCS_SPEEDHACK,
   OPT_CORE_SYS_SUBFOLDER,
   OPT_CORE_SAVE_SUBFOLDER,
-  OPT_TATE_MODE,  
+  OPT_TATE_MODE,
   OPT_BRIGHTNESS,
-  OPT_GAMMA,  
+  OPT_GAMMA,
   OPT_FRAMESKIP,
-  OPT_SAMPLE_RATE,  
-  OPT_INPUT_INTERFACE,    
+  OPT_SAMPLE_RATE,
+  OPT_INPUT_INTERFACE,
   OPT_MAME_REMAPPING,
   OPT_ARTWORK,
   OPT_ART_RESOLUTION,
-  OPT_NVRAM_BOOTSTRAP, 
+  OPT_NVRAM_BOOTSTRAP,
   OPT_Cheat_Input_Ports,
   OPT_Machine_Timing,
   OPT_end /* dummy last entry */
@@ -164,41 +164,15 @@ static void check_system_specs(void)
 
 void retro_set_environment(retro_environment_t cb)
 {
-                                                
-                                                        
-                                                                           
-                                                                         
-                                                                     
-                                                                                   
-                                                                                                                                          
-                    
-                                                                         
-     
-                                                                         
-      
-                                                                                   
-                                                                               
-                                                                                                                                         
-                                                                                                                      
-                                                                              
-                                                                                                                                    
-                                                                                 
-                                                                                       
-                                                                            
-                     
-     
   environ_cb = cb;
 }
 
-                                                    
- 
-
-/* static void init_core_options(void) 
+/* static void init_core_options(void)
  *
- * Note that core options are not presented in order they are initialized here, 
+ * Note that core options are not presented in order they are initialized here,
  * but rather by their order in the OPT_ enum
  */
-static void init_core_options(void) 
+static void init_core_options(void)
 {
   init_default(&default_options[OPT_4WAY],                APPNAME"_four_way_emulation",  "4-way joystick emulation on 8-way joysticks; disabled");
 #if defined(__IOS__)
@@ -208,20 +182,20 @@ static void init_core_options(void)
 #endif
   init_default(&default_options[OPT_CROSSHAIR_ENABLED],   APPNAME"_crosshair_enabled",   "Show Lightgun crosshair; enabled|disabled");
   init_default(&default_options[OPT_SKIP_DISCLAIMER],     APPNAME"_skip_disclaimer",     "Skip Disclaimer; disabled|enabled");
-  init_default(&default_options[OPT_SKIP_WARNINGS],       APPNAME"_skip_warnings",       "Skip Warnings; disabled|enabled");    
+  init_default(&default_options[OPT_SKIP_WARNINGS],       APPNAME"_skip_warnings",       "Skip Warnings; disabled|enabled");
   init_default(&default_options[OPT_DISPLAY_SETUP],       APPNAME"_display_setup",       "Display MAME menu; disabled|enabled");
   init_default(&default_options[OPT_BRIGHTNESS],          APPNAME"_brightness",          "Brightness; 1.0|0.2|0.3|0.4|0.5|0.6|0.7|0.8|0.9|1.1|1.2|1.3|1.4|1.5|1.6|1.7|1.8|1.9|2.0");
   init_default(&default_options[OPT_GAMMA],               APPNAME"_gamma",               "Gamma correction; 1.0|0.5|0.6|0.7|0.8|0.9|1.1|1.2|1.3|1.4|1.5|1.6|1.7|1.8|1.9|2.0");
   init_default(&default_options[OPT_ARTWORK],             APPNAME"_display_artwork",     "Display artwork (Restart core); enabled|disabled");
   init_default(&default_options[OPT_ART_RESOLUTION],      APPNAME"_art_resolution",      "Artwork resolution multiplier (Restart core); 2|1");
   init_default(&default_options[OPT_NEOGEO_BIOS],         APPNAME"_neogeo_bios",         "Specify Neo Geo BIOS (Restart core); default|euro|euro-s1|us|us-e|asia|japan|japan-s2|unibios33|unibios20|unibios13|unibios11|unibios10|debug|asia-aes");
-  init_default(&default_options[OPT_STV_BIOS],            APPNAME"_stv_bios",            "Specify Sega ST-V BIOS (Restart core); default|japan|japana|us|japan_b|taiwan|europe");  
+  init_default(&default_options[OPT_STV_BIOS],            APPNAME"_stv_bios",            "Specify Sega ST-V BIOS (Restart core); default|japan|japana|us|japan_b|taiwan|europe");
   init_default(&default_options[OPT_USE_ALT_SOUND],       APPNAME"_use_alt_sound",       "Use CD soundtrack (Restart core); disabled");
   init_default(&default_options[OPT_SHARE_DIAL],          APPNAME"_dialsharexy",         "Share 2 player dial controls across one X/Y device; disabled|enabled");
   init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled");
   init_default(&default_options[OPT_RSTICK_BTNS],         APPNAME"_rstick_to_btns",      "Map right analog stick as buttons; enabled|disabled");
   init_default(&default_options[OPT_TATE_MODE],           APPNAME"_tate_mode",           "TATE Mode; disabled|enabled");
-  init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution_multiplier", 
+  init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution_multiplier",
                                                                                          "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10");
   init_default(&default_options[OPT_VECTOR_ANTIALIAS],    APPNAME"_vector_antialias",    "Vector antialiasing; enabled|disabled");
   init_default(&default_options[OPT_VECTOR_BEAM],         APPNAME"_vector_beam_width",   "Vector beam width (only with antialiasing); 1.2|1|1.4|1.6|1.8|2|2.5|3|4|5|6|7|8|9|10|11|12");
@@ -231,14 +205,14 @@ static void init_core_options(void)
   init_default(&default_options[OPT_NVRAM_BOOTSTRAP],     APPNAME"_nvram_bootstraps",    "NVRAM Bootstraps; enabled|disabled");
   init_default(&default_options[OPT_SAMPLE_RATE],         APPNAME"_sample_rate",         "Sample Rate (KHz); 48000|8000|11025|22050|30000|44100|");
   init_default(&default_options[OPT_DCS_SPEEDHACK],       APPNAME"_dcs_speedhack",       "DCS Speedhack; enabled|disabled");
-  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous");  
-  init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); enabled|disabled");  
+  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous");
+  init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); enabled|disabled");
   init_default(&default_options[OPT_FRAMESKIP],           APPNAME"_frameskip",           "Frameskip; 0|1|2|3|4|5");
   init_default(&default_options[OPT_CORE_SYS_SUBFOLDER],  APPNAME"_core_sys_subfolder",  "Locate system files within a subfolder; enabled"); /* This should be probably handled by the frontend and not by cores per discussions in Fall 2018 but RetroArch for example doesn't provide this as an option. */
   init_default(&default_options[OPT_CORE_SAVE_SUBFOLDER], APPNAME"_core_save_subfolder", "Locate save files within a subfolder; enabled"); /* This is already available as an option in RetroArch although it is left enabled by default as of November 2018 for consistency with past practice. At least for now.*/
   init_default(&default_options[OPT_Cheat_Input_Ports],   APPNAME"_cheat_input ports",   "Dip switch/Cheat input ports; disabled|enabled");
   init_default(&default_options[OPT_Machine_Timing],      APPNAME"_machine_timing",      "Bypass audio skew (Restart core); disabled");
-  init_default(&default_options[OPT_end], NULL, NULL); 
+  init_default(&default_options[OPT_end], NULL, NULL);
   set_variables(true);
 }
 
@@ -246,7 +220,7 @@ static void set_variables(bool first_time)
 {
   static struct retro_variable_default  effective_defaults[OPT_end + 1];
   static unsigned effective_options_count;         /* the number of core options in effect for the current content */
-  int option_index   = 0; 
+  int option_index   = 0;
 
   for(option_index = 0; option_index < (OPT_end + 1); option_index++)
   {
@@ -259,7 +233,7 @@ static void set_variables(bool first_time)
       case OPT_CROSSHAIR_ENABLED:
          if(!options.content_flags[CONTENT_LIGHTGUN])
            continue;
-         break; 
+         break;
       case OPT_STV_BIOS:
          if(!options.content_flags[CONTENT_STV])
            continue; /* only offer BIOS selection when it is relevant */
@@ -316,11 +290,11 @@ static struct retro_variable_default *spawn_effective_option(int option_index)
    *
    * search for the string "; " as the delimiter between the option display name and the values
    * stringify the current value for this option
-   * see if the current option string is already listed first in the original default -- 
+   * see if the current option string is already listed first in the original default --
    *    if the current selected option is not in the original defaults string at all
    *      log an error message and bail. that shouldn't be possible.
-   *    is the currently selected option the first in the default pipe-delimited list? 
-   *      if so, just return default_options[option_index]          
+   *    is the currently selected option the first in the default pipe-delimited list?
+   *      if so, just return default_options[option_index]
    *    else
    *       create a copy of default_options[option_index].defaults_string.
    *       First add the stringified current option as the first in the pipe-delimited list for this copied string
@@ -337,7 +311,7 @@ void init_default(struct retro_variable_default *def, const char *key, const cha
 
 static void update_variables(bool first_time)
 {
-     
+
   struct retro_led_interface ledintf;
   struct retro_variable var;
   int index;
@@ -350,7 +324,7 @@ static void update_variables(bool first_time)
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && !string_is_empty(var.value)) /* the frontend sends a value for this core option */
     {
       current_options[index].value = var.value; /* keep the state of core options matched with the frontend */
-            
+
       switch(index)
       {
         case OPT_INPUT_INTERFACE:
@@ -358,7 +332,7 @@ static void update_variables(bool first_time)
             options.input_interface = RETRO_DEVICE_JOYPAD;
           else if(strcmp(var.value, "keyboard") == 0)
             options.input_interface = RETRO_DEVICE_KEYBOARD;
-		    else 
+		    else
 			    options.input_interface = RETRO_DEVICE_KEYBOARD + RETRO_DEVICE_JOYPAD;
         break;
 
@@ -396,7 +370,7 @@ static void update_variables(bool first_time)
           else
             options.crosshair_enable = 0;
           break;
-          
+
         case OPT_SKIP_DISCLAIMER:
           if(strcmp(var.value, "enabled") == 0)
             options.skip_disclaimer = true;
@@ -421,7 +395,7 @@ static void update_variables(bool first_time)
         case OPT_BRIGHTNESS:
           options.brightness = atof(var.value);
           if(!first_time)
-            palette_set_global_brightness(options.brightness);    
+            palette_set_global_brightness(options.brightness);
           break;
 
         case OPT_GAMMA:
@@ -510,7 +484,7 @@ static void update_variables(bool first_time)
           {
             options.dial_share_xy = 0;
             break;
-          }          
+          }
 
         case OPT_DUAL_JOY:
           if(options.content_flags[CONTENT_DUAL_JOYSTICK])
@@ -519,7 +493,7 @@ static void update_variables(bool first_time)
               options.dual_joysticks = true;
             else
               options.dual_joysticks = false;
-            
+
             if(first_time)
               old_dual_joystick_state = options.dual_joysticks;
             else if(old_dual_joystick_state != options.dual_joysticks)
@@ -529,9 +503,9 @@ static void update_variables(bool first_time)
               osd_get_path(FILETYPE_CONFIG, buffer);
               snprintf(cfg_file_path, PATH_MAX_LENGTH, "%s%s%s.cfg", buffer, path_default_slash(), options.romset_filename_noext);
               buffer[0] = '\0';
-              
+
               if(path_is_valid(cfg_file_path))
-              {            
+              {
                 if(!remove(cfg_file_path) == 0)
                   snprintf(buffer, PATH_MAX_LENGTH, "%s.cfg exists but cannot be deleted!\n", options.romset_filename_noext);
                 else
@@ -539,7 +513,7 @@ static void update_variables(bool first_time)
               }
               log_cb(RETRO_LOG_INFO, LOGPRE "%s Reloading input maps.\n", buffer);
               usrintf_showmessage_secs(4, "%s Reloading input maps.", buffer);
-              
+
               load_input_port_settings(); /* this may just read the active mappings from memory (ie the same ones we're trying to delete) rather than resetting them to default */
               /* should use reset_driver_inputs() if that function is ever completed */
 
@@ -549,7 +523,7 @@ static void update_variables(bool first_time)
           }
           else /* always disabled except when options.content_flags[CONTENT_DUAL_JOYSTICK] has been set to true */
           {
-            options.dual_joysticks = false; 
+            options.dual_joysticks = false;
             break;
           }
 
@@ -581,7 +555,7 @@ static void update_variables(bool first_time)
           case OPT_VECTOR_BEAM:
           options.beam = atof(var.value); /* float: vector beam width */
           break;
-          
+
         case OPT_VECTOR_TRANSLUCENCY:
           if(strcmp(var.value, "enabled") == 0)
             options.translucency = 1; /* integer: 1 to enable translucency on vectors */
@@ -633,7 +607,7 @@ static void update_variables(bool first_time)
             options.system_subfolder = true;
           else
             options.system_subfolder = false;
-          break;       
+          break;
 
           case OPT_CORE_SAVE_SUBFOLDER:
           if(strcmp(var.value, "enabled") == 0)
@@ -647,7 +621,7 @@ static void update_variables(bool first_time)
             options.cheat_input_ports = true;
           else
             options.cheat_input_ports = false;
-          break;		  
+          break;		
 	    case OPT_Machine_Timing:
           if(strcmp(var.value, "enabled") == 0)
             options.machine_timing = true;
@@ -657,219 +631,37 @@ static void update_variables(bool first_time)
 	  }
     }
   }
- 
+
   /*if(!options.content_flags[CONTENT_ALT_SOUND])*/
     options.use_samples = true;
 
   ledintf.set_led_state = NULL;
   environ_cb(RETRO_ENVIRONMENT_GET_LED_INTERFACE, &ledintf);
   led_state_cb = ledintf.set_led_state;
-  
+
   if(reset_control_descriptions) /* one of the option changes has flagged a need to re-describe the controls */
   {
     /*retro_describe_controls();*/
     reset_control_descriptions = false;
   }
-      
-                             
-   
-                    
-                                 
-
-                                                                     
-                                          
-
-                    
-                                     
-   
-                                                                     
-    
-                                           
-                                            
-          
-                                            
-    
-       
-                                         
-
-                    
-                                       
-
-                                                                     
-    
-                                           
-                                     
-          
-                                     
-    
-       
-                                  
-
-                    
-                                     
-
-                                                                     
-    
-                                           
-                                   
-          
-                                   
-    
-       
-                                
-   
-                    
-                                   
-   
-                                                                     
-                                           
-       
-                                 
-
-                    
-   
-                                   
-                                                                     
-    
-                                           
-                                   
-          
-                                   
-    
-       
-                                
-
-                    
-   
-                                    
-                                                                     
-    
-                                           
-                                                     
-                                              
-                                                   
-          
-                                  
-    
-       
-                               
-
-                    
-   
-                                         
-                                                                     
-    
-                                           
-                                      
-          
-                                      
-    
-       
-                                   
-
-                    
-   
-                                        
-                                                                     
-    
-                                           
-                                    
-          
-                                    
-    
-       
-                                 
-
-                    
-   
-                                 
-                                                                     
-    
-                                           
-                               
-          
-                               
-    
-       
-                            
-
-                    
-    
-                                                    
-                                                                      
-                                                             
- 
-                    
-   
-                                        
-                                                                     
-    
-                                           
-                                                                                  
-          
-                               
-    
-
-                    
-   
-                                         
-                                                                     
-    
-                                                                    
-    
-
-                    
-   
-                                           
-                                                                     
-    
-                                           
-                                                                                     
-           
-                                            
-    
- 
-                    
-   
-                                       
-                                                                     
-    
-                                                                                               
-       
-
-                    
-
-                                           
-                                                                     
-    
-                                                                                               
-    
-    
-    
-                                          
-                                    
-       
-                                                                 
-                                            
-    
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-	mame2003_video_get_geometry(&info->geometry);  
+	mame2003_video_get_geometry(&info->geometry);
 	if (options.machine_timing)
 	//by pass audio scew
 	{
 		if (Machine->drv->frames_per_second < 60.0 )
-			info->timing.fps = 60.0; 
+			info->timing.fps = 60.0;
 
 		else  if (Machine->drv->frames_per_second > 60.0 )
-			info->timing.fps = Machine->drv->frames_per_second; // qbert is 61 fps 
+			info->timing.fps = Machine->drv->frames_per_second; // qbert is 61 fps
 	
-		if ( Machine->drv->frames_per_second * 1000 < options.samplerate || Machine->drv->frames_per_second < 60 )   
+		if ( Machine->drv->frames_per_second * 1000 < options.samplerate || Machine->drv->frames_per_second < 60 )
 			options.samplerate = Machine->drv->frames_per_second * 1000;
 	}
-  
+
 	else
 	{
 
@@ -896,7 +688,7 @@ void retro_get_system_info(struct retro_system_info *info)
 #endif
    info->library_version = "0.78" GIT_VERSION;
    info->valid_extensions = "zip";
-   info->need_fullpath = true;   
+   info->need_fullpath = true;
    info->block_extract = true;
 }
 
@@ -905,7 +697,6 @@ bool retro_load_game(const struct retro_game_info *game)
   int              driverIndex    = 0;
   int              port_index;
   char             *driver_lookup = NULL;
-  static const int uiModes[]      = {ROT0, ROT90, ROT180, ROT270};
 
   if(string_is_empty(game->path))
   {
@@ -913,7 +704,7 @@ bool retro_load_game(const struct retro_game_info *game)
     return false;
   }
 
-  log_cb(RETRO_LOG_INFO, LOGPRE "Content path: %s.\n", game->path);    
+  log_cb(RETRO_LOG_INFO, LOGPRE "Content path: %s.\n", game->path);
   if(!path_is_valid(game->path))
   {
     log_cb(RETRO_LOG_ERROR, LOGPRE "Content path is not valid. Exiting!");
@@ -929,7 +720,7 @@ bool retro_load_game(const struct retro_game_info *game)
   {
     const struct GameDriver *needle = drivers[driverIndex];
 
-    if ((strcasecmp(driver_lookup, needle->description) == 0) 
+    if ((strcasecmp(driver_lookup, needle->description) == 0)
       || (strcasecmp(driver_lookup, needle->name) == 0) )
     {
       log_cb(RETRO_LOG_INFO, LOGPRE "Driver index counter: %d. Matched game driver: %s.\n",  driverIndex, needle->name);
@@ -945,8 +736,8 @@ bool retro_load_game(const struct retro_game_info *game)
  }
 
    if(!init_game(driverIndex))
-    return false;  
-  
+    return false;
+
   set_content_flags();
 
   options.libretro_content_path = strdup(game->path);
@@ -960,7 +751,7 @@ bool retro_load_game(const struct retro_game_info *game)
       log_cb(RETRO_LOG_INFO, LOGPRE "libretro system path not set by frontend, using content path\n");
       options.libretro_system_path = options.libretro_content_path;
   }
-  
+
   /* Get save directory from frontend */
   options.libretro_save_path = NULL;
   environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
@@ -974,16 +765,16 @@ bool retro_load_game(const struct retro_game_info *game)
   log_cb(RETRO_LOG_INFO, LOGPRE " system path: %s\n", options.libretro_system_path);
   log_cb(RETRO_LOG_INFO, LOGPRE "   save path: %s\n", options.libretro_save_path);
 
-  
+
   init_core_options();
   update_variables(true);
-                                                                                                          
-                                   
-                                   
-                                   
-                                   
-                                    
-                                    
+
+
+
+
+
+
+
 
   #define describe_buttons(INDEX) \
   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
@@ -1012,10 +803,10 @@ bool retro_load_game(const struct retro_game_info *game)
       };
 
     environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
-    
+
   if(!run_game(driverIndex))
     return true;
-  
+
   return false;
 }
 
@@ -1028,7 +819,7 @@ static void set_content_flags(void)
   const struct InputPortTiny *input = game_driver->input_ports;
 
   extern const char* ost_drivers[];
-  
+
   /************ DRIVERS WITH MULTIPLE BIOS OPTIONS ************/
   if (game_driver->clone_of == &driver_neogeo
    ||(game_driver->clone_of && game_driver->clone_of->clone_of == &driver_neogeo))
@@ -1062,15 +853,15 @@ static void set_content_flags(void)
     i++;
   }
 
-  /************ DRIVERS WITH VECTOR VIDEO DISPLAYS ************/  
+  /************ DRIVERS WITH VECTOR VIDEO DISPLAYS ************/
   if(Machine->drv->video_attributes & VIDEO_TYPE_VECTOR)
   {
     options.content_flags[CONTENT_VECTOR] = true;
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using a vector video display.\n");
   }
-  
+
   /************ INPUT-BASED CONTENT FLAGS ************/
-  
+
   options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] = 8; /* default behavior is 8-way joystick, even for 2-way games */
 
 	while ((input->type & ~IPF_MASK) != IPT_END)
@@ -1099,7 +890,7 @@ static void set_content_flags(void)
 					if (options.content_flags[CONTENT_PLAYER_COUNT] < 6) options.content_flags[CONTENT_PLAYER_COUNT] = 6;
 					break;
 			}
-      
+
       if (input->type & IPF_4WAY) /* original controls used a 4-way joystick */
       {
         options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] = 4;
@@ -1185,42 +976,42 @@ static void set_content_flags(void)
 
   if(options.content_flags[CONTENT_DUAL_JOYSTICK] == true)
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using \"dual joystick\" controls.\n");
-  
+
   if (options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] == 4)
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using 4-way joystick controls.\n");
   else
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using 8-way joystick controls.\n");
 
-  /************ DRIVERS FLAGGED IN CONTROLS.C WITH 45-DEGREE JOYSTICK ROTATION ************/  
-  if(game_driver->ctrl_dat->rotate_joy_45) 
-  { 
+  /************ DRIVERS FLAGGED IN CONTROLS.C WITH 45-DEGREE JOYSTICK ROTATION ************/
+  if(game_driver->ctrl_dat->rotate_joy_45)
+  {
     options.content_flags[CONTENT_ROTATE_JOY_45] = true;
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as joysticks rotated 45-degrees with respect to the cabinet.\n");
   }
   else
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as having joysticks on axis with respect to the cabinet.\n");
 
-  /************ DRIVERS FLAGGED IN CONTROLS.C WITH ALTERNATING CONTROLS ************/  
-  if(game_driver->ctrl_dat->alternating_controls) 
-  { 
+  /************ DRIVERS FLAGGED IN CONTROLS.C WITH ALTERNATING CONTROLS ************/
+  if(game_driver->ctrl_dat->alternating_controls)
+  {
     options.content_flags[CONTENT_ALTERNATING_CTRLS] = true;
     /* there may or may not be some need to have a ctrl_count different than player_count, perhaps because of some
        alternating controls layout. this is a place to check some condition and make the two numbers different
        if that should ever prove useful. */
-    if(true)       
+    if(true)
       options.content_flags[CONTENT_CTRL_COUNT] = options.content_flags[CONTENT_PLAYER_COUNT];
   }
   else
     options.content_flags[CONTENT_CTRL_COUNT] = options.content_flags[CONTENT_PLAYER_COUNT];
- 
+
   log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as supporting %i players with %i distinct controls.\n", options.content_flags[CONTENT_PLAYER_COUNT], options.content_flags[CONTENT_CTRL_COUNT]);
   log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as supporting %i button controls.\n", options.content_flags[CONTENT_BUTTON_COUNT]);
 
-  
-  
-  /************ DRIVERS FLAGGED IN CONTROLS.C WITH MIRRORED CONTROLS ************/  
-  if(game_driver->ctrl_dat->mirrored_controls) 
-  { 
+
+
+  /************ DRIVERS FLAGGED IN CONTROLS.C WITH MIRRORED CONTROLS ************/
+  if(game_driver->ctrl_dat->mirrored_controls)
+  {
     options.content_flags[CONTENT_MIRRORED_CTRLS] = true;
     log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as having mirrored multiplayer control labels.\n");
   }
@@ -1239,13 +1030,13 @@ static void set_content_flags(void)
     }
     i++;
   }
-  
+
   /************ DRIVERS WITH NVRAM BOOTSTRAP PATCHES ************/
   if(game_driver->bootstrap != NULL)
   {
     options.content_flags[CONTENT_NVRAM_BOOTSTRAP] = true;
     log_cb(RETRO_LOG_INFO, LOGPRE "Content has an NVRAM bootstrap controlled via core option.\n");
-  }  
+  }
 
 }
 
@@ -1270,7 +1061,7 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
          *prev_coord = coord;
       }
    }
-   
+
    return delta;
 }
 
@@ -1293,7 +1084,7 @@ void retro_run (void)
       retroKeyState[thisInput->code] = input_cb(0, RETRO_DEVICE_KEYBOARD, 0, thisInput->code);
       thisInput ++;
    }
-   
+
    for (i = 0; i < 4; i ++)
    {
       unsigned int offset = (i * 18);
@@ -1303,7 +1094,7 @@ void retro_run (void)
       analogjoy[i][1] = input_cb(i, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y);
       analogjoy[i][2] = input_cb(i, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X);
       analogjoy[i][3] = input_cb(i, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y);
-      
+
       /* Joystick */
       if (options.rstick_to_btns)
       {
@@ -1338,7 +1129,7 @@ void retro_run (void)
       retroJsState[13 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
       retroJsState[14 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
       retroJsState[15 + offset] = input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
-      
+
       if (options.mouse_device)
       {
          if (options.mouse_device == RETRO_DEVICE_MOUSE)
@@ -1371,8 +1162,8 @@ void retro_unload_game(void)
 {
     mame_done();
     /* do we need to be freeing things here? */
-    
-    free(options.romset_filename_noext); 
+
+    free(options.romset_filename_noext);
 }
 
 void retro_deinit(void)
@@ -1385,7 +1176,7 @@ void retro_deinit(void)
 extern size_t state_get_dump_size(void);
 
 size_t retro_serialize_size(void)
-{ 
+{
     return state_get_dump_size();
 }
 
@@ -1459,7 +1250,7 @@ bool retro_unserialize(const void * data, size_t size)
         /* finish and close */
         state_save_load_finish();
 
-        
+
         return true;
 	}
 
@@ -1497,7 +1288,7 @@ int osd_start_audio_stream(int stereo)
 	if (options.machine_timing)
 	{
 		
-		if  ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )   
+		if  ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )
 		{
 			newrate = Machine->drv->frames_per_second * 1000;
 			
@@ -1513,15 +1304,15 @@ int osd_start_audio_stream(int stereo)
 			
 			if ( newrate && newrate != options.samplerate ) options.samplerate = newrate;
 /*			{
-				//this code below crashes android so its set retro_get_system_av_info for now 
+				//this code below crashes android so its set retro_get_system_av_info for now
 				//it also opens and extra ra window on windows
 				struct retro_system_av_info info;
 				retro_get_system_av_info(&info);
-				mame2003_video_get_geometry(&info.geometry);  
+				mame2003_video_get_geometry(&info.geometry);
 				if (options.machine_timing)
 				{
-					if (Machine->drv->frames_per_second < 60.0 ) 			info.timing.fps = 60.0; 
-					else  info.timing.fps = Machine->drv->frames_per_second; // qbert is 61 fps 
+					if (Machine->drv->frames_per_second < 60.0 ) 			info.timing.fps = 60.0;
+					else  info.timing.fps = Machine->drv->frames_per_second; // qbert is 61 fps
 				}		
 				else info.timing.fps = Machine->drv->frames_per_second;				log_cb(RETRO_LOG_INFO,"Changing Sample rate old:%d new:%d",options.samplerate, newrate);
 				options.samplerate = newrate;
@@ -1577,13 +1368,13 @@ int osd_update_audio_stream(INT16 *buffer)
 		
 			int integer_delta = (int)delta_samples;
 			if (integer_delta <= 16 )
-                        { 
+                        {
 				log_cb(RETRO_LOG_DEBUG,"sound: Delta added value %d added to frame\n",integer_delta);
 				samples_per_frame += integer_delta;
 			}
 			else if(integer_delta >= 16) log_cb(RETRO_LOG_INFO, "sound: Delta not added to samples_per_frame too large integer_delta:%d\n", integer_delta);
 			else log_cb(RETRO_LOG_DEBUG,"sound(delta) no contitions met\n");	
-			delta_samples -= integer_delta; 
+			delta_samples -= integer_delta;
 
 		}
 	}
@@ -1743,7 +1534,7 @@ void osd_joystick_end_calibration(void) { }
 /******************************************************************************
 
 	Keyboard
-  
+
 ******************************************************************************/
 
 extern const struct KeyboardInfo retroKeys[];
@@ -1789,7 +1580,7 @@ const struct KeyboardInfo retroKeys[] =
     EMIT1(BACKSPACE),
     EMIT1(TAB),
     EMITX(CLEAR),
-    
+
     EMIT1(BACKSPACE),
     EMIT1(TAB),
     EMITX(CLEAR),
@@ -1811,9 +1602,9 @@ const struct KeyboardInfo retroKeys[] =
     EMIT1(MINUS),
     EMITX(PERIOD),
     EMIT1(SLASH),
-    
+
     EMIT1(0), EMIT1(1), EMIT1(2), EMIT1(3), EMIT1(4), EMIT1(5), EMIT1(6), EMIT1(7), EMIT1(8), EMIT1(9),
-    
+
     EMIT1(COLON),
     EMITX(SEMICOLON),
     EMITX(LESS),
@@ -1827,19 +1618,19 @@ const struct KeyboardInfo retroKeys[] =
     EMITX(CARET),
     EMITX(UNDERSCORE),
     EMITX(BACKQUOTE),
-    
+
     EMIT2(a, A), EMIT2(b, B), EMIT2(c, C), EMIT2(d, D), EMIT2(e, E), EMIT2(f, F),
     EMIT2(g, G), EMIT2(h, H), EMIT2(i, I), EMIT2(j, J), EMIT2(k, K), EMIT2(l, L),
     EMIT2(m, M), EMIT2(n, N), EMIT2(o, O), EMIT2(p, P), EMIT2(q, Q), EMIT2(r, R),
     EMIT2(s, S), EMIT2(t, T), EMIT2(u, U), EMIT2(v, V), EMIT2(w, W), EMIT2(x, X),
     EMIT2(y, Y), EMIT2(z, Z),
-    
+
     EMIT2(DELETE, DEL),
 
     EMIT2(KP0, 0_PAD), EMIT2(KP1, 1_PAD), EMIT2(KP2, 2_PAD), EMIT2(KP3, 3_PAD),
     EMIT2(KP4, 4_PAD), EMIT2(KP5, 5_PAD), EMIT2(KP6, 6_PAD), EMIT2(KP7, 7_PAD),
     EMIT2(KP8, 8_PAD), EMIT2(KP9, 9_PAD),
-    
+
     EMITX(KP_PERIOD),
     EMIT2(KP_DIVIDE, SLASH_PAD),
     EMITX(KP_MULTIPLY),
@@ -1860,7 +1651,7 @@ const struct KeyboardInfo retroKeys[] =
     EMIT2(SCROLLOCK, SCRLOCK),
     EMIT1(RSHIFT), EMIT1(LSHIFT), EMIT2(RCTRL, RCONTROL), EMIT2(LCTRL, LCONTROL), EMIT1(RALT), EMIT1(LALT),
     EMITX(RMETA), EMITX(LMETA), EMITX(LSUPER), EMITX(RSUPER),
-    
+
     EMITX(MODE),
     EMITX(COMPOSE),
 
