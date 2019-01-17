@@ -440,7 +440,7 @@ static void update_variables(void)
    var.key = APPNAME"-vector-intensity";   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      options.vector_intensity = atof(var.value); /* float: vector beam intensity */
+      options.vector_intensity_correction = atof(var.value); /* float: vector beam intensity */
    }
     
    {
