@@ -48,6 +48,7 @@ retro_log_printf_t                 log_cb;
 static struct retro_message        frontend_message;
 
 struct                             retro_perf_callback perf_cb;
+                                                  
 retro_environment_t                environ_cb                    = NULL;
 retro_video_refresh_t              video_cb                      = NULL;
 static retro_input_poll_t          poll_cb                       = NULL;
@@ -163,9 +164,34 @@ static void check_system_specs(void)
 
 void retro_set_environment(retro_environment_t cb)
 {
+                                                
+                                                        
+                                                                           
+                                                                         
+                                                                     
+                                                                                   
+                                                                                                                                          
+                    
+                                                                         
+     
+                                                                         
+      
+                                                                                   
+                                                                               
+                                                                                                                                         
+                                                                                                                      
+                                                                              
+                                                                                                                                    
+                                                                                 
+                                                                                       
+                                                                            
+                     
+     
   environ_cb = cb;
 }
 
+                                                    
+ 
 
 /* static void init_core_options(void) 
  *
@@ -311,6 +337,7 @@ void init_default(struct retro_variable_default *def, const char *key, const cha
 
 static void update_variables(bool first_time)
 {
+     
   struct retro_led_interface ledintf;
   struct retro_variable var;
   int index;
@@ -643,6 +670,188 @@ static void update_variables(bool first_time)
     /*retro_describe_controls();*/
     reset_control_descriptions = false;
   }
+      
+                             
+   
+                    
+                                 
+
+                                                                     
+                                          
+
+                    
+                                     
+   
+                                                                     
+    
+                                           
+                                            
+          
+                                            
+    
+       
+                                         
+
+                    
+                                       
+
+                                                                     
+    
+                                           
+                                     
+          
+                                     
+    
+       
+                                  
+
+                    
+                                     
+
+                                                                     
+    
+                                           
+                                   
+          
+                                   
+    
+       
+                                
+   
+                    
+                                   
+   
+                                                                     
+                                           
+       
+                                 
+
+                    
+   
+                                   
+                                                                     
+    
+                                           
+                                   
+          
+                                   
+    
+       
+                                
+
+                    
+   
+                                    
+                                                                     
+    
+                                           
+                                                     
+                                              
+                                                   
+          
+                                  
+    
+       
+                               
+
+                    
+   
+                                         
+                                                                     
+    
+                                           
+                                      
+          
+                                      
+    
+       
+                                   
+
+                    
+   
+                                        
+                                                                     
+    
+                                           
+                                    
+          
+                                    
+    
+       
+                                 
+
+                    
+   
+                                 
+                                                                     
+    
+                                           
+                               
+          
+                               
+    
+       
+                            
+
+                    
+    
+                                                    
+                                                                      
+                                                             
+ 
+                    
+   
+                                        
+                                                                     
+    
+                                           
+                                                                                  
+          
+                               
+    
+
+                    
+   
+                                         
+                                                                     
+    
+                                                                    
+    
+
+                    
+   
+                                           
+                                                                     
+    
+                                           
+                                                                                     
+           
+                                            
+    
+ 
+                    
+   
+                                       
+                                                                     
+    
+                                                                                               
+       
+
+                    
+
+                                           
+                                                                     
+    
+                                                                                               
+    
+    
+    
+                                          
+                                    
+       
+                                                                 
+                                            
+    
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
@@ -768,6 +977,13 @@ bool retro_load_game(const struct retro_game_info *game)
   
   init_core_options();
   update_variables(true);
+                                                                                                          
+                                   
+                                   
+                                   
+                                   
+                                    
+                                    
 
   #define describe_buttons(INDEX) \
   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
@@ -1542,6 +1758,7 @@ int osd_is_key_pressed(int keycode)
 {
     return (keycode < 512 && keycode >= 0) ? retroKeyState[keycode] : 0;
 }
+
 
 int osd_readkey_unicode(int flush)
 {
