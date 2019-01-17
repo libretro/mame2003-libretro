@@ -77,7 +77,6 @@ SOURCES_C := \
 	$(CORE_DIR)/profiler.c \
 	$(CORE_DIR)/hash.c \
 	$(CORE_DIR)/harddisk.c \
-	$(CORE_DIR)/md5.c \
 	$(CORE_DIR)/machine/idectrl.c \
 	$(CORE_DIR)/sound/wavwrite.c \
 	$(CORE_DIR)/x86drc.c \
