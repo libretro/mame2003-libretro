@@ -192,7 +192,7 @@ static void init_core_options(void)
   init_default(&default_options[OPT_STV_BIOS],            APPNAME"_stv_bios",            "Specify Sega ST-V BIOS (Restart core); default|japan|japana|us|japan_b|taiwan|europe");
   init_default(&default_options[OPT_USE_ALT_SOUND],       APPNAME"_use_alt_sound",       "Use CD soundtrack (Restart core); disabled");
   init_default(&default_options[OPT_SHARE_DIAL],          APPNAME"_dialsharexy",         "Share 2 player dial controls across one X/Y device; disabled|enabled");
-  init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled");
+  init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled|enabled");
   init_default(&default_options[OPT_RSTICK_BTNS],         APPNAME"_rstick_to_btns",      "Map right analog stick as buttons; enabled|disabled");
   init_default(&default_options[OPT_TATE_MODE],           APPNAME"_tate_mode",           "TATE Mode; disabled|enabled");
   init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution_multiplier",
@@ -1518,23 +1518,70 @@ void osd_analogjoy_read(int player,int analog_axis[MAX_ANALOG_AXES], InputCode a
 
 void osd_customize_inputport_defaults(struct ipd *defaults)
 {
-#if 0
-   unsigned int i = 0;
 
-   for( ; defaults[i].type != IPT_END; ++i)
-   {
-      struct ipd *entry = &defaults[i];
+  unsigned int i = 0;
+  default_inputs = defaults;
 
+  for( ; default_inputs[i].type != IPT_END; ++i)
+  {
+    struct ipd *entry = &default_inputs[i];
+
+    if(options.dual_joysticks)
+    {
       switch(entry->type)
       {
-         case (IPT_BUTTON1 | IPF_PLAYER1):
-            fprintf(stderr, "IPT_BUTTON1 | IPF_PLAYER1.\n");
+         case (IPT_JOYSTICKRIGHT_UP   | IPF_PLAYER1):
+            seq_set_1(&entry->seq, JOYCODE_2_UP);
             break;
-         default:
-            fprintf(stderr, "Label not known.\n");
-      }
+         case (IPT_JOYSTICKRIGHT_DOWN | IPF_PLAYER1):
+            seq_set_1(&entry->seq, JOYCODE_2_DOWN);
+            break;
+         case (IPT_JOYSTICKRIGHT_LEFT | IPF_PLAYER1):
+            seq_set_1(&entry->seq, JOYCODE_2_LEFT);
+            break;
+         case (IPT_JOYSTICKRIGHT_RIGHT | IPF_PLAYER1):
+            seq_set_1(&entry->seq, JOYCODE_2_RIGHT);
+            break;
+         case (IPT_JOYSTICK_UP   | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_UP);
+            break;
+         case (IPT_JOYSTICK_DOWN | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_DOWN);
+            break;
+         case (IPT_JOYSTICK_LEFT | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_LEFT);
+            break;
+         case (IPT_JOYSTICK_RIGHT | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_RIGHT);
+            break;
+         case (IPT_JOYSTICKRIGHT_UP   | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_4_UP);
+            break;
+         case (IPT_JOYSTICKRIGHT_DOWN | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_4_DOWN);
+            break;
+         case (IPT_JOYSTICKRIGHT_LEFT | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_4_LEFT);
+            break;
+         case (IPT_JOYSTICKRIGHT_RIGHT | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_4_RIGHT);
+            break;
+         case (IPT_JOYSTICKLEFT_UP   | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_UP);
+            break;
+         case (IPT_JOYSTICKLEFT_DOWN | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_DOWN);
+            break;
+         case (IPT_JOYSTICKLEFT_LEFT | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_LEFT);
+            break;
+         case (IPT_JOYSTICKLEFT_RIGHT | IPF_PLAYER2):
+            seq_set_1(&entry->seq, JOYCODE_3_RIGHT);
+            break;
+     }
+    }
    }
-#endif
+
 }
 
 /* These calibration functions should never actually be used (as long as needs_calibration returns 0 anyway).*/
