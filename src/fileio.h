@@ -10,7 +10,6 @@
 #define FILEIO_H
 
 #include <stdarg.h>
-#include <file_path.h>
 #include "mame2003.h"
 #include "hash.h"
 
@@ -27,12 +26,12 @@ enum
 	FILETYPE_IMAGE,
 	FILETYPE_IMAGE_DIFF,
 	FILETYPE_SAMPLE,
+	FILETYPE_SAMPLE_FLAC,
 	FILETYPE_ARTWORK,
 	FILETYPE_NVRAM,
 	FILETYPE_HIGHSCORE,
 	FILETYPE_HIGHSCORE_DB,
 	FILETYPE_CONFIG,
-	FILETYPE_INPUTLOG,
 	FILETYPE_MEMCARD,
 	FILETYPE_HISTORY,
 	FILETYPE_CHEAT,
@@ -56,9 +55,23 @@ enum
 
 typedef struct _mame_file mame_file;
 
-
 /* Return the number of paths for a given type */
 int osd_get_path_count(int pathtype);
+
+struct bin2cFILE {
+  const unsigned int length;
+  const unsigned char data[]; 
+};
+
+/******************************************************************************
+ 
+ osd_get_path
+ Sets char* path to point at a valid path of the type incidated by int pathtype,
+ although the path itself does not necessarily exist at this point in the process.
+ 
+ *****************************************************************************/
+ void osd_get_path(int pathtype, char* path);
+
 
 /* Get information on the existence of a file */
 int osd_get_path_info(int pathtype, int pathindex, const char *filename);
@@ -67,6 +80,8 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename);
 FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *mode);
 
 int osd_create_directory(const char *dir);
+
+
 
 int mame_faccess(const char *filename, int filetype);
 mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, int openforwrite);
@@ -100,6 +115,21 @@ UINT64 mame_ftell(mame_file *file);
 
 int mame_fputs(mame_file *f, const char *s);
 int mame_vfprintf(mame_file *f, const char *fmt, va_list va);
+
+
+/***************************************************************************
+	get_extension_for_filetype
+***************************************************************************/
+
+const char *get_extension_for_filetype(int filetype);
+
+
+/***************************************************************************
+	spawn_bootstrap_nvram
+  creates a new nvram file for the current romset (as specified in
+  options.romset_filename_noext) using bootstrap_nvram as the source.
+***************************************************************************/
+mame_file *spawn_bootstrap_nvram(unsigned char const *bootstrap_nvram, unsigned nvram_length);
 
 #ifdef __GNUC__
 int CLIB_DECL mame_fprintf(mame_file *f, const char *fmt, ...)
