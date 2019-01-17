@@ -48,7 +48,6 @@ retro_log_printf_t                 log_cb;
 static struct retro_message        frontend_message;
 
 struct                             retro_perf_callback perf_cb;
-extern int                         framerate_test;
 retro_environment_t                environ_cb                    = NULL;
 retro_video_refresh_t              video_cb                      = NULL;
 static retro_input_poll_t          poll_cb                       = NULL;
@@ -164,33 +163,9 @@ static void check_system_specs(void)
 
 void retro_set_environment(retro_environment_t cb)
 {
-   static const struct retro_variable vars[] = {
-      { APPNAME"-frameskip", "Frameskip; 0|1|2|3|4|5" },
-      { APPNAME"-dcs-speedhack","MK2/MK3 DCS Speedhack; enabled|disabled"},
-      { APPNAME"-skip_disclaimer", "Skip Disclaimer; enabled|disabled" },
-      { APPNAME"-skip_warnings", "Skip Warnings; disabled|enabled" },
-      { APPNAME"-sample_rate", "Sample Rate (KHz); 48000|8000|11025|22050|44100" },
-      { APPNAME"-dialsharexy", "Share 2 player dial controls across one X/Y device; disabled|enabled" },
-#if defined(__IOS__)
-      { APPNAME"-mouse_device", "Mouse Device; pointer|mouse|disabled" },
-#else
-      { APPNAME"-mouse_device", "Mouse Device; mouse|pointer|disabled" },
-#endif
-      { APPNAME"-crosshair_enabled", "Show Lightgun crosshair; enabled|disabled" },
-      { APPNAME"-rstick_to_btns", "Right Stick to Buttons; enabled|disabled" },
-      { APPNAME"-tate_mode", "TATE Mode (rotate vertical games by 90 degrees CCW); disabled|enabled" },
-      { APPNAME"-vector-resolution-multiplier", "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10" },
-      { APPNAME"-vector-antialias", "Vector antialiasing; enabled|disabled" },
-      { APPNAME"-vector-beam-width", "Vector beam width (only with antialiasing); 1.2|1|1.4|1.6|1.8|2|2.5|3|4|5|6|7|8|9|10|11|12" },
-      { APPNAME"-vector-translucency", "Vector translucency; enabled|disabled" },
-      { APPNAME"-vector-flicker", "Vector flicker; 20|0|10|30|40|50|60|70|80|90|100" },
-      { APPNAME"-vector-intensity", "Vector intensity; 1.5|0.5|1|2|2.5|3" },
-      { NULL, NULL },
-   };
-   environ_cb = cb;
-
-   cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)vars);
+  environ_cb = cb;
 }
+
 
 /* static void init_core_options(void) 
  *
@@ -199,7 +174,7 @@ void retro_set_environment(retro_environment_t cb)
  */
 static void init_core_options(void) 
 {
-  init_default(&default_options[OPT_4WAY],                APPNAME"_four_way_emulation",  "4-way joystick emulation on 8-way joysticks; disabled|enabled");
+  init_default(&default_options[OPT_4WAY],                APPNAME"_four_way_emulation",  "4-way joystick emulation on 8-way joysticks; disabled");
 #if defined(__IOS__)
   init_default(&default_options[OPT_MOUSE_DEVICE],        APPNAME"_mouse_device",        "Mouse Device; pointer|mouse|disabled");
 #else
@@ -215,9 +190,9 @@ static void init_core_options(void)
   init_default(&default_options[OPT_ART_RESOLUTION],      APPNAME"_art_resolution",      "Artwork resolution multiplier (Restart core); 2|1");
   init_default(&default_options[OPT_NEOGEO_BIOS],         APPNAME"_neogeo_bios",         "Specify Neo Geo BIOS (Restart core); default|euro|euro-s1|us|us-e|asia|japan|japan-s2|unibios33|unibios20|unibios13|unibios11|unibios10|debug|asia-aes");
   init_default(&default_options[OPT_STV_BIOS],            APPNAME"_stv_bios",            "Specify Sega ST-V BIOS (Restart core); default|japan|japana|us|japan_b|taiwan|europe");  
-  init_default(&default_options[OPT_USE_ALT_SOUND],       APPNAME"_use_alt_sound",       "Use CD soundtrack (Restart core); enabled|disabled");
+  init_default(&default_options[OPT_USE_ALT_SOUND],       APPNAME"_use_alt_sound",       "Use CD soundtrack (Restart core); disabled");
   init_default(&default_options[OPT_SHARE_DIAL],          APPNAME"_dialsharexy",         "Share 2 player dial controls across one X/Y device; disabled|enabled");
-  init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled|enabled");
+  init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled");
   init_default(&default_options[OPT_RSTICK_BTNS],         APPNAME"_rstick_to_btns",      "Map right analog stick as buttons; enabled|disabled");
   init_default(&default_options[OPT_TATE_MODE],           APPNAME"_tate_mode",           "TATE Mode; disabled|enabled");
   init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution_multiplier", 
@@ -230,13 +205,13 @@ static void init_core_options(void)
   init_default(&default_options[OPT_NVRAM_BOOTSTRAP],     APPNAME"_nvram_bootstraps",    "NVRAM Bootstraps; enabled|disabled");
   init_default(&default_options[OPT_SAMPLE_RATE],         APPNAME"_sample_rate",         "Sample Rate (KHz); 48000|8000|11025|22050|30000|44100|");
   init_default(&default_options[OPT_DCS_SPEEDHACK],       APPNAME"_dcs_speedhack",       "DCS Speedhack; enabled|disabled");
-  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; retropad|keyboard|simultaneous");  
-  init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); disabled|enabled");  
+  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous");  
+  init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); enabled|disabled");  
   init_default(&default_options[OPT_FRAMESKIP],           APPNAME"_frameskip",           "Frameskip; 0|1|2|3|4|5");
-  init_default(&default_options[OPT_CORE_SYS_SUBFOLDER],  APPNAME"_core_sys_subfolder",  "Locate system files within a subfolder; enabled|disabled"); /* This should be probably handled by the frontend and not by cores per discussions in Fall 2018 but RetroArch for example doesn't provide this as an option. */
-  init_default(&default_options[OPT_CORE_SAVE_SUBFOLDER], APPNAME"_core_save_subfolder", "Locate save files within a subfolder; enabled|disabled"); /* This is already available as an option in RetroArch although it is left enabled by default as of November 2018 for consistency with past practice. At least for now.*/
+  init_default(&default_options[OPT_CORE_SYS_SUBFOLDER],  APPNAME"_core_sys_subfolder",  "Locate system files within a subfolder; enabled"); /* This should be probably handled by the frontend and not by cores per discussions in Fall 2018 but RetroArch for example doesn't provide this as an option. */
+  init_default(&default_options[OPT_CORE_SAVE_SUBFOLDER], APPNAME"_core_save_subfolder", "Locate save files within a subfolder; enabled"); /* This is already available as an option in RetroArch although it is left enabled by default as of November 2018 for consistency with past practice. At least for now.*/
   init_default(&default_options[OPT_Cheat_Input_Ports],   APPNAME"_cheat_input ports",   "Dip switch/Cheat input ports; disabled|enabled");
-  init_default(&default_options[OPT_Machine_Timing],      APPNAME"_machine_timing",      "Bypass audio skew (Restart core); enabled|disabled");
+  init_default(&default_options[OPT_Machine_Timing],      APPNAME"_machine_timing",      "Bypass audio skew (Restart core); disabled");
   init_default(&default_options[OPT_end], NULL, NULL); 
   set_variables(true);
 }
@@ -336,7 +311,6 @@ void init_default(struct retro_variable_default *def, const char *key, const cha
 
 static void update_variables(bool first_time)
 {
-#if 0
   struct retro_led_interface ledintf;
   struct retro_variable var;
   int index;
@@ -648,7 +622,7 @@ static void update_variables(bool first_time)
             options.cheat_input_ports = false;
           break;		  
 	    case OPT_Machine_Timing:
-		if(strcmp(var.value, "enabled") == 0)
+          if(strcmp(var.value, "enabled") == 0)
             options.machine_timing = true;
           else
             options.machine_timing = false;
@@ -666,191 +640,9 @@ static void update_variables(bool first_time)
   
   if(reset_control_descriptions) /* one of the option changes has flagged a need to re-describe the controls */
   {
-    retro_describe_controls();
+    /*retro_describe_controls();*/
     reset_control_descriptions = false;
   }
-#endif
-   struct retro_variable var;
-   
-   var.value = NULL;
-   var.key = APPNAME"-frameskip";
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      options.frameskip = atoi(var.value);
-
-   var.value = NULL;
-   var.key = APPNAME"-dcs-speedhack";
-   
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.activate_dcs_speedhack = 1;
-      else
-         options.activate_dcs_speedhack = 0;
-   }
-   else
-      options.activate_dcs_speedhack = 0;
-
-   var.value = NULL;
-   var.key = APPNAME"-skip_disclaimer";
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.skip_disclaimer = 1;
-      else
-         options.skip_disclaimer = 0;
-   }
-   else
-      options.skip_disclaimer = 0;
-
-   var.value = NULL;
-   var.key = APPNAME"-skip_warnings";
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.skip_warnings = 1;
-      else
-         options.skip_warnings = 0;
-   }
-   else
-      options.skip_warnings = 0;
-   
-   var.value = NULL;
-   var.key = APPNAME"-sample_rate";
-   
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      options.samplerate = atoi(var.value);
-   else
-      options.samplerate = 48000;
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-dialsharexy";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.dial_share_xy = 1;
-      else
-         options.dial_share_xy = 0;
-   }
-   else
-      options.dial_share_xy = 0;
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-mouse_device";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "pointer") == 0)
-         options.mouse_device = RETRO_DEVICE_POINTER;
-      else if(strcmp(var.value, "mouse") == 0)
-         options.mouse_device = RETRO_DEVICE_MOUSE;
-      else
-         options.mouse_device = 0;
-   }
-   else
-      options.mouse_device = 0;
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-crosshair_enabled";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.crosshair_enable = 1;
-      else
-         options.crosshair_enable = 0;
-   }
-   else
-      options.crosshair_enable = 0;
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-rstick_to_btns";  
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.rstick_to_btns = 1;
-      else
-         options.rstick_to_btns = 0;
-   }
-   else
-      options.rstick_to_btns = 0;
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-tate_mode";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.tate_mode = 1;
-      else
-         options.tate_mode = 0;
-   }
-   else
-      options.tate_mode = 0;
-
-   var.value = NULL;
-    
-   var.key = APPNAME"-vector-resolution-multiplier";
-    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-      options.vector_resolution_multiplier = atoi(var.value);
- 
-   var.value = NULL;
-   
-   var.key = APPNAME"-vector-antialias";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.antialias = 1; /* integer: 1 to enable antialiasing on vectors */
-      else
-         options.antialias = 0;
-   }
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-vector-beam-width";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      options.beam = atof(var.value); /* float: vector beam width */
-   }
-
-   var.value = NULL;
-   
-   var.key = APPNAME"-vector-translucency";
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if(strcmp(var.value, "enabled") == 0)
-         options.translucency = 1; /* integer: 1 to enable translucency on vectors */
-      else 
-         options.translucency = 0;          
-   }
- 
-   var.value = NULL;
-   
-   var.key = APPNAME"-vector-flicker"; 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      options.vector_flicker = atof(var.value); /* float: vector beam flicker effect control */
-   }   
-
-   var.value = NULL;
-
-   var.key = APPNAME"-vector-intensity";   
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      options.vector_intensity_correction = atof(var.value); /* float: vector beam intensity */
-   }
-    
-   {
-       struct retro_led_interface ledintf;
-       ledintf.set_led_state = NULL;
-       
-       environ_cb(RETRO_ENVIRONMENT_GET_LED_INTERFACE, &ledintf);
-       led_state_cb = ledintf.set_led_state;
-   }
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
@@ -976,39 +768,32 @@ bool retro_load_game(const struct retro_game_info *game)
   
   init_core_options();
   update_variables(true);
-  options.input_interface   = RETRO_DEVICE_KEYBOARD + RETRO_DEVICE_JOYPAD; /* "simultaneous" input mode */
-  options.mame_remapping    = true;
-  options.use_samples       = true;
-  options.brightness        = 1.0f;
-  options.gamma             = 1.0f;
-  options.cheat_input_ports = false;
-  options.machine_timing    = false;
 
-    #define describe_buttons(INDEX) \
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
-    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
+  #define describe_buttons(INDEX) \
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
+  { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
 
-    struct retro_input_descriptor desc[] = {
-        describe_buttons(0)
-        describe_buttons(1)
-        describe_buttons(2)
-        describe_buttons(3)
-        { 0, 0, 0, 0, NULL }
-        };
+  struct retro_input_descriptor desc[] = {
+      describe_buttons(0)
+      describe_buttons(1)
+      describe_buttons(2)
+      describe_buttons(3)
+      { 0, 0, 0, 0, NULL }
+      };
 
     environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
     
@@ -1729,7 +1514,7 @@ void osd_customize_inputport_defaults(struct ipd *defaults)
 #endif
 }
 
-// These calibration functions should never actually be used (as long as needs_calibration returns 0 anyway).
+/* These calibration functions should never actually be used (as long as needs_calibration returns 0 anyway).*/
 int osd_joystick_needs_calibration(void) { return 0; }
 void osd_joystick_start_calibration(void){ }
 const char *osd_joystick_calibrate_next(void) { return 0; }
@@ -1742,7 +1527,7 @@ void osd_joystick_end_calibration(void) { }
 /******************************************************************************
 
 	Keyboard
-
+  
 ******************************************************************************/
 
 extern const struct KeyboardInfo retroKeys[];
@@ -1750,7 +1535,7 @@ int retroKeyState[512];
 
 const struct KeyboardInfo *osd_get_key_list(void)
 {
-    return retroKeys;
+  return retroKeys;
 }
 
 int osd_is_key_pressed(int keycode)
@@ -1758,11 +1543,10 @@ int osd_is_key_pressed(int keycode)
     return (keycode < 512 && keycode >= 0) ? retroKeyState[keycode] : 0;
 }
 
-
 int osd_readkey_unicode(int flush)
 {
-    // TODO
-    return 0;
+  /* TODO*/
+  return 0;
 }
 
 /******************************************************************************
@@ -1771,13 +1555,13 @@ int osd_readkey_unicode(int flush)
 
 ******************************************************************************/
 
-// Unassigned keycodes
-//	KEYCODE_OPENBRACE, KEYCODE_CLOSEBRACE, KEYCODE_BACKSLASH2, KEYCODE_STOP, KEYCODE_LWIN, KEYCODE_RWIN, KEYCODE_DEL_PAD, KEYCODE_PAUSE,
+/* Unassigned keycodes*/
+/*	KEYCODE_OPENBRACE, KEYCODE_CLOSEBRACE, KEYCODE_BACKSLASH2, KEYCODE_STOP, KEYCODE_LWIN, KEYCODE_RWIN, KEYCODE_DEL_PAD, KEYCODE_PAUSE,*/
 
-// The format for each systems key constants is RETROK_$(TAG) and KEYCODE_$(TAG)
-// EMIT1(TAG): The tag value is the same between libretro and MAME
-// EMIT2(RTAG, MTAG): The tag value is different between the two
-// EXITX(TAG): MAME has no equivalent key.
+/* The format for each systems key constants is RETROK_$(TAG) and KEYCODE_$(TAG) */
+/* EMIT1(TAG): The tag value is the same between libretro and the core           */
+/* EMIT2(RTAG, MTAG): The tag value is different between the two                 */
+/* EXITX(TAG): The core has no equivalent key.*/
 
 #define EMIT2(RETRO, KEY) {(char*)#RETRO, RETROK_##RETRO, KEYCODE_##KEY}
 #define EMIT1(KEY) {(char*)#KEY, RETROK_##KEY, KEYCODE_##KEY}
