@@ -39,7 +39,6 @@ extern retro_environment_t environ_cb;
 
 #define APPNAME					"mame2003"
 
-
 /***************************************************************************
 
 	Core description of the currently-running machine
@@ -209,7 +208,6 @@ struct GameOptions
   bool 	   skip_disclaimer;	     /* 1 to skip the disclaimer screen at startup */
   bool     skip_warnings;        /* 1 to skip the game warning screen at startup */
   bool     display_setup;        /* the MAME setup menu */
-  bool     all_ctrls;            /* show unused controls in the frontend remapper */
 
   unsigned dial_share_xy;
   unsigned mouse_device;
@@ -259,8 +257,7 @@ struct GameOptions
   int      debug_width;	         /* requested width of debugger bitmap */
   int      debug_height;	       /* requested height of debugger bitmap */
   int      debug_depth;	         /* requested depth of debugger bitmap */
-  bool     cheat_input_ports;    /* cheat input ports enable/disable */
-  bool     cheat;                /* in use temporarily as of 2019-01-16 */
+  bool     cheat_input_ports;     /*cheat input ports enable/disable */
   bool     machine_timing;         
   };
 
@@ -326,7 +323,6 @@ struct performance_info
 
 
 
-
 /***************************************************************************
 
 	Globals referencing the current machine and the global options
@@ -346,8 +342,10 @@ extern struct RunningMachine *Machine;
 
 /* ----- core system management ----- */
 
+bool init_game(int game);
+
 /* execute a given game by index in the drivers[] array */
-int run_game(int game);
+bool run_game(int game);
 
 /* construct a machine driver */
 struct InternalMachineDriver;
@@ -377,12 +375,10 @@ void update_video_and_audio(void);
 /* (this calls draw_screen and update_video_and_audio) */
 int updatescreen(void);
 
+void mame_done(void);
 
 
 /* ----- miscellaneous bits & pieces ----- */
-
-/* mame_fopen() must use this to know if high score files can be used */
-int mame_highscore_enabled(void);
 
 /* set the state of a given LED */
 void set_led_status(int num, int on);

@@ -34,23 +34,20 @@ void displaytext(struct mame_bitmap *bitmap,const struct DisplayText *dt);
 void ui_drawchar(struct mame_bitmap *dest, int ch, int color, int sx, int sy);
 void ui_text(struct mame_bitmap *bitmap,const char *buf,int x,int y);
 void ui_drawbox(struct mame_bitmap *bitmap,int leftx,int topy,int width,int height);
+void ui_copyright_and_warnings(void);
 void ui_displaymessagewindow(struct mame_bitmap *bitmap,const char *text);
 void ui_displaymenu(struct mame_bitmap *bitmap,const char **items,const char **subitems,char *flag,int selected,int arrowize_subitem);
-void ui_display_fps(struct mame_bitmap *bitmap);
-int showcopyright(struct mame_bitmap *bitmap);
-int showgamewarnings(struct mame_bitmap *bitmap);
-int showgameinfo(struct mame_bitmap *bitmap);
 void set_ui_visarea (int xmin, int ymin, int xmax, int ymax);
 
 void init_user_interface(void);
 int handle_user_interface(struct mame_bitmap *bitmap);
+void setup_menu_init(void);
 
 void generate_xml_dat(void);
 
-int onscrd_active(void);
 int setup_active(void);
 
-#if defined(__sgi) && ! defined(MESS)
+#if defined(__sgi)
 int is_game_paused(void);
 #endif
 
