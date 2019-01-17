@@ -270,6 +270,9 @@ void retro_get_system_info(struct retro_system_info *info)
 static void update_variables(void)
 {
    struct retro_variable var;
+   
+   options.system_subfolder = true; /* traditional mame2003 subfolder behavior */
+   options.save_subfolder   = true; /* traditional mame2003 subfolder behavior */
 
    var.value = NULL;
    var.key = APPNAME"-frameskip";
