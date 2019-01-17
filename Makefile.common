@@ -22,6 +22,7 @@ SOURCES_C := \
 	$(CORE_DIR)/mame2003/keyboard.c \
 	$(CORE_DIR)/mame2003/joystick.c \
 	$(CORE_DIR)/mame2003/video.c \
+	$(CORE_DIR)/bootstrap.c \
 	$(CORE_DIR)/mame.c \
 	$(CORE_DIR)/drawgfx.c \
 	$(CORE_DIR)/common.c \
