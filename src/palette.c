@@ -146,7 +146,7 @@ int palette_start(void)
 	highlight_factor = (int)(PALETTE_DEFAULT_HIGHLIGHT_FACTOR * (double)(1 << PEN_BRIGHTNESS_BITS));
 	global_brightness = (options.brightness > .001) ? options.brightness : 1.0;
 	global_brightness_adjust = 1.0;
-	global_gamma = (options.gamma > .001) ? options.gamma : 1.0;
+	global_gamma = options.gamma;
 
 	/* determine the color mode */
 	if (Machine->color_depth == 15)
@@ -162,7 +162,7 @@ int palette_start(void)
 	if ((Machine->drv->video_attributes & VIDEO_RGB_DIRECT) &&
 			Machine->drv->color_table_len)
 	{
-		logerror("Error: VIDEO_RGB_DIRECT requires color_table_len to be 0.\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "Error: VIDEO_RGB_DIRECT requires color_table_len to be 0.\n");
 		return 1;
 	}
 
@@ -177,7 +177,7 @@ int palette_start(void)
 	/* make sure we still fit in 16 bits */
 	if (total_colors > 65536)
 	{
-		logerror("Error: palette has more than 65536 colors.\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "Error: palette has more than 65536 colors.\n");
 		return 1;
 	}
 
@@ -194,7 +194,7 @@ int palette_start(void)
 }
 
 
-//* 072703AT (last update)
+/* 072703AT (last update) */
 /*-------------------------------------------------
 
 	palette_set_shadow_mode(mode)
@@ -273,7 +273,7 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 
 	if ((table_ptr32 = shadow_table_base[mode]) == NULL) return;
 
-	if (style) // monotone shadows(style 1) or highlights(style 2)
+	if (style) /* monotone shadows(style 1) or highlights(style 2)*/
 	{
 		if (factor < 0) factor = 0;
 
@@ -286,12 +286,12 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 		{
 			switch (style)
 			{
-				// modify shadows(first upper palette)
+				/* modify shadows(first upper palette)*/
 				case 1:
 					palette_set_shadow_factor(factor);
 				break;
 
-				// modify highlights(second upper palette)
+				/* modify highlights(second upper palette)*/
 				case 2:
 					palette_set_highlight_factor(factor);
 				break;
@@ -394,15 +394,13 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 						else
 							((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
 					}
-				} // end of highlight_methods
-			} // end of factor
-		} // end of colormode
+				} /* end of highlight_methods*/
+			} /* end of factor*/
+		} /* end of colormode*/
 
-		#if VERBOSE
-			usrintf_showmessage("shadow %d recalc factor:%1.2f style:%d", mode, factor, style);
-		#endif
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "shadow %d recalc factor:%1.2f style:%d", mode, factor, style);
 	}
-	else // color shadows or highlights(style 0)
+	else /* color shadows or highlights(style 0)*/
 	{
 		if (!(colormode & DIRECT_RGB)) return;
 
@@ -417,9 +415,7 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 		oldRGB[mode][0] = dr; oldRGB[mode][1] = dg; oldRGB[mode][2] = db;
 		oldfactor[mode] = -1;
 
-		#if VERBOSE
-			usrintf_showmessage("shadow %d recalc %d %d %d %02x", mode, dr, dg, db, noclip);
-		#endif
+	  log_cb(RETRO_LOG_DEBUG, LOGPRE "shadow %d recalc %d %d %d %02x", mode, dr, dg, db, noclip);
 
 		dr <<= 10; dg <<= 5;
 		d32 = (colormode == DIRECT_32BIT);
@@ -582,7 +578,7 @@ static int palette_alloc(void)
 		Machine->debug_remapped_colortable[2*i+1] = i % DEBUGGER_TOTAL_COLORS;
 	}
 
-#if 0 //* for reference, do not remove
+#if 0 /** for reference, do not remove*/
 	/* allocate the shadow lookup table for 16bpp modes */
 	palette_shadow_table = NULL;
 	if (colormode == PALETTIZED_16BIT)
@@ -872,7 +868,7 @@ static void internal_modify_single_pen(pen_t pen, rgb_t color, int pen_bright)
 	its corresponding shadow/highlight
 -------------------------------------------------*/
 
-static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) //* new highlight operation
+static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) /** new highlight operation*/
 {
 #define FMAX (0xff<<PEN_BRIGHTNESS_BITS)
 
@@ -889,7 +885,7 @@ static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) //* new 
 		{
 			pen += Machine->drv->total_colors;
 
-			if (shadow_factor > (1 << PEN_BRIGHTNESS_BITS) && highlight_method) // luminance > 1.0
+			if (shadow_factor > (1 << PEN_BRIGHTNESS_BITS) && highlight_method) /* luminance > 1.0*/
 			{
 				r = color>>16 & 0xff;
 				g = color>>8  & 0xff;
@@ -925,7 +921,7 @@ static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) //* new 
 
 				internal_modify_single_pen(pen, r|g|b, pen_bright);
 			}
-			else // luminance <= 1.0
+			else /* luminance <= 1.0*/
 				internal_modify_single_pen(pen, color, (pen_bright * shadow_factor) >> PEN_BRIGHTNESS_BITS);
 		}
 
@@ -934,7 +930,7 @@ static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) //* new 
 		{
 			pen += Machine->drv->total_colors;
 
-			if (highlight_factor > (1 << PEN_BRIGHTNESS_BITS) && highlight_method) // luminance > 1.0
+			if (highlight_factor > (1 << PEN_BRIGHTNESS_BITS) && highlight_method) /* luminance > 1.0*/
 			{
 				r = color>>16 & 0xff;
 				g = color>>8  & 0xff;
@@ -970,7 +966,7 @@ static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) //* new 
 
 				internal_modify_single_pen(pen, r|g|b, pen_bright);
 			}
-			else // luminance <= 1.0
+			else /* luminance <= 1.0*/
 				internal_modify_single_pen(pen, color, (pen_bright * highlight_factor) >> PEN_BRIGHTNESS_BITS);
 		}
 	}
@@ -1026,7 +1022,7 @@ void palette_set_color(pen_t pen, UINT8 r, UINT8 g, UINT8 b)
 	/* make sure we're in range */
 	if (pen >= total_colors)
 	{
-		logerror("error: palette_set_color() called with color %d, but only %d allocated.\n", pen, total_colors);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "error: palette_set_color() called with color %d, but only %d allocated.\n", pen, total_colors);
 		return;
 	}
 
