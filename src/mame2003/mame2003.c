@@ -48,7 +48,6 @@ retro_log_printf_t                 log_cb;
 static struct retro_message        frontend_message;
 
 struct                             retro_perf_callback perf_cb;
-
 retro_environment_t                environ_cb                    = NULL;
 retro_video_refresh_t              video_cb                      = NULL;
 static retro_input_poll_t          poll_cb                       = NULL;
@@ -167,6 +166,7 @@ void retro_set_environment(retro_environment_t cb)
   environ_cb = cb;
 }
 
+
 /* static void init_core_options(void)
  *
  * Note that core options are not presented in order they are initialized here,
@@ -205,7 +205,7 @@ static void init_core_options(void)
   init_default(&default_options[OPT_NVRAM_BOOTSTRAP],     APPNAME"_nvram_bootstraps",    "NVRAM Bootstraps; enabled|disabled");
   init_default(&default_options[OPT_SAMPLE_RATE],         APPNAME"_sample_rate",         "Sample Rate (KHz); 48000|8000|11025|22050|30000|44100|");
   init_default(&default_options[OPT_DCS_SPEEDHACK],       APPNAME"_dcs_speedhack",       "DCS Speedhack; enabled|disabled");
-  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous");
+  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous|retropad|keyboard");
   init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); enabled|disabled");
   init_default(&default_options[OPT_FRAMESKIP],           APPNAME"_frameskip",           "Frameskip; 0|1|2|3|4|5");
   init_default(&default_options[OPT_CORE_SYS_SUBFOLDER],  APPNAME"_core_sys_subfolder",  "Locate system files within a subfolder; enabled"); /* This should be probably handled by the frontend and not by cores per discussions in Fall 2018 but RetroArch for example doesn't provide this as an option. */
@@ -277,6 +277,7 @@ static void set_variables(bool first_time)
    effective_defaults[effective_options_count] = first_time ? default_options[option_index] : *spawn_effective_option(option_index);
    effective_options_count++;
   }
+
   environ_cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)effective_defaults);
 
 }
@@ -311,7 +312,6 @@ void init_default(struct retro_variable_default *def, const char *key, const cha
 
 static void update_variables(bool first_time)
 {
-
   struct retro_led_interface ledintf;
   struct retro_variable var;
   int index;
@@ -1008,7 +1008,6 @@ static void set_content_flags(void)
   log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as supporting %i button controls.\n", options.content_flags[CONTENT_BUTTON_COUNT]);
 
 
-
   /************ DRIVERS FLAGGED IN CONTROLS.C WITH MIRRORED CONTROLS ************/
   if(game_driver->ctrl_dat->mirrored_controls)
   {
@@ -1153,6 +1152,20 @@ void retro_run (void)
          retroJsState[16 + offset] = 0;
          retroJsState[17 + offset] = 0;
       }
+      if ( (options.rstick_to_btns) && (options.content_flags[CONTENT_DUAL_JOYSTICK]) )	
+      {
+         retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
+         retroJsState[20 + offset] = analogjoy[i][3] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
+         retroJsState[18 + offset] = analogjoy[i][3] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
+         retroJsState[19 + offset] = analogjoy[i][2] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y);
+	    }
+      else
+	    {	
+        retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : 0;
+        retroJsState[19 + offset] = analogjoy[i][2] < -0x4000 ? 1 : 0;
+        retroJsState[18 + offset] = analogjoy[i][3] >  0x4000 ? 1 : 0;
+        retroJsState[20 + offset] = analogjoy[i][3] < -0x4000 ? 1 : 0;
+	    }
   }
 
    mame_frame();
@@ -1408,7 +1421,7 @@ void retro_set_input_state(retro_input_state_t cb) { input_cb = cb; }
 
 /******************************************************************************
 
-	Keymapping
+	RetroPad mapping
 
 ******************************************************************************/
 
@@ -1460,7 +1473,10 @@ const struct JoystickInfo *osd_get_joy_list(void)
 
 int osd_is_joy_pressed(int joycode)
 {
-    return (joycode >= 0) ? retroJsState[joycode] : 0;
+  if (options.input_interface == RETRO_DEVICE_KEYBOARD)
+    return 0;
+
+  return (joycode >= 0) ? retroJsState[joycode] : 0;
 }
 
 int osd_is_joystick_axis_code(int joycode)
@@ -1547,7 +1563,13 @@ const struct KeyboardInfo *osd_get_key_list(void)
 
 int osd_is_key_pressed(int keycode)
 {
-    return (keycode < 512 && keycode >= 0) ? retroKeyState[keycode] : 0;
+	if (options.input_interface == RETRO_DEVICE_JOYPAD)
+		return 0;
+
+	if (keycode < 512 && keycode >= 0)
+    return retroKeyState[keycode];
+
+  return 0;
 }
 
 
