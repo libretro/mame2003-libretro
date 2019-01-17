@@ -480,6 +480,8 @@
 #include "vidhrdw/generic.h"
 #include "williams.h"
 
+#include "bootstrap.h"
+#include "inptport.h"
 
 /**** configuration macros ****/
 
@@ -2514,12 +2516,12 @@ static DRIVER_INIT( joust2 )
  *
  *************************************/
 
-GAME( 1980, defender, 0,        defender, defender, defender, ROT0,   "Williams", "Defender (Red label)" )
-GAME( 1980, defendg,  defender, defender, defender, defender, ROT0,   "Williams", "Defender (Green label)" )
-GAME( 1980, defendw,  defender, defender, defender, defender, ROT0,   "Williams", "Defender (White label)" )
+GAMEC(1980, defender, 0,        defender, defender, defender, ROT0,   "Williams", "Defender (Red label)",   &generic_ctrl, &defender_bootstrap )
+GAMEC(1980, defendg,  defender, defender, defender, defender, ROT0,   "Williams", "Defender (Green label)", &generic_ctrl, &defendg_bootstrap )
+GAMEC(1980, defendw,  defender, defender, defender, defender, ROT0,   "Williams", "Defender (White label)", &generic_ctrl, &defendg_bootstrap )
 GAMEX(1980, defndjeu, defender, defender, defender, defndjeu, ROT0,   "Jeutel", "Defender ? (bootleg)", GAME_NOT_WORKING )
-GAME( 1980, defcmnd,  defender, defender, defender, defender, ROT0,   "bootleg", "Defense Command (set 1)" )
-GAME( 1981, defence,  defender, defender, defender, defender, ROT0,   "Outer Limits", "Defence Command" )
+GAMEC(1980, defcmnd,  defender, defender, defender, defender, ROT0,   "bootleg", "Defense Command (set 1)", &generic_ctrl, &defcmnd_bootstrap )
+GAMEC(1981, defence,  defender, defender, defender, defender, ROT0,   "Outer Limits", "Defence Command",    &generic_ctrl, &defence_bootstrap   )
 
 GAME( 1980, mayday,   0,        defender, defender, mayday,   ROT0,   "<unknown>", "Mayday (set 1)" )
 GAME( 1980, maydaya,  mayday,   defender, defender, mayday,   ROT0,   "<unknown>", "Mayday (set 2)" )
@@ -2530,12 +2532,12 @@ GAME( 1981, colony7a, colony7,  defender, colony7,  colony7,  ROT270, "Taito", "
 
 GAME( 1981, stargate, 0,        williams, stargate, stargate, ROT0,   "Williams", "Stargate" )
 
-GAME( 1982, robotron, 0,        williams, robotron, robotron, ROT0,   "Williams", "Robotron (Solid Blue label)" )
-GAME( 1982, robotryo, robotron, williams, robotron, robotron, ROT0,   "Williams", "Robotron (Yellow/Orange label)" )
+GAMEC(1982, robotron, 0,        williams, robotron, robotron, ROT0,   "Williams", "Robotron (Solid Blue label)",    &robotron_ctrl, &robotron_bootstrap )
+GAMEC(1982, robotryo, robotron, williams, robotron, robotron, ROT0,   "Williams", "Robotron (Yellow/Orange label)", &robotron_ctrl, &robotron_bootstrap )
 
-GAME( 1982, joust,    0,        williams, joust,    joust,    ROT0,   "Williams", "Joust (White/Green label)" )
-GAME( 1982, joustr,   joust,    williams, joust,    joust,    ROT0,   "Williams", "Joust (Solid Red label)" )
-GAME( 1982, joustwr,  joust,    williams, joust,    joust,    ROT0,   "Williams", "Joust (White/Red label)" )
+GAMEC(1982, joust,    0,        williams, joust,    joust,    ROT0,   "Williams", "Joust (White/Green label)", &joust_ctrl, &joust_bootstrap )
+GAMEC(1982, joustr,   joust,    williams, joust,    joust,    ROT0,   "Williams", "Joust (Solid Red label)",   &joust_ctrl, &joust_bootstrap )
+GAMEC(1982, joustwr,  joust,    williams, joust,    joust,    ROT0,   "Williams", "Joust (White/Red label)",   &joust_ctrl, &joust_bootstrap )
 
 GAME( 1982, bubbles,  0,        williams, bubbles,  bubbles,  ROT0,   "Williams", "Bubbles" )
 GAME( 1982, bubblesr, bubbles,  williams, bubbles,  bubbles,  ROT0,   "Williams", "Bubbles (Solid Red label)" )
@@ -2543,9 +2545,9 @@ GAME( 1982, bubblesp, bubbles,  williams, bubbles,  bubbles,  ROT0,   "Williams"
 
 GAME( 1982, splat,    0,        williams, splat,    splat,    ROT0,   "Williams", "Splat!" )
 
-GAME( 1982, sinistar, 0,        sinistar, sinistar, sinistar, ROT270, "Williams", "Sinistar (revision 3)" )
-GAME( 1982, sinista1, sinistar, sinistar, sinistar, sinistar, ROT270, "Williams", "Sinistar (prototype version)" )
-GAME( 1982, sinista2, sinistar, sinistar, sinistar, sinistar, ROT270, "Williams", "Sinistar (revision 2)" )
+GAMEC(1982, sinistar, 0,        sinistar, sinistar, sinistar, ROT270, "Williams", "Sinistar (revision 3)",         &generic_ctrl, &sinistar_bootstrap )
+GAMEC(1982, sinista1, sinistar, sinistar, sinistar, sinistar, ROT270, "Williams", "Sinistar (prototype version)",  &generic_ctrl, &sinista1_bootstrap )
+GAMEC(1982, sinista2, sinistar, sinistar, sinistar, sinistar, ROT270, "Williams", "Sinistar (revision 2)",         &generic_ctrl, &sinista2_bootstrap )
 
 GAME( 1983, playball, 0,        playball, playball, playball, ROT270, "Williams", "PlayBall! (prototype)" )
 
@@ -2556,7 +2558,7 @@ GAME( 1985, spdball,  0,        williams, spdball,  spdball,  ROT0,   "Williams"
 
 GAME( 1983, mysticm,  0,        williams2,mysticm,  mysticm,  ROT0,   "Williams", "Mystic Marathon" )
 GAME( 1984, tshoot,   0,        williams2,tshoot,   tshoot,   ROT0,   "Williams", "Turkey Shoot" )
-GAMEX(1984, inferno,  0,        williams2,inferno,  inferno,  ROT0,   "Williams", "Inferno", GAME_IMPERFECT_SOUND )
-GAME( 1986, joust2,   0,        joust2,   joust2,   joust2,   ROT270, "Williams", "Joust 2 - Survival of the Fittest (set 1)" )
+GAMECX(1984, inferno,  0,        williams2,inferno,  inferno,  ROT0,   "Williams", "Inferno", GAME_IMPERFECT_SOUND,             &inferno_ctrl, NULL  )
+GAMEC(1986, joust2,   0,        joust2,   joust2,   joust2,   ROT270, "Williams", "Joust 2 - Survival of the Fittest (set 1)", &joust2_ctrl,  &joust2_bootstrap )
 
 GAME( 1987, lottofun, 0,        williams, lottofun, lottofun, ROT0,   "H.A.R. Management", "Lotto Fun" )

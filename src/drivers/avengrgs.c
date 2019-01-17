@@ -59,6 +59,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 #include "machine/eeprom.h"
+#include "bootstrap.h"
 
 VIDEO_START( avengrgs );
 VIDEO_UPDATE( avengrgs );
@@ -351,4 +352,4 @@ static DRIVER_INIT( avengrgs )
 
 /***************************************************************************/
 
-GAMEX( 1995, avengrgs, 0, avengrgs, avengrgs, avengrgs, ROT0, "Data East Corporation", "Avengers In Galactic Storm (Japan)", GAME_NOT_WORKING )
+GAMECX( 1995, avengrgs, 0, avengrgs, avengrgs, avengrgs, ROT0, "Data East Corporation", "Avengers In Galactic Storm (Japan)", GAME_NOT_WORKING, &avengers_ctrl, &avengrgs_bootstrap  )
