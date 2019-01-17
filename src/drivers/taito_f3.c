@@ -37,7 +37,7 @@
 #include "machine/eeprom.h"
 #include "taito_f3.h"
 #include "state.h"
-#include "control.h"
+
 #include "bootstrap.h"
 
 VIDEO_START( f3 );
