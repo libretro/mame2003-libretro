@@ -12,8 +12,7 @@
 #define XML_ROOT "mame"
 #define XML_TOP "game"
 
-extern const char* ost_drivers[];
- 
+
 /* Print a free format string */
 static void print_free_string(FILE* out, const char* s)
 {
@@ -430,21 +429,7 @@ static void print_game_sampleof(FILE* out, const struct GameDriver* game)
 #if (HAS_SAMPLES)
 	struct InternalMachineDriver drv;
 	int i=0;
-        int ost=0;
 
-	while(ost_drivers[i])
-  	{
-  	  if(strcmp(ost_drivers[i], game->name) == 0)
-	  { 	 
-	   ost=1;
-           break;
-          }
-
-	  i++;    
-        }
-    
-        if (!ost) 
-        { 
 		expand_machine_driver(game->drv, &drv);
 
 		for( i = 0; drv.sound[i].sound_type && i < MAX_SOUND; i++ )
@@ -462,7 +447,7 @@ static void print_game_sampleof(FILE* out, const struct GameDriver* game)
 					++k;
 				}
 			}
-	}	}
+	}
 #endif
 }
 
@@ -471,51 +456,34 @@ static void print_game_sample(FILE* out, const struct GameDriver* game)
 #if (HAS_SAMPLES)
 	struct InternalMachineDriver drv;
 	int i=0;
-        int ost=0;
-
 	
+  expand_machine_driver(game->drv, &drv);
 
-	while(ost_drivers[i])
-  	{
-  	  if(strcmp(ost_drivers[i], game->name) == 0)
-	  { 	 
-	   ost=1;
-           break;
-          }
-
-	  i++;    
+  for( i = 0; drv.sound[i].sound_type && i < MAX_SOUND; i++ )
+  {
+    const char **samplenames = NULL;
+    if( drv.sound[i].sound_type == SOUND_SAMPLES )
+      samplenames = ((struct Samplesinterface *)drv.sound[i].sound_interface)->samplenames;
+    if (samplenames != 0 && samplenames[0] != 0) {
+      int k = 0;
+      if (samplenames[k][0]=='*')
+      {
+        ++k;
+      }	
+      while (samplenames[k] != 0) {
+        /* check if is not empty */
+        if (*samplenames[k]) {
+          /* check if sample is duplicate */
+          int l = 0;
+          while (l<k && strcmp(samplenames[k],samplenames[l])!=0)
+            ++l;
+          if (l==k)
+            fprintf(out, "\t\t<sample name=\"%s\"/>\n", samplenames[k]);
         }
-
-        if (!ost) 
-        { 
-		expand_machine_driver(game->drv, &drv);
-
-		for( i = 0; drv.sound[i].sound_type && i < MAX_SOUND; i++ )
-		{
-			const char **samplenames = NULL;
-			if( drv.sound[i].sound_type == SOUND_SAMPLES )
-				samplenames = ((struct Samplesinterface *)drv.sound[i].sound_interface)->samplenames;
-			if (samplenames != 0 && samplenames[0] != 0) {
-				int k = 0;
-				if (samplenames[k][0]=='*')
-				{
-					++k;
-				}	
-				while (samplenames[k] != 0) {
-					/* check if is not empty */
-					if (*samplenames[k]) {
-						/* check if sample is duplicate */
-						int l = 0;
-						while (l<k && strcmp(samplenames[k],samplenames[l])!=0)
-							++l;
-						if (l==k)
-							fprintf(out, "\t\t<sample name=\"%s\"/>\n", samplenames[k]);
-					}
-					++k;
-				}
-			}
-		}
-	}
+        ++k;
+      }
+    }
+  }
 #endif
 }
 #pragma GCC pop_options
