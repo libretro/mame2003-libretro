@@ -12,27 +12,12 @@
 #include "state.h"
 #include "mamedbg.h"
 #include "cpuexec.h"
+#include "log.h"
+
 
 #if (HAS_M68000 || HAS_M68010 || HAS_M68020 || HAS_M68EC020)
 #include "cpu/m68000/m68000.h"
 #endif
-
-
-/*************************************
- *
- *	Debug logging
- *
- *************************************/
-
-#define VERBOSE 0
-
-#if VERBOSE
-#define LOG(x)	logerror x
-#else
-#define LOG(x)
-#endif
-
-
 
 /*************************************
  *
@@ -44,7 +29,7 @@
 	int activecpu = cpu_getactivecpu();						\
 	if (activecpu < 0)										\
 	{														\
-		logerror(#name "() called with no active cpu!\n");	\
+		log_cb(RETRO_LOG_ERROR, LOGPRE #name "() called with no active cpu!\n");	\
 		return retval;										\
 	}
 
@@ -52,7 +37,7 @@
 	int activecpu = cpu_getactivecpu();						\
 	if (activecpu < 0)										\
 	{														\
-		logerror(#name "() called with no active cpu!\n");	\
+		log_cb(RETRO_LOG_ERROR, LOGPRE #name "() called with no active cpu!\n");	\
 		return;												\
 	}
 
@@ -68,7 +53,7 @@
 	int activecpu = cpu_getexecutingcpu();					\
 	if (activecpu < 0)										\
 	{														\
-		logerror(#name "() called with no executing cpu!\n");\
+		log_cb(RETRO_LOG_ERROR, LOGPRE #name "() called with no executing cpu!\n");\
 		return retval;										\
 	}
 
@@ -76,7 +61,7 @@
 	int activecpu = cpu_getexecutingcpu();					\
 	if (activecpu < 0)										\
 	{														\
-		logerror(#name "() called with no executing cpu!\n");\
+		log_cb(RETRO_LOG_ERROR, LOGPRE #name "() called with no executing cpu!\n");\
 		return;												\
 	}
 
@@ -91,14 +76,14 @@
 #define VERIFY_CPUNUM(retval, name)							\
 	if (cpunum < 0 || cpunum >= cpu_gettotalcpu())			\
 	{														\
-		logerror(#name "() called for invalid cpu num!\n");	\
+		log_cb(RETRO_LOG_ERROR, #name "() called for invalid cpu num!\n");	\
 		return retval;										\
 	}
 
 #define VERIFY_CPUNUM_VOID(name)							\
 	if (cpunum < 0 || cpunum >= cpu_gettotalcpu())			\
 	{														\
-		logerror(#name "() called for invalid cpu num!\n");	\
+		log_cb(RETRO_LOG_ERROR, #name "() called for invalid cpu num!\n");	\
 		return;												\
 	}
 
@@ -285,7 +270,7 @@ static void cpu_pre_run(void)
 {
 	int cpunum;
 
-	logerror("Machine reset\n");
+	log_cb(RETRO_LOG_INFO, LOGPRE "Preparing emulated CPUs for execution.\n");
 
 	begin_resource_tracking();
 
@@ -460,7 +445,7 @@ void machine_reset(void)
 static void watchdog_reset(void)
 {
 	if (watchdog_counter == -1)
-		logerror("watchdog armed\n");
+		log_cb(RETRO_LOG_INFO, "watchdog armed\n");
 	watchdog_counter = 3 * Machine->drv->frames_per_second;
 }
 
@@ -591,14 +576,14 @@ static void cpu_timeslice(void)
 	double target = timer_time_until_next_timer();
 	int cpunum, ran;
 	
-	LOG(("------------------\n"));
-	LOG(("cpu_timeslice: target = %.9f\n", target));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "------------------\n");
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu_timeslice: target = %.9f\n", target);
 	
 	/* process any pending suspends */
 	for (cpunum = 0; Machine->drv->cpu[cpunum].cpu_type != CPU_DUMMY; cpunum++)
 	{
 		if (cpu[cpunum].suspend != cpu[cpunum].nextsuspend)
-			LOG(("--> updated CPU%d suspend from %X to %X\n", cpunum, cpu[cpunum].suspend, cpu[cpunum].nextsuspend));
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "--> updated CPU%d suspend from %X to %X\n", cpunum, cpu[cpunum].suspend, cpu[cpunum].nextsuspend);
 		cpu[cpunum].suspend = cpu[cpunum].nextsuspend;
 		cpu[cpunum].eatcycles = cpu[cpunum].nexteatcycles;
 	}
@@ -611,7 +596,7 @@ static void cpu_timeslice(void)
 		{
 			/* compute how long to run */
 			cycles_running = TIME_TO_CYCLES(cpunum, target - cpu[cpunum].localtime);
-			LOG(("  cpu %d: %d cycles\n", cpunum, cycles_running));
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "  cpu %d: %d cycles\n", cpunum, cycles_running);
 		
 			/* run for the requested number of cycles */
 			if (cycles_running > 0)
@@ -625,13 +610,13 @@ static void cpu_timeslice(void)
 				/* account for these cycles */
 				cpu[cpunum].totalcycles += ran;
 				cpu[cpunum].localtime += TIME_IN_CYCLES(ran, cpunum);
-				LOG(("         %d ran, %d total, time = %.9f\n", ran, (INT32)cpu[cpunum].totalcycles, cpu[cpunum].localtime));
+				log_cb(RETRO_LOG_DEBUG, LOGPRE "         %d ran, %d total, time = %.9f\n", ran, (INT32)cpu[cpunum].totalcycles, cpu[cpunum].localtime);
 				
 				/* if the new local CPU time is less than our target, move the target up */
 				if (cpu[cpunum].localtime < target && cpu[cpunum].localtime > 0)
 				{
 					target = cpu[cpunum].localtime;
-					LOG(("         (new target)\n"));
+					log_cb(RETRO_LOG_DEBUG, LOGPRE "         (new target)\n");
 				}
 			}
 		}
@@ -645,16 +630,16 @@ static void cpu_timeslice(void)
 		{
 			/* compute how long to run */
 			cycles_running = TIME_TO_CYCLES(cpunum, target - cpu[cpunum].localtime);
-			LOG(("  cpu %d: %d cycles (suspended)\n", cpunum, cycles_running));
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "  cpu %d: %d cycles (suspended)\n", cpunum, cycles_running);
 
 			cpu[cpunum].totalcycles += cycles_running;
 			cpu[cpunum].localtime += TIME_IN_CYCLES(cycles_running, cpunum);
-			LOG(("         %d skipped, %d total, time = %.9f\n", cycles_running, (INT32)cpu[cpunum].totalcycles, cpu[cpunum].localtime));
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "         %d skipped, %d total, time = %.9f\n", cycles_running, (INT32)cpu[cpunum].totalcycles, cpu[cpunum].localtime);
 		}
 		
 		/* update the suspend state */
 		if (cpu[cpunum].suspend != cpu[cpunum].nextsuspend)
-			LOG(("--> updated CPU%d suspend from %X to %X\n", cpunum, cpu[cpunum].suspend, cpu[cpunum].nextsuspend));
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "--> updated CPU%d suspend from %X to %X\n", cpunum, cpu[cpunum].suspend, cpu[cpunum].nextsuspend);
 		cpu[cpunum].suspend = cpu[cpunum].nextsuspend;
 		cpu[cpunum].eatcycles = cpu[cpunum].nexteatcycles;
 
@@ -688,7 +673,7 @@ void activecpu_abort_timeslice(void)
 	int current_icount;
 	
 	VERIFY_EXECUTINGCPU_VOID(activecpu_abort_timeslice);
-	LOG(("activecpu_abort_timeslice (CPU=%d, cycles_left=%d)\n", cpu_getexecutingcpu(), activecpu_get_icount() + 1));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "activecpu_abort_timeslice (CPU=%d, cycles_left=%d)\n", cpu_getexecutingcpu(), activecpu_get_icount() + 1);
 	
 	/* swallow the remaining cycles */
 	current_icount = activecpu_get_icount() + 1;
@@ -735,7 +720,7 @@ double cpunum_get_localtime(int cpunum)
 void cpunum_suspend(int cpunum, int reason, int eatcycles)
 {
 	VERIFY_CPUNUM_VOID(cpunum_suspend);
-	LOG(("cpunum_suspend (CPU=%d, r=%X, eat=%d)\n", cpunum, reason, eatcycles));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpunum_suspend (CPU=%d, r=%X, eat=%d)\n", cpunum, reason, eatcycles);
 	
 	/* set the pending suspend bits, and force a resync */
 	cpu[cpunum].nextsuspend |= reason;
@@ -756,7 +741,7 @@ void cpunum_suspend(int cpunum, int reason, int eatcycles)
 void cpunum_resume(int cpunum, int reason)
 {
 	VERIFY_CPUNUM_VOID(cpunum_resume);
-	LOG(("cpunum_resume (CPU=%d, r=%X)\n", cpunum, reason));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpunum_resume (CPU=%d, r=%X)\n", cpunum, reason);
 
 	/* clear the pending suspend bits, and force a resync */
 	cpu[cpunum].nextsuspend &= ~reason;
@@ -830,7 +815,7 @@ void cpu_boost_interleave(double timeslice_time, double boost_duration)
 	if (timeslice_time < perfect_interleave)
 		timeslice_time = perfect_interleave;
 	
-	LOG(("cpu_boost_interleave(%.9f, %.9f)\n", timeslice_time, boost_duration));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu_boost_interleave(%.9f, %.9f)\n", timeslice_time, boost_duration);
 
 	/* adjust the interleave timer */
 	timer_adjust(interleave_boost_timer, timeslice_time, 0, timeslice_time);		
@@ -1468,7 +1453,7 @@ static void cpu_updatecallback(int param)
 	if (watchdog_counter > 0)
 		if (--watchdog_counter == 0)
 		{
-			logerror("reset caused by the watchdog\n");
+			log_cb(RETRO_LOG_INFO, "reset caused by the watchdog\n");
 			machine_reset();
 		}
 
@@ -1558,7 +1543,7 @@ static void cpu_timeslicecallback(int param)
 static void end_interleave_boost(int param)
 {
 	timer_adjust(interleave_boost_timer, TIME_NEVER, 0, TIME_NEVER);		
-	LOG(("end_interleave_boost\n"));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "end_interleave_boost\n");
 }
 
 
@@ -1593,7 +1578,7 @@ static void compute_perfect_interleave(void)
 	if (perfect_interleave == 1.0)
 		perfect_interleave = cycles_to_sec[0];
 
-	LOG(("Perfect interleave = %.9f, smallest = %.9f\n", perfect_interleave, smallest));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "Perfect interleave = %.9f, smallest = %.9f\n", perfect_interleave, smallest);
 }
 
 

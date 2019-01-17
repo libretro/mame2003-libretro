@@ -23,8 +23,8 @@
 #include <stdarg.h>
 
 
-//#define MEM_DUMP
-//#define CHECK_MASKS
+/*#define MEM_DUMP*/
+/*#define CHECK_MASKS*/
 
 
 
@@ -452,7 +452,7 @@ data8_t *install_mem_read_handler(int cpunum, offs_t start, offs_t end, mem_read
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 8)
 	{
-		printf("fatal: install_mem_read_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_mem_read_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
 		exit(1);
 	}
 
@@ -476,7 +476,7 @@ data16_t *install_mem_read16_handler(int cpunum, offs_t start, offs_t end, mem_r
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 16)
 	{
-		printf("fatal: install_mem_read16_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_mem_read16_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
 		exit(1);
 	}
 
@@ -500,7 +500,7 @@ data32_t *install_mem_read32_handler(int cpunum, offs_t start, offs_t end, mem_r
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 32)
 	{
-		printf("fatal: install_mem_read32_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_mem_read32_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
 		exit(1);
 	}
 
@@ -524,7 +524,7 @@ data8_t *install_mem_write_handler(int cpunum, offs_t start, offs_t end, mem_wri
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 8)
 	{
-		printf("fatal: install_mem_write_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_mem_write_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
 		exit(1);
 	}
 
@@ -548,7 +548,7 @@ data16_t *install_mem_write16_handler(int cpunum, offs_t start, offs_t end, mem_
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 16)
 	{
-		printf("fatal: install_mem_write16_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_mem_write16_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
 		exit(1);
 	}
 
@@ -572,7 +572,7 @@ data32_t *install_mem_write32_handler(int cpunum, offs_t start, offs_t end, mem_
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 32)
 	{
-		printf("fatal: install_mem_write32_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_mem_write32_handler called on %d-bit cpu\n",cpudata[cpunum].mem.dbits);
 		exit(1);
 	}
 
@@ -596,7 +596,7 @@ void install_port_read_handler(int cpunum, offs_t start, offs_t end, port_read_h
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 8)
 	{
-		printf("fatal: install_port_read_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_port_read_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
 		exit(1);
 	}
 
@@ -619,7 +619,7 @@ void install_port_read16_handler(int cpunum, offs_t start, offs_t end, port_read
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 16)
 	{
-		printf("fatal: install_port_read16_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_port_read16_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
 		exit(1);
 	}
 
@@ -642,7 +642,7 @@ void install_port_read32_handler(int cpunum, offs_t start, offs_t end, port_read
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 32)
 	{
-		printf("fatal: install_port_read32_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_port_read32_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
 		exit(1);
 	}
 
@@ -665,7 +665,7 @@ void install_port_write_handler(int cpunum, offs_t start, offs_t end, port_write
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 8)
 	{
-		printf("fatal: install_port_write_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_port_write_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
 		exit(1);
 	}
 
@@ -688,7 +688,7 @@ void install_port_write16_handler(int cpunum, offs_t start, offs_t end, port_wri
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 16)
 	{
-		printf("fatal: install_port_write16_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_port_write16_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
 		exit(1);
 	}
 
@@ -711,7 +711,7 @@ void install_port_write32_handler(int cpunum, offs_t start, offs_t end, port_wri
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 32)
 	{
-		printf("fatal: install_port_write32_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "fatal: install_port_write32_handler called on %d-bit cpu\n",cpudata[cpunum].port.dbits);
 		exit(1);
 	}
 
@@ -733,7 +733,7 @@ int CLIB_DECL fatalerror(const char *string, ...)
 {
 	va_list arg;
 	va_start(arg, string);
-	vprintf(string, arg);
+	log_cb(RETRO_LOG_ERROR, string, arg);
 	va_end(arg);
 	exit(1);
 	return 0;
@@ -864,7 +864,7 @@ UINT8 alloc_new_subtable(const struct memport_data *memport, struct table_data *
 		fatalerror("error: ran out of memory subtables\n");
 
 
-#ifdef __LIBRETRO__ // HACK: Don't use realloc
+#ifdef __LIBRETRO__ /* HACK: Don't use realloc*/
     if(tabledata->subtable_alloc < SUBTABLE_COUNT)
     {
         tabledata->subtable_alloc = SUBTABLE_COUNT;
@@ -1137,7 +1137,7 @@ static int init_memport(int cpunum, struct memport_data *data, int abits, int db
 	data->mask = 0xffffffffUL >> (32 - abits);
 
 	/* allocate memory */
-#ifdef __LIBRETRO__ // HACK: Don't use realloc
+#ifdef __LIBRETRO__ /* HACK: Don't use realloc*/
 	data->read.table = malloc(1024*1024);
 	data->write.table = malloc(1024*1024);
 #else
@@ -1664,7 +1664,7 @@ void register_banks(void)
 		const struct Memory_ReadAddress *mra, *mra_start = Machine->drv->cpu[cpunum].memory_read;
 		const struct Memory_WriteAddress *mwa, *mwa_start = Machine->drv->cpu[cpunum].memory_write;
 		int bits = cpudata[cpunum].mem.abits;
-//		int width = cpunum_databus_width(cpunum);
+/*		int width = cpunum_databus_width(cpunum);*/
 
 		if (!IS_SPARSE(bits))
 		{
@@ -2573,7 +2573,7 @@ int mem_address_bits_of_cpu(int cputype)
 			return readmem_to_bits[idx].bits;
 
 	/* this is a fatal error */
-	fatalerror("CPU #%d memory handlers don't have a table entry in readmem_to_bits!\n");
+	fatalerror("CPU memory handlers don't have a table entry in readmem_to_bits!\n");
 	exit(1);
 	return 0;
 }
@@ -2608,71 +2608,82 @@ static INLINE offs_t effective_offset(offs_t offset)
 
 static READ_HANDLER( mrh8_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped memory byte read from %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory byte read from %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset));
 	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return cpu_bankbase[STATIC_RAM][offset];
 	return unmap_value;
 }
 static READ16_HANDLER( mrh16_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped memory word read from %08X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), mem_mask ^ 0xffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory word read from %08X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), mem_mask ^ 0xffff);
 	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return ((data16_t *)cpu_bankbase[STATIC_RAM])[offset];
 	return unmap_value;
 }
 static READ32_HANDLER( mrh32_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped memory dword read from %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), mem_mask ^ 0xffffffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory dword read from %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), mem_mask ^ 0xffffffff);
 	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return ((data32_t *)cpu_bankbase[STATIC_RAM])[offset];
 	return unmap_value;
 }
 
 static WRITE_HANDLER( mwh8_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped memory byte write to %08X = %02X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset), data);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory byte write to %08X = %02X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset), data);
 	if (activecpu_address_bits() <= SPARSE_THRESH) cpu_bankbase[STATIC_RAM][offset] = data;
 }
 static WRITE16_HANDLER( mwh16_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped memory word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), data, mem_mask ^ 0xffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), data, mem_mask ^ 0xffff);
 	if (activecpu_address_bits() <= SPARSE_THRESH) COMBINE_DATA(&((data16_t *)cpu_bankbase[STATIC_RAM])[offset]);
 }
 static WRITE32_HANDLER( mwh32_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped memory dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), data, mem_mask ^ 0xffffffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), data, mem_mask ^ 0xffffffff);
 	if (activecpu_address_bits() <= SPARSE_THRESH) COMBINE_DATA(&((data32_t *)cpu_bankbase[STATIC_RAM])[offset]);
 }
 
 static READ_HANDLER( prh8_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped port byte read from %08X\n", cpu_getactivecpu(), activecpu_get_pc(), offset);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped port byte read from %08X\n", cpu_getactivecpu(), activecpu_get_pc(), offset);
 	return unmap_value;
 }
 static READ16_HANDLER( prh16_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped port word read from %08X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*2, mem_mask ^ 0xffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped port word read from %08X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*2, mem_mask ^ 0xffff);
 	return unmap_value;
 }
 static READ32_HANDLER( prh32_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped port dword read from %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*4, mem_mask ^ 0xffffffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped port dword read from %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*4, mem_mask ^ 0xffffffff);
 	return unmap_value;
 }
 
 static WRITE_HANDLER( pwh8_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped port byte write to %08X = %02X\n", cpu_getactivecpu(), activecpu_get_pc(), offset, data);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped port byte write to %08X = %02X\n", cpu_getactivecpu(), activecpu_get_pc(), offset, data);
 }
 static WRITE16_HANDLER( pwh16_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped port word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*2, data, mem_mask ^ 0xffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped port word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*2, data, mem_mask ^ 0xffff);
 }
 static WRITE32_HANDLER( pwh32_bad )
 {
-	logerror("cpu #%d (PC=%08X): unmapped port dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*4, data, mem_mask ^ 0xffffffff);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped port dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), offset*4, data, mem_mask ^ 0xffffffff);
 }
 
-static WRITE_HANDLER( mwh8_rom )       { logerror("cpu #%d (PC=%08X): byte write to ROM %08X = %02X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset), data); }
-static WRITE16_HANDLER( mwh16_rom )    { logerror("cpu #%d (PC=%08X): word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), data, mem_mask ^ 0xffff); }
-static WRITE32_HANDLER( mwh32_rom )    { logerror("cpu #%d (PC=%08X): dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), data, mem_mask ^ 0xffffffff); }
+static WRITE_HANDLER( mwh8_rom )
+{ 
+  log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): byte write to ROM %08X = %02X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset), data); 
+}
+
+static WRITE16_HANDLER( mwh16_rom )
+{
+  log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), data, mem_mask ^ 0xffff);
+}
+
+static WRITE32_HANDLER( mwh32_rom )
+{
+  log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), data, mem_mask ^ 0xffffffff);
+}
 
 static READ_HANDLER( mrh8_nop )        { return 0; }
 static READ16_HANDLER( mrh16_nop )     { return 0; }
@@ -2971,19 +2982,19 @@ static void verify_masks(void)
 									if (size != 1)
 									{
 										if (!track_entry((void *)mra, (void *)mra->handler))
-											printf("%s: %s cpu %d readmem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mra->start, mra->end);
+											log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d readmem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mra->start, mra->end);
 									}
 								}
 								size--;
 								if ((mra->start & size) != 0)
 								{
 									if (!track_entry((void *)mra, (void *)mra->handler))
-										printf("%s: %s cpu %d readmem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mra->start, mra->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d readmem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mra->start, mra->end);
 								}
 								if ((mra->end & size) != size)
 								{
 									if (!track_entry((void *)mra, (void *)mra->handler))
-										printf("%s: %s cpu %d readmem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mra->start, mra->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d readmem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mra->start, mra->end);
 								}
 							}
 
@@ -2998,19 +3009,19 @@ static void verify_masks(void)
 									if (size != 1)
 									{
 										if (!track_entry((void *)mwa, (void *)mwa->handler))
-											printf("%s: %s cpu %d writemem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mwa->start, mwa->end);
+											log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d writemem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mwa->start, mwa->end);
 									}
 								}
 								size--;
 								if ((mwa->start & size) != 0)
 								{
 									if (!track_entry((void *)mwa, (void *)mwa->handler))
-										printf("%s: %s cpu %d writemem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mwa->start, mwa->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d writemem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mwa->start, mwa->end);
 								}
 								if ((mwa->end & size) != size)
 								{
 									if (!track_entry((void *)mwa, (void *)mwa->handler))
-										printf("%s: %s cpu %d writemem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mwa->start, mwa->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d writemem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, mwa->start, mwa->end);
 								}
 							}
 
@@ -3025,19 +3036,19 @@ static void verify_masks(void)
 									if (size != 1)
 									{
 										if (!track_entry((void *)iora, (void *)iora->handler))
-											printf("%s: %s cpu %d readmem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iora->start, iora->end);
+											log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d readmem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iora->start, iora->end);
 									}
 								}
 								size--;
 								if ((iora->start & size) != 0)
 								{
 									if (!track_entry((void *)iora, (void *)iora->handler))
-										printf("%s: %s cpu %d readmem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iora->start, iora->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d readmem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iora->start, iora->end);
 								}
 								if ((iora->end & size) != size)
 								{
 									if (!track_entry((void *)iora, (void *)iora->handler))
-										printf("%s: %s cpu %d readmem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iora->start, iora->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d readmem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iora->start, iora->end);
 								}
 							}
 
@@ -3052,26 +3063,26 @@ static void verify_masks(void)
 									if (size != 1)
 									{
 										if (!track_entry((void *)iowa, (void *)iowa->handler))
-											printf("%s: %s cpu %d writemem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iowa->start, iowa->end);
+											log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d writemem inval size  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iowa->start, iowa->end);
 									}
 								}
 								size--;
 								if ((iowa->start & size) != 0)
 								{
 									if (!track_entry((void *)iowa, (void *)iowa->handler))
-										printf("%s: %s cpu %d writemem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iowa->start, iowa->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d writemem inval start { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iowa->start, iowa->end);
 								}
 								if ((iowa->end & size) != size)
 								{
 									if (!track_entry((void *)iowa, (void *)iowa->handler))
-										printf("%s: %s cpu %d writemem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iowa->start, iowa->end);
+										log_cb(RETRO_LOG_DEBUG, LOGPRE "%s: %s cpu %d writemem inval end  { %08X, %08X }\n", drivers[i]->source_file, drivers[i]->name, cpunum, iowa->start, iowa->end);
 								}
 							}
 				}
 			}
 		}
 	}
-	printf("Total busted entries = %d\n", track_count);
-	printf("Busted entries that are static = %d\n", static_count);
+	log_cb(RETRO_LOG_INFO, LOGPRE "mame-memory: Total busted entries = %d\n", track_count);
+	log_cb(RETRO_LOG_INFO, LOGPRE "mame-memory: Busted entries that are static = %d\n", static_count);
 }
 #endif

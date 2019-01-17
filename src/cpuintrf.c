@@ -161,54 +161,6 @@
 #include "cpu/e132xs/e132xs.h"
 #endif
 
-#ifdef MESS
-
-#if (HAS_APEXC)
-#include "cpu/apexc/apexc.h"
-#endif
-#if (HAS_CDP1802)
-#include "cpu/cdp1802/cdp1802.h"
-#endif
-#if (HAS_CP1600)
-#include "cpu/cp1600/cp1600.h"
-#endif
-#if (HAS_F8)
-#include "cpu/f8/f8.h"
-#endif
-#if (HAS_LH5801)
-#include "cpu/lh5801/lh5801.h"
-#endif
-#if (HAS_PDP1)
-#include "cpu/pdp1/pdp1.h"
-#endif
-#if (HAS_SATURN)
-#include "cpu/saturn/saturn.h"
-#endif
-#if (HAS_SC61860)
-#include "cpu/sc61860/sc61860.h"
-#endif
-#if (HAS_Z80GB)
-#include "cpu/z80gb/z80gb.h"
-#endif
-
-#endif
-
-
-
-/*************************************
- *
- *	Debug logging
- *
- *************************************/
-
-#define VERBOSE 0
-
-#if VERBOSE
-#define LOG(x)	logerror x
-#else
-#define LOG(x)
-#endif
-
 
 
 /*************************************
@@ -663,42 +615,6 @@ const struct cpu_interface cpuintrf[] =
 	CPU0(E132XS,   e132xs, 	 1,0,1.00, 32, 32bedw,	  0,32,BE,2, 6	),
 #endif
 
-#ifdef MESS
-#if (HAS_APEXC)
-	CPU0(APEXC,    apexc,	 0,  0,1.00,32,18bedw, 0,18,LE,1, 1	),
-#endif
-#if (HAS_CDP1802)
-#define cdp1802_ICount cdp1802_icount
-	CPU0(CDP1802,  cdp1802,  1,  0,1.00, 8, 16,	  0,16,BE,1, 3	),
-#endif
-#if (HAS_CP1600)
-#define cp1600_ICount cp1600_icount
-	CPU0(CP1600,   cp1600,	 4,  0,1.00, 16, 24bew,  -1,17,BE,2,3	),
-#endif
-#if (HAS_F8)
-#define f8_ICount f8_icount
-	CPU4(F8,	   f8,		 1,  0,1.00, 8, 16,	  0,16,LE,1, 3	),
-#endif
-#if (HAS_LH5801)
-#define lh5801_ICount lh5801_icount
-	CPU0(LH5801,   lh5801,	 1,  0,1.00, 8, 17,	  0,17,BE,1, 5	),
-#endif
-#if (HAS_PDP1)
-	//CPU0(PDP1,	   pdp1,	 0,  0,1.00, 8, 16,	  0,18,LE,1, 3	),
-	CPU0(PDP1,	   pdp1,	 0,  0,1.00,32,18bedw,0,18,LE,1, 3	),
-#endif
-#if (HAS_SATURN)
-#define saturn_ICount saturn_icount
-	CPU0(SATURN,   saturn,	 1,  0,1.00, 8,20,	  0,20,LE,1, 21 ),
-#endif
-#if (HAS_SC61860)
-	#define sc61860_ICount sc61860_icount
-	CPU0(SC61860,  sc61860,  1,  0,1.00, 8, 16,	  0,16,BE,1, 4	),
-#endif
-#if (HAS_Z80GB)
-	CPU0(Z80GB,    z80gb,	 5,255,1.00, 8, 16,	  0,16,LE,1, 4	),
-#endif
-#endif
 };
 
 
@@ -820,7 +736,7 @@ int cpuintrf_init(void)
 		/* make sure the index in the array matches the current index */
 		if (cpuintrf[cputype].cpu_num != cputype)
 		{
-			printf("CPU #%d [%s] wrong ID %d: check enum CPU_... in src/cpuintrf.h!\n", cputype, cputype_name(cputype), cpuintrf[cputype].cpu_num);
+			log_cb(RETRO_LOG_ERROR, LOGPRE "CPU #%d [%s] wrong ID %d: check enum CPU_... in src/cpuintrf.h!\n", cputype, cputype_name(cputype), cpuintrf[cputype].cpu_num);
 			exit(1);
 		}
 
@@ -888,7 +804,7 @@ int cpuintrf_init_cpu(int cpunum, int cputype)
 	if (size == 0)
 	{
 		/* that can't really be true */
-		//logerror("CPU #%d claims to need no context buffer!\n", cpunum);
+		/*logerror("CPU #%d claims to need no context buffer!\n", cpunum);*/
 		return 1;
 	}
 
@@ -897,7 +813,7 @@ int cpuintrf_init_cpu(int cpunum, int cputype)
 	if (cpu[cpunum].context == NULL)
 	{
 		/* that's really bad :( */
-		//logerror("CPU #%d failed to allocate context buffer (%d bytes)!\n", cpunum, size);
+		/*logerror("CPU #%d failed to allocate context buffer (%d bytes)!\n", cpunum, size);*/
 		return 1;
 	}
 
@@ -985,7 +901,7 @@ void activecpu_set_irq_line(int irqline, int state)
 	VERIFY_ACTIVECPU_VOID(activecpu_set_irq_line);
 	if (state != INTERNAL_CLEAR_LINE && state != INTERNAL_ASSERT_LINE)
 	{
-		//logerror("activecpu_set_irq_line called when cpu_set_irq_line should have been used!\n");
+		/*logerror("activecpu_set_irq_line called when cpu_set_irq_line should have been used!\n");*/
 		return;
 	}
 	(*cpu[activecpu].intf.set_irq_line)(irqline, state - INTERNAL_CLEAR_LINE);
@@ -1528,7 +1444,7 @@ void cpu_set_m68k_reset(int cpunum, void (*resetfn)(void))
 #endif
 		)
 	{
-		//logerror("Trying to set m68k reset vector on non-68k cpu\n");
+		/*logerror("Trying to set m68k reset vector on non-68k cpu\n");*/
 		exit(1);
 	}
 
