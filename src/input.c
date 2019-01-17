@@ -259,28 +259,26 @@ static const char* internal_code_name(InputCode code)
 /* Update the code table */
 static void internal_code_update(void)
 {
-  const struct KeyboardInfo *keyinfo;
-  const struct JoystickInfo *joyinfo;
+	const struct KeyboardInfo *keyinfo;
+	const struct JoystickInfo *joyinfo;
 
-  /* add only oscode because all standard codes are already present */
+	/* add only oscode because all standard codes are already present */
 
-  keyinfo = osd_get_key_list();
-  while (keyinfo->name)
-  {
-    if (keyinfo->standardcode == CODE_OTHER)
-      if (internal_oscode_find(keyinfo->code,CODE_TYPE_KEYBOARD) == CODE_NONE)
-        internal_oscode_add(keyinfo->code,CODE_TYPE_KEYBOARD);
+	keyinfo = osd_get_key_list();
+	while (keyinfo->name)
+	{
+		if (keyinfo->standardcode == CODE_OTHER)
+			if (internal_oscode_find(keyinfo->code,CODE_TYPE_KEYBOARD) == CODE_NONE)
+				internal_oscode_add(keyinfo->code,CODE_TYPE_KEYBOARD);
+		++keyinfo;
+	}
 
-    ++keyinfo;
-  }
-
-  joyinfo = osd_get_joy_list();
-  while (joyinfo->name)
-  {
-    if (joyinfo->standardcode == CODE_OTHER)
-      if (internal_oscode_find(joyinfo->code,CODE_TYPE_JOYSTICK)==CODE_NONE)
-        internal_oscode_add(joyinfo->code,CODE_TYPE_JOYSTICK);
-
+	joyinfo = osd_get_joy_list();
+	while (joyinfo->name)
+	{
+		if (joyinfo->standardcode == CODE_OTHER)
+                        if (internal_oscode_find(joyinfo->code,CODE_TYPE_JOYSTICK)==CODE_NONE)
+				internal_oscode_add(joyinfo->code,CODE_TYPE_JOYSTICK);
 		++joyinfo;
 	}
 }
@@ -290,9 +288,9 @@ void code_close(void)
 {
 #if 0
 	int i;
-	log_cb(RETRO_LOG_ERROR, LOGPRE "List of OS dependant input codes:\n");
+	logerror("List of OS dependant input codes:\n");
 	for(i=__code_max;i<code_mac;++i)
-		log_cb(RETRO_LOG_ERROR, LOGPRE "\tcode %d, oscode %d, %s, %s\n",i,code_map[i].oscode,code_map[i].type == CODE_TYPE_KEYBOARD ? "keyboard" : "joystick", internal_code_name(i));
+		logerror("\tcode %d, oscode %d, %s, %s\n",i,code_map[i].oscode,code_map[i].type == CODE_TYPE_KEYBOARD ? "keyboard" : "joystick", internal_code_name(i));
 #endif
 
 	code_mac = 0;
@@ -750,8 +748,8 @@ int seq_read_async(InputSeq* seq, int first)
        the key/button that UI_CANCEL is bound to, especially in RETROPAD-only
        environments.
      */
-	/*if (input_ui_pressed(IPT_UI_CANCEL))*/
-	/*	return 1;*/
+	//if (input_ui_pressed(IPT_UI_CANCEL))
+	//	return 1;
 
 	if (record_count == SEQ_MAX
 		|| (record_count > 0 && clock() > record_last + RECORD_TIME))	{
