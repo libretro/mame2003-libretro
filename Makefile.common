@@ -74,6 +74,7 @@ SOURCES_C += \
 	$(CORE_DIR)/machine/7474.c \
 	$(CORE_DIR)/machine/8255ppi.c \
 	$(CORE_DIR)/machine/eeprom.c \
+	$(CORE_DIR)/machine/idectrl.c \
 	$(CORE_DIR)/machine/mathbox.c \
 	$(CORE_DIR)/machine/mb87078.c \
 	$(CORE_DIR)/machine/random.c \
@@ -84,6 +85,7 @@ SOURCES_C += \
 	$(CORE_DIR)/sound/mixer.c \
 	$(CORE_DIR)/sound/streams.c \
 	$(CORE_DIR)/sound/votrax.c \
+	$(CORE_DIR)/sound/wavwrite.c \
 	$(CORE_DIR)/vidhrdw/avgdvg_vidhrdw.c \
 	$(CORE_DIR)/vidhrdw/generic.c \
 	$(CORE_DIR)/vidhrdw/matrix3d.c \
