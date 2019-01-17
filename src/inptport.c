@@ -291,20 +291,6 @@ OSD_4
 #include "driver.h"
 #include "config.h"
 
-#ifdef MESS
-#include "inputx.h"
-#endif
-
-/* MAMEnet support */
-#if defined MAME_NET || defined XMAME_NET
-#include "network.h"
-
-static unsigned short input_port_defaults[MAX_INPUT_PORTS];
-static int default_player;
-static int analog_player_port[MAX_INPUT_PORTS];
-#endif /* MAME_NET */
-
-
 
 /***************************************************************************
 
@@ -917,10 +903,10 @@ struct ipd inputport_defaults[] =
 #endif
 
 	{ IPT_UNKNOWN,             "UNKNOWN",         SEQ_DEF_0 },
-	{ IPT_OSD_RESERVED,        "",                SEQ_DEF_0 },
-	{ IPT_OSD_RESERVED,        "",                SEQ_DEF_0 },
-	{ IPT_OSD_RESERVED,        "",                SEQ_DEF_0 },
-	{ IPT_OSD_RESERVED,        "",                SEQ_DEF_0 },
+	{ IPT_OSD_DESCRIPTION,     "",                SEQ_DEF_0 },
+	{ IPT_OSD_DESCRIPTION,     "",                SEQ_DEF_0 },
+	{ IPT_OSD_DESCRIPTION,     "",                SEQ_DEF_0 },
+	{ IPT_OSD_DESCRIPTION,     "",                SEQ_DEF_0 },
 	{ IPT_END,                 0,                 SEQ_DEF_0 }	/* returned when there is no match */
 };
 
@@ -1688,6 +1674,30 @@ struct ik input_keywords[] =
 };
 
 int num_ik = sizeof(input_keywords)/sizeof(struct ik);
+
+
+/***************************************************************************/
+
+
+const char *generic_ctrl_label(int input)
+{
+  unsigned int i = 0;
+
+  for( ; inputport_defaults[i].type != IPT_END; ++i)
+  {
+    struct ipd *entry = &inputport_defaults[i];
+    if(entry->type == input)
+    {
+      if(input >= IPT_SERVICE1 && input <= IPT_UI_EDIT_CHEAT)
+        return entry->name; /* these strings are not player-specific */
+      else /* start with the third character, trimming the initial 'P1', 'P2', etc which we don't need for libretro */
+        return &entry->name[3];
+    }
+  }
+  return NULL;
+}
+
+
 
 /***************************************************************************/
 /* Generic IO */

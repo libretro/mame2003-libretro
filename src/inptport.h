@@ -33,12 +33,7 @@ struct InputPort
 	UINT32 type;			/* see defines below */
 	const char *name;		/* name to display */
 	InputSeq seq;                  	/* input sequence affecting the input bits */
-#ifdef MESS
-	UINT32 arg;				/* extra argument needed in some cases */
-	UINT16 min, max;		/* for analog controls */
-#endif
 };
-
 
 #define IP_ACTIVE_HIGH 0x0000
 #define IP_ACTIVE_LOW 0xffff
@@ -69,18 +64,13 @@ enum { IPT_END=1,IPT_PORT,
 	IPT_SERVICE1, IPT_SERVICE2, IPT_SERVICE3, IPT_SERVICE4,	/* service coin */
 	IPT_SERVICE, IPT_TILT,
 	IPT_DIPSWITCH_NAME, IPT_DIPSWITCH_SETTING,
-#ifdef MESS
-	IPT_KEYBOARD, IPT_UCHAR,
-	IPT_CONFIG_NAME, IPT_CONFIG_SETTING,
-	IPT_MOUSE_X, IPT_MOUSE_Y,
-	IPT_START, IPT_SELECT,
-#endif
+
 /* Many games poll an input bit to check for vertical blanks instead of using */
 /* interrupts. This special value allows you to handle that. If you set one of the */
 /* input bits to this, the bit will be inverted while a vertical blank is happening. */
 	IPT_VBLANK,
 	IPT_UNKNOWN,
-	IPT_OSD_RESERVED,
+	IPT_OSD_DESCRIPTION,
 	IPT_OSD_1,
 	IPT_OSD_2,
 	IPT_OSD_3,
@@ -117,10 +107,10 @@ enum { IPT_END=1,IPT_PORT,
 #define IPT_SPECIAL    IPT_UNUSED	/* special meaning handled by custom functions */
 
 #define IPF_MASK       0xffffff00
-#define IPF_UNUSED     0x80000000	/* The bit is not used by this game, but is used */
-									/* by other games running on the same hardware. */
-									/* This is different from IPT_UNUSED, which marks */
-									/* bits not connected to anything. */
+#define IPF_UNUSED     0x80000000 /* The bit is not used by this game, but is used */
+                                  /* by other games running on the same hardware. */
+                                  /* This is different from IPT_UNUSED, which marks */
+                                  /* bits not connected to anything. */
 #define IPF_COCKTAIL   IPF_PLAYER2	/* the bit is used in cocktail mode only */
 
 #define IPF_CHEAT      0x40000000	/* Indicates that the input bit is a "cheat" key */
@@ -138,11 +128,11 @@ enum { IPT_END=1,IPT_PORT,
 #define IPF_PLAYER7    0x00060000
 #define IPF_PLAYER8    0x00070000
 
-#define IPF_8WAY       0         	/* Joystick modes of operation. 8WAY is the default, */
-#define IPF_4WAY       0x00080000	/* it prevents left/right or up/down to be pressed at */
-#define IPF_2WAY       0         	/* the same time. 4WAY prevents diagonal directions. */
-									/* 2WAY should be used for joysticks wich move only */
-                                 	/* on one axis (e.g. Battle Zone) */
+#define IPF_8WAY       0          /* Joystick modes of operation. 8WAY is the default, */
+#define IPF_4WAY       0x00080000 /* it prevents left/right or up/down to be pressed at */
+#define IPF_2WAY       0          /* the same time. 4WAY prevents diagonal directions. */
+                                  /* 2WAY should be used for joysticks wich move only */
+                                  /* on one axis (e.g. Battle Zone) */
 
 #define IPF_IMPULSE    0x00100000	/* When this is set, when the key corrisponding to */
 									/* the input bit is pressed it will be reported as */
@@ -330,10 +320,6 @@ InputSeq* input_port_seq(const struct InputPort *in);
 struct InputPort* input_port_allocate(const struct InputPortTiny *src);
 void input_port_free(struct InputPort* dst);
 
-#ifdef MAME_NET
-void set_default_player_controls(int player);
-#endif /* MAME_NET */
-
 void init_analog_seq(void);
 
 void update_analog_port(int port);
@@ -416,11 +402,26 @@ struct ik
 	UINT32 type;
 	UINT32 val;
 };
+
+
 extern struct ik input_keywords[];
 extern struct ik *osd_input_keywords;
 extern int num_ik;
 
 void seq_set_string(InputSeq* a, const char *buf);
+const char *generic_ctrl_label(int input);
+
+/* 
+ * void reset_default_inputs(void)
+ * repopulate mappings from the defaults specified in the inptport source 
+ */
+void reset_default_inputs(void);
+
+/* 
+ * void reset_default_keys(void)
+ * repopulate mappings from the defaults specified in the driver source 
+ */
+void reset_driver_inputs(void);
 
 #ifdef __cplusplus
 }
