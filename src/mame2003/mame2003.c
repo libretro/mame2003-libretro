@@ -42,7 +42,7 @@ extern int16_t mouse_y[4];
 int16_t prev_pointer_x;
 int16_t prev_pointer_y;
 extern int16_t analogjoy[4][4];
-
+static struct retro_message        frontend_message;
 struct retro_perf_callback perf_cb;
 retro_environment_t environ_cb = NULL;
 retro_log_printf_t log_cb = NULL;
@@ -475,6 +475,20 @@ static void check_system_specs(void)
    unsigned level = 10;
    environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
 }
+
+/******************************************************************************
+
+	frontend message interface
+
+******************************************************************************/
+void frontend_message_cb(const char *message_string, unsigned frames_to_display)
+{
+  frontend_message.msg    = message_string;
+  frontend_message.frames = frames_to_display;
+  environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE, &frontend_message);
+}
+
+
 
 void retro_init (void)
 {
