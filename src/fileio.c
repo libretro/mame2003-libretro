@@ -13,23 +13,7 @@
 #include "driver.h"
 #include "unzip.h"
 #include "fileio.h"
-
-
-/***************************************************************************
-	DEBUGGING
-***************************************************************************/
-
-/* Verbose outputs to error.log ? */
-#define VERBOSE 					0
-
-/* enable lots of logging */
-#if VERBOSE
-#define LOG(x)	logerror x
-#else
-#define LOG(x)
-#endif
-
-#define PATH_MAX_LENGTH 256
+#include "log.h"
 
 
 /***************************************************************************
@@ -77,7 +61,6 @@ struct _mame_file
 ***************************************************************************/
 
 static mame_file *generic_fopen(int pathtype, const char *gamename, const char *filename, const char* hash, UINT32 flags);
-static const char *get_extension_for_filetype(int filetype);
 static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **p, UINT64 *size, char* hash);
 
 
@@ -94,12 +77,13 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 		case FILETYPE_ROM:
 		case FILETYPE_IMAGE:
 		case FILETYPE_SAMPLE:
+		case FILETYPE_SAMPLE_FLAC:
 		case FILETYPE_ARTWORK:
 		case FILETYPE_HISTORY:
 		case FILETYPE_LANGUAGE:
 			if (openforwrite)
 			{
-				logerror("mame_fopen: type %02x write not supported\n", filetype);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "mame_fopen: type %02x write not supported\n", filetype);
 				return NULL;
 			}
 			break;
@@ -125,6 +109,9 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 		case FILETYPE_SAMPLE:
 			return generic_fopen(filetype, gamename, filename, 0, FILEFLAG_OPENREAD);
 
+		case FILETYPE_SAMPLE_FLAC:
+ 			return generic_fopen(filetype, gamename, filename, 0, FILEFLAG_OPENREAD);
+
 		/* artwork files */
 		case FILETYPE_ARTWORK:
 			return generic_fopen(filetype, gamename, filename, 0, FILEFLAG_OPENREAD);
@@ -135,8 +122,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* high score files */
 		case FILETYPE_HIGHSCORE:
-			if (!mame_highscore_enabled())
-				return NULL;
 			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
 		/* highscore database */
@@ -145,10 +130,6 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* config files */
 		case FILETYPE_CONFIG:
-			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
-
-		/* input logs */
-		case FILETYPE_INPUTLOG:
 			return generic_fopen(filetype, NULL, gamename, 0, openforwrite ? FILEFLAG_OPENWRITE : FILEFLAG_OPENREAD);
 
 		/* memory card files */
@@ -173,7 +154,7 @@ mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, 
 
 		/* anything else */
 		default:
-			logerror("mame_fopen(): unknown filetype %02x\n", filetype);
+			log_cb(RETRO_LOG_ERROR, LOGPRE "mame_fopen(): unknown filetype %02x\n", filetype);
 			return NULL;
 	}
 	return NULL;
@@ -191,48 +172,74 @@ int osd_get_path_count(int pathtype)
 	return 1;
 }
 
+/******************************************************************************
+ 
+ osd_get_path
+ Sets char* path to point at a valid path of the type incidated by int pathtype,
+ although the path itself does not necessarily exist at this point in the process.
+ 
+ *****************************************************************************/
 void osd_get_path(int pathtype, char* path)
 {
+  char save_path_buffer[PATH_MAX_LENGTH];
+  char sys_path_buffer[PATH_MAX_LENGTH];
+
+  save_path_buffer[0] = '\0';
+  if(options.save_subfolder)
+    snprintf(save_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_save_path,path_default_slash_c(), APPNAME);
+  else
+    snprintf(save_path_buffer, PATH_MAX_LENGTH, "%s", options.libretro_save_path);
+
+  sys_path_buffer[0] = '\0';
+  if(options.system_subfolder)
+    snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_system_path,path_default_slash_c(), APPNAME);
+  else
+    snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s", options.libretro_system_path);
+    
    switch (pathtype)
-   {
-      case FILETYPE_ROM:
-      case FILETYPE_IMAGE:
-         strcpy(path, options.libretro_content_path);
-         break;
-         
-      /* user-initiated content goes in save directory subfolders */
-        
+   {       
+       case FILETYPE_ROM:
+       case FILETYPE_IMAGE:	
+          strcpy(path, options.libretro_content_path);	
+          break;
+
+      /* user-initiated content goes in mame2003 save directory subfolders */      
       case FILETYPE_IMAGE_DIFF:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), "diff");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "diff");
          break;     
       case FILETYPE_NVRAM:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), "nvram");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "nvram");
          break;
       case FILETYPE_HIGHSCORE:
-          snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), "hi");
+          snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "hi");
          break;
       case FILETYPE_CONFIG:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), "cfg");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "cfg");
          break;
       case FILETYPE_MEMCARD:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), "memcard");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "memcard");
          break;
       case FILETYPE_CTRLR:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME, path_default_slash(), "ctrlr");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "ctrlr");
          break;
       case FILETYPE_XML_DAT:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME);
+         snprintf(path, PATH_MAX_LENGTH, "%s", save_path_buffer);
          break;
-      /* pre-generated content goes in system directory subfolders */
+
+         /* static, pregenerated content goes in mam2003 system directory subfolders */
       case FILETYPE_ARTWORK:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME, path_default_slash(), "artwork");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer,path_default_slash_c(), "artwork");
          break;
       case FILETYPE_SAMPLE:
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME, path_default_slash(), "samples");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer,path_default_slash_c(), "samples");
          break;
+      case FILETYPE_SAMPLE_FLAC:
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer,path_default_slash_c(), "samples");
+         break;
+
       default:
          /* .dat files and additional core content goes in mame2003 system directory */
-         snprintf(path, PATH_MAX_LENGTH, "%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME);
+         snprintf(path, PATH_MAX_LENGTH, "%s", sys_path_buffer);
    }    
 }
 
@@ -242,7 +249,7 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
    char currDir[PATH_MAX_LENGTH];
 
    osd_get_path(pathtype, currDir);
-   snprintf(buffer, PATH_MAX_LENGTH, "%s%s%s", currDir, path_default_slash(), filename);
+   snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir,path_default_slash_c(), filename);
 
    /*log_cb(RETRO_LOG_INFO, LOGPRE "osd_get_path_info (buffer = [%s]), (directory: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, pathtype, filename);*/
 
@@ -261,7 +268,7 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
    FILE* out;
 
    osd_get_path(pathtype, currDir);
-   snprintf(buffer, PATH_MAX_LENGTH, "%s%s%s", currDir, path_default_slash(), filename);
+   snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir,path_default_slash_c(), filename);
 
    path_mkdir(currDir);
 
@@ -269,6 +276,7 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
 
    return out;
 }
+
 
 
 /***************************************************************************
@@ -342,23 +350,23 @@ int mame_faccess(const char *filename, int filetype)
 	/* loop over all paths */
 	for (pathindex = 0; pathindex < pathcount; pathindex++)
 	{
-		char name[256];
+		char name[PATH_MAX_LENGTH];
 
 		/* first check the raw filename, in case we're looking for a directory */
 		sprintf(name, "%s", filename);
-		LOG(("mame_faccess: trying %s\n", name));
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "mame_faccess: trying %s\n", name);
 		if (osd_get_path_info(filetype, pathindex, name) != PATH_NOT_FOUND)
 			return 1;
 
 		/* try again with a .zip extension */
 		sprintf(name, "%s.zip", filename);
-		LOG(("mame_faccess: trying %s\n", name));
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "mame_faccess: trying %s\n", name);
 		if (osd_get_path_info(filetype, pathindex, name) != PATH_NOT_FOUND)
 			return 1;
 
 		/* does such a directory (or file) exist? */
 		sprintf(name, "%s", modified_filename);
-		LOG(("mame_faccess: trying %s\n", name));
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "mame_faccess: trying %s\n", name);
 		if (osd_get_path_info(filetype, pathindex, name) != PATH_NOT_FOUND)
 			return 1;
 	}
@@ -408,6 +416,10 @@ UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length)
 
 UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length)
 {
+	/* check against null pointer */
+	if (!file)
+		return 0;
+	
 	/* switch off the file type */
 	switch (file->type)
 	{
@@ -593,51 +605,50 @@ int mame_ungetc(int c, mame_file *file)
 	mame_fgets
 ***************************************************************************/
 
-char *mame_fgets(char *s, int n, mame_file *file)
+char *mame_fgets(char *buffer, int length, mame_file *file)
 {
-	char *cur = s;
+	char *needle = buffer;
 
 	/* loop while we have characters */
-	while (n > 0)
+	while (length > 0)
 	{
-		int c = mame_fgetc(file);
-		if (c == EOF)
+		int character = mame_fgetc(file);
+		if (character == EOF)
 			break;
 
-		/* if there's a CR, look for an LF afterwards */
-		if (c == 0x0d)
+		/* if it's CR, look for an LF afterwards */
+		if (character == 0x0d)
 		{
-			int c2 = mame_fgetc(file);
-			if (c2 != 0x0a)
-				mame_ungetc(c2, file);
-			*cur++ = 0x0d;
-			n--;
+			int next_char = mame_fgetc(file);
+			if (next_char != 0x0a)
+				mame_ungetc(next_char, file);
+			*needle++ = 0x0d;
+			length--;
 			break;
 		}
 
-		/* if there's an LF, reinterp as a CR for consistency */
-		else if (c == 0x0a)
+		/* if it's LF, reinterp as a CR for consistency */
+		else if (character == 0x0a)
 		{
-			*cur++ = 0x0d;
-			n--;
+			*needle++ = 0x0d;
+			length--;
 			break;
 		}
 
 		/* otherwise, pop the character in and continue */
-		*cur++ = c;
-		n--;
+		*needle++ = character;
+		length--;
 	}
 
 	/* if we put nothing in, return NULL */
-	if (cur == s)
+	if (needle == buffer)
 		return NULL;
 
 	/* otherwise, terminate */
-	if (n > 0)
-		*cur++ = 0;
-	return s;
+	if (length > 0)
+		*needle++ = 0;
+	return buffer;
 }
-
 
 
 /***************************************************************************
@@ -784,7 +795,7 @@ static INLINE void compose_path(char *output, const char *gamename, const char *
 	get_extension_for_filetype
 ***************************************************************************/
 
-static const char *get_extension_for_filetype(int filetype)
+const char *get_extension_for_filetype(int filetype)
 {
 	const char *extension;
 
@@ -812,6 +823,10 @@ static const char *get_extension_for_filetype(int filetype)
 			extension = "wav";
 			break;
 
+		case FILETYPE_SAMPLE_FLAC:		/* samples */
+			extension = "flac";
+			break;			
+
 		case FILETYPE_ARTWORK:		/* artwork files */
 			extension = "png";
 			break;
@@ -830,10 +845,6 @@ static const char *get_extension_for_filetype(int filetype)
 
 		case FILETYPE_CONFIG:		/* config files */
 			extension = "cfg";
-			break;
-
-		case FILETYPE_INPUTLOG:		/* input logs */
-			extension = "inp";
 			break;
 
 		case FILETYPE_MEMCARD:		/* memory card files */
@@ -863,7 +874,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 	mame_file file, *newfile;
 	char tempname[256];
 
-	LOG(("generic_fopen(%d, %s, %s, %s, %X)\n", pathc, gamename, filename, extension, flags));
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "generic_fopen(%d, %s, %s, %s, %X)\n", pathtype, gamename, filename, extension, flags);
 
 	/* reset the file handle */
 	memset(&file, 0, sizeof(file));
@@ -889,13 +900,13 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 	/* loop over paths */
 	for (pathindex = pathstart; pathindex != pathstop; pathindex += pathinc)
 	{
-		char name[1024];
+		char name[PATH_MAX_LENGTH];
 
 		/* ----------------- STEP 1: OPEN THE FILE RAW -------------------- */
 
 		/* first look for path/gamename as a directory */
 		compose_path(name, gamename, NULL, NULL);
-		LOG(("Trying %s\n", name));
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "Trying %s\n", name);
 
 
 		/* if the directory exists, proceed */
@@ -935,7 +946,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 		{
 			/* first look for path/gamename.zip */
 			compose_path(name, gamename, NULL, "zip");
-			LOG(("Trying %s file\n", name));
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "Trying %s file\n", name);
 
 			/* if the ZIP file exists, proceed */
 			if (osd_get_path_info(pathtype, pathindex, name) == PATH_IS_FILE)
@@ -1004,7 +1015,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 					{
 						unsigned functions;
 
-						LOG(("Using (mame_fopen) zip file for %s\n", filename));
+						log_cb(RETRO_LOG_DEBUG, LOGPRE "Using (mame_fopen) zip file for %s\n", filename);
 						file.length = ziplength;
 						file.type = ZIPPED_FILE;
 
@@ -1121,18 +1132,6 @@ static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **
 }
 
 
-
-/***************************************************************************
-	mame_fputs
-***************************************************************************/
-
-int mame_fputs(mame_file *f, const char *s)
-{
-	return mame_fwrite(f, s, strlen(s));
-}
-
-
-
 /***************************************************************************
 	mame_vfprintf
 ***************************************************************************/
@@ -1141,9 +1140,32 @@ int mame_vfprintf(mame_file *f, const char *fmt, va_list va)
 {
 	char buf[512];
 	vsnprintf(buf, sizeof(buf), fmt, va);
-	return mame_fputs(f, buf);
+	return mame_fwrite(f, buf, strlen(buf));
 }
 
+/***************************************************************************
+	spawn_bootstrap_nvram
+  creates a new nvram file for the current romset (as specified in
+  options.romset_filename_noext) using bootstrap_nvram as the source.
+***************************************************************************/
+
+mame_file *spawn_bootstrap_nvram(unsigned char const *bootstrap_nvram, unsigned nvram_length)
+{
+  mame_file *nvram_file = NULL;
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "Generating bootstrap nvram for %s\n", options.romset_filename_noext);
+        
+  nvram_file = mame_fopen(options.romset_filename_noext, 0, FILETYPE_NVRAM, 1);
+  mame_fwrite(nvram_file, bootstrap_nvram, nvram_length);          
+  mame_fclose(nvram_file);
+
+  nvram_file = mame_fopen(options.romset_filename_noext, 0, FILETYPE_NVRAM, 0);
+  
+  if(!nvram_file)
+    log_cb(RETRO_LOG_ERROR, LOGPRE "Error generating nvram bootstrap file!\n");
+  
+  return nvram_file;  
+}
 
 
 /***************************************************************************
@@ -1159,4 +1181,3 @@ int CLIB_DECL mame_fprintf(mame_file *f, const char *fmt, ...)
 	va_end(va);
 	return rc;
 }
-
