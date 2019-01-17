@@ -5,7 +5,6 @@ INCFLAGS := \
 	-I$(CORE_DIR) \
 	-I$(CORE_DIR)/includes \
 	-I$(CORE_DIR)/cpu/m68000 \
-	-I$(CORE_DIR)/libretro \
 	-I$(CORE_DIR)/mame2003 \
 	-I$(LIBRETRO_COMM_DIR)/include \
 	-I$(LIBRETRO_COMM_DIR)/include/file \
@@ -19,10 +18,10 @@ endif
 COREDEFINES += -D__LIBRETRO__ -DPI=3.1415927 -DM_PI=3.1415927
 
 SOURCES_C := \
-	$(CORE_DIR)/libretro/mame2003.c \
-	$(CORE_DIR)/libretro/keyboard.c \
-	$(CORE_DIR)/libretro/joystick.c \
-	$(CORE_DIR)/libretro/video.c \
+	$(CORE_DIR)/mame2003/mame2003.c \
+	$(CORE_DIR)/mame2003/keyboard.c \
+	$(CORE_DIR)/mame2003/joystick.c \
+	$(CORE_DIR)/mame2003/video.c \
 	$(CORE_DIR)/mame.c \
 	$(CORE_DIR)/drawgfx.c \
 	$(CORE_DIR)/common.c \
