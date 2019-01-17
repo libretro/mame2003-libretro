@@ -1,5 +1,3 @@
-// __LIBRETRO__: Screw it, this code base isn't being modified elsewhere, just delete what isn't needed
-
 /*********************************************************************
 
 	usrintrf.c
@@ -9,31 +7,25 @@
 *********************************************************************/
 
 #include "driver.h"
-#include "info.h"
 #include "vidhrdw/vector.h"
 #include "datafile.h"
 #include <stdarg.h>
+#include <stdio.h>
 #include <math.h>
 #include "ui_text.h"
 #include "fileio.h"
 #include "info.h"
-#include "libretro.h"
+#include "log.h"
+#include <libretro.h>
+#include <string/stdstring.h>
 
-#ifdef MESS
-  #include "mess.h"
-#include "mesintrf.h"
-#endif
+#define MAX_MESSAGE_LENGTH 2014
 
+static char message_buffer[MAX_MESSAGE_LENGTH];
+static char messagetext[MAX_MESSAGE_LENGTH];
+static int  messagecounter;
+static bool generate_DAT;           /* allows us to display a UI message before and while the DAT is generated */
 
-extern void (*pause_action)(void);
-static void pause_action_showcopyright(void);
-static void pause_action_showgamewarnings(void);
-void pause_action_start_emulator(void);
-static struct mame_bitmap *pause_bitmap;
-static char pause_buffer[2048];
-static int pause_done;
-
-extern retro_log_printf_t log_cb; 
 
 /***************************************************************************
 
@@ -47,25 +39,12 @@ extern unsigned int coins[COIN_COUNTERS];
 extern unsigned int coinlockedout[COIN_COUNTERS];
 
 /* MARTINEZ.F 990207 Memory Card */
-#ifndef MESS
-#ifndef TINY_COMPILE
-#ifndef CPSMAME
-#ifndef MMSND
 int 		memcard_menu(struct mame_bitmap *bitmap, int);
 extern int	mcd_action;
 extern int	mcd_number;
 extern int	memcard_status;
 extern int	memcard_number;
 extern int	memcard_manager;
-extern struct GameDriver driver_neogeo;
-#endif
-#endif
-#endif
-#endif
-
-#if defined(__sgi) && !defined(MESS)
-static int game_paused = 0; /* not zero if the game is paused */
-#endif
 
 extern int neogeo_memcard_load(int);
 extern void neogeo_memcard_save(void);
@@ -93,8 +72,7 @@ static int uirotwidth, uirotheight;
 int uirotcharwidth, uirotcharheight;
 
 static int setup_selected;
-static int osd_selected;
-static int jukebox_selected;
+static int setup_via_menu = 0;
 
 UINT8 ui_dirty;
 
@@ -255,6 +233,16 @@ static const struct GfxLayout uifontlayout =
 #if 0
 #pragma mark UTILITIES
 #endif
+
+
+/*-------------------------------------------------
+	Private Functions
+-------------------------------------------------*/
+
+static void wordwrap_text_buffer (char *buffer, int maxwidth);
+void display_warn_callback(int param);
+bool generate_warning_list(void);
+void generate_gameinfo(void);
 
 /*-------------------------------------------------
 	ui_markdirty - mark a raw rectangle dirty
@@ -495,11 +483,6 @@ struct GfxElement *builduifont(void)
 void ui_drawchar(struct mame_bitmap *dest, int ch, int color, int sx, int sy)
 {
 	struct rectangle bounds;
-
-#ifdef MESS
-	extern int skip_this_frame;
-	skip_this_frame = 0;
-#endif /* MESS */
 
 	/* construct a rectangle in rotated coordinates, then transform it */
 	bounds.min_x = sx + uirotbounds.min_x;
@@ -770,72 +753,6 @@ void ui_drawbox(struct mame_bitmap *bitmap, int leftx, int topy, int width, int 
 	ui_rot2raw_rect(&bounds);
 	ui_markdirty(&bounds);
 }
-
-
-
-/*-------------------------------------------------
-	drawbar - draw a thermometer bar
--------------------------------------------------*/
-
-static void drawbar(struct mame_bitmap *bitmap, int leftx, int topy, int width, int height, int percentage, int default_percentage)
-{
-	struct rectangle bounds, tbounds;
-	UINT32 black, white;
-
-	/* make a rect and orient/clip it */
-	bounds.min_x = uirotbounds.min_x + leftx;
-	bounds.min_y = uirotbounds.min_y + topy;
-	bounds.max_x = bounds.min_x + width - 1;
-	bounds.max_y = bounds.min_y + height - 1;
-	sect_rect(&bounds, &uirotbounds);
-
-	/* pick colors from the colortable */
-	black = uirotfont->colortable[0];
-	white = uirotfont->colortable[1];
-
-	/* draw the top default percentage marker */
-	tbounds = bounds;
-	tbounds.min_x += (width - 1) * default_percentage / 100;
-	tbounds.max_x = tbounds.min_x;
-	tbounds.max_y = tbounds.min_y + height / 8;
-	ui_rot2raw_rect(&tbounds);
-	fillbitmap(bitmap, white, &tbounds);
-
-	/* draw the bottom default percentage marker */
-	tbounds = bounds;
-	tbounds.min_x += (width - 1) * default_percentage / 100;
-	tbounds.max_x = tbounds.min_x;
-	tbounds.min_y = tbounds.max_y - height / 8;
-	ui_rot2raw_rect(&tbounds);
-	fillbitmap(bitmap, white, &tbounds);
-
-	/* draw the top line of the bar */
-	tbounds = bounds;
-	tbounds.min_y += height / 8;
-	tbounds.max_y = tbounds.min_y;
-	ui_rot2raw_rect(&tbounds);
-	fillbitmap(bitmap, white, &tbounds);
-
-	/* draw the bottom line of the bar */
-	tbounds = bounds;
-	tbounds.max_y -= height / 8;
-	tbounds.min_y = tbounds.max_y;
-	ui_rot2raw_rect(&tbounds);
-	fillbitmap(bitmap, white, &tbounds);
-
-	/* fill in the percentage */
-	tbounds = bounds;
-	tbounds.max_x = tbounds.min_x + (width - 1) * percentage / 100;
-	tbounds.min_y += height / 8;
-	tbounds.max_y -= height / 8;
-	ui_rot2raw_rect(&tbounds);
-	fillbitmap(bitmap, white, &tbounds);
-
-	/* mark things dirty */
-	ui_rot2raw_rect(&bounds);
-	ui_markdirty(&bounds);
-}
-
 
 
 #if 0
@@ -1128,7 +1045,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 	char buf[80];
 	int mode,bank,color,firstdrawn;
 	int palpage;
-	int changed;
+/*	int changed = 1;*/
 	int total_colors = 0;
 	pen_t *colortable = NULL;
 	int cpx=0,cpy,skip_chars=0,skip_tmap=0;
@@ -1140,8 +1057,6 @@ static void showcharset(struct mame_bitmap *bitmap)
 	color = 0;
 	firstdrawn = 0;
 	palpage = 0;
-
-	changed = 1;
 
 	do
 	{
@@ -1222,7 +1137,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 						ui_text(bitmap,"N/A",3*uirotcharwidth,2*uirotcharheight);
 
 					ui_text(bitmap,buf,0,0);
-					changed = 0;
+					/*changed = 0;*/
 				}
 
 				break;
@@ -1272,7 +1187,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 
 					sprintf(buf,"GFXSET %d COLOR %2X CODE %X-%X",bank,color,firstdrawn,lastdrawn);
 					ui_text(bitmap,buf,0,0);
-					changed = 0;
+					/*changed = 0;*/
 				}
 
 				break;
@@ -1295,7 +1210,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 					tilemap_nb_draw (bitmap, bank, tilemap_xpos, tilemap_ypos);
 					sprintf(buf, "TILEMAP %d (%dx%d)  X:%d  Y:%d", bank, tilemap_width, tilemap_height, tilemap_xpos, tilemap_ypos);
 					ui_text(bitmap,buf,0,0);
-					changed = 0;
+					/*changed = 0;*/
 					skip_tmap = 0;
 				}
 				break;
@@ -1353,8 +1268,8 @@ static void showcharset(struct mame_bitmap *bitmap)
 			{
 				bank = next_bank;
 				mode = next_mode;
-//				firstdrawn = 0;
-				changed = 1;
+				/*firstdrawn = 0;*/
+				/*changed = 1;*/
 			}
 		}
 
@@ -1389,8 +1304,8 @@ static void showcharset(struct mame_bitmap *bitmap)
 			{
 				bank = next_bank;
 				mode = next_mode;
-//				firstdrawn = 0;
-				changed = 1;
+				/*firstdrawn = 0;*/
+				/*changed = 1;*/
 			}
 		}
 
@@ -1403,7 +1318,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 					if (256 * (palpage + 1) < total_colors)
 					{
 						palpage++;
-						changed = 1;
+						/*changed = 1;*/
 					}
 					break;
 				}
@@ -1412,7 +1327,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 					if (firstdrawn + skip_chars < Machine->gfx[bank]->total_elements)
 					{
 						firstdrawn += skip_chars;
-						changed = 1;
+						/*changed = 1;*/
 					}
 					break;
 				}
@@ -1422,7 +1337,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 						tilemap_ypos -= skip_tmap;
 					else
 						tilemap_ypos -= bitmap->height/4;
-					changed = 1;
+					/*changed = 1;*/
 					break;
 				}
 			}
@@ -1437,7 +1352,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 					if (palpage > 0)
 					{
 						palpage--;
-						changed = 1;
+						/*changed = 1;*/
 					}
 					break;
 				}
@@ -1445,7 +1360,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 				{
 					firstdrawn -= skip_chars;
 					if (firstdrawn < 0) firstdrawn = 0;
-					changed = 1;
+					/*changed = 1;*/
 					break;
 				}
 				case 2:
@@ -1454,7 +1369,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 						tilemap_ypos += skip_tmap;
 					else
 						tilemap_ypos += bitmap->height/4;
-					changed = 1;
+					/*changed = 1;*/
 					break;
 				}
 			}
@@ -1470,7 +1385,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 						tilemap_xpos -= skip_tmap;
 					else
 						tilemap_xpos -= bitmap->width/4;
-					changed = 1;
+					/*changed = 1;*/
 					break;
 				}
 			}
@@ -1486,7 +1401,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 						tilemap_xpos += skip_tmap;
 					else
 						tilemap_xpos += bitmap->width/4;
-					changed = 1;
+					/*changed = 1;*/
 					break;
 				}
 			}
@@ -1501,7 +1416,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 					if (color < Machine->gfx[bank]->total_colors - 1)
 					{
 						color++;
-						changed = 1;
+						/*changed = 1;*/
 					}
 					break;
 				}
@@ -1519,7 +1434,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 					if (color > 0)
 					{
 						color--;
-						changed = 1;
+						/*changed = 1;*/
 					}
 				}
 			}
@@ -1554,7 +1469,7 @@ static int switchmenu(struct mame_bitmap *bitmap, int selected, UINT32 switch_na
 	{
 		if ((in->type & ~IPF_MASK) == switch_name && input_port_name(in) != 0 &&
 				(in->type & IPF_UNUSED) == 0 &&
-				!(!options.cheat && (in->type & IPF_CHEAT)))
+				!(!options.cheat_input_ports && (in->type & IPF_CHEAT)))
 		{
 			entry[total] = in;
 			menu_item[total] = input_port_name(in);
@@ -1603,7 +1518,7 @@ static int switchmenu(struct mame_bitmap *bitmap, int selected, UINT32 switch_na
 		else
 		{
 			if (((in-1)->type & ~IPF_MASK) == switch_setting &&
-					!(!options.cheat && ((in-1)->type & IPF_CHEAT)))
+					!(!options.cheat_input_ports && ((in-1)->type & IPF_CHEAT)))
 				arrowize |= 1;
 		}
 	}
@@ -1620,7 +1535,7 @@ static int switchmenu(struct mame_bitmap *bitmap, int selected, UINT32 switch_na
 		else
 		{
 			if (((in+1)->type & ~IPF_MASK) == switch_setting &&
-					!(!options.cheat && ((in+1)->type & IPF_CHEAT)))
+					!(!options.cheat_input_ports && ((in+1)->type & IPF_CHEAT)))
 				arrowize |= 2;
 		}
 	}
@@ -1648,7 +1563,7 @@ static int switchmenu(struct mame_bitmap *bitmap, int selected, UINT32 switch_na
 			else
 			{
 				if (((in+1)->type & ~IPF_MASK) == switch_setting &&
-						!(!options.cheat && ((in+1)->type & IPF_CHEAT)))
+						!(!options.cheat_input_ports && ((in+1)->type & IPF_CHEAT)))
 					entry[sel]->default_value = (in+1)->default_value & entry[sel]->mask;
 			}
 
@@ -1672,7 +1587,7 @@ static int switchmenu(struct mame_bitmap *bitmap, int selected, UINT32 switch_na
 			else
 			{
 				if (((in-1)->type & ~IPF_MASK) == switch_setting &&
-						!(!options.cheat && ((in-1)->type & IPF_CHEAT)))
+						!(!options.cheat_input_ports && ((in-1)->type & IPF_CHEAT)))
 					entry[sel]->default_value = (in-1)->default_value & entry[sel]->mask;
 			}
 
@@ -1707,17 +1622,6 @@ static int setdipswitches(struct mame_bitmap *bitmap, int selected)
 	return switchmenu(bitmap, selected, IPT_DIPSWITCH_NAME, IPT_DIPSWITCH_SETTING);
 }
 
-
-
-#ifdef MESS
-static int setconfiguration(struct mame_bitmap *bitmap, int selected)
-{
-	return switchmenu(bitmap, selected, IPT_CONFIG_NAME, IPT_CONFIG_SETTING);
-}
-#endif /* MESS */
-
-
-
 /* This flag is used for record OR sequence of key/joy */
 /* when is !=0 the first sequence is record, otherwise the first free */
 /* it's used byt setdefkeysettings, setdefjoysettings, setkeysettings, setjoysettings */
@@ -1748,7 +1652,7 @@ static int setdefcodesettings(struct mame_bitmap *bitmap,int selected)
 	while (in->type != IPT_END)
 	{
 		if (in->name != 0  && (in->type & ~IPF_MASK) != IPT_UNKNOWN && (in->type & ~IPF_MASK) != IPT_OSD_DESCRIPTION && (in->type & IPF_UNUSED) == 0
-			&& !(!options.cheat && (in->type & IPF_CHEAT)))
+			&& !(!options.cheat_input_ports && (in->type & IPF_CHEAT)))
 		{
 			entry[total] = in;
 			menu_item[total] = in->name;
@@ -1876,7 +1780,8 @@ static int setcodesettings(struct mame_bitmap *bitmap,int selected)
 	total = 0;
 	while (in->type != IPT_END)
 	{
-		if (input_port_name(in) != 0 && seq_get_1(&in->seq) != CODE_NONE && (in->type & ~IPF_MASK) != IPT_UNKNOWN && (in->type & ~IPF_MASK) != IPT_OSD_DESCRIPTION)
+		if (input_port_name(in) != 0 && seq_get_1(&in->seq) != CODE_NONE && (in->type & ~IPF_MASK) != IPT_UNKNOWN && (in->type & ~IPF_MASK) != IPT_OSD_DESCRIPTION 
+		 && !( !options.cheat_input_ports && (in->type & IPF_CHEAT) ) ) 	
 		{
 			entry[total] = in;
 			menu_item[total] = input_port_name(in);
@@ -2071,7 +1976,7 @@ static int settraksettings(struct mame_bitmap *bitmap,int selected)
 	while (in->type != IPT_END)
 	{
 		if (((in->type & 0xff) > IPT_ANALOG_START) && ((in->type & 0xff) < IPT_ANALOG_END)
-				&& !(!options.cheat && (in->type & IPF_CHEAT)))
+				&& !(!options.cheat_input_ports && (in->type & IPF_CHEAT)))
 		{
 			entry[total] = in;
 			total++;
@@ -2236,7 +2141,6 @@ static int settraksettings(struct mame_bitmap *bitmap,int selected)
 	return sel + 1;
 }
 
-#ifndef MESS
 static int mame_stats(struct mame_bitmap *bitmap,int selected)
 {
 	char temp[10];
@@ -2308,28 +2212,7 @@ static int mame_stats(struct mame_bitmap *bitmap,int selected)
 
 	return sel + 1;
 }
-#endif
 
-int showcopyright(struct mame_bitmap *bitmap)
-{
-	char buf2[256];
-
-	strcpy (pause_buffer, ui_getstring(UI_copyright1));
-	strcat (pause_buffer, "\n\n");
-	sprintf(buf2, ui_getstring(UI_copyright2), Machine->gamedrv->description);
-	strcat (pause_buffer, buf2);
-	strcat (pause_buffer, "\n\n");
-	strcat (pause_buffer, ui_getstring(UI_copyright3));
-
-	setup_selected = -1;////
-	
-	// Prep pause action
-    pause_action = pause_action_showcopyright;
-    pause_bitmap = bitmap;
-    pause_done = 0;
-
-    return 0;
-}
 
 static int displaygameinfo(struct mame_bitmap *bitmap,int selected)
 {
@@ -2454,6 +2337,7 @@ static int displaygameinfo(struct mame_bitmap *bitmap,int selected)
 		sprintf (buf2, "\n\t%s ", ui_getstring (UI_mame));	/* \t means that the line will be centered */
 		strcat(buf, buf2);
 
+		strcat(buf,APPNAME);
 		sprintf (buf2, "\n\t%s", ui_getstring (UI_anykey));
 		strcat(buf,buf2);
 		ui_drawbox(bitmap,0,0,uirotwidth,uirotheight);
@@ -2494,63 +2378,196 @@ static int displaygameinfo(struct mame_bitmap *bitmap,int selected)
 }
 
 
-int showgamewarnings(struct mame_bitmap *bitmap)
+void generate_gameinfo(void)
 {
-    int i;
-    pause_action = pause_action_start_emulator;
+	int i;
+	char buf2[32];
+  
+  message_buffer[0] = '\0';
 
-    // Fill pause_buffer with text
+	sprintf(message_buffer,"CONTROLS: %s\n\nGAMEINFO: %s\n%s %s\n\n%s:\n",Machine->gamedrv->ctrl_dat->control_details, Machine->gamedrv->description, Machine->gamedrv->year, Machine->gamedrv->manufacturer,
+		ui_getstring (UI_cpu));
+	i = 0;
+	while (i < MAX_CPU && Machine->drv->cpu[i].cpu_type)
+	{
+
+		if (Machine->drv->cpu[i].cpu_clock >= 1000000)
+			sprintf(&message_buffer[strlen(message_buffer)],"%s %d.%06d MHz",
+					cputype_name(Machine->drv->cpu[i].cpu_type),
+					Machine->drv->cpu[i].cpu_clock / 1000000,
+					Machine->drv->cpu[i].cpu_clock % 1000000);
+		else
+			sprintf(&message_buffer[strlen(message_buffer)],"%s %d.%03d kHz",
+					cputype_name(Machine->drv->cpu[i].cpu_type),
+					Machine->drv->cpu[i].cpu_clock / 1000,
+					Machine->drv->cpu[i].cpu_clock % 1000);
+
+		if (Machine->drv->cpu[i].cpu_flags & CPU_AUDIO_CPU)
+		{
+			sprintf (buf2, " (%s)", ui_getstring (UI_sound_lc));
+			strcat(message_buffer, buf2);
+		}
+
+		strcat(message_buffer,"\n");
+
+		i++;
+	}
+
+	sprintf (buf2, "\n%s", ui_getstring (UI_sound));
+	strcat (message_buffer, buf2);
+	if (Machine->drv->sound_attributes & SOUND_SUPPORTS_STEREO)
+		sprintf(&message_buffer[strlen(message_buffer)]," (%s)", ui_getstring (UI_stereo));
+	strcat(message_buffer,":\n");
+
+	i = 0;
+	while (i < MAX_SOUND && Machine->drv->sound[i].sound_type)
+	{
+		if (sound_num(&Machine->drv->sound[i]))
+			sprintf(&message_buffer[strlen(message_buffer)],"%dx",sound_num(&Machine->drv->sound[i]));
+
+		sprintf(&message_buffer[strlen(message_buffer)],"%s",sound_name(&Machine->drv->sound[i]));
+
+		if (sound_clock(&Machine->drv->sound[i]))
+		{
+			if (sound_clock(&Machine->drv->sound[i]) >= 1000000)
+				sprintf(&message_buffer[strlen(message_buffer)]," %d.%06d MHz",
+						sound_clock(&Machine->drv->sound[i]) / 1000000,
+						sound_clock(&Machine->drv->sound[i]) % 1000000);
+			else
+				sprintf(&message_buffer[strlen(message_buffer)]," %d.%03d kHz",
+						sound_clock(&Machine->drv->sound[i]) / 1000,
+						sound_clock(&Machine->drv->sound[i]) % 1000);
+		}
+
+		strcat(message_buffer,"\n");
+
+		i++;
+	}
+
+	if (Machine->drv->video_attributes & VIDEO_TYPE_VECTOR)
+		sprintf(&message_buffer[strlen(message_buffer)],"\n%s\n", ui_getstring (UI_vectorgame));
+	else
+	{
+		sprintf(&message_buffer[strlen(message_buffer)],"\n%s:\n", ui_getstring (UI_screenres));
+		sprintf(&message_buffer[strlen(message_buffer)],"%d x %d (%s) %f Hz\n",
+				Machine->visible_area.max_x - Machine->visible_area.min_x + 1,
+				Machine->visible_area.max_y - Machine->visible_area.min_y + 1,
+				(Machine->gamedrv->flags & ORIENTATION_SWAP_XY) ? "V" : "H",
+				Machine->drv->frames_per_second);
+#if 0
+		{
+			int pixelx,pixely,tmax,tmin,rem;
+
+			pixelx = 4 * (Machine->visible_area.max_y - Machine->visible_area.min_y + 1);
+			pixely = 3 * (Machine->visible_area.max_x - Machine->visible_area.min_x + 1);
+
+			/* calculate MCD */
+			if (pixelx >= pixely)
+			{
+				tmax = pixelx;
+				tmin = pixely;
+			}
+			else
+			{
+				tmax = pixely;
+				tmin = pixelx;
+			}
+			while ( (rem = tmax % tmin) )
+			{
+				tmax = tmin;
+				tmin = rem;
+			}
+			/* tmin is now the MCD */
+
+			pixelx /= tmin;
+			pixely /= tmin;
+
+			sprintf(&message_buffer[strlen(message_buffer)],"pixel aspect ratio %d:%d\n",
+					pixelx,pixely);
+		}
+		sprintf(&message_buffer[strlen(message_buffer)],"%d colors ",Machine->drv->total_colors);
+#endif
+	}
+}
+
+
+void ui_copyright_and_warnings(void)
+{
+  char buffer[MAX_MESSAGE_LENGTH];
+  buffer[0]='\0';
+  if(!options.skip_disclaimer)
+    snprintf(buffer, MAX_MESSAGE_LENGTH, "%s", ui_getstring(UI_copyright));
+  
+  if(generate_warning_list())
+  {
+    log_cb(RETRO_LOG_WARN, LOGPRE "\n\n%s", message_buffer); /* log warning list to the console */
+    frontend_message_cb("Warning: There are known problems emulating this game.", 180);
+
+    if(!options.skip_warnings)
+    {
+      snprintf(&buffer[strlen(buffer)], MAX_MESSAGE_LENGTH - strlen(buffer), "%s - %s %s\n\n%s", Machine->gamedrv->description, Machine->gamedrv->year, Machine->gamedrv->manufacturer, message_buffer);
+    }
+  }
+ 
+  generate_gameinfo();
+  log_cb(RETRO_LOG_INFO, LOGPRE "\n\n%s", message_buffer);
+  
+  if(strlen(buffer))
+    usrintf_showmessage_secs(8, "%s", buffer);
+  
+}
+
+bool generate_warning_list(void)
+{
+  int i;
+  char buffer[MAX_MESSAGE_LENGTH];
+  
+  buffer[0] = '\0';
 
 	if (Machine->gamedrv->flags &
 			(GAME_NOT_WORKING | GAME_UNEMULATED_PROTECTION | GAME_WRONG_COLORS | GAME_IMPERFECT_COLORS |
-			  GAME_NO_SOUND | GAME_IMPERFECT_SOUND | GAME_IMPERFECT_GRAPHICS | GAME_NO_COCKTAIL | GAME_MUST_INITIALIZE))
+			  GAME_NO_SOUND | GAME_IMPERFECT_SOUND | GAME_IMPERFECT_GRAPHICS | GAME_NO_COCKTAIL ))
 	{
-        pause_action = pause_action_showgamewarnings;
-        pause_bitmap = bitmap;
-        pause_done = 0;
-		
-		strcpy(pause_buffer, ui_getstring (UI_knownproblems));
-		strcat(pause_buffer, "\n\n");
 
 		if (Machine->gamedrv->flags & GAME_IMPERFECT_COLORS)
 		{
-			strcat(pause_buffer, ui_getstring (UI_imperfectcolors));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_imperfectcolors));
+			strcat(buffer, "\n");
 		}
 
 		if (Machine->gamedrv->flags & GAME_WRONG_COLORS)
 		{
-			strcat(pause_buffer, ui_getstring (UI_wrongcolors));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_wrongcolors));
+			strcat(buffer, "\n");
 		}
 
 		if (Machine->gamedrv->flags & GAME_IMPERFECT_GRAPHICS)
 		{
-			strcat(pause_buffer, ui_getstring (UI_imperfectgraphics));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_imperfectgraphics));
+			strcat(buffer, "\n");
 		}
 
 		if (Machine->gamedrv->flags & GAME_IMPERFECT_SOUND)
 		{
-			strcat(pause_buffer, ui_getstring (UI_imperfectsound));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_imperfectsound));
+			strcat(buffer, "\n");
 		}
 
 		if (Machine->gamedrv->flags & GAME_NO_SOUND)
 		{
-			strcat(pause_buffer, ui_getstring (UI_nosound));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_nosound));
+			strcat(buffer, "\n");
 		}
 
 		if (Machine->gamedrv->flags & GAME_NO_COCKTAIL)
 		{
-			strcat(pause_buffer, ui_getstring (UI_nococktail));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_nococktail));
+			strcat(buffer, "\n");
 		}
-		if (Machine->gamedrv->flags & GAME_MUST_INITIALIZE)
+		if (Machine->gamedrv->flags & GAME_DOESNT_SERIALIZE)
 		{
-			strcat(pause_buffer, ui_getstring (UI_mustbeinitialized));
-			strcat(pause_buffer, "\n");
+			strcat(buffer, ui_getstring (UI_no_serialization));
+			strcat(buffer, "\n");
 		}
 
 		if (Machine->gamedrv->flags & (GAME_NOT_WORKING | GAME_UNEMULATED_PROTECTION))
@@ -2560,13 +2577,13 @@ int showgamewarnings(struct mame_bitmap *bitmap)
 
 			if (Machine->gamedrv->flags & GAME_NOT_WORKING)
 			{
-				strcpy(pause_buffer, ui_getstring (UI_brokengame));
-				strcat(pause_buffer, "\n");
+				strcpy(buffer, ui_getstring (UI_brokengame));
+				strcat(buffer, "\n");
 			}
 			if (Machine->gamedrv->flags & GAME_UNEMULATED_PROTECTION)
 			{
-				strcat(pause_buffer, ui_getstring (UI_brokenprotection));
-				strcat(pause_buffer, "\n");
+				strcat(buffer, ui_getstring (UI_brokenprotection));
+				strcat(buffer, "\n");
 			}
 
 			if (Machine->gamedrv->clone_of && !(Machine->gamedrv->clone_of->flags & NOT_A_DRIVER))
@@ -2583,59 +2600,26 @@ int showgamewarnings(struct mame_bitmap *bitmap)
 					{
 						if (foundworking == 0)
 						{
-							strcat(pause_buffer,"\n\n");
-							strcat(pause_buffer, ui_getstring (UI_workingclones));
-							strcat(pause_buffer,"\n\n");
+							strcat(buffer,"\n\n");
+							strcat(buffer, ui_getstring (UI_workingclones));
+							strcat(buffer,"\n\n");
 						}
 						foundworking = 1;
 
-						sprintf(&pause_buffer[strlen(pause_buffer)],"%s\n",drivers[i]->name);
+						sprintf(&buffer[strlen(buffer)],"%s\n",drivers[i]->name);
 					}
 				}
 				i++;
 			}
 		}
-
-		strcat(pause_buffer,"\n\n");
-		strcat(pause_buffer,ui_getstring (UI_typeok));
 	}
-
-	/* not needed */
-	//erase_screen(bitmap);
-	//update_video_and_audio();
-
-	return 0;
+  if(string_is_empty(buffer))
+    return false;
+  
+  snprintf(message_buffer, MAX_MESSAGE_LENGTH, "== Driver Warnings ==\n%s", buffer);
+	return true;
 }
 
-
-#if 0 // Will hang
-int showgameinfo(struct mame_bitmap *bitmap)
-{
-	/* clear the input memory */
-	while (code_read_async() != CODE_NONE) {};
-
-	while (displaygameinfo(bitmap,0) == 1)
-	{
-		update_video_and_audio();
-	}
-
-	#ifdef MESS
-	while (displayimageinfo(bitmap,0) == 1)
-	{
-		update_video_and_audio();
-	}
-	#endif
-
-	erase_screen(bitmap);
-	/* make sure that the screen is really cleared, in case autoframeskip kicked in */
-	update_video_and_audio();
-	update_video_and_audio();
-	update_video_and_audio();
-	update_video_and_audio();
-
-	return 0;
-}
-#endif
 
 /* Word-wraps the text in the specified buffer to fit in maxwidth characters per line.
    The contents of the buffer are modified.
@@ -2859,6 +2843,19 @@ static int displayhistory (struct mame_bitmap *bitmap, int selected)
 			ui_displaymessagewindow(bitmap,msg);
 		}
 
+		if ((scroll > 0) && input_ui_pressed_repeat(IPT_UI_UP,4))
+		{
+			if (scroll == 2) scroll = 0;	/* 1 would be the same as 0, but with arrow on top */
+			else scroll--;
+		}
+
+		if (input_ui_pressed_repeat(IPT_UI_DOWN,4))
+		{
+			if (scroll == 0) scroll = 2;	/* 1 would be the same as 0, but with arrow on top */
+			else scroll++;
+		}
+
+
 		if (input_ui_pressed(IPT_UI_SELECT))
 			sel = -1;
 
@@ -2885,11 +2882,6 @@ static int displayhistory (struct mame_bitmap *bitmap, int selected)
 
 }
 
-
-#ifndef MESS
-#ifndef TINY_COMPILE
-#ifndef CPSMAME
-#ifndef MMSND
 int memcard_menu(struct mame_bitmap *bitmap, int selection)
 {
 	int sel;
@@ -2904,9 +2896,6 @@ int memcard_menu(struct mame_bitmap *bitmap, int selection)
 	menuitem[menutotal++] = buf;
 	menuitem[menutotal++] = ui_getstring (UI_ejectcard);
 	menuitem[menutotal++] = ui_getstring (UI_createcard);
-#ifdef MESS
-	menuitem[menutotal++] = ui_getstring (UI_resetcard);
-#endif
 	menuitem[menutotal++] = ui_getstring (UI_returntomain);
 	menuitem[menutotal] = 0;
 
@@ -2984,20 +2973,9 @@ int memcard_menu(struct mame_bitmap *bitmap, int selection)
 				else
 					mcd_action = 5;
 				break;
-#ifdef MESS
-			case 3:
-				memcard_manager=1;
-				sel=-2;
-				machine_reset();
-				break;
-			case 4:
-				sel=-1;
-				break;
-#else
 			case 3:
 				sel=-1;
 				break;
-#endif
 
 
 			}
@@ -3017,27 +2995,12 @@ int memcard_menu(struct mame_bitmap *bitmap, int selection)
 
 	return sel + 1;
 }
-#endif
-#endif
-#endif
-#endif
 
 
-#ifndef MESS
-enum { UI_SWITCH = 0,UI_DEFCODE,UI_CODE,UI_ANALOG,UI_CALIBRATE,
+enum { UI_SWITCH = 0,UI_DEFCODE,UI_CODE,UI_FLUSH_CURRENT_CFG, UI_FLUSH_ALL_CFG, UI_ANALOG,UI_CALIBRATE,
 		UI_STATS,UI_GAMEINFO, UI_HISTORY,
-		UI_CHEAT,UI_RESET,UI_GENERATE_XML_DAT, UI_MEMCARD,UI_RAPIDFIRE,UI_EXIT };
-#else
-enum { UI_SWITCH = 0,UI_DEFCODE,UI_CODE,UI_ANALOG,UI_CALIBRATE,
-		UI_GAMEINFO, UI_IMAGEINFO,UI_FILEMANAGER,UI_TAPECONTROL,
-		UI_HISTORY,UI_CHEAT,UI_RESET,UI_GENERATE_XML_DAT,UI_MEMCARD,UI_RAPIDFIRE,UI_EXIT,
-		UI_CONFIGURATION };
-#endif
+		UI_CHEAT,UI_RESET, UI_GENERATE_XML_DAT, UI_MEMCARD,UI_RAPIDFIRE,UI_EXIT };
 
-
-#ifdef XMAME
-extern int setrapidfire(struct mame_bitmap *bitmap, int selected);
-#endif
 
 
 #define MAX_SETUPMENU_ITEMS 20
@@ -3046,15 +3009,17 @@ static int menu_action[MAX_SETUPMENU_ITEMS];
 static int menu_total;
 
 
-static void setup_menu_init(void)
+void setup_menu_init(void)
 {
 	menu_total = 0;
 
-	menu_item[menu_total] = ui_getstring (UI_inputgeneral); menu_action[menu_total++] = UI_DEFCODE;
-	menu_item[menu_total] = ui_getstring (UI_inputspecific); menu_action[menu_total++] = UI_CODE;
-#ifdef MESS
-	menu_item[menu_total] = ui_getstring (UI_configuration); menu_action[menu_total++] = UI_CONFIGURATION;
-#endif /* MESS */
+  if(options.mame_remapping)
+  {
+	  menu_item[menu_total] = ui_getstring (UI_inputgeneral);      menu_action[menu_total++] = UI_DEFCODE;
+    menu_item[menu_total] = ui_getstring (UI_inputspecific);     menu_action[menu_total++] = UI_CODE;
+    //menu_item[menu_total] = ui_getstring (UI_flush_current_cfg); menu_action[menu_total++] = UI_FLUSH_CURRENT_CFG;    
+    //menu_item[menu_total] = ui_getstring (UI_flush_all_cfg);     menu_action[menu_total++] = UI_FLUSH_ALL_CFG;    
+  }
 
 	/* Determine if there are any dip switches */
 	{
@@ -3067,7 +3032,7 @@ static void setup_menu_init(void)
 		while (in->type != IPT_END)
 		{
 			if ((in->type & ~IPF_MASK) == IPT_DIPSWITCH_NAME && input_port_name(in) != 0 &&
-					(in->type & IPF_UNUSED) == 0 &&	!(!options.cheat && (in->type & IPF_CHEAT)))
+					(in->type & IPF_UNUSED) == 0 &&	!(in->type & IPF_CHEAT))
 				num++;
 			in++;
 		}
@@ -3077,18 +3042,6 @@ static void setup_menu_init(void)
 			menu_item[menu_total] = ui_getstring (UI_dipswitches); menu_action[menu_total++] = UI_SWITCH;
 		}
 	}
-
-#ifdef XMAME
-	{
-		extern int rapidfire_enable;
-
-		if (rapidfire_enable != 0)
-		{
-			menu_item[menu_total] = "Rapid Fire";
-			menu_action[menu_total++] = UI_RAPIDFIRE;
-		}
-	}
-#endif
 
 	/* Determine if there are any analog controls */
 	{
@@ -3101,62 +3054,43 @@ static void setup_menu_init(void)
 		while (in->type != IPT_END)
 		{
 			if (((in->type & 0xff) > IPT_ANALOG_START) && ((in->type & 0xff) < IPT_ANALOG_END)
-					&& !(!options.cheat && (in->type & IPF_CHEAT)))
+					&& !(in->type & IPF_CHEAT))
 				num++;
 			in++;
 		}
 
-		if (num != 0)
+		if (options.mame_remapping && num != 0)
 		{
 			menu_item[menu_total] = ui_getstring (UI_analogcontrols); menu_action[menu_total++] = UI_ANALOG;
 		}
 	}
 
-	/* Joystick calibration possible? */
-	if ((osd_joystick_needs_calibration()) != 0)
+	/* Joystick calibration possible? - not implemented in the libretro port as of May 2018*/
+	if ((options.mame_remapping && osd_joystick_needs_calibration()) != 0)
 	{
 		menu_item[menu_total] = ui_getstring (UI_calibrate); menu_action[menu_total++] = UI_CALIBRATE;
 	}
 
-#ifndef MESS
 	menu_item[menu_total] = ui_getstring (UI_bookkeeping); menu_action[menu_total++] = UI_STATS;
 	menu_item[menu_total] = ui_getstring (UI_gameinfo); menu_action[menu_total++] = UI_GAMEINFO;
 	menu_item[menu_total] = ui_getstring (UI_history); menu_action[menu_total++] = UI_HISTORY;
-#else
-	menu_item[menu_total] = ui_getstring (UI_imageinfo); menu_action[menu_total++] = UI_IMAGEINFO;
-	menu_item[menu_total] = ui_getstring (UI_filemanager); menu_action[menu_total++] = UI_FILEMANAGER;
-#if HAS_WAVE
-	menu_item[menu_total] = ui_getstring (UI_tapecontrol); menu_action[menu_total++] = UI_TAPECONTROL;
-#endif
-	menu_item[menu_total] = ui_getstring (UI_history); menu_action[menu_total++] = UI_HISTORY;
-#endif
 
-	if (options.cheat)
-	{
-		menu_item[menu_total] = ui_getstring (UI_cheat); menu_action[menu_total++] = UI_CHEAT;
-	}
+	menu_item[menu_total] = ui_getstring (UI_cheat); menu_action[menu_total++] = UI_CHEAT;
 
-#ifndef MESS
-#ifndef TINY_COMPILE
-#ifndef CPSMAME
-#ifndef MMSND
-	if (Machine->gamedrv->clone_of == &driver_neogeo ||
-			(Machine->gamedrv->clone_of &&
-				Machine->gamedrv->clone_of->clone_of == &driver_neogeo))
+	if (options.content_flags[CONTENT_NEOGEO])
 	{
 		menu_item[menu_total] = ui_getstring (UI_memorycard); menu_action[menu_total++] = UI_MEMCARD;
 	}
-#endif
-#endif
-#endif
-#endif
 
-	menu_item[menu_total] = ui_getstring (UI_resetgame); menu_action[menu_total++] = UI_RESET;
 #if !defined(WIIU) && !defined(GEKKO) && !defined(__CELLOS_LV2__) && !defined(__SWITCH__) && !defined(PSP) && !defined(VITA) && !defined(__GCW0__) && !defined(__EMSCRIPTEN__) && !defined(_XBOX)
     /* don't offer to generate_xml_dat on consoles where it can't be used */
-    menu_item[menu_total] = ui_getstring (UI_generate_xml_dat); menu_action[menu_total++] = UI_GENERATE_XML_DAT;
+    menu_item[menu_total] = ui_getstring (UI_generate_xml_dat);   menu_action[menu_total++] = UI_GENERATE_XML_DAT;
+
 #endif
-	menu_item[menu_total] = ui_getstring (UI_returntogame); menu_action[menu_total++] = UI_EXIT;
+  if(!options.display_setup) 
+  {
+    menu_item[menu_total] = ui_getstring (UI_returntogame); menu_action[menu_total++] = UI_EXIT;
+  }
 	menu_item[menu_total] = 0; /* terminate array */
 }
 
@@ -3165,7 +3099,12 @@ static int setup_menu(struct mame_bitmap *bitmap, int selected)
 {
 	int sel,res=-1;
 	static int menu_lastselected = 0;
-
+ 
+  if(generate_DAT)
+  {
+    print_mame_xml();
+    generate_DAT = false;
+  }
 
 	if (selected == -1)
 		sel = menu_lastselected;
@@ -3175,11 +3114,6 @@ static int setup_menu(struct mame_bitmap *bitmap, int selected)
 	{
 		switch (menu_action[sel & SEL_MASK])
 		{
-#ifdef XMAME
-			case UI_RAPIDFIRE:
-				res = setrapidfire(bitmap, sel >> SEL_BITS);
-				break;
-#endif
 			case UI_SWITCH:
 				res = setdipswitches(bitmap, sel >> SEL_BITS);
 				break;
@@ -3195,47 +3129,22 @@ static int setup_menu(struct mame_bitmap *bitmap, int selected)
 			case UI_CALIBRATE:
 				res = calibratejoysticks(bitmap, sel >> SEL_BITS);
 				break;
-#ifndef MESS
 			case UI_STATS:
 				res = mame_stats(bitmap, sel >> SEL_BITS);
 				break;
 			case UI_GAMEINFO:
 				res = displaygameinfo(bitmap, sel >> SEL_BITS);
 				break;
-#endif
-#ifdef MESS
-			case UI_IMAGEINFO:
-				res = displayimageinfo(bitmap, sel >> SEL_BITS);
-				break;
-			case UI_FILEMANAGER:
-				res = filemanager(bitmap, sel >> SEL_BITS);
-				break;
-#if HAS_WAVE
-			case UI_TAPECONTROL:
-				res = tapecontrol(bitmap, sel >> SEL_BITS);
-				break;
-#endif /* HAS_WAVE */
-			case UI_CONFIGURATION:
-				res = setconfiguration(bitmap, sel >> SEL_BITS);
-				break;
-#endif /* MESS */
 			case UI_HISTORY:
 				res = displayhistory(bitmap, sel >> SEL_BITS);
 				break;
 			case UI_CHEAT:
 				res = cheat_menu(bitmap, sel >> SEL_BITS);
 				break;
-#ifndef MESS
-#ifndef TINY_COMPILE
-#ifndef CPSMAME
-#ifndef MMSND
 			case UI_MEMCARD:
 				res = memcard_menu(bitmap, sel >> SEL_BITS);
 				break;
-#endif
-#endif
-#endif
-#endif
+
 		}
 
 		if (res == -1)
@@ -3262,38 +3171,82 @@ static int setup_menu(struct mame_bitmap *bitmap, int selected)
 	{
 		switch (menu_action[sel])
 		{
-#ifdef XMAME
-			case UI_RAPIDFIRE:
-#endif
 			case UI_SWITCH:
 			case UI_DEFCODE:
 			case UI_CODE:
 			case UI_ANALOG:
 			case UI_CALIBRATE:
-			#ifndef MESS
 			case UI_STATS:
 			case UI_GAMEINFO:
-			#else
-			case UI_GAMEINFO:
-			case UI_IMAGEINFO:
-			case UI_FILEMANAGER:
-			case UI_TAPECONTROL:
-			case UI_CONFIGURATION:
-#endif /* !MESS */
 			case UI_HISTORY:
 			case UI_CHEAT:
 			case UI_MEMCARD:
 				sel |= 1 << SEL_BITS;
 				schedule_full_refresh();
 				break;
+      case UI_FLUSH_CURRENT_CFG:
+      {
+        char msg_buffer[MAX_MESSAGE_LENGTH];
+        char path_buffer[PATH_MAX_LENGTH];
+        char current_path[PATH_MAX_LENGTH];
+        msg_buffer[0]='\0';  
 
-			case UI_RESET:
-				machine_reset();
-				break;
-            
-            case UI_GENERATE_XML_DAT:
-                print_mame_xml();
-                break;
+        osd_get_path(FILETYPE_CONFIG, current_path);       
+        snprintf(path_buffer, PATH_MAX_LENGTH, "%s%c%s%c%s", current_path,path_default_slash_c(), Machine->gamedrv->name, '.', get_extension_for_filetype(FILETYPE_CONFIG));
+
+        if(remove(path_buffer))
+          snprintf(msg_buffer, MAX_MESSAGE_LENGTH, "%s%s%s", "Error flushing CFG from ", path_buffer, "!");
+        else
+          snprintf(msg_buffer, MAX_MESSAGE_LENGTH, "%s", "CFG flushed!"); 
+        usrintf_showmessage_secs(2, "%s", msg_buffer);
+        reset_driver_inputs(); /* just a stub for now */
+        break;
+      }
+      case UI_FLUSH_ALL_CFG:
+      {
+        char msg_buffer[MAX_MESSAGE_LENGTH];
+        char path_buffer[PATH_MAX_LENGTH];
+        char current_path[PATH_MAX_LENGTH];
+        int driverIndex = 0;       
+        msg_buffer[0]='\0';
+
+        osd_get_path(FILETYPE_CONFIG, current_path);        
+
+        snprintf(msg_buffer, MAX_MESSAGE_LENGTH, "%s", "Executing flush all CFG command!"); 
+        usrintf_showmessage_secs(2, "%s", msg_buffer);
+
+        /* delete "default.cfg" and repopulate from the defaults specified by inptport source */
+        snprintf(path_buffer, PATH_MAX_LENGTH, "%s%c%s%c%s", current_path,path_default_slash_c(), "default", '.', get_extension_for_filetype(FILETYPE_CONFIG));
+        remove(path_buffer);
+        reset_default_inputs();
+              
+        /* loop through all driver names and attempt to delete the corresponding cfg file.
+           it would be good to have a cleaner implementation but this does work and can reuse
+           code from mame2003.c */
+        for (driverIndex = 0; driverIndex < total_drivers; driverIndex++)
+        {
+          const struct GameDriver *needle = drivers[driverIndex];
+          if(needle && needle->name) 
+          {
+            snprintf(path_buffer, PATH_MAX_LENGTH, "%s%c%s%c%s", current_path,path_default_slash_c(), needle->name, '.', get_extension_for_filetype(FILETYPE_CONFIG));
+            remove(path_buffer); /* try to remove DOS filename version */
+          }            
+          if(needle && needle->description)
+          {            
+            snprintf(path_buffer, PATH_MAX_LENGTH, "%s%c%s%c%s", current_path,path_default_slash_c(), needle->description, '.', get_extension_for_filetype(FILETYPE_CONFIG));
+            remove(path_buffer); /* try to remove full/alternative filename version -- although not in use as of November 2018 */   
+          }
+        }
+        reset_driver_inputs(); /* just a stub for now */
+
+        break;          
+      }        
+
+      case UI_GENERATE_XML_DAT:
+          frontend_message_cb("Generating XML DAT", 180);   
+          schedule_full_refresh();
+          generate_DAT = true;
+          break;
 
 			case UI_EXIT:
 				menu_lastselected = 0;
@@ -3317,309 +3270,6 @@ static int setup_menu(struct mame_bitmap *bitmap, int selected)
 	return sel + 1;
 }
 
-struct _osd_file
-{
-	FILE* file;
-};
-
-
-/*********************************************************************
-
-  start of On Screen Display handling
-
-*********************************************************************/
-
-static void displayosd(struct mame_bitmap *bitmap,const char *text,int percentage,int default_percentage)
-{
-	struct DisplayText dt[2];
-	int avail;
-
-
-	avail = (uirotwidth / uirotcharwidth) * 19 / 20;
-
-	ui_drawbox(bitmap,(uirotwidth - uirotcharwidth * avail) / 2,
-			(uirotheight - 7*uirotcharheight/2),
-			avail * uirotcharwidth,
-			3*uirotcharheight);
-
-	avail--;
-
-	drawbar(bitmap,(uirotwidth - uirotcharwidth * avail) / 2,
-			(uirotheight - 3*uirotcharheight),
-			avail * uirotcharwidth,
-			uirotcharheight,
-			percentage,default_percentage);
-
-	dt[0].text = text;
-	dt[0].color = UI_COLOR_NORMAL;
-	dt[0].x = (uirotwidth - uirotcharwidth * strlen(text)) / 2;
-	dt[0].y = (uirotheight - 2*uirotcharheight) + 2;
-	dt[1].text = 0; /* terminate array */
-	displaytext(bitmap,dt);
-}
-
-/* K.Wilkins Feb2003 Additional of Disrete Sound System ADJUSTMENT sliders */
-#if HAS_DISCRETE
-static void onscrd_discrete(struct mame_bitmap *bitmap,int increment,int arg)
-{
-	int ourval,initial;
-	char buf[40];
-	struct discrete_sh_adjuster adjuster;
-
-	ourval=0;
-	initial=0;
-	strcpy(buf,"ADJUSTER ERROR");
-
-	/* Use ARG to select correct DISCRETE_ADJUST in sound subsystem */
-	if(discrete_sh_adjuster_get(arg,&adjuster)==-1)
-	{
-		/* Serious error, init has setup a non-existant slider, should NEVER happen */
-		logerror("onscrd_discrete() - osd_menu_init has setup invalid slider No %d",arg);
-	}
-	else
-	{
-		if(adjuster.islogscale)
-		{
-			double loginc,logspan,logval,logmin,loginit;
-			logspan=log10(adjuster.max)-log10(adjuster.min);
-			loginit=log10(adjuster.initial);
-			logmin=log10(adjuster.min);
-			logval=log10(adjuster.value);
-			loginc=(logspan/100)*increment;
-			logval+=loginc;
-			adjuster.value=pow(10,logval);
-
-			/* Keep within sensible bounds */
-			if(adjuster.value > adjuster.max)
-			{
-				adjuster.value=adjuster.max;
-				ourval=100;
-			}
-			if(adjuster.value < adjuster.min)
-			{
-				adjuster.value=adjuster.min;
-				ourval=0;
-			}
-
-			ourval=(int) (100.0*((logval-logmin)/logspan));
-			initial=(int) (100.0*((loginit-logmin)/logspan));
-		}
-		else
-		{
-			double finc;
-			finc=((adjuster.max-adjuster.min)/100)*increment;
-			adjuster.value+=finc;
-
-			/* Keep within sensible bounds */
-			if(adjuster.value > adjuster.max) adjuster.value=adjuster.max;
-			if(adjuster.value < adjuster.min) adjuster.value=adjuster.min;
-
-			ourval=(int) (100.0*((adjuster.value-adjuster.min)/(adjuster.max-adjuster.min)));
-			initial=(int) (100.0*((adjuster.initial-adjuster.min)/(adjuster.max-adjuster.min)));
-		}
-
-		/* Update the system */
-		discrete_sh_adjuster_set(arg,&adjuster);
-
-		sprintf(buf,"%s %d%%",adjuster.name,ourval);
-	}
-	displayosd(bitmap,buf,ourval,initial);
-}
-#endif /* HAS_DISCRETE */
-/* K.Wilkins Feb2003 Additional of Disrete Sound System ADJUSTMENT sliders */
-
-static void onscrd_volume(struct mame_bitmap *bitmap,int increment,int arg)
-{
-}
-
-static void onscrd_mixervol(struct mame_bitmap *bitmap,int increment,int arg)
-{
-}
-
-static void onscrd_brightness(struct mame_bitmap *bitmap,int increment,int arg)
-{
-	char buf[20];
-	double brightness;
-
-
-	if (increment)
-	{
-		brightness = palette_get_global_brightness();
-		brightness += 0.05 * increment;
-		if (brightness < 0.1) brightness = 0.1;
-		if (brightness > 1.0) brightness = 1.0;
-		palette_set_global_brightness(brightness);
-	}
-	brightness = palette_get_global_brightness();
-
-	sprintf(buf,"%s %3d%%", ui_getstring (UI_brightness), (int)(brightness * 100));
-	displayosd(bitmap,buf,brightness*100,100);
-}
-
-static void onscrd_gamma(struct mame_bitmap *bitmap,int increment,int arg)
-{
-	char buf[20];
-	double gamma_correction;
-
-	if (increment)
-	{
-		gamma_correction = palette_get_global_gamma();
-
-		gamma_correction += 0.05 * increment;
-		if (gamma_correction < 0.5) gamma_correction = 0.5;
-		if (gamma_correction > 2.0) gamma_correction = 2.0;
-
-		palette_set_global_gamma(gamma_correction);
-	}
-	gamma_correction = palette_get_global_gamma();
-
-	sprintf(buf,"%s %1.2f", ui_getstring (UI_gamma), gamma_correction);
-	displayosd(bitmap,buf,100*(gamma_correction-0.5)/(2.0-0.5),100*(1.0-0.5)/(2.0-0.5));
-}
-
-static void onscrd_overclock(struct mame_bitmap *bitmap,int increment,int arg)
-{
-	char buf[30];
-	double overclock;
-	int cpu, doallcpus = 0, oc;
-
-	if (code_pressed(KEYCODE_LSHIFT) || code_pressed(KEYCODE_RSHIFT))
-		doallcpus = 1;
-	if (!code_pressed(KEYCODE_LCONTROL) && !code_pressed(KEYCODE_RCONTROL))
-		increment *= 5;
-	if( increment )
-	{
-		overclock = timer_get_overclock(arg);
-		overclock += 0.01 * increment;
-		if (overclock < 0.01) overclock = 0.01;
-		if (overclock > 2.0) overclock = 2.0;
-		if( doallcpus )
-			for( cpu = 0; cpu < cpu_gettotalcpu(); cpu++ )
-				timer_set_overclock(cpu, overclock);
-		else
-			timer_set_overclock(arg, overclock);
-	}
-
-	oc = 100 * timer_get_overclock(arg) + 0.5;
-
-	if( doallcpus )
-		sprintf(buf,"%s %s %3d%%", ui_getstring (UI_allcpus), ui_getstring (UI_overclock), oc);
-	else
-		sprintf(buf,"%s %s%d %3d%%", ui_getstring (UI_overclock), ui_getstring (UI_cpu), arg, oc);
-	displayosd(bitmap,buf,oc/2,100/2);
-}
-
-#define MAX_OSD_ITEMS 30
-static void (*onscrd_fnc[MAX_OSD_ITEMS])(struct mame_bitmap *bitmap,int increment,int arg);
-static int onscrd_arg[MAX_OSD_ITEMS];
-static int onscrd_total_items;
-
-static void onscrd_init(void)
-{
-	int item,ch;
-#if HAS_DISCRETE
-	int soundnum;
-#endif /* HAS_DISCRETE */
-
-
-	item = 0;
-
-	if (Machine->sample_rate)
-	{
-		onscrd_fnc[item] = onscrd_volume;
-		onscrd_arg[item] = 0;
-		item++;
-
-		for (ch = 0;ch < MIXER_MAX_CHANNELS;ch++)
-		{
-			if (mixer_get_name(ch) != 0)
-			{
-				onscrd_fnc[item] = onscrd_mixervol;
-				onscrd_arg[item] = ch;
-				item++;
-			}
-		}
-
-		/* K.Wilkins Feb2003 Additional of Disrete Sound System ADJUSTMENT sliders */
-#if HAS_DISCRETE
-		/* See if there is a discrete sound sub-system present */
-		for (soundnum = 0; soundnum < MAX_SOUND; soundnum++)
-		{
-			if (Machine->drv->sound[soundnum].sound_type == SOUND_DISCRETE)
-			{
-				/* For each DISCRETE_ADJUST node then there is a slider, there can only be one SOUND_DISCRETE */
-				/* in the machinbe sound delcaration so this WONT trigger more than once                      */
-				{
-					int count;
-					count=discrete_sh_adjuster_count((struct discrete_sound_block*)Machine->drv->sound[soundnum].sound_interface);
-
-					for(ch=0;ch<count;ch++)
-					{
-						onscrd_fnc[item] = onscrd_discrete;
-						onscrd_arg[item] = ch;
-						item++;
-					}
-				}
-			}
-		}
-#endif /* HAS_DISCRETE */
-		/* K.Wilkins Feb2003 Additional of Disrete Sound System ADJUSTMENT sliders */
-	}
-
-	if (options.cheat)
-	{
-		for (ch = 0;ch < cpu_gettotalcpu();ch++)
-		{
-			onscrd_fnc[item] = onscrd_overclock;
-			onscrd_arg[item] = ch;
-			item++;
-		}
-	}
-
-	onscrd_fnc[item] = onscrd_brightness;
-	onscrd_arg[item] = 0;
-	item++;
-
-	onscrd_fnc[item] = onscrd_gamma;
-	onscrd_arg[item] = 0;
-	item++;
-
-	onscrd_total_items = item;
-}
-
-static int on_screen_display(struct mame_bitmap *bitmap, int selected)
-{
-	int increment,sel;
-	static int lastselected = 0;
-
-
-	if (selected == -1)
-		sel = lastselected;
-	else sel = selected - 1;
-
-	increment = 0;
-	if (input_ui_pressed_repeat(IPT_UI_LEFT,8))
-		increment = -1;
-	if (input_ui_pressed_repeat(IPT_UI_RIGHT,8))
-		increment = 1;
-	if (input_ui_pressed_repeat(IPT_UI_DOWN,8))
-		sel = (sel + 1) % onscrd_total_items;
-	if (input_ui_pressed_repeat(IPT_UI_UP,8))
-		sel = (sel + onscrd_total_items - 1) % onscrd_total_items;
-
-	(*onscrd_fnc[sel])(bitmap,increment,onscrd_arg[sel]);
-
-	lastselected = sel;
-
-	if (input_ui_pressed(IPT_UI_ON_SCREEN_DISPLAY))
-	{
-		sel = -1;
-
-		schedule_full_refresh();
-	}
-
-	return sel + 1;
-}
 
 /*********************************************************************
 
@@ -3655,10 +3305,6 @@ static void displaymessage(struct mame_bitmap *bitmap,const char *text)
 	displaytext(bitmap,dt);
 }
 
-
-static char messagetext[200];
-static int messagecounter;
-
 void CLIB_DECL usrintf_showmessage(const char *text,...)
 {
 	va_list arg;
@@ -3679,68 +3325,57 @@ void CLIB_DECL usrintf_showmessage_secs(int seconds, const char *text,...)
 
 int handle_user_interface(struct mame_bitmap *bitmap)
 {
-#ifdef MESS
-	extern int mess_pause_for_ui;
-#endif
 
-	/* This call is for the cheat, it must be called once a frame */
-	if (options.cheat) DoCheat(bitmap);
+	DoCheat(bitmap);	/* This must be called once a frame */
+   
+	if (setup_selected == 0)
+  {
+    if(input_ui_pressed(IPT_UI_CONFIGURE))
+    {
+      setup_selected = -1;
+    }
+    else if(options.display_setup)
+    {
+      setup_selected = -1;
+      setup_via_menu = 1;
+	    setup_menu_init();      
+    }
+  }
 
-	/* if the user pressed ESC, stop the emulation */
-	/* but don't quit if the setup menu is on screen */
-#ifndef __LIBRETRO__ // libretro handles quits, so ignore.
-	if (setup_selected == 0 && input_ui_pressed(IPT_UI_CANCEL))
-		return 1;
-#endif
-    
-	if (setup_selected == 0 && input_ui_pressed(IPT_UI_CONFIGURE))
-	{
-		setup_selected = -1;
-		if (osd_selected != 0)
-		{
-			osd_selected = 0;	/* disable on screen display */
-			schedule_full_refresh();
-		}
-#ifdef XMAME
-		update_video_and_audio(); /* for rapid-fire support */
-#endif
-	}
-	if (setup_selected != 0) setup_selected = setup_menu(bitmap, setup_selected);
+	if (setup_selected && setup_via_menu && !options.display_setup)
+  {
+    setup_selected = 0;
+    setup_via_menu = 0;
+    setup_menu_init();       
+    schedule_full_refresh();
+  }   
+  else if(setup_selected)
+  {  
+    setup_selected = setup_menu(bitmap, setup_selected);
+  }
 
 #ifdef MAME_DEBUG
 	if (!mame_debug)
-#endif
-		if (osd_selected == 0 && input_ui_pressed(IPT_UI_ON_SCREEN_DISPLAY))
-		{
-			osd_selected = -1;
-			if (setup_selected != 0)
-			{
-				setup_selected = 0; /* disable setup menu */
-				schedule_full_refresh();
-			}
-		}
-	if (osd_selected != 0) osd_selected = on_screen_display(bitmap, osd_selected);
-
-
-	/* if the user pressed F3, reset the emulation */
-	if (input_ui_pressed(IPT_UI_RESET_MACHINE))
-		machine_reset();
-
-#if defined(__sgi) && !defined(MESS)
-	game_paused = 0;
 #endif
 
 	/* show popup message if any */
 	if (messagecounter > 0)
 	{
-		displaymessage(bitmap, messagetext);
+    if ( /* a popup is on screen and the user presses one of these UI controls */
+        input_ui_pressed(IPT_UI_CANCEL) || input_ui_pressed(IPT_UI_SELECT)
+     || input_ui_pressed(IPT_UI_UP)     || input_ui_pressed(IPT_UI_DOWN)
+     || input_ui_pressed(IPT_UI_LEFT)   || input_ui_pressed(IPT_UI_RIGHT) )
+     {
+      messagecounter = 1; /* decrease to trigger screen refresh */
+     }
+		else
+      displaymessage(bitmap, messagetext);
 
 		if (--messagecounter == 0)
 			schedule_full_refresh();
 	}
 
-
-	/* if the user pressed F4, show the character set */
+	/* if the user pressed IPT_UI_SHOW_GFX, show the character set */
 	if (input_ui_pressed(IPT_UI_SHOW_GFX))
 	{
 		showcharset(bitmap);
@@ -3752,81 +3387,15 @@ int handle_user_interface(struct mame_bitmap *bitmap)
 
 void init_user_interface(void)
 {
-	extern int snapno;	/* in common.c */
-
-	snapno = 0; /* reset snapshot counter */
-
 	/* clear the input memory */
 	while (code_read_async() != CODE_NONE) {};
 
 	setup_menu_init();
 	setup_selected = 0;
 
-	onscrd_init();
-	osd_selected = 0;
-
-	jukebox_selected = -1;
-}
-
-int onscrd_active(void)
-{
-	return osd_selected;
 }
 
 int setup_active(void)
 {
 	return setup_selected;
-}
-
-#if defined(__sgi) && !defined(MESS)
-
-/* Return if the game is paused or not */
-int is_game_paused(void)
-{
-	return game_paused;
-}
-
-#endif
-
-static int show_game_message(void)
-{
-    erase_screen(pause_bitmap);
-    ui_drawbox(pause_bitmap,0,0,uirotwidth,uirotheight);
-    ui_displaymessagewindow(pause_bitmap,pause_buffer);
-
-    update_video_and_audio();
-    
-    if (input_ui_pressed(IPT_UI_CANCEL))
-    {
-        return 1;
-    }
-    
-    if (code_pressed_memory(KEYCODE_O) || input_ui_pressed(IPT_UI_LEFT))
-    {
-        pause_done = 1;
-    }
-    else if (pause_done == 1 && (code_pressed_memory(KEYCODE_K) || input_ui_pressed(IPT_UI_RIGHT)))
-    {
-        pause_done = 2;
-        return 1;
-    }
-    
-    return 0;
-}
-
-static void pause_action_showcopyright(void)
-{
-    if(show_game_message())
-    {
-        setup_selected = 0;
-        showgamewarnings(pause_bitmap);
-    }
-}
-
-static void pause_action_showgamewarnings(void)
-{
-    if(show_game_message())
-    {
-        pause_action = pause_action_start_emulator;    
-    }
 }

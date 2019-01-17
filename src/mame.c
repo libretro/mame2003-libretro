@@ -6,12 +6,13 @@
 
 ****************************************************************************
 
-        libretro manages:
-	        - platform-specific init
-		- calls run_game() from the function retro_load_game()
+    libretro manages:
+        - platform-specific init
+        - calls init_game() from retro_load_game()
+        - calls run_game() from retro_load_game
         
 	mame.c manages:
-		run_game()
+		init_game()
 			- constructs the machine driver
 			- calls init_game_options()
 
@@ -20,7 +21,6 @@
 				- computes orientation from the options
 
 			- initializes the savegame system
-			- calls osd_init() to do platform-specific initialization
 			- calls init_machine()
 
 			init_machine()
@@ -58,11 +58,9 @@
 				- calls the driver's VIDEO_START callback
 				- starts the audio system
 				- disposes of regions marked as disposable
-				- calls run_machine_core()
+				- calls ui_copyright_and_warnings()
 
-				run_machine_core()
-					- shows the copyright screen
-					- shows the game warnings
+				pause_action_start_emulator()
 					- initializes the user interface
 					- initializes the cheat system
 					- calls the driver's NVRAM_HANDLER
@@ -116,9 +114,7 @@
 #include "harddisk.h"
 #include "driver.h"
 #include "mame.h"
-
-#include "log.h"
-
+#include "bootstrap.h"
 
 /***************************************************************************
 
@@ -144,6 +140,7 @@ int mame_debug; /* !0 when -debug option is specified */
 int bailing;	/* set to 1 if the startup is aborted to prevent multiple error messages */
 
 extern int16_t XsoundBuffer[2048];
+extern void (*pause_action)(void);
 
 /* the active machine */
 static struct RunningMachine active_machine;
@@ -214,7 +211,7 @@ static struct chd_interface mame_chd_interface =
 static int init_machine(void);
 static void shutdown_machine(void);
 static int run_machine(void);
-static void run_machine_core(void);
+void pause_action_start_emulator(void);
 
 #ifdef MAME_DEBUG
 static int validitychecks(void);
@@ -222,7 +219,7 @@ static int validitychecks(void);
 
 static int vh_open(void);
 static void vh_close(void);
-static int init_game_options(void);
+static void init_game_options(void);
 static int decode_graphics(const struct GfxDecodeInfo *gfxdecodeinfo);
 static void compute_aspect_ratio(const struct InternalMachineDriver *drv, int *aspect_x, int *aspect_y);
 static void scale_vectorgames(int gfx_width, int gfx_height, int *width, int *height);
@@ -246,7 +243,7 @@ static INLINE void bail_and_print(const char *message)
 	if (!bailing)
 	{
 		bailing = 1;
-		printf("%s\n", message);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "%s\n", message);
 	}
 }
 
@@ -259,21 +256,14 @@ static INLINE void bail_and_print(const char *message)
 
 ***************************************************************************/
 
-/*-------------------------------------------------
-	run_game - run the given game in a session
--------------------------------------------------*/
-
-int run_game(int game)
+bool init_game(int game)
 {
-    char buffer[1024];
-	int err = 1;
-
 	begin_resource_tracking();
 
 #ifdef MAME_DEBUG
 	/* validity checks -- debug build only */
 	if (validitychecks())
-		return 1;
+		return false;
 #endif
 
 	/* first give the machine a good cleaning */
@@ -283,45 +273,45 @@ int run_game(int game)
 	Machine->gamedrv = gamedrv = drivers[game];
 	expand_machine_driver(gamedrv->drv, &internal_drv);
 	Machine->drv = &internal_drv;
+  
+  return true;
+}
+    
 
-	/* initialize the game options */
-	if (init_game_options())
-		return 1;
+/*-------------------------------------------------
+	run_game - run the given game in a session
+-------------------------------------------------*/
+
+bool run_game(int game)
+{
+	init_game_options();
 
 	/* here's the meat of it all */
 	bailing = 0;
+  
+  begin_resource_tracking();
 
-	/* let the OSD layer start up first */
-	/* ensure parent dir for various mame dirs is created */
-	snprintf(buffer, 1024, "%s%s%s", options.libretro_save_path, path_default_slash(), APPNAME);
-	path_mkdir(buffer);
-	snprintf(buffer, 1024, "%s%s%s", options.libretro_system_path, path_default_slash(), APPNAME);
-	path_mkdir(buffer);
+  /* finish setting up our local machine */
+  if (init_machine())
+      bail_and_print("Unable to initialize machine emulation");
+  else
+  {	  
+  /* then run it */
+      if (run_machine())
+          bail_and_print("Unable to start machine emulation");
+      else
+      {
+         game_loaded = 1;
+         return 0;
+      }
+
+      /* shutdown the local machine */
+      shutdown_machine();
+  }
+  /* stop tracking resources and exit the OSD layer */
+  end_resource_tracking();
     
-    begin_resource_tracking();
-
-    /* then finish setting up our local machine */
-    if (init_machine())
-        bail_and_print("Unable to initialize machine emulation");
-    else
-    {
-        /* then run it */
-        if (run_machine())
-            bail_and_print("Unable to start machine emulation");
-        else
-        {
-            game_loaded = 1;
-            return 0;
-        }
-
-        /* shutdown the local machine */
-        shutdown_machine();
-    }
-
-    /* stop tracking resources and exit the OSD layer */
-    end_resource_tracking();
-    
-	return err;
+	return 1;
 }
 
 void run_game_done(void)
@@ -340,14 +330,14 @@ static int init_machine(void)
 	/* load the localization file */
 	if (uistring_init(options.language_file) != 0)
 	{
-		logerror("uistring_init failed\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "uistring_init failed\n");
 		goto cant_load_language_file;
 	}
 
 	/* initialize the input system */
 	if (code_init() != 0)
 	{
-		logerror("code_init failed\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "code_init failed\n");
 		goto cant_init_input;
 	}
 
@@ -358,7 +348,7 @@ static int init_machine(void)
 		Machine->input_ports = input_port_allocate(gamedrv->input_ports);
 		if (!Machine->input_ports)
 		{
-			logerror("could not allocate Machine->input_ports\n");
+			log_cb(RETRO_LOG_ERROR, LOGPRE "could not allocate Machine->input_ports\n");
 			goto cant_allocate_input_ports;
 		}
 
@@ -366,7 +356,7 @@ static int init_machine(void)
 		Machine->input_ports_default = input_port_allocate(gamedrv->input_ports);
 		if (!Machine->input_ports_default)
 		{
-			logerror("could not allocate Machine->input_ports_default\n");
+			log_cb(RETRO_LOG_ERROR, LOGPRE "could not allocate Machine->input_ports_default\n");
 			goto cant_allocate_input_ports_default;
 		}
 	}
@@ -377,7 +367,7 @@ static int init_machine(void)
 	/* load the ROMs if we have some */
 	if (gamedrv->rom && rom_load(gamedrv->rom) != 0)
 	{
-		logerror("readroms failed\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "readroms failed\n");
 		goto cant_load_roms;
 	}
 
@@ -398,7 +388,7 @@ static int init_machine(void)
 	/* initialize the memory system for this game */
 	if (!memory_init())
 	{
-		logerror("memory_init failed\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "memory_init failed\n");
 		goto cant_init_memory;
 	}
 
@@ -467,8 +457,8 @@ static int run_machine(void)
 						Machine->memory_region[region].base = 0;
 					}
 
-				/* now do the core execution */
-				run_machine_core();
+				ui_copyright_and_warnings();
+        pause_action = pause_action_start_emulator;
 				return 0;
 			}
 
@@ -498,63 +488,44 @@ void run_machine_done(void)
     vh_close();
 }
 
-
-/*-------------------------------------------------
-	run_machine_core - core execution loop
--------------------------------------------------*/
-extern void (*pause_action)(void);
-
 void pause_action_start_emulator(void)
 {
-    init_user_interface();
+  init_user_interface();
+  artwork_enable(1);
+  InitCheat();
 
-    /* enable artwork now */
-    artwork_enable(1);
+  /* load the NVRAM now */
+  if (Machine->drv->nvram_handler)
+  {
+    mame_file *nvram_file = mame_fopen(Machine->gamedrv->name, 0, FILETYPE_NVRAM, 0);
 
-    /* disable cheat if no roms */
-    if (!gamedrv->rom)
-        options.cheat = 0;
-    else
-        InitCheat();
-
-    /* load the NVRAM now */
-    if (Machine->drv->nvram_handler)
+    if(!nvram_file)
+      log_cb(RETRO_LOG_INFO, LOGPRE "First run: NVRAM handler found for %s but no existing NVRAM file found.\n", Machine->gamedrv->name);
+    
+    log_cb(RETRO_LOG_INFO, LOGPRE "options.nvram_bootstrap: %i \n", options.nvram_bootstrap);
+    if(!nvram_file && (Machine->gamedrv->bootstrap != NULL))
     {
-        mame_file *nvram_file = mame_fopen(Machine->gamedrv->name, 0, FILETYPE_NVRAM, 0);
-        (*Machine->drv->nvram_handler)(nvram_file, 0);
-        if (nvram_file)
-            mame_fclose(nvram_file);
-    }
-
-    /* run the emulation! */
-    cpu_run();
-
-    // Unpause
-    pause_action = 0;
-}
-
-void run_machine_core(void)
-{
-	/* disable artwork for the start */
-	artwork_enable(0);
-
-    if(settingsloaded || options.skip_disclaimer)
-    {
-        if (options.skip_warnings)
-        {
-            pause_action = pause_action_start_emulator;
-        }
-        else
-        {
-            showgamewarnings(artwork_get_ui_bitmap());
-        }
+      if(options.nvram_bootstrap)
+      {
+        log_cb(RETRO_LOG_INFO, LOGPRE "Spwaning NVRAM bootstrap as the initial NVRAM image.\n");
+        nvram_file = spawn_bootstrap_nvram(Machine->gamedrv->bootstrap->data, Machine->gamedrv->bootstrap->length);
+      }
+      else
+        log_cb(RETRO_LOG_INFO, LOGPRE "NVRAM bootstrap available, but disabled via core option.\n");
     }
     else
-    {
-        showcopyright(artwork_get_ui_bitmap());
-    }
+      log_cb(RETRO_LOG_INFO, LOGPRE "Delegating population of initial NVRAM to emulated system.\n");
 
-    // GAME INFO
+    (*Machine->drv->nvram_handler)(nvram_file, 0);
+    if (nvram_file)
+        mame_fclose(nvram_file);
+  }
+
+  /* run the emulation! */
+  cpu_run();
+
+  /* Unpause */
+  pause_action = 0;
 }
 
 void run_machine_core_done(void)
@@ -570,9 +541,7 @@ void run_machine_core_done(void)
         }
     }
 
-    /* stop the cheat engine */
-    if (options.cheat)
-        StopCheat();
+    StopCheat();
 
     /* save input ports settings */
     save_input_port_settings();
@@ -669,8 +638,7 @@ static int vh_open(void)
 	params.colors = palette_get_total_colors_with_ui();
 	params.fps = Machine->drv->frames_per_second;
 	params.video_attributes = Machine->drv->video_attributes;
-	params.orientation = Machine->gamedrv->flags & ORIENTATION_MASK;
-
+	params.orientation = Machine->orientation;
 	artcallbacks = &mame_artwork_callbacks;
 
 	/* initialize the display through the artwork (and eventually the OSD) layer */
@@ -690,7 +658,7 @@ static int vh_open(void)
 		goto cant_create_scrbitmap;
 
 	/* set the default visible area */
-	set_visible_area(0,1,0,1);	// make sure everything is recalculated on multiple runs
+	set_visible_area(0,1,0,1);	/* make sure everything is recalculated on multiple runs */
 	set_visible_area(
 			Machine->drv->default_visible_area.min_x,
 			Machine->drv->default_visible_area.max_x,
@@ -823,58 +791,53 @@ static void compute_aspect_ratio(const struct InternalMachineDriver *drv, int *a
 	game options
 -------------------------------------------------*/
 
-static int init_game_options(void)
+static void init_game_options(void)
 {
-	/* copy some settings into easier-to-handle variables */
-	record	   = options.record;
-	playback   = options.playback;
-	mame_debug = options.mame_debug;
+  /* copy some settings into easier-to-handle variables */
+  record	   = options.record;
+  playback   = options.playback;
+  mame_debug = options.mame_debug;
 
-	/* determine the color depth */
-	Machine->color_depth = 16;
-	alpha_active = 0;
-	if (Machine->drv->video_attributes & VIDEO_RGB_DIRECT)
-	{
-		/* first pick a default */
-		if (Machine->drv->video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
-			Machine->color_depth = 32;
-		else
-			Machine->color_depth = 15;
+  /* determine the color depth */
+  Machine->color_depth = 16;
+  alpha_active = 0;
+  if (Machine->drv->video_attributes & VIDEO_RGB_DIRECT)
+  {
+    /* first pick a default */
+    if (Machine->drv->video_attributes & VIDEO_NEEDS_6BITS_PER_GUN)
+      Machine->color_depth = 32;
+    else
+      Machine->color_depth = 15;
+    
+    /* use 32-bit color output as default to skip color conversions */
+	if (Machine->drv->video_attributes & VIDEO_TYPE_VECTOR) 	Machine->color_depth = 32;
 
-		/* now allow overrides */
-		if (options.color_depth == 15 || options.color_depth == 32)
-			Machine->color_depth = options.color_depth;
+    /* now allow overrides */
+    if (options.color_depth == 15 || options.color_depth == 32)
+      Machine->color_depth = options.color_depth;
 
-		/* enable alpha for direct video modes */
-		alpha_active = 1;
-		alpha_init();
-	}
+    /* enable alpha for direct video modes */
+    alpha_active = 1;
+    alpha_init();
+  }
 
-	/* update the vector width/height with defaults */
-	if (options.vector_width == 0)
-		options.vector_width = Machine->drv->screen_width;
-	if (options.vector_height == 0)
-		options.vector_height = Machine->drv->screen_height;
-
-	/* apply the vector resolution multiplier */
-	options.vector_width *= options.vector_resolution_multiplier;
+  /* update the vector width/height with defaults */
+  if (options.vector_width  == 0) options.vector_width  = Machine->drv->screen_width;
+  if (options.vector_height == 0) options.vector_height = Machine->drv->screen_height;
+  
+  /* apply the vector resolution multiplier */
+	options.vector_width  *= options.vector_resolution_multiplier;
 	options.vector_height *= options.vector_resolution_multiplier;
 
-	/* initialize the samplerate */
-	if ( (  Machine->drv->frames_per_second < 47 ) && (options.samplerate >= 30000) )	
-	{	
-		printf("sample rate too high\n");	
-		framerate_test =1;	
-		options.samplerate=22050;	
-		framerate_test =1;	
-	}        
-	Machine->sample_rate = options.samplerate;
+  /* get orientation right */
+  Machine->orientation    = ROT0;
+  Machine->ui_orientation = options.ui_orientation;
 
-	/* get orientation right */
-	Machine->orientation = ROT0;
-	Machine->ui_orientation = options.ui_orientation;
+  /* initialize the samplerate */
+  
+  Machine->sample_rate = options.samplerate;
+/* move this to a core option if you want it to toggle */
 
-	return 0;
 }
 
 
@@ -943,7 +906,7 @@ static int decode_graphics(const struct GfxDecodeInfo *gfxdecodeinfo)
 		if ((Machine->gfx[i] = decodegfx(region_base + gfxdecodeinfo[i].start, &glcopy)) == 0)
 		{
 			bailing = 1;
-			printf("Out of memory decoding gfx\n");
+			log_cb(RETRO_LOG_ERROR, LOGPRE "Out of memory decoding gfx\n");
 			return 1;
 		}
 
@@ -993,7 +956,7 @@ static int init_buffered_spriteram(void)
 	/* make sure we have a valid size */
 	if (spriteram_size == 0)
 	{
-		logerror("vh_open():  Video buffers spriteram but spriteram_size is 0\n");
+		log_cb(RETRO_LOG_ERROR, LOGPRE "vh_open():  Video buffers spriteram but spriteram_size is 0\n");
 		return 0;
 	}
 
@@ -1275,42 +1238,6 @@ int updatescreen(void)
 
 
 
-/***************************************************************************
-
-	Miscellaneous bits & pieces
-
-***************************************************************************/
-
-/*-------------------------------------------------
-	mame_highscore_enabled - return 1 if high
-	scores are enabled
--------------------------------------------------*/
-
-int mame_highscore_enabled(void)
-{
-	/* disable high score when record/playback is on */
-	if (record != 0 || playback != 0)
-		return 0;
-
-	/* disable high score when cheats are used */
-	if (he_did_cheat != 0)
-		return 0;
-
-	/* disable high score when playing network game */
-	/* (this forces all networked machines to start from the same state!) */
-#ifdef MAME_NET
-	if (net_active())
-		return 0;
-#elif defined XMAME_NET
-	if (osd_net_active())
-		return 0;
-#endif
-
-	return 1;
-}
-
-
-
 /*-------------------------------------------------
 	set_led_status - set the state of a given LED
 -------------------------------------------------*/
@@ -1327,7 +1254,7 @@ void set_led_status(int num, int on)
 
 /*-------------------------------------------------
 	mame_get_performance_info - return performance
-	info
+,	info
 -------------------------------------------------*/
 
 const struct performance_info *mame_get_performance_info(void)
@@ -1373,7 +1300,7 @@ struct MachineCPU *machine_add_cpu(struct InternalMachineDriver *machine, const 
 			return &machine->cpu[cpunum];
 		}
 
-	logerror("Out of CPU's!\n");
+	log_cb(RETRO_LOG_ERROR, LOGPRE "Out of CPU's!\n");
 	return NULL;
 }
 
@@ -1392,7 +1319,7 @@ struct MachineCPU *machine_find_cpu(struct InternalMachineDriver *machine, const
 		if (machine->cpu[cpunum].tag && strcmp(machine->cpu[cpunum].tag, tag) == 0)
 			return &machine->cpu[cpunum];
 
-	logerror("Can't find CPU '%s'!\n", tag);
+	log_cb(RETRO_LOG_ERROR, LOGPRE "Can't find CPU '%s'!\n", tag);
 	return NULL;
 }
 
@@ -1415,7 +1342,7 @@ void machine_remove_cpu(struct InternalMachineDriver *machine, const char *tag)
 			return;
 		}
 
-	logerror("Can't find CPU '%s'!\n", tag);
+	log_cb(RETRO_LOG_ERROR, LOGPRE "Can't find CPU '%s'!\n", tag);
 }
 
 
@@ -1438,7 +1365,7 @@ struct MachineSound *machine_add_sound(struct InternalMachineDriver *machine, co
 			return &machine->sound[soundnum];
 		}
 
-	logerror("Out of sounds!\n");
+	log_cb(RETRO_LOG_ERROR, LOGPRE "Out of sounds!\n");
 	return NULL;
 
 }
@@ -1458,7 +1385,7 @@ struct MachineSound *machine_find_sound(struct InternalMachineDriver *machine, c
 		if (machine->sound[soundnum].tag && strcmp(machine->sound[soundnum].tag, tag) == 0)
 			return &machine->sound[soundnum];
 
-	logerror("Can't find sound '%s'!\n", tag);
+	log_cb(RETRO_LOG_ERROR, LOGPRE "Can't find sound '%s'!\n", tag);
 	return NULL;
 }
 
@@ -1481,7 +1408,7 @@ void machine_remove_sound(struct InternalMachineDriver *machine, const char *tag
 			return;
 		}
 
-	logerror("Can't find sound '%s'!\n", tag);
+	log_cb(RETRO_LOG_ERROR, LOGPRE "Can't find sound '%s'!\n", tag);
 }
 
 
@@ -1572,18 +1499,6 @@ UINT64 mame_chd_length(struct chd_interface_file *file)
 ***************************************************************************/
 
 #ifdef MAME_DEBUG
-static INLINE int my_stricmp(const char *dst, const char *src)
-{
-	while (*src && *dst)
-	{
-		if (tolower(*src) != tolower(*dst))
-			return *dst - *src;
-		src++;
-		dst++;
-	}
-	return *dst - *src;
-}
-
 
 static int validitychecks(void)
 {
@@ -1594,16 +1509,16 @@ static int validitychecks(void)
 
 	a = 0xff;
 	b = a + 1;
-	if (b > a)	{ printf("UINT8 must be 8 bits\n"); error = 1; }
+	if (b > a)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT8 must be 8 bits\n"); error = 1; }
 
-	if (sizeof(INT8)   != 1)	{ printf("INT8 must be 8 bits\n"); error = 1; }
-	if (sizeof(UINT8)  != 1)	{ printf("UINT8 must be 8 bits\n"); error = 1; }
-	if (sizeof(INT16)  != 2)	{ printf("INT16 must be 16 bits\n"); error = 1; }
-	if (sizeof(UINT16) != 2)	{ printf("UINT16 must be 16 bits\n"); error = 1; }
-	if (sizeof(INT32)  != 4)	{ printf("INT32 must be 32 bits\n"); error = 1; }
-	if (sizeof(UINT32) != 4)	{ printf("UINT32 must be 32 bits\n"); error = 1; }
-	if (sizeof(INT64)  != 8)	{ printf("INT64 must be 64 bits\n"); error = 1; }
-	if (sizeof(UINT64) != 8)	{ printf("UINT64 must be 64 bits\n"); error = 1; }
+	if (sizeof(INT8)   != 1)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT8 must be 8 bits\n"); error = 1; }
+	if (sizeof(UINT8)  != 1)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT8 must be 8 bits\n"); error = 1; }
+	if (sizeof(INT16)  != 2)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT16 must be 16 bits\n"); error = 1; }
+	if (sizeof(UINT16) != 2)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT16 must be 16 bits\n"); error = 1; }
+	if (sizeof(INT32)  != 4)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT32 must be 32 bits\n"); error = 1; }
+	if (sizeof(UINT32) != 4)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT32 must be 32 bits\n"); error = 1; }
+	if (sizeof(INT64)  != 8)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT64 must be 64 bits\n"); error = 1; }
+	if (sizeof(UINT64) != 8)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT64 must be 64 bits\n"); error = 1; }
 
 	for (i = 0;drivers[i];i++)
 	{
@@ -1615,7 +1530,7 @@ static int validitychecks(void)
 
 		if (drivers[i]->clone_of == drivers[i])
 		{
-			printf("%s: %s is set as a clone of itself\n",drivers[i]->source_file,drivers[i]->name);
+			log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s is set as a clone of itself\n",drivers[i]->source_file,drivers[i]->name);
 			error = 1;
 		}
 
@@ -1623,17 +1538,17 @@ static int validitychecks(void)
 		{
 			if ((drivers[i]->clone_of->clone_of->flags & NOT_A_DRIVER) == 0)
 			{
-				printf("%s: %s is a clone of a clone\n",drivers[i]->source_file,drivers[i]->name);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s is a clone of a clone\n",drivers[i]->source_file,drivers[i]->name);
 				error = 1;
 			}
 		}
 
 #if 0
-//		if (drivers[i]->drv->color_table_len == drivers[i]->drv->total_colors &&
+/*		if (drivers[i]->drv->color_table_len == drivers[i]->drv->total_colors && */
 		if (drivers[i]->drv->color_table_len && drivers[i]->drv->total_colors &&
 				drivers[i]->drv->vh_init_palette == 0)
 		{
-			printf("%s: %s could use color_table_len = 0\n",drivers[i]->source_file,drivers[i]->name);
+			log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s could use color_table_len = 0\n",drivers[i]->source_file,drivers[i]->name);
 			error = 1;
 		}
 #endif
@@ -1642,19 +1557,19 @@ static int validitychecks(void)
 		{
 			if (!strcmp(drivers[i]->name,drivers[j]->name))
 			{
-				printf("%s: %s is a duplicate name (%s, %s)\n",drivers[i]->source_file,drivers[i]->name,drivers[i]->source_file,drivers[j]->source_file);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s is a duplicate name (%s, %s)\n",drivers[i]->source_file,drivers[i]->name,drivers[i]->source_file,drivers[j]->source_file);
 				error = 1;
 			}
 			if (!strcmp(drivers[i]->description,drivers[j]->description))
 			{
-				printf("%s: %s is a duplicate description (%s, %s)\n",drivers[i]->description,drivers[i]->source_file,drivers[i]->name,drivers[j]->name);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s is a duplicate description (%s, %s)\n",drivers[i]->description,drivers[i]->source_file,drivers[i]->name,drivers[j]->name);
 				error = 1;
 			}
 			if (drivers[i]->rom && drivers[i]->rom == drivers[j]->rom
 					&& (drivers[i]->flags & NOT_A_DRIVER) == 0
 					&& (drivers[j]->flags & NOT_A_DRIVER) == 0)
 			{
-				printf("%s: %s and %s use the same ROM set\n",drivers[i]->source_file,drivers[i]->name,drivers[j]->name);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s and %s use the same ROM set\n",drivers[i]->source_file,drivers[i]->name,drivers[j]->name);
 				error = 1;
 			}
 		}
@@ -1664,7 +1579,7 @@ static int validitychecks(void)
 			if (drv.sound[0].sound_type == 0 && (drivers[i]->flags & GAME_NO_SOUND) == 0 &&
 					strcmp(drivers[i]->name,"minivadr"))
 			{
-				printf("%s: %s missing GAME_NO_SOUND flag\n",drivers[i]->source_file,drivers[i]->name);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s missing GAME_NO_SOUND flag\n",drivers[i]->source_file,drivers[i]->name);
 				error = 1;
 			}
 		}
@@ -1695,7 +1610,7 @@ static int validitychecks(void)
 					count++;
 					if (type && (type >= REGION_MAX || type <= REGION_INVALID))
 					{
-						printf("%s: %s has invalid ROM_REGION type %x\n",drivers[i]->source_file,drivers[i]->name,type);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has invalid ROM_REGION type %x\n",drivers[i]->source_file,drivers[i]->name,type);
 						error = 1;
 					}
 
@@ -1711,7 +1626,7 @@ static int validitychecks(void)
 					{
 						if (tolower(*c) != *c)
 						{
-							printf("%s: %s has upper case ROM name %s\n",drivers[i]->source_file,drivers[i]->name,ROM_GETNAME(romp));
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has upper case ROM name %s\n",drivers[i]->source_file,drivers[i]->name,ROM_GETNAME(romp));
 							error = 1;
 						}
 						c++;
@@ -1720,7 +1635,7 @@ static int validitychecks(void)
 					hash = ROM_GETHASHDATA(romp);
 					if (!hash_verify_string(hash))
 					{
-						printf("%s: rom '%s' has an invalid hash string '%s'\n", drivers[i]->name, ROM_GETNAME(romp), hash);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: rom '%s' has an invalid hash string '%s'\n", drivers[i]->name, ROM_GETNAME(romp), hash);
 						error = 1;
 					}
 				}
@@ -1728,7 +1643,7 @@ static int validitychecks(void)
 				{
 					if (ROM_GETOFFSET(romp) + ROM_GETLENGTH(romp) > region_length[count])
 					{
-						printf("%s: %s has ROM %s extending past the defined memory region\n",drivers[i]->source_file,drivers[i]->name,last_name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has ROM %s extending past the defined memory region\n",drivers[i]->source_file,drivers[i]->name,last_name);
 						error = 1;
 					}
 				}
@@ -1739,7 +1654,7 @@ static int validitychecks(void)
 			{
 				if (region_type_used[j] > 1)
 				{
-					printf("%s: %s has duplicated ROM_REGION type %x\n",drivers[i]->source_file,drivers[i]->name,j);
+					log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has duplicated ROM_REGION type %x\n",drivers[i]->source_file,drivers[i]->name,j);
 					error = 1;
 				}
 			}
@@ -1761,7 +1676,7 @@ static int validitychecks(void)
 
 						if (!IS_MEMPORT_MARKER(mra) || (mra->end & MEMPORT_DIRECTION_MASK) != MEMPORT_DIRECTION_READ)
 						{
-							printf("%s: %s wrong MEMPORT_READ_START\n",drivers[i]->source_file,drivers[i]->name);
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong MEMPORT_READ_START\n",drivers[i]->source_file,drivers[i]->name);
 							error = 1;
 						}
 
@@ -1770,21 +1685,21 @@ static int validitychecks(void)
 							case 8:
 								if ((mra->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_8)
 								{
-									printf("%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mra->end);
 									error = 1;
 								}
 								break;
 							case 16:
 								if ((mra->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_16)
 								{
-									printf("%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mra->end);
 									error = 1;
 								}
 								break;
 							case 32:
 								if ((mra->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_32)
 								{
-									printf("%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mra->end);
 									error = 1;
 								}
 								break;
@@ -1796,12 +1711,12 @@ static int validitychecks(void)
 							{
 								if (mra->end < mra->start)
 								{
-									printf("%s: %s wrong memory read handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,mra->start,mra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong memory read handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,mra->start,mra->end);
 									error = 1;
 								}
 								if ((mra->start & (alignunit-1)) != 0 || (mra->end & (alignunit-1)) != (alignunit-1))
 								{
-									printf("%s: %s wrong memory read handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,mra->start,mra->end,alignunit);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong memory read handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,mra->start,mra->end,alignunit);
 									error = 1;
 								}
 							}
@@ -1815,7 +1730,7 @@ static int validitychecks(void)
 						if (mwa->start != MEMPORT_MARKER ||
 								(mwa->end & MEMPORT_DIRECTION_MASK) != MEMPORT_DIRECTION_WRITE)
 						{
-							printf("%s: %s wrong MEMPORT_WRITE_START\n",drivers[i]->source_file,drivers[i]->name);
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong MEMPORT_WRITE_START\n",drivers[i]->source_file,drivers[i]->name);
 							error = 1;
 						}
 
@@ -1824,21 +1739,21 @@ static int validitychecks(void)
 							case 8:
 								if ((mwa->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_8)
 								{
-									printf("%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mwa->end);
 									error = 1;
 								}
 								break;
 							case 16:
 								if ((mwa->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_16)
 								{
-									printf("%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mwa->end);
 									error = 1;
 								}
 								break;
 							case 32:
 								if ((mwa->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_32)
 								{
-									printf("%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width memory handlers! (width = %d, memory = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,mwa->end);
 									error = 1;
 								}
 								break;
@@ -1850,12 +1765,12 @@ static int validitychecks(void)
 							{
 								if (mwa->end < mwa->start)
 								{
-									printf("%s: %s wrong memory write handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,mwa->start,mwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong memory write handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,mwa->start,mwa->end);
 									error = 1;
 								}
 								if ((mwa->start & (alignunit-1)) != 0 || (mwa->end & (alignunit-1)) != (alignunit-1))
 								{
-									printf("%s: %s wrong memory write handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,mwa->start,mwa->end,alignunit);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong memory write handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,mwa->start,mwa->end,alignunit);
 									error = 1;
 								}
 							}
@@ -1869,7 +1784,7 @@ static int validitychecks(void)
 
 						if (!IS_MEMPORT_MARKER(pra) || (pra->end & MEMPORT_DIRECTION_MASK) != MEMPORT_DIRECTION_READ)
 						{
-							printf("%s: %s wrong PORT_READ_START\n",drivers[i]->source_file,drivers[i]->name);
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong PORT_READ_START\n",drivers[i]->source_file,drivers[i]->name);
 							error = 1;
 						}
 
@@ -1878,21 +1793,21 @@ static int validitychecks(void)
 							case 8:
 								if ((pra->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_8)
 								{
-									printf("%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pra->end);
 									error = 1;
 								}
 								break;
 							case 16:
 								if ((pra->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_16)
 								{
-									printf("%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pra->end);
 									error = 1;
 								}
 								break;
 							case 32:
 								if ((pra->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_32)
 								{
-									printf("%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pra->end);
 									error = 1;
 								}
 								break;
@@ -1904,12 +1819,12 @@ static int validitychecks(void)
 							{
 								if (pra->end < pra->start)
 								{
-									printf("%s: %s wrong port read handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,pra->start,pra->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong port read handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,pra->start,pra->end);
 									error = 1;
 								}
 								if ((pra->start & (alignunit-1)) != 0 || (pra->end & (alignunit-1)) != (alignunit-1))
 								{
-									printf("%s: %s wrong port read handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,pra->start,pra->end,alignunit);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong port read handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,pra->start,pra->end,alignunit);
 									error = 1;
 								}
 
@@ -1925,7 +1840,7 @@ static int validitychecks(void)
 						if (pwa->start != MEMPORT_MARKER ||
 								(pwa->end & MEMPORT_DIRECTION_MASK) != MEMPORT_DIRECTION_WRITE)
 						{
-							printf("%s: %s wrong PORT_WRITE_START\n",drivers[i]->source_file,drivers[i]->name);
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong PORT_WRITE_START\n",drivers[i]->source_file,drivers[i]->name);
 							error = 1;
 						}
 
@@ -1934,21 +1849,21 @@ static int validitychecks(void)
 							case 8:
 								if ((pwa->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_8)
 								{
-									printf("%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pwa->end);
 									error = 1;
 								}
 								break;
 							case 16:
 								if ((pwa->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_16)
 								{
-									printf("%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pwa->end);
 									error = 1;
 								}
 								break;
 							case 32:
 								if ((pwa->end & MEMPORT_WIDTH_MASK) != MEMPORT_WIDTH_32)
 								{
-									printf("%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s cpu #%d uses wrong data width port handlers! (width = %d, port = %08x)\n",drivers[i]->source_file,drivers[i]->name,cpu,databus_width,pwa->end);
 									error = 1;
 								}
 								break;
@@ -1960,12 +1875,12 @@ static int validitychecks(void)
 							{
 								if (pwa->end < pwa->start)
 								{
-									printf("%s: %s wrong port write handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,pwa->start,pwa->end);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong port write handler start = %08x > end = %08x\n",drivers[i]->source_file,drivers[i]->name,pwa->start,pwa->end);
 									error = 1;
 								}
 								if ((pwa->start & (alignunit-1)) != 0 || (pwa->end & (alignunit-1)) != (alignunit-1))
 								{
-									printf("%s: %s wrong port write handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,pwa->start,pwa->end,alignunit);
+									log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s wrong port write handler start = %08x, end = %08x ALIGN = %d\n",drivers[i]->source_file,drivers[i]->name,pwa->start,pwa->end,alignunit);
 									error = 1;
 								}
 
@@ -1989,7 +1904,7 @@ static int validitychecks(void)
 /*
 					if (type && (type >= REGION_MAX || type <= REGION_INVALID))
 					{
-						printf("%s: %s has invalid memory region for gfx[%d]\n",drivers[i]->source_file,drivers[i]->name,j);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has invalid memory region for gfx[%d]\n",drivers[i]->source_file,drivers[i]->name,j);
 						error = 1;
 					}
 */
@@ -2009,7 +1924,7 @@ static int validitychecks(void)
 								- (drv.gfxdecodeinfo[j].start & ~(drv.gfxdecodeinfo[j].gfxlayout->charincrement/8-1));
 						if ((start + len) / 8 > avail)
 						{
-							printf("%s: %s has gfx[%d] extending past allocated memory\n",drivers[i]->source_file,drivers[i]->name,j);
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has gfx[%d] extending past allocated memory\n",drivers[i]->source_file,drivers[i]->name,j);
 							error = 1;
 						}
 					}
@@ -2031,41 +1946,41 @@ static int validitychecks(void)
 					for (j = 0;j < STR_TOTAL;j++)
 					{
 						if (inp->name == ipdn_defaultstrings[j]) break;
-						else if (!my_stricmp(inp->name,ipdn_defaultstrings[j]))
+						else if (!strcasecmp(inp->name,ipdn_defaultstrings[j]))
 						{
-							printf("%s: %s must use DEF_STR( %s )\n",drivers[i]->source_file,drivers[i]->name,inp->name);
+							log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s must use DEF_STR( %s )\n",drivers[i]->source_file,drivers[i]->name,inp->name);
 							error = 1;
 						}
 					}
 
 					if (inp->name == DEF_STR( On ) && (inp+1)->name == DEF_STR( Off ))
 					{
-						printf("%s: %s has inverted Off/On dipswitch order\n",drivers[i]->source_file,drivers[i]->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has inverted Off/On dipswitch order\n",drivers[i]->source_file,drivers[i]->name);
 						error = 1;
 					}
 
 					if (inp->name == DEF_STR( Yes ) && (inp+1)->name == DEF_STR( No ))
 					{
-						printf("%s: %s has inverted No/Yes dipswitch order\n",drivers[i]->source_file,drivers[i]->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has inverted No/Yes dipswitch order\n",drivers[i]->source_file,drivers[i]->name);
 						error = 1;
 					}
 
-					if (!my_stricmp(inp->name,"table"))
+					if (!strcasecmp(inp->name,"table"))
 					{
-						printf("%s: %s must use DEF_STR( Cocktail ), not %s\n",drivers[i]->source_file,drivers[i]->name,inp->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s must use DEF_STR( Cocktail ), not %s\n",drivers[i]->source_file,drivers[i]->name,inp->name);
 						error = 1;
 					}
 
 					if (inp->name == DEF_STR( Cabinet ) && (inp+1)->name == DEF_STR( Upright )
 							&& inp->default_value != (inp+1)->default_value)
 					{
-						printf("%s: %s Cabinet must default to Upright\n",drivers[i]->source_file,drivers[i]->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s Cabinet must default to Upright\n",drivers[i]->source_file,drivers[i]->name);
 						error = 1;
 					}
 
 					if (inp->name == DEF_STR( Cocktail ) && (inp+1)->name == DEF_STR( Upright ))
 					{
-						printf("%s: %s has inverted Upright/Cocktail dipswitch order\n",drivers[i]->source_file,drivers[i]->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has inverted Upright/Cocktail dipswitch order\n",drivers[i]->source_file,drivers[i]->name);
 						error = 1;
 					}
 
@@ -2073,26 +1988,26 @@ static int validitychecks(void)
 							&& (inp+1)->name >= DEF_STR( 9C_1C ) && (inp+1)->name <= DEF_STR( Free_Play )
 							&& inp->name >= (inp+1)->name)
 					{
-						printf("%s: %s has unsorted coinage %s > %s\n",drivers[i]->source_file,drivers[i]->name,inp->name,(inp+1)->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has unsorted coinage %s > %s\n",drivers[i]->source_file,drivers[i]->name,inp->name,(inp+1)->name);
 						error = 1;
 					}
 
 					if (inp->name == DEF_STR( Flip_Screen ) && (inp+1)->name != DEF_STR( Off ))
 					{
-						printf("%s: %s has wrong Flip Screen option %s\n",drivers[i]->source_file,drivers[i]->name,(inp+1)->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has wrong Flip Screen option %s\n",drivers[i]->source_file,drivers[i]->name,(inp+1)->name);
 						error = 1;
 					}
 
 					if (inp->name == DEF_STR( Demo_Sounds ) && (inp+2)->name == DEF_STR( On )
 							&& inp->default_value != (inp+2)->default_value)
 					{
-						printf("%s: %s Demo Sounds must default to On\n",drivers[i]->source_file,drivers[i]->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s Demo Sounds must default to On\n",drivers[i]->source_file,drivers[i]->name);
 						error = 1;
 					}
 
 					if (inp->name == DEF_STR( Demo_Sounds ) && (inp+1)->name == DEF_STR( No ))
 					{
-						printf("%s: %s has wrong Demo Sounds option No instead of Off\n",drivers[i]->source_file,drivers[i]->name);
+						log_cb(RETRO_LOG_ERROR, LOGPRE "%s: %s has wrong Demo Sounds option No instead of Off\n",drivers[i]->source_file,drivers[i]->name);
 						error = 1;
 					}
 				}

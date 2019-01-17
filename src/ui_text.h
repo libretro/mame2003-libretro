@@ -18,9 +18,7 @@ enum
 	UI_mame = 0,
 
 	/* copyright stuff */
-	UI_copyright1,
-	UI_copyright2,
-	UI_copyright3,
+	UI_copyright,
 
 	/* misc menu stuff */
 	UI_returntomain,
@@ -70,7 +68,7 @@ enum
 	UI_nococktail,
 	UI_brokengame,
 	UI_brokenprotection,
-	UI_mustbeinitialized,
+	UI_no_serialization,
 	UI_workingclones,
 	UI_typeok,
 
@@ -81,10 +79,12 @@ enum
 	UI_calibrate,
 	UI_bookkeeping,
 	UI_inputspecific,
+  UI_flush_current_cfg,
+  UI_flush_all_cfg,  
 	UI_gameinfo,
 	UI_history,
-	UI_resetgame,
-    UI_generate_xml_dat,
+  UI_resetgame,
+  UI_generate_xml_dat,  
 	UI_returntogame,
 	UI_cheat,
 	UI_memorycard,
@@ -174,10 +174,6 @@ enum
 
 	UI_last_mame_entry
 };
-
-#ifdef MESS
-#include "mui_text.h"
-#endif
 
 struct lang_struct
 {

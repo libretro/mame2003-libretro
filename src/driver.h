@@ -79,17 +79,7 @@
 #include "tilemap.h"
 #include "profiler.h"
 
-#ifdef MESS
-#include "messdrv.h"
-#endif
-
-#ifdef MAME_NET
-#include "network.h"
-#endif /* MAME_NET */
-
-#ifdef MMSND
-#include "mmsnd/mmsnd.h"
-#endif
+#include "controls.h"
 
 
 /***************************************************************************
@@ -405,28 +395,26 @@ struct InternalMachineDriver
 
 struct GameDriver
 {
-	const char *source_file;	/* set this to __FILE__ */
-	const struct GameDriver *clone_of;	/* if this is a clone, point to */
-										/* the main version of the game */
-	const char *name;
-	const struct SystemBios *bios;	/* if this system has alternate bios roms use this */
-									/* structure to list names and ROM_BIOSFLAGS. */
-	const char *description;
-	const char *year;
-	const char *manufacturer;
-	void (*drv)(struct InternalMachineDriver *);
-	const struct InputPortTiny *input_ports;
-	void (*driver_init)(void);	/* optional function to be called during initialization */
-								/* This is called ONCE, unlike Machine->init_machine */
-								/* which is called every time the game is reset. */
+  const char   *source_file;          /* set this to __FILE__ */
+  const struct GameDriver *clone_of;	/* if this is a clone, point to */
+                                      /* the main version of the game */
+  const char *name;
+  const struct SystemBios *bios;      /* if this system has alternate bios roms use this */
+                                      /* structure to list names and ROM_BIOSFLAGS. */
+  const char *description;
+  const char *year;
+  const char *manufacturer;
+  void (*drv)(struct InternalMachineDriver *);
+  const struct InputPortTiny *input_ports;
+  void (*driver_init)(void);          /* optional function to be called during initialization */
+                                      /* This is called ONCE, unlike Machine->init_machine */
+                                      /* which is called every time the game is reset. */
+  const struct RomModule *rom;
 
-	const struct RomModule *rom;
-#ifdef MESS
-	void (*sysconfig_ctor)(struct SystemConfigurationParamBlock *cfg);
-	const struct GameDriver *compatible_with;
-#endif
-
-	UINT32 flags;	/* orientation and other flags; see defines below */
+  UINT32 flags;	/* orientation and other flags; see defines below */
+  
+  const struct ControlInfo *ctrl_dat;
+  const struct bin2cFILE *bootstrap;
 };
 
 
@@ -439,109 +427,155 @@ struct GameDriver
 
 /* ----- values for the flags field ----- */
 
-#define ORIENTATION_MASK        	0x0007
-#define	ORIENTATION_FLIP_X			0x0001	/* mirror everything in the X direction */
-#define	ORIENTATION_FLIP_Y			0x0002	/* mirror everything in the Y direction */
-#define ORIENTATION_SWAP_XY			0x0004	/* mirror along the top-left/bottom-right diagonal */
+#define ORIENTATION_MASK        	  0x0007
+#define	ORIENTATION_FLIP_X			    0x0001	/* mirror everything in the X direction */
+#define	ORIENTATION_FLIP_Y			    0x0002	/* mirror everything in the Y direction */
+#define ORIENTATION_SWAP_XY			    0x0004	/* mirror along the top-left/bottom-right diagonal */
 
-#define GAME_NOT_WORKING			0x0008
+#define GAME_NOT_WORKING			      0x0008
 #define GAME_UNEMULATED_PROTECTION	0x0010	/* game's protection not fully emulated */
-#define GAME_WRONG_COLORS			0x0020	/* colors are totally wrong */
-#define GAME_IMPERFECT_COLORS		0x0040	/* colors are not 100% accurate, but close */
-#define GAME_IMPERFECT_GRAPHICS		0x0080	/* graphics are wrong/incomplete */
-#define GAME_NO_COCKTAIL			0x0100	/* screen flip support is missing */
-#define GAME_NO_SOUND				0x0200	/* sound is missing */
-#define GAME_IMPERFECT_SOUND		0x0400	/* sound is known to be wrong */
-#define GAME_MUST_INITIALIZE		0x0420  /* user must conduct a reset or intialization process */
-#define NOT_A_DRIVER				0x4000	/* set by the fake "root" driver_0 and by "containers" */
-											/* e.g. driver_neogeo. */
-
-											
+#define GAME_WRONG_COLORS           0x0020	/* colors are totally wrong */
+#define GAME_IMPERFECT_COLORS       0x0040	/* colors are not 100% accurate, but close */
+#define GAME_IMPERFECT_GRAPHICS     0x0080	/* graphics are wrong/incomplete */
+#define GAME_NO_COCKTAIL            0x0100	/* screen flip support is missing */
+#define GAME_NO_SOUND               0x0200	/* sound is missing */
+#define GAME_IMPERFECT_SOUND        0x0400	/* sound is known to be wrong */
+#define GAME_DOESNT_SERIALIZE       0x0420  /* game can not be saved through serailization */
+#define NOT_A_DRIVER                0x4000	/* set by the fake "root" driver_0 and by "containers" */
+                                            /* e.g. driver_neogeo. */					
 
 
 /***************************************************************************
 
-	Macros for building game drivers
+  Macros for building game drivers
 
 ***************************************************************************/
 
-#define GAME(YEAR,NAME,PARENT,MACHINE,INPUT,INIT,MONITOR,COMPANY,FULLNAME)	\
-extern const struct GameDriver driver_##PARENT;	\
-const struct GameDriver driver_##NAME =		\
-{											\
-	__FILE__,								\
-	&driver_##PARENT,						\
-	#NAME,									\
-	system_bios_0,							\
-	FULLNAME,								\
-	#YEAR,									\
-	COMPANY,								\
-	construct_##MACHINE,					\
-	input_ports_##INPUT,					\
-	init_##INIT,							\
-	rom_##NAME,								\
-	MONITOR									\
+#define GAME(YEAR, NAME, PARENT, MACHINE, INPUT, INIT, MONITOR, COMPANY, FULLNAME)  \
+extern const struct GameDriver driver_##PARENT;  \
+const struct GameDriver driver_##NAME =          \
+{                       \
+  __FILE__,             \
+  &driver_##PARENT,     \
+  #NAME,                \
+  system_bios_0,        \
+  FULLNAME,             \
+  #YEAR,                \
+  COMPANY,              \
+  construct_##MACHINE,  \
+  input_ports_##INPUT,  \
+  init_##INIT,          \
+  rom_##NAME,           \
+  MONITOR,              \
+  (&generic_ctrl), \
+  NULL                  \
 };
 
-#define GAMEX(YEAR,NAME,PARENT,MACHINE,INPUT,INIT,MONITOR,COMPANY,FULLNAME,FLAGS)	\
-extern const struct GameDriver driver_##PARENT;	\
-const struct GameDriver driver_##NAME =		\
-{											\
-	__FILE__,								\
-	&driver_##PARENT,						\
-	#NAME,									\
-	system_bios_0,							\
-	FULLNAME,								\
-	#YEAR,									\
-	COMPANY,								\
-	construct_##MACHINE,					\
-	input_ports_##INPUT,					\
-	init_##INIT,							\
-	rom_##NAME,								\
-	(MONITOR)|(FLAGS)						\
+#define GAMEX(YEAR, NAME, PARENT, MACHINE, INPUT, INIT, MONITOR, COMPANY, FULLNAME, FLAGS)  \
+extern const struct GameDriver driver_##PARENT;   \
+const struct GameDriver driver_##NAME =           \
+{                       \
+  __FILE__,             \
+  &driver_##PARENT,     \
+  #NAME,                \
+  system_bios_0,        \
+  FULLNAME,             \
+  #YEAR,                \
+  COMPANY,              \
+  construct_##MACHINE,  \
+  input_ports_##INPUT,  \
+  init_##INIT,          \
+  rom_##NAME,           \
+  (MONITOR)|(FLAGS),    \
+  (&generic_ctrl), \
+  NULL                  \
 };
 
-#define GAMEB(YEAR,NAME,PARENT,BIOS,MACHINE,INPUT,INIT,MONITOR,COMPANY,FULLNAME)	\
-extern const struct GameDriver driver_##PARENT;	\
-const struct GameDriver driver_##NAME =		\
-{											\
-	__FILE__,								\
-	&driver_##PARENT,						\
-	#NAME,									\
-	system_bios_##BIOS,						\
-	FULLNAME,								\
-	#YEAR,									\
-	COMPANY,								\
-	construct_##MACHINE,					\
-	input_ports_##INPUT,					\
-	init_##INIT,							\
-	rom_##NAME,								\
-	MONITOR									\
+#define GAMEC(YEAR, NAME, PARENT, MACHINE, INPUT, INIT, MONITOR, COMPANY, FULLNAME, CTRL_INFO, BOOTSTRAP)  \
+extern const struct GameDriver driver_##PARENT;  \
+const struct GameDriver driver_##NAME =          \
+{                       \
+  __FILE__,             \
+  &driver_##PARENT,     \
+  #NAME,                \
+  system_bios_0,        \
+  FULLNAME,             \
+  #YEAR,                \
+  COMPANY,              \
+  construct_##MACHINE,  \
+  input_ports_##INPUT,  \
+  init_##INIT,          \
+  rom_##NAME,           \
+  MONITOR,              \
+  CTRL_INFO,            \
+  BOOTSTRAP             \
 };
 
-#define GAMEBX(YEAR,NAME,PARENT,BIOS,MACHINE,INPUT,INIT,MONITOR,COMPANY,FULLNAME,FLAGS)	\
-extern const struct GameDriver driver_##PARENT;	\
-const struct GameDriver driver_##NAME =		\
-{											\
-	__FILE__,								\
-	&driver_##PARENT,						\
-	#NAME,									\
-	system_bios_##BIOS,						\
-	FULLNAME,								\
-	#YEAR,									\
-	COMPANY,								\
-	construct_##MACHINE,					\
-	input_ports_##INPUT,					\
-	init_##INIT,							\
-	rom_##NAME,								\
-	(MONITOR)|(FLAGS)						\
+#define GAMECX(YEAR, NAME, PARENT, MACHINE, INPUT, INIT, MONITOR, COMPANY, FULLNAME, FLAGS, CTRL_INFO, BOOTSTRAP)  \
+extern const struct GameDriver driver_##PARENT;   \
+const struct GameDriver driver_##NAME =           \
+{                       \
+  __FILE__,             \
+  &driver_##PARENT,     \
+  #NAME,                \
+  system_bios_0,        \
+  FULLNAME,             \
+  #YEAR,                \
+  COMPANY,              \
+  construct_##MACHINE,  \
+  input_ports_##INPUT,  \
+  init_##INIT,          \
+  rom_##NAME,           \
+  (MONITOR)|(FLAGS),    \
+  CTRL_INFO,            \
+  BOOTSTRAP             \
+};
+
+#define GAMEB(YEAR, NAME, PARENT, BIOS, MACHINE, INPUT, INIT, MONITOR, COMPANY, FULLNAME, CTRL_INFO, BOOTSTRAP)  \
+extern const struct GameDriver driver_##PARENT;    \
+const struct GameDriver driver_##NAME =            \
+{                       \
+  __FILE__,             \
+  &driver_##PARENT,     \
+  #NAME,                \
+  system_bios_##BIOS,   \
+  FULLNAME,             \
+  #YEAR,                \
+  COMPANY,              \
+  construct_##MACHINE,  \
+  input_ports_##INPUT,  \
+  init_##INIT,          \
+  rom_##NAME,           \
+  MONITOR,              \
+  CTRL_INFO,          \
+  BOOTSTRAP             \
+};
+
+#define GAMEBX(YEAR, NAME, PARENT, BIOS, MACHINE, INPUT, INIT, MONITOR, COMPANY, FULLNAME, FLAGS, BTN_LABELER, BOOTSTRAP)  \
+extern const struct GameDriver driver_##PARENT;  \
+const struct GameDriver driver_##NAME =          \
+{                       \
+  __FILE__,             \
+  &driver_##PARENT,     \
+  #NAME,                \
+  system_bios_##BIOS,   \
+  FULLNAME,             \
+  #YEAR,                \
+  COMPANY,              \
+  construct_##MACHINE,  \
+  input_ports_##INPUT,  \
+  init_##INIT,          \
+  rom_##NAME,           \
+  (MONITOR)|(FLAGS),    \
+  BTN_LABELER,          \
+  BOOTSTRAP             \
 };
 
 /* monitor parameters to be used with the GAME() macro */
-#define	ROT0	0
-#define	ROT90	(ORIENTATION_SWAP_XY|ORIENTATION_FLIP_X)	/* rotate clockwise 90 degrees */
-#define	ROT180	(ORIENTATION_FLIP_X|ORIENTATION_FLIP_Y)		/* rotate 180 degrees */
-#define	ROT270	(ORIENTATION_SWAP_XY|ORIENTATION_FLIP_Y)	/* rotate counter-clockwise 90 degrees */
+#define	ROT0    0
+#define	ROT90   (ORIENTATION_SWAP_XY | ORIENTATION_FLIP_X)	/* rotate clockwise 90 degrees */
+#define	ROT180  (ORIENTATION_FLIP_X  | ORIENTATION_FLIP_Y)		/* rotate 180 degrees */
+#define	ROT270  (ORIENTATION_SWAP_XY | ORIENTATION_FLIP_Y)	/* rotate counter-clockwise 90 degrees */
 
 /* this allows to leave the INIT field empty in the GAME() macro call */
 #define init_0 0
@@ -558,6 +592,8 @@ const struct GameDriver driver_##NAME =		\
 
 extern const struct GameDriver *drivers[];
 extern const struct GameDriver *test_drivers[];
+
+extern const int total_drivers;
 
 extern unsigned activate_dcs_speedhack;
 

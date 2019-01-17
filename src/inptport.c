@@ -1806,6 +1806,32 @@ static void save_default_keys(void)
 	memcpy(inputport_defaults,inputport_defaults_backup,sizeof(inputport_defaults_backup));
 }
 
+/* 
+ * void reset_default_inputs(void)
+ * repopulate mappings from the defaults specified in the inptport source 
+ */
+void reset_default_inputs(void)
+{
+	memcpy(inputport_defaults,inputport_defaults_backup,sizeof(inputport_defaults_backup));
+  save_default_keys();
+}
+
+/* 
+ * void reset_default_inputs(void)
+ * repopulate mappings from the defaults specified in the driver source 
+ */
+void reset_driver_inputs(void)
+{
+  struct InputPort *in;
+
+	in = (struct InputPort *) inputport_defaults;
+	while (in->type != IPT_END)
+	{
+    /* still needs to be implemented */
+		in++;
+	}
+}
+
 
 int load_input_port_settings(void)
 {
@@ -2172,14 +2198,14 @@ InputSeq* input_port_seq(const struct InputPort *in)
 	{
 		type = (in-1)->type & (~IPF_MASK | IPF_PLAYERMASK);
 		/* if port is disabled, or cheat with cheats disabled, return no key */
-		if (((in-1)->type & IPF_UNUSED) || (!options.cheat && ((in-1)->type & IPF_CHEAT)))
+		if (((in-1)->type & IPF_UNUSED) || (!options.cheat_input_ports && ((in-1)->type & IPF_CHEAT)))
 			return &ip_none;
 	}
 	else
 	{
 		type = in->type & (~IPF_MASK | IPF_PLAYERMASK);
 		/* if port is disabled, or cheat with cheats disabled, return no key */
-		if ((in->type & IPF_UNUSED) || (!options.cheat && (in->type & IPF_CHEAT)))
+		if ((in->type & IPF_UNUSED) || (!options.cheat_input_ports && (in->type & IPF_CHEAT)))
 			return &ip_none;
 	}
 
@@ -2212,7 +2238,7 @@ void update_analog_port(int port)
 	in = input_analog[port];
 
 	/* if we're not cheating and this is a cheat-only port, bail */
-	if (!options.cheat && (in->type & IPF_CHEAT)) return;
+	if (!options.cheat_input_ports && (in->type & IPF_CHEAT)) return;
 	type=(in->type & ~IPF_MASK);
 
 	decseq = input_port_seq(in);

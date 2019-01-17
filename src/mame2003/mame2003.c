@@ -23,7 +23,7 @@
 
 /* Part of libretro's API */
 int gotFrame;
-
+static const struct GameDriver  *game_driver;
 extern int framerate_test;
 
 static float delta_samples;
@@ -68,7 +68,7 @@ Sound
 int osd_start_audio_stream(int stereo)
 {
     
-     Machine->sample_rate = options.samplerate;
+  Machine->sample_rate = options.samplerate;
 
 	delta_samples = 0.0f;
 	usestereo = stereo ? 1 : 0;
@@ -276,9 +276,6 @@ static void update_variables(void)
 {
    struct retro_variable var;
    
-   options.system_subfolder = true; /* traditional mame2003 subfolder behavior */
-   options.save_subfolder   = true; /* traditional mame2003 subfolder behavior */
-
    var.value = NULL;
    var.key = APPNAME"-frameskip";
 
@@ -645,74 +642,123 @@ void retro_run (void)
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-   int driverIndex;
+  int              driverIndex    = 0;
+  int              port_index;
+  char             *driver_lookup = NULL;
+  static const int uiModes[]      = {ROT0, ROT90, ROT180, ROT270};
 
-   if (!game)
-      return false;
-
-    /* Find game index */
-    driverIndex = getDriverIndex(game->path);
-    
-    if(driverIndex)
-    {
-        #define describe_buttons(INDEX) \
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
-        { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
-
-        struct retro_input_descriptor desc[] = {
-            describe_buttons(0)
-            describe_buttons(1)
-            describe_buttons(2)
-            describe_buttons(3)
-            { 0, 0, 0, 0, NULL }
-            };
-
-        environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
-        
-        options.libretro_content_path = peelPathItem(normalizePath(strdup(game->path)));
-
-        /* Get system directory from frontend */
-        environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
-        if ( (options.libretro_system_path == NULL) || (options.libretro_system_path[0] == '\0') )
-        {
-            /* error if not set */
-            log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro system path not set!\n");
-            options.libretro_system_path = options.libretro_content_path;
-        }
-        
-        /* Get save directory from frontend */
-        environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
-        if ( (options.libretro_save_path == NULL) || (options.libretro_save_path[0] == '\0') )
-        {
-            /* error if not set */
-            log_cb(RETRO_LOG_ERROR, "[MAME 2003] libretro save path not set!\n");
-            options.libretro_save_path = options.libretro_content_path;
-        }
-
-        /* Set all remaining options before starting the game */
-        options.use_samples = 1;
-        options.cheat = 1;
-
-        /* Boot the emulator */
-        return run_game(driverIndex) == 0;
-    }
-
+  if(string_is_empty(game->path))
+  {
+    log_cb(RETRO_LOG_ERROR, LOGPRE "Content path is not set. Exiting!\n");
     return false;
+  }
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "Content path: %s.\n", game->path);    
+  if(!path_is_valid(game->path))
+  {
+    log_cb(RETRO_LOG_ERROR, LOGPRE "Content path is not valid. Exiting!");
+    return false;
+  }
+
+  driver_lookup = strdup(path_basename(game->path));
+  path_remove_extension(driver_lookup);
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "Content lookup name: %s.\n", driver_lookup);
+
+  for (driverIndex = 0; driverIndex < total_drivers; driverIndex++)
+  {
+    const struct GameDriver *needle = drivers[driverIndex];
+
+    if ((strcasecmp(driver_lookup, needle->description) == 0) 
+      || (strcasecmp(driver_lookup, needle->name) == 0) )
+    {
+      log_cb(RETRO_LOG_INFO, LOGPRE "Driver index counter: %d. Matched game driver: %s.\n",  driverIndex, needle->name);
+      game_driver = needle;
+      options.romset_filename_noext = driver_lookup;
+      break;
+    }
+	if(driverIndex == total_drivers -2) // we could fix the total drives in drivers c but the it pointless its taken into account here
+	{
+      log_cb(RETRO_LOG_ERROR, LOGPRE "Driver index counter: %d. Game driver not found for %s!\n", driverIndex, needle->name);
+      return false;
+	}
+ }
+
+   if(!init_game(driverIndex))
+    return false;  
+  
+  /*set_content_flags();*/
+
+  options.libretro_content_path = strdup(game->path);
+  path_basedir(options.libretro_content_path);
+
+  /* Get system directory from frontend */
+  options.libretro_system_path = NULL;
+  environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
+  if (options.libretro_system_path == NULL || options.libretro_system_path[0] == '\0')
+  {
+      log_cb(RETRO_LOG_INFO, LOGPRE "libretro system path not set by frontend, using content path\n");
+      options.libretro_system_path = options.libretro_content_path;
+  }
+  
+  /* Get save directory from frontend */
+  options.libretro_save_path = NULL;
+  environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
+  if (options.libretro_save_path == NULL || options.libretro_save_path[0] == '\0')
+  {
+      log_cb(RETRO_LOG_INFO,  LOGPRE "libretro save path not set by frontent, using content path\n");
+      options.libretro_save_path = options.libretro_content_path;
+  }
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "content path: %s\n", options.libretro_content_path);
+  log_cb(RETRO_LOG_INFO, LOGPRE " system path: %s\n", options.libretro_system_path);
+  log_cb(RETRO_LOG_INFO, LOGPRE "   save path: %s\n", options.libretro_save_path);
+
+  
+  /*init_core_options();*/
+  /*update_variables(true);*/
+  options.input_interface   = RETRO_DEVICE_KEYBOARD + RETRO_DEVICE_JOYPAD; /* "simultaneous" input mode */
+  options.mame_remapping    = true;
+  options.use_samples       = true;
+  options.brightness        = 1.0f;
+  options.gamma             = 1.0f;
+  options.cheat_input_ports = false;
+  options.machine_timing    = false;
+
+    #define describe_buttons(INDEX) \
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,   "Joystick Left" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT,  "Joystick Right" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,     "Joystick Up" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,   "Joystick Down" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "Button 1" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Button 2" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Button 3" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "Button 4" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "Button 5" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "Button 6" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT, "Insert Coin" },\
+    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,  "Start" },
+
+    struct retro_input_descriptor desc[] = {
+        describe_buttons(0)
+        describe_buttons(1)
+        describe_buttons(2)
+        describe_buttons(3)
+        { 0, 0, 0, 0, NULL }
+        };
+
+    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
+    
+  if(!run_game(driverIndex))
+    return true;
+  
+  return false;
 }
+
 
 void retro_unload_game(void)
 {
