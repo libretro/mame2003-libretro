@@ -1152,6 +1152,7 @@ void retro_run (void)
          retroJsState[16 + offset] = 0;
          retroJsState[17 + offset] = 0;
       }
+
       if ( (options.rstick_to_btns) && (options.content_flags[CONTENT_DUAL_JOYSTICK]) )	
       {
          retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
@@ -1590,8 +1591,6 @@ void osd_joystick_start_calibration(void){ }
 const char *osd_joystick_calibrate_next(void) { return 0; }
 void osd_joystick_calibrate(void) { }
 void osd_joystick_end_calibration(void) { }
-
-
 
 
 /******************************************************************************
