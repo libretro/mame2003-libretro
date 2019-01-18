@@ -2205,49 +2205,75 @@ ScanJoysticks( struct InputPort *in )
 		}
 
 		/* Only update mJoy4Way if the joystick has moved. */
-		if( mJoyCurrent[i]!=mJoyPrevious[i] )
+		if( mJoyCurrent[i]!=mJoyPrevious[i] && !options.restrict_4_way)
 		{
 			mJoy4Way[i] = mJoyCurrent[i];
 
-			if( (mJoy4Way[i] & 0x3) && (mJoy4Way[i] & 0xc) )
-			{
-				/* If joystick is pointing at a diagonal, acknowledge that the player moved
-				 * the joystick by favoring a direction change.  This minimizes frustration
-				 * when using a keyboard for input, and maximizes responsiveness.
-				 *
-				 * For example, if you are holding "left" then switch to "up" (where both left
-				 * and up are briefly pressed at the same time), we'll transition immediately
-				 * to "up."
-				 *
-				 * Under the old "sticky" key implentation, "up" wouldn't be triggered until
-				 * left was released.
-				 *
-				 * Zero any switches that didn't change from the previous to current state.
-				 */
-				mJoy4Way[i] ^= (mJoy4Way[i] & mJoyPrevious[i]);
-			}
+			  if( (mJoy4Way[i] & 0x3) && (mJoy4Way[i] & 0xc) )
+			  {
+			  	  /* If joystick is pointing at a diagonal, acknowledge that the player moved
+				   * the joystick by favoring a direction change.  This minimizes frustration
+				   * when using a keyboard for input, and maximizes responsiveness.
+				   *
+				   * For example, if you are holding "left" then switch to "up" (where both left
+				   * and up are briefly pressed at the same time), we'll transition immediately
+				   * to "up."
+				   *
+				   * Under the old "sticky" key implentation, "up" wouldn't be triggered until
+				   * left was released.
+				   *
+				   * Zero any switches that didn't change from the previous to current state.
+				   */
+				  mJoy4Way[i] ^= (mJoy4Way[i] & mJoyPrevious[i]);
+			  }
 
-			if( (mJoy4Way[i] & 0x3) && (mJoy4Way[i] & 0xc) )
-			{
-				/* If we are still pointing at a diagonal, we are in an indeterminant state.
-				 *
-				 * This could happen if the player moved the joystick from the idle position directly
-				 * to a diagonal, or from one diagonal directly to an extreme diagonal.
-				 *
-				 * The chances of this happening with a keyboard are slim, but we still need to
-				 * constrain this case.
-				 *
-				 * For now, just resolve randomly.
-				 */
-				if( rand()&1 )
-				{
-					mJoy4Way[i] &= 0x3; /* eliminate horizontal component */
-				}
-				else
-				{
-					mJoy4Way[i] &= 0xc; /* eliminate vertical component */
-				}
-			}
+			  if( (mJoy4Way[i] & 0x3) && (mJoy4Way[i] & 0xc) )
+			  {
+			  	  /* If we are still pointing at a diagonal, we are in an indeterminant state.
+				   *
+				   * This could happen if the player moved the joystick from the idle position directly
+				   * to a diagonal, or from one diagonal directly to an extreme diagonal.
+				   *
+				   * The chances of this happening with a keyboard are slim, but we still need to
+				   * constrain this case.
+				   *
+				   * For now, just resolve randomly.
+				   */
+				  if( rand()&1 )
+				  {
+				  	  mJoy4Way[i] &= 0x3; /* eliminate horizontal component */
+				  }
+				  else
+				  {
+				 	  mJoy4Way[i] &= 0xc; /* eliminate vertical component */
+				  }
+			  }
+
+		}
+    else if (options.restrict_4_way) //start use alternative code 
+    {
+      if(options.content_flags[CONTENT_ROTATE_JOY_45])
+      {
+        if  ( (mJoyCurrent[i]) && (mJoyCurrent[i] !=1) &&
+              (mJoyCurrent[i] !=2) && (mJoyCurrent[i] !=4) &&
+              (mJoyCurrent[i] !=8) )  	
+        {    
+          if      (mJoyCurrent[i] == 9)  mJoy4Way[i]=1;
+          else if (mJoyCurrent[i] == 6)  mJoy4Way[i]=2;
+          else if (mJoyCurrent[i] == 5)  mJoy4Way[i]=4;
+          else if (mJoyCurrent[i] == 10) mJoy4Way[i]=8;
+        }     
+        else if (mJoy4Way[i])
+          mJoy4Way[i]=0;
+      }
+      else // just a regular 4-way - last press no code needed just ignore diagonals and no movement
+      {
+        if  ( (mJoyCurrent[i]) && (mJoyCurrent[i] !=5) && (mJoyCurrent[i] !=6)
+          &&  (mJoyCurrent[i] !=9) && (mJoyCurrent[i] !=10) )
+        {
+          mJoy4Way[i] = mJoyCurrent[i];
+        }
+      }
 		}
 	}
 } /* ScanJoysticks */
