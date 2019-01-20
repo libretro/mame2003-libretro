@@ -14,15 +14,6 @@
  */ 
 #include <retro_inline.h>
 
-#if defined(_WIN32) && !defined(_XBOX)
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#elif defined(_WIN32) && defined(_XBOX)
-#include <Xtl.h>
-#endif
-
 #if defined(__CELLOS_LV2__)
 #include <sys/fs_external.h>
 #endif
