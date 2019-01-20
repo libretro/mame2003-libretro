@@ -4,7 +4,7 @@
 
 ***************************************************************************/
 
-#include <libchdr/chd.h>
+#include <chd.h>
 #include <retro_inline.h>
 #include <utils/md5.h>
 #include <utils/sha1.h>
