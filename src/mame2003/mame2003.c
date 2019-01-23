@@ -10,6 +10,7 @@
 #include <string/stdstring.h>
 #include <libretro.h>
 #include <file/file_path.h>
+#include <math.h>
 
 #include "mame.h"
 #include "driver.h"
@@ -1490,10 +1491,34 @@ void osd_trak_read(int player, int *deltax, int *deltay)
 
 int convert_analog_scale(int input)
 {
-    static int libretro_analog_range = LIBRETRO_ANALOG_MAX - LIBRETRO_ANALOG_MIN;
-    static int analog_range = ANALOG_MAX - ANALOG_MIN;
+	int trigger_deadzone = (32678 /100) * 20; // 20% deadzone is plenty i would imagine
+	int neg_test=0;
 
-    return (input - LIBRETRO_ANALOG_MIN)*analog_range / libretro_analog_range + ANALOG_MIN;
+	if (input < 0) { input =abs(input); neg_test=1; }
+	static const int TRIGGER_MAX = 0x8000;
+	const float scale = ((float)TRIGGER_MAX/(float)(TRIGGER_MAX - trigger_deadzone));
+
+	if ( input > 0 && input > trigger_deadzone )
+	{
+		// Re-scale analog range
+		float scaled = (input - trigger_deadzone)*scale;
+
+		input = (int)round(scaled);
+		if (input > +32767) 
+		{
+			input = +32767;
+		}
+			input = input / 326.78;
+	}
+
+	else
+	{
+		input = 0;
+	}
+
+	
+	if (neg_test) input =-abs(input);
+	return input * 1.28;
 }
 
 void osd_analogjoy_read(int player,int analog_axis[MAX_ANALOG_AXES], InputCode analogjoy_input[MAX_ANALOG_AXES])
