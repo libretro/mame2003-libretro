@@ -2337,7 +2337,7 @@ static int displaygameinfo(struct mame_bitmap *bitmap,int selected)
 		sprintf (buf2, "\n\t%s ", ui_getstring (UI_mame));	/* \t means that the line will be centered */
 		strcat(buf, buf2);
 
-		strcat(buf,"mame2003-plus");
+		strcat(buf, APPNAME);
 		sprintf (buf2, "\n\t%s", ui_getstring (UI_anykey));
 		strcat(buf,buf2);
 		ui_drawbox(bitmap,0,0,uirotwidth,uirotheight);
