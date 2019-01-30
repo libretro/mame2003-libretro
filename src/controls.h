@@ -2329,6 +2329,9 @@ const char *sbm_get_ctrl_name(int type);
 extern const struct ControlInfo souledge_ctrl;
 const char *souledge_get_ctrl_name(int type);
 
+extern const struct ControlInfo spacewar_ctrl;
+const char *spacewar_get_ctrl_name(int type);
+
 extern const struct ControlInfo sspaceat_ctrl;
 const char *sspaceat_get_ctrl_name(int type);
 
@@ -2817,6 +2820,9 @@ const char *triviayp_get_ctrl_name(int type);
 
 extern const struct ControlInfo trog_ctrl;
 const char *trog_get_ctrl_name(int type);
+
+extern const struct ControlInfo trojan_ctrl;
+const char *trojan_get_ctrl_name(int type);
 
 extern const struct ControlInfo tron_ctrl;
 const char *tron_get_ctrl_name(int type);
