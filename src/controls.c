@@ -17818,6 +17818,29 @@ const char *souledge_get_ctrl_name(int type)
   return "";
 }
 
+const struct ControlInfo spacewar_ctrl =
+{
+  false, /* 45_degree_rotation for joystick(s) */
+  false, /* alternating_controls */
+  true, /* mirrored_controls */
+  "Two player only game where each player flies around space and tries to shoot each other. Features include partial damage, modifying gravity and inertia. Controls are fire, thrust, rotate left and right, hyperspace and reset.", /* control_details */
+  &sspaceat_get_ctrl_name
+};
+
+const char *spacewar_get_ctrl_name(int type)
+{
+  switch(type)
+  {
+    case IPT_BUTTON1: return BTN1 "Fire";
+    case IPT_BUTTON2: return BTN2 "Thrust";
+    case IPT_BUTTON3: return BTN3 "Hyper Space";
+    case IPT_JOYSTICK_LEFT: return "Left";
+    case IPT_JOYSTICK_RIGHT: return "Right";
+  } /* end of switch */
+
+  return "";
+}
+
 const struct ControlInfo sspaceat_ctrl =
 {
   false, /* 45_degree_rotation for joystick(s) */
@@ -21562,6 +21585,30 @@ const char *triviayp_get_ctrl_name(int type)
   {
     case IPT_BUTTON1: return BTN1 "Correct";
     case IPT_BUTTON2: return BTN2 "Incorrect";
+  } /* end of switch */
+
+  return "";
+}
+
+const struct ControlInfo trojan_ctrl =
+{
+  false, /* 45_degree_rotation for joystick(s) */
+  true, /* alternating_controls */
+  true, /* mirrored_controls */
+  "Tatakai no Banka/Trojan features an 8-way joystick, two action buttons, and alternating two-player gamepay.", /* control_details */
+  &trojan_get_ctrl_name
+};
+
+const char *trojan_get_ctrl_name(int type)
+{
+  switch(type)
+  {
+    case IPT_BUTTON1: return BTN1 "Sword/Punch";
+    case IPT_BUTTON2: return BTN1 "Shield/Kick";
+    case IPT_JOYSTICK_UP: return "Up";
+    case IPT_JOYSTICK_DOWN: return "Down";
+    case IPT_JOYSTICK_LEFT: return "Left";
+    case IPT_JOYSTICK_RIGHT: return "Right";
   } /* end of switch */
 
   return "";

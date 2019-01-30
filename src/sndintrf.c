@@ -14,17 +14,17 @@
 static int cleared_value = 0x00;
 
 static int latch;
-//static int read_debug;
+/*static int read_debug;*/
 
 
 static void soundlatch_callback(int param)
 {
 #if 0
 	if (read_debug == 0 && latch != param)
-		logerror("Warning: sound latch written before being read. Previous: %02x, new: %02x\n",latch,param);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "Warning: sound latch written before being read. Previous: %02x, new: %02x\n",latch,param);
 #endif
 	latch = param;
-	//read_debug = 0;
+	/*read_debug = 0;*/
 }
 
 WRITE_HANDLER( soundlatch_w )
@@ -44,13 +44,13 @@ WRITE16_HANDLER( soundlatch_word_w )
 
 READ_HANDLER( soundlatch_r )
 {
-	//read_debug = 1;
+	/*read_debug = 1;*/
 	return latch;
 }
 
 READ16_HANDLER( soundlatch_word_r )
 {
-	//read_debug = 1;
+	/*read_debug = 1;*/
 	return latch;
 }
 
@@ -61,16 +61,16 @@ WRITE_HANDLER( soundlatch_clear_w )
 
 
 static int latch2;
-//static int read_debug2;
+/*static int read_debug2;*/
 
 static void soundlatch2_callback(int param)
 {
 #if 0
 	if (read_debug2 == 0 && latch2 != param)
-		logerror("Warning: sound latch 2 written before being read. Previous: %02x, new: %02x\n",latch2,param);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "Warning: sound latch 2 written before being read. Previous: %02x, new: %02x\n",latch2,param);
 #endif
 	latch2 = param;
-	//read_debug2 = 0;
+	/*read_debug2 = 0;*/
 }
 
 WRITE_HANDLER( soundlatch2_w )
@@ -90,13 +90,13 @@ WRITE16_HANDLER( soundlatch2_word_w )
 
 READ_HANDLER( soundlatch2_r )
 {
-	//read_debug2 = 1;
+	/*read_debug2 = 1;*/
 	return latch2;
 }
 
 READ16_HANDLER( soundlatch2_word_r )
 {
-	//read_debug2 = 1;
+	/*read_debug2 = 1;*/
 	return latch2;
 }
 
@@ -107,16 +107,16 @@ WRITE_HANDLER( soundlatch2_clear_w )
 
 
 static int latch3;
-//static int read_debug3;
+/*static int read_debug3;*/
 
 static void soundlatch3_callback(int param)
 {
 #if 0
 	if (read_debug3 == 0 && latch3 != param)
-		logerror("Warning: sound latch 3 written before being read. Previous: %02x, new: %02x\n",latch3,param);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "Warning: sound latch 3 written before being read. Previous: %02x, new: %02x\n",latch3,param);
 #endif
 	latch3 = param;
-	//read_debug3 = 0;
+	/*read_debug3 = 0;*/
 }
 
 WRITE_HANDLER( soundlatch3_w )
@@ -136,13 +136,13 @@ WRITE16_HANDLER( soundlatch3_word_w )
 
 READ_HANDLER( soundlatch3_r )
 {
-	//read_debug3 = 1;
+	/*read_debug3 = 1;*/
 	return latch3;
 }
 
 READ16_HANDLER( soundlatch3_word_r )
 {
-	//read_debug3 = 1;
+	/*read_debug3 = 1;*/
 	return latch3;
 }
 
@@ -153,16 +153,16 @@ WRITE_HANDLER( soundlatch3_clear_w )
 
 
 static int latch4;
-//static int read_debug4;
+/*static int read_debug4;*/
 
 static void soundlatch4_callback(int param)
 {
 #if 0
 	if (read_debug4 == 0 && latch4 != param)
-		logerror("Warning: sound latch 4 written before being read. Previous: %02x, new: %02x\n",latch2,param);
+		log_cb(RETRO_LOG_ERROR, LOGPRE "Warning: sound latch 4 written before being read. Previous: %02x, new: %02x\n",latch2,param);
 #endif
 	latch4 = param;
-	//read_debug4 = 0;
+	/*read_debug4 = 0;*/
 }
 
 WRITE_HANDLER( soundlatch4_w )
@@ -182,13 +182,13 @@ WRITE16_HANDLER( soundlatch4_word_w )
 
 READ_HANDLER( soundlatch4_r )
 {
-	//read_debug4 = 1;
+	/*read_debug4 = 1;*/
 	return latch4;
 }
 
 READ16_HANDLER( soundlatch4_word_r )
 {
-	//read_debug4 = 1;
+	/*read_debug4 = 1;*/
 	return latch4;
 }
 
@@ -409,18 +409,6 @@ int c6280_num(const struct MachineSound *msound) { return ((struct C6280_interfa
 #endif
 #if (HAS_TIA)
 int TIA_clock(const struct MachineSound *msound) { return ((struct TIAinterface*)msound->sound_interface)->baseclock; }
-#endif
-
-#ifdef MESS
-#if (HAS_BEEP)
-int beep_num(const struct MachineSound *msound) { return ((struct beep_interface*)msound->sound_interface)->num; }
-#endif
-#if (HAS_SPEAKER)
-int speaker_num(const struct MachineSound *msound) { return ((struct Speaker_interface*)msound->sound_interface)->num; }
-#endif
-#if (HAS_WAVE)
-int wave_num(const struct MachineSound *msound) { return ((struct Wave_interface*)msound->sound_interface)->num; }
-#endif
 #endif
 
 struct snd_interface sndintf[] =
@@ -706,6 +694,18 @@ struct snd_interface sndintf[] =
 		0,
 		namco_sh_start,
 		namco_sh_stop,
+		0,
+		0
+	},
+#endif
+#if (HAS_NAMCO_54XX)
+    {
+		SOUND_NAMCO_54XX,
+		"Namco 54XX",
+		0,
+		namco_54xx_clock,
+		namco_54xx_sh_start,
+		namco_54xx_sh_stop,
 		0,
 		0
 	},
@@ -1167,50 +1167,7 @@ struct snd_interface sndintf[] =
 	},
 #endif
 
-
-
-#ifdef MESS
-#if (HAS_BEEP)
-	{
-		SOUND_BEEP,
-		"Beep",
-		beep_num,
-		0,
-		beep_sh_start,
-		beep_sh_stop,
-		beep_sh_update,
-		0
-	},
-#endif
-#if (HAS_SPEAKER)
-	{
-		SOUND_SPEAKER,
-		"Speaker",
-		speaker_num,
-		0,
-		speaker_sh_start,
-		speaker_sh_stop,
-		speaker_sh_update,
-		0
-	},
-#endif
-#if (HAS_WAVE)
-	{
-		SOUND_WAVE,
-		"Cassette",
-		wave_num,
-		0,
-		wave_sh_start,
-		0,
-		0,
-		0
-	},
-#endif
-#endif
-
 };
-
-
 
 
 int sound_start(void)
@@ -1224,9 +1181,9 @@ int sound_start(void)
 		if (sndintf[i].sound_num != i)
 		{
             int j;
-logerror("Sound #%d wrong ID %d: check enum SOUND_... in src/sndintrf.h!\n",i,sndintf[i].sound_num);
+log_cb(RETRO_LOG_ERROR, LOGPRE "Sound #%d wrong ID %d: check enum SOUND_... in src/sndintrf.h!\n",i,sndintf[i].sound_num);
 			for (j = 0; j < i; j++)
-				logerror("ID %2d: %s\n", j, sndintf[j].name);
+				log_cb(RETRO_LOG_ERROR, LOGPRE "ID %2d: %s\n", j, sndintf[j].name);
             return 1;
 		}
 	}
@@ -1290,7 +1247,7 @@ void sound_update(void)
 	int totalsound = 0;
 
 
-	//profiler_mark(PROFILER_SOUND);
+	/*profiler_mark(PROFILER_SOUND);*/
 
 	while (Machine->drv->sound[totalsound].sound_type != 0 && totalsound < MAX_SOUND)
 	{
@@ -1305,7 +1262,7 @@ void sound_update(void)
 
 	timer_adjust(sound_update_timer, TIME_NEVER, 0, 0);
 
-	//profiler_mark(PROFILER_END);
+	/*profiler_mark(PROFILER_END);*/
 }
 
 

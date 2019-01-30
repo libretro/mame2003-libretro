@@ -12,6 +12,7 @@
 #include <file/file_path.h>
 #include <math.h>
 
+
 #include "mame.h"
 #include "driver.h"
 #include "state.h"
@@ -647,11 +648,11 @@ static void update_variables(bool first_time)
   }
 }
 
+
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
 	mame2003_video_get_geometry(&info->geometry);
 	if (options.machine_timing)
-	//by pass audio scew
 	{
 		if (Machine->drv->frames_per_second < 60.0 )
 			info->timing.fps = 60.0;
@@ -791,6 +792,7 @@ bool retro_load_game(const struct retro_game_info *game)
   log_cb(RETRO_LOG_INFO, LOGPRE "content path: %s\n", options.libretro_content_path);
   log_cb(RETRO_LOG_INFO, LOGPRE " system path: %s\n", options.libretro_system_path);
   log_cb(RETRO_LOG_INFO, LOGPRE "   save path: %s\n", options.libretro_save_path);
+
 
   init_core_options();
   update_variables(true);
@@ -1059,26 +1061,26 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
 
 void retro_run (void)
 {
-   int i;
-   bool pointer_pressed;
-   const struct KeyboardInfo *thisInput;
-   bool updated = false;
+	int i;
+	bool pointer_pressed;
+	const struct KeyboardInfo *thisInput;
+	bool updated = false;
 
-   poll_cb();
+	poll_cb();
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
-      update_variables(false);
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
+		update_variables(false);
 
-   /* Keyboard */
-   thisInput = retroKeys;
-   while(thisInput->name)
-   {
-      retroKeyState[thisInput->code] = input_cb(0, RETRO_DEVICE_KEYBOARD, 0, thisInput->code);
-      thisInput ++;
-   }
-
-   for (i = 0; i < 4; i ++)
-   {
+	/* Keyboard */
+	thisInput = retroKeys;
+	while(thisInput->name)
+	{
+		retroKeyState[thisInput->code] = input_cb(0, RETRO_DEVICE_KEYBOARD, 0, thisInput->code);
+		thisInput ++;
+	}
+   
+	for (i = 0; i < 4; i ++)
+	{
       unsigned int offset = (i * 18);
 
       /* Analog joystick */
@@ -1291,42 +1293,12 @@ bool retro_unserialize(const void * data, size_t size)
 
 int osd_start_audio_stream(int stereo)
 {
-	int newrate = 0;
 	if (options.machine_timing)
 	{
-		
-		if  ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )
-		{
-			newrate = Machine->drv->frames_per_second * 1000;
-			
-		}
+		if  ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )   Machine->sample_rate = Machine->drv->frames_per_second * 1000;
+		else Machine->sample_rate = options.samplerate;
 	}
 	else
-	{
-		if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
-		newrate=22050;
-	
-	}
-
-			
-			if ( newrate && newrate != options.samplerate ) options.samplerate = newrate;
-/*			{
-				//this code below crashes android so its set retro_get_system_av_info for now
-				//it also opens and extra ra window on windows
-				struct retro_system_av_info info;
-				retro_get_system_av_info(&info);
-				mame2003_video_get_geometry(&info.geometry);
-				if (options.machine_timing)
-				{
-					if (Machine->drv->frames_per_second < 60.0 ) 			info.timing.fps = 60.0;
-					else  info.timing.fps = Machine->drv->frames_per_second; // qbert is 61 fps
-				}		
-				else info.timing.fps = Machine->drv->frames_per_second;				log_cb(RETRO_LOG_INFO,"Changing Sample rate old:%d new:%d",options.samplerate, newrate);
-				options.samplerate = newrate;
-				info.timing.sample_rate=options.samplerate;
-				environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
-			}
-*/
 	Machine->sample_rate = options.samplerate;
 	delta_samples = 0.0f;
 	usestereo = stereo ? 1 : 0;
@@ -1392,6 +1364,7 @@ int osd_update_audio_stream(INT16 *buffer)
 void osd_stop_audio_stream(void)
 {
 }
+
 
 
 /******************************************************************************
