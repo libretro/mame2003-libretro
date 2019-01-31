@@ -1462,6 +1462,15 @@ void osd_trak_read(int player, int *deltax, int *deltay)
     *deltay = mouse_y[player];
 }
 
+#ifdef _MSC_VER
+#if _MSC_VER < 1800
+double round(double number)
+{
+  return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
+}
+#endif
+#endif
+
 int convert_analog_scale(int input)
 {
 	static const int TRIGGER_MAX = 0x8000;
