@@ -225,7 +225,6 @@ static void compute_aspect_ratio(const struct InternalMachineDriver *drv, int *a
 static void scale_vectorgames(int gfx_width, int gfx_height, int *width, int *height);
 static int init_buffered_spriteram(void);
 
-
 /***************************************************************************
 
 	Inline functions
@@ -273,7 +272,6 @@ bool init_game(int game)
 	Machine->gamedrv = gamedrv = drivers[game];
 	expand_machine_driver(gamedrv->drv, &internal_drv);
 	Machine->drv = &internal_drv;
-  
   return true;
 }
     
@@ -1254,7 +1252,7 @@ void set_led_status(int num, int on)
 
 /*-------------------------------------------------
 	mame_get_performance_info - return performance
-,	info
+	info
 -------------------------------------------------*/
 
 const struct performance_info *mame_get_performance_info(void)
