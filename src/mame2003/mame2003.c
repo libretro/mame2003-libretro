@@ -23,6 +23,9 @@
 #include "controls.h"
 #include "usrintrf.h"
 
+int  pressure_check =  1.28 * 20;
+int convert_analog_scale(int input);
+
 int gotFrame;
 static const struct GameDriver  *game_driver;
 static float              delta_samples;
@@ -544,7 +547,36 @@ static void update_variables(bool first_time)
           break;
 
         case OPT_VECTOR_RESOLUTION:
-          options.vector_resolution_multiplier = atoi(var.value);
+          if(strcmp(var.value, "640x480") == 0)
+          {
+            options.vector_width=640;
+            options.vector_height=480; 
+          }
+          else if(strcmp(var.value, "1024x768") == 0)
+          {
+            options.vector_width=1024;
+            options.vector_height=768; 
+          }
+          else if(strcmp(var.value, "1280x960") == 0)
+          {
+            options.vector_width=1280;
+            options.vector_height=960; 
+          }
+          else if(strcmp(var.value, "1440x1080") == 0)
+          {
+            options.vector_width=1440;
+            options.vector_height=1080; 
+          }
+          else if(strcmp(var.value, "1600x1200") == 0)
+          {
+            options.vector_width=1600;
+            options.vector_height=1200; 
+          }
+          else 
+          {
+            options.vector_width=0; // mame will set this from the driver resolution set
+            options.vector_height=0; 
+          }
           break;
 
         case OPT_VECTOR_ANTIALIAS:
@@ -651,27 +683,38 @@ static void update_variables(bool first_time)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-	mame2003_video_get_geometry(&info->geometry);
-	if (options.machine_timing)
-	{
-		if (Machine->drv->frames_per_second < 60.0 )
-			info->timing.fps = 60.0;
+  mame2003_video_get_geometry(&info->geometry);  
+  if(options.machine_timing)
+  {
+    if (Machine->drv->frames_per_second < 60.0 )
+      info->timing.fps = 60.0; 
+    else 
+      info->timing.fps = Machine->drv->frames_per_second; /* qbert is 61 fps */
 
-		else  if (Machine->drv->frames_per_second > 60.0 )
-			info->timing.fps = Machine->drv->frames_per_second; // qbert is 61 fps
-	
-		if ( Machine->drv->frames_per_second * 1000 < options.samplerate || Machine->drv->frames_per_second < 60 )
-			options.samplerate = Machine->drv->frames_per_second * 1000;
-	}
+    if ( (Machine->drv->frames_per_second * 1000 < options.samplerate) || ( Machine->drv->frames_per_second < 60) ) 
+    {
+      info->timing.sample_rate = Machine->drv->frames_per_second * 1000;
+      log_cb(RETRO_LOG_INFO, LOGPRE "Sample timing rate too high for framerate required dropping to %f",  Machine->drv->frames_per_second * 1000);
+    }       
 
-	else
-	{
+    else
+    {
+      info->timing.sample_rate = options.samplerate;
+      log_cb(RETRO_LOG_INFO, LOGPRE "Sample rate set to %d\n",options.samplerate); 
+    }
+  }
 
-		info->timing.fps = Machine->drv->frames_per_second; /* sets the core timing does any game go above 60fps? */
-		if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
-			options.samplerate=22050;
-	}
-	info->timing.sample_rate = options.samplerate;
+  else
+  {
+    info->timing.fps = Machine->drv->frames_per_second;
+
+    if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
+     info->timing.sample_rate = 22050;
+
+    else 
+     info->timing.sample_rate = options.samplerate;
+  }
+
 }
 
 
@@ -901,7 +944,7 @@ static void set_content_flags(void)
 				case IPT_JOYSTICKLEFT_DOWN:
 				case IPT_JOYSTICKLEFT_LEFT:
 				case IPT_JOYSTICKLEFT_RIGHT:
-          options.content_flags[CONTENT_DUAL_JOYSTICK] = true; /* if there are any "JOYSTICKLEFT" mappings we know there are two joysticks */
+                    options.content_flags[CONTENT_DUAL_JOYSTICK] = true; /* if there are any "JOYSTICKLEFT" mappings we know there are two joysticks */
 					break;
 				case IPT_BUTTON1:
 					if (options.content_flags[CONTENT_BUTTON_COUNT] < 1) options.content_flags[CONTENT_BUTTON_COUNT] = 1;
@@ -1293,26 +1336,36 @@ bool retro_unserialize(const void * data, size_t size)
 
 int osd_start_audio_stream(int stereo)
 {
-	if (options.machine_timing)
-	{
-		if  ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )   Machine->sample_rate = Machine->drv->frames_per_second * 1000;
-		else Machine->sample_rate = options.samplerate;
-	}
-	else
-	Machine->sample_rate = options.samplerate;
-	delta_samples = 0.0f;
-	usestereo = stereo ? 1 : 0;
+  if (options.machine_timing)
+  {
+    if ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) ) 
+      Machine->sample_rate = Machine->drv->frames_per_second * 1000;
+    
+    else Machine->sample_rate = options.samplerate;
+  }
 
-	/* determine the number of samples per frame */
-	samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
-	orig_samples_per_frame = samples_per_frame;
+  else
+  {
+    if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
+      Machine->sample_rate=22050;
 
-	if (Machine->sample_rate == 0) return 0;
+    else
+      Machine->sample_rate = options.samplerate;
+  }
+  
+  delta_samples = 0.0f;
+  usestereo = stereo ? 1 : 0;
 
-	samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
-	if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
-	
-	return samples_per_frame;
+  /* determine the number of samples per frame */
+  samples_per_frame = Machine->sample_rate / Machine->drv->frames_per_second;
+  orig_samples_per_frame = samples_per_frame;
+
+  if (Machine->sample_rate == 0) return 0;
+
+  samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
+  if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
+  
+  return samples_per_frame;
 }
 
 
@@ -1474,25 +1527,27 @@ double round(double number)
 int convert_analog_scale(int input)
 {
 	static const int TRIGGER_MAX = 0x8000;
-	int trigger_deadzone = (32678 /100) * 20; // 20% deadzone is plenty i would imagine
 	int neg_test=0;
 	float scale;
-
+	int trigger_deadzone;
+	
+	if( options.analog_scale)   trigger_deadzone = (32678 /100) * 20;
+	if( !options.analog_scale)  trigger_deadzone = (32678 * options.analog_deadzone) / 100;
+	
 	if (input < 0) { input =abs(input); neg_test=1; }
-
 	scale = ((float)TRIGGER_MAX/(float)(TRIGGER_MAX - trigger_deadzone));
 
 	if ( input > 0 && input > trigger_deadzone )
 	{
 		// Re-scale analog range
 		float scaled = (input - trigger_deadzone)*scale;
+    input = (int)round(scaled);
 
-		input = (int)round(scaled);
 		if (input > +32767) 
 		{
 			input = +32767;
 		}
-			input = input / 326.78;
+		input = input / 326.78;
 	}
 
 	else
