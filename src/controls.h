@@ -835,6 +835,9 @@ const char *dangar_get_ctrl_name(int type);
 extern const struct ControlInfo dangerz_ctrl;
 const char *dangerz_get_ctrl_name(int type);
 
+extern const struct ControlInfo dbreed_ctrl;
+const char *dbreed_get_ctrl_name(int type);
+
 extern const struct ControlInfo indyheat_ctrl;
 const char *indyheat_get_ctrl_name(int type);
 
@@ -1432,6 +1435,9 @@ const char *lupin3_get_ctrl_name(int type);
 extern const struct ControlInfo m4_ctrl;
 const char *m4_get_ctrl_name(int type);
 
+extern const struct ControlInfo megaplay_ctrl;
+const char *megaplay_get_ctrl_name(int type);
+
 extern const struct ControlInfo mplanets_ctrl;
 const char *mplanets_get_ctrl_name(int type);
 
@@ -1776,9 +1782,6 @@ const char *monsterb_get_ctrl_name(int type);
 
 extern const struct ControlInfo montecar_ctrl;
 const char *montecar_get_ctrl_name(int type);
-
-extern const struct ControlInfo mooncrst_ctrl;
-const char *mooncrst_get_ctrl_name(int type);
 
 extern const struct ControlInfo mpatrol_ctrl;
 const char *mpatrol_get_ctrl_name(int type);
@@ -2551,6 +2554,9 @@ const char *sstrike_get_ctrl_name(int type);
 extern const struct ControlInfo stonebal_ctrl;
 const char *stonebal_get_ctrl_name(int type);
 
+extern const struct ControlInfo streakng_ctrl;
+const char *streakng_get_ctrl_name(int type);
+
 extern const struct ControlInfo szaxxon_ctrl;
 const char *szaxxon_get_ctrl_name(int type);
 
@@ -3063,6 +3069,9 @@ const char *mj4simai_get_ctrl_name(int type);
 
 extern const struct ControlInfo wargods_ctrl;
 const char *wargods_get_ctrl_name(int type);
+
+extern const struct ControlInfo warofbug_ctrl;
+const char *warofbug_get_ctrl_name(int type);
 
 extern const struct ControlInfo wotw_ctrl;
 const char *wotw_get_ctrl_name(int type);

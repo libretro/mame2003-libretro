@@ -819,22 +819,35 @@ static void init_game_options(void)
     alpha_init();
   }
 
-  /* update the vector width/height with defaults */
+  /* update the vector width/height with libretro settings or use the default */
   if (options.vector_width  == 0) options.vector_width  = Machine->drv->screen_width;
   if (options.vector_height == 0) options.vector_height = Machine->drv->screen_height;
   
-  /* apply the vector resolution multiplier */
-	options.vector_width  *= options.vector_resolution_multiplier;
-	options.vector_height *= options.vector_resolution_multiplier;
+
 
   /* get orientation right */
   Machine->orientation    = ROT0;
   Machine->ui_orientation = options.ui_orientation;
 
-  /* initialize the samplerate */
-  
-  Machine->sample_rate = options.samplerate;
-/* move this to a core option if you want it to toggle */
+
+// set sample rate here as osd_start_audio_stream the logic must be the same in both some soundcores require setting here as well
+// ie ymf271 will segfault without this.
+ if (options.machine_timing)
+  {
+    if ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) ) 
+      Machine->sample_rate = Machine->drv->frames_per_second * 1000;
+    
+    else Machine->sample_rate = options.samplerate;
+  }
+
+  else
+  {
+    if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
+      Machine->sample_rate=22050;
+
+    else
+      Machine->sample_rate = options.samplerate;
+  }
 
 }
 

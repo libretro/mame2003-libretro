@@ -132,7 +132,6 @@ static void writeword(mame_file *f,UINT16 num)
 	{
 		unsigned char c;
 
-
 		c = (num >> 8 * (sizeof(UINT16)-1)) & 0xff;
 		mame_fwrite(f,&c,1);
 		num <<= 8;

@@ -203,11 +203,12 @@ struct GameOptions
   char     *libretro_system_path;
   char     *libretro_save_path;
 
-  int      mame_debug;		       /* 1 to enable debugging */
-  int      skip_gameinfo;		     /* 1 to skip the game info screen at startup */
+  int      mame_debug;		     /* 1 to enable debugging */
+  int      skip_gameinfo;		 /* 1 to skip the game info screen at startup */
   bool 	   skip_disclaimer;	     /* 1 to skip the disclaimer screen at startup */
   bool     skip_warnings;        /* 1 to skip the game warning screen at startup */
   bool     display_setup;        /* the MAME setup menu */
+  bool     show_all_ctrls;       /* show unused controls in the frontend remapper */
 
   unsigned dial_share_xy;
   unsigned mouse_device;
@@ -215,11 +216,15 @@ struct GameOptions
   unsigned retropad_layout[DISP_PLAYER6];  /* flags to indicate the default layout for each player */
   bool     dual_joysticks;                 /* Player 1 uses Joystick 1 & 2, Player 2 uses Joystick 3 and 4 */
   bool 	   restrict_4_way;                 /* simulate 4-way joystick restrictor */
-  unsigned rstick_to_btns;
-  unsigned tate_mode;
+  bool     rstick_to_btns;
+  bool     use_analog_input;               /* analog enable/disable */
+  unsigned analog_deadzone;                       /* analog deadzone in percent. 20 corresponds to 20% */
+  unsigned analog_scale;                   /* analog scale type */
+
+  bool     tate_mode;
 
   int      crosshair_enable;
-  unsigned activate_dcs_speedhack;
+  bool     activate_dcs_speedhack;
   bool     mame_remapping;       /* display MAME input remapping menu */
 
   int      samplerate;		       /* sound sample playback rate, in KHz */
@@ -259,7 +264,7 @@ struct GameOptions
   int      debug_depth;	         /* requested depth of debugger bitmap */
   bool     cheat_input_ports;     /*cheat input ports enable/disable */
   bool     machine_timing;         
-  };
+};
 
 
 
