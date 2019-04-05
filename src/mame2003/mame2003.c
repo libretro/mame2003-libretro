@@ -200,8 +200,7 @@ static void init_core_options(void)
   init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled|enabled");
   init_default(&default_options[OPT_RSTICK_BTNS],         APPNAME"_rstick_to_btns",      "Map right analog stick as buttons; enabled|disabled");
   init_default(&default_options[OPT_TATE_MODE],           APPNAME"_tate_mode",           "TATE Mode; disabled|enabled");
-  init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution_multiplier",
-                                                                                         "Vector resolution multiplier (Restart core); 1|2|3|4|5|6|7|8|9|10");
+  init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution", "Vector resolution (Restart core); 1024x768|640x480|1280x960|1440x1080|1600x1200|original");
   init_default(&default_options[OPT_VECTOR_ANTIALIAS],    APPNAME"_vector_antialias",    "Vector antialiasing; enabled|disabled");
   init_default(&default_options[OPT_VECTOR_BEAM],         APPNAME"_vector_beam_width",   "Vector beam width (only with antialiasing); 1.2|1|1.4|1.6|1.8|2|2.5|3|4|5|6|7|8|9|10|11|12");
   init_default(&default_options[OPT_VECTOR_TRANSLUCENCY], APPNAME"_vector_translucency", "Vector translucency; enabled|disabled");
