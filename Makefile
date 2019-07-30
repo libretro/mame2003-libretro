@@ -428,6 +428,26 @@ PSS_STYLE :=2
 LDFLAGS += -DLL
 LIBS =
 
+# Windows MSVC 2003 x86
+else ifeq ($(platform), windows_msvc2003_x86)
+ 	CC  = cl.exe
+ 	CXX = cl.exe
+ 	PATH := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/bin"):$(PATH)
+ 	PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../IDE")
+ 	INCLUDE := $(shell IFS=$$'\n'; cygpath -w "$(VS71COMNTOOLS)../../Vc7/include")
+ 	LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS71COMNTOOLS)../../Vc7/lib")
+ 	BIN := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/bin")
+
+ 	WindowsSdkDir := $(INETSDK)
+ 	export INCLUDE := $(INCLUDE);$(INETSDK)/Include;src/libretro/libretro-common/include/compat/msvc
+ 	export LIB := $(LIB);$(WindowsSdkDir);$(INETSDK)/Lib
+
+ 	TARGET := $(TARGET_NAME)_libretro.dll
+ 	PSS_STYLE :=2
+ 	LDFLAGS += -DLL
+ 	CFLAGS += -D_CRT_SECURE_NO_DEPRECATE
+ 	LIBS =
+
 # Windows MSVC 2005 x86
 else ifeq ($(platform), windows_msvc2005_x86)
  	CC  = cl.exe
@@ -561,9 +581,6 @@ endif
 
 # Compiler flags for all platforms #############################
 
-# explictly use -fsigned-char on all platforms to solve problems with code written/tested on x86 but used on ARM
-# for example, audio on rtype leo is wrong on ARM without this flag
-CFLAGS += -fsigned-char
 
 # Use position-independent code for all platforms
 CFLAGS += $(fpic)
@@ -580,6 +597,9 @@ CFLAGS += -Wall -Wunused \
 	-Wshadow -Wstrict-prototypes \
 	-Wformat-security -Wwrite-strings \
 	-Wdisabled-optimization
+# explictly use -fsigned-char on all platforms to solve problems with code written/tested on x86 but used on ARM
+# for example, audio on rtype leo is wrong on ARM without this flag
+CFLAGS += -fsigned-char
 endif
 endif
 
