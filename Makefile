@@ -174,6 +174,17 @@ else ifeq ($(platform), rpi3)
    CPU_ARCH := arm
    ARM = 1
 
+else ifeq ($(platform), rpi4)
+   TARGET = $(TARGET_NAME)_libretro.so
+   fpic = -fPIC
+	 CFLAGS += $(fpic)
+	 LDFLAGS += $(fpic) -shared -Wl,--version-script=link.T
+	 PLATCFLAGS += -marm -mcpu=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard
+	 PLATCFLAGS += -fomit-frame-pointer -ffast-math
+	 CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
+	 CPU_ARCH := arm
+	 ARM = 1
+
 # Classic Platforms ####################
 # Platform affix = classic_<ISA>_<µARCH>
 # Help at https://modmyclassic.com/comp
@@ -284,7 +295,7 @@ else ifeq ($(platform), ps3)
    PLATCFLAGS += -D__CELLOS_LV2__ -D__ppc__ -D__POWERPC__
    STATIC_LINKING = 1
    SPLIT_UP_LINK=1
-	
+
 else ifeq ($(platform), sncps3)
    TARGET = $(TARGET_NAME)_libretro_ps3.a
    BIGENDIAN = 1
@@ -324,7 +335,7 @@ else ifeq ($(platform), vita)
    HAVE_RZLIB := 1
    ARM = 1
    STATIC_LINKING := 1
-		
+
 else ifneq (,$(findstring armv,$(platform)))
    TARGET = $(TARGET_NAME)_libretro.so
    CFLAGS += -fPIC
@@ -556,7 +567,7 @@ else ifneq (,$(findstring windows_msvc2017,$(platform)))
 	ifneq (,$(findstring uwp,$(PlatformSuffix)))
 		LIB := $(LIB);$(shell IFS=$$'\n'; cygpath -w "$(LIB)/store")
 	endif
-    
+
 	export INCLUDE := $(INCLUDE);$(WindowsSDKSharedIncludeDir);$(WindowsSDKUCRTIncludeDir);$(WindowsSDKUMIncludeDir)
 	export LIB := $(LIB);$(WindowsSDKUCRTLibDir);$(WindowsSDKUMLibDir)
 	TARGET := $(TARGET_NAME)_libretro.dll
