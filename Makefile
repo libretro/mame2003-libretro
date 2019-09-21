@@ -122,12 +122,17 @@ else ifneq (,$(findstring ios,$(platform)))
    TARGET = $(TARGET_NAME)_libretro_ios.dylib
    fpic = -fPIC
    LDFLAGS += $(fpic) -dynamiclib
-   PLATCFLAGS += -D__IOS__
+   PLATCFLAGS += -D__IOS__ -std=c99 -Wno-error=implicit-function-declaration
 ifeq ($(IOSSDK),)
      IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
+ifeq ($(platform),ios-arm64)
+   CC = cc -arch arm64 -isysroot $(IOSSDK)
+   LD = cc -arch arm64 -isysroot $(IOSSDK)
+else
    CC = cc -arch armv7 -isysroot $(IOSSDK)
    LD = cc -arch armv7 -isysroot $(IOSSDK)
+endif
 ifeq ($(platform),ios9)
      fpic += -miphoneos-version-min=8.0
      CC += -miphoneos-version-min=8.0
@@ -136,6 +141,16 @@ else
      fpic += -miphoneos-version-min=5.0
      CC += -miphoneos-version-min=5.0
      LD += -miphoneos-version-min=5.0
+endif
+
+# tvOS
+else ifeq ($(platform), tvos-arm64)
+   TARGET = $(TARGET_NAME)_libretro_tvos.dylib
+   fpic = -fPIC
+   LDFLAGS += $(fpic) -dynamiclib
+   PLATCFLAGS += -D__IOS__ -std=c99 -Wno-error=implicit-function-declaration
+ifeq ($(IOSSDK),)
+     IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
 
 # 3DS
