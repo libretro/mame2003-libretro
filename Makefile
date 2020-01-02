@@ -339,8 +339,8 @@ else ifeq ($(platform), vita)
    TARGET = $(TARGET_NAME)_libretro_$(platform).a
    CC = arm-vita-eabi-gcc$(EXE_EXT)
    AR = arm-vita-eabi-ar$(EXE_EXT)
-   PLATCFLAGS += -DVITA
-   CFLAGS += -mthumb -mfloat-abi=hard -fsingle-precision-constant
+   PLATCFLAGS += -DVITA -marm
+   CFLAGS += -mfloat-abi=hard -fsingle-precision-constant
    CFLAGS += -Wall -mword-relocations
    CFLAGS += -fomit-frame-pointer -ffast-math
    CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables
@@ -350,6 +350,8 @@ else ifeq ($(platform), vita)
    HAVE_RZLIB := 1
    ARM = 1
    STATIC_LINKING := 1
+   USE_CYCLONE := 1
+   USE_DRZ80 := 1
 
 else ifneq (,$(findstring armv,$(platform)))
    TARGET = $(TARGET_NAME)_libretro.so
@@ -656,7 +658,7 @@ CFLAGS += $(INCFLAGS) $(INCFLAGS_PLATFORM)
 # combine the various definitions to one
 CDEFS = $(DEFS) $(COREDEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS)
 
-OBJECTS := $(SOURCES_C:.c=.o)
+OBJECTS := $(SOURCES_C:.c=.o) $(SOURCES_ASM:.s=.o)
 
 OBJOUT   = -o
 LINKOUT  = -o
@@ -704,6 +706,9 @@ endif
 CFLAGS += $(PLATCFLAGS) $(CDEFS)
 
 %.o: %.c
+	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
+
+%.o: %.s
 	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 $(OBJ)/%.a:
