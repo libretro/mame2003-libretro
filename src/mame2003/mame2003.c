@@ -12,6 +12,9 @@
 #include <file/file_path.h>
 #include <math.h>
 
+#if (HAS_DRZ80 || HAS_CYCLONE)
+#include "frontend_list.h"
+#endif
 
 #include "mame.h"
 #include "driver.h"
@@ -764,7 +767,7 @@ struct retro_input_descriptor desc[] = {
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-  int              driverIndex    = 0;
+  int              i, driverIndex    = 0;
   int              port_index;
   char             *driver_lookup = NULL;
 
@@ -807,6 +810,101 @@ bool retro_load_game(const struct retro_game_info *game)
 
    if(!init_game(driverIndex))
     return false;
+
+  #if (HAS_CYCLONE || HAS_DRZ80)
+   int use_cyclone = 1;
+   int use_drz80 = 1;
+   int use_drz80_snd = 1;
+
+	for (i=0;i<NUMGAMES;i++)
+ 	{
+		if (strcmp(drivers[driverIndex]->name,fe_drivers[i].name)==0)
+		{
+			/* ASM cores: 0=None,1=Cyclone,2=DrZ80,3=Cyclone+DrZ80,4=DrZ80(snd),5=Cyclone+DrZ80(snd) */
+         switch (fe_drivers[i].cores)
+         {
+         case 0:
+            use_cyclone = 0;
+				use_drz80_snd = 0;
+				use_drz80 = 0;
+            break;
+         case 1:
+				use_drz80_snd = 0;
+				use_drz80 = 0;
+            break;
+         case 2:
+            use_cyclone = 0;
+            break;
+         case 4:
+            use_cyclone = 0;
+				use_drz80 = 0;
+            break;
+         case 5:
+				use_drz80 = 0;
+            break;
+         default:
+            break;
+         }
+			
+         break;
+		}
+	}
+
+   /* Replace M68000 by CYCLONE */
+#if (HAS_CYCLONE)
+   if (use_cyclone)
+   {
+	   for (i=0;i<MAX_CPU;i++)
+	   {
+		   unsigned int *type=(unsigned int *)&(Machine->drv->cpu[i].cpu_type);
+#ifdef NEOMAME
+		   if (*type==CPU_M68000)
+#else
+			   if (*type==CPU_M68000 || *type==CPU_M68010 )
+#endif
+			   {
+				   *type=CPU_CYCLONE;
+                   log_cb(RETRO_LOG_INFO, LOGPRE "Replaced CPU_CYCLONE\n"); 
+			   }
+        if(!(*type)){
+          break;
+        }
+	   }
+   }
+#endif
+
+#if (HAS_DRZ80)
+	/* Replace Z80 by DRZ80 */
+	if (use_drz80)
+	{
+		for (i=0;i<MAX_CPU;i++)
+		{
+			unsigned int *type=(unsigned int *)&(Machine->drv->cpu[i].cpu_type);
+			if (type==CPU_Z80)
+			{
+				*type=CPU_DRZ80;
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80\n"); 
+			}
+		}
+	}
+
+	/* Replace Z80 with DRZ80 only for sound CPUs */
+	if (use_drz80_snd)
+	{
+		for (i=0;i<MAX_CPU;i++)
+		{
+			int *type=(int*)&(Machine->drv->cpu[i].cpu_type);
+			if (type==CPU_Z80 && Machine->drv->cpu[i].cpu_flags&CPU_AUDIO_CPU)
+			{
+				*type=CPU_DRZ80;
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80 sound\n"); 
+
+			}
+		}
+	}
+#endif
+
+#endif
 
   set_content_flags();
 
