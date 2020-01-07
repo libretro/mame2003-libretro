@@ -696,10 +696,10 @@ else
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
 	$(file >$@.in,$(OBJECTS))
-	$(LD) $(LDFLAGS) $(LINKOUT) $@ @$@.in $(LIBS)
+	$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
 	@rm $@.in
 else
-	$(LD) $(LDFLAGS) $(LINKOUT) $@ $(OBJECTS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 endif
 
