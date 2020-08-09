@@ -10631,7 +10631,7 @@ const struct bin2cFILE rungunu_bootstrap = {
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,
-  } 
+  }
 };
 
 const struct bin2cFILE sinistar_bootstrap = {
