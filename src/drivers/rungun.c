@@ -48,6 +48,7 @@
 
 #include "mame2003.h"
 #include "bootstrap.h"
+#include "inptport.h"
 
 VIDEO_START( rng );
 VIDEO_UPDATE( rng );
@@ -74,17 +75,6 @@ static struct EEPROM_interface eeprom_interface =
 	"0100110000000" /* unlock command */
 };
 
-static const unsigned char bootstrap_nvram[] = {
-    4, 20,251,235,146, 71, 69, 65, 65,  0, 21,  3,  7,  3,  0,  0,  0,  0,
-    0,  0,  0,  0,  0, 30,  0, 21, 32,  0,  1,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,
-};
-
 static NVRAM_HANDLER( rungun )
 {
 	if (read_or_write)
@@ -99,22 +89,9 @@ static NVRAM_HANDLER( rungun )
 			EEPROM_load(file);
 		}
 		else
-        {   
-			log_cb(RETRO_LOG_INFO, "[MAME 2003] Generating bootstrap nvram for rungun");
-			/* 
-				I can't seem to get the Machine to accept nvram loaded directly from a byte array in memory.
-				Thus writing the data to a file and creating a valid read-mode mame_file (which the driver 
-                wants to have) --markwkidd
-			*/
-            
-			file = mame_fopen(Machine->gamedrv->name, 0, FILETYPE_NVRAM, 1);
-			mame_fwrite(file, bootstrap_nvram, sizeof(bootstrap_nvram));          
-			mame_fclose(file);
-
-			file = mame_fopen(Machine->gamedrv->name, 0, FILETYPE_NVRAM, 0);
-			init_eeprom_count = 0;
-			EEPROM_load(file);
-        }
+    {   
+      init_eeprom_count = 10;
+    }
 	}
 }
 
