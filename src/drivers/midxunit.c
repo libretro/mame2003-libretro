@@ -314,4 +314,4 @@ ROM_END
  *
  *************************************/
 
-GAMEC( 1994, revx,   0,         midxunit, revx, revx, ROT0, "Midway",   "Revolution X (Rev. 1.0 6-16-94)", &revx_ctrl, &revx_bootstrap )
+GAMEC( 1994, revx,   0,         midxunit, revx, revx, ROT0, "Midway",   "Revolution X (Rev. 1.0 6/16/94)", &revx_ctrl, &revx_bootstrap )
