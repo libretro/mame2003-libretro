@@ -197,6 +197,7 @@
 #include "vidhrdw/generic.h"
 
 #include "bootstrap.h"
+#include "inptport.h"
 
 
 /* Constants */

@@ -27,6 +27,7 @@
 #include "midtunit.h"
 
 #include "bootstrap.h"
+#include "inptport.h"
 
 
 /*************************************

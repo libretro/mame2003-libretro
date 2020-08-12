@@ -60,6 +60,7 @@
 #include "vidhrdw/generic.h"
 #include "machine/eeprom.h"
 #include "bootstrap.h"
+#include "inptport.h"
 
 VIDEO_START( avengrgs );
 VIDEO_UPDATE( avengrgs );
