@@ -39,6 +39,7 @@
 #include "state.h"
 
 #include "bootstrap.h"
+#include "inptport.h"
 
 VIDEO_START( f3 );
 VIDEO_UPDATE( f3 );
