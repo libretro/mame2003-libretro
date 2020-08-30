@@ -1074,7 +1074,7 @@ GAME ( 1994, umk3r11, mk3,       wunit, mk3,     umk3r11, ROT0, "Midway", "Ultim
 
 GAMEC( 1995, wwfmania,0,         wunit, wwfmania,wwfmania,ROT0, "Midway", "WWF: Wrestlemania (rev 1.30 08/10/95)", &wwfmania_ctrl, &wwfmania_bootstrap )
 GAMEC( 1995, openice, 0,         wunit, openice, openice, ROT0, "Midway", "2 On 2 Open Ice Challenge (rev 1.21)", &openice_ctrl, &openice_bootstrap )
-GAMEC( 1996, nbahangt,0,         wunit, nbahangt,nbahangt,ROT0, "Midway", "NBA Hangtime (rev L1.1 04/16/96)", nbahangt_ctrl, &nbahangt_bootstrap )
+GAMEC( 1996, nbahangt,0,         wunit, nbahangt,nbahangt,ROT0, "Midway", "NBA Hangtime (rev L1.1 04/16/96)", &nbahangt_ctrl, &nbahangt_bootstrap )
 GAMEC( 1996, nbamaxht,nbahangt,  wunit, nbahangt,nbahangt,ROT0, "Midway", "NBA Maximum Hangtime (rev 1.0 11/8/96)", &nbahangt_ctrl, &nbamaxht_bootstrap )
 GAMEC( 1997, rmpgwt,  0,         wunit, rmpgwt,  rmpgwt,  ROT0, "Midway", "Rampage: World Tour (rev 1.3)", &rmpgwt_ctrl, &rmpgwt_bootstrap )
 GAMEC( 1997, rmpgwt11,rmpgwt,    wunit, rmpgwt,  rmpgwt,  ROT0, "Midway", "Rampage: World Tour (rev 1.1)", &rmpgwt_ctrl, &rmpgwt11_bootstrap )
