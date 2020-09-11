@@ -2588,9 +2588,9 @@ V-V                           TP-027
 	/* Sega System 1 / System 2 games */
 	DRIVER( starjack )	/* 834-5191 (c) 1983 (S1) */
 	DRIVER( starjacs )	/* (c) 1983 Stern (S1) */
-	DRIVER( regulus )	/* 834-5328 (c) 1983 (S1) */
-	DRIVER( reguluso )	/* 834-5328 (c) 1983 (S1) */
-	DRIVER( regulusu )	/* 834-5328 (c) 1983 (S1) */
+	DRIVER( regulus )	/* 834-5328Â (c) 1983 (S1) */
+	DRIVER( reguluso )	/* 834-5328Â (c) 1983 (S1) */
+	DRIVER( regulusu )	/* 834-5328Â (c) 1983 (S1) */
 	DRIVER( upndown )	/* (c) 1983 (S1) */
 	DRIVER( upndownu )	/* (c) 1983 (S1) */
 	DRIVER( mrviking )	/* 834-5383 (c) 1984 (S1) */
@@ -4374,7 +4374,7 @@ BOMULEUL CHAJARA SEGA ST-V  1997/04/11
 	DRIVER( mk2r42 )	/* hack */
 	DRIVER( mk2r91 )	/* hack */
 	DRIVER( mk2chal )	/* hack */
-	DRIVER( mk2p )		/* hack PLUS Beta 2*/
+	DRIVER( mk2p )		/* hack plus beta 2*/
 	DRIVER( jdreddp )	/* (c) 1993 Midway */
 	DRIVER( nbajam )	/* (c) 1993 Midway */
 	DRIVER( nbajamr2 )	/* (c) 1993 Midway */
@@ -4388,7 +4388,7 @@ BOMULEUL CHAJARA SEGA ST-V  1997/04/11
 	DRIVER( mk3r10 )	/* (c) 1994 Midway */
 	DRIVER( umk3 )		/* (c) 1994 Midway */
 	DRIVER( umk3r11 )	/* (c) 1994 Midway */
-	DRIVER( umk3p )		/* hack PLUS Beta 1*/
+	DRIVER( umk3p )		/* hack plus beta 1*/
 	DRIVER( wwfmania )	/* (c) 1995 Midway */
 	DRIVER( openice )	/* (c) 1995 Midway */
 	DRIVER( nbahangt )	/* (c) 1996 Midway */
