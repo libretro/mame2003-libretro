@@ -173,16 +173,16 @@ int osd_get_path_count(int pathtype)
 }
 
 /******************************************************************************
- 
+
  osd_get_path
  Sets char* path to point at a valid path of the type incidated by int pathtype,
  although the path itself does not necessarily exist at this point in the process.
- 
+
  *****************************************************************************/
 void osd_get_path(int pathtype, char* path)
 {
-  char save_path_buffer[PATH_MAX_LENGTH];
-  char sys_path_buffer[PATH_MAX_LENGTH];
+  char save_path_buffer[PATH_MAX_LENGTH]= {0};
+  char sys_path_buffer[PATH_MAX_LENGTH]= {0};
 
   save_path_buffer[0] = '\0';
   if(options.save_subfolder)
@@ -195,18 +195,18 @@ void osd_get_path(int pathtype, char* path)
     snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_system_path,path_default_slash_c(), APPNAME);
   else
     snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s", options.libretro_system_path);
-    
+
    switch (pathtype)
-   {       
+   {
        case FILETYPE_ROM:
-       case FILETYPE_IMAGE:	
-          strcpy(path, options.libretro_content_path);	
+       case FILETYPE_IMAGE:
+          strcpy(path, options.libretro_content_path);
           break;
 
-      /* user-initiated content goes in mame2003 save directory subfolders */      
+      /* user-initiated content goes in mame2003 save directory subfolders */
       case FILETYPE_IMAGE_DIFF:
          snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "diff");
-         break;     
+         break;
       case FILETYPE_NVRAM:
          snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,path_default_slash_c(), "nvram");
          break;
@@ -240,7 +240,7 @@ void osd_get_path(int pathtype, char* path)
       default:
          /* .dat files and additional core content goes in mame2003 system directory */
          snprintf(path, PATH_MAX_LENGTH, "%s", sys_path_buffer);
-   }    
+   }
 }
 
 int osd_get_path_info(int pathtype, int pathindex, const char *filename)
@@ -251,25 +251,31 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
    osd_get_path(pathtype, currDir);
    snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir,path_default_slash_c(), filename);
 
-   /*log_cb(RETRO_LOG_INFO, LOGPRE "osd_get_path_info (buffer = [%s]), (directory: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, pathtype, filename);*/
+   log_cb(RETRO_LOG_DEBUG, "(osd_get_path_info) (buffer = [%s]), (directory: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, pathtype, filename);
 
    if (path_is_directory(buffer))
+   {
+       log_cb(RETRO_LOG_DEBUG, "(osd_get_path_info) path is directory _-_ %s\n",buffer);
       return PATH_IS_DIRECTORY;
+   }
    else if (filestream_exists(buffer))
+   {
+      log_cb(RETRO_LOG_DEBUG, "(osd_get_path_info) path is file _-_ %s\n",buffer);
       return PATH_IS_FILE;
-
+   }
+   log_cb(RETRO_LOG_DEBUG, "(osd_get_path_info) path not found _-_ %s\n",buffer);
    return PATH_NOT_FOUND;
 }
 
 FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *mode)
 {
-   char buffer[PATH_MAX_LENGTH];
-   char currDir[PATH_MAX_LENGTH];
+   char buffer[PATH_MAX_LENGTH]= {0};
+   char currDir[PATH_MAX_LENGTH]= {0};
    FILE* out;
 
    osd_get_path(pathtype, currDir);
    snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir,path_default_slash_c(), filename);
-
+   log_cb(RETRO_LOG_DEBUG, "(osd_fopen) called: %s\n",buffer);
    path_mkdir(currDir);
 
    out = fopen(buffer, mode);
@@ -283,7 +289,7 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
 	mame_fopen_rom
 ***************************************************************************/
 
-/* Similar to mame_fopen(,,FILETYPE_ROM), but lets you specify an expected checksum 
+/* Similar to mame_fopen(,,FILETYPE_ROM), but lets you specify an expected checksum
    (better encapsulation of the load by CRC used for ZIP files) */
 mame_file *mame_fopen_rom(const char *gamename, const char *filename, const char* exphash)
 {
@@ -419,7 +425,7 @@ UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length)
 	/* check against null pointer */
 	if (!file)
 		return 0;
-	
+
 	/* switch off the file type */
 	switch (file->type)
 	{
@@ -825,7 +831,7 @@ const char *get_extension_for_filetype(int filetype)
 
 		case FILETYPE_SAMPLE_FLAC:		/* samples */
 			extension = "flac";
-			break;			
+			break;
 
 		case FILETYPE_ARTWORK:		/* artwork files */
 			extension = "png";
@@ -874,7 +880,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 	mame_file file, *newfile;
 	char tempname[256];
 
-	log_cb(RETRO_LOG_DEBUG, LOGPRE "generic_fopen(%d, %s, %s, %s, %X)\n", pathtype, gamename, filename, extension, flags);
+	log_cb(RETRO_LOG_DEBUG, "(generic_fopen) (%d, %s, %s, %s, %X)\n", pathtype, gamename, filename, extension, flags);
 
 	/* reset the file handle */
 	memset(&file, 0, sizeof(file));
@@ -912,6 +918,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 		/* if the directory exists, proceed */
 		if (*name == 0 || osd_get_path_info(pathtype, pathindex, name) == PATH_IS_DIRECTORY)
 		{
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "(generic_fopen) directory exists: %s\n", name);
 			/* now look for path/gamename/filename.ext */
 			compose_path(name, gamename, filename, extension);
 
@@ -928,6 +935,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 			/* otherwise, just open it straight */
 			else
 			{
+				log_cb(RETRO_LOG_DEBUG, LOGPRE " (generic_fopen) using osd_fopen %s\n", name);
 				file.type = PLAIN_FILE;
 				file.file = osd_fopen(pathtype, pathindex, name, access_modes[flags & 3]);
 				if (file.file == NULL && (flags & 3) == 3)
@@ -976,7 +984,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 					}
 
 					hash_data_clear(file.hash);
-						
+
 					if (checksum_zipped_file(pathtype, pathindex, name, tempname, &ziplength, &crc) == 0)
 					{
 						file.length = ziplength;
@@ -999,8 +1007,8 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 					/* Try loading the file */
 					err = load_zipped_file(pathtype, pathindex, name, tempname, &file.data, &ziplength);
 
-					/* If it failed, since this is a ZIP file, we can try to load by CRC 
-					   if an expected hash has been provided. unzip.c uses this ugly hack 
+					/* If it failed, since this is a ZIP file, we can try to load by CRC
+					   if an expected hash has been provided. unzip.c uses this ugly hack
 					   of specifying the CRC as filename. */
 					if (err && hash)
 					{
@@ -1111,7 +1119,7 @@ static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **
 
 	*size = length;
 
-	
+
 	/* compute the checksums (only the functions for which we have an expected
 	   checksum). Take also care of crconly: if the user asked, we will calculate
 	   only the CRC, but only if there is an expected CRC for this file. */
@@ -1154,17 +1162,17 @@ mame_file *spawn_bootstrap_nvram(unsigned char const *bootstrap_nvram, unsigned 
   mame_file *nvram_file = NULL;
 
   log_cb(RETRO_LOG_INFO, LOGPRE "Generating bootstrap nvram for %s\n", options.romset_filename_noext);
-        
+
   nvram_file = mame_fopen(options.romset_filename_noext, 0, FILETYPE_NVRAM, 1);
-  mame_fwrite(nvram_file, bootstrap_nvram, nvram_length);          
+  mame_fwrite(nvram_file, bootstrap_nvram, nvram_length);
   mame_fclose(nvram_file);
 
   nvram_file = mame_fopen(options.romset_filename_noext, 0, FILETYPE_NVRAM, 0);
-  
+
   if(!nvram_file)
     log_cb(RETRO_LOG_ERROR, LOGPRE "Error generating nvram bootstrap file!\n");
-  
-  return nvram_file;  
+
+  return nvram_file;
 }
 
 
