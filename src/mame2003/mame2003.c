@@ -767,7 +767,8 @@ struct retro_input_descriptor desc[] = {
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-  int              i, driverIndex    = 0;
+  int i;
+  int              driverIndex    = 0;
   int              port_index;
   char             *driver_lookup = NULL;
 
@@ -777,17 +778,17 @@ bool retro_load_game(const struct retro_game_info *game)
     return false;
   }
 
-  log_cb(RETRO_LOG_INFO, LOGPRE "Content path: %s.\n", game->path);
+  log_cb(RETRO_LOG_INFO, LOGPRE "Full content path %s\n", game->path);
   if(!path_is_valid(game->path))
   {
     log_cb(RETRO_LOG_ERROR, LOGPRE "Content path is not valid. Exiting!");
     return false;
   }
-
+  log_cb(RETRO_LOG_INFO, LOGPRE "Git Version %s\n",GIT_VERSION);
   driver_lookup = strdup(path_basename(game->path));
   path_remove_extension(driver_lookup);
 
-  log_cb(RETRO_LOG_INFO, LOGPRE "Content lookup name: %s.\n", driver_lookup);
+  log_cb(RETRO_LOG_INFO, LOGPRE "Content lookup name: %s\n", driver_lookup);
 
   for (driverIndex = 0; driverIndex < total_drivers; driverIndex++)
   {
@@ -796,7 +797,7 @@ bool retro_load_game(const struct retro_game_info *game)
     if ((strcasecmp(driver_lookup, needle->description) == 0)
       || (strcasecmp(driver_lookup, needle->name) == 0) )
     {
-      log_cb(RETRO_LOG_INFO, LOGPRE "Driver index counter: %d. Matched game driver: %s.\n",  driverIndex, needle->name);
+      log_cb(RETRO_LOG_INFO, LOGPRE "Driver index counter: %d. Matched game driver: %s\n",  driverIndex, needle->name);
       game_driver = needle;
       options.romset_filename_noext = driver_lookup;
       break;
@@ -845,7 +846,7 @@ bool retro_load_game(const struct retro_game_info *game)
          default:
             break;
          }
-			
+
          break;
 		}
 	}
@@ -864,7 +865,7 @@ bool retro_load_game(const struct retro_game_info *game)
 #endif
 			   {
 				   *type=CPU_CYCLONE;
-                   log_cb(RETRO_LOG_INFO, LOGPRE "Replaced CPU_CYCLONE\n"); 
+                   log_cb(RETRO_LOG_INFO, LOGPRE "Replaced CPU_CYCLONE\n");
 			   }
         if(!(*type)){
           break;
@@ -883,7 +884,7 @@ bool retro_load_game(const struct retro_game_info *game)
 			if (type==CPU_Z80)
 			{
 				*type=CPU_DRZ80;
-        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80\n"); 
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80\n");
 			}
 		}
 	}
@@ -897,7 +898,7 @@ bool retro_load_game(const struct retro_game_info *game)
 			if (type==CPU_Z80 && Machine->drv->cpu[i].cpu_flags&CPU_AUDIO_CPU)
 			{
 				*type=CPU_DRZ80;
-        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80 sound\n"); 
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80 sound\n");
 
 			}
 		}
@@ -910,6 +911,10 @@ bool retro_load_game(const struct retro_game_info *game)
 
   options.libretro_content_path = strdup(game->path);
   path_basedir(options.libretro_content_path);
+  /*fix trailing slash in path*/
+  for(i = 0; options.libretro_content_path[i] != '\0'; ++i);
+  if ( options.libretro_content_path[i-1] == '/' || options.libretro_content_path[i-1]  == '\\' )
+   options.libretro_content_path[i-1] =0;
 
   /* Get system directory from frontend */
   options.libretro_system_path = NULL;
