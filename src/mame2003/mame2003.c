@@ -765,7 +765,7 @@ struct retro_input_descriptor desc[] = {
   { 0, 0, 0, 0, NULL }
 };
 
-static char* remove_slash (char* temp)
+static void remove_slash (char* temp)
 {
   int i;
 
@@ -780,8 +780,6 @@ static char* remove_slash (char* temp)
   }
   else
     log_cb(RETRO_LOG_INFO, LOGPRE "Trailing slash removal was not necessary for path given.\n");
-
-  return temp;
 }
 
 bool retro_load_game(const struct retro_game_info *game)
