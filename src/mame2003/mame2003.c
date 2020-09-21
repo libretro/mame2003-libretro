@@ -508,7 +508,7 @@ static void update_variables(bool first_time)
               char cfg_file_path[PATH_MAX_LENGTH];
               char buffer[PATH_MAX_LENGTH];
               osd_get_path(FILETYPE_CONFIG, buffer);
-              snprintf(cfg_file_path, PATH_MAX_LENGTH, "%s%s%s.cfg", buffer, path_default_slash(), options.romset_filename_noext);
+              snprintf(cfg_file_path, PATH_MAX_LENGTH, "%s%s%s.cfg", buffer, PATH_DEFAULT_SLASH(), options.romset_filename_noext);
               buffer[0] = '\0';
 
               if(path_is_valid(cfg_file_path))
