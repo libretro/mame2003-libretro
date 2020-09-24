@@ -186,15 +186,31 @@ void osd_get_path(int pathtype, char* path)
 
   save_path_buffer[0] = '\0';
   if(options.save_subfolder)
-    snprintf(save_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_save_path,PATH_DEFAULT_SLASH_C(), APPNAME);
+    snprintf(save_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_save_path, PATH_DEFAULT_SLASH_C(), APPNAME);
   else
     snprintf(save_path_buffer, PATH_MAX_LENGTH, "%s", options.libretro_save_path);
 
   sys_path_buffer[0] = '\0';
   if(options.system_subfolder)
-    snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_system_path,PATH_DEFAULT_SLASH_C(), APPNAME);
+    snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s%c%s", options.libretro_system_path, PATH_DEFAULT_SLASH_C(), APPNAME);
   else
     snprintf(sys_path_buffer, PATH_MAX_LENGTH, "%s", options.libretro_system_path);
+
+  /* force system and save paths to be created if not already there */
+  if ( !(path_is_directory(sys_path_buffer)) || !(path_is_directory(save_path_buffer)) )
+  {
+    log_cb(RETRO_LOG_INFO, LOGPRE "Searching for missing directories.........\n");
+
+    if (path_mkdir(sys_path_buffer))
+      log_cb(RETRO_LOG_INFO, LOGPRE "Verified system directory exists:  %s\n", sys_path_buffer);
+    else
+      log_cb(RETRO_LOG_INFO, LOGPRE "Failed to create missing system directory:  %s\n", sys_path_buffer);
+
+    if (path_mkdir(save_path_buffer))
+      log_cb(RETRO_LOG_INFO, LOGPRE "Verified save directory exists:  %s\n", save_path_buffer);
+    else
+      log_cb(RETRO_LOG_INFO, LOGPRE "Failed to create missing save directory:  %s\n", save_path_buffer);
+  }
 
    switch (pathtype)
    {
@@ -205,22 +221,22 @@ void osd_get_path(int pathtype, char* path)
 
       /* user-initiated content goes in mame2003 save directory subfolders */
       case FILETYPE_IMAGE_DIFF:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,PATH_DEFAULT_SLASH_C(), "diff");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer, PATH_DEFAULT_SLASH_C(), "diff");
          break;
       case FILETYPE_NVRAM:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,PATH_DEFAULT_SLASH_C(), "nvram");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer, PATH_DEFAULT_SLASH_C(), "nvram");
          break;
       case FILETYPE_HIGHSCORE:
-          snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,PATH_DEFAULT_SLASH_C(), "hi");
+          snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer, PATH_DEFAULT_SLASH_C(), "hi");
          break;
       case FILETYPE_CONFIG:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,PATH_DEFAULT_SLASH_C(), "cfg");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer, PATH_DEFAULT_SLASH_C(), "cfg");
          break;
       case FILETYPE_MEMCARD:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,PATH_DEFAULT_SLASH_C(), "memcard");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer, PATH_DEFAULT_SLASH_C(), "memcard");
          break;
       case FILETYPE_CTRLR:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer,PATH_DEFAULT_SLASH_C(), "ctrlr");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", save_path_buffer, PATH_DEFAULT_SLASH_C(), "ctrlr");
          break;
       case FILETYPE_XML_DAT:
          snprintf(path, PATH_MAX_LENGTH, "%s", save_path_buffer);
@@ -228,13 +244,13 @@ void osd_get_path(int pathtype, char* path)
 
          /* static, pregenerated content goes in mam2003 system directory subfolders */
       case FILETYPE_ARTWORK:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer,PATH_DEFAULT_SLASH_C(), "artwork");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer, PATH_DEFAULT_SLASH_C(), "artwork");
          break;
       case FILETYPE_SAMPLE:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer,PATH_DEFAULT_SLASH_C(), "samples");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer, PATH_DEFAULT_SLASH_C(), "samples");
          break;
       case FILETYPE_SAMPLE_FLAC:
-         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer,PATH_DEFAULT_SLASH_C(), "samples");
+         snprintf(path, PATH_MAX_LENGTH, "%s%c%s", sys_path_buffer, PATH_DEFAULT_SLASH_C(), "samples");
          break;
 
       default:
@@ -249,9 +265,9 @@ int osd_get_path_info(int pathtype, int pathindex, const char *filename)
    char currDir[PATH_MAX_LENGTH];
 
    osd_get_path(pathtype, currDir);
-   snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir,PATH_DEFAULT_SLASH_C(), filename);
+   snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir, PATH_DEFAULT_SLASH_C(), filename);
 
-   log_cb(RETRO_LOG_DEBUG, "(osd_get_path_info) (buffer = [%s]), (directory: [%s]), (path type: [%d]), (filename: [%s]) \n", buffer, currDir, pathtype, filename);
+   log_cb(RETRO_LOG_DEBUG, "(osd_get_path_info) directory= %s  pathindex= %d  filename= %s\n", currDir, pathtype, filename);
 
    if (path_is_directory(buffer))
    {
@@ -274,9 +290,13 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
    FILE* out;
 
    osd_get_path(pathtype, currDir);
-   snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir,PATH_DEFAULT_SLASH_C(), filename);
-   log_cb(RETRO_LOG_DEBUG, "(osd_fopen) called: %s\n",buffer);
+
+   /* call this before adding slash else wiiu will fail at creating directory */
    path_mkdir(currDir);
+
+   if (filename) snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir, PATH_DEFAULT_SLASH_C(), filename);
+
+   log_cb(RETRO_LOG_DEBUG, "(osd_fopen) called: buffer= %s  filename= %s  pathindex= %d   pathtype= %d\n", buffer, filename, pathindex, pathtype);
 
    out = fopen(buffer, mode);
 
@@ -808,12 +828,12 @@ const char *get_extension_for_filetype(int filetype)
 	/* now open the file appropriately */
 	switch (filetype)
 	{
-		case FILETYPE_RAW:			/* raw data files */
-		case FILETYPE_ROM:			/* ROM files */
-		case FILETYPE_HIGHSCORE_DB:	/* highscore database/history files */
-		case FILETYPE_HISTORY:		/* game history files */
-		case FILETYPE_CHEAT:		/* cheat file */
-		default:					/* anything else */
+		case FILETYPE_RAW:              /* raw data files */
+		case FILETYPE_ROM:              /* ROM files */
+		case FILETYPE_HIGHSCORE_DB:     /* highscore database/history files */
+		case FILETYPE_HISTORY:          /* game history files */
+		case FILETYPE_CHEAT:            /* cheat file */
+		default:                        /* anything else */
 			extension = NULL;
 			break;
 
@@ -829,7 +849,7 @@ const char *get_extension_for_filetype(int filetype)
 			extension = "wav";
 			break;
 
-		case FILETYPE_SAMPLE_FLAC:		/* samples */
+		case FILETYPE_SAMPLE_FLAC:	/* samples */
 			extension = "flac";
 			break;
 
@@ -880,7 +900,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 	mame_file file, *newfile;
 	char tempname[256];
 
-	log_cb(RETRO_LOG_DEBUG, "(generic_fopen) (%d, %s, %s, %s, %X)\n", pathtype, gamename, filename, extension, flags);
+	log_cb(RETRO_LOG_DEBUG, "(generic_fopen) (pathtype:%d, gamename:%s, filename:%s, extension:%s, flags:%X)\n", pathtype, gamename, filename, extension, flags);
 
 	/* reset the file handle */
 	memset(&file, 0, sizeof(file));
