@@ -240,19 +240,19 @@ static data32_t decodeShift( data32_t insn, data32_t *pCarry);
 
 /***************************************************************************/
 
-static INLINE void cpu_write32( int addr, data32_t data )
+INLINE void cpu_write32( int addr, data32_t data )
 {
 	/* Unaligned writes are treated as normal writes */
 	cpu_writemem26ledw_dword(addr&ADDRESS_MASK,data);
 	if (ARM_DEBUG_CORE && addr&3) logerror("%08x: Unaligned write %08x\n",R15,addr);
 }
 
-static INLINE void cpu_write8( int addr, data8_t data )
+INLINE void cpu_write8( int addr, data8_t data )
 {
 	cpu_writemem26ledw(addr,data);
 }
 
-static INLINE data32_t cpu_read32( int addr )
+INLINE data32_t cpu_read32( int addr )
 {
 	data32_t result = cpu_readmem26ledw_dword(addr&ADDRESS_MASK);
 
@@ -261,28 +261,28 @@ static INLINE data32_t cpu_read32( int addr )
 		if (ARM_DEBUG_CORE && addr&1)
 			logerror("%08x: Unaligned byte read %08x\n",R15,addr);
 
-		if ((addr&3)==3)
+		if ((addr&3)==1)
 			return ((result&0x000000ff)<<24)|((result&0xffffff00)>> 8);
 		if ((addr&3)==2)
 			return ((result&0x0000ffff)<<16)|((result&0xffff0000)>>16);
-		if ((addr&3)==1)
+		if ((addr&3)==3)
 			return ((result&0x00ffffff)<< 8)|((result&0xff000000)>>24);
 	}
 
 	return result;
 }
 
-static INLINE data8_t cpu_read8( int addr )
+INLINE data8_t cpu_read8( int addr )
 {
 	return cpu_readmem26ledw(addr);
 }
 
-static INLINE data32_t GetRegister( int rIndex )
+INLINE data32_t GetRegister( int rIndex )
 {
 	return arm.sArmRegister[sRegisterTable[MODE][rIndex]];
 }
 
-static INLINE void SetRegister( int rIndex, data32_t value )
+INLINE void SetRegister( int rIndex, data32_t value )
 {
 	arm.sArmRegister[sRegisterTable[MODE][rIndex]] = value;
 }
