@@ -1,7 +1,7 @@
 .core-defs:
   variables:
     JNI_PATH: .
-    CORENAME: handy
+    CORENAME: mame2003
 
 include:
   - template: Jobs/Code-Quality.gitlab-ci.yml
