@@ -1,5 +1,5 @@
 # mame2003-libretro
-[Pipeline Build Status](https://git.libretro.com/libretro/mame2003-libretro/-/pipelines/)
+[![pipeline status](https://git.libretro.com/libretro/mame2003-libretro/badges/master/pipeline.svg)](https://git.libretro.com/libretro/mame2003-libretro/-/commits/master)
 
 MAME as it was in 2003, using the libretro API. Suitable for lower-end devices that would struggle to run current versions of MAME (later versions of MAME are increasingly accurate, thus can perform worse).
 
