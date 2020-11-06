@@ -26,6 +26,8 @@
 #include "machine/midwayic.h"
 #include "midvunit.h"
 #include <time.h>
+#include "bootstrap.h"
+#include "inptport.h"
 
 
 static data32_t *ram_base;
@@ -72,7 +74,7 @@ static MACHINE_INIT( midvplus )
 	dcs_reset_w(0);
 	dcs_reset_w(1);
 
-//	cpu_setbank(1, ram_base);
+/*	cpu_setbank(1, ram_base);*/
 	memcpy(ram_base, memory_region(REGION_USER1), 0x20000*4);
 
 	timer[0] = timer_alloc(NULL);
@@ -135,7 +137,7 @@ READ32_HANDLER( midvunit_adc_r )
 	if (!(control_data & 0x40))
 		return adc_data << adc_shift;
 	else
-		logerror("adc_r without enabling reads!\n");
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "adc_r without enabling reads!\n");
 	return 0xffffffff;
 }
 
@@ -152,12 +154,12 @@ WRITE32_HANDLER( midvunit_adc_w )
 	{
 		int which = (data >> adc_shift) - 4;
 		if (which < 0 || which > 2)
-			logerror("adc_w: unexpected which = %02X\n", which + 4);
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "adc_w: unexpected which = %02X\n", which + 4);
 		adc_data = readinputport(3 + which);
 		timer_set(TIME_IN_MSEC(1), 0, adc_ready);
 	}
 	else
-		logerror("adc_w without enabling writes!\n");
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "adc_w without enabling writes!\n");
 }
 
 
@@ -214,7 +216,7 @@ WRITE32_HANDLER( midvunit_control_w )
 
 	/* log anything unusual */
 	if ((olddata ^ control_data) & ~0x00e8)
-		logerror("midvunit_control_w: old=%04X new=%04X diff=%04X\n", olddata, control_data, olddata ^ control_data);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "midvunit_control_w: old=%04X new=%04X diff=%04X\n", olddata, control_data, olddata ^ control_data);
 }
 
 
@@ -234,13 +236,13 @@ WRITE32_HANDLER( crusnwld_control_w )
 
 	/* log anything unusual */
 	if ((olddata ^ control_data) & ~0xe800)
-		logerror("crusnwld_control_w: old=%04X new=%04X diff=%04X\n", olddata, control_data, olddata ^ control_data);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "crusnwld_control_w: old=%04X new=%04X diff=%04X\n", olddata, control_data, olddata ^ control_data);
 }
 
 
 static WRITE32_HANDLER( midvunit_sound_w )
 {
-	logerror("Sound W = %02X\n", data);
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "Sound W = %02X\n", data);
 	dcs_data_w(data & 0xff);
 }
 
@@ -260,13 +262,13 @@ READ32_HANDLER( tms32031_control_r )
 		/* timer is clocked at 100ns */
 		int which = (offset >> 4) & 1;
 		INT32 result = timer_timeelapsed(timer[which]) * timer_rate;
-//		logerror("%06X:tms32031_control_r(%02X) = %08X\n", activecpu_get_pc(), offset, result);
+/*		log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:tms32031_control_r(%02X) = %08X\n", activecpu_get_pc(), offset, result);*/
 		return result;
 	}
 
 	/* log anything else except the memory control register */
 	if (offset != 0x64)
-		logerror("%06X:tms32031_control_r(%02X)\n", activecpu_get_pc(), offset);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:tms32031_control_r(%02X)\n", activecpu_get_pc(), offset);
 
 	return tms32031_control[offset];
 }
@@ -284,7 +286,7 @@ WRITE32_HANDLER( tms32031_control_w )
 	else if (offset == 0x20 || offset == 0x30)
 	{
 		int which = (offset >> 4) & 1;
-//	logerror("%06X:tms32031_control_w(%02X) = %08X\n", activecpu_get_pc(), offset, data);
+/*	log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:tms32031_control_w(%02X) = %08X\n", activecpu_get_pc(), offset, data);*/
 		if (data & 0x40)
 			timer_adjust(timer[which], TIME_NEVER, 0, TIME_NEVER);
 
@@ -295,7 +297,7 @@ WRITE32_HANDLER( tms32031_control_w )
 			timer_rate = 10000000.;
 	}
 	else
-		logerror("%06X:tms32031_control_w(%02X) = %08X\n", activecpu_get_pc(), offset, data);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:tms32031_control_w(%02X) = %08X\n", activecpu_get_pc(), offset, data);
 }
 
 
@@ -417,7 +419,7 @@ static READ32_HANDLER( midvplus_misc_r )
 	}
 
 	if (offset != 0 && offset != 3)
-		logerror("%06X:midvplus_misc_r(%d) = %08X\n", activecpu_get_pc(), offset, result);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:midvplus_misc_r(%d) = %08X\n", activecpu_get_pc(), offset, result);
 	return result;
 }
 
@@ -446,7 +448,7 @@ static WRITE32_HANDLER( midvplus_misc_w )
 	}
 
 	if (logit)
-		logerror("%06X:midvplus_misc_w(%d) = %08X\n", activecpu_get_pc(), offset, data);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:midvplus_misc_w(%d) = %08X\n", activecpu_get_pc(), offset, data);
 }
 
 
@@ -460,7 +462,7 @@ static WRITE32_HANDLER( midvplus_misc_w )
 static void midvplus_xf1_w(UINT8 val)
 {
 	static int lastval;
-//	printf("xf1_w = %d\n", val);
+/*	log_cb(RETRO_LOG_DEBUG, LOGPRE "xf1_w = %d\n", val);*/
 
 	if (lastval && !val)
 		memcpy(ram_base, fastram_base, 0x20000*4);
@@ -489,13 +491,13 @@ static MEMORY_READ32_START( vunit_readmem )
 	{ ADDR_RANGE(0x980040, 0x980040), midvunit_page_control_r },
 	{ ADDR_RANGE(0x980080, 0x980080), MRA32_NOP },
 	{ ADDR_RANGE(0x980082, 0x980083), midvunit_dma_trigger_r },
-	{ ADDR_RANGE(0x990000, 0x990000), MRA32_NOP },	// link PAL (low 4 bits must == 4)
+	{ ADDR_RANGE(0x990000, 0x990000), MRA32_NOP },	/* link PAL (low 4 bits must == 4)*/
 	{ ADDR_RANGE(0x991030, 0x991030), port1_r },
-//	{ ADDR_RANGE(0x991050, 0x991050), MRA32_RAM },	// seems to be another port
+/*	{ ADDR_RANGE(0x991050, 0x991050), MRA32_RAM },	*/ /* seems to be another port*/
 	{ ADDR_RANGE(0x991060, 0x991060), port0_r },
 	{ ADDR_RANGE(0x992000, 0x992000), port2_r },
 	{ ADDR_RANGE(0x993000, 0x993000), midvunit_adc_r },
-	{ ADDR_RANGE(0x997000, 0x997000), MRA32_NOP },	// communications
+	{ ADDR_RANGE(0x997000, 0x997000), MRA32_NOP },	/* communications*/
 	{ ADDR_RANGE(0x9c0000, 0x9c1fff), midvunit_cmos_r },
 	{ ADDR_RANGE(0x9e0000, 0x9e7fff), MRA32_RAM },
 	{ ADDR_RANGE(0xa00000, 0xbfffff), midvunit_textureram_r },
@@ -515,9 +517,9 @@ static MEMORY_WRITE32_START( vunit_writemem )
 	{ ADDR_RANGE(0x980080, 0x980080), MWA32_NOP },
 	{ ADDR_RANGE(0x993000, 0x993000), midvunit_adc_w },
 	{ ADDR_RANGE(0x994000, 0x994000), midvunit_control_w },
-	{ ADDR_RANGE(0x995000, 0x995000), MWA32_NOP },	// force feedback?
+	{ ADDR_RANGE(0x995000, 0x995000), MWA32_NOP },	/* force feedback?*/
 	{ ADDR_RANGE(0x995020, 0x995020), midvunit_cmos_protect_w },
-	{ ADDR_RANGE(0x997000, 0x997000), MWA32_NOP },	// link communications
+	{ ADDR_RANGE(0x997000, 0x997000), MWA32_NOP },	/* link communications*/
 	{ ADDR_RANGE(0x9a0000, 0x9a0000), midvunit_sound_w },
 	{ ADDR_RANGE(0x9c0000, 0x9c1fff), midvunit_cmos_w, (data32_t **)&generic_nvram, &generic_nvram_size },
 	{ ADDR_RANGE(0x9e0000, 0x9e7fff), midvunit_paletteram_w, &paletteram32 },
@@ -1451,12 +1453,12 @@ static DRIVER_INIT( wargods )
  *
  *************************************/
 
-GAME( 1994, crusnusa, 0,        midvunit, crusnusa, crusnusa, ROT0, "Midway", "Cruis'n USA (rev L4.1)" )
-GAME( 1994, crusnu40, crusnusa, midvunit, crusnusa, crusnu40, ROT0, "Midway", "Cruis'n USA (rev L4.0)" )
-GAME( 1994, crusnu21, crusnusa, midvunit, crusnusa, crusnu21, ROT0, "Midway", "Cruis'n USA (rev L2.1)" )
-GAME( 1996, crusnwld, 0,        midvunit, crusnwld, crusnwld, ROT0, "Midway", "Cruis'n World (rev L2.3)" )
-GAME( 1996, crusnw20, crusnwld, midvunit, crusnwld, crusnwld, ROT0, "Midway", "Cruis'n World (rev L2.0)" )
-GAME( 1996, crusnw13, crusnwld, midvunit, crusnwld, crusnwld, ROT0, "Midway", "Cruis'n World (rev L1.3)" )
+GAMEC( 1994, crusnusa, 0,        midvunit, crusnusa, crusnusa, ROT0, "Midway", "Cruis'n USA (rev L4.1)", &generic_ctrl, &crusnusa_bootstrap )
+GAME ( 1994, crusnu40, crusnusa, midvunit, crusnusa, crusnu40, ROT0, "Midway", "Cruis'n USA (rev L4.0)" )
+GAME ( 1994, crusnu21, crusnusa, midvunit, crusnusa, crusnu21, ROT0, "Midway", "Cruis'n USA (rev L2.1)" )
+GAME ( 1996, crusnwld, 0,        midvunit, crusnwld, crusnwld, ROT0, "Midway", "Cruis'n World (rev L2.3)" )
+GAME ( 1996, crusnw20, crusnwld, midvunit, crusnwld, crusnwld, ROT0, "Midway", "Cruis'n World (rev L2.0)" )
+GAME ( 1996, crusnw13, crusnwld, midvunit, crusnwld, crusnwld, ROT0, "Midway", "Cruis'n World (rev L1.3)" )
 GAMEX( 1997, offroadc, 0,        midvunit, offroadc, offroadc, ROT0, "Midway", "Off Road Challenge", GAME_NOT_WORKING )
 
 GAME( 1995, wargods,  0,        midvplus, wargods,  wargods,  ROT0, "Midway", "War Gods" )
