@@ -16,7 +16,6 @@
 //#define LOG_LOAD
 
 
-
 char *chd_error_text[] =
 {
 	"CHDERR_NONE",
