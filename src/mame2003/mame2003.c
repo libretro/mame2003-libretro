@@ -6,6 +6,7 @@
 
 *********************************************************************/
 
+#include <stdio.h>
 #include <stdint.h>
 #include <string/stdstring.h>
 #include <libretro.h>
