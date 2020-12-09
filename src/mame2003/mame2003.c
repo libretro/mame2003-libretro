@@ -12,6 +12,7 @@
 #include <libretro.h>
 #include <file/file_path.h>
 #include <math.h>
+#include <string.h>
 
 #if (HAS_DRZ80 || HAS_CYCLONE)
 #include "frontend_list.h"
