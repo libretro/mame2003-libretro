@@ -113,6 +113,7 @@ ifeq ($(ARCH),ppc)
    BIGENDIAN = 1
    PLATCFLAGS += -D__ppc__ -D__POWERPC__
 endif
+   PLATCFLAGS += -std=c99
    LDFLAGS += $(fpic) -dynamiclib
    OSXVER = `sw_vers -productVersion | cut -c 4`
    fpic += -mmacosx-version-min=10.1
