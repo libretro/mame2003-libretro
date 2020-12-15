@@ -33,7 +33,6 @@ Video board
 
 TODO:
 
-- colors (8 colors originally, see game flyer screen shots)
 - SN76477 sound
 
 ****************************************************************************/
@@ -42,9 +41,9 @@ TODO:
 #include "vidhrdw/generic.h"
 
 
-UINT8 *safarir_ram1, *safarir_ram2;
-size_t safarir_ram_size;
-
+static UINT8 *safarir_ram1, *safarir_ram2;
+static size_t safarir_ram_size;
+static UINT8 safarir_ram_bank;
 static UINT8 *safarir_ram;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
@@ -52,24 +51,17 @@ static struct tilemap *bg_tilemap, *fg_tilemap;
 
 WRITE_HANDLER( safarir_ram_w )
 {
-	if (safarir_ram[offset] != data)
-	{
-		safarir_ram[offset] = data;
+	if (safarir_ram_bank)
+		safarir_ram2[offset] = data;
+	else
+		safarir_ram1[offset] = data;
 
-		if (offset < 0x400)
-		{
-			tilemap_mark_tile_dirty(fg_tilemap, offset);
-		} 
-		else
-		{
-			tilemap_mark_tile_dirty(bg_tilemap, offset - 0x400);
-		}
-	}
+	tilemap_mark_tile_dirty((offset & 0x0400) ? bg_tilemap : fg_tilemap, offset & 0x03ff);
 }
 
 READ_HANDLER( safarir_ram_r )
 {
-	return safarir_ram[offset];
+	return safarir_ram_bank ? safarir_ram2[offset] : safarir_ram1[offset];
 }
 
 WRITE_HANDLER( safarir_scroll_w )
@@ -79,23 +71,44 @@ WRITE_HANDLER( safarir_scroll_w )
 
 WRITE_HANDLER( safarir_ram_bank_w )
 {
-	safarir_ram = data ? safarir_ram1 : safarir_ram2;
+	safarir_ram_bank = data & 0x01;
+
 	tilemap_mark_all_tiles_dirty(ALL_TILEMAPS);
 }
 
 static void get_bg_tile_info(int tile_index)
 {
-	int code = safarir_ram[tile_index + 0x400];
+	int color;
+	UINT8 code = safarir_ram_r(tile_index | 0x400);
 
-	SET_TILE_INFO(0, code & 0x7f, code >> 7, 0)
+	if (code & 0x80)
+		color = 6;	/* yellow */
+	else
+	{
+		color = ((~tile_index & 0x04) >> 2) | ((tile_index & 0x04) >> 1);
+
+		if (~tile_index & 0x100)
+			color |= ((tile_index & 0xc0) == 0x80) ? 1 : 0;
+		else
+			color |= (tile_index & 0xc0) ? 1 : 0;
+	}
+
+	SET_TILE_INFO(0, code & 0x7f, color, 0)
 }
 
 static void get_fg_tile_info(int tile_index)
 {
-	int code = safarir_ram[tile_index];
-	int flags = ((tile_index & 0x1d) && (tile_index & 0x1e)) ? 0 : TILE_IGNORE_TRANSPARENCY;
+	int color, flags;
+	UINT8 code = safarir_ram_r(tile_index);
 
-	SET_TILE_INFO(1, code & 0x7f, code >> 7, flags)
+	if (code & 0x80)
+		color = 7;	/* white */
+	else
+		color = (~tile_index & 0x04) | ((tile_index >> 1) & 0x03);
+
+	flags = ((tile_index & 0x1f) >= 0x03) ? 0 : TILE_IGNORE_TRANSPARENCY;
+
+	SET_TILE_INFO(1, code & 0x7f, color, flags)
 }
 
 VIDEO_START( safarir )
@@ -119,35 +132,114 @@ VIDEO_START( safarir )
 
 VIDEO_UPDATE( safarir )
 {
-	tilemap_draw(bitmap, &Machine->visible_area, bg_tilemap, 0, 0);
-	tilemap_draw(bitmap, &Machine->visible_area, fg_tilemap, 0, 0);
+	tilemap_draw(bitmap, cliprect, bg_tilemap, 0, 0);
+	tilemap_draw(bitmap, cliprect, fg_tilemap, 0, 0);
 }
 
 
-static unsigned short colortable_source[] =
+/*************************************
+ *
+ *  Audio system
+ *
+ *************************************/
+
+#define SAMPLE_SOUND1_1		0
+#define SAMPLE_SOUND1_2		1
+#define SAMPLE_SOUND2		2
+#define SAMPLE_SOUND3		3
+#define SAMPLE_SOUND4_1		4
+#define SAMPLE_SOUND4_2		5
+#define SAMPLE_SOUND5_1		6
+#define SAMPLE_SOUND5_2		7
+#define SAMPLE_SOUND6		8
+#define SAMPLE_SOUND7		9
+#define SAMPLE_SOUND8		10
+
+#define CHANNEL_SOUND1		0
+#define CHANNEL_SOUND2		1
+#define CHANNEL_SOUND3		2
+#define CHANNEL_SOUND4		3
+#define CHANNEL_SOUND5		4
+#define CHANNEL_SOUND6		5
+
+static UINT8 port_last;
+static UINT8 port_last2;
+
+
+WRITE_HANDLER( safarir_audio_w )
 {
-	0x00, 0x01,
-	0x00, 0x02,
-	0x00, 0x03,
-	0x00, 0x04,
-	0x00, 0x05,
-	0x00, 0x06,
-	0x00, 0x07,
+	UINT8 rising_bits = data & ~port_last;
+
+	if (rising_bits == 0x12) sample_start(CHANNEL_SOUND1, SAMPLE_SOUND1_1, 0);
+	if (rising_bits == 0x02) sample_start(CHANNEL_SOUND1, SAMPLE_SOUND1_2, 0);
+	if (rising_bits == 0x95) sample_start(CHANNEL_SOUND1, SAMPLE_SOUND6, 0);
+
+	if (rising_bits == 0x04 && (data == 0x15 || data ==0x16)) sample_start(CHANNEL_SOUND2, SAMPLE_SOUND2, 0);
+
+	if (data == 0x5f && (rising_bits == 0x49 || rising_bits == 0x5f)) sample_start(CHANNEL_SOUND3, SAMPLE_SOUND3, 1);
+	if (data == 0x00 || rising_bits == 0x01) sample_stop(CHANNEL_SOUND3);
+
+	if (data == 0x13)
+	{
+		if ((rising_bits == 0x13 && port_last != 0x04) || (rising_bits == 0x01 && port_last == 0x12))
+		{
+			sample_start(CHANNEL_SOUND4, SAMPLE_SOUND7, 0);
+		}
+		else if (rising_bits == 0x03 && port_last2 == 0x15 && !sample_playing(CHANNEL_SOUND4))
+		{
+			sample_start(CHANNEL_SOUND4, SAMPLE_SOUND4_1, 0);
+		}
+	}
+	if (data == 0x53 && port_last == 0x55) sample_start(CHANNEL_SOUND4, SAMPLE_SOUND4_2, 0);
+
+	if (data == 0x1f && rising_bits == 0x1f) sample_start(CHANNEL_SOUND5, SAMPLE_SOUND5_1, 0);
+	if (data == 0x14 && (rising_bits == 0x14 || rising_bits == 0x04)) sample_start(CHANNEL_SOUND5, SAMPLE_SOUND5_2, 0);
+
+	if (data == 0x07 && rising_bits == 0x07 && !sample_playing(CHANNEL_SOUND6))
+		sample_start(CHANNEL_SOUND6, SAMPLE_SOUND8, 0);
+
+	port_last2 = port_last;
+	port_last = data;
+}
+
+
+static const char *safarir_sample_names[] =
+{
+	"*safarir",
+	"sound1-1.wav",
+	"sound1-2.wav",
+	"sound2.wav",
+	"sound3.wav",
+	"sound4-1.wav",
+	"sound4-2.wav",
+	"sound5-1.wav",
+	"sound5-2.wav",
+	"sound6.wav",
+	"sound7.wav",
+	"sound8.wav",
+	0
 };
+
+
+struct Samplesinterface safarir_samples_interface =
+{
+	6,	/* 6 channels */
+	50, /* volume */
+	safarir_sample_names
+};
+
 
 static PALETTE_INIT( safarir )
 {
-	palette_set_color(0, 0x00, 0x00, 0x00);
-	palette_set_color(1, 0x80, 0x80, 0x80);
-	palette_set_color(2, 0xff, 0xff, 0xff);
-	
-	palette_set_color(3, 0x00, 0x00, 0x00);
-	palette_set_color(4, 0x00, 0x00, 0x00);
-	palette_set_color(5, 0x00, 0x00, 0x00);
-	palette_set_color(6, 0x00, 0x00, 0x00);
-	palette_set_color(7, 0x00, 0x00, 0x00);
+	int i;
 
-	memcpy(colortable, colortable_source, sizeof(colortable_source));
+	for (i = 0; i < Machine->drv->total_colors; i++)
+	{
+		palette_set_color(i, pal1bit(i >> 2), pal1bit(i >> 1), pal1bit(i >> 0));
+
+		colortable[(i * 2) + 0] = 0;
+		colortable[(i * 2) + 1] = i;
+	}
 }
 
 
@@ -163,8 +255,7 @@ static MEMORY_WRITE_START( writemem )
 	{ 0x2000, 0x27ff, safarir_ram_w, &safarir_ram1, &safarir_ram_size },
 	{ 0x2800, 0x28ff, safarir_ram_bank_w },
 	{ 0x2c00, 0x2cff, safarir_scroll_w },
-	{ 0x3000, 0x30ff, MWA_NOP },	/* goes to SN76477 */
-
+	{ 0x3000, 0x30ff, safarir_audio_w },	/* goes to SN76477 */
 	{ 0x8000, 0x87ff, MWA_NOP, &safarir_ram2 },	/* only here to initialize pointer */
 MEMORY_END
 
@@ -218,8 +309,8 @@ static struct GfxLayout charlayout =
 
 static struct GfxDecodeInfo gfxdecodeinfo[] =
 {
-	{ REGION_GFX1, 0, &charlayout, 0, 2 },
-	{ REGION_GFX2, 0, &charlayout, 0, 2 },
+	{ REGION_GFX1, 0, &charlayout, 0, 8 },
+	{ REGION_GFX2, 0, &charlayout, 0, 8 },
 	{ -1 } /* end of array */
 };
 
@@ -246,10 +337,11 @@ struct SN76477interface safarir_sn76477_interface =
 	{ 0	/* N/C */}		/* 24  oneshot_res		 */
 };
 
+
 static MACHINE_DRIVER_START( safarir )
 
 	/* basic machine hardware */
-	MDRV_CPU_ADD(8080, 3072000)	/* 3 MHz ? */
+	MDRV_CPU_ADD(8080, 18000000/8)	/* 2.25 MHz ? */
 	MDRV_CPU_MEMORY(readmem, writemem)
 
 	MDRV_FRAMES_PER_SECOND(60)
@@ -261,14 +353,14 @@ static MACHINE_DRIVER_START( safarir )
 	MDRV_VISIBLE_AREA(0*8, 32*8-1, 0*8, 26*8-1)
 	MDRV_GFXDECODE(gfxdecodeinfo)
 	MDRV_PALETTE_LENGTH(8)
-	MDRV_COLORTABLE_LENGTH(2*7)
+	MDRV_COLORTABLE_LENGTH(2*8)
 
 	MDRV_PALETTE_INIT(safarir)
 	MDRV_VIDEO_START(safarir)
 	MDRV_VIDEO_UPDATE(safarir)
 
 	/* sound hardware */
-	MDRV_SOUND_ADD(SN76477, safarir_sn76477_interface)
+	MDRV_SOUND_ADD(SAMPLES, safarir_samples_interface)
 MACHINE_DRIVER_END
 
 /***************************************************************************
@@ -286,10 +378,10 @@ ROM_START( safarir )
 	ROM_LOAD( "rl05",		0x1000, 0x0400, CRC(935ed469) SHA1(052a59df831dcc2c618e9e5e5fdfa47548550596) )
 	ROM_LOAD( "rl06",		0x1400, 0x0400, CRC(24c1cd42) SHA1(fe32ecea77a3777f8137ca248b8f371db37b8b85) )
 
-	ROM_REGION( 0x0400, REGION_GFX1, ROMREGION_DISPOSE )
+	ROM_REGION( 0x0400, REGION_GFX1, 0 )
 	ROM_LOAD( "rl08",		0x0000, 0x0400, CRC(d6a50aac) SHA1(0a0c2cefc556e4e15085318fcac485b82bac2416) )
 
-	ROM_REGION( 0x0400, REGION_GFX2, ROMREGION_DISPOSE )
+	ROM_REGION( 0x0400, REGION_GFX2, 0 )
 	ROM_LOAD( "rl07",		0x0000, 0x0400, CRC(ba525203) SHA1(1c261cc1259787a7a248766264fefe140226e465) )
 ROM_END
 
@@ -297,7 +389,10 @@ ROM_END
 DRIVER_INIT( safarir )
 {
 	safarir_ram = safarir_ram1;
+
+	port_last = 0;
+	port_last2 = 0;
 }
 
 
-GAMEX( 1979, safarir, 0, safarir, safarir, safarir, ROT90, "SNK", "Safari Rally (Japan)", GAME_NO_SOUND | GAME_WRONG_COLORS )
+GAMEX( 1979, safarir, 0, safarir, safarir, safarir, ROT90, "SNK", "Safari Rally (Japan)", GAME_IMPERFECT_SOUND )
