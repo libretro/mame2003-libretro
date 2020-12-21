@@ -18,6 +18,7 @@
 #include "frontend_list.h"
 #endif
 
+#include "common.h"
 #include "mame.h"
 #include "driver.h"
 #include "state.h"
@@ -804,7 +805,7 @@ bool retro_load_game(const struct retro_game_info *game)
     return false;
   }
   log_cb(RETRO_LOG_INFO, LOGPRE "Git Version %s\n",GIT_VERSION);
-  driver_lookup = strdup(path_basename(game->path));
+  driver_lookup = auto_strdup(path_basename(game->path));
   path_remove_extension(driver_lookup);
 
   log_cb(RETRO_LOG_INFO, LOGPRE "Content lookup name: %s\n", driver_lookup);
@@ -928,7 +929,7 @@ bool retro_load_game(const struct retro_game_info *game)
 
   set_content_flags();
 
-  options.libretro_content_path = strdup(game->path);
+  options.libretro_content_path = auto_strdup(game->path);
   path_basedir(options.libretro_content_path);
 
   /* Get system directory from frontend */
