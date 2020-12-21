@@ -18,7 +18,6 @@
 #include "frontend_list.h"
 #endif
 
-#include "common.h"
 #include "mame.h"
 #include "driver.h"
 #include "state.h"
