@@ -6,6 +6,7 @@
 
 #include <compat/zlib.h>
 
+#include <stdio.h>
 #include <assert.h>
 
 #include <streams/file_stream.h>
