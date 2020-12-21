@@ -14,16 +14,10 @@
  */ 
 #include <retro_inline.h>
 
-#if defined(__CELLOS_LV2__)
-#include <sys/fs_external.h>
-#endif
-
 #include <limits.h>
 
 #ifndef PATH_MAX_LENGTH
-#if defined(__CELLOS_LV2__)
-#define PATH_MAX_LENGTH CELL_FS_MAX_FS_PATH_LENGTH
-#elif defined(_XBOX1) || defined(_3DS) || defined(PSP) || defined(PS2) || defined(GEKKO)|| defined(WIIU) || defined(ORBIS)
+#if defined(_XBOX1) || defined(_3DS) || defined(PSP) || defined(PS2) || defined(GEKKO)|| defined(WIIU) || defined(ORBIS) || defined(__PS3__)
 #define PATH_MAX_LENGTH 512
 #else
 #define PATH_MAX_LENGTH 4096

@@ -61,7 +61,7 @@ typedef int8_t   INT8;
 #define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
 #endif
 #else
-#if !defined(__CELLOS_LV2__)
+#if !defined(__PS3__)
 #include <strings.h>
 #endif
 #endif
