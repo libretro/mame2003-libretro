@@ -47,14 +47,14 @@ READ_HANDLER( speedspn_vidram_r )
 
 WRITE_HANDLER(speedspn_banked_vidram_change)
 {
-//	logerror("VidRam Bank: %04x\n", data);
+/*	log_cb(RETRO_LOG_DEBUG, LOGPRE "VidRam Bank: %04x\n", data);*/
 	speedspn_bank_vidram = data & 1;
 	speedspn_bank_vidram *= 0x1000;
 }
 
 WRITE_HANDLER(speedspn_global_display_w)
 {
-//	logerror("Global display: %u\n", data);
+/*	log_cb(RETRO_LOG_DEBUG, LOGPRE "Global display: %u\n", data);*/
 	speedspn_display_disable = data & 1;
 }
 
@@ -72,6 +72,8 @@ static void speedspn_drawsprites( struct mame_bitmap *bitmap, const struct recta
 		int attr = source[2];
 		int ypos = source[3];
 		int color;
+
+		if (!attr && xpos) break; /* end of sprite list marker? */
 
 		if (attr&0x10) xpos +=0x100;
 
@@ -107,7 +109,7 @@ VIDEO_UPDATE(speedspn)
 		fclose(f);
 	}
 #endif
-	tilemap_set_scrollx(speedspn_tilemap,0, 0x100); // verify
+	tilemap_set_scrollx(speedspn_tilemap,0, 0x100); /* verify*/
 	tilemap_draw(bitmap,cliprect,speedspn_tilemap,0,0);
 	speedspn_drawsprites(bitmap,cliprect);
 }
