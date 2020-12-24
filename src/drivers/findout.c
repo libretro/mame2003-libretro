@@ -10,6 +10,8 @@ driver by Nicola Salmoria
 #include "vidhrdw/generic.h"
 #include "machine/8255ppi.h"
 
+static UINT8 drawctrl[3];
+static UINT8 color[8];
 
 
 VIDEO_UPDATE( findout )
@@ -17,45 +19,51 @@ VIDEO_UPDATE( findout )
 	copybitmap(bitmap,tmpbitmap,0,0,0,0,cliprect,TRANSPARENCY_NONE,0);
 }
 
-
-static data8_t drawctrl[3];
-
 static WRITE_HANDLER( findout_drawctrl_w )
 {
 	drawctrl[offset] = data;
+	if (offset == 2)
+	{
+		int i;
+		for (i = 0; i < 8; i++)
+			if (BIT(drawctrl[1],i)) color[i] = drawctrl[0] & 7;
+	}
 }
 
 static WRITE_HANDLER( findout_bitmap_w )
 {
 	int sx,sy;
-	int fg,bg,mask,bits;
+	int mask;
 
-	fg = drawctrl[0] & 7;
-	bg = 2;
-	mask = 0xff;//drawctrl[2];
-	bits = drawctrl[1];
+	mask = 0xff;
 
 	sx = 8*(offset % 64);
 	sy = offset / 64;
 
-//if (mask != bits)
-//	usrintf_showmessage("color %02x bits %02x mask %02x\n",fg,bits,mask);
-
-	if (mask & 0x80) plot_pixel(tmpbitmap,sx+0,sy,(bits & 0x80) ? fg : bg);
-	if (mask & 0x40) plot_pixel(tmpbitmap,sx+1,sy,(bits & 0x40) ? fg : bg);
-	if (mask & 0x20) plot_pixel(tmpbitmap,sx+2,sy,(bits & 0x20) ? fg : bg);
-	if (mask & 0x10) plot_pixel(tmpbitmap,sx+3,sy,(bits & 0x10) ? fg : bg);
-	if (mask & 0x08) plot_pixel(tmpbitmap,sx+4,sy,(bits & 0x08) ? fg : bg);
-	if (mask & 0x04) plot_pixel(tmpbitmap,sx+5,sy,(bits & 0x04) ? fg : bg);
-	if (mask & 0x02) plot_pixel(tmpbitmap,sx+6,sy,(bits & 0x02) ? fg : bg);
-	if (mask & 0x01) plot_pixel(tmpbitmap,sx+7,sy,(bits & 0x01) ? fg : bg);
+	if (mask & 0x80) plot_pixel(tmpbitmap,sx+0,sy, color[8-0-1]);
+	if (mask & 0x40) plot_pixel(tmpbitmap,sx+1,sy, color[8-1-1]);
+	if (mask & 0x20) plot_pixel(tmpbitmap,sx+2,sy, color[8-2-1]);
+	if (mask & 0x10) plot_pixel(tmpbitmap,sx+3,sy, color[8-3-1]);
+	if (mask & 0x08) plot_pixel(tmpbitmap,sx+4,sy, color[8-4-1]);
+	if (mask & 0x04) plot_pixel(tmpbitmap,sx+5,sy, color[8-5-1]);
+	if (mask & 0x02) plot_pixel(tmpbitmap,sx+6,sy, color[8-6-1]);
+	if (mask & 0x01) plot_pixel(tmpbitmap,sx+7,sy, color[8-7-1]);
 }
 
+PALETTE_INIT( findout )
+{
+	int i;
+
+	for (i = 0; i < 8; i++ )
+	{
+		palette_set_color(i, pal1bit(i >> 2), pal1bit(i), pal1bit(i >> 1));
+	}
+}
 
 static READ_HANDLER( portC_r )
 {
 	return 4;
-//	return (rand()&2);
+/*	return (rand()&2);*/
 }
 
 static WRITE_HANDLER( lamps_w )
@@ -77,8 +85,8 @@ static WRITE_HANDLER( sound_w )
 	/* bit 7 goes directly to the sound amplifier */
 	DAC_data_w(0,((data & 0x80) >> 7) * 255);
 
-//	logerror("%04x: sound_w %02x\n",activecpu_get_pc(),data);
-//	usrintf_showmessage("%02x",data);
+/*	log_cb(RETRO_LOG_DEBUG, LOGPRE "%04x: sound_w %02x\n",activecpu_get_pc(),data);*/
+/*	usrintf_showmessage("%02x",data);*/
 }
 
 static ppi8255_interface ppi8255_intf =
@@ -103,7 +111,7 @@ static READ_HANDLER( catchall )
 	int pc = activecpu_get_pc();
 
 	if (pc != 0x3c74 && pc != 0x0364 && pc != 0x036d)	/* weed out spurious blit reads */
-		logerror("%04x: unmapped memory read from %04x\n",pc,offset);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "%04x: unmapped memory read from %04x\n",pc,offset);
 
 	return 0xff;
 }
@@ -264,7 +272,8 @@ static MACHINE_DRIVER_START( findout )
 	MDRV_VIDEO_ATTRIBUTES(VIDEO_TYPE_RASTER|VIDEO_PIXEL_ASPECT_RATIO_1_2)
 	MDRV_SCREEN_SIZE(512, 256)
 	MDRV_VISIBLE_AREA(48, 511-48, 16, 255-16)
-	MDRV_PALETTE_LENGTH(256)
+	MDRV_PALETTE_LENGTH(8)
+	MDRV_PALETTE_INIT(findout)
 
 	MDRV_VIDEO_START(generic_bitmapped)
 	MDRV_VIDEO_UPDATE(findout)
@@ -297,4 +306,4 @@ ROM_END
 
 
 
-GAMEX( 1987, findout, 0, findout, findout, 0, ROT0, "Elettronolo", "Find Out", GAME_WRONG_COLORS | GAME_IMPERFECT_SOUND )
+GAMEX( 1987, findout, 0, findout, findout, 0, ROT0, "Elettronolo", "Find Out", GAME_IMPERFECT_SOUND )
