@@ -75,6 +75,7 @@ static void dkongjrm_modify_spritecode(data8_t *spriteram,int *code,int *flipx,i
 static void (*modify_color)(UINT8 *color);	/* function to call to do modify how the color codes map to the PROM */
 static void frogger_modify_color(UINT8 *color);
 static void gmgalax_modify_color(UINT8 *color);
+static void drivfrcg_modify_color(UINT8 *color);
 
 static void (*modify_ypos)(UINT8*);	/* function to call to do modify how vertical positioning bits are connected */
 static void frogger_modify_ypos(UINT8 *sy);
@@ -91,16 +92,17 @@ struct star
 	int x,y,color;
 };
 static struct star stars[STAR_COUNT];
+static int stars_colors_start;
        int galaxian_stars_on;
 static int stars_scrollpos;
 static int stars_blink_state;
 static void *stars_blink_timer;
 static void *stars_scroll_timer;
 static int timer_adjusted;
-       void galaxian_init_stars(void);
+       void galaxian_init_stars(int colors_offset);
 static void (*draw_stars)(struct mame_bitmap *);		/* function to call to draw the star layer */
 static void     noop_draw_stars(struct mame_bitmap *bitmap);
-static void galaxian_draw_stars(struct mame_bitmap *bitmap);
+       void galaxian_draw_stars(struct mame_bitmap *bitmap);
 	   void scramble_draw_stars(struct mame_bitmap *bitmap);
 static void   rescue_draw_stars(struct mame_bitmap *bitmap);
 static void  mariner_draw_stars(struct mame_bitmap *bitmap);
@@ -194,7 +196,7 @@ PALETTE_INIT( galaxian )
 	}
 
 
-	galaxian_init_stars();
+	galaxian_init_stars(STARS_COLOR_BASE);
 
 
 	/* bullets - yellow and white */
@@ -809,13 +811,13 @@ static void drivfrcg_get_tile_info(int tile_index)
 {
 	int code = galaxian_videoram[tile_index];
 	UINT8 x = tile_index & 0x1f;
-	UINT8 color = galaxian_attributesram[(x << 1) | 1] & color_mask;
+	UINT8 color = galaxian_attributesram[(x << 1) | 1] & 7;
 	UINT8 bank = galaxian_attributesram[(x << 1) | 1] & 0x30;
 
 	code |= (bank << 4);
-//	color |= ((galaxian_attributesram[(x << 1) | 1] & 0x40) >> 2);
+	color |= ((galaxian_attributesram[(x << 1) | 1] & 0x40) >> 3);
 
-	SET_TILE_INFO(0,code,color,0)
+	SET_TILE_INFO(0, code, color, 0)
 }
 
 VIDEO_START( drivfrcg )
@@ -831,7 +833,7 @@ VIDEO_START( drivfrcg )
 
 	modify_charcode = 0;
 	modify_spritecode = mshuttle_modify_spritecode;
-	modify_color = 0;
+	modify_color = drivfrcg_modify_color;
 	modify_ypos = 0;
 
 	mooncrst_gfxextend = 0;
@@ -854,7 +856,7 @@ VIDEO_START( drivfrcg )
 	spritevisiblearea      = &_spritevisiblearea;
 	spritevisibleareaflipx = &_spritevisibleareaflipx;
 
-	color_mask = (Machine->gfx[0]->color_granularity == 4) ? 7 : 3;
+	color_mask = 0xff;
 
 	return 0;
 }
@@ -1187,6 +1189,11 @@ static void gmgalax_modify_color(UINT8 *color)
 	*color |= (gfxbank[0] << 3);
 }
 
+static void drivfrcg_modify_color(UINT8 *color)
+{
+	*color = ((*color & 0x40) >> 3) | (*color & 7);
+}
+
 
 /* y position mapping functions */
 
@@ -1450,7 +1457,7 @@ static void mariner_draw_background(struct mame_bitmap *bitmap)
 
 /* star drawing functions */
 
-void galaxian_init_stars(void)
+void galaxian_init_stars(int colors_offset)
 {
 	int i;
 	int total_stars;
@@ -1463,6 +1470,7 @@ void galaxian_init_stars(void)
 	stars_blink_timer = timer_alloc(stars_blink_callback);
 	stars_scroll_timer = timer_alloc(stars_scroll_callback);
 	timer_adjusted = 0;
+	stars_colors_start = colors_offset;
 
 
 	for (i = 0;i < 64;i++)
@@ -1477,7 +1485,7 @@ void galaxian_init_stars(void)
 		g = map[bits];
 		bits = (i >> 4) & 0x03;
 		b = map[bits];
-		palette_set_color(STARS_COLOR_BASE+i,r,g,b);
+		palette_set_color(colors_offset+i,r,g,b);
 	}
 
 
@@ -1517,7 +1525,7 @@ void galaxian_init_stars(void)
 
 	if (total_stars != STAR_COUNT)
 	{
-		logerror("total_stars = %d, STAR_COUNT = %d\n",total_stars,STAR_COUNT);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "total_stars = %d, STAR_COUNT = %d\n",total_stars,STAR_COUNT);
 		exit(1);
 	}
 }
@@ -1540,14 +1548,14 @@ static void plot_star(struct mame_bitmap *bitmap, int x, int y, int color)
 		y = 255 - y;
 	}
 
-	plot_pixel(bitmap, x, y, Machine->pens[STARS_COLOR_BASE + color]);
+	plot_pixel(bitmap, x, y, Machine->pens[stars_colors_start + color]);
 }
 
 static void noop_draw_stars(struct mame_bitmap *bitmap)
 {
 }
 
-static void galaxian_draw_stars(struct mame_bitmap *bitmap)
+void galaxian_draw_stars(struct mame_bitmap *bitmap)
 {
 	int offs;
 
