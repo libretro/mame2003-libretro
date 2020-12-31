@@ -1188,10 +1188,6 @@ static void gmgalax_modify_color(UINT8 *color)
 	*color |= (gfxbank[0] << 3);
 }
 
-static void drivfrcg_modify_color(UINT8 *color)
-{
-	*color = ((*color & 0x40) >> 3) | (*color & 7);
-}
 
 
 /* y position mapping functions */
