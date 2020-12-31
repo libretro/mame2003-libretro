@@ -1189,7 +1189,6 @@ static void gmgalax_modify_color(UINT8 *color)
 }
 
 
-
 /* y position mapping functions */
 
 static void frogger_modify_ypos(UINT8 *sy)
