@@ -75,7 +75,6 @@ static void dkongjrm_modify_spritecode(data8_t *spriteram,int *code,int *flipx,i
 static void (*modify_color)(UINT8 *color);	/* function to call to do modify how the color codes map to the PROM */
 static void frogger_modify_color(UINT8 *color);
 static void gmgalax_modify_color(UINT8 *color);
-static void drivfrcg_modify_color(UINT8 *color);
 
 static void (*modify_ypos)(UINT8*);	/* function to call to do modify how vertical positioning bits are connected */
 static void frogger_modify_ypos(UINT8 *sy);
