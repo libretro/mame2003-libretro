@@ -832,7 +832,7 @@ VIDEO_START( drivfrcg )
 
 	modify_charcode = 0;
 	modify_spritecode = mshuttle_modify_spritecode;
-	modify_color = drivfrcg_modify_color;
+	modify_color = 0;
 	modify_ypos = 0;
 
 	mooncrst_gfxextend = 0;
@@ -855,7 +855,7 @@ VIDEO_START( drivfrcg )
 	spritevisiblearea      = &_spritevisiblearea;
 	spritevisibleareaflipx = &_spritevisibleareaflipx;
 
-	color_mask = 0xff;
+	color_mask = (Machine->gfx[0]->color_granularity == 4) ? 7 : 3;
 
 	return 0;
 }
