@@ -1,15 +1,15 @@
 ;     ___   ___ ___ ________ ______  ________ _____     _______    ______   _______ __________
 ;    /  /  /  //  //       //  ___/ / ____  // _   \   /      /   / __   \ / __   //___   ___/
 ;   /  /__/  //  //  _____//  /    / /   / // /_/  /  /  ____/   / /  \  // /_/  /    /  /
-;  /  __    //  //____   //  /    / /   / //      /  /  ____/   / /   / // __   /    /  /  
-; /  /  /  //  //       //  /___ / /___/ //  /\  \  /      /_  / /___/ // /  / /    /  / 
-;/__/  /__//__//_______//______//_______//__/  \__\/______//_//_______//_/  /_/    /__/               
+;  /  __    //  //____   //  /    / /   / //      /  /  ____/   / /   / // __   /    /  /
+; /  /  /  //  //       //  /___ / /___/ //  /\  \  /      /_  / /___/ // /  / /    /  /
+;/__/  /__//__//_______//______//_______//__/  \__\/______//_//_______//_/  /_/    /__/
 ;_________________________________________________________________________________________
 
 ;This file can be edited with a text editor, but keep the same format:
 ; all fields are separated by a colon (:)
 ; <gamename>:
-; <cpu>:<address>:<length>:<value to wait for 
+; <cpu>:<address>:<length>:<value to wait for
 ; in the first byte/word>:<value to wait for in the last byte/word>
 ; [repeat the above as many times as necessary]
 ;
@@ -23,7 +23,7 @@
 ;***************************************************************************
 ;*    latest unofficial highscore_v_infinity additions below - by leezer   *
 ;*            hiscore.dat discontinued as from mame v0.107u2.              *
-;*                 [ for Leezer's personal use only ]                      * 
+;*                 [ for Leezer's personal use only ]                      *
 ;* (to use this .dat file after the release of mame v0.107u2 you must use) *
 ;*          (a hacked mame that enables hiscore.dat saves.)                *
 ;***************************************************************************
@@ -65,8 +65,8 @@ wingforc:
 0:30d7e7:13f:00:35
 
 strider: ;*Missing: Stage completion information (Player name + Score)
-striderj: 
-stridrjr: 
+striderj:
+stridrjr:
 striderua:
 strideruc:
 0:ff89aa:78:ff:20
@@ -133,7 +133,7 @@ taotaido3:
 
 ;(sdi - strategic defence initiative)
 sdi:
-defense:  ;******Defense (System 16B, FD1089A 317-0028) 
+defense:  ;******Defense (System 16B, FD1089A 317-0028)
 sdibl:
 sdib:
 sdibl2:
@@ -143,7 +143,7 @@ sdibl5:
 sdibl6:
 0:fff800:320:00:20
 0:fffb88:4:00:00
-0:fffbca:3:4b:5a 
+0:fffbca:3:4b:5a
 
 ;*******Twin Cobra 2 (World) & (us)
 tcobra2:
@@ -227,7 +227,7 @@ phoenixa:
 phoenixb:
 phoenixc:
 phoenixc2:
-phoenixj: 
+phoenixj:
 phoenixt:
 vautour:
 pleiads:
@@ -342,7 +342,7 @@ carhntds:
 0:83a1:6:00:00
 
 ;********berzerk.c
-berzerk: 
+berzerk:
 berzerk1:
 berzerkg:
 berzerks:
@@ -497,9 +497,9 @@ fixeight:
 fixeightt:
 fixeighth:
 fixeightht:
-fixeightj: 
+fixeightj:
 fixeightjt:
-fixeighta: 
+fixeighta:
 fixeightat:
 fixeightk:
 fixeightkt:
@@ -538,8 +538,8 @@ kangaroob:
 0:e1a0:3c:00:00
 0:e1da:1:50:50
 
-nemesis: 
-nemesisuk: 
+nemesis:
+nemesisuk:
 0:06509a:1:76:76
 0:065010:8c:00:00
 0:060098:4:00:00
@@ -564,7 +564,7 @@ gangwarsj:
 
 ;(dai toride) (by GeoMan)
 daitorid:
-0:8042ba:28:00:40  
+0:8042ba:28:00:40
 0:8042e2:28:02:00
 
 daitorida:  ;******Daitoride (YMF278B version)
@@ -638,7 +638,7 @@ stoffy:
 0:833:e0:00:f2
 0:913:f0:20:00
 
-;** you must let the highscore display in attract mode before starting a game  ** 
+;** you must let the highscore display in attract mode before starting a game  **
 shangha3u:
 shangha3j:
 0:307be2:78:00:1d
@@ -828,7 +828,7 @@ newfanta:
 0:c825b7:62:30:20
 
 ikari3:
-ikari3u:  
+ikari3u:
 ikari3j:
 ikari3k:
 0:4007e:58:00:1d
@@ -911,7 +911,7 @@ teddybbobl:
 0:ef03:31:00:49
 
 ;(satan of saturn) and clones (by GeoMan)
-satansat: 
+satansat:
 zarzon:
 satansata:
 satansatind:
@@ -1038,7 +1038,7 @@ ghostmun:
 0:5220:1:40:40
 0:4087:1:01:01
 
-sranger:  
+sranger:
 srangero:
 srangern:
 srangerw:
@@ -1084,7 +1084,7 @@ gngt:
 makaimur:
 makaimurc:
 makaimurg:
-gngbl:  
+gngbl:
 gngblita:
 gngc:
 0:1518:5a:15:72
@@ -1180,8 +1180,8 @@ rastsagaa:
 
 ;*******Knights of the Round (world 911127 & clones))
 knights:
-knightsj: 
-knightsu: 
+knightsj:
+knightsu:
 knightsb:
 knightsja:
 0:ffe53a:257:00:00
@@ -1219,7 +1219,7 @@ brapboysj:
 brapboysu:
 0:1030c5:31:00:4a
 
-birdiy:   
+birdiy:
 0:4c29:1e:00:00
 0:c3ed:6:30:20
 0:4d03:3:00:00
@@ -1253,7 +1253,7 @@ galactic:
 spacmiss:
 0:20a8:3:00:00
 
-bublpong: 
+bublpong:
 0:e64c:32:00:13
 0:e64d:1:30:30
 0:e5df:1:00:00
@@ -1322,7 +1322,7 @@ ddpdojb:
 ddpdojblkbl:
 0:803824:8c:01:06
 
-;dodonpachi dai-ou-jou (black label)  -- new version game is the default hiscore.dat version !! 
+;dodonpachi dai-ou-jou (black label)  -- new version game is the default hiscore.dat version !!
 ddpdojblk:  ;**** you choose between old/new game on startup swap the ; on the version you want. ****
 ddpdojblka:
 0:803824:8c:01:06   ;*** new version (default) - if you use other version you must delete .hi file
@@ -1370,7 +1370,7 @@ bygone:  ;***** GAME NOT 100% working yet !! *****
 0:e002:1:0a:0a
 0:f42d:6:3c:3c
 
-pzlbreak:  
+pzlbreak:
 0:102d9c:32:50:32
 0:102e0b:3:00:00
 
@@ -1485,7 +1485,7 @@ spidmanj:
 0:208c00:7f:a0:57
 
 ;** hiscore & top score don`t update until you lose your first life, pretty **
-;** lame way for doing a hiscore - but who am i to complain!! ;0)            **
+;** lame way for doing a hiscore - but who am i to complain!! ;0)           **
 spacebrd:
 0:c0e0:3:00:00
 0:d0e0:3:00:00
@@ -1732,10 +1732,10 @@ hatrisj:  ;******hatris (japan)
 
 xevious:
 sxevious:
-sxeviousj:  ;******Super Xevious (Japan) 
-xevios: 
+sxeviousj:  ;******Super Xevious (Japan)
+xevios:
 xeviousa:
-battles: 
+battles:
 0:8510:4d:00:24
 0:8024:3:00:00
 0:8025:1:40:40
@@ -1747,9 +1747,9 @@ xeviousc:
 0:8025:1:40:40
 
 sci:
-scia:  
-scij:  
-sciu:  
+scia:
+scij:
+sciu:
 0:101500:28:02:51
 0:10164e:4:02:80
 
@@ -1780,7 +1780,7 @@ ckongpt2b:
 ckongalc:
 ckongs:
 ckongg:
-kkgalax:  
+kkgalax:
 ckongpt2j:  ;******Crazy Kong Part II (Japan)
 ckong:
 ckongmc:
@@ -1804,8 +1804,8 @@ aliensa:  ;******Aliens (Asia)
 aliensj:
 aliensu:
 aliens2:
-aliens3:  
-aliensj2:  
+aliens3:
+aliensj2:
 0:1e30:38:00:48
 
 asterix:
@@ -1847,7 +1847,7 @@ suprheli:  ;******Super Heli (Super Cobra bootleg)
 0:8200:1e:00:01
 
 masterw:
-masterwu:  
+masterwu:
 masterwj:  ;******Master of Weapon (Japan)
 yukiwo:
 0:2030c0:28:00:4f
@@ -2042,7 +2042,7 @@ sfz2jd:
 sfa:
 sfzjr1:
 sfzj:
-sfau:  
+sfau:
 sfar3:
 sfar2:
 sfar1:
@@ -2061,7 +2061,7 @@ sfa3r1:
 sfz3j:
 sfz3jr1:
 sfz3a:
-sfz3jr2:  
+sfz3jr2:
 sfa3b:
 sfa3ur1:
 sfa3ud:  ;******Street Fighter Alpha 3 (USA 980904 Phoenix Edition) (bootleg)
@@ -2079,14 +2079,14 @@ sf2ceuc:
 sf2ceua:
 sf2rb2:
 sf2ceea:
-sf2ceub:  
-sf2cejb:  
-sf2rb:   
+sf2ceub:
+sf2cejb:
+sf2rb:
 sf2hfu:
 sf2hfj:
 sf2m2:
-sf2m1: 
-sf2m4: 
+sf2m1:
+sf2m4:
 sf2m5:
 sf2m6:
 sf2m7:
@@ -2118,7 +2118,7 @@ sf2m10:
 
 xmvsf:
 xmvsfur1:
-xmvsfu:  
+xmvsfu:
 xmvsfar1:
 xmvsfa:
 xmvsfb:
@@ -2134,7 +2134,7 @@ xmvsfar3:
 xmvsfur2:
 0:ff256e:63:00:05
 
-xmcotar1: 
+xmcotar1:
 xmcotaj2:
 xmcotaar1:
 xmcotar1d:  ;******X-Men: Children of the Atom (Euro 950105 Phoenix Edition)
@@ -2170,9 +2170,9 @@ viostormeb:
 progear:
 progearj:
 progeara:
-progearjd:  ;******Progear no Arashi (Japan 010117 Phoenix Edition) (bootleg) 
+progearjd:  ;******Progear no Arashi (Japan 010117 Phoenix Edition) (bootleg)
 progearud:
-progearjbl:  
+progearjbl:
 0:ff3dcf:e5:20:04
 
 nwarr:
@@ -2193,11 +2193,11 @@ mvscb:
 mvscj:
 mvscjr1:
 mvsca:
-mvscr1:  
-mvsch:  
+mvscr1:
+mvsch:
 mvscu:
 mvscar1:
-mvscud:  ;******Marvel Vs. Capcom: Clash of Super Heroes (USA 980123 Phoenix Edition) (bootleg)  
+mvscud:  ;******Marvel Vs. Capcom: Clash of Super Heroes (USA 980123 Phoenix Edition) (bootleg)
 mvscur1:
 mvscjsing:
 0:ff26fd:66:ff:00
@@ -2243,41 +2243,41 @@ gigawingd:
 dstlk:
 dstlku:
 dstlkur1:
-dstlka: 
-vampj: 
-vampja: 
+dstlka:
+vampj:
+vampja:
 vampjr1:
 dstlku1d:  ;******Darkstalkers: The Night Warriors (USA 940705 Phoenix Edition) (bootleg)
 dstlkh:
 0:fff4aa:5:00:43
-0:fff4af:37:41:00 
+0:fff4af:37:41:00
 0:ffe976:4:00:00
 
 ddsom:
-ddsoma: 
-ddsomar1: 
-ddsomr1:  
-ddsomjr1:  
-ddsomj:  
-ddsomur1:  
+ddsoma:
+ddsomar1:
+ddsomr1:
+ddsomjr1:
+ddsomj:
+ddsomur1:
 ddsomu:
 ddsomb:
 ddsomr3:
 ddsomr2:
 ddsomud:  ;******Dungeons & Dragons: Shadow over Mystara (USA 960619 Phoenix Edition) (bootleg)
-ddsomh:  
+ddsomh:
 0:ff0fd0:8b:12:09
 
 ddtod:
 ddtodu:
-ddtodhr1:  
-ddtodjr1:  
-ddtodj:  
-ddtodur1: 
+ddtodhr1:
+ddtodjr1:
+ddtodj:
+ddtodur1:
 ddtodjr2:
 ddtodd:  ;******Dungeons & Dragons: Tower of Doom (Euro 940412 Phoenix Edition) (bootleg)
 ddtoda:
-ddtodar1: 
+ddtodar1:
 ddtodr1:
 ddtodhr2:
 ddtodh:
@@ -2349,8 +2349,8 @@ tnzsop:
 0:ec0a:23:00:55
 
 boogwing:
-boogwinga:  
-ragtime: 
+boogwinga:
+ragtime:
 ragtimea:
 boogwingu:
 0:200f4a:27:00:0b
@@ -2367,13 +2367,13 @@ imago:
 0:c521:4a:00:00
 0:c565:1:01:01
 
-ddragon: 
+ddragon:
 ddragonb:
 ddragonu:
-ddragonw:  
-ddragonw1:  
+ddragonw:
+ddragonw1:
 ddragonua:
-ddragonba:  
+ddragonba:
 ddragonb2:  ;******Double Dragon (bootleg)
 ddragonub:
 0:0e73:1e:02:2c
@@ -2406,15 +2406,15 @@ ccastlesp:
 0:474:5dd:00:55
 0:d2:1:03:03
 
-abattle:  
+abattle:
 abattle2:
 astrof:
 acombat3:
 astrof2:
 astrof3:
-afire:  
+afire:
 acombat:
-acombato:  
+acombato:
 sstarbtl:  ;******Super Star Battle
 0:0084:2:00:00
 0:4268:5:c1:c1
@@ -2457,11 +2457,11 @@ galastrm:  ;******Galactic Storm (Japan)
 0:202100:190:01:61
 
 captcomm:
-captcomu: 
+captcomu:
 captcomj:
 captcommb:  ;******Captain Commando (bootleg)
 captcommr1:
-captcommjr1: 
+captcommjr1:
 0:ff0000:190:08:00
 0:ff018d:1:01:01
 0:ffa8c2:04:00:00
@@ -2493,7 +2493,7 @@ smgpud:
 
 wrally:  ;******world rally (set1)
 wrallya:  ;******world rally (set 2)
-wrallyb:  l******world rally (us, 930217)
+wrallyb:  ;******world rally (us, 930217)
 wrallyat:
 0:fef558:288:5a:ff
 
@@ -2503,9 +2503,9 @@ ghoxa:  ;******Ghox (set 2)
 0:80006:4:00:00
 
 demonwld:
-demonwld1:  
-demonwld4:  
-demonwld3:  
+demonwld1:
+demonwld4:
+demonwld3:
 demonwld2:
 0:c001c2:c8:00:2d
 0:c001be:4:00:00
@@ -2577,10 +2577,10 @@ dogfgtu:
 0:609:1:01:01
 
 rfjet:  ;******raiden fighters jet (all versions fixed)
-rfjeta:  
-rfjetu:  
-rfjets: 
-rfjetj:  
+rfjeta:
+rfjetu:
+rfjets:
+rfjetj:
 rfjet2kc:
 rfjetsa:
 rfjett:
@@ -2656,7 +2656,7 @@ extrmatnur:
 0:e886:01:00:00
 
 toride2g:  ;******toride ii adouchi gaiden
-toride2gk: 
+toride2gk:
 0:40c5f4:4:00:00
 0:40c5f6:1:50:50
 0:40c60a:4c:00:40
@@ -2707,15 +2707,15 @@ tehkenwcc:
 tantr:
 tantrbl:
 tantrbl2:
-tantrkor:  
+tantrkor:
 tantrbl3:  ;******Puzzle & Action: Tant-R (Japan) (bootleg set 3)
 0:fffc45:28:48:00
 
 ;** this only saves the hiscore table, the top score will stay at default **
-sqix:  
-sqixr1:  
-sqixu:  
-sqixb1:  
+sqix:
+sqixr1:
+sqixu:
+sqixb1:
 sqixb2:
 0:f4c0:28:00:03
 
@@ -2728,7 +2728,7 @@ rongrongj:  ;******puzzle game rong rong (japan)
 0:614e:ea:f4:01
 0:619b:1:01:01
 
-loht:  
+loht:
 lohtj:
 lohtb2:
 0:a3af4:32:36:20
@@ -2764,7 +2764,7 @@ shinobi1:
 shinobi2:
 shinobi3:
 shinobi4:
-shinobi5:  
+shinobi5:
 shinobld:
 shinobls:  ;******Shinobi (Star bootleg, System 16A)
 shinoblda:
@@ -2833,12 +2833,12 @@ fantazia:
 eagle:
 eagle2:
 eagle3:
-mooncrs3:  
-spcdrag:   
-spcdraga:  
+mooncrs3:
+spcdrag:
+spcdraga:
 mooncmw:  ;******Moon War (Moon Cresta bootleg)
 mooncrstu:
-stera: 
+stera:
 mooncrstuk:
 sstarcrs:
 mooncrstuku:
@@ -2876,8 +2876,8 @@ spacbatt:
 spacbat2:
 redufob:
 galaxiana:
-galaxianmo:  
-galaxbsf:  
+galaxianmo:
+galaxbsf:
 galaxiant:
 skyraidr:
 spacempr:
@@ -2934,7 +2934,7 @@ exodus:
 strahla:  ;******koutetsu yousai strahl (japan set 2)
 0:f30d1:d9:55:2e
 0:f3239:27:00:88
-0:f0d5b:3:00:50 
+0:f0d5b:3:00:50
 
 ;*******jump coaster
 jumpcoas:
@@ -2961,7 +2961,7 @@ mstworld:  ;******monsters world
 0:fc01:9e:00:07
 0:e154:3:00:00
 
-airattck: 
+airattck:
 airattcka:  ;******Air Attack (set 2)
 0:b9100:80:0:6b
 
@@ -3083,9 +3083,9 @@ hyprduel:  ;******hyper duel (japan set 1)
 0:fff2a2:3c:00:01
 0:fff2e2:1:ff:ff
 
-brdrline:  
-starrkr: 
-brdrlinb:  
+brdrline:
+starrkr:
+brdrlinb:
 brdrlins:  ;******Borderline (Sidam bootleg)
 0:938d:2:00:00
 
@@ -3117,7 +3117,7 @@ brain:
 0:c017:3:00:05
 
 turtship:
-turtshipk:  
+turtshipk:
 turtshipj:  ;******turtle ship (japan)
 turtshipkn:
 turtshipko:
@@ -3156,15 +3156,15 @@ monsterb2:  ;******monster bash (2 board version) (fixed)  *
 0:c910:0b:99:00
 
 ddenlovr:  ;******don den lover vol.1 (hong Kong)
-0:ff853a:74:82:3c 
+0:ff853a:74:82:3c
 
 tryout:  ;******pro baseball skill tryout (japan)
 0:319:29:90:00
 0:33d:1:01:01
 0:13:3:07:90
 
-nslasher:  
-nslasherj:  
+nslasher:
+nslasherj:
 nslasheru:
 nslashers:  ;******Night Slashers (Over Sea Rev 1.2)
 0:100044:50:13:00
@@ -3194,7 +3194,7 @@ thepitu2:
 amidar: ;[Special thanks to Cananas for enhancing this entry]
 amidarb:
 amidaro:
-amidaru: 
+amidaru:
 amigo:
 amidar1:
 0:8200:1e:00:01
@@ -3205,7 +3205,7 @@ amidars:
 0:40a8:03:00:01
 
 realbrk:
-realbrkj:  
+realbrkj:
 realbrkk:  ;******Billiard Academy Real Break (Korea)
 realbrko:
 0:ff84da:44:52:f8
@@ -3214,7 +3214,7 @@ mangchi:  ;******Mang-Chi
 0:1c1b02:4c:27:20
 
 cawing:
-cawingj: 
+cawingj:
 cawingu:
 cawingr1:  ;******Carrier Air Wing (World 901009)
 cawingbl:
@@ -3288,19 +3288,19 @@ mspacman:
 mspacmnf:
 mschamps:
 newpuc2:
-newpuc2b: 
-joyman: 
+newpuc2b:
+joyman:
 mspacpls:
 pacgal:
 newpuckx:
 alibaba:
-mspacmat: 
+mspacmat:
 puckmod:
 puckmana:
-ctrpllrp:  
-puckmanh: 
+ctrpllrp:
+puckmanh:
 piranhao:
-abscam:  ;******Abscam 
+abscam:  ;******Abscam
 mspacmbe:  ;******Ms. Pac-Man (bootleg, (encrypted))
 popeyeman:
 bucaner:
@@ -3352,7 +3352,7 @@ pac90:
 0:8220:1:40:40
 0:8dce:1:03:03
 
-;** wardner,wardner (japan),pyros all fixed  * 
+;** wardner,wardner (japan),pyros all fixed  *
 wardner:
 wardnerj:
 pyros:
@@ -3485,7 +3485,7 @@ polluxn:
 
 outzone:
 outzonea:
-outzoneb: 
+outzoneb:
 outzonec:  ;******outzone (set 4)
 outzoned:
 outzoneh:
@@ -3559,7 +3559,7 @@ sprglobp:  ;******Super Glob (Pac-Man hardware)
 burnforc:
 burnforco:  ;******Burning Force (Japan old version) 
 0:100171:bb:00:48
-0:100175:1:08:08 
+0:100175:1:08:08
 
 darkmist:  ;******The Lost Castle In Darkmist
 0:e01d:8c:00:20
@@ -3670,7 +3670,7 @@ mgcrystlj:
 0:30048c:7c:41:00
 
 alien3:
-alien3u:  ;*******alien 3: the gun (us)  
+alien3u:  ;*******alien 3: the gun (us)
 0:20f2bc:78:80:00
 
 shuttlei:  ;******shuttle invader
@@ -3681,7 +3681,7 @@ avengrgsj:  ;******avengers in galactic storm (japan)
 0:108909:4e:01:52
 
 hvysmsh: ;[Special thanks to Cananas for enhancing this entry]
-hvysmshj: 
+hvysmshj:
 hvysmsha:
 0:100400:50:01:00
 0:10000c:04:00:00
@@ -3730,12 +3730,12 @@ mchampdxa:  ;******Multi Champ Deluxe (ver. 1126, 26/11/1999)
 0:20a900:200:00:40
 
 arabfgt:
-arabfgtj: 
+arabfgtj:
 arabfgtu:  ;******Arabian Fight (us)
 0:208300:49:53:00
 0:208345:1:17:17
 
-powerbal:  
+powerbal:
 powerbals:  ;******power balls (super slam conversion)
 0:f8276:7c:56:00
 0:f82f0:1:20:20
@@ -3765,7 +3765,7 @@ splatterj:  ;*****splatter house (japan)
 splatter2:
 1:1430:3f:00:2e
 
-vbowlj:  ;******Virtua Bowling (Japan, V100JCM) 
+vbowlj:  ;******Virtua Bowling (Japan, V100JCM)
 vbowl:
 0:101c32:44:00:2e
 
@@ -3773,7 +3773,7 @@ stkclmns:
 stkclmnsj:  ;******Stack Columns (japan)
 0:fffc24:38:4b:88
 
-redclash: 
+redclash:
 redclasha:
 0:6023:4:00:00
 0:6320:6:23:1d
@@ -3792,7 +3792,7 @@ zigzag2:  ;******zig zag (galaxian hardware, set 2)
 0:4280:3:00:00
 0:5242:1:10:10
 0:5222:1:10:10
-0:5202:1:10:10 
+0:5202:1:10:10
 0:51e2:1:10:10
 0:51c2:1:00:00
 0:51a2:1:00:00
@@ -3820,18 +3820,18 @@ trckydoca:  ;******Tricky Doc (Set 2)
 0:e03c:78:10:46
 
 rohga:
-rohgah:  
-rohgau:  
+rohgah:
+rohgau:
 rohga1:  ;******rohga armour force (asia/europe v3.0 set 1)
 rohga2:  ;******rohga armour force (asia/europe v3.0 set 2)
 wolffang:
-0:3f0200:50:00:09 
+0:3f0200:50:00:09
 
 ;** these are untested as the dont work in this version of mame (mame v0.96u1) **
-mtlchampj:  
-mtlchamp:  
-mtlchampa:  
-mtlchampu:  
+mtlchampj:
+mtlchamp:
+mtlchampa:
+mtlchampu:
 mtlchamp1:  ;******martial champion (ver eaa)
 mtlchampu1:
 0:100300:61:00:44
@@ -3842,7 +3842,7 @@ metamrphu:  ;******Metamorphic Force (ver uaa)
 0:203240:35:00:5a
 
 raimais:
-raimaisj:  
+raimaisj:
 raimaisjo:
 0:a237:30:50:4b
 
@@ -4015,7 +4015,7 @@ vspinbalj:  ;******vs. pinball (japan)
 searchar:
 searcharu:
 searcharj:  ;******;sar - search and rescue (japan)
-0:437b6:50:00:1f 
+0:437b6:50:00:1f
 0:40118:3:00:01
 
 jajamaru:  ;******vs. ninja jajamaru kun (japan)
@@ -4143,8 +4143,8 @@ chainrec:  ;******Chain Reaction (world, version 2.2 1995.09.25)
 0:400920:a:54:00
 
 cannonb:
-cannonb2: 
-cannonb3: 
+cannonb2:
+cannonb3:
 0:6180:d4:00:01
 0:665c:3:00:01
 
@@ -4170,10 +4170,10 @@ endurord:
 0:43400:4a0:01:20
 0:43b90:10:99:99
 
-kaitei:  ;******kaitei takara sagashi (k`k-tokki) 
+kaitei:  ;******kaitei takara sagashi (k`k-tokki)
 0:200e:5:00:00
 
-kaitein:  ;******kaitei takara sagashi  
+kaitein:  ;******kaitei takara sagashi
 0:403e:2:00:00
 0:21c0:1:00:00
 0:21e0:1:00:00
@@ -4274,7 +4274,7 @@ eaglshta:  ;******eagle shot golf (alt)
 
 rdft:
 rdftau:
-rdftj:  
+rdftj:
 rdftadi:  ;******Raiden Fighters (Dream Island Co. license)
 rdftu:  ;******Raiden Fighters (US)
 rdfta:
@@ -4328,7 +4328,7 @@ ad2083:
 
 welltris:  ;******welltris (world?,2 players)
 welltrisj:  ;******welltris (japan,2 players)
-0:ffb61c:50:0c:00 
+0:ffb61c:50:0c:00
 
 mshuttle:
 mshuttlej:
@@ -4376,7 +4376,7 @@ hcrashc:  ;******Hyper Crash (version C)
 0:80c64:1:20:20
 
 gaiapols:
-gaiapolsj:  
+gaiapolsj:
 gaiapolsu:
 0:60f801:99:00:00
 0:60f896:1:29:29
@@ -4394,9 +4394,9 @@ gardiaj:
 0:c017:3:00:02
 
 rdft22kc:
-rdft2a:  
+rdft2a:
 rdft2:  ;******Raiden Fighters 2 
-rdft2j: 
+rdft2j:
 rdft2a2:
 rdft2us:  ;******raiden fighters 2.1 (us, single board)
 rdft2j2:
@@ -4437,9 +4437,9 @@ calorieb:  ;******calorie kun vs moguranian (bootleg)
 sxyreac2:
 0:7550:a3:4c:4c
 
-survarts:  
+survarts:
 survartsu:  ;******survival arts (usa)
-0:11a5:26:00:45 
+0:11a5:26:00:45
 0:11cb:2:45:00
 
 invaders:
@@ -4457,8 +4457,8 @@ alieninvp2:
 spceking:
 spcewars:
 spacewr3:
-invader4:  
-invadrmr:  
+invader4:
+invadrmr:
 invasion:
 searthin:
 searthina:
@@ -4496,7 +4496,7 @@ sspaceat3:
 
 ;******Cosmic Monsters 2
 cosmicm2:
-cosmicmo: ;******cosmic monsters (*) 
+cosmicmo: ;******cosmic monsters (*)
 0:20f4:03:00:00
 
 darthvdr:
@@ -4536,11 +4536,11 @@ gloc:
 wbbc97:
 0:5023f1:6d:00:02
 
-opwolf:  
+opwolf:
 opwolfb:
 opwolfu:
 opwolfa:
-opwolfj:  
+opwolfj:
 0:100a42:75:00:54
 0:100e28:3b:00:01
 
@@ -4549,7 +4549,7 @@ opwolfp:
 0:100e68:37:08:01
 
 gsword:  ;******Great Swordsman (Japan?)
-gsword2: ;******Great Swordsman (world?) 
+gsword2: ;******Great Swordsman (world?)
 0:9c00:1e:00:00
 0:9c78:3c:34:00
 
@@ -4565,7 +4565,7 @@ mcatadvj:
 0:101bd3:31:05:2b
 
 avalnche:
-cascade:  ;******Cascade 
+cascade:  ;******Cascade
 0:009b:2:00:00
 
 ;******Aero Fighters (bootleg)
@@ -4603,18 +4603,18 @@ pbaction5:
 rainbow:
 rainbowo:  ;******rainbow islands (old version)
 rbisland:
-0:10d0cc:32:00:32 
-0:10e1f2:04:00:00 
+0:10d0cc:32:00:32
+0:10e1f2:04:00:00
 
 jumping:
 jumpinga:
 jumpingi:
-0:10d0cc:32:00:41 
-0:10e1f2:04:00:00 
+0:10d0cc:32:00:41
+0:10e1f2:04:00:00
 
 rainbowe:
 rbislande:
-0:10d0d2:32:00:33 
+0:10d0d2:32:00:33
 0:10e1b6:04:00:00
 
 ;***********************************************************************
@@ -4710,7 +4710,7 @@ bullfgtrs:  ;******Bull Fighter (Sega)
 0:800b0:1c:00:11
 
 bigstrik:
-bestleag:  
+bestleag:
 bestleaw:
 bigstrkb:
 0:ff890b:49:08:78
@@ -4742,9 +4742,9 @@ buccanrsb:
 ;*** this saves just the today`s best scores, the all time greatest are ***
 ;*** saved using nvram ***
 defender:
-startrkd:  
-defenderg:  
-defenderw:  
+startrkd:
+defenderg:
+defenderw:
 defenderb:  ;******defender (blue label)
 defence:
 defcmnd:
@@ -4835,7 +4835,7 @@ alphamis:
 0:d83b:82:00:20
 0:e77b:3:00:00
 
-;********sprcros2.c 
+;********sprcros2.c
 sprcros2:
 sprcros2a:  ;******Super Cross 2 (Japan set 2)
 0:fa00:78:00:4a
@@ -4902,7 +4902,7 @@ rezont:  ;******Rezon (Taito)
 0:201c66:63:03:20
 0:2018ba:2:03:e8
 
-;********pushman.c 
+;********pushman.c
 pushman:
 pushmans:
 pushmana:  ;******Pushman (Korea, set 2)
@@ -4917,7 +4917,7 @@ lgtnfghta:
 0:90400:50:41:50
 0:90120:4:00:60
 
-;******Bronx 
+;******Bronx
 bronx:
 0:e1da:28:0:41
 
@@ -5003,7 +5003,7 @@ popeyeu:
 pbobble:
 0:907010:36:00:00
 
-;******turbo out run (set 2, upright, 317-unknown)(both fixed) 
+;******turbo out run (set 2, upright, 317-unknown)(both fixed)
 toutruna:
 toutrunu:  ;****** turbo out run (set 3,upgrade kit, 317-0118)
 toutrun1:
@@ -5056,7 +5056,7 @@ qsangoku:
 shippumd:
 kingdmgp:
 0:1002d0:9e:00:4e
-0:1003c4:53:2a:39 
+0:1003c4:53:2a:39
 
 ;********cps2.c (Quiz Nanairo Dreams: Nijiirochou no Kiseki (Japan 960826))
 qndream:
@@ -5217,7 +5217,7 @@ aurail1d:
 aurailjd:
 0:ffff7e:27:00:52
 
-;******body slam (8751 317-unknown) 
+;******body slam (8751 317-unknown)
 bodyslam:
 dumpmtmt:  ;******dump matsumoto (japan 8751 317-unknown)
 0:fffcc0:3c:00:00
@@ -5225,10 +5225,10 @@ dumpmtmt:  ;******dump matsumoto (japan 8751 317-unknown)
 
 ;Golden Axe (by GeoMan)
 goldnaxe:
-goldnaxa:  
-goldnaxej:  
+goldnaxa:
+goldnaxej:
 goldnaxeu:
-goldnaxeb2: 
+goldnaxeb2:
 goldnaxeb1:
 goldnaxe1:
 goldnaxe2:
@@ -5289,7 +5289,7 @@ quartet2:  ;******quartet 2 (japan, 8751 317-unknown)
 vanguard:
 vanguardc:
 vanguardj:  ;******Vanguard (Japan)
-0:220:70:11:30 
+0:220:70:11:30
 0:25:3:00:00
 
 ;********tigeroad.c
@@ -5315,8 +5315,8 @@ bootcampa:
 
 ;*******mermaid.c (mermaid)
 mermaid:
-yachtmn:  ;******Yachtsman 
-0:c008:6:00:00 
+yachtmn:  ;******Yachtsman
+0:c008:6:00:00
 
 ;********asteroid.c
 asteroid:
@@ -5331,7 +5331,7 @@ asteroid1:
 0:001c:35:00:00
 0:2a6:1:01:01
 
-meteorts: ;******Meteorites 
+meteorts: ;******Meteorites
 meteorho:
 0:001c:35:00:00
 
@@ -5455,8 +5455,8 @@ ikki:
 farmer: ;*****Farmers Rebellion
 0:c010:1e:22:00
 0:d61b:1:2a:2a
-0:d65b:1:04:04 
-0:d69b:1:00:00 
+0:d65b:1:04:04
+0:d69b:1:00:00
 0:d6db:1:00:00
 0:d71b:1:00:00
 0:d75b:1:00:00
@@ -5491,7 +5491,7 @@ cookbib2:
 0:1026c4:1:4d:4d
 
 ;******Street Fighter II' - Hyper Fighting (World 921209)
-sf2hf:   
+sf2hf:
 0:ffd276:28:00:20
 0:ffd2c6:14:ff:96
 0:ffd2ee:04:00:00
@@ -5546,11 +5546,11 @@ countrunb:
 ;* latest unofficial highscore_v0.85 additions below - by leezer/firebrand/geoman/others  *
 ;******************************************************************************************
 
-;*******gold medalist & Gold Medalist (alt) 
+;*******gold medalist & Gold Medalist (alt)
 goldmedl:
 goldmedla:
 0:40a20:a0:00:00
-0:40b22:46:1b:00 
+0:40b22:46:1b:00
 0:40b20:2:00:01
 
 ;*******fax & fax (alt questions)
@@ -5744,7 +5744,7 @@ nratechu:
 piratetr:
 0:2dc:4f:55:44
 
-;(leprechaun) and clones (by GeoMan) 
+;(leprechaun) and clones (by GeoMan)
 ;** let game display hiscore table a few times in attract mode before **
 ;** starting a game **
 leprechn:
@@ -5859,7 +5859,7 @@ changesa:
 0:8aba:6:00:00
 
 ;(violence fight (world)) (by GeoMan)
-viofight: 
+viofight:
 viofightu:
 viofightj:
 0:a02800:28:02:20
@@ -5958,7 +5958,7 @@ bullsdrtg:
 
 ;********toaplan2.c
 battleg:
-battlegb: 
+battlegb:
 0:10ca4c:ed:00:2a
 0:101241:1:45:45
 
@@ -6280,11 +6280,11 @@ ultraxg:
 0:1ac8e:28:40:04
 0:e23c:3:40:0f
 
-;**btime by Ziller 
+;**btime by Ziller
 vecbtime:
 0:0033:27:00:FF
 
-;*******centiped.c by Ziller 
+;*******centiped.c by Ziller
 centidux:
 pacipede:
 vectiped:
@@ -6293,7 +6293,7 @@ killiped:
 0:000b:0f:10:01
 0:0023:0f:04:12
 
-;********dkong.c by Ziller 
+;********dkong.c by Ziller
 kong2600:
 0:6100:AA:94:76
 0:60B8:03:50:00
@@ -6305,22 +6305,22 @@ kong2600:
 0:75a1:01:00:00
 
 
-;********galaga.c by Ziller 
+;********galaga.c by Ziller
 galaga99:
 vgalaga:
 0:8a20:2d:00:18
 0:83ed:6:00:24
 
-;**galaxian: by Ziller 
+;**galaxian: by Ziller
 buglaxn:
 0:40a8:3:00:00
 
-;********milliped.c by Ziller 
+;********milliped.c by Ziller
 silliped:
 0:64:30:75:17
 0:24:1:a0:a0
 
-;********mrdo.c by Ziller 
+;********mrdo.c by Ziller
 mrdigdo:
 0:e017:64:01:00
 
@@ -6375,11 +6375,11 @@ rungun:
 
 ;******locked and loaded(By Firebrand)
 lockload:
-0:102703:f6:20:1e 
+0:102703:f6:20:1e
 
 ;******great guns(By Firebrand)
 greatgun:
-0:e00b:53:55:50 
+0:e00b:53:55:50
 
 ;******genix(By Firebrand)
 genix:
@@ -6450,7 +6450,7 @@ retofinv1:
 
 ;********(field day and clone)
 fieldday:
-undoukai: 
+undoukai:
 0:c00d:536:48:11
 0:a190:1:03:03
 
@@ -6486,43 +6486,43 @@ sgunner2j:
 zaviga:
 zavigaj:
 0:0da0:50:00:20
-0:1026:5:14:10 
+0:1026:5:14:10
 
 ;*******tricky doc(By Firebrand)
 trckydoc:
-0:e05a:5a:2d:46 
+0:e05a:5a:2d:46
 
 sdtennis: ;[Special thanks to Cananas for enhancing this entry]
 0:0200:3c:01:15
 0:0250:3c:3b:43
-0:002c:03:88:01 
+0:002c:03:88:01
 
 ;*******rapid hero(Japan?)(By Firebrand)
 ;wait to see top scores before you start a game
 raphero:
-0:1fe600:60:00:01 
+0:1fe600:60:00:01
 
 ;*******progress(By Firebrand)(Hiscore does not seem to change during game)
 progress:
-0:8711:e:00:01 
+0:8711:e:00:01
 
 ;*******prebillian(By Firebrand)(Hiscore display will not change. It is always 50,000. Please check)
 pbillian:
 0:f26b:23:00:45
-0:f222:3:00:00 
+0:f222:3:00:00
 
 ;*******metal soldier issac II(By Firebrand)
 msisaac:
-0:e4a5:50:02:4d 
+0:e4a5:50:02:4d
 
 ;*******kung-fu taikun(By Firebrand)
 kungfut:
 kungfuta:
-0:c1d3:2c:00:1f 
+0:c1d3:2c:00:1f
 
 ;*******kick start wheelie king(By Firebrand)
 kikstart:
-0:816f:3:00:00 
+0:816f:3:00:00
 
 ;*******horizon(By Firebrand)
 horizon:
@@ -6630,7 +6630,7 @@ hedpanico:
 ;*******champion pro wrestling(By Firebrand)
 chwrestl:
 0:c009:3:00:00
-0:c00c:3:00:00 
+0:c00c:3:00:00
 
 ;*******vasara
 vasara:
@@ -6831,7 +6831,7 @@ sboblboblc:
 0:e611:1:00:00
 0:e60b:2:00:00
 
-sboblbob:  
+sboblbob:
 sboblboa:  ;******Super Bobble Bobble (set 1)
 sboblbobla:
 sboblboblb:
@@ -7045,7 +7045,7 @@ gametngk:
 0:fee16000:44d:47:00
 0:fee16448:1:01:01
 
-;********macross II(By Firebrand)(redited to include each stage's hiscore 
+;********macross II(By Firebrand)(redited to include each stage's hiscore
 ;and all ranks)
 macross2:
 macross2g:
@@ -7081,20 +7081,20 @@ dassault:
 0:3f803c:1e:19:10
 
 ;*******mayhem 2002(By Firebrand)
-; - Only works if you delete the nvram after you turn off the game. Making 
+; - Only works if you delete the nvram after you turn off the game. Making
 ;the nvram read-only will not work.
 mayhem:
 0:e081:ba:10:45
 
 ;*******super triv II(By Firebrand)
-; - Only saves "Experts Only" scores, can save other slots but the games are 
+; - Only saves "Experts Only" scores, can save other slots but the games are
 ;different every time
-;, - unless you choose the same three over and over again so only "Experts 
+;, - unless you choose the same three over and over again so only "Experts
 ;Only" game stays the same.
 supertr2:
 0:4891:20:00:00
 
-;*******golly! ghost!(By Firebrand)(unable to test properly due to lack of 
+;*******golly! ghost!(By Firebrand)(unable to test properly due to lack of
 ;sight movement on screen)
 gollygho:
 0:10312E:143:02:00
@@ -7149,7 +7149,7 @@ bjourney:
 
 ;*******(mega twins [updated])
 mtwins:
-chikij: 
+chikij:
 0:ff12c8:190:00:00
 0:ff9168:28:02:5b
 0:ffe006:04:00:00
@@ -7219,7 +7219,7 @@ willowuo:
 
 willow:
 willowj:
-willowu: 
+willowu:
 0:ffefc6:50:00:20
 0:fff03e:04:00:00
 
@@ -7292,7 +7292,7 @@ dragnblz:
 bang:
 0:fe5a4c:ee:41:01
 
-;*******(alligator hunt (unprotected))   
+;*******(alligator hunt (unprotected))
 aligatorun:
 0:fe51da:2:42:68
 0:feaf02:98:42:2e
@@ -7511,7 +7511,7 @@ armwarr1:
 armwaru1:
 pgearr1:
 pgear:
-0:ff27d6:256:00:04 
+0:ff27d6:256:00:04
 
 ;(cassette: tornado) (by GeoMan)
 ctornado:
@@ -7857,7 +7857,7 @@ shadfrceu:
 0:1f002c:26:00:00
 0:1f0022:4:00:00
 
-;(sheriff) and clones (by GeoMan) 
+;(sheriff) and clones (by GeoMan)
 sheriff:
 bandido:
 westgun2:
@@ -7892,7 +7892,7 @@ stactics:
 0:e700:a:0:0
 0:f700:a:0:0
 
-;(space laser) and clones (by GeoMan) 
+;(space laser) and clones (by GeoMan)
 spclaser:
 laser:
 0:2034:2:0:0
@@ -8137,7 +8137,7 @@ iqblock:
 0:f1a4:3:00:00
 0:f16e:1:13:13
 
-;*******epos.c (igmo) 
+;*******epos.c (igmo)
 ;** only saves top score **
 igmo:
 0:784a:3c:10:00
@@ -8300,11 +8300,11 @@ uecology:
 ecofghtru:
 0:ff033b:a0:0a:00
 0:ff8106:4:00:00
- 
+
 ;********psikyo.c (battle k-road (japan))
 btlkrodj:
 btlkroad:
-btlkroadk: 
+btlkroadk:
 0:fe1af4:4e:00:04
 
 ;********missb.c (miss bubble 2)
@@ -8316,15 +8316,15 @@ missb2:
 ;********renegade.c (nekketsu kouha kunio-kun (japan bootleg))
 kuniokunb:
 kuniokun:
-0:2e:3:00:05 
-0:102c:28:47:00 
+0:2e:3:00:05
+0:102c:28:47:00
 
-;********rockrage.c (rock `n rage (world?) 
+;********rockrage.c (rock `n rage (world?)
 rockrage:
 rockragej:
 0:4980:4e:01:53
 0:48be:3:01:80
-0:4fc8:1:54:54 
+0:4fc8:1:54:54
 
 ;******Rock 'n Rage (Prototype?)
 rockragea:
@@ -8335,7 +8335,7 @@ rockragea:
 ;********galaxian.c (zero time)
 zerotime:
 0:40a8:3:00:00
- 
+
 ;(scrambled egg) and clones (by GeoMan)
 scregg:
 eggs:
@@ -8347,17 +8347,17 @@ scorpng:
 0:4207:f:00:00
 0:42ad:f:10:10
 
-;(sauro) (by GeoMan) 
+;(sauro) (by GeoMan)
 sauro:
 saurop:
 0:e000:b4:00:4f
- 
+
 ;(sasuke vs. commander) (by GeoMan)
 sasuke:
 0:24:2:00:05
 
 ;(samurai (sega)) (by GeoMan)
-samurai: 
+samurai:
 0:971a:12:00:00
 
 ;(safari rally) (by GeoMan) - hiscore updates after new game start !!!
@@ -8365,24 +8365,24 @@ safarir:
 safarirj:
 0:2389:3:00:00
 0:2381:3:00:00
-0:2141:1:20:20 
+0:2141:1:20:20
 0:2161:1:20:20
-0:2181:1:20:20 
+0:2181:1:20:20
 0:21a1:1:20:20
 0:21c1:1:20:20
 0:21e1:1:20:20
- 
+
 ;(sadari) (by GeoMan)
-sadari: 
+sadari:
 0:c31d:3c:3a:01
 
 ;(riding fight (world)) and clones (by GeoMan)
-ridingf: 
-ridingfu: 
-ridingfj: 
+ridingf:
+ridingfu:
+ridingfj:
 0:408060:80:00:3f
- 
-;(reikai doushi (japan)) 
+
+;(reikai doushi (japan))
 reikaids:
 0:43ca:1e:00:e8
 0:40df:2:13:88
@@ -8390,10 +8390,10 @@ reikaids:
 ;(red alert) (by GeoMan)
 redalert:
 0:301:f:0:0
- 
+
 ;(raiders5) and clones (by GeoMan)
 raiders5:
-raiders5t: 
+raiders5t:
 0:e075:37:00:55
 0:888c:7:22:10
 
@@ -8405,28 +8405,28 @@ raflesia:
 ;(puzzle de bowling (japan)) (by GeoMan)
 pzlbowl:
 0:20a9c4:60:0a:a8
- 
+
 ;(punk shot (us 4 players)) and clones (by GeoMan)
-punkshot: 
+punkshot:
 punkshotj:
 punkshot2:
 0:80700:30:00:40
 
 ;(power surge) (by GeoMan) - Hiscores appear correctly after game enters attract mode!
-psurge: 
-0:a86c:6:20:30 
+psurge:
+0:a86c:6:20:30
 0:b080:50:31:ff
 
-;(pop flamer (protected)) and clones (by GeoMan)- hiscore updates after new game start !!! 
+;(pop flamer (protected)) and clones (by GeoMan)- hiscore updates after new game start !!!
 popflame:
 popflamea:
 popflameb:
-popflamen: 
+popflamen:
 0:4004:3:0:0
 0:4021:3:0:0
 0:872f:1:20:20
 0:8733:1:20:20
-0:8737:1:20:20 
+0:8737:1:20:20
 0:873b:1:20:20
 0:873f:1:20:20
 0:8743:1:20:20
@@ -8435,8 +8435,8 @@ popflamen:
 pcktgal:
 pcktgalb:
 pcktgal2:
-spool3: 
-spool3i: 
+spool3:
+spool3i:
 pcktgal2j:
 0:0467:2:64:00
 
@@ -8444,21 +8444,21 @@ pballoon:
 pballoonr:
 0:0220:70:11:30
 0:0022:3:00:00
- 
+
 ;(pettan pyuu (japan)) (by GeoMan)
-pettanp: 
+pettanp:
 0:c0c2:1e:20:00
 
 ;********slapfght.c - ADDED CLONE
-perfrman: 
+perfrman:
 perfrmanu:
 0:8006:30:89:12
 0:8609:07:24:00
 
 ;(percussor, the) (by GeoMan)
-percuss: 
+percuss:
 0:5da8:37:00:24
- 
+
 ;********************************************************************************
 ;* latest unofficial highscore_v7.93 additions below - by leezer/geoman/others  *
 ;********************************************************************************
@@ -8468,23 +8468,23 @@ peekaboo:
 peekaboou:
 0:1f0278:60:00:fa
 0:1f0380:4:00:00
- 
+
 ;(pass) (by GeoMan)
 pass:
 0:81200:50:4b:00
 0:8005e:4:00:00
- 
+
 ;(paddle mania) (by GeoMan)
 paddlema:
 0:801a8:28:02:03
 0:82108:a0:00:20
 
 ;(onna sansirou - typhoon gal (set 1)) and clones (by GeoMan)
-onna34ro: 
+onna34ro:
 onna34roa:
-0:e1d7:82:00:65 
+0:e1d7:82:00:65
 0:e188:3:00:01
- 
+
 ;(noboranka (japan)) (by GeoMan)
 nob:
 nobb:
@@ -8495,11 +8495,11 @@ nobb:
 ninjakun:
 0:e0a3:37:00:20
 0:c08c:7:22:10
- 
-;(ninja kid ii (set 1)) and clones (by GeoMan) 
+
+;(ninja kid ii (set 1)) and clones (by GeoMan)
 ninjakd2:
-ninjakd2a: 
-ninjakd2b: 
+ninjakd2a:
+ninjakd2b:
 rdaction:
 ninjakd2c:
 0:e0f4:3:00:00
@@ -8512,14 +8512,14 @@ column2j:
 0:fffc1f:90:55:00
 
 ;(new sinbad 7) (by GeoMan)
-newsin7: 
+newsin7:
 newsin7a:
 0:43d3:48:00:10
 0:413d:3:0:0
 
 ;(navalone) (by GeoMan)
 navalone:
-navarone: 
+navarone:
 0:402d:3:0:0
 
 ;(nato defense) and clones (by GeoMan)
@@ -8533,53 +8533,53 @@ nastarw:
 rastsag2:
 0:601eef:3a:00:42
 0:600545:3:00:77
- 
+
 ;(hexion (japan)) (by GeoMan)
-hexion: 
+hexion:
 hexionb:
 0:a740:3:00:10
 0:a743:27d:00:00
 
 ;*******gotya.c (got-ya (12/241981,prototype ?)) - ADDED CLONE
 gotya:
-thehand: 
+thehand:
 0:5021:3:00:01
 
 ;******cvs.c (radar zone - ADDED CLONE)
 outline:
 radarzon:
-radarzon1: 
-radarzont: 
+radarzon1:
+radarzont:
 0:1c08:35:00:00
 
 ;(invinco) (by GeoMan)
 invinco:
 0:8398:16:00:00
- 
+
 ;(invinco / head on 2) (by GeoMan)
 invho2:
-0:83b6:16:00:00 
+0:83b6:16:00:00
 0:8392:12:30:30
 
 ;(kaos) (by GeoMan)
-kaos: 
+kaos:
 0:03c8:30:84:44
 
 ;(ken-go) (by GeoMan)
-kengo: 
+kengo:
 kengoa:
 ltswords:
 0:e09f2:82:10:20
- 
+
 ;(kodure ookami (japan)) (by GeoMan)
-kodure: 
-0:637c0:4:00:00 
+kodure:
+0:637c0:4:00:00
 0:635b4:28:00:00
 
 ;(knuckle bash) (by GeoMan)
 kbash:
 kbashk:
-0:100080:3c:00:30 
+0:100080:3c:00:30
 
 ;(knuckle joe (set 1)) and clones (by GeoMan)
 kncljoe:
@@ -8593,76 +8593,76 @@ kurikintu:
 kurikintj:
 kurikinta:
 0:8aa3:a0:00:2e
- 
+
 ;(legend of makai (world)) and clones (by GeoMan)
 lomakai:
-makaiden: 
-0:ff000:2:00:03 
-0:ff002:7e:00:00 
+makaiden:
+0:ff000:2:00:03
+0:ff002:7e:00:00
 0:fe060:4:00:00
- 
+
 ;(kyros) (by GeoMan)
-kyros: 
+kyros:
 kyrosj:
-0:20e00:ae:01:02 
+0:20e00:ae:01:02
 0:20020:4:00:00
 
 ;(lizard wizard) (by GeoMan)
-lizwiz: 
+lizwiz:
 0:4daf:3c:4d:01
 0:43ed:6:00:40
 
-;(lost tomb (easy)) and clones (by GeoMan) 
-losttomb: 
-losttombh: 
+;(lost tomb (easy)) and clones (by GeoMan)
+losttomb:
+losttombh:
 0:8110:50:03:00
 
 ;(mach rider) (by GeoMan)
 machridr:
 0:0714:50:00:4b
- 
+
 ;(mad crasher) (by GeoMan)
 madcrash:
 0:c2b3:4b:00:4b
 
 ;(magical spot ii) (by GeoMan)
 magspot2:
-0:6007:2:00:20 
+0:6007:2:00:20
 0:6009:1:00:00
 
 ;(megatack) (by GeoMan)
 megatack:
 0:00c4:f:00:1a
 
-;(minefield) (by GeoMan) 
+;(minefield) (by GeoMan)
 minefld:
 0:80f3:3c:01:43
 minefldfe:
 0:ef3:3c:03:50
- 
-;(bucky o'hare (world version ea) and clones (by GeoMan) 
+
+;(bucky o'hare (world version ea) and clones (by GeoMan)
 bucky:
 buckyuab:
 buckyaab:
 buckyea:
 0:801e0:50:00:04
- 
+
 ;(mister viking) and clones (by GeoMan)
 mrviking:
-mrvikngj: 
+mrvikngj:
 0:d42c:15:59:47
-0:d300:15:00:01 
+0:d300:15:00:01
 0:c086:3:00:02
- 
+
 ;(money money) (by GeoMan)
 monymony:
 0:7512:48:0a:00
 0:726d:3:00:00
- 
+
 ;(mystic raiders (world)) and clones (by GeoMan)
 mysticri:
 gunhohki:
-0:e8af8:38:00:4d 
+0:e8af8:38:00:4d
 0:e8b30:94:2e:00
 
 ;(mysterious stones) (by GeoMan)
@@ -8670,54 +8670,54 @@ mystston:
 myststono:
 myststonoi:
 0:0308:37:00:0c
-0:001a:5:00:00 
+0:001a:5:00:00
 0:1033:8:40:41
- 
+
 ;(cyberbots: fullmetal madness (japan 950420)) (by GeoMan)
-cybots: 
+cybots:
 cybotsj:
 cybotsu:
 cybotsjd:
 cybotsud:
 0:ffe6a0:5:00:43
 0:ffe6a5:4b:41:00
- 
-;(space trek (upright)) and clones (by GeoMan) 
+
+;(space trek (upright)) and clones (by GeoMan)
 spacetrk:
 spacetrkc:
 0:838c:4:0:0
 
-spacezap: 
-0:d00f:1:ff:ff 
-0:d041:6:0:0 
+spacezap:
+0:d00f:1:ff:ff
+0:d041:6:0:0
 0:d01d:6:0:0
 
 
 ;(american speedway (set 1)) and clones (by GeoMan)- * UNDER TEST *
-amspdwy: 
+amspdwy:
 amspdwya:
-0:e402:190:50:00 
-0:e602:190:50:00 
+0:e402:190:50:00
+0:e602:190:50:00
 0:e3de:23:00:5c
- 
-;(speed ball) (by GeoMan) 
-speedbal: 
+
+;(speed ball) (by GeoMan)
+speedbal:
 0:f800:46:20:50
 
 ;(speed freak) (by GeoMan)
 speedfrk:
 0:128:2:0:0
- 
-;(spinal breakers (world)) and clones (by GeoMan) 
-spinlbrk: 
-spinlbrku: 
-0:ffac76:8c:00:50 
+
+;(spinal breakers (world)) and clones (by GeoMan)
+spinlbrk:
+spinlbrku:
+0:ffac76:8c:00:50
 spinlbrkj:
 0:ffacce:8c:00:50
- 
+
 ;(sports match) (by GeoMan)
-sprtmtch: 
-0:7500:30:4a:00 
+sprtmtch:
+0:7500:30:4a:00
 0:7743:2:00:00
 
 ;(s.r.d. mission) (by GeoMan)
@@ -8727,7 +8727,7 @@ fx:
 
 ;(star jacker (sega)) and clones (by GeoMan)
 starjack:
-0:c0e1:1e:00:52 
+0:c0e1:1e:00:52
 0:c0db:3:00:03
 
 starjacks:
@@ -8736,31 +8736,31 @@ starjacks:
 
 ;(strength & skill) and clones (by GeoMan)
 strnskil:
-guiness: 
+guiness:
 0:c0c4:1e:22:00
 0:c430:60:09:00
- 
+
 ;(super bond) (by GeoMan)
 superbon:
 0:810f:50:00:48
 
 ;(super invader attack) (by GeoMan)
-sia2650: 
-tinv2650: 
+sia2650:
+tinv2650:
 0:1d07:2:0:0
-0:19fa:1:30:30 
+0:19fa:1:30:30
 0:1a1a:1:30:30
 0:1a3a:1:30:30
 0:1a5a:1:30:30
- 
-;(superbike) (by GeoMan) 
-superbik: 
+
+;(superbike) (by GeoMan)
+superbik:
 0:1c08:1e:00:30
 
 ;(syvalion (japan)) (by GeoMan)
 syvalion:
-0:1090ec:10:00:01 
-0:1090fc:54:49:00 
+0:1090ec:10:00:01
+0:1090fc:54:49:00
 0:104266:4:00:00
 
 ;(tailgunner) (by GeoMan)
@@ -8768,22 +8768,22 @@ tailg:
 0:d8:4:0:0
 
 ;(tecmo knight) and clones (by GeoMan)- hiscores update after hiscore table is displayed in attract mode
-tknight: 
-wildfang: 
+tknight:
+wildfang:
 wildfangs:
 0:609ce:28:00:1a
- 
-;(time limit) (by GeoMan) 
+
+;(time limit) (by GeoMan)
 timelimt:
-0:80ca:3:0:0 
+0:80ca:3:0:0
 0:8981:1:27:27
-0:89a1:1:00:00 
+0:89a1:1:00:00
 0:89c1:1:27:27
 0:89e1:1:27:27
-0:8a01:1:27:27 
+0:8a01:1:27:27
 0:8a21:1:27:27
- 
-;(time tunnel) (by GeoMan) 
+
+;(time tunnel) (by GeoMan)
 timetunl:
 0:801f:6:0:0
 0:c46d:6:63:63
@@ -8793,64 +8793,64 @@ tokisens:
 0:c04d:54:00:20
 0:c0a1:4:00:00
 
-;(tough turf (japan)) and clones (by GeoMan) 
+;(tough turf (japan)) and clones (by GeoMan)
 tturf:
 tturfu:
 tturfbl:
 0:200100:4:00:08
 0:200104:7c:08:00
- 
+
 ;(ultraman club - tatakae! ultraman kyoudai!!) (by GeoMan)
-umanclub: 
+umanclub:
 0:200742:2:00:07
-0:2006a2:a0:00:00 
+0:2006a2:a0:00:00
 
 ;(valkyrie no densetsu (japan)) (by GeoMan)
-valkyrie: 
-0:100620:4:00:a0 
+valkyrie:
+0:100620:4:00:a0
 0:100624:9c:56:00
 
-;(vanguard ii) (by GeoMan) 
+;(vanguard ii) (by GeoMan)
 vangrd2:
 0:c380:60:0a:00
 0:f620:3:00:00
- 
-;(vastar (set 1)) and clones (by GeoMan) 
-vastar: 
+
+;(vastar (set 1)) and clones (by GeoMan)
+vastar:
 vastar2:
 vastar3:
 vastar4:
 0:cda1:1:00:00
-0:cdc1:1:00:00 
-0:cde1:1:00:00 
+0:cdc1:1:00:00
+0:cde1:1:00:00
 0:ce01:1:00:00
-0:ce21:1:02:02 
-0:ce41:1:28:28 
-0:ce61:1:28:28 
-0:f128:85:00:16 
+0:ce21:1:02:02
+0:ce41:1:28:28
+0:ce61:1:28:28
+0:f128:85:00:16
 
-;(wai wai jockey gate-in!) (by GeoMan) 
+;(wai wai jockey gate-in!) (by GeoMan)
 wwjgtin:
-0:0220:70:24:24 
+0:0220:70:24:24
 0:001c:3:00:00
 
-;(wall street) (by GeoMan) 
+;(wall street) (by GeoMan)
 wallst:
 0:1c19:1e:00:00
 
 ;(water match) (by GeoMan)
-wmatch: 
-0:c000:3c:84:02 
-0:c086:3:00:02 
-0:d300:15:00:01 
-0:d380:15:41:49 
+wmatch:
+0:c000:3c:84:02
+0:c086:3:00:02
+0:d300:15:00:01
+0:d380:15:41:49
 0:d400:2d0:84:4d
 
 ;(water ski) (by GeoMan)
-waterski: 
+waterski:
 0:835b:3:0:0
 
-;(capcom sports club (japan 970722)) and clones (by GeoMan) 
+;(capcom sports club (japan 970722)) and clones (by GeoMan)
 csclubj:
 cscluba:
 csclub:
@@ -8858,15 +8858,15 @@ csclub1:
 csclubh:
 csclubjy:
 csclub1d:
-0:ff9894:50:00:b2 
-0:ff98e4:dc:1a:01 
+0:ff9894:50:00:b2
+0:ff98e4:dc:1a:01
 
-;(in the hunt (world)) and clones (by GeoMan) - FIXED ENTRY! 
+;(in the hunt (world)) and clones (by GeoMan) - FIXED ENTRY!
 inthunt:
 inthuntu:
 kaiteids:
 0:e0180:d8:00:02
- 
+
 ;********system16.c (wonder boy iii - monster lair (set 1))
 wb3bbl:
 wb32:
@@ -9121,7 +9121,7 @@ puzzli:
 
 ;********taito_b.c (hit the ice (us))
 ;** you must wait untill the hiscore table has displayed in attract mode before **
-;** starting a game, for the save to work ** 
+;** starting a game, for the save to work **
 hitice:
 0:802830:27:00:4b
 0:802852:1:56:56
@@ -9246,7 +9246,7 @@ rckman2jregion:
 ;0:fff666:1:54:54
 
 ;Saturday Night Slam Masters clones
-slammastu: 
+slammastu:
 0:ffa138:02:00:10
 0:ffa13a:ae:00:00
 
@@ -9368,7 +9368,7 @@ naughtyc:
 0:8743:1:20:20
 
 ;in this game to make the hiscore display by starting a new game (if you beat the hiscore) before you exit
-naughtyb: 
+naughtyb:
 naughtyba:
 naughtybc:
 0:4004:3:0:0
@@ -9376,8 +9376,8 @@ naughtybc:
 0:872f:1:20:20
 0:8733:1:20:20
 0:8737:1:20:20
-0:873b:1:20:20 
-0:873f:1:20:20 
+0:873b:1:20:20
+0:873f:1:20:20
 0:8743:1:20:20
 
 ;Video Hustler and clones (by GeoMan)
@@ -9403,7 +9403,7 @@ moonwara:
 
 ;********taito_f3.c (lightbringer (japan))
 ;** you must wait until the hiscore table has displayed in attract mode before **
-;** starting a game, for the save to work ** 
+;** starting a game, for the save to work **
 lightbr:
 lightbrj:
 0:40a312:70:00:01
@@ -9473,7 +9473,7 @@ omega:
 
 ;********wgp.c (world grand prix (us & joystick version set 1 japan)
 ;** you must wait untill the hiscore table has displayed in attract mode before **
-;** starting a game, for the save to work ** 
+;** starting a game, for the save to work **
 ;** THIS SAVE DOES NOT SAVE THE COURSE RECORDS **
 wgp:
 0:10bbd9:c5:01:02
@@ -10227,7 +10227,7 @@ bouldash:
 0:306aa1:3:00:00
 
 ;*********gaelco.c (biomechanical toy (unprotected))
-;** you must let the highscore display in attract mode before starting a game  ** 
+;** you must let the highscore display in attract mode before starting a game  **
 biomtoy:
 biomtoya:
 0:ff0794:17:06:2e
@@ -10762,7 +10762,7 @@ rrangerb:
 
 ;********parodius.c (parodius da! (japan))
 parodius:
-parodiusj: 
+parodiusj:
 parodiusa:
 parodiuse:
 0:1f50:5e:00:00
@@ -11025,7 +11025,7 @@ quantump:
 
 ;*******playch10.c (play choice 10:rc pro am)
 ;pc_rcpam:
-;1:378:64:17:29 
+;1:378:64:17:29
 
 ;********deniam.c (karian cross)
 karianx:
@@ -11137,7 +11137,7 @@ helifirea:
 0:6008:3:00:00
 
 invadpt2:
-invaddlx: 
+invaddlx:
 0:20f4:2:00:05
 0:2340:a:1b:1b
 
@@ -11160,7 +11160,7 @@ lagunar:
 lrescue:
 warl:
 desterth:
-lrescuem:  
+lrescuem:
 lrescuem2:
 ;updated when start a game
 0:20db:1:0a:0a
@@ -11181,9 +11181,9 @@ polaris:
 
 polarisa:
 polarisbr:
-0:2150:14:00:00  
-0:2165:1e:2a:2a 
-0:2314:02:00:00 
+0:2150:14:00:00
+0:2165:1e:2a:2a
+0:2314:02:00:00
 
 rollingc:
 0:2302:0f:00:00
@@ -11250,12 +11250,12 @@ valtric:
 0:fc38:4:00:00
 
 arkanoid: ;[Special thanks to Cananas for enhancing this entry]
-ark1ball: 
-arkangc: 
-arkangc2: 
+ark1ball:
+arkangc:
+arkangc2:
 arkbloc2:
 arkblock:
-arkgcbl: 
+arkgcbl:
 arkmcubl:
 arkanoidu:
 arkanoiduo:
@@ -11578,8 +11578,8 @@ armorar:
 ;starcas:
 ;starcas1:
 ;starcase:
-;starcasp: 
-;stellcas: 
+;starcasp:
+;stellcas:
 ;0:1aa:4:00:00
 
 crash:
@@ -11597,7 +11597,7 @@ f1gpstar:
 
 ;********citycon.c
 citycon:
-citycona: 
+citycona:
 cruisin:
 0:0055:3:00:13
 0:0043:3:00:02
@@ -11672,7 +11672,7 @@ cop01a:
 cosmica:
 cosmica2:
 cosmica1:
-0:400e:3:00:00  
+0:400e:3:00:00
 
 panic:
 panich:
@@ -11681,7 +11681,7 @@ panic2:
 panic3:
 0:40c1:5:00:00
 0:5c00:c:09:15
-0:4004:2:00:00   
+0:4004:2:00:00
 
 ;********cps1.c
 1941:
@@ -11697,21 +11697,21 @@ cworld2j:
 0:ff0f6c:9c:00:00
 
 dino:
-dinoj: 
+dinoj:
 dinou:
 dinohunt:
 0:fff03e:310:00:00
 0:fff34e:010:99:00
 
 ghouls:
-ghoulsu: 
+ghoulsu:
 daimakair:
-daimakai: 
+daimakai:
 0:ffbf4c:78:48:a8
 0:ff087a:04:00:00
 
-mbombrd:  
-mbombrdj: 
+mbombrd:
+mbombrdj:
 0:ffa0cc:02:00:10
 0:ffa0ce:ae:00:00
 
@@ -11725,28 +11725,28 @@ mmancp2ur1:
 0:ffef10:28:00:02
 
 mercs:
-mercsur1: 
-mercsj: 
+mercsur1:
+mercsj:
 mercsua:
 0:ff0fd0:a0:00:20
 
 msword:
-mswordu: 
-mswordj: 
+mswordu:
+mswordj:
 mswordr1:
 0:fffe32:98:00:00
 0:fffeca:02:04:00
 0:ffa890:04:00:00
 
 nemo:
-nemoj: 
+nemoj:
 nemor1:
 0:fff004:28:00:20
 0:fff054:14:ff:24
 0:fff07c:04:00:00
 
 pang3:
-pang3j: 
+pang3j:
 pang3b:
 pang3r1:
 0:ff9726:8c:00:09
@@ -11757,8 +11757,8 @@ pnickj:
 0:ff8534:04:00:00
 
 punisher:
-punisheru: 
-punisherj: 
+punisheru:
+punisherj:
 punisherbz:
 punisherh:
 0:ff7896:258:ff:01
@@ -11803,8 +11803,8 @@ sf2jl:
 sf2ed:
 sf2ebbl2:
 sf2ebbl3:
-0:ffd28a:30:00:20 
-0:ffd302:04:00:00            
+0:ffd28a:30:00:20
+0:ffd302:04:00:00
 
 sf2accp2:
 0:ffd276:27:00:4b
@@ -11814,20 +11814,20 @@ sf2red:
 0:ffd276:28:02:20
 0:ffd2ee:04:02:53
 
-slammast: 
-mbomberj: 
+slammast:
+mbomberj:
 0:ffa138:02:00:10
 0:ffa13a:ae:00:00
 
 unsquad:  ;******u.n. squadren
 area88:
-area88r: 
+area88r:
 0:ff101c:50:00:26
 0:ff107c:08:00:00
 
 ;********crbaloon.c
-crbaloon: 
-crbaloon2: 
+crbaloon:
+crbaloon2:
 0:4016:03:00:00
 0:417f:0a:11:00
 
@@ -11881,12 +11881,12 @@ ddribblep:
 0:4800:70:1d:03
 
 baddudes: ;[Special thanks to Cananas for enhancing this entry]
-0:ffa8fe:a0:4d:01 
-0:ff81d4:04:00:00 
+0:ffa8fe:a0:4d:01
+0:ff81d4:04:00:00
 
-drgninja: 
+drgninja:
 drgninjab:
-0:ffa8f8:a0:4d:01 
+0:ffa8f8:a0:4d:01
 0:ff81d4:04:00:00
 
 drgninjab2:
@@ -11905,7 +11905,7 @@ ffantasya:
 0:ffbe00:50:08:01
 
 ;********dec8.c
-breywood: 
+breywood:
 0:0108:28:31:00
 0:006d:3:04:00
 
@@ -11950,7 +11950,7 @@ oscaru:
 0:075a:46:00:33
 0:0006:3:00:09
 
-shackled: 
+shackled:
 0:0108:28:31:00
 0:006b:3:04:00
 
@@ -11967,7 +11967,7 @@ croquis:
 logicpr2:
 0:ff70e6:46:0a:d0
 
-radarscp: 
+radarscp:
 radarscp1:
 0:6307:a2:00:fc
 0:60a8:3:50:00
@@ -12083,7 +12083,7 @@ phantom:
 rallysa:
 0:00ae:2:00:10
 
-sidetrac: 
+sidetrac:
 0:000f:2:00:00
 
 ;********fastfred.c
@@ -12091,7 +12091,7 @@ fastfred:
 0:c04b:3:00:00
 0:c400:3f:00:11
 
-flyboy: 
+flyboy:
 flyboyb:
 0:c400:1e:00:00
 0:c430:64:1b:10
@@ -12332,7 +12332,7 @@ gunsmokej:
 0:e680:50:00:18
 0:e600:8:00:00
 
-;********hcastle.c 
+;********hcastle.c
 hcastle:
 hcastleo:
 hcastljo:
@@ -12348,16 +12348,16 @@ hexa:
 hexaa:
 0:c709:2:00:00
 
-;********hyperspt.c 
+;********hyperspt.c
 roadf:
-roadf2: 
+roadf2:
 0:3bd0:10a:01:01
 0:3066:3:01:00
 
 ;********ironhors.c
 ironhors:
 dairesya:
-farwest: 
+farwest:
 0:32f1:3:02:00
 0:3300:40:23:00
 
@@ -12381,7 +12381,7 @@ manhatan:
 
 ;********junofrst.c
 junofrst:
-junofrstg: 
+junofrstg:
 0:8100:a0:01:3f
 
 diamond:
@@ -12399,7 +12399,7 @@ gyrussb:
 0:9488:28:00:83
 0:940b:03:00:01
 
-;********kaneko16.c 
+;********kaneko16.c
 berlwall:
 berlwallt:
 berlwallk:
@@ -12639,7 +12639,7 @@ lastfortg:
 0:c0db1a:0a:01:64
 
 ;********m97.c
-bbmanwj: ;**** top score not working ????? 
+bbmanwj: ;**** top score not working ?????
 bbmanw:
 bomblord:
 bbmanwja:
@@ -12810,14 +12810,14 @@ skyalert:
 mikie:
 mikiej:
 mikiehs:
-0:2a00:01:1d:1d 
-0:2a01:01:2c:2c 
-0:2a02:01:1f:1f 
-0:2a03:01:00:00 
-0:2a04:01:01:01 
-0:2a05:28:00:00 
-0:29f0:04:00:00 
-0:297c:04:00:00 
+0:2a00:01:1d:1d
+0:2a01:01:2c:2c
+0:2a02:01:1f:1f
+0:2a03:01:00:00
+0:2a04:01:01:01
+0:2a05:28:00:00
+0:29f0:04:00:00
+0:297c:04:00:00
 
 ;********mitchell.c
 block:
@@ -12843,13 +12843,13 @@ mole:
 00:0375:50:19:00
 
 ;********mpatrol.c
-mpatrol: 
-mpatrolw: 
-mranger: 
+mpatrol:
+mpatrolw:
+mranger:
 0:e008:2c:00:00
 
 ;********mrdo.c
-mrdo:  
+mrdo:
 mrdot:
 mrdofix:
 mrlo:
@@ -12964,7 +12964,7 @@ darius2do:
 sagaia:
 0:1010fa:44b:00:20
 
-;********nova2001.c 
+;********nova2001.c
 ;****note doesnt save top scores
 nova2001u:
 nova2001:
@@ -13118,7 +13118,7 @@ rallyxm:
 nrallyx:
 nrallyxb:
 rallyxmr:
-0:8060:8:00:02 
+0:8060:8:00:02
 
 ;********renegade.c
 renegade:
@@ -13213,7 +13213,7 @@ scramce:
 0:4200:1e:00:01
 0:40a8:03:00:01
 
-explorer: 
+explorer:
 0:4200:1e:49:01
 0:40a8:03:00:01
 
@@ -13245,7 +13245,7 @@ tacscan:
 0:cb44:0f:4d:48
 0:cb95:0f:02:00
 
-;********segac2.c 
+;********segac2.c
 borench:
 borencha:
 0:fff410:44:4d:05
@@ -13338,7 +13338,7 @@ shaolinb:
 sharkatt:
 0:806e:50:30:20
 
-;********sidearms.c 
+;********sidearms.c
 dyger:
 dygera:
 0:c0d0:23:37:06
@@ -13486,7 +13486,7 @@ superpacm:
 
 pacnpal:
 pacnchmp:
-pacnpal2: 
+pacnpal2:
 0:104c:28:00:23
 0:116d:3:00:00
 0:3ed:7:00:24
@@ -13539,7 +13539,7 @@ wboy2:
 wboy3:
 wboy4:
 wboy4u:
-wboyu: ;*note* only 1/2 works... 
+wboyu: ;*note* only 1/2 works...
 wbdeluxe:
 wboyo:
 wboy2u:
@@ -13554,7 +13554,7 @@ wboysys2:  ;******Wonder Boy (system 2)
 wbmljo:
 wbmljb:
 wbml:
-wbmlbg: 
+wbmlbg:
 wbmlbge:
 wbmlvc:
 wbmld:
@@ -13726,7 +13726,7 @@ spcinvdj:
 ;********taito_f2.c
 cameltry:
 ;*note cant see highscore table in cameltry so its commented out
-;cameltru: 
+;cameltru:
 0:106c9e:244:35:44
 0:1066b0:3e:06:00
 0:105430:4:00:00
@@ -13739,12 +13739,12 @@ dondokod:
 dondokodu:
 dondokodj:
 0:1028e8:28:00:55
- 
+
 gunfront:
 gunfrontj:
 0:10922c:54:00:30
 0:10922e:1:c3:c3
- 
+
 liquidk:
 liquidku:
 mizubaku:
@@ -14010,7 +14010,7 @@ truxton2:
 tatsujn2:
 0:100300:7c:00:01
 
-;********topspeed.c 
+;********topspeed.c
 topspeed:
 topspeedu:
 fullthrl:
