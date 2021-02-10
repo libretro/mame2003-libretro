@@ -526,13 +526,13 @@ else ifeq ($(platform), windows_msvc2010_x64)
 	WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')
 	WindowsSdkDir ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')
 
-   WindowsSDKIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include")
-   WindowsSDKGlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\gl")
-   WindowsSDKLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib\x64")
+	WindowsSDKIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include")
+	WindowsSDKGlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\gl")
+	WindowsSDKLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib\x64")
 
-   INCFLAGS_PLATFORM = -I"$(WindowsSDKIncludeDir)"
-   export INCLUDE := $(INCLUDE);$(WindowsSDKIncludeDir);$(WindowsSDKGlIncludeDir)
-   export LIB := $(LIB);$(WindowsSDKLibDir)
+	INCFLAGS_PLATFORM = -I"$(WindowsSDKIncludeDir)"
+	export INCLUDE := $(INCLUDE);$(WindowsSDKIncludeDir);$(WindowsSDKGlIncludeDir)
+	export LIB := $(LIB);$(WindowsSDKLibDir)
 	TARGET := $(TARGET_NAME)_libretro.dll
 	PSS_STYLE :=2
 	LDFLAGS += -DLL
@@ -550,12 +550,12 @@ else ifeq ($(platform), windows_msvc2010_x86)
 	WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')
 	WindowsSdkDir ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')
 
-   WindowsSDKIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include")
-   WindowsSDKGlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\gl")
-   WindowsSDKLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib")
+	WindowsSDKIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include")
+	WindowsSDKGlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\gl")
+	WindowsSDKLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib")
 
 	INCFLAGS_PLATFORM = -I"$(WindowsSDKIncludeDir)"
-   export INCLUDE := $(INCLUDE);$(WindowsSDKIncludeDir);$(WindowsSDKGlIncludeDir)
+	export INCLUDE := $(INCLUDE);$(WindowsSDKIncludeDir);$(WindowsSDKGlIncludeDir)
 	export LIB := $(LIB);$(WindowsSDKLibDir)
 	TARGET := $(TARGET_NAME)_libretro.dll
 	PSS_STYLE :=2
@@ -590,17 +590,17 @@ else ifeq ($(platform), windows_msvc2005_x86)
  	LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS80COMNTOOLS)../../VC/lib")
  	BIN := $(shell IFS=$$'\n'; cygpath "$(VS80COMNTOOLS)../../VC/bin")
 
-   WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3" -v "Install Dir" | grep -o '[A-Z]:\\.*')
+	WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3" -v "Install Dir" | grep -o '[A-Z]:\\.*')
 
-   WindowsSDKIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include")
-   WindowsSDKAtlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\atl")
+	WindowsSDKIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include")
+	WindowsSDKAtlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\atl")
 	WindowsSDKCrtIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\crt")
 	WindowsSDKGlIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\gl")
 	WindowsSDKMfcIncludeDir := $(shell cygpath -w "$(WindowsSdkDir)\Include\mfc")
 	WindowsSDKLibDir := $(shell cygpath -w "$(WindowsSdkDir)\Lib")
 
-   export INCLUDE := $(INCLUDE);$(WindowsSDKIncludeDir);$(WindowsSDKAtlIncludeDir);$(WindowsSDKCrtIncludeDir);$(WindowsSDKGlIncludeDir);$(WindowsSDKMfcIncludeDir);src/libretro/libretro-common/include/compat/msvc
-   export LIB := $(LIB);$(WindowsSDKLibDir)
+	export INCLUDE := $(INCLUDE);$(WindowsSDKIncludeDir);$(WindowsSDKAtlIncludeDir);$(WindowsSDKCrtIncludeDir);$(WindowsSDKGlIncludeDir);$(WindowsSDKMfcIncludeDir);src/libretro/libretro-common/include/compat/msvc
+	export LIB := $(LIB);$(WindowsSDKLibDir)
  	TARGET := $(TARGET_NAME)_libretro.dll
  	PSS_STYLE :=2
  	LDFLAGS += -DLL
