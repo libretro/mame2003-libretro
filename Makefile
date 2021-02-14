@@ -9,8 +9,6 @@ CPU_ARCH      ?= 0 # as of November 2018 this flag doesn't seem to be used but i
 
 LIBS          ?=
 
-HIDE ?= @
-
 ifneq ($(SANITIZER),)
 	CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
 	CXXFLAGS := -fsanitize=$(SANITIZER) $(CXXFLAGS)
@@ -756,6 +754,14 @@ else
 	CFLAGS += -O2 -DNDEBUG
 endif
 
+ifneq (,$(findstring msvc,$(platform)))
+ifeq ($(DEBUG),1)
+	CFLAGS += -MTd
+else
+	CFLAGS += -MT
+endif
+endif
+
 # include the various .mak files
 include Makefile.common
 
@@ -796,46 +802,41 @@ endef
 all:	$(TARGET)
 $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING),1)
-	@echo Archiving $@...
 ifeq ($(SPLIT_UP_LINK), 1)
-	$(HIDE)$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
+	$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
 else
-	$(HIDE)$(AR) rcs $@ $(OBJECTS)
+	$(AR) rcs $@ $(OBJECTS)
 endif
 else
-	@echo Linking $@...
-	@echo platform $(system_platform)
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
-	$(HIDE)$(file >$@.in,$(OBJECTS))
-	$(HIDE)$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
-	@rm $@.in
+	$(file >$@.in,$(OBJECTS))
+	$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
+	$(RM) $@.in
 else
-	$(HIDE)$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 endif
 
 CFLAGS += $(PLATCFLAGS) $(CDEFS)
 
 %.o: %.c
-	@echo Compiling $<...
-	$(HIDE)$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
+	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 %.o: %.s
 	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 $(OBJ)/%.a:
-	@echo Archiving $@...
-	@$(RM) $@
-	$(HIDE)$(AR) cr $@ $^
+	$(RM) $@
+	$(AR) cr $@ $^
 
 
 clean:
 	@echo Cleaning project...
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
-	$(HIDE)$(file >$@.in,$(OBJECTS))
-	$(HIDE)rm -f @$@.in $(TARGET)
-	@rm $@.in
+	$(file >$@.in,$(OBJECTS))
+	$(RM) -f @$@.in $(TARGET)
+	$(RM) $@.in
 endif
-	$(HIDE)rm -f $(OBJECTS) $(TARGET)
+	$(RM) -f $(OBJECTS) $(TARGET)
