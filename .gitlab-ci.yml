@@ -159,8 +159,6 @@ libretro-build-osx-arm64:
 
 # MacOS PowerPC 32-bit
 libretro-build-osx-ppc:
-  tags:
-    - macosx-packaging
   extends:
     - .libretro-osx-ppc-make-default
     - .core-defs
