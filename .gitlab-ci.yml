@@ -190,8 +190,6 @@ android-x86:
 
 # iOS 9
 libretro-build-ios-9:
-  tags:
-    - macosx-packaging
   extends:
     - .libretro-ios9-make-default
     - .core-defs
