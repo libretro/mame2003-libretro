@@ -14,11 +14,11 @@ VIDEO_START(diverboy)
 static void diverboy_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	data16_t *source = diverboy_spriteram;
-	data16_t *finish = source + diverboy_spriteram_size/2;
+	data16_t *finish = source + (diverboy_spriteram_size/2);
 
 	while (source < finish)
 	{
-		int xpos,ypos,number,colr,bank,flash;
+		INT16 xpos,ypos,number,colr,bank,flash;
 
 		ypos = source[4];
 		xpos = source[0];
@@ -48,6 +48,6 @@ static void diverboy_drawsprites( struct mame_bitmap *bitmap, const struct recta
 
 VIDEO_UPDATE(diverboy)
 {
-//	fillbitmap(bitmap,get_black_pen(),cliprect);
+/*	fillbitmap(bitmap,get_black_pen(),cliprect);*/
 	diverboy_drawsprites(bitmap,cliprect);
 }
