@@ -207,7 +207,7 @@ libretro-build-ios9:
   extends:
     - .libretro-ios9-make-default
     - .core-defs
-    
+
 # tvOS
 libretro-build-tvos-arm64:
   extends:
