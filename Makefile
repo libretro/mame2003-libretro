@@ -136,7 +136,7 @@ else ifneq (,$(findstring ios,$(platform)))
 	fpic = -fPIC
 	LDFLAGS += $(fpic) -dynamiclib
 	PLATCFLAGS += -D__IOS__ -Wcast-align -Wall -Wno-error=implicit-function-declaration
-        MINVERSION :=
+	MINVERSION :=
 	ifeq ($(IOSSDK),)
 		IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 	endif
