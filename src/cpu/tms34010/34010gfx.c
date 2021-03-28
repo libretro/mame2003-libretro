@@ -22,14 +22,12 @@ static void line(void)
 {
 	if (!P_FLAG)
 	{
-#if 0
 		if (state.window_checking != 0 && state.window_checking != 3)
-			logerror("LINE XY  %08X - Window Checking Mode %d not supported\n", PC, state.window_checking);
-#endif
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "LINE XY  %08X - Window Checking Mode %d not supported\n", PC, state.window_checking);
 
 		P_FLAG = 1;
 		TEMP = (state.op & 0x80) ? 1 : 0;  /* boundary value depends on the algorithm */
-		//LOGGFX(("%08X(%3d):LINE (%d,%d)-(%d,%d)\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DADDR_X + DYDX_X, DADDR_Y + DYDX_Y));
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "%08X(%3d):LINE (%d,%d)-(%d,%d)\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DADDR_X + DYDX_X, DADDR_Y + DYDX_Y);
 	}
 
 	if (COUNT > 0)
@@ -87,10 +85,8 @@ static int apply_window(const char *inst_name,int srcbpp, UINT32 *srcaddr, XY *d
 		int ey = sy + *dy - 1;
 		int diff, cycles = 3;
 
-#if 0
 		if (state.window_checking == 1 || state.window_checking == 2)
-			logerror("%08x: %s apply_window window mode %d not supported!\n", activecpu_get_pc(), inst_name, state.window_checking);
-#endif
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "%08x: %s apply_window window mode %d not supported!\n", activecpu_get_pc(), inst_name, state.window_checking);
 
 		if (state.window_checking == 1)
 			V_FLAG = 1;
@@ -212,20 +208,16 @@ static void shiftreg_w(offs_t offset,data16_t data)
 {
 	if (state.config->from_shiftreg)
 		(*state.config->from_shiftreg)((UINT32)(offset << 3) & ~15, &state.shiftreg[0]);
-#if 0
 	else
-		logerror("From ShiftReg function not set. PC = %08X\n", PC);
-#endif
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "From ShiftReg function not set. PC = %08X\n", PC);
 }
 
 static data16_t shiftreg_r(offs_t offset)
 {
 	if (state.config->to_shiftreg)
 		(*state.config->to_shiftreg)((UINT32)(offset << 3) & ~15, &state.shiftreg[0]);
-#if 0
 	else
-		logerror("To ShiftReg function not set. PC = %08X\n", PC);
-#endif
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "To ShiftReg function not set. PC = %08X\n", PC);
 	return state.shiftreg[0];
 }
 
@@ -914,7 +906,7 @@ static void pixblt_b_l(void)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT B,L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT B,L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	(*pixblt_b_op_table[ix])(1);
@@ -926,7 +918,7 @@ static void pixblt_b_xy(void)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT B,XY (%d,%d) (%dx%d) depth=%d\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT B,XY (%d,%d) (%dx%d) depth=%d\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	(*pixblt_b_op_table[ix])(0);
@@ -939,7 +931,7 @@ static void pixblt_l_l(void)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT L,L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT L,L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	if (!pbh)
@@ -955,7 +947,7 @@ static void pixblt_l_xy(void)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT L,XY (%d,%d) (%dx%d) depth=%d\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT L,XY (%d,%d) (%dx%d) depth=%d\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	if (!pbh)
@@ -971,7 +963,7 @@ static void pixblt_xy_l(void)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT XY,L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT XY,L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	if (!pbh)
@@ -987,7 +979,7 @@ static void pixblt_xy_xy(void)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT XY,XY (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):PIXBLT XY,XY (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	if (!pbh)
@@ -1002,7 +994,7 @@ static void fill_l(void)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):FILL L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):FILL L (%dx%d) depth=%d\n", PC, cpu_getscanline(), DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	(*fill_op_table[ix])(1);
@@ -1014,7 +1006,7 @@ static void fill_xy(void)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	//if (!P_FLAG) LOGGFX(("%08X(%3d):FILL XY (%d,%d) (%dx%d) depth=%d\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
+	/*if (!P_FLAG) LOGGFX(("%08X(%3d):FILL XY (%d,%d) (%dx%d) depth=%d\n", PC, cpu_getscanline(), DADDR_X, DADDR_Y, DYDX_X, DYDX_Y, IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));*/
 	pixel_op = pixel_op_table[rop];
 	pixel_op_timing = pixel_op_timing_table[rop];
 	(*fill_op_table[ix])(0);
@@ -1075,7 +1067,7 @@ static void FUNCTION_NAME(pixblt)(int src_is_linear, int dst_is_linear)
 		else
 			daddr = DADDR;
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		//LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH, DPTCH));
+		/*LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH, DPTCH));*/
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1252,7 +1244,7 @@ static void FUNCTION_NAME(pixblt)(int src_is_linear, int dst_is_linear)
 				daddr -= DPTCH;
 			}
 		}
-		//LOGGFX(("  (%d cycles)\n", state.gfxcycles));
+		/*LOGGFX(("  (%d cycles)\n", state.gfxcycles));*/
 	}
 
 	/* eat cycles */
@@ -1320,7 +1312,7 @@ static void FUNCTION_NAME(pixblt_r)(int src_is_linear, int dst_is_linear)
 		else
 			daddr = DADDR;
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		//LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH, DPTCH));
+		/*LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH, DPTCH));*/
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1496,7 +1488,7 @@ static void FUNCTION_NAME(pixblt_r)(int src_is_linear, int dst_is_linear)
 				daddr -= DPTCH;
 			}
 		}
-		//LOGGFX(("  (%d cycles)\n", state.gfxcycles));
+		/*LOGGFX(("  (%d cycles)\n", state.gfxcycles));*/
 	}
 
 	/* eat cycles */
@@ -1567,7 +1559,7 @@ static void FUNCTION_NAME(pixblt_b)(int dst_is_linear)
 		else
 			daddr = DADDR;
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		//LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH, DPTCH));
+		/*LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH, DPTCH));*/
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1706,7 +1698,7 @@ static void FUNCTION_NAME(pixblt_b)(int dst_is_linear)
 			saddr += SPTCH;
 			daddr += DPTCH;
 		}
-		//LOGGFX(("  (%d cycles)\n", state.gfxcycles));
+		/*LOGGFX(("  (%d cycles)\n", state.gfxcycles));*/
 	}
 
 	/* eat cycles */
@@ -1765,7 +1757,7 @@ static void FUNCTION_NAME(fill)(int dst_is_linear)
 		else
 			daddr = DADDR;
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		//LOGGFX(("  daddr=%08X\n", daddr));
+		/*LOGGFX(("  daddr=%08X\n", daddr));*/
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1898,7 +1890,7 @@ static void FUNCTION_NAME(fill)(int dst_is_linear)
 		}
 bailout:
       (void)0;
-		//LOGGFX(("  (%d cycles)\n", state.gfxcycles));
+		/*LOGGFX(("  (%d cycles)\n", state.gfxcycles));*/
 	}
 
 	/* eat cycles */
@@ -1941,4 +1933,3 @@ bailout:
 }
 
 #endif
-
