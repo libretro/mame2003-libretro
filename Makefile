@@ -9,6 +9,8 @@ CPU_ARCH      ?= 0 # as of November 2018 this flag doesn't seem to be used but i
 
 LIBS          ?=
 
+HIDE ?= @
+
 ifneq ($(SANITIZER),)
 	CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
 	CXXFLAGS := -fsanitize=$(SANITIZER) $(CXXFLAGS)
@@ -718,30 +720,27 @@ else
 	CFLAGS += -D__WIN32__
 endif
 
-# Architecture-specific flags #############################
 
+# Architecture-specific flags #############################
 ifeq ($(BIGENDIAN), 1)
 	PLATCFLAGS += -DMSB_FIRST
 endif
-
 # End of architecture-specific flags ######################
 
-# Compiler flags for all platforms #############################
-
-# explictly use -fsigned-char on all platforms to solve problems with code written/tested on x86 but used on ARM
-# for example, audio on rtype leo is wrong on ARM without this flag
-ifeq (,$(findstring msvc,$(platform)))
-	CFLAGS += -fsigned-char
+# Platform-specific flags #################################
+# All Android platforms       #############################
+ifneq ($(findstring Android, $(platform)), )
+	PLATCFLAGS += -D__ANDROID__
+else ifneq ($(findstring android, $(platform)), )
+	PLATCFLAGS += -D__ANDROID__
 endif
 
-# Use position-independent code for all platforms
-CFLAGS += $(fpic)
+# All MSVC platforms
+ifeq (,$(findstring msvc,$(platform)))
+	CFLAGS += -D_XOPEN_SOURCE=500 -fomit-frame-pointer -fstrict-aliasing
+endif
 
-CFLAGS += -DFLAC__NO_ASM -DHAVE_INTTYPES_H -DHAVE_ICONV -DHAVE_LANGINFO_CODESET -DHAVE_SOCKLEN_T -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-
-RETRO_PROFILE = 0
-CFLAGS += -DRETRO_PROFILE=$(RETRO_PROFILE)
-
+# All MSVC platforms except the SNC PS3
 ifneq ($(platform), sncps3)
 	ifeq (,$(findstring msvc,$(platform)))
 		CFLAGS += -Wall -Wunused \
@@ -752,10 +751,33 @@ ifneq ($(platform), sncps3)
 	endif
 endif
 
-ifeq (,$(findstring msvc,$(platform)))
-	CFLAGS += -D_XOPEN_SOURCE=500 -fomit-frame-pointer -fstrict-aliasing
-endif
-# End of compiler flags for all platforms ######################
+# End of platform-specific flags ##########################
+
+# Compiler flags for all platforms and architectures ######
+
+CFLAGS += $(fpic)        # Position-independent code
+CFLAGS += -fsigned-char  # Older MAME code assumes signed character type (x86 platform)
+
+CFLAGS += -DFLAC__NO_ASM -DFLAC__NO_DLL
+CFLAGS += -DHAVE_INTTYPES_H
+CFLAGS += -DHAVE_ICONV
+CFLAGS += -DHAVE_LANGINFO_CODESET
+CFLAGS += -DHAVE_SOCKLEN_T
+CFLAGS += -D_LARGEFILE_SOURCE
+CFLAGS += -D_FILE_OFFSET_BITS=64
+
+# In theory, the RETRO_PROFILE could be set to different values for different
+# architectures or for special builds to hint to the host system how many
+# resources to allocate. In practice, there seems to be no standard way to 
+# rate performance needs and no point in doing so.
+# As of June 2021, the libretro performance profile callback is not known
+# to be implemented by any frontends. RetroArch does not use this callback
+# and its developers do not have a suggested range of values. We use 10 by
+# convention (copying other cores).
+RETRO_PROFILE = 10
+CFLAGS += -DRETRO_PROFILE=$(RETRO_PROFILE)
+
+# End compiler flags for all platforms and architectures ##
 
 
 # Disable optimization when debugging #####################
@@ -779,8 +801,6 @@ include Makefile.common
 # build the targets in different object dirs, since mess changes
 # some structures and thus they can't be linked against each other.
 DEFS = $(COREDEFINES) -Dasm=__asm__
-
-DEFS += -DFLAC__NO_DLL
 
 CFLAGS += $(INCFLAGS) $(INCFLAGS_PLATFORM)
 
@@ -813,41 +833,45 @@ endef
 all:	$(TARGET)
 $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING),1)
+	@echo Archiving $@...
 ifeq ($(SPLIT_UP_LINK), 1)
-	$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
+	$(HIDE)$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
 else
-	$(AR) rcs $@ $(OBJECTS)
+	$(HIDE)$(AR) rcs $@ $(OBJECTS)
 endif
 else
+	@echo Linking $@...
+	@echo platform $(system_platform)
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
-	$(file >$@.in,$(OBJECTS))
-	$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
-	$(RM) $@.in
+	$(HIDE)$(file >$@.in,$(OBJECTS))
+	$(HIDE)$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
+	@rm $@.in
 else
-	$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
+	$(HIDE)$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 endif
 
 CFLAGS += $(PLATCFLAGS) $(CDEFS)
 
 %.o: %.c
-	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
+	@echo Compiling $<...
+	$(HIDE)$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 %.o: %.s
 	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 $(OBJ)/%.a:
-	$(RM) $@
-	$(AR) cr $@ $^
-
+	@echo Archiving $@...
+	@$(RM) $@
+	$(HIDE)$(AR) cr $@ $^
 
 clean:
 	@echo Cleaning project...
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
-	$(file >$@.in,$(OBJECTS))
-	$(RM) -f @$@.in $(TARGET)
-	$(RM) $@.in
+	$(HIDE)$(file >$@.in,$(OBJECTS))
+	$(HIDE)rm -f @$@.in $(TARGET)
+	@rm $@.in
 endif
-	$(RM) -f $(OBJECTS) $(TARGET)
+	$(HIDE)rm -f $(OBJECTS) $(TARGET)
