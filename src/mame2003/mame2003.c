@@ -64,6 +64,7 @@ static retro_input_poll_t          poll_cb                       = NULL;
 static retro_input_state_t         input_cb                      = NULL;
 static retro_audio_sample_batch_t  audio_batch_cb                = NULL;
 retro_set_led_state_t              led_state_cb                  = NULL;
+struct retro_audio_buffer_status_callback buf_status_cb;
 
 bool old_dual_joystick_state = false; /* used to track when this core option changes */
 
@@ -108,6 +109,9 @@ enum CORE_OPTIONS/* controls the order in which core options appear. common, imp
   OPT_NVRAM_BOOTSTRAP,
   OPT_Cheat_Input_Ports,
   OPT_Machine_Timing,
+#if (HAS_CYCLONE || HAS_DRZ80)
+  OPT_CYCLONE_MODE,
+#endif
   OPT_end /* dummy last entry */
 };
 
@@ -129,6 +133,7 @@ static struct retro_variable_default *spawn_effective_option(int option_index);
 static void   check_system_specs(void);
        void   retro_describe_controls(void);
        int    get_mame_ctrl_id(int display_idx, int retro_ID);
+static void   configure_cyclone_mode (int driverIndex);
 
 
 /******************************************************************************
@@ -148,6 +153,39 @@ void frontend_message_cb(const char *message_string, unsigned frames_to_display)
   implementation of key libretro functions
 
 ******************************************************************************/
+bool retro_audio_buff_active        = false;
+unsigned retro_audio_buff_occupancy = 0;
+bool retro_audio_buff_underrun      = false;
+
+static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool underrun_likely)
+{
+   retro_audio_buff_active    = active;
+   retro_audio_buff_occupancy = occupancy;
+   retro_audio_buff_underrun  = underrun_likely;
+}
+
+void retro_set_audio_buff_status_cb(void)
+{
+  if (options.frameskip >0 && options.frameskip >= 12)
+  {
+
+      if (!environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,
+            &buf_status_cb))
+      {
+         if (log_cb)
+            log_cb(RETRO_LOG_WARN, "Frameskip disabled - frontend does not support audio buffer status monitoring.\n");
+
+         retro_audio_buff_active    = false;
+         retro_audio_buff_occupancy = 0;
+         retro_audio_buff_underrun  = false;
+      }
+      else
+      log_cb(RETRO_LOG_INFO, "Frameskip Enabled\n");
+  }
+   else
+      environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,NULL);
+
+}
 
 void retro_init (void)
 {
@@ -224,11 +262,14 @@ static void init_core_options(void)
   init_default(&default_options[OPT_DCS_SPEEDHACK],       APPNAME"_dcs_speedhack",       "DCS Speedhack; enabled|disabled");
   init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous|retropad|keyboard");
   init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); enabled|disabled");
-  init_default(&default_options[OPT_FRAMESKIP],           APPNAME"_frameskip",           "Frameskip; 0|1|2|3|4|5");
+  init_default(&default_options[OPT_FRAMESKIP],           APPNAME"_frameskip",           "Frameskip; disabled|1|2|3|4|5|6|7|9|10|11|auto|auto_aggressive|auto_max");
   init_default(&default_options[OPT_CORE_SYS_SUBFOLDER],  APPNAME"_core_sys_subfolder",  "Locate system files within a subfolder; enabled|disabled"); /* This should be probably handled by the frontend and not by cores per discussions in Fall 2018 but RetroArch for example doesn't provide this as an option. */
   init_default(&default_options[OPT_CORE_SAVE_SUBFOLDER], APPNAME"_core_save_subfolder", "Locate save files within a subfolder; enabled|disabled"); /* This is already available as an option in RetroArch although it is left enabled by default as of November 2018 for consistency with past practice. At least for now.*/
   init_default(&default_options[OPT_Cheat_Input_Ports],   APPNAME"_cheat_input_ports",   "Dip switch/Cheat input ports; disabled|enabled");
   init_default(&default_options[OPT_Machine_Timing],      APPNAME"_machine_timing",      "Bypass Timing Skew (Restart core); disabled|enabled");
+#if (HAS_CYCLONE || HAS_DRZ80)
+  init_default(&default_options[OPT_CYCLONE_MODE],        APPNAME"_cyclone_mode",        "Cyclone mode (Restart core); default|disabled|Cyclone|DrZ80|Cyclone+DrZ80|DrZ80(snd)|Cyclone+DrZ80(snd)");
+#endif
   init_default(&default_options[OPT_end], NULL, NULL);
   set_variables(true);
 }
@@ -349,9 +390,9 @@ static void update_variables(bool first_time)
             options.input_interface = RETRO_DEVICE_JOYPAD;
           else if(strcmp(var.value, "keyboard") == 0)
             options.input_interface = RETRO_DEVICE_KEYBOARD;
-		    else
-			    options.input_interface = RETRO_DEVICE_KEYBOARD + RETRO_DEVICE_JOYPAD;
-        break;
+          else
+            options.input_interface = RETRO_DEVICE_KEYBOARD + RETRO_DEVICE_JOYPAD;
+          break;
 
         case OPT_4WAY:
           if( (strcmp(var.value, "enabled") == 0) && (options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] == 4) )
@@ -562,32 +603,32 @@ static void update_variables(bool first_time)
           if(strcmp(var.value, "640x480") == 0)
           {
             options.vector_width=640;
-            options.vector_height=480; 
+            options.vector_height=480;
           }
           else if(strcmp(var.value, "1024x768") == 0)
           {
             options.vector_width=1024;
-            options.vector_height=768; 
+            options.vector_height=768;
           }
           else if(strcmp(var.value, "1280x960") == 0)
           {
             options.vector_width=1280;
-            options.vector_height=960; 
+            options.vector_height=960;
           }
           else if(strcmp(var.value, "1440x1080") == 0)
           {
             options.vector_width=1440;
-            options.vector_height=1080; 
+            options.vector_height=1080;
           }
           else if(strcmp(var.value, "1600x1200") == 0)
           {
             options.vector_width=1600;
-            options.vector_height=1200; 
+            options.vector_height=1200;
           }
-          else 
+          else
           {
             options.vector_width=0; // mame will set this from the driver resolution set
-            options.vector_height=0; 
+            options.vector_height=0;
           }
           break;
 
@@ -598,7 +639,7 @@ static void update_variables(bool first_time)
             options.antialias = 0;
           break;
 
-          case OPT_VECTOR_BEAM:
+        case OPT_VECTOR_BEAM:
           options.beam = atof(var.value); /* float: vector beam width */
           break;
 
@@ -645,7 +686,16 @@ static void update_variables(bool first_time)
           break;
 
         case OPT_FRAMESKIP:
-          options.frameskip = atoi(var.value);
+          if (strcmp(var.value, "auto") == 0)
+            options.frameskip = 12;
+          else if (strcmp(var.value, "auto_aggressive") == 0)
+            options.frameskip = 13;
+          else if(strcmp(var.value, "auto_max") == 0)
+            options.frameskip = 14;
+          else
+            options.frameskip = atoi(var.value);
+
+          retro_set_audio_buff_status_cb();
           break;
 
         case OPT_CORE_SYS_SUBFOLDER:
@@ -655,26 +705,46 @@ static void update_variables(bool first_time)
             options.system_subfolder = false;
           break;
 
-          case OPT_CORE_SAVE_SUBFOLDER:
-          if(strcmp(var.value, "enabled") == 0)
-            options.save_subfolder = true;
-          else
-            options.save_subfolder = false;
-          break;
+        case OPT_CORE_SAVE_SUBFOLDER:
+           if(strcmp(var.value, "enabled") == 0)
+             options.save_subfolder = true;
+           else
+             options.save_subfolder = false;
+           break;
 
-	    case OPT_Cheat_Input_Ports:
+        case OPT_Cheat_Input_Ports:
           if(strcmp(var.value, "enabled") == 0)
             options.cheat_input_ports = true;
           else
             options.cheat_input_ports = false;
-          break;		
-	    case OPT_Machine_Timing:
+          break;
+
+        case OPT_Machine_Timing:
           if(strcmp(var.value, "enabled") == 0)
             options.machine_timing = true;
           else
             options.machine_timing = false;
-          break;	
-	  }
+          break;
+
+#if (HAS_CYCLONE || HAS_DRZ80)
+        case OPT_CYCLONE_MODE:
+          if(strcmp(var.value, "default") == 0)
+            options.cyclone_mode = 1;
+          else if(strcmp(var.value, "Cyclone") == 0)
+            options.cyclone_mode = 2;
+          else if(strcmp(var.value, "DrZ80") == 0)
+            options.cyclone_mode = 3;
+          else if(strcmp(var.value, "Cyclone+DrZ80") == 0)
+            options.cyclone_mode = 4;
+          else if(strcmp(var.value, "DrZ80(snd)") == 0)
+            options.cyclone_mode = 5;
+          else if(strcmp(var.value, "Cyclone+DrZ80(snd)") == 0)
+            options.cyclone_mode = 6;
+          else /* disabled */
+            options.cyclone_mode = 0;
+          break;
+#endif
+      }
     }
   }
 
@@ -695,24 +765,24 @@ static void update_variables(bool first_time)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-  mame2003_video_get_geometry(&info->geometry);  
+  mame2003_video_get_geometry(&info->geometry);
   if(options.machine_timing)
   {
     if (Machine->drv->frames_per_second < 60.0 )
-      info->timing.fps = 60.0; 
-    else 
+      info->timing.fps = 60.0;
+    else
       info->timing.fps = Machine->drv->frames_per_second; /* qbert is 61 fps */
 
-    if ( (Machine->drv->frames_per_second * 1000 < options.samplerate) || ( Machine->drv->frames_per_second < 60) ) 
+    if ( (Machine->drv->frames_per_second * 1000 < options.samplerate) || ( Machine->drv->frames_per_second < 60) )
     {
       info->timing.sample_rate = Machine->drv->frames_per_second * 1000;
       log_cb(RETRO_LOG_INFO, LOGPRE "Sample timing rate too high for framerate required dropping to %f\n",  Machine->drv->frames_per_second * 1000);
-    }       
+    }
 
     else
     {
       info->timing.sample_rate = options.samplerate;
-      log_cb(RETRO_LOG_INFO, LOGPRE "Sample rate set to %d\n",options.samplerate); 
+      log_cb(RETRO_LOG_INFO, LOGPRE "Sample rate set to %d\n",options.samplerate);
     }
   }
 
@@ -723,7 +793,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
     if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
      info->timing.sample_rate = 22050;
 
-    else 
+    else
      info->timing.sample_rate = options.samplerate;
   }
 
@@ -794,7 +864,6 @@ static void remove_slash (char* temp)
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-  int i;
   int              driverIndex    = 0;
   int              port_index;
   char             *driver_lookup = NULL;
@@ -838,101 +907,6 @@ bool retro_load_game(const struct retro_game_info *game)
    if(!init_game(driverIndex))
     return false;
 
-  #if (HAS_CYCLONE || HAS_DRZ80)
-   int use_cyclone = 1;
-   int use_drz80 = 1;
-   int use_drz80_snd = 1;
-
-	for (i=0;i<NUMGAMES;i++)
- 	{
-		if (strcmp(drivers[driverIndex]->name,fe_drivers[i].name)==0)
-		{
-			/* ASM cores: 0=None,1=Cyclone,2=DrZ80,3=Cyclone+DrZ80,4=DrZ80(snd),5=Cyclone+DrZ80(snd) */
-         switch (fe_drivers[i].cores)
-         {
-         case 0:
-            use_cyclone = 0;
-				use_drz80_snd = 0;
-				use_drz80 = 0;
-            break;
-         case 1:
-				use_drz80_snd = 0;
-				use_drz80 = 0;
-            break;
-         case 2:
-            use_cyclone = 0;
-            break;
-         case 4:
-            use_cyclone = 0;
-				use_drz80 = 0;
-            break;
-         case 5:
-				use_drz80 = 0;
-            break;
-         default:
-            break;
-         }
-
-         break;
-		}
-	}
-
-   /* Replace M68000 by CYCLONE */
-#if (HAS_CYCLONE)
-   if (use_cyclone)
-   {
-	   for (i=0;i<MAX_CPU;i++)
-	   {
-		   unsigned int *type=(unsigned int *)&(Machine->drv->cpu[i].cpu_type);
-#ifdef NEOMAME
-		   if (*type==CPU_M68000)
-#else
-			   if (*type==CPU_M68000 || *type==CPU_M68010 )
-#endif
-			   {
-				   *type=CPU_CYCLONE;
-                   log_cb(RETRO_LOG_INFO, LOGPRE "Replaced CPU_CYCLONE\n");
-			   }
-        if(!(*type)){
-          break;
-        }
-	   }
-   }
-#endif
-
-#if (HAS_DRZ80)
-	/* Replace Z80 by DRZ80 */
-	if (use_drz80)
-	{
-		for (i=0;i<MAX_CPU;i++)
-		{
-			unsigned int *type=(unsigned int *)&(Machine->drv->cpu[i].cpu_type);
-			if (type==CPU_Z80)
-			{
-				*type=CPU_DRZ80;
-        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80\n");
-			}
-		}
-	}
-
-	/* Replace Z80 with DRZ80 only for sound CPUs */
-	if (use_drz80_snd)
-	{
-		for (i=0;i<MAX_CPU;i++)
-		{
-			int *type=(int*)&(Machine->drv->cpu[i].cpu_type);
-			if (type==CPU_Z80 && Machine->drv->cpu[i].cpu_flags&CPU_AUDIO_CPU)
-			{
-				*type=CPU_DRZ80;
-        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80 sound\n");
-
-			}
-		}
-	}
-#endif
-
-#endif
-
   set_content_flags();
 
   options.libretro_content_path = auto_strdup(game->path);
@@ -968,6 +942,7 @@ bool retro_load_game(const struct retro_game_info *game)
 
   init_core_options();
   update_variables(true);
+  configure_cyclone_mode(driverIndex);
 
   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 
@@ -1248,7 +1223,7 @@ void retro_run (void)
 		retroKeyState[thisInput->code] = input_cb(0, RETRO_DEVICE_KEYBOARD, 0, thisInput->code);
 		thisInput ++;
 	}
-   
+
 	for (i = 0; i < 4; i ++)
 	{
       unsigned int offset = (i * 18);
@@ -1318,7 +1293,7 @@ void retro_run (void)
          retroJsState[17 + offset] = 0;
       }
 
-      if ( (options.rstick_to_btns) && (options.content_flags[CONTENT_DUAL_JOYSTICK]) )	
+      if ( (options.rstick_to_btns) && (options.content_flags[CONTENT_DUAL_JOYSTICK]) )
       {
          retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
          retroJsState[20 + offset] = analogjoy[i][3] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
@@ -1326,7 +1301,7 @@ void retro_run (void)
          retroJsState[19 + offset] = analogjoy[i][2] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y);
 	    }
       else
-	    {	
+	    {
         retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : 0;
         retroJsState[19 + offset] = analogjoy[i][2] < -0x4000 ? 1 : 0;
         retroJsState[18 + offset] = analogjoy[i][3] >  0x4000 ? 1 : 0;
@@ -1392,7 +1367,7 @@ bool retro_serialize(void *data, size_t size)
 
 		/* finish and close */
 		state_save_save_finish();
-		
+
 		return true;
 	}
 
@@ -1465,9 +1440,9 @@ int osd_start_audio_stream(int stereo)
 {
   if (options.machine_timing)
   {
-    if ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) ) 
+    if ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )
       Machine->sample_rate = Machine->drv->frames_per_second * 1000;
-    
+
     else Machine->sample_rate = options.samplerate;
   }
 
@@ -1479,7 +1454,7 @@ int osd_start_audio_stream(int stereo)
     else
       Machine->sample_rate = options.samplerate;
   }
-  
+
   delta_samples = 0.0f;
   usestereo = stereo ? 1 : 0;
 
@@ -1491,7 +1466,7 @@ int osd_start_audio_stream(int stereo)
 
   samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
   if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
-  
+
   return samples_per_frame;
 }
 
@@ -1512,19 +1487,19 @@ int osd_update_audio_stream(INT16 *buffer)
 				conversion_buffer[j++] = samples_buffer[i];
 		        }
          		audio_batch_cb(conversion_buffer,samples_per_frame);
-		}	
-		
-			
+		}
+
+
 		//process next frame
-			
+
 		if ( samples_per_frame  != orig_samples_per_frame ) samples_per_frame = orig_samples_per_frame;
-		
+
 		// dont drop any sample frames some games like mk will drift with time
 
 		delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - orig_samples_per_frame;
 		if ( delta_samples >= 1.0f )
 		{
-		
+
 			int integer_delta = (int)delta_samples;
 			if (integer_delta <= 16 )
                         {
@@ -1532,7 +1507,7 @@ int osd_update_audio_stream(INT16 *buffer)
 				samples_per_frame += integer_delta;
 			}
 			else if(integer_delta >= 16) log_cb(RETRO_LOG_INFO, "sound: Delta not added to samples_per_frame too large integer_delta:%d\n", integer_delta);
-			else log_cb(RETRO_LOG_DEBUG,"sound(delta) no contitions met\n");	
+			else log_cb(RETRO_LOG_DEBUG,"sound(delta) no contitions met\n");
 			delta_samples -= integer_delta;
 
 		}
@@ -1657,10 +1632,10 @@ int convert_analog_scale(int input)
 	int neg_test=0;
 	float scale;
 	int trigger_deadzone;
-	
+
 	if( options.analog_scale)   trigger_deadzone = (32678 /100) * 20;
 	if( !options.analog_scale)  trigger_deadzone = (32678 * options.analog_deadzone) / 100;
-	
+
 	if (input < 0) { input =abs(input); neg_test=1; }
 	scale = ((float)TRIGGER_MAX/(float)(TRIGGER_MAX - trigger_deadzone));
 
@@ -1670,7 +1645,7 @@ int convert_analog_scale(int input)
 		float scaled = (input - trigger_deadzone)*scale;
     input = (int)round(scaled);
 
-		if (input > +32767) 
+		if (input > +32767)
 		{
 			input = +32767;
 		}
@@ -1682,7 +1657,7 @@ int convert_analog_scale(int input)
 		input = 0;
 	}
 
-	
+
 	if (neg_test) input =-abs(input);
 	return input * 1.28;
 }
@@ -1917,3 +1892,136 @@ const struct KeyboardInfo retroKeys[] =
 
     {0, 0, 0}
 };
+
+static void configure_cyclone_mode (int driverIndex)
+{
+  /* Determine how to use cyclone if available to the platform */
+
+#if (HAS_CYCLONE || HAS_DRZ80)
+  int i;
+  int use_cyclone = 1;
+  int use_drz80 = 1;
+  int use_drz80_snd = 1;
+
+  /* cyclone mode core option: 0=disabled, 1=default, 2=Cyclone, 3=DrZ80, 4=Cyclone+DrZ80, 5=DrZ80(snd), 6=Cyclone+DrZ80(snd) */
+  switch (options.cyclone_mode)
+  {
+    case 0:
+      use_cyclone = 0;
+      use_drz80_snd = 0;
+      use_drz80 = 0;
+      break;
+
+    case 1:
+      for (i=0;i<NUMGAMES;i++)
+      {
+        /* ASM cores: 0=disabled, 1=Cyclone, 2=DrZ80, 3=Cyclone+DrZ80, 4=DrZ80(snd), 5=Cyclone+DrZ80(snd) */
+        if (strcmp(drivers[driverIndex]->name,fe_drivers[i].name)==0)
+        {
+          switch (fe_drivers[i].cores)
+          {
+            case 0:
+              use_cyclone = 0;
+              use_drz80_snd = 0;
+              use_drz80 = 0;
+              break;
+            case 1:
+              use_drz80_snd = 0;
+              use_drz80 = 0;
+              break;
+            case 2:
+              use_cyclone = 0;
+              break;
+            case 4:
+              use_cyclone = 0;
+              use_drz80 = 0;
+              break;
+            case 5:
+              use_drz80 = 0;
+              break;
+            default:
+              break;
+          }
+
+          break; /* end for loop */
+        }
+      }
+      break; /* end case 1 */
+
+    case 2:
+      use_drz80_snd = 0;
+      use_drz80 = 0;
+      break;
+
+    case 3:
+      use_cyclone = 0;
+      break;
+
+    case 5:
+      use_cyclone = 0;
+      use_drz80 = 0;
+      break;
+
+    case 6:
+      use_drz80 = 0;
+      break;
+
+    default:
+      break;
+  }
+
+#if (HAS_CYCLONE)
+  /* Replace M68000 by CYCLONE */
+  if (use_cyclone)
+  {
+    for (i=0;i<MAX_CPU;i++)
+    {
+      unsigned int *type=(unsigned int *)&(Machine->drv->cpu[i].cpu_type);
+
+#ifdef NEOMAME
+      if (*type==CPU_M68000)
+#else
+      if (*type==CPU_M68000 || *type==CPU_M68010 )
+#endif
+      {
+        *type=CPU_CYCLONE;
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced CPU_CYCLONE\n");
+      }
+
+      if (!(*type)) break;
+    }
+  }
+#endif
+
+#if (HAS_DRZ80)
+  /* Replace Z80 by DRZ80 */
+  if (use_drz80)
+  {
+    for (i=0;i<MAX_CPU;i++)
+    {
+      unsigned int *type=(unsigned int *)&(Machine->drv->cpu[i].cpu_type);
+      if (type==CPU_Z80)
+      {
+        *type=CPU_DRZ80;
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80\n");
+      }
+    }
+  }
+
+  /* Replace Z80 with DRZ80 only for sound CPUs */
+  if (use_drz80_snd)
+  {
+    for (i=0;i<MAX_CPU;i++)
+    {
+      int *type=(int*)&(Machine->drv->cpu[i].cpu_type);
+      if (type==CPU_Z80 && Machine->drv->cpu[i].cpu_flags&CPU_AUDIO_CPU)
+      {
+        *type=CPU_DRZ80;
+        log_cb(RETRO_LOG_INFO, LOGPRE "Replaced Z80 sound\n");
+      }
+    }
+  }
+#endif
+
+#endif
+}
