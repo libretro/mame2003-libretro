@@ -149,7 +149,6 @@ void frontend_message_cb(const char *message_string, unsigned frames_to_display)
   implementation of key libretro functions
 
 ******************************************************************************/
-
 bool retro_audio_buff_active        = false;
 unsigned retro_audio_buff_occupancy = 0;
 bool retro_audio_buff_underrun      = false;
