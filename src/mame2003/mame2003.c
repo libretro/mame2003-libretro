@@ -744,7 +744,7 @@ static void update_variables(bool first_time)
             options.cyclone_mode = 0;
           break;
 #endif
-	  }
+      }
     }
   }
 
