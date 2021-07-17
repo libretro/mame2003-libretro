@@ -603,32 +603,32 @@ static void update_variables(bool first_time)
           if(strcmp(var.value, "640x480") == 0)
           {
             options.vector_width=640;
-            options.vector_height=480; 
+            options.vector_height=480;
           }
           else if(strcmp(var.value, "1024x768") == 0)
           {
             options.vector_width=1024;
-            options.vector_height=768; 
+            options.vector_height=768;
           }
           else if(strcmp(var.value, "1280x960") == 0)
           {
             options.vector_width=1280;
-            options.vector_height=960; 
+            options.vector_height=960;
           }
           else if(strcmp(var.value, "1440x1080") == 0)
           {
             options.vector_width=1440;
-            options.vector_height=1080; 
+            options.vector_height=1080;
           }
           else if(strcmp(var.value, "1600x1200") == 0)
           {
             options.vector_width=1600;
-            options.vector_height=1200; 
+            options.vector_height=1200;
           }
-          else 
+          else
           {
             options.vector_width=0; // mame will set this from the driver resolution set
-            options.vector_height=0; 
+            options.vector_height=0;
           }
           break;
 
@@ -717,7 +717,7 @@ static void update_variables(bool first_time)
             options.cheat_input_ports = true;
           else
             options.cheat_input_ports = false;
-          break;		
+          break;
 	    case OPT_Machine_Timing:
           if(strcmp(var.value, "enabled") == 0)
             options.machine_timing = true;
@@ -764,24 +764,24 @@ static void update_variables(bool first_time)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-  mame2003_video_get_geometry(&info->geometry);  
+  mame2003_video_get_geometry(&info->geometry);
   if(options.machine_timing)
   {
     if (Machine->drv->frames_per_second < 60.0 )
-      info->timing.fps = 60.0; 
-    else 
+      info->timing.fps = 60.0;
+    else
       info->timing.fps = Machine->drv->frames_per_second; /* qbert is 61 fps */
 
-    if ( (Machine->drv->frames_per_second * 1000 < options.samplerate) || ( Machine->drv->frames_per_second < 60) ) 
+    if ( (Machine->drv->frames_per_second * 1000 < options.samplerate) || ( Machine->drv->frames_per_second < 60) )
     {
       info->timing.sample_rate = Machine->drv->frames_per_second * 1000;
       log_cb(RETRO_LOG_INFO, LOGPRE "Sample timing rate too high for framerate required dropping to %f\n",  Machine->drv->frames_per_second * 1000);
-    }       
+    }
 
     else
     {
       info->timing.sample_rate = options.samplerate;
-      log_cb(RETRO_LOG_INFO, LOGPRE "Sample rate set to %d\n",options.samplerate); 
+      log_cb(RETRO_LOG_INFO, LOGPRE "Sample rate set to %d\n",options.samplerate);
     }
   }
 
@@ -792,7 +792,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
     if ( Machine->drv->frames_per_second * 1000 < options.samplerate)
      info->timing.sample_rate = 22050;
 
-    else 
+    else
      info->timing.sample_rate = options.samplerate;
   }
 
@@ -1223,7 +1223,7 @@ void retro_run (void)
 		retroKeyState[thisInput->code] = input_cb(0, RETRO_DEVICE_KEYBOARD, 0, thisInput->code);
 		thisInput ++;
 	}
-   
+
 	for (i = 0; i < 4; i ++)
 	{
       unsigned int offset = (i * 18);
@@ -1293,7 +1293,7 @@ void retro_run (void)
          retroJsState[17 + offset] = 0;
       }
 
-      if ( (options.rstick_to_btns) && (options.content_flags[CONTENT_DUAL_JOYSTICK]) )	
+      if ( (options.rstick_to_btns) && (options.content_flags[CONTENT_DUAL_JOYSTICK]) )
       {
          retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
          retroJsState[20 + offset] = analogjoy[i][3] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
@@ -1301,7 +1301,7 @@ void retro_run (void)
          retroJsState[19 + offset] = analogjoy[i][2] < -0x4000 ? 1 : input_cb(i, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y);
 	    }
       else
-	    {	
+	    {
         retroJsState[21 + offset] = analogjoy[i][2] >  0x4000 ? 1 : 0;
         retroJsState[19 + offset] = analogjoy[i][2] < -0x4000 ? 1 : 0;
         retroJsState[18 + offset] = analogjoy[i][3] >  0x4000 ? 1 : 0;
@@ -1367,7 +1367,7 @@ bool retro_serialize(void *data, size_t size)
 
 		/* finish and close */
 		state_save_save_finish();
-		
+
 		return true;
 	}
 
@@ -1440,9 +1440,9 @@ int osd_start_audio_stream(int stereo)
 {
   if (options.machine_timing)
   {
-    if ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) ) 
+    if ( ( Machine->drv->frames_per_second * 1000 < options.samplerate) || (Machine->drv->frames_per_second < 60) )
       Machine->sample_rate = Machine->drv->frames_per_second * 1000;
-    
+
     else Machine->sample_rate = options.samplerate;
   }
 
@@ -1454,7 +1454,7 @@ int osd_start_audio_stream(int stereo)
     else
       Machine->sample_rate = options.samplerate;
   }
-  
+
   delta_samples = 0.0f;
   usestereo = stereo ? 1 : 0;
 
@@ -1466,7 +1466,7 @@ int osd_start_audio_stream(int stereo)
 
   samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
   if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
-  
+
   return samples_per_frame;
 }
 
@@ -1487,19 +1487,19 @@ int osd_update_audio_stream(INT16 *buffer)
 				conversion_buffer[j++] = samples_buffer[i];
 		        }
          		audio_batch_cb(conversion_buffer,samples_per_frame);
-		}	
-		
-			
+		}
+
+
 		//process next frame
-			
+
 		if ( samples_per_frame  != orig_samples_per_frame ) samples_per_frame = orig_samples_per_frame;
-		
+
 		// dont drop any sample frames some games like mk will drift with time
 
 		delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - orig_samples_per_frame;
 		if ( delta_samples >= 1.0f )
 		{
-		
+
 			int integer_delta = (int)delta_samples;
 			if (integer_delta <= 16 )
                         {
@@ -1507,7 +1507,7 @@ int osd_update_audio_stream(INT16 *buffer)
 				samples_per_frame += integer_delta;
 			}
 			else if(integer_delta >= 16) log_cb(RETRO_LOG_INFO, "sound: Delta not added to samples_per_frame too large integer_delta:%d\n", integer_delta);
-			else log_cb(RETRO_LOG_DEBUG,"sound(delta) no contitions met\n");	
+			else log_cb(RETRO_LOG_DEBUG,"sound(delta) no contitions met\n");
 			delta_samples -= integer_delta;
 
 		}
@@ -1632,10 +1632,10 @@ int convert_analog_scale(int input)
 	int neg_test=0;
 	float scale;
 	int trigger_deadzone;
-	
+
 	if( options.analog_scale)   trigger_deadzone = (32678 /100) * 20;
 	if( !options.analog_scale)  trigger_deadzone = (32678 * options.analog_deadzone) / 100;
-	
+
 	if (input < 0) { input =abs(input); neg_test=1; }
 	scale = ((float)TRIGGER_MAX/(float)(TRIGGER_MAX - trigger_deadzone));
 
@@ -1645,7 +1645,7 @@ int convert_analog_scale(int input)
 		float scaled = (input - trigger_deadzone)*scale;
     input = (int)round(scaled);
 
-		if (input > +32767) 
+		if (input > +32767)
 		{
 			input = +32767;
 		}
@@ -1657,7 +1657,7 @@ int convert_analog_scale(int input)
 		input = 0;
 	}
 
-	
+
 	if (neg_test) input =-abs(input);
 	return input * 1.28;
 }
