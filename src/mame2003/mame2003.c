@@ -124,11 +124,7 @@ static struct retro_variable  current_options[OPT_end + 1];
   private function prototypes
 
 ******************************************************************************/
-static void   set_content_flags(void);
-static void   init_core_options(void);
-       void   init_default(struct retro_variable *def, const char *key, const char *value);
-static void   update_variables(bool first_time);
-static void   set_variables(void);
+
 static void   check_system_specs(void);
        void   retro_describe_controls(void);
        int    get_mame_ctrl_id(int display_idx, int retro_ID);
