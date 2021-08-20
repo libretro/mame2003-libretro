@@ -96,6 +96,7 @@ void init_core_options(void)
   set_variables();
 }
 
+
 static void set_variables()
 {
   static unsigned effective_options_count;         /* the number of core options in effect for the current content */
@@ -161,11 +162,13 @@ static void set_variables()
 
 }
 
+
 static void init_default(struct retro_variable *def, const char *key, const char *value)
 {
   def->key = key;
   def->value = value;
 }
+
 
 void update_variables(bool first_time)
 {
@@ -558,6 +561,7 @@ void update_variables(bool first_time)
     reset_control_descriptions = false;
   }
 }
+
 
 void set_content_flags(void)
 {
