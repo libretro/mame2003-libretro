@@ -65,11 +65,56 @@ extern retro_log_printf_t log_cb;
 extern void frontend_message_cb(const char *message_string, unsigned frames_to_display);
 
 
-struct retro_variable_default
+/******************************************************************************
+
+  Core options
+
+******************************************************************************/
+void set_content_flags(void);
+void init_core_options(void);
+void update_variables(bool first_time);
+
+enum CORE_OPTIONS /* controls the order in which core options appear. common, important, and content-specific options should go earlier on the list */
 {
-   const char *key;
-   const char *defaults_string;
+  OPT_4WAY = 0,
+  OPT_MOUSE_DEVICE,
+  OPT_CROSSHAIR_ENABLED,
+  OPT_SKIP_DISCLAIMER,
+  OPT_SKIP_WARNINGS,
+  OPT_DISPLAY_SETUP,
+  OPT_NEOGEO_BIOS,
+  OPT_STV_BIOS,
+  OPT_USE_ALT_SOUND,
+  OPT_SHARE_DIAL,
+  OPT_DUAL_JOY,
+  OPT_RSTICK_BTNS,
+  OPT_VECTOR_RESOLUTION,
+  OPT_VECTOR_ANTIALIAS,
+  OPT_VECTOR_BEAM,
+  OPT_VECTOR_TRANSLUCENCY,
+  OPT_VECTOR_FLICKER,
+  OPT_VECTOR_INTENSITY,
+  OPT_DCS_SPEEDHACK,
+  OPT_CORE_SYS_SUBFOLDER,
+  OPT_CORE_SAVE_SUBFOLDER,
+  OPT_TATE_MODE,
+  OPT_BRIGHTNESS,
+  OPT_GAMMA,
+  OPT_FRAMESKIP,
+  OPT_SAMPLE_RATE,
+  OPT_INPUT_INTERFACE,
+  OPT_MAME_REMAPPING,
+  OPT_ARTWORK,
+  OPT_ART_RESOLUTION,
+  OPT_NVRAM_BOOTSTRAP,
+  OPT_Cheat_Input_Ports,
+  OPT_Machine_Timing,
+#if (HAS_CYCLONE || HAS_DRZ80)
+  OPT_CYCLONE_MODE,
+#endif
+  OPT_end /* dummy last entry */
 };
+
 
 enum
 {
