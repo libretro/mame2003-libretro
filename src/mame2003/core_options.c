@@ -98,7 +98,6 @@ void init_core_options(void)
 
 static void set_variables()
 {
-  static struct retro_variable  effective_defaults[OPT_end + 1];
   static unsigned effective_options_count;         /* the number of core options in effect for the current content */
   int option_index   = 0;
 
