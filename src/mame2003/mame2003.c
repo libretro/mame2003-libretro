@@ -126,7 +126,7 @@ static struct retro_variable  current_options[OPT_end + 1];
 ******************************************************************************/
 static void   set_content_flags(void);
 static void   init_core_options(void);
-       void   init_default(struct retro_variable *option, const char *key, const char *value);
+       void   init_default(struct retro_variable *def, const char *key, const char *value);
 static void   update_variables(bool first_time);
 static void   set_variables(void);
 static void   check_system_specs(void);
