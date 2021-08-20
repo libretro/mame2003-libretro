@@ -65,12 +65,6 @@ extern retro_log_printf_t log_cb;
 extern void frontend_message_cb(const char *message_string, unsigned frames_to_display);
 
 
-struct retro_variable_default
-{
-   const char *key;
-   const char *defaults_string;
-};
-
 enum
 {
   IDX_CLASSIC = 0,
