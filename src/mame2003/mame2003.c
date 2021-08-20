@@ -354,8 +354,6 @@ bool retro_load_game(const struct retro_game_info *game)
   return false;
 }
 
-
-
 void retro_reset (void)
 {
     machine_reset(); /* use internal core function */
