@@ -66,12 +66,6 @@ static retro_audio_sample_batch_t  audio_batch_cb                = NULL;
 retro_set_led_state_t              led_state_cb                  = NULL;
 struct retro_audio_buffer_status_callback buf_status_cb;
 
-bool old_dual_joystick_state = false; /* used to track when this core option changes */
-
-
-static struct retro_variable  default_options[OPT_end + 1];    /* need the plus one for the NULL entries at the end */
-static struct retro_variable  current_options[OPT_end + 1];
-
 
 /******************************************************************************
 
