@@ -734,7 +734,6 @@ void set_content_flags(void)
   /************ DCS DRIVERS WITH SPEEDDUP HACKS ************/
   options.content_flags[CONTENT_DCS_SPEEDHACK] = true;
 
-
   /************ DRIVERS FLAGGED IN CONTROLS.C WITH MIRRORED CONTROLS ************/
   if(game_driver->ctrl_dat->mirrored_controls)
     options.content_flags[CONTENT_MIRRORED_CTRLS] = true;
