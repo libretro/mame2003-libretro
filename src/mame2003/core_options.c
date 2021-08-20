@@ -181,8 +181,6 @@ void update_variables(bool first_time)
     var.key = default_options[index].key;
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && !string_is_empty(var.value)) /* the frontend sends a value for this core option */
     {
-      current_options[index].value = var.value; /* keep the state of core options matched with the frontend */
-
       switch(index)
       {
         case OPT_INPUT_INTERFACE:
