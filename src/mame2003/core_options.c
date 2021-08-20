@@ -576,7 +576,6 @@ void set_content_flags(void)
       if (strcmp("OST Samples",  Machine->drv->sound[i].tag) == 0)
       {
         options.content_flags[CONTENT_ALT_SOUND] = true;
-        log_cb(RETRO_LOG_INFO, LOGPRE "Content has an alternative audio option controlled via core option.\n");
       }
   }
 
@@ -585,31 +584,22 @@ void set_content_flags(void)
    ||(game_driver->clone_of && game_driver->clone_of->clone_of == &driver_neogeo))
   {
     options.content_flags[CONTENT_NEOGEO] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as a Neo Geo game.\n");
   }
   else if (game_driver->clone_of == &driver_stvbios
    ||(game_driver->clone_of && game_driver->clone_of->clone_of == &driver_stvbios))
   {
     options.content_flags[CONTENT_STV] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as a ST-V game.\n");
   }
 
   /************ DIE HARD: ARCADE ************/
   if(strcasecmp(game_driver->name, "diehard") == 0)
-  {
     options.content_flags[CONTENT_DIEHARD] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as \"Die Hard: Arcade\". BIOS will be set to \"us\".\n");
-  }
 
   /************ DRIVERS WITH VECTOR VIDEO DISPLAYS ************/
   if(Machine->drv->video_attributes & VIDEO_TYPE_VECTOR)
-  {
     options.content_flags[CONTENT_VECTOR] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using a vector video display.\n");
-  }
 
   /************ INPUT-BASED CONTENT FLAGS ************/
-
   options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] = 8; /* default behavior is 8-way joystick, even for 2-way games */
 
 	while ((input->type & ~IPF_MASK) != IPT_END)
@@ -637,12 +627,16 @@ void set_content_flags(void)
 				case IPF_PLAYER6:
 					if (options.content_flags[CONTENT_PLAYER_COUNT] < 6) options.content_flags[CONTENT_PLAYER_COUNT] = 6;
 					break;
+				case IPF_PLAYER7:
+					if (options.content_flags[CONTENT_PLAYER_COUNT] < 7) options.content_flags[CONTENT_PLAYER_COUNT] = 7;
+					break;
+				case IPF_PLAYER8:
+					if (options.content_flags[CONTENT_PLAYER_COUNT] < 8) options.content_flags[CONTENT_PLAYER_COUNT] = 8;
+					break;
 			}
 
-      if (input->type & IPF_4WAY) /* original controls used a 4-way joystick */
-      {
-        options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] = 4;
-      }
+			if (input->type & IPF_4WAY) /* the controls use a 4-way joystick */
+				options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] = 4;
 
 			switch (input->type & ~IPF_MASK)
 			{
@@ -654,7 +648,7 @@ void set_content_flags(void)
 				case IPT_JOYSTICKLEFT_DOWN:
 				case IPT_JOYSTICKLEFT_LEFT:
 				case IPT_JOYSTICKLEFT_RIGHT:
-                    options.content_flags[CONTENT_DUAL_JOYSTICK] = true; /* if there are any "JOYSTICKLEFT" mappings we know there are two joysticks */
+					options.content_flags[CONTENT_DUAL_JOYSTICK] = true;
 					break;
 				case IPT_BUTTON1:
 					if (options.content_flags[CONTENT_BUTTON_COUNT] < 1) options.content_flags[CONTENT_BUTTON_COUNT] = 1;
@@ -687,102 +681,100 @@ void set_content_flags(void)
 					if (options.content_flags[CONTENT_BUTTON_COUNT] < 10) options.content_flags[CONTENT_BUTTON_COUNT] = 10;
 					break;
 				case IPT_PADDLE:
-          options.content_flags[CONTENT_PADDLE] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using paddle controls.\n");
-          break;
+					options.content_flags[CONTENT_PADDLE] = true;
+					break;
 				case IPT_DIAL:
-          options.content_flags[CONTENT_DIAL] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using dial controls.\n");
+					options.content_flags[CONTENT_DIAL] = true;
 					break;
 				case IPT_TRACKBALL_X:
 				case IPT_TRACKBALL_Y:
-          options.content_flags[CONTENT_TRACKBALL] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using trackball controls.\n");
+					options.content_flags[CONTENT_TRACKBALL] = true;
 					break;
 				case IPT_AD_STICK_X:
 				case IPT_AD_STICK_Y:
-          options.content_flags[CONTENT_AD_STICK] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using Analog/Digital stick controls.\n");
+					options.content_flags[CONTENT_AD_STICK] = true;
 					break;
 				case IPT_LIGHTGUN_X:
 				case IPT_LIGHTGUN_Y:
-          options.content_flags[CONTENT_LIGHTGUN] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using Analog/Digital stick controls.\n");
+					options.content_flags[CONTENT_LIGHTGUN] = true;
 					break;
 				case IPT_SERVICE :
-          options.content_flags[CONTENT_HAS_SERVICE] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as having a service button.\n");
+					options.content_flags[CONTENT_HAS_SERVICE] = true;
 					break;
 				case IPT_TILT :
-          options.content_flags[CONTENT_HAS_TILT] = true;
-          log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as having a tilt feature.\n");
+					options.content_flags[CONTENT_HAS_TILT] = true;
 					break;
 			}
 		}
 		++input;
 	}
 
-  if(options.content_flags[CONTENT_DUAL_JOYSTICK] == true)
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using \"dual joystick\" controls.\n");
-
-  if (options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] == 4)
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using 4-way joystick controls.\n");
-  else
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as using 8-way joystick controls.\n");
-
-  /************ DRIVERS FLAGGED IN CONTROLS.C WITH 45-DEGREE JOYSTICK ROTATION ************/
-  if(game_driver->ctrl_dat->rotate_joy_45)
-  {
-    options.content_flags[CONTENT_ROTATE_JOY_45] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as joysticks rotated 45-degrees with respect to the cabinet.\n");
-  }
-  else
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as having joysticks on axis with respect to the cabinet.\n");
-
   /************ DRIVERS FLAGGED IN CONTROLS.C WITH ALTERNATING CONTROLS ************/
   if(game_driver->ctrl_dat->alternating_controls)
   {
     options.content_flags[CONTENT_ALTERNATING_CTRLS] = true;
-    /* there may or may not be some need to have a ctrl_count different than player_count, perhaps because of some
-       alternating controls layout. this is a place to check some condition and make the two numbers different
-       if that should ever prove useful. */
-    if(true)
-      options.content_flags[CONTENT_CTRL_COUNT] = options.content_flags[CONTENT_PLAYER_COUNT];
   }
-  else
-    options.content_flags[CONTENT_CTRL_COUNT] = options.content_flags[CONTENT_PLAYER_COUNT];
 
-  log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as supporting %i players with %i distinct controls.\n", options.content_flags[CONTENT_PLAYER_COUNT], options.content_flags[CONTENT_CTRL_COUNT]);
-  log_cb(RETRO_LOG_INFO, LOGPRE "Content identified as supporting %i button controls.\n", options.content_flags[CONTENT_BUTTON_COUNT]);
+  /************ NUMBER OF DISTINCT CONTROL LAYOUTS ************/
+  options.content_flags[CONTENT_CTRL_COUNT] = options.content_flags[CONTENT_PLAYER_COUNT];
+
+  /* There may be a future need to have a ctrl_count different than player_count,
+   * perhaps because of some alternating controls layout. This is a place to check
+   * some condition and make the two numbers different if that should ever prove useful.
+   */
+  if(false/*options.content_flags[CONTENT_ALTERNATING_CTRLS]*/)
+  {
+    options.content_flags[CONTENT_CTRL_COUNT] = 1;
+  }
+
+  /************ DRIVERS FLAGGED IN CONTROLS.C WITH 45-DEGREE JOYSTICK ROTATION ************/
+  if(game_driver->ctrl_dat->rotate_joy_45)
+    options.content_flags[CONTENT_ROTATE_JOY_45] = true;
+
+  /************ DCS DRIVERS WITH SPEEDDUP HACKS ************/
+  options.content_flags[CONTENT_DCS_SPEEDHACK] = true;
 
 
   /************ DRIVERS FLAGGED IN CONTROLS.C WITH MIRRORED CONTROLS ************/
   if(game_driver->ctrl_dat->mirrored_controls)
-  {
     options.content_flags[CONTENT_MIRRORED_CTRLS] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as having mirrored multiplayer control labels.\n");
-  }
-  else
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content identified by controls.c as having non-mirrored multiplayer control labels.\n");
-
-
-  /************ DCS DRIVERS WITH SPEEDDUP HACKS ************/
-  while(/*dcs_drivers[i]*/true)
-  {
-    if(/*strcmp(dcs_drivers[i], game_driver->name) == 0*/true)
-    {
-      options.content_flags[CONTENT_DCS_SPEEDHACK] = true;
-      /*log_cb(RETRO_LOG_INFO, LOGPRE "DCS content has a speedup hack controlled via core option.\n");*/
-      break;
-    }
-    i++;
-  }
 
   /************ DRIVERS WITH NVRAM BOOTSTRAP PATCHES ************/
   if(game_driver->bootstrap != NULL)
-  {
     options.content_flags[CONTENT_NVRAM_BOOTSTRAP] = true;
-    log_cb(RETRO_LOG_INFO, LOGPRE "Content has an NVRAM bootstrap controlled via core option.\n");
-  }
 
+
+  /************ LOG THE STATE OF THE CONTENT FLAGS ************/
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "==== BEGIN DRIVER CONTENT ATTRIBUTES ====\n");
+
+  if(options.content_flags[CONTENT_NEOGEO])     log_cb(RETRO_LOG_INFO, LOGPRE "* Neo Geo BIOS required.\n");
+  if(options.content_flags[CONTENT_STV])        log_cb(RETRO_LOG_INFO, LOGPRE "* STV BIOS required.\n");
+  if(options.content_flags[CONTENT_DIEHARD])    log_cb(RETRO_LOG_INFO, LOGPRE "* Die Hard: Arcade BIOS required.\n");
+  if(options.content_flags[CONTENT_ALT_SOUND])  log_cb(RETRO_LOG_INFO, LOGPRE "* Alternative soundtrack available.\n");
+  if(options.content_flags[CONTENT_VECTOR])     log_cb(RETRO_LOG_INFO, LOGPRE "* Vector display.\n");
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "* Supports %i players with %i distinct controls.\n", options.content_flags[CONTENT_PLAYER_COUNT], options.content_flags[CONTENT_CTRL_COUNT]);
+  log_cb(RETRO_LOG_INFO, LOGPRE "* Supports %i distinct button controls.\n", options.content_flags[CONTENT_BUTTON_COUNT]);
+
+  if(options.content_flags[CONTENT_DIAL])               log_cb(RETRO_LOG_INFO, LOGPRE "* Uses a dial.\n");
+  if(options.content_flags[CONTENT_TRACKBALL])          log_cb(RETRO_LOG_INFO, LOGPRE "* Uses a trackball.\n");
+  if(options.content_flags[CONTENT_LIGHTGUN])           log_cb(RETRO_LOG_INFO, LOGPRE "* Uses a lightgun.\n");
+  if(options.content_flags[CONTENT_PADDLE])             log_cb(RETRO_LOG_INFO, LOGPRE "* Uses an paddle.\n");
+  if(options.content_flags[CONTENT_AD_STICK])           log_cb(RETRO_LOG_INFO, LOGPRE "* Uses an analog joystick.\n");
+  if(options.content_flags[CONTENT_HAS_SERVICE])        log_cb(RETRO_LOG_INFO, LOGPRE "* Uses a service button.\n");
+  if(options.content_flags[CONTENT_HAS_TILT])           log_cb(RETRO_LOG_INFO, LOGPRE "* Uses a tilt function.\n");
+
+  if(options.content_flags[CONTENT_ALTERNATING_CTRLS])  log_cb(RETRO_LOG_INFO, LOGPRE "* Uses alternating controls.\n");
+  if(options.content_flags[CONTENT_MIRRORED_CTRLS])     log_cb(RETRO_LOG_INFO, LOGPRE "* Uses multiplayer control labels.\n");
+  if(options.content_flags[CONTENT_ROTATE_JOY_45])      log_cb(RETRO_LOG_INFO, LOGPRE "* Uses joysticks rotated 45-degrees with respect to the cabinet.\n");
+  if(options.content_flags[CONTENT_DUAL_JOYSTICK])      log_cb(RETRO_LOG_INFO, LOGPRE "* Uses dual joysticks.\n");
+  if(options.content_flags[CONTENT_JOYSTICK_DIRECTIONS] == 4)
+      log_cb(RETRO_LOG_INFO, LOGPRE "* Uses 4-way joystick controls.\n");
+  else
+      log_cb(RETRO_LOG_INFO, LOGPRE "* Uses 8-way joystick controls.\n");
+
+  if(options.content_flags[CONTENT_NVRAM_BOOTSTRAP])    log_cb(RETRO_LOG_INFO, LOGPRE "* Uses an NVRAM bootstrap controlled via core option.\n");
+
+  log_cb(RETRO_LOG_INFO, LOGPRE "==== END DRIVER CONTENT ATTRIBUTES ====\n");
 }
