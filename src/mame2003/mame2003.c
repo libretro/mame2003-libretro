@@ -32,7 +32,7 @@ int  pressure_check =  1.28 * 20;
 int convert_analog_scale(int input);
 
 int gotFrame;
-static const struct GameDriver  *game_driver;
+const struct GameDriver  *game_driver;
 static float              delta_samples;
 int                       samples_per_frame = 0;
 int                       orig_samples_per_frame =0;
@@ -68,52 +68,6 @@ struct retro_audio_buffer_status_callback buf_status_cb;
 
 bool old_dual_joystick_state = false; /* used to track when this core option changes */
 
-/******************************************************************************
-
-Core options
-
-******************************************************************************/
-
-enum CORE_OPTIONS/* controls the order in which core options appear. common, important, and content-specific options should go earlier on the list */
-{
-  OPT_4WAY = 0,
-  OPT_MOUSE_DEVICE,
-  OPT_CROSSHAIR_ENABLED,
-  OPT_SKIP_DISCLAIMER,
-  OPT_SKIP_WARNINGS,
-  OPT_DISPLAY_SETUP,
-  OPT_NEOGEO_BIOS,
-  OPT_STV_BIOS,
-  OPT_USE_ALT_SOUND,
-  OPT_SHARE_DIAL,
-  OPT_DUAL_JOY,
-  OPT_RSTICK_BTNS,
-  OPT_VECTOR_RESOLUTION,
-  OPT_VECTOR_ANTIALIAS,
-  OPT_VECTOR_BEAM,
-  OPT_VECTOR_TRANSLUCENCY,
-  OPT_VECTOR_FLICKER,
-  OPT_VECTOR_INTENSITY,
-  OPT_DCS_SPEEDHACK,
-  OPT_CORE_SYS_SUBFOLDER,
-  OPT_CORE_SAVE_SUBFOLDER,
-  OPT_TATE_MODE,
-  OPT_BRIGHTNESS,
-  OPT_GAMMA,
-  OPT_FRAMESKIP,
-  OPT_SAMPLE_RATE,
-  OPT_INPUT_INTERFACE,
-  OPT_MAME_REMAPPING,
-  OPT_ARTWORK,
-  OPT_ART_RESOLUTION,
-  OPT_NVRAM_BOOTSTRAP,
-  OPT_Cheat_Input_Ports,
-  OPT_Machine_Timing,
-#if (HAS_CYCLONE || HAS_DRZ80)
-  OPT_CYCLONE_MODE,
-#endif
-  OPT_end /* dummy last entry */
-};
 
 static struct retro_variable  default_options[OPT_end + 1];    /* need the plus one for the NULL entries at the end */
 static struct retro_variable  current_options[OPT_end + 1];
