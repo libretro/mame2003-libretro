@@ -65,6 +65,16 @@ extern retro_log_printf_t log_cb;
 extern void frontend_message_cb(const char *message_string, unsigned frames_to_display);
 
 
+/******************************************************************************
+
+  Core options
+
+******************************************************************************/
+void set_content_flags(void);
+void init_core_options(void);
+void update_variables(bool first_time);
+
+
 enum
 {
   IDX_CLASSIC = 0,
