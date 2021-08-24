@@ -13,8 +13,8 @@
 
 bool old_dual_joystick_state = false; /* used to track when this core option changes */
 
-static struct retro_variable  default_options[OPT_end + 1];    /* need the plus one for the NULL entries at the end */
-static struct retro_variable  effective_defaults[OPT_end + 1];
+static struct retro_core_option_v2_definition  default_options[OPT_end + 1];    /* need the plus one for the NULL entries at the end */
+static struct retro_core_option_v2_definition  effective_defaults[OPT_end + 1];
 
 /******************************************************************************
 
@@ -22,8 +22,8 @@ static struct retro_variable  effective_defaults[OPT_end + 1];
 
 ******************************************************************************/
 
-static void   init_default(struct retro_variable *def, const char *key, const char *value);
 static void   set_variables(void);
+static void   determine_core_options_version(struct retro_core_options_v2 *core_options_us);
 
 
 /******************************************************************************
@@ -669,49 +669,86 @@ static struct retro_core_option_v2_definition option_def_null = {
 };
 
 
+struct retro_core_option_v2_category option_cats_us[] = {
+   {
+      "cat_key_system",
+      "System",
+      "Configure system options."
+   },
+   {
+      "cat_key_input",
+      "Input",
+      "Configure input options."
+   },
+   {
+      "cat_key_audio",
+      "Audio",
+      "Configure audio options."
+   },
+   {
+      "cat_key_video",
+      "Video",
+      "Configure video options."
+   },
+   {
+      "cat_key_artwork",
+      "Artwork",
+      "Configure artwork options."
+   },
+   {
+      "cat_key_vector",
+      "Vector",
+      "Configure vector options."
+   },
+   { NULL, NULL, NULL },
+};
+
+
+struct retro_core_options_v2 options_us = {
+   option_cats_us,
+   effective_defaults
+};
+
+
 void init_core_options(void)
 {
-  init_default(&default_options[OPT_4WAY],                APPNAME"_four_way_emulation",  "4-way joystick emulation on 8-way joysticks; disabled|enabled");
-#if defined(__IOS__)
-  init_default(&default_options[OPT_MOUSE_DEVICE],        APPNAME"_mouse_device",        "Mouse Device; pointer|mouse|disabled");
-#else
-  init_default(&default_options[OPT_MOUSE_DEVICE],        APPNAME"_mouse_device",        "Mouse Device; mouse|pointer|disabled");
-#endif
-  init_default(&default_options[OPT_CROSSHAIR_ENABLED],   APPNAME"_crosshair_enabled",   "Show Lightgun crosshair; enabled|disabled");
-  init_default(&default_options[OPT_SKIP_DISCLAIMER],     APPNAME"_skip_disclaimer",     "Skip Disclaimer; disabled|enabled");
-  init_default(&default_options[OPT_SKIP_WARNINGS],       APPNAME"_skip_warnings",       "Skip Warnings; disabled|enabled");
-  init_default(&default_options[OPT_DISPLAY_SETUP],       APPNAME"_display_setup",       "Display MAME menu; disabled|enabled");
-  init_default(&default_options[OPT_BRIGHTNESS],          APPNAME"_brightness",          "Brightness; 1.0|0.2|0.3|0.4|0.5|0.6|0.7|0.8|0.9|1.1|1.2|1.3|1.4|1.5|1.6|1.7|1.8|1.9|2.0");
-  init_default(&default_options[OPT_GAMMA],               APPNAME"_gamma",               "Gamma correction; 1.0|0.5|0.6|0.7|0.8|0.9|1.1|1.2|1.3|1.4|1.5|1.6|1.7|1.8|1.9|2.0");
-  init_default(&default_options[OPT_ARTWORK],             APPNAME"_display_artwork",     "Display artwork (Restart core); enabled|disabled");
-  init_default(&default_options[OPT_ART_RESOLUTION],      APPNAME"_art_resolution",      "Artwork resolution multiplier (Restart core); 1|2");
-  init_default(&default_options[OPT_NEOGEO_BIOS],         APPNAME"_neogeo_bios",         "Specify Neo Geo BIOS (Restart core); default|euro|euro-s1|us|us-e|asia|japan|japan-s2|unibios33|unibios20|unibios13|unibios11|unibios10|debug|asia-aes");
-  init_default(&default_options[OPT_STV_BIOS],            APPNAME"_stv_bios",            "Specify Sega ST-V BIOS (Restart core); default|japan|japana|us|japan_b|taiwan|europe");
-  init_default(&default_options[OPT_USE_ALT_SOUND],       APPNAME"_use_alt_sound",       "Use CD soundtrack (Restart core); disabled");
-  init_default(&default_options[OPT_SHARE_DIAL],          APPNAME"_dialsharexy",         "Share 2 player dial controls across one X/Y device; disabled|enabled");
-  init_default(&default_options[OPT_DUAL_JOY],            APPNAME"_dual_joysticks",      "Dual joystick mode (!NETPLAY); disabled|enabled");
-  init_default(&default_options[OPT_RSTICK_BTNS],         APPNAME"_rstick_to_btns",      "Map right analog stick as buttons; enabled|disabled");
-  init_default(&default_options[OPT_TATE_MODE],           APPNAME"_tate_mode",           "TATE Mode - Rotating display (Restart core); disabled|enabled");
-  init_default(&default_options[OPT_VECTOR_RESOLUTION],   APPNAME"_vector_resolution",   "Vector resolution (Restart core); 1024x768|640x480|1280x960|1440x1080|1600x1200|original");
-  init_default(&default_options[OPT_VECTOR_ANTIALIAS],    APPNAME"_vector_antialias",    "Vector antialiasing; enabled|disabled");
-  init_default(&default_options[OPT_VECTOR_BEAM],         APPNAME"_vector_beam_width",   "Vector beam width (only with antialiasing); 1.2|1|1.4|1.6|1.8|2|2.5|3|4|5|6|7|8|9|10|11|12");
-  init_default(&default_options[OPT_VECTOR_TRANSLUCENCY], APPNAME"_vector_translucency", "Vector translucency; enabled|disabled");
-  init_default(&default_options[OPT_VECTOR_FLICKER],      APPNAME"_vector_flicker",      "Vector flicker; 20|0|10|30|40|50|60|70|80|90|100");
-  init_default(&default_options[OPT_VECTOR_INTENSITY],    APPNAME"_vector_intensity",    "Vector intensity; 1.5|0.5|1|2|2.5|3");
-  init_default(&default_options[OPT_NVRAM_BOOTSTRAP],     APPNAME"_nvram_bootstraps",    "NVRAM Bootstraps; enabled|disabled");
-  init_default(&default_options[OPT_SAMPLE_RATE],         APPNAME"_sample_rate",         "Sample Rate (KHz); 48000|8000|11025|22050|30000|44100|");
-  init_default(&default_options[OPT_DCS_SPEEDHACK],       APPNAME"_dcs_speedhack",       "DCS Speedhack; enabled|disabled");
-  init_default(&default_options[OPT_INPUT_INTERFACE],     APPNAME"_input_interface",     "Input interface; simultaneous|retropad|keyboard");
-  init_default(&default_options[OPT_MAME_REMAPPING],      APPNAME"_mame_remapping",      "Legacy Remapping (!NETPLAY); enabled|disabled");
-  init_default(&default_options[OPT_FRAMESKIP],           APPNAME"_frameskip",           "Frameskip; disabled|1|2|3|4|5|6|7|9|10|11|auto|auto_aggressive|auto_max");
-  init_default(&default_options[OPT_CORE_SYS_SUBFOLDER],  APPNAME"_core_sys_subfolder",  "Locate system files within a subfolder; enabled|disabled"); /* This should be probably handled by the frontend and not by cores per discussions in Fall 2018 but RetroArch for example doesn't provide this as an option. */
-  init_default(&default_options[OPT_CORE_SAVE_SUBFOLDER], APPNAME"_core_save_subfolder", "Locate save files within a subfolder; enabled|disabled"); /* This is already available as an option in RetroArch although it is left enabled by default as of November 2018 for consistency with past practice. At least for now.*/
-  init_default(&default_options[OPT_Cheat_Input_Ports],   APPNAME"_cheat_input_ports",   "Dip switch/Cheat input ports; disabled|enabled");
-  init_default(&default_options[OPT_Machine_Timing],      APPNAME"_machine_timing",      "Bypass Timing Skew (Restart core); disabled|enabled");
+  default_options[OPT_4WAY]                      = option_def_four_way_emulation;
+  default_options[OPT_XY_DEVICE]                 = option_def_xy_device;
+  default_options[OPT_CROSSHAIR_ENABLED]         = option_def_crosshair_enabled;
+  default_options[OPT_SKIP_DISCLAIMER]           = option_def_skip_disclaimer;
+  default_options[OPT_SKIP_WARNINGS]             = option_def_skip_warnings;
+  default_options[OPT_DISPLAY_SETUP]             = option_def_display_setup;
+  default_options[OPT_BRIGHTNESS]                = option_def_brightness;
+  default_options[OPT_GAMMA]                     = option_def_gamma;
+  default_options[OPT_ARTWORK]                   = option_def_display_artwork;
+  default_options[OPT_ART_RESOLUTION]            = option_def_art_resolution;
+  default_options[OPT_NEOGEO_BIOS]               = option_def_neogeo_bios;
+  default_options[OPT_STV_BIOS]                  = option_def_stv_bios;
+  default_options[OPT_USE_ALT_SOUND]             = option_def_use_alt_sound;
+  default_options[OPT_SHARE_DIAL]                = option_def_dialsharexy;
+  default_options[OPT_DUAL_JOY]                  = option_def_dual_joysticks;
+  default_options[OPT_RSTICK_BTNS]               = option_def_rstick_to_btns;
+  default_options[OPT_TATE_MODE]                 = option_def_tate_mode;
+  default_options[OPT_VECTOR_RESOLUTION]         = option_def_vector_resolution;
+  default_options[OPT_VECTOR_ANTIALIAS]          = option_def_vector_antialias;
+  default_options[OPT_VECTOR_BEAM]               = option_def_vector_beam_width;
+  default_options[OPT_VECTOR_TRANSLUCENCY]       = option_def_vector_translucency;
+  default_options[OPT_VECTOR_FLICKER]            = option_def_vector_flicker;
+  default_options[OPT_VECTOR_INTENSITY]          = option_def_vector_intensity;
+  default_options[OPT_DCS_SPEEDHACK]             = option_def_dcs_speedhack;
+  default_options[OPT_NVRAM_BOOTSTRAP]           = option_def_nvram_bootstraps;
+  default_options[OPT_SAMPLE_RATE]               = option_def_sample_rate;
+  default_options[OPT_INPUT_INTERFACE]           = option_def_input_interface;
+  default_options[OPT_MAME_REMAPPING]            = option_def_mame_remapping;
+  default_options[OPT_FRAMESKIP]                 = option_def_frameskip;
+  default_options[OPT_CORE_SYS_SUBFOLDER]        = option_def_core_sys_subfolder;
+  default_options[OPT_CORE_SAVE_SUBFOLDER]       = option_def_core_save_subfolder;
+  default_options[OPT_CHEAT_INPUT_PORTS]         = option_def_cheat_input_ports;
+  default_options[OPT_MACHINE_TIMING]            = option_def_machine_timing;
 #if (HAS_CYCLONE || HAS_DRZ80)
-  init_default(&default_options[OPT_CYCLONE_MODE],        APPNAME"_cyclone_mode",        "Cyclone mode (Restart core); default|disabled|Cyclone|DrZ80|Cyclone+DrZ80|DrZ80(snd)|Cyclone+DrZ80(snd)");
+  default_options[OPT_CYCLONE_MODE]              = option_def_cyclone_mode;
 #endif
-  init_default(&default_options[OPT_end], NULL, NULL);
+  default_options[OPT_end]                       = option_def_null;
   set_variables();
 }
 
@@ -777,15 +814,8 @@ static void set_variables()
    effective_options_count++;
   }
 
-  environ_cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)effective_defaults);
+  determine_core_options_version( &options_us );
 
-}
-
-
-static void init_default(struct retro_variable *def, const char *key, const char *value)
-{
-  def->key = key;
-  def->value = value;
 }
 
 
@@ -1398,4 +1428,185 @@ void set_content_flags(void)
   if(options.content_flags[CONTENT_NVRAM_BOOTSTRAP])    log_cb(RETRO_LOG_INFO, LOGPRE "* Uses an NVRAM bootstrap controlled via core option.\n");
 
   log_cb(RETRO_LOG_INFO, LOGPRE "==== END DRIVER CONTENT ATTRIBUTES ====\n");
+}
+
+
+static void determine_core_options_version(struct retro_core_options_v2 *core_options_us)
+{
+   unsigned version  = 0;
+
+   if (!environ_cb)
+      return;
+
+   if (!environ_cb(RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION, &version))
+      version = 0;
+
+   if (version >= 2)
+   {
+      environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2,
+            core_options_us);
+   }
+   else
+   {
+      size_t i, j;
+      size_t option_index              = 0;
+      size_t num_options               = 0;
+      struct retro_core_option_v2_definition
+            *option_defs_us            = core_options_us->definitions;
+      struct retro_core_option_definition
+            *option_v1_defs_us         = NULL;
+      struct retro_variable *variables = NULL;
+      char **values_buf                = NULL;
+
+      /* Determine total number of options */
+      while (true)
+      {
+         if (option_defs_us[num_options].key)
+            num_options++;
+         else
+            break;
+      }
+
+      if (version >= 1)
+      {
+         /* Allocate US array */
+         option_v1_defs_us = (struct retro_core_option_definition *)
+               calloc(num_options + 1, sizeof(struct retro_core_option_definition));
+
+         /* Copy parameters from option_defs_us array */
+         for (i = 0; i < num_options; i++)
+         {
+            struct retro_core_option_v2_definition *option_def_us = &option_defs_us[i];
+            struct retro_core_option_value *option_values         = option_def_us->values;
+            struct retro_core_option_definition *option_v1_def_us = &option_v1_defs_us[i];
+            struct retro_core_option_value *option_v1_values      = option_v1_def_us->values;
+
+            option_v1_def_us->key           = option_def_us->key;
+            option_v1_def_us->desc          = option_def_us->desc;
+            option_v1_def_us->info          = option_def_us->info;
+            option_v1_def_us->default_value = option_def_us->default_value;
+
+            /* Values must be copied individually... */
+            while (option_values->value)
+            {
+               option_v1_values->value = option_values->value;
+               option_v1_values->label = option_values->label;
+
+               option_values++;
+               option_v1_values++;
+            }
+         }
+
+         environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS, option_v1_defs_us);
+      }
+      else
+      {
+         /* Allocate arrays */
+         variables  = (struct retro_variable *)calloc(num_options + 1,
+               sizeof(struct retro_variable));
+         values_buf = (char **)calloc(num_options, sizeof(char *));
+
+         if (!variables || !values_buf)
+            goto error;
+
+         /* Copy parameters from option_defs_us array */
+         for (i = 0; i < num_options; i++)
+         {
+            const char *key                        = option_defs_us[i].key;
+            const char *desc                       = option_defs_us[i].desc;
+            const char *default_value              = option_defs_us[i].default_value;
+            struct retro_core_option_value *values = option_defs_us[i].values;
+            size_t buf_len                         = 3;
+            size_t default_index                   = 0;
+
+            values_buf[i] = NULL;
+
+            if (desc)
+            {
+               size_t num_values = 0;
+
+               /* Determine number of values */
+               while (true)
+               {
+                  if (values[num_values].value)
+                  {
+                     /* Check if this is the default value */
+                     if (default_value)
+                        if (strcmp(values[num_values].value, default_value) == 0)
+                           default_index = num_values;
+
+                     buf_len += strlen(values[num_values].value);
+                     num_values++;
+                  }
+                  else
+                     break;
+               }
+
+               /* Build values string */
+               if (num_values > 0)
+               {
+                  buf_len += num_values - 1;
+                  buf_len += strlen(desc);
+
+                  values_buf[i] = (char *)calloc(buf_len, sizeof(char));
+                  if (!values_buf[i])
+                     goto error;
+
+                  strcpy(values_buf[i], desc);
+                  strcat(values_buf[i], "; ");
+
+                  /* Default value goes first */
+                  strcat(values_buf[i], values[default_index].value);
+
+                  /* Add remaining values */
+                  for (j = 0; j < num_values; j++)
+                  {
+                     if (j != default_index)
+                     {
+                        strcat(values_buf[i], "|");
+                        strcat(values_buf[i], values[j].value);
+                     }
+                  }
+               }
+            }
+
+            variables[option_index].key   = key;
+            variables[option_index].value = values_buf[i];
+            option_index++;
+         }
+
+         /* Set variables */
+         environ_cb(RETRO_ENVIRONMENT_SET_VARIABLES, variables);
+      }
+
+error:
+      /* Clean up */
+
+      if (option_v1_defs_us)
+      {
+         free(option_v1_defs_us);
+         option_v1_defs_us = NULL;
+      }
+
+      if (values_buf)
+      {
+         for (i = 0; i < num_options; i++)
+         {
+            if (values_buf[i])
+            {
+               free(values_buf[i]);
+               values_buf[i] = NULL;
+            }
+         }
+
+         free(values_buf);
+         values_buf = NULL;
+      }
+
+      if (variables)
+      {
+         free(variables);
+         variables = NULL;
+      }
+   }
 }
