@@ -255,7 +255,6 @@ static struct retro_core_option_v2_definition option_def_neogeo_bios = {
       { "asia",      NULL },
       { "japan",     NULL },
       { "japan-s2",  NULL },
-      { "unibios40", NULL },
       { "unibios33", NULL },
       { "unibios20", NULL },
       { "unibios13", NULL },
