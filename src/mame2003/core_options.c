@@ -310,6 +310,36 @@ static struct retro_core_option_v2_definition option_def_dialsharexy = {
    "disabled"
 };
 
+static struct retro_core_option_v2_definition option_def_dual_joysticks = {
+   APPNAME"_dual_joysticks",
+   "Dual Joystick Mode",
+   NULL,
+   "(!NETPLAY).",
+   NULL,
+   "cat_key_input",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_rstick_to_btns = {
+   APPNAME"_rstick_to_btns",
+   "Map Right Analog Stick as Buttons",
+   NULL,
+   NULL,
+   NULL,
+   "cat_key_input",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
 static struct retro_core_option_v2_definition option_def_tate_mode = {
    APPNAME"_tate_mode",
    "TATE Mode",
@@ -445,6 +475,21 @@ static struct retro_core_option_v2_definition option_def_vector_intensity = {
       { NULL, NULL },
    },
    "1.5"
+};
+
+static struct retro_core_option_v2_definition option_def_dcs_speedhack = {
+   APPNAME"_dcs_speedhack",
+   "DCS Speedhack",
+   NULL,
+   NULL,
+   NULL,
+   "cat_key_audio",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
 };
 
 static struct retro_core_option_v2_definition option_def_nvram_bootstraps = {
