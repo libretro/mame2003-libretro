@@ -391,6 +391,15 @@ void retro_run (void)
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
 		update_variables(false);
 
+	if (options.cpu_clock_scale)
+	{
+		if (cpunum_get_clockscale(0) != options.cpu_clock_scale)
+		{
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "changing cpu clock scale from %lf to %lf\n",cpunum_get_clockscale(0),options.cpu_clock_scale);
+			cpunum_set_clockscale(0, options.cpu_clock_scale);
+		}
+	}
+
 	/* Keyboard */
 	thisInput = retroKeys;
 	while(thisInput->name)
