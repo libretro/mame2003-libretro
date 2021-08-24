@@ -47,6 +47,592 @@ extern retro_set_led_state_t led_state_cb;
  */
 
 
+static struct retro_core_option_v2_definition option_def_four_way_emulation = {
+   APPNAME"_four_way_emulation",
+   "4-Way Joystick Emulation on 8-Way Joysticks",
+   NULL,
+   "Improves issues with hitting diagonals when playing 4-way games.",
+   NULL,
+   "cat_key_input",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_mouse_device = {
+   APPNAME"_mouse_device",
+   "Mouse Device",
+   NULL,
+   "Selects a specific x-y coordinates input device to read.",
+   NULL,
+   "cat_key_input",
+   {
+      { "mouse",    NULL },
+      { "pointer",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+#if defined(__IOS__)
+   "pointer"
+#else
+   "mouse"
+#endif
+};
+
+static struct retro_core_option_v2_definition option_def_crosshair_enabled = {
+   APPNAME"_crosshair_enabled",
+   "Show Lightgun Crosshairs",
+   NULL,
+   "Displays a generic crosshair for each player.",
+   NULL,
+   "cat_key_input",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_skip_disclaimer = {
+   APPNAME"_skip_disclaimer",
+   "Skip Disclaimer",
+   NULL,
+   "Bypasses a copyright warning from being displayed when loading content.",
+   NULL,
+   "cat_key_system",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_skip_warnings = {
+   APPNAME"_skip_warnings",
+   "Skip Warnings",
+   NULL,
+   "Bypasses a warning message from being displayed when loading content containing known issues.",
+   NULL,
+   "cat_key_system",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_display_setup = {
+   APPNAME"_display_setup",
+   "Display MAME Menu",
+   NULL,
+   "Toggles the visibility of the internal MAME menu.",
+   NULL,
+   "cat_key_system",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_brightness = {
+   APPNAME"_brightness",
+   "Brightness",
+   NULL,
+   "Modifies the brightness level being used.",
+   NULL,
+   "cat_key_video",
+   {
+      { "0.2", NULL },
+      { "0.3", NULL },
+      { "0.4", NULL },
+      { "0.5", NULL },
+      { "0.6", NULL },
+      { "0.7", NULL },
+      { "0.8", NULL },
+      { "0.9", NULL },
+      { "1.0", NULL },
+      { "1.1", NULL },
+      { "1.2", NULL },
+      { "1.3", NULL },
+      { "1.4", NULL },
+      { "1.5", NULL },
+      { "1.6", NULL },
+      { "1.7", NULL },
+      { "1.8", NULL },
+      { "1.9", NULL },
+      { "2.0", NULL },
+      { NULL, NULL },
+   },
+   "1.0"
+};
+
+static struct retro_core_option_v2_definition option_def_gamma = {
+   APPNAME"_gamma",
+   "Gamma Correction",
+   NULL,
+   "Modifies the gamma level being used.",
+   NULL,
+   "cat_key_video",
+   {
+      { "0.5", NULL },
+      { "0.6", NULL },
+      { "0.7", NULL },
+      { "0.8", NULL },
+      { "0.9", NULL },
+      { "1.0", NULL },
+      { "1.1", NULL },
+      { "1.2", NULL },
+      { "1.3", NULL },
+      { "1.4", NULL },
+      { "1.5", NULL },
+      { "1.6", NULL },
+      { "1.7", NULL },
+      { "1.8", NULL },
+      { "1.9", NULL },
+      { "2.0", NULL },
+      { NULL, NULL },
+   },
+   "1.0"
+};
+
+static struct retro_core_option_v2_definition option_def_display_artwork = {
+   APPNAME"_display_artwork",
+   "Display Artwork",
+   NULL,
+   "Restart core required. Used to display custom artwork when available.",
+   NULL,
+   "cat_key_artwork",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_art_resolution = {
+   APPNAME"_art_resolution",
+   "Artwork Resolution Multiplier",
+   "Resolution Multiplier",
+   "Restart core required. Increases the artwork resolution by the selected multiplier value.",
+   NULL,
+   "cat_key_artwork",
+   {
+      { "1",  NULL },
+      { "2",  NULL },
+      { "3",  NULL },
+      { "4",  NULL },
+      { "5",  NULL },
+      { "6",  NULL },
+      { "7",  NULL },
+      { "8",  NULL },
+      { NULL, NULL },
+   },
+   "1"
+};
+
+static struct retro_core_option_v2_definition option_def_neogeo_bios = {
+   APPNAME"_neogeo_bios",
+   "Specify Neo Geo BIOS",
+   NULL,
+   "Restart core required. Select alternative bios files.",
+   NULL,
+   NULL,
+   {
+      { "default",   NULL },
+      { "euro",      NULL },
+      { "euro-s1",   NULL },
+      { "us",        NULL },
+      { "us-e",      NULL },
+      { "asia",      NULL },
+      { "japan",     NULL },
+      { "japan-s2",  NULL },
+      { "unibios40", NULL },
+      { "unibios33", NULL },
+      { "unibios20", NULL },
+      { "unibios13", NULL },
+      { "unibios11", NULL },
+      { "unibios10", NULL },
+      { "debug",     NULL },
+      { "asia-aes",  NULL },
+      { NULL, NULL },
+   },
+   "default"
+};
+
+static struct retro_core_option_v2_definition option_def_stv_bios = {
+   APPNAME"_stv_bios",
+   "Specify Sega ST-V BIOS",
+   NULL,
+   "Restart core required. Select alternative bios files.",
+   NULL,
+   NULL,
+   {
+      { "default", NULL },
+      { "japan",   NULL },
+      { "japana",  NULL },
+      { "us",      NULL },
+      { "japan_b", NULL },
+      { "taiwan",  NULL },
+      { "europe",  NULL },
+      { NULL, NULL },
+   },
+   "default"
+};
+
+static struct retro_core_option_v2_definition option_def_use_alt_sound = {
+   APPNAME"_use_alt_sound",
+   "Use CD Soundtrack",
+   NULL,
+   "Restart core required. Replaces original hardware sounds with external audio files when available.",
+   NULL,
+   "cat_key_audio",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_dialsharexy = {
+   APPNAME"_dialsharexy",
+   "Share 2 Player Dial Controls Across One X/Y Device",
+   NULL,
+   NULL,
+   NULL,
+   "cat_key_input",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_tate_mode = {
+   APPNAME"_tate_mode",
+   "TATE Mode",
+   NULL,
+   "When enabled, the display will be rotated to the orientation used by actual hardware.",
+   NULL,
+   "cat_key_video",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_vector_resolution = {
+   APPNAME"_vector_resolution",
+   "Vector Resolution",
+   "Resolution",
+   "Restart core required.",
+   NULL,
+   "cat_key_vector",
+   {
+      { "640x480",   NULL },
+      { "1024x768",  NULL },
+      { "1280x960",  NULL },
+      { "1440x1080", NULL },
+      { "1600x1200", NULL },
+      { "1707x1280", NULL },
+      { "original",  NULL },
+      { NULL, NULL },
+   },
+   "1024x768"
+};
+
+static struct retro_core_option_v2_definition option_def_vector_antialias = {
+   APPNAME"_vector_antialias",
+   "Vector Antialiasing",
+   "Antialiasing",
+   NULL,
+   NULL,
+   "cat_key_vector",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_vector_beam_width = {
+   APPNAME"_vector_beam_width",
+   "Vector Beam Width",
+   "Beam Width",
+   "Only used with antialiasing.",
+   NULL,
+   "cat_key_vector",
+   {
+      { "1",   NULL },
+      { "1.2", NULL },
+      { "1.4", NULL },
+      { "1.6", NULL },
+      { "1.8", NULL },
+      { "2",   NULL },
+      { "2.5", NULL },
+      { "3",   NULL },
+      { "4",   NULL },
+      { "5",   NULL },
+      { "6",   NULL },
+      { "7",   NULL },
+      { "8",   NULL },
+      { "9",   NULL },
+      { "10",  NULL },
+      { "11",  NULL },
+      { "12",  NULL },
+      { NULL,  NULL },
+   },
+   "2"
+};
+
+static struct retro_core_option_v2_definition option_def_vector_translucency = {
+   APPNAME"_vector_translucency",
+   "Vector Translucency",
+   "Translucency",
+   NULL,
+   NULL,
+   "cat_key_vector",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_vector_flicker = {
+   APPNAME"_vector_flicker",
+   "Vector Flicker",
+   "Flicker",
+   NULL,
+   NULL,
+   "cat_key_vector",
+   {
+      { "0",   NULL },
+      { "10",  NULL },
+      { "20",  NULL },
+      { "30",  NULL },
+      { "40",  NULL },
+      { "50",  NULL },
+      { "60",  NULL },
+      { "70",  NULL },
+      { "80",  NULL },
+      { "90",  NULL },
+      { "100", NULL },
+      { NULL, NULL },
+   },
+   "20"
+};
+
+static struct retro_core_option_v2_definition option_def_vector_intensity = {
+   APPNAME"_vector_intensity",
+   "Vector Intensity",
+   "Intensity",
+   NULL,
+   NULL,
+   "cat_key_vector",
+   {
+      { "0.5", NULL },
+      { "1",   NULL },
+      { "1.5", NULL },
+      { "2",   NULL },
+      { "2.5", NULL },
+      { "3",   NULL },
+      { NULL, NULL },
+   },
+   "1.5"
+};
+
+static struct retro_core_option_v2_definition option_def_nvram_bootstraps = {
+   APPNAME"_nvram_bootstraps",
+   "NVRAM Bootstraps",
+   NULL,
+   "Used to automatically initialize games that otherwise require special startup procedures or configurations.",
+   NULL,
+   "cat_key_system",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_sample_rate = {
+   APPNAME"_sample_rate",
+   "Sample Rate",
+   NULL,
+   "Number of samples taken per second. Higher rates provide better quality audio.",
+   NULL,
+   "cat_key_audio",
+   {
+      { "8000",   "8000 KHz" },
+      { "11025", "11025 KHz" },
+      { "22050", "22050 KHz" },
+      { "30000", "30000 KHz" },
+      { "44100", "44100 KHz" },
+      { "48000", "48000 KHz" },
+      { NULL, NULL },
+   },
+   "48000"
+};
+
+static struct retro_core_option_v2_definition option_def_input_interface = {
+   APPNAME"_input_interface",
+   "Input Interface",
+   NULL,
+   "Configures which input types are being read.",
+   NULL,
+   "cat_key_input",
+   {
+      { "simultaneous", NULL },
+      { "retropad",     NULL },
+      { "keyboard",     NULL },
+      { NULL, NULL },
+   },
+   "simultaneous"
+};
+
+static struct retro_core_option_v2_definition option_def_mame_remapping = {
+   APPNAME"_mame_remapping",
+   "Legacy Remapping",
+   NULL,
+   "Restart core required. Enables MAME menu input remapping.",
+   NULL,
+   "cat_key_system",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_frameskip = {
+   APPNAME"_frameskip",
+   "Frameskip",
+   NULL,
+   "Skips a number of frames from being displayed. Can be used to squeeze performance out of lower spec platforms.",
+   NULL,
+   "cat_key_video",
+   {
+      { "disabled",        NULL },
+      { "1",               NULL },
+      { "2",               NULL },
+      { "3",               NULL },
+      { "4",               NULL },
+      { "5",               NULL },
+      { "6",               NULL },
+      { "7",               NULL },
+      { "9",               NULL },
+      { "10",              NULL },
+      { "11",              NULL },
+      { "auto",            NULL },
+      { "auto_aggressive", "auto aggressive" },
+      { "auto_max",        "auto max"        },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_core_sys_subfolder = {
+   APPNAME"_core_sys_subfolder",
+   "Locate System Files Within a Subfolder",
+   NULL,
+   NULL,
+   NULL,
+   "cat_key_system",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_core_save_subfolder = {
+   APPNAME"_core_save_subfolder",
+   "Locate Save Files Within a Subfolder",
+   NULL,
+   NULL,
+   NULL,
+   "cat_key_system",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_cheat_input_ports = {
+   APPNAME"_cheat_input_ports",
+   "Dip Switch/Cheat Input Ports",
+   NULL,
+   NULL,
+   NULL,
+   "cat_key_input",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
+static struct retro_core_option_v2_definition option_def_machine_timing = {
+   APPNAME"_machine_timing",
+   "Bypass Audio Skew",
+   NULL,
+   "Restart core required.",
+   NULL,
+   "cat_key_audio",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
+static struct retro_core_option_v2_definition option_def_cyclone_mode = {
+   APPNAME"_cyclone_mode",
+   "Cyclone Mode",
+   NULL,
+   "Restart core required. Forces the selected cyclone mode to be used.",
+   NULL,
+   NULL,
+   {
+      { "default",            NULL },
+      { "disabled",           NULL },
+      { "Cyclone",            NULL },
+      { "DrZ80",              NULL },
+      { "Cyclone+DrZ80",      NULL },
+      { "DrZ80(snd)",         NULL },
+      { "Cyclone+DrZ80(snd)", NULL },
+      { NULL, NULL },
+   },
+   "default"
+};
+
+static struct retro_core_option_v2_definition option_def_null = {
+   NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL
+};
+
+
 void init_core_options(void)
 {
   init_default(&default_options[OPT_4WAY],                APPNAME"_four_way_emulation",  "4-way joystick emulation on 8-way joysticks; disabled|enabled");
