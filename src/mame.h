@@ -264,6 +264,7 @@ struct GameOptions
   int      debug_depth;	         /* requested depth of debugger bitmap */
   bool     cheat_input_ports;     /*cheat input ports enable/disable */
   bool     machine_timing;
+  double   cpu_clock_scale;
 #if (HAS_CYCLONE || HAS_DRZ80)
   int      cyclone_mode;
 #endif
