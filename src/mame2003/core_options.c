@@ -644,6 +644,40 @@ static struct retro_core_option_v2_definition option_def_machine_timing = {
    "disabled"
 };
 
+static struct retro_core_option_v2_definition option_def_cpu_clock_scale = {
+   APPNAME"_cpu_clock_scale",
+   "CPU Clock Scale",
+   NULL,
+   "Used to under or over clock the emulated CPU by a specified percentage.",
+   NULL,
+   NULL,
+   {
+      { "default", NULL },
+      { "25",     "25%" },
+      { "30",     "30%" },
+      { "35",     "35%" },
+      { "40",     "40%" },
+      { "45",     "45%" },
+      { "50",     "50%" },
+      { "55",     "55%" },
+      { "60",     "60%" },
+      { "65",     "65%" },
+      { "70",     "70%" },
+      { "75",     "75%" },
+      { "80",     "80%" },
+      { "85",     "85%" },
+      { "90",     "90%" },
+      { "95",     "95%" },
+      { "105",   "105%" },
+      { "110",   "110%" },
+      { "115",   "115%" },
+      { "120",   "120%" },
+      { "125",   "125%" },
+      { NULL, NULL },
+   },
+   "default"
+};
+
 static struct retro_core_option_v2_definition option_def_cyclone_mode = {
    APPNAME"_cyclone_mode",
    "Cyclone Mode",
@@ -745,6 +779,7 @@ void init_core_options(void)
   default_options[OPT_CORE_SAVE_SUBFOLDER]       = option_def_core_save_subfolder;
   default_options[OPT_CHEAT_INPUT_PORTS]         = option_def_cheat_input_ports;
   default_options[OPT_MACHINE_TIMING]            = option_def_machine_timing;
+  default_options[OPT_CPU_CLOCK_SCALE]           = option_def_cpu_clock_scale;
 #if (HAS_CYCLONE || HAS_DRZ80)
   default_options[OPT_CYCLONE_MODE]              = option_def_cyclone_mode;
 #endif
@@ -908,37 +943,6 @@ void update_variables(bool first_time)
           if(!first_time)
             palette_set_global_gamma(options.gamma);
           break;
-
-          /* TODO: Add overclock option. Below is the code from the old MAME osd to help process the core option.*/
-          /*
-
-          double overclock;
-          int cpu, doallcpus = 0, oc;
-
-          if (code_pressed(KEYCODE_LSHIFT) || code_pressed(KEYCODE_RSHIFT))
-            doallcpus = 1;
-          if (!code_pressed(KEYCODE_LCONTROL) && !code_pressed(KEYCODE_RCONTROL))
-            increment *= 5;
-          if( increment :
-            overclock = timer_get_overclock(arg);
-            overclock += 0.01 * increment;
-            if (overclock < 0.01) overclock = 0.01;
-            if (overclock > 2.0) overclock = 2.0;
-            if( doallcpus )
-              for( cpu = 0; cpu < cpu_gettotalcpu(); cpu++ )
-                timer_set_overclock(cpu, overclock);
-            else
-              timer_set_overclock(arg, overclock);
-          }
-
-          oc = 100 * timer_get_overclock(arg) + 0.5;
-
-          if( doallcpus )
-            sprintf(buf,"%s %s %3d%%", ui_getstring (UI_allcpus), ui_getstring (UI_overclock), oc);
-          else
-            sprintf(buf,"%s %s%d %3d%%", ui_getstring (UI_overclock), ui_getstring (UI_cpu), arg, oc);
-          displayosd(bitmap,buf,oc/2,100/2);
-        */
 
         case OPT_ARTWORK:
           if(strcmp(var.value, "enabled") == 0)
@@ -1143,6 +1147,13 @@ void update_variables(bool first_time)
             options.frameskip = atoi(var.value);
 
           retro_set_audio_buff_status_cb();
+          break;
+
+        case OPT_CPU_CLOCK_SCALE:
+          if(strcmp(var.value, "default") == 0)
+            options.cpu_clock_scale = 1;
+          else
+            options.cpu_clock_scale = (double) atoi(var.value) / 100;
           break;
 
         case OPT_CORE_SYS_SUBFOLDER:
