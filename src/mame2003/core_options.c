@@ -507,7 +507,7 @@ static struct retro_core_option_v2_definition option_def_mame_remapping = {
    APPNAME"_mame_remapping",
    "Legacy Remapping",
    NULL,
-   "Restart core required. Enables MAME menu input remapping.",
+   "Restart core required. Enables MAME menu input remapping. (!NETPLAY).",
    NULL,
    "cat_key_system",
    {
