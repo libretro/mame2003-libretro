@@ -1161,14 +1161,14 @@ void update_variables(bool first_time)
              options.save_subfolder = false;
            break;
 
-        case OPT_Cheat_Input_Ports:
+        case OPT_CHEAT_INPUT_PORTS:
           if(strcmp(var.value, "enabled") == 0)
             options.cheat_input_ports = true;
           else
             options.cheat_input_ports = false;
           break;
 
-        case OPT_Machine_Timing:
+        case OPT_MACHINE_TIMING:
           if(strcmp(var.value, "enabled") == 0)
             options.machine_timing = true;
           else
