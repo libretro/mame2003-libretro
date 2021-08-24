@@ -296,7 +296,6 @@ static struct retro_core_option_v2_definition option_def_use_alt_sound = {
    "cat_key_audio",
    {
       { "disabled", NULL },
-      { "enabled",  NULL },
       { NULL, NULL },
    },
    "disabled"
