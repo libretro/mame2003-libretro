@@ -713,7 +713,7 @@ struct retro_core_options_v2 options_us = {
 void init_core_options(void)
 {
   default_options[OPT_4WAY]                      = option_def_four_way_emulation;
-  default_options[OPT_XY_DEVICE]                 = option_def_xy_device;
+  default_options[OPT_MOUSE_DEVICE]              = option_def_mouse_device;
   default_options[OPT_CROSSHAIR_ENABLED]         = option_def_crosshair_enabled;
   default_options[OPT_SKIP_DISCLAIMER]           = option_def_skip_disclaimer;
   default_options[OPT_SKIP_WARNINGS]             = option_def_skip_warnings;
