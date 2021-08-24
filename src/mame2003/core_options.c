@@ -481,7 +481,7 @@ static struct retro_core_option_v2_definition option_def_dcs_speedhack = {
    APPNAME"_dcs_speedhack",
    "DCS Speedhack",
    NULL,
-   NULL,
+   "Speedhack for Midway sound hardware. Improves performance.",
    NULL,
    "cat_key_audio",
    {
