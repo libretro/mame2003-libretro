@@ -477,21 +477,6 @@ static struct retro_core_option_v2_definition option_def_vector_intensity = {
    "1.5"
 };
 
-static struct retro_core_option_v2_definition option_def_dcs_speedhack = {
-   APPNAME"_dcs_speedhack",
-   "DCS Speedhack",
-   NULL,
-   "Speedhack for Midway sound hardware. Improves performance.",
-   NULL,
-   "cat_key_audio",
-   {
-      { "enabled",  NULL },
-      { "disabled", NULL },
-      { NULL, NULL },
-   },
-   "enabled"
-};
-
 static struct retro_core_option_v2_definition option_def_nvram_bootstraps = {
    APPNAME"_nvram_bootstraps",
    "NVRAM Bootstraps",
@@ -524,6 +509,21 @@ static struct retro_core_option_v2_definition option_def_sample_rate = {
       { NULL, NULL },
    },
    "48000"
+};
+
+static struct retro_core_option_v2_definition option_def_dcs_speedhack = {
+   APPNAME"_dcs_speedhack",
+   "DCS Speedhack",
+   NULL,
+   "Speedhack for Midway sound hardware. Improves performance.",
+   NULL,
+   "cat_key_audio",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
 };
 
 static struct retro_core_option_v2_definition option_def_input_interface = {
@@ -637,8 +637,8 @@ static struct retro_core_option_v2_definition option_def_machine_timing = {
    NULL,
    "cat_key_audio",
    {
-      { "enabled",  NULL },
       { "disabled", NULL },
+      { "enabled",  NULL },
       { NULL, NULL },
    },
    "disabled"
@@ -769,9 +769,9 @@ void init_core_options(void)
   default_options[OPT_VECTOR_TRANSLUCENCY]       = option_def_vector_translucency;
   default_options[OPT_VECTOR_FLICKER]            = option_def_vector_flicker;
   default_options[OPT_VECTOR_INTENSITY]          = option_def_vector_intensity;
-  default_options[OPT_DCS_SPEEDHACK]             = option_def_dcs_speedhack;
   default_options[OPT_NVRAM_BOOTSTRAP]           = option_def_nvram_bootstraps;
   default_options[OPT_SAMPLE_RATE]               = option_def_sample_rate;
+  default_options[OPT_DCS_SPEEDHACK]             = option_def_dcs_speedhack;
   default_options[OPT_INPUT_INTERFACE]           = option_def_input_interface;
   default_options[OPT_MAME_REMAPPING]            = option_def_mame_remapping;
   default_options[OPT_FRAMESKIP]                 = option_def_frameskip;
