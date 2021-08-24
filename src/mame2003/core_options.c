@@ -807,7 +807,7 @@ static void set_variables()
          if(!options.content_flags[CONTENT_NVRAM_BOOTSTRAP])
            continue;
          break;
-      case OPT_Machine_Timing:
+      case OPT_MACHINE_TIMING:
          continue;
    }
    effective_defaults[effective_options_count] = default_options[option_index];
