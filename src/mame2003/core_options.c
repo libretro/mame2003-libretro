@@ -344,7 +344,6 @@ static struct retro_core_option_v2_definition option_def_vector_resolution = {
       { "1280x960",  NULL },
       { "1440x1080", NULL },
       { "1600x1200", NULL },
-      { "1707x1280", NULL },
       { "original",  NULL },
       { NULL, NULL },
    },
@@ -393,7 +392,7 @@ static struct retro_core_option_v2_definition option_def_vector_beam_width = {
       { "12",  NULL },
       { NULL,  NULL },
    },
-   "2"
+   "1.2"
 };
 
 static struct retro_core_option_v2_definition option_def_vector_translucency = {
