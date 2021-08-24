@@ -228,12 +228,6 @@ static struct retro_core_option_v2_definition option_def_art_resolution = {
    {
       { "1",  NULL },
       { "2",  NULL },
-      { "3",  NULL },
-      { "4",  NULL },
-      { "5",  NULL },
-      { "6",  NULL },
-      { "7",  NULL },
-      { "8",  NULL },
       { NULL, NULL },
    },
    "1"
