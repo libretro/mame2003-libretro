@@ -586,7 +586,7 @@ static struct retro_core_option_v2_definition option_def_cheat_input_ports = {
 
 static struct retro_core_option_v2_definition option_def_machine_timing = {
    APPNAME"_machine_timing",
-   "Bypass Audio Skew",
+   "Bypass Timing Skew",
    NULL,
    "Restart core required.",
    NULL,
@@ -596,7 +596,7 @@ static struct retro_core_option_v2_definition option_def_machine_timing = {
       { "disabled", NULL },
       { NULL, NULL },
    },
-   "enabled"
+   "disabled"
 };
 
 static struct retro_core_option_v2_definition option_def_cyclone_mode = {
