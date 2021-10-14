@@ -971,29 +971,18 @@ void update_variables(bool first_time)
           break;
 
         case OPT_USE_ALT_SOUND:
-          if(options.content_flags[CONTENT_ALT_SOUND])
-          {
-            if(strcmp(var.value, "enabled") == 0)
-              options.use_samples = true;
-            else
+          if(options.content_flags[CONTENT_ALT_SOUND] && (strcmp(var.value, "disabled") == 0))
               options.use_samples = false;
-          }
+          else
+            options.use_samples = true; 
           break;
 
         case OPT_SHARE_DIAL:
-          if(options.content_flags[CONTENT_DIAL])
-          {
-            if(strcmp(var.value, "enabled") == 0)
-              options.dial_share_xy = 1;
-            else
-              options.dial_share_xy = 0;
-            break;
-          }
+          if(options.content_flags[CONTENT_DIAL] && (strcmp(var.value, "enabled") == 0))
+            options.dial_share_xy = 1;
           else
-          {
             options.dial_share_xy = 0;
-            break;
-          }
+          break;
 
         case OPT_DUAL_JOY:
           if(options.content_flags[CONTENT_DUAL_JOYSTICK])
@@ -1051,35 +1040,13 @@ void update_variables(bool first_time)
           break;
 
         case OPT_VECTOR_RESOLUTION:
-          if(strcmp(var.value, "640x480") == 0)
           {
-            options.vector_width=640;
-            options.vector_height=480;
-          }
-          else if(strcmp(var.value, "1024x768") == 0)
-          {
-            options.vector_width=1024;
-            options.vector_height=768;
-          }
-          else if(strcmp(var.value, "1280x960") == 0)
-          {
-            options.vector_width=1280;
-            options.vector_height=960;
-          }
-          else if(strcmp(var.value, "1440x1080") == 0)
-          {
-            options.vector_width=1440;
-            options.vector_height=1080;
-          }
-          else if(strcmp(var.value, "1600x1200") == 0)
-          {
-            options.vector_width=1600;
-            options.vector_height=1200;
-          }
-          else
-          {
-            options.vector_width=0; // mame will set this from the driver resolution set
-            options.vector_height=0;
+            int width = 0;
+            int height = 0;
+            sscanf(var.value, "%dx%d", &width, &height);
+            // if they are still 0, mame will set from driver resolution set
+            options.vector_width = width;
+            options.vector_height = height;
           }
           break;
 
@@ -1205,9 +1172,6 @@ void update_variables(bool first_time)
       }
     }
   }
-
-  /*if(!options.content_flags[CONTENT_ALT_SOUND])*/
-    options.use_samples = true;
 
   ledintf.set_led_state = NULL;
   environ_cb(RETRO_ENVIRONMENT_GET_LED_INTERFACE, &ledintf);
