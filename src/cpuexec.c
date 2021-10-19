@@ -698,7 +698,10 @@ void activecpu_abort_timeslice(void)
 double cpunum_get_localtime(int cpunum)
 {
 	double result;
-	
+
+	/* There must be a cpu active to get local time */
+	if (!cpu_gettotalcpu()) return 0;
+
 	VERIFY_CPUNUM(0, cpunum_get_localtime);
 
 	/* if we're active, add in the time from the current slice */
