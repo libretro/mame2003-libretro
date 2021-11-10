@@ -614,6 +614,22 @@ static struct retro_core_option_v2_definition option_def_core_save_subfolder = {
    "enabled"
 };
 
+static struct retro_core_option_v2_definition option_def_autosave_hiscore = {
+   APPNAME"_autosave_hiscore",
+   "Autosave Hiscore",
+   NULL,
+   "Recommended to use default which will save the hiscore when closing content. Recursively will save repeatedly the entire time during gameplay. Disabled will bypass the use of the hiscore.dat file entirely.",
+   NULL,
+   "cat_key_system",
+   {
+      { "default",     NULL },
+      { "recursively", NULL },
+      { "disabled",    NULL },
+      { NULL, NULL },
+   },
+   "default"
+};
+
 static struct retro_core_option_v2_definition option_def_cheat_input_ports = {
    APPNAME"_cheat_input_ports",
    "Dip Switch/Cheat Input Ports",
@@ -777,6 +793,7 @@ void init_core_options(void)
   default_options[OPT_FRAMESKIP]                 = option_def_frameskip;
   default_options[OPT_CORE_SYS_SUBFOLDER]        = option_def_core_sys_subfolder;
   default_options[OPT_CORE_SAVE_SUBFOLDER]       = option_def_core_save_subfolder;
+  default_options[OPT_AUTOSAVE_HISCORE]          = option_def_autosave_hiscore;
   default_options[OPT_CHEAT_INPUT_PORTS]         = option_def_cheat_input_ports;
   default_options[OPT_MACHINE_TIMING]            = option_def_machine_timing;
   default_options[OPT_CPU_CLOCK_SCALE]           = option_def_cpu_clock_scale;
@@ -1136,6 +1153,15 @@ void update_variables(bool first_time)
            else
              options.save_subfolder = false;
            break;
+
+        case OPT_AUTOSAVE_HISCORE:
+          if(strcmp(var.value, "default") == 0)
+            options.autosave_hiscore = 1;
+          else if(strcmp(var.value, "recursively") == 0)
+            options.autosave_hiscore = 2;
+          else
+            options.autosave_hiscore = 0;
+          break;
 
         case OPT_CHEAT_INPUT_PORTS:
           if(strcmp(var.value, "enabled") == 0)
