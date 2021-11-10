@@ -10,12 +10,15 @@
 #include "../precompile/hiscore_dat.h"
 
 #define MAX_CONFIG_LINE_SIZE 48
+#define HISCORE_SYNC_FILE_DELAY	1000
 
 const char *db_filename = "hiscore.dat"; /* high score definition file */
 
 static struct
 {
 	int hiscores_have_been_loaded;
+	int hs_sync_delay;
+	mame_file *hs_file;
 
 	struct mem_range
 	{
@@ -162,6 +165,7 @@ static void hs_load (void)
 {
 	mame_file *f = mame_fopen (Machine->gamedrv->name, 0, FILETYPE_HIGHSCORE, 0);
 	state.hiscores_have_been_loaded = 1;
+	state.hs_sync_delay = HISCORE_SYNC_FILE_DELAY;
     
 	if (f)
 	{
@@ -183,17 +187,25 @@ static void hs_load (void)
 			}
 			mem_range = mem_range->next;
 		}
-		mame_fclose (f);
+		mame_fclose(f);
 	}
 }
 
 static void hs_save (void)
 {
-	mame_file *f = mame_fopen (Machine->gamedrv->name, 0, FILETYPE_HIGHSCORE, 1);
-	if (f)
+	/* bail if the core option has changed and is now disabled */
+	if (!options.autosave_hiscore) return;
+
+	if (!state.hs_file)
+	{
+		state.hs_file = mame_fopen (Machine->gamedrv->name, 0, FILETYPE_HIGHSCORE, 1);
+	}
+
+	if (state.hs_file)
 	{
 		struct mem_range *mem_range = state.mem_range;
 		log_cb(RETRO_LOG_INFO, LOGPRE "saving %s.hi hiscore memory file...\n", Machine->gamedrv->name);
+		mame_fseek(state.hs_file, 0, SEEK_SET);
 		while (mem_range)
 		{
 			UINT8 *data = malloc (mem_range->num_bytes);
@@ -204,11 +216,10 @@ static void hs_save (void)
 					avoid memory trashing just in case
 				*/
 				copy_from_memory (mem_range->cpu, mem_range->addr, data, mem_range->num_bytes);
-				mame_fwrite(f, data, mem_range->num_bytes);
+				mame_fwrite(state.hs_file, data, mem_range->num_bytes);
 			}
 			mem_range = mem_range->next;
 		}
-		mame_fclose(f);
 	}
 }
 
@@ -224,6 +235,13 @@ void hs_open (const char *name)
 
 	state.mem_range = NULL;
 	mode = FIND_NAME;
+
+	/* Core option to disable hiscore implementation */
+	if (!options.autosave_hiscore)
+	{
+		log_cb(RETRO_LOG_INFO, LOGPRE "hiscore implementation has been disabled via core option\n");
+		return;
+	}
 
 	db_file = mame_fopen(NULL, db_filename, FILETYPE_HIGHSCORE_DB, 0);
 
@@ -324,10 +342,18 @@ void hs_update (void)
 	if (state.mem_range)
 	{
 		if (!state.hiscores_have_been_loaded)
-      {
-         if (safe_to_load())
-            hs_load();
-      }
+		{
+			if (safe_to_load())
+				hs_load();
+		}
+		else if (options.autosave_hiscore == 2)
+		{
+			if (state.hs_sync_delay-- <= 0)
+			{
+				hs_save();
+				state.hs_sync_delay = HISCORE_SYNC_FILE_DELAY;
+			}
+		}
 	}
 }
 
@@ -335,6 +361,15 @@ void hs_update (void)
 void hs_close (void)
 {
 	if (state.hiscores_have_been_loaded)
-      hs_save();
+	{
+		hs_save();
+
+		if (state.hs_file)
+		{
+			mame_fclose(state.hs_file);
+			state.hs_file = NULL;
+		}
+	}
+
 	hs_free();
 }
