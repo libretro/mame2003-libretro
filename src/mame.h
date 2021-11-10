@@ -265,6 +265,7 @@ struct GameOptions
   bool     cheat_input_ports;     /*cheat input ports enable/disable */
   bool     machine_timing;
   double   cpu_clock_scale;
+  int      autosave_hiscore;      /* default saves on exit / recursively saves every number of frames defined in hiscore.c / disabled bypasses hiscore implementation entirely */
 #if (HAS_CYCLONE || HAS_DRZ80)
   int      cyclone_mode;
 #endif
