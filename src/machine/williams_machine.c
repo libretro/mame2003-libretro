@@ -644,9 +644,9 @@ WRITE_HANDLER( williams2_7segment_w )
 		dot = ' ';
 
 	if (n == -1)
-		logerror("[ %c]\n", dot);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "[ %c]\n", dot);
 	else
-		logerror("[%d%c]\n", n, dot);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "[%d%c]\n", n, dot);
 }
 
 
@@ -706,9 +706,9 @@ READ_HANDLER( defender_input_port_0_r )
 		keys |= altkeys;
 		if (memory_region(REGION_CPU1)[0xa0bb] == 0xfd)
 		{
-			if (keys & 0x02)
+			if (altkeys & 0x02)
 				keys = (keys & 0xfd) | 0x40;
-			else if (keys & 0x40)
+			else if (altkeys & 0x40)
 				keys = (keys & 0xbf) | 0x02;
 		}
 	}
@@ -794,9 +794,9 @@ READ_HANDLER( stargate_input_port_0_r )
 		keys |= altkeys;
 		if (memory_region(REGION_CPU1)[0x9c92] == 0xfd)
 		{
-			if (keys & 0x02)
+			if (altkeys & 0x02)
 				keys = (keys & 0xfd) | 0x40;
-			else if (keys & 0x40)
+			else if (altkeys & 0x40)
 				keys = (keys & 0xbf) | 0x02;
 		}
 	}
@@ -888,7 +888,7 @@ static READ_HANDLER( tshoot_input_port_0_3_r )
 static WRITE_HANDLER( tshoot_maxvol_w )
 {
 	/* something to do with the sound volume */
-	logerror("tshoot maxvol = %d (pc:%x)\n", data, activecpu_get_pc());
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "tshoot maxvol = %d (pc:%x)\n", data, activecpu_get_pc());
 }
 
 
@@ -903,17 +903,17 @@ static WRITE_HANDLER( tshoot_lamp_w )
 #if 0
 	/* gun coil */
 	if (data & 0x10)
-		printf("[gun coil] ");
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "[gun coil] ");
 	else
-		printf("           ");
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "           ");
 
 	/* feather coil */
 	if (data & 0x20)
-		printf("[feather coil] ");
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "[feather coil] ");
 	else
-		printf("               ");
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "               ");
 
-	printf("\n");
+	log_cb(RETRO_LOG_DEBUG, LOGPRE "\n");
 #endif
 }
 
