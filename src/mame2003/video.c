@@ -136,22 +136,31 @@ void mame2003_video_init_orientation(void)
    video_hw_transpose = false;
 
    /* Try to use libretro to do a rotation */
-   if (rotate_mode != 0 /* Known invalid value */
-      && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
-   {
-      video_hw_transpose = orientation & ORIENTATION_SWAP_XY;
-      orientation = 0;
-   }
-
+   if (rotate_mode != 0 ) /* Known invalid value */
+      if (environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
+      {
+         video_hw_transpose = orientation & ORIENTATION_SWAP_XY;
+         orientation = 0;
+      }
    /* Otherwise try to use it to do a transpose */
-   rotate_mode = 3; /* ROT90 */
-   if (orientation & ORIENTATION_SWAP_XY
-      && environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
+   if (rotate_mode == 3 && orientation & ORIENTATION_SWAP_XY) /* ROT90 */
+      if (environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
+      {
+         video_hw_transpose = true;
+         orientation = reverse_orientation(orientation ^ ROT270);
+      }
+   #ifdef WIIU
+  /*If Ra fails to rotate through settings->core  or doesnt implement rotation adjust for it recent addition to the code allows this check*/
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotate_mode))
    {
-      video_hw_transpose = true;
-      orientation = reverse_orientation(orientation ^ ROT270);
-   }
+      
+      log_cb(RETRO_LOG_INFO,"RA rotation failed mame will assume its duties\n"); 
 
+      if (orientation & ORIENTATION_SWAP_XY )   
+         video_hw_transpose = true;
+
+    }
+    #endif
    /* Set up native orientation flags that aren't handled by libretro */
    video_flip_x = orientation & ORIENTATION_FLIP_X;
    video_flip_y = orientation & ORIENTATION_FLIP_Y;
