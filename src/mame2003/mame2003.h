@@ -92,6 +92,7 @@ enum CORE_OPTIONS  /* controls the order in which core options appear. common, i
   OPT_DUAL_JOY,
   OPT_RSTICK_BTNS,
   OPT_CHEAT_INPUT_PORTS,
+  OPT_USE_SAMPLES,
   OPT_USE_ALT_SOUND,
   OPT_DCS_SPEEDHACK,
   OPT_SAMPLE_RATE,
