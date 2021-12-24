@@ -285,7 +285,7 @@ static struct retro_core_option_v2_definition option_def_use_alt_sound = {
    APPNAME"_use_alt_sound",
    "Use CD Soundtrack",
    NULL,
-   "Restart core required. Replaces original hardware sounds with external audio files when available.",
+   "Restart core required. Replace original hardware sounds with optional audio sample files when provided in the samples directory.",
    NULL,
    "cat_key_audio",
    {
@@ -993,9 +993,9 @@ void update_variables(bool first_time)
 
         case OPT_USE_ALT_SOUND:
           if(strcmp(var.value, "enabled") == 0)
-            options.use_samples = true;
+            options.use_alt_sound = true;
           else
-            options.use_samples = false;
+            options.use_alt_sound = false;
           break;
 
         case OPT_SHARE_DIAL:
