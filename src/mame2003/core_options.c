@@ -281,6 +281,21 @@ static struct retro_core_option_v2_definition option_def_stv_bios = {
    "default"
 };
 
+static struct retro_core_option_v2_definition option_def_use_samples = {
+   APPNAME"_use_samples",
+   "Use Samples",
+   NULL,
+   "Restart core required. Allow audio sample files to be loaded when provided in the samples directory.",
+   NULL,
+   "cat_key_audio",
+   {
+      { "enabled",  NULL },
+      { "disabled", NULL },
+      { NULL, NULL },
+   },
+   "enabled"
+};
+
 static struct retro_core_option_v2_definition option_def_use_alt_sound = {
    APPNAME"_use_alt_sound",
    "Use CD Soundtrack",
@@ -774,6 +789,7 @@ void init_core_options(void)
   default_options[OPT_ART_RESOLUTION]            = option_def_art_resolution;
   default_options[OPT_NEOGEO_BIOS]               = option_def_neogeo_bios;
   default_options[OPT_STV_BIOS]                  = option_def_stv_bios;
+  default_options[OPT_USE_SAMPLES]               = option_def_use_samples;
   default_options[OPT_USE_ALT_SOUND]             = option_def_use_alt_sound;
   default_options[OPT_SHARE_DIAL]                = option_def_dialsharexy;
   default_options[OPT_DUAL_JOY]                  = option_def_dual_joysticks;
@@ -989,6 +1005,13 @@ void update_variables(bool first_time)
           if(!options.content_flags[CONTENT_NEOGEO])
             break;
           options.bios = (strcmp(var.value, "default") == 0) ? NULL : var.value;
+          break;
+
+        case OPT_USE_SAMPLES:
+          if(strcmp(var.value, "enabled") == 0)
+            options.use_samples = true;
+          else
+            options.use_samples = false;
           break;
 
         case OPT_USE_ALT_SOUND:
