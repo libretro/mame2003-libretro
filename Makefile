@@ -804,7 +804,7 @@ CFLAGS += -D_FILE_OFFSET_BITS=64
 
 # In theory, the RETRO_PROFILE could be set to different values for different
 # architectures or for special builds to hint to the host system how many
-# resources to allocate. In practice, there seems to be no standard way to 
+# resources to allocate. In practice, there seems to be no standard way to
 # rate performance needs and no point in doing so.
 # As of June 2021, the libretro performance profile callback is not known
 # to be implemented by any frontends. RetroArch does not use this callback
