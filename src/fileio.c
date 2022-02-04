@@ -300,8 +300,8 @@ FILE* osd_fopen(int pathtype, int pathindex, const char *filename, const char *m
    snprintf(buffer, PATH_MAX_LENGTH, "%s%c%s", currDir, PATH_DEFAULT_SLASH_C(), filename);
 
    out = fopen(buffer, mode);
-   if (out)  log_cb(RETRO_LOG_DEBUG, "(osd_fopen) opened the file:  %s\n", buffer);
-   else  log_cb(RETRO_LOG_DEBUG, "(osd_fopen) failed to open file:  %s\n", buffer);
+   if (out)  log_cb(RETRO_LOG_DEBUG, LOGPRE "(osd_fopen) opened the file:  %s\n", buffer);
+   else  log_cb(RETRO_LOG_DEBUG, LOGPRE "(osd_fopen) failed to open file:  %s\n", buffer);
 
    return out;
 }
