@@ -504,7 +504,7 @@ struct GameSamples *readsamples(const char **samplenames,const char *basename)
 	int i;
 	struct GameSamples *samples;
 	int skipfirst = 0;
-	bool missing_sample = false;
+  bool missing_sample = false;
 
 	/* if the user doesn't want to use samples, bail */
 	if( !options.use_samples ) return 0;
@@ -1153,46 +1153,26 @@ const struct RomModule *rom_next_chunk(const struct RomModule *romp)
 
 int determine_bios_rom(const struct SystemBios *bios)
 {
-	const struct SystemBios *firstbios = bios;
-
 	/* set to default */
 	int bios_no = 0;
 
 	/* Not system_bios_0 and options.bios is set  */
 	if(bios && (options.bios != NULL))
 	{
-
-    /* Allow '-bios n' to still be used */
-		/* no actually in mame2003 we don't use the old numerical bios index
-       we use the core option & option.bios string */
-    /*
-    while(!BIOSENTRY_ISEND(bios))
-		{
-			char bios_number[3];
-
-			if(!strcmp(bios_number, options.bios))
-				bios_no = bios->value;
-
-			bios++;
-		}
-
-		bios = firstbios;
-    */
-
 		/* Test for bios short names */
 		while(!BIOSENTRY_ISEND(bios))
 		{
 			if(strcmp(bios->_name, options.bios) == 0)
-      {
-        log_cb(RETRO_LOG_INFO, LOGPRE "Using BIOS: %s\n", options.bios);
+			{
+				log_cb(RETRO_LOG_INFO, LOGPRE "Using BIOS: %s\n", options.bios);
 				bios_no = bios->value;
-        break;
-      }
+				break;
+			}
 			bios++;
 		}
-    if(string_is_empty(options.bios))
-      log_cb(RETRO_LOG_INFO, LOGPRE "No matching BIOS found. Using default system BIOS.");
 
+		if(string_is_empty(options.bios))
+			log_cb(RETRO_LOG_INFO, LOGPRE "No matching BIOS found. Using default system BIOS.");
 	}
 
 	return bios_no;
@@ -1704,6 +1684,7 @@ static int copy_rom_data(struct rom_load_data *romdata, const struct RomModule *
 static int process_rom_entries(struct rom_load_data *romdata, const struct RomModule *romp)
 {
 	UINT32 lastflags = 0;
+	const struct RomModule *fallback_romp = romp;
 
 	/* loop until we hit the end of this region */
 	while (!ROMENTRY_ISREGIONEND(romp))
@@ -1747,7 +1728,16 @@ static int process_rom_entries(struct rom_load_data *romdata, const struct RomMo
 				/* open the file */
 				log_cb(RETRO_LOG_INFO, LOGPRE "Opening ROM file: %s\n", ROM_GETNAME(romp));
 				if (!open_rom_file(romdata, romp))
-					handle_missing_file(romdata, romp);
+				{
+					if (ROM_GETBIOSFLAGS(romp) == (system_bios+1))
+					{
+						log_cb(RETRO_LOG_WARN, LOGPRE "%s NOT FOUND! Attempt fallback to default bios.\n", ROM_GETNAME(romp));
+						if (!open_rom_file(romdata, &fallback_romp[0])) /* try default bios instead */
+							handle_missing_file(romdata, romp);
+					}
+					else
+						handle_missing_file(romdata, romp);
+				}
 
 				/* loop until we run out of reloads */
 				do
@@ -1777,7 +1767,7 @@ static int process_rom_entries(struct rom_load_data *romdata, const struct RomMo
 					if (baserom)
 					{
 						log_cb(RETRO_LOG_DEBUG, LOGPRE "Verifying length (%X) and checksums\n", explength);
-            verify_length_and_hash(romdata, ROM_GETNAME(baserom), explength, ROM_GETHASHDATA(baserom));
+						verify_length_and_hash(romdata, ROM_GETNAME(baserom), explength, ROM_GETHASHDATA(baserom));
 						log_cb(RETRO_LOG_DEBUG, LOGPRE "Length and checksum verify finished\n");
 					}
 
