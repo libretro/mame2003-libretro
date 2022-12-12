@@ -26,7 +26,7 @@ WRITE_HANDLER( dkong_videoram_w )
 
 static void modify_RGB_vals( int *r, int *g, int *b )
 {
-	const int fbNeoVals[ 8 ] = { 0xe1, 0xa7, 0x8b, 0xc5, 0x66, 0x24, 0xda, 0x8a }
+	const int fbNeoVals[ 8 ] = { 0xe1, 0xa7, 0x8b, 0xc5, 0x66, 0x24, 0xda, 0x8a };
 	if( r )
 	{
 		if( *r == 0xff )	*r = fbNeoVals[ 0 ]; // no bits set
