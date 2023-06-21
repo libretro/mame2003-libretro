@@ -21,7 +21,7 @@
 	else	\
 		MemWrite32(f2Op##num, f2u(appf));
 
-static void F2DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
+void F2DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 {
 	modDim = dim1;
 	modM = if2 & 0x40;
@@ -31,7 +31,7 @@ static void F2DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 	f2Flag1 = amFlag;
 }
 
-static void F2DecodeSecondOperand(UINT32 (*DecodeOp2)(void), UINT8 dim2)
+void F2DecodeSecondOperand(UINT32 (*DecodeOp2)(void), UINT8 dim2)
 {
 	modDim = dim2;
 	modM = if2 & 0x20;
@@ -41,7 +41,7 @@ static void F2DecodeSecondOperand(UINT32 (*DecodeOp2)(void), UINT8 dim2)
 	f2Flag2 = amFlag;
 }
 
-static void F2WriteSecondOperand(UINT8 dim2)
+void F2WriteSecondOperand(UINT8 dim2)
 {
 	modDim = dim2;
 	modM = if2 & 0x20;
@@ -49,7 +49,7 @@ static void F2WriteSecondOperand(UINT8 dim2)
 	amLength2 = WriteAM();
 }
 
-static UINT32 opCVTWS(void)
+int opCVTWS(void)
 {
 	float val;
 
@@ -68,7 +68,7 @@ static UINT32 opCVTWS(void)
 	F2END();
 }
 
-static UINT32 opCVTSW(void)
+int opCVTSW(void)
 {
 	float val;
 
@@ -76,7 +76,7 @@ static UINT32 opCVTSW(void)
 
 	// Convert to UINT32
 	val = u2f(f2Op1);
-	modWriteValW = (INT32)val;
+	modWriteValW = (UINT32)val;
 
 	_OV=0;
 	_CY=(val < 0.0f);
@@ -87,7 +87,7 @@ static UINT32 opCVTSW(void)
 	F2END();
 }
 
-static UINT32 opMOVFS(void)
+int opMOVFS(void)
 {
 	F2DecodeFirstOperand(ReadAM,2);
 	modWriteValW = f2Op1;
@@ -95,7 +95,7 @@ static UINT32 opMOVFS(void)
 	F2END();
 }
 
-static UINT32 opNEGFS(void)
+int opNEGFS(void)
 {
 	float appf;
 
@@ -113,7 +113,7 @@ static UINT32 opNEGFS(void)
 	F2END()
 }
 
-static UINT32 opABSFS(void)
+int opABSFS(void)
 {
 	float appf;
 
@@ -134,7 +134,7 @@ static UINT32 opABSFS(void)
 	F2END()
 }
 
-static UINT32 opADDFS(void)
+int opADDFS(void)
 {
 	UINT32 appw;
 	float appf;
@@ -155,7 +155,7 @@ static UINT32 opADDFS(void)
 	F2END()
 }
 
-static UINT32 opSUBFS(void)
+int opSUBFS(void)
 {
 	UINT32 appw;
 	float appf;
@@ -176,7 +176,7 @@ static UINT32 opSUBFS(void)
 	F2END()
 }
 
-static UINT32 opMULFS(void)
+int opMULFS(void)
 {
 	UINT32 appw;
 	float appf;
@@ -197,7 +197,7 @@ static UINT32 opMULFS(void)
 	F2END()
 }
 
-static UINT32 opDIVFS(void)
+int opDIVFS(void)
 {
 	UINT32 appw;
 	float appf;
@@ -207,7 +207,7 @@ static UINT32 opDIVFS(void)
 
 	F2LOADOPFLOAT(2);
 
-	appf /= u2f(f2Op1);
+	appf *= u2f(f2Op1);
 
 	appw = f2u(appf);
 	_OV = _CY = 0;
@@ -218,7 +218,7 @@ static UINT32 opDIVFS(void)
 	F2END()
 }
 
-static UINT32 opSCLFS(void)
+int opSCLFS(void)
 {
 	UINT32 appw;
 	float appf;
@@ -242,7 +242,7 @@ static UINT32 opSCLFS(void)
 	F2END()
 }
 
-static UINT32 opCMPF(void)
+int opCMPF(void)
 {
 	float appf;
 
@@ -259,19 +259,19 @@ static UINT32 opCMPF(void)
 	F2END();
 }
 
-static UINT32 op5FUNHANDLED(void)
+int op5FUNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 5F opcode at %08x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 5F opcode at %08x\n", PC);
+	abort();
 }
 
-static UINT32 op5CUNHANDLED(void)
+int op5CUNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 5C opcode at %08x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 5C opcode at %08x\n", PC);
+	abort();
 }
 
-static UINT32 (*const Op5FTable[32])(void) =
+int (*Op5FTable[32])(void) =
 {
 	opCVTWS,
 	opCVTSW,
@@ -307,7 +307,7 @@ static UINT32 (*const Op5FTable[32])(void) =
 	op5FUNHANDLED
 };
 
-static UINT32 (*const Op5CTable[32])(void) =
+int (*Op5CTable[32])(void) =
 {
 	opCMPF,
 	op5CUNHANDLED,
@@ -345,14 +345,14 @@ static UINT32 (*const Op5CTable[32])(void) =
 };
 
 
-static UINT32 op5F(void)
+UINT32 op5F(void)
 {
 	if2 = OpRead8(PC + 1);
 	return Op5FTable[if2&0x1F]();
 }
 
 
-static UINT32 op5C(void)
+UINT32 op5C(void)
 {
 	if2 = OpRead8(PC + 1);
 	return Op5CTable[if2&0x1F]();

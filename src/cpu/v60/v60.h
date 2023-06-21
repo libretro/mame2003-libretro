@@ -113,3 +113,4 @@ const char *v70_info(void *context, int regnum);
 #define v70_set_irq_line v60_set_irq_line
 #define v70_set_irq_callback v60_set_irq_callback
 #endif
+
