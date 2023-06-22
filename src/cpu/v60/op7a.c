@@ -12,12 +12,12 @@
  *   they do the opposite (set if not found, reset if found)
  */
 
-static UINT32 f7aOp1, f7aOp2;
-static UINT8 f7aFlag1, f7aFlag2;
-static UINT32 f7aLenOp1, f7aLenOp2;
-static UINT8 subOp;
+UINT32 f7aOp1, f7aOp2;
+UINT8 f7aFlag1, f7aFlag2;
+UINT32 f7aLenOp1, f7aLenOp2;
+UINT8 subOp;
 
-static UINT32 f7bBamOffset1, f7bBamOffset2;
+UINT32 f7bBamOffset1, f7bBamOffset2;
 
 #define f7bOp1 f7aOp1
 #define f7bFlag1 f7aFlag1
@@ -46,7 +46,7 @@ static UINT32 f7bBamOffset1, f7bBamOffset2;
 #define F7CCREATEBITMASK(x)	\
 	x=((1<<(x))-1)
 
-static void F7aDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
+void F7aDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
 {
 	UINT8 appb;
 	// Decode first operand
@@ -80,7 +80,7 @@ static void F7aDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*De
 		f7aLenOp2=appb;
 }
 
-static void F7bDecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
+void F7bDecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 {
 	UINT8 appb;
 	// Decode first operand
@@ -100,7 +100,7 @@ static void F7bDecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 }
 
 
-static void F7bWriteSecondOperand(UINT8 dim2)
+void F7bWriteSecondOperand(UINT8 dim2)
 {
 	modDim=dim2;
 	modM=subOp&0x20;
@@ -109,7 +109,7 @@ static void F7bWriteSecondOperand(UINT8 dim2)
 }
 
 
-static void F7bDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
+void F7bDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
 {
 	// Decode first operand
 	F7bDecodeFirstOperand(DecodeOp1,dim1);
@@ -125,7 +125,7 @@ static void F7bDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*De
 	f7bBamOffset2 = bamOffset;
 }
 
-static void F7cDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
+void F7cDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
 {
 	UINT8 appb;
 	// Decode first operand
@@ -177,7 +177,7 @@ static void F7cDecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*De
 	else \
 		MemWrite16(f7cOp2, apph);
 
-static UINT32 opCMPSTRB(UINT8 bFill, UINT8 bStop)
+UINT32 opCMPSTRB(UINT8 bFill, UINT8 bStop)
 {
 	UINT32 i,dest;
 	UINT8 c1,c2;
@@ -243,7 +243,7 @@ static UINT32 opCMPSTRB(UINT8 bFill, UINT8 bStop)
 	F7AEND();
 }
 
-static UINT32 opCMPSTRH(UINT8 bFill, UINT8 bStop)
+UINT32 opCMPSTRH(UINT8 bFill, UINT8 bStop)
 {
 	UINT32 i,dest;
 	UINT16 c1,c2;
@@ -311,15 +311,15 @@ static UINT32 opCMPSTRH(UINT8 bFill, UINT8 bStop)
 
 
 
-static UINT32 opMOVSTRUB(UINT8 bFill, UINT8 bStop) /* TRUSTED (0,0) (1,0) */
+UINT32 opMOVSTRUB(UINT8 bFill, UINT8 bStop) /* TRUSTED (0,0) (1,0) */
 {
 	UINT32 i,dest;
 	UINT8 c1;
 
-//  if (bStop)
-//  {
-//      int a=1;
-//  }
+//	if (bStop)
+//	{
+//		int a=1;
+//	}
 
 	F7aDecodeOperands(ReadAMAddress,0,ReadAMAddress,0);
 
@@ -348,7 +348,7 @@ static UINT32 opMOVSTRUB(UINT8 bFill, UINT8 bStop) /* TRUSTED (0,0) (1,0) */
 	F7AEND();
 }
 
-static UINT32 opMOVSTRDB(UINT8 bFill, UINT8 bStop)
+UINT32 opMOVSTRDB(UINT8 bFill, UINT8 bStop)
 {
 	UINT32 i,dest;
 	UINT8 c1;
@@ -381,13 +381,13 @@ static UINT32 opMOVSTRDB(UINT8 bFill, UINT8 bStop)
 }
 
 
-static UINT32 opMOVSTRUH(UINT8 bFill, UINT8 bStop) /* TRUSTED (0,0) (1,0) */
+UINT32 opMOVSTRUH(UINT8 bFill, UINT8 bStop) /* TRUSTED (0,0) (1,0) */
 {
 	UINT32 i,dest;
 	UINT16 c1;
 
-//  if (bStop)
-//  {   int a=1; }
+//	if (bStop)
+//	{	int a=1; }
 
 	F7aDecodeOperands(ReadAMAddress,1,ReadAMAddress,1);
 
@@ -415,18 +415,18 @@ static UINT32 opMOVSTRUH(UINT8 bFill, UINT8 bStop) /* TRUSTED (0,0) (1,0) */
 	F7AEND();
 }
 
-static UINT32 opMOVSTRDH(UINT8 bFill, UINT8 bStop)
+UINT32 opMOVSTRDH(UINT8 bFill, UINT8 bStop)
 {
 	UINT32 i,dest;
 	UINT16 c1;
 
-//  if (bFill | bStop)
-//  { int a=1; }
+//	if (bFill | bStop)
+//	{ int a=1; }
 
 	F7aDecodeOperands(ReadAMAddress,1,ReadAMAddress,1);
 
-//  if (f7aLenOp1 != f7aLenOp2)
-//  { int a=1; }
+//	if (f7aLenOp1 != f7aLenOp2)
+//	{ int a=1; }
 
 	dest=(f7aLenOp1 < f7aLenOp2 ? f7aLenOp1 : f7aLenOp2);
 
@@ -452,7 +452,7 @@ static UINT32 opMOVSTRDH(UINT8 bFill, UINT8 bStop)
 	F7AEND();
 }
 
-static UINT32 opSEARCHUB(UINT8 bSearch)
+UINT32 opSEARCHUB(UINT8 bSearch)
 {
 	UINT8 appb;
 	UINT32 i;
@@ -478,7 +478,7 @@ static UINT32 opSEARCHUB(UINT8 bSearch)
 	F7BEND();
 }
 
-static UINT32 opSEARCHUH(UINT8 bSearch)
+UINT32 opSEARCHUH(UINT8 bSearch)
 {
 	UINT8 appb;
 	UINT32 i;
@@ -503,7 +503,7 @@ static UINT32 opSEARCHUH(UINT8 bSearch)
 	F7BEND();
 }
 
-static UINT32 opSEARCHDB(UINT8 bSearch)
+UINT32 opSEARCHDB(UINT8 bSearch)
 {
 	UINT8 appb;
 	INT32 i;
@@ -529,7 +529,7 @@ static UINT32 opSEARCHDB(UINT8 bSearch)
 	F7BEND();
 }
 
-static UINT32 opSEARCHDH(UINT8 bSearch)
+UINT32 opSEARCHDH(UINT8 bSearch)
 {
 	UINT8 appb;
 	INT32 i;
@@ -555,35 +555,35 @@ static UINT32 opSEARCHDH(UINT8 bSearch)
 }
 
 
-static UINT32 opSCHCUB(void) { return opSEARCHUB(1); }
-static UINT32 opSCHCUH(void) { return opSEARCHUH(1); }
-static UINT32 opSCHCDB(void) { return opSEARCHDB(1); }
-static UINT32 opSCHCDH(void) { return opSEARCHDH(1); }
-static UINT32 opSKPCUB(void) { return opSEARCHUB(0); }
-static UINT32 opSKPCUH(void) { return opSEARCHUH(0); }
-static UINT32 opSKPCDB(void) { return opSEARCHDB(0); }
-static UINT32 opSKPCDH(void) { return opSEARCHDH(0); }
+UINT32 opSCHCUB(void) { return opSEARCHUB(1); }
+UINT32 opSCHCUH(void) { return opSEARCHUH(1); }
+UINT32 opSCHCDB(void) { return opSEARCHDB(1); }
+UINT32 opSCHCDH(void) { return opSEARCHDH(1); }
+UINT32 opSKPCUB(void) { return opSEARCHUB(0); }
+UINT32 opSKPCUH(void) { return opSEARCHUH(0); }
+UINT32 opSKPCDB(void) { return opSEARCHDB(0); }
+UINT32 opSKPCDH(void) { return opSEARCHDH(0); }
 
-static UINT32 opCMPCB(void) { return opCMPSTRB(0,0); }
-static UINT32 opCMPCH(void) { return opCMPSTRH(0,0); }
-static UINT32 opCMPCFB(void) { return opCMPSTRB(1,0); }
-static UINT32 opCMPCFH(void) { return opCMPSTRH(1,0); }
-static UINT32 opCMPCSB(void) { return opCMPSTRB(0,1); }
-static UINT32 opCMPCSH(void) { return opCMPSTRH(0,1); }
+UINT32 opCMPCB(void) { return opCMPSTRB(0,0); }
+UINT32 opCMPCH(void) { return opCMPSTRH(0,0); }
+UINT32 opCMPCFB(void) { return opCMPSTRB(1,0); }
+UINT32 opCMPCFH(void) { return opCMPSTRH(1,0); }
+UINT32 opCMPCSB(void) { return opCMPSTRB(0,1); }
+UINT32 opCMPCSH(void) { return opCMPSTRH(0,1); }
 
-static UINT32 opMOVCUB(void) { return opMOVSTRUB(0,0); }
-static UINT32 opMOVCUH(void) { return opMOVSTRUH(0,0); }
-static UINT32 opMOVCFUB(void) { return opMOVSTRUB(1,0); }
-static UINT32 opMOVCFUH(void) { return opMOVSTRUH(1,0); }
-static UINT32 opMOVCSUB(void) { return opMOVSTRUB(0,1); }
-static UINT32 opMOVCSUH(void) { return opMOVSTRUH(0,1); }
+UINT32 opMOVCUB(void) { return opMOVSTRUB(0,0); }
+UINT32 opMOVCUH(void) { return opMOVSTRUH(0,0); }
+UINT32 opMOVCFUB(void) { return opMOVSTRUB(1,0); }
+UINT32 opMOVCFUH(void) { return opMOVSTRUH(1,0); }
+UINT32 opMOVCSUB(void) { return opMOVSTRUB(0,1); }
+UINT32 opMOVCSUH(void) { return opMOVSTRUH(0,1); }
 
-static UINT32 opMOVCDB(void) { return opMOVSTRDB(0,0); }
-static UINT32 opMOVCDH(void) { return opMOVSTRDH(0,0); }
-static UINT32 opMOVCFDB(void) { return opMOVSTRDB(1,0); }
-static UINT32 opMOVCFDH(void) { return opMOVSTRDH(1,0); }
+UINT32 opMOVCDB(void) { return opMOVSTRDB(0,0); }
+UINT32 opMOVCDH(void) { return opMOVSTRDH(0,0); }
+UINT32 opMOVCFDB(void) { return opMOVSTRDB(1,0); }
+UINT32 opMOVCFDH(void) { return opMOVSTRDH(1,0); }
 
-static UINT32 opEXTBFZ(void) /* TRUSTED */
+UINT32 opEXTBFZ(void) /* TRUSTED */
 {
 	F7bDecodeFirstOperand(BitReadAM, 11);
 
@@ -596,7 +596,7 @@ static UINT32 opEXTBFZ(void) /* TRUSTED */
 	F7BEND();
 }
 
-static UINT32 opEXTBFS(void) /* TRUSTED */
+UINT32 opEXTBFS(void) /* TRUSTED */
 {
  	F7bDecodeFirstOperand(BitReadAM, 11);
 
@@ -611,7 +611,7 @@ static UINT32 opEXTBFS(void) /* TRUSTED */
 	F7BEND();
 }
 
-static UINT32 opEXTBFL(void)
+UINT32 opEXTBFL(void)
 {
 	UINT32 appw;
 
@@ -628,7 +628,7 @@ static UINT32 opEXTBFL(void)
 	F7BEND();
 }
 
-static UINT32 opSCHBS(UINT32 bSearch1)
+UINT32 opSCHBS(UINT32 bSearch1)
 {
 	UINT32 i,data;
 	UINT32 offset;
@@ -672,10 +672,10 @@ static UINT32 opSCHBS(UINT32 bSearch1)
 	F7BEND();
 }
 
-static UINT32 opSCH0BSU(void) { return opSCHBS(0); }
-static UINT32 opSCH1BSU(void) { return opSCHBS(1); }
+UINT32 opSCH0BSU(void) { return opSCHBS(0); }
+UINT32 opSCH1BSU(void) { return opSCHBS(1); }
 
-static UINT32 opINSBFR(void)
+UINT32 opINSBFR(void)
 {
 	UINT32 appw;
 	F7cDecodeOperands(ReadAM,2,BitReadAMAddress,11);
@@ -694,7 +694,7 @@ static UINT32 opINSBFR(void)
 	F7CEND();
 }
 
-static UINT32 opINSBFL(void)
+UINT32 opINSBFL(void)
 {
 	UINT32 appw;
 	F7cDecodeOperands(ReadAM,2,BitReadAMAddress,11);
@@ -715,15 +715,15 @@ static UINT32 opINSBFL(void)
 	F7CEND();
 }
 
-static UINT32 opMOVBSD(void)
+UINT32 opMOVBSD(void)
 {
 	UINT32 i;
 	UINT8 srcdata, dstdata;
 
 	F7bDecodeOperands(BitReadAMAddress,10,BitReadAMAddress,10);
 
-//  if (f7bLen!=1)
-//  { int a=1; }
+//	if (f7bLen!=1)
+//	{ int a=1; }
 
 	f7bBamOffset1 += f7bLen-1;
 	f7bBamOffset2 += f7bLen-1;
@@ -771,7 +771,7 @@ static UINT32 opMOVBSD(void)
 	F7BEND();
 }
 
-static UINT32 opMOVBSU(void)
+UINT32 opMOVBSU(void)
 {
 	UINT32 i;
 	UINT8 srcdata, dstdata;
@@ -822,7 +822,7 @@ static UINT32 opMOVBSU(void)
 
 // RADM 0x20f4b8 holds the time left
 
-static UINT32 opADDDC(void)
+UINT32 opADDDC(void)
 {
 	UINT8 appb;
 	UINT8 src, dst;
@@ -836,8 +836,8 @@ static UINT32 opADDDC(void)
 
 	F7CLOADOP2BYTE(appb);
 
-	src = (UINT8)(f7cOp1 >> 4) * 10 + (UINT8)(f7cOp1 & 0xF);
-	dst = (appb >> 4) * 10 + (appb & 0xF);
+	src = (appb >> 4) * 10 + (appb & 0xF);
+	dst = (UINT8)(f7cOp1 >> 4) * 10 + (UINT8)(f7cOp1 & 0xF);
 
 	appb = src + dst + (_CY?1:0);
 
@@ -861,7 +861,7 @@ static UINT32 opADDDC(void)
 	F7CEND();
 }
 
-static UINT32 opSUBDC(void)
+UINT32 opSUBDC(void)
 {
 	INT8 appb;
 	UINT32 src, dst;
@@ -875,48 +875,8 @@ static UINT32 opSUBDC(void)
 
 	F7CLOADOP2BYTE(appb);
 
-	src = (UINT32)(f7cOp1 >> 4) * 10 + (UINT32)(f7cOp1 & 0xF);
-	dst = ((appb & 0xF0) >> 4) * 10 + (appb & 0xF);
-
-	// Note that this APPB must be SIGNED!
-	appb = (INT32)dst - (INT32)src - (_CY?1:0);
-
-	if (appb < 0)
-	{
-		appb += 100;
-		_CY = 1;
-	}
-	else
-		_CY = 0;
-
-	// compute z flag:
-	// cleared if result non-zero or carry generated
-	// unchanged otherwise
-	if (appb != 0 || _CY)
-		_Z = 0;
-
-	appb = ((appb/10)<<4) | (appb % 10);
-
-	F7CSTOREOP2BYTE();
-	F7CEND();
-}
-
-static UINT32 opSUBRDC(void)
-{
-	INT8 appb;
-	UINT32 src, dst;
-
-	F7cDecodeOperands(ReadAM, 0, ReadAMAddress, 0);
-
-	if (f7cLen != 0)
-	{
-		logerror("SUBRDC %x (pat: %x)\n", f7cOp1, f7cLen);
-	}
-
-	F7CLOADOP2BYTE(appb);
-
-	src = (UINT32)(f7cOp1 >> 4) * 10 + (UINT32)(f7cOp1 & 0xF);
-	dst = ((appb & 0xF0) >> 4) * 10 + (appb & 0xF);
+	src = ((appb & 0xF0) >> 4) * 10 + (appb & 0xF);
+	dst = (UINT32)(f7cOp1 >> 4) * 10 + (UINT32)(f7cOp1 & 0xF);
 
 	// Note that this APPB must be SIGNED!
 	appb = (INT32)src - (INT32)dst - (_CY?1:0);
@@ -941,7 +901,16 @@ static UINT32 opSUBRDC(void)
 	F7CEND();
 }
 
-static UINT32 opCVTDPZ(void)
+UINT32 opSUBRDC(void)
+{
+	F7cDecodeOperands(ReadAM, 0, ReadAMAddress, 0);
+
+	logerror("SUBRDC %x (pat: %x)\n", f7cOp1, f7cLen);
+
+	F7CEND();
+}
+
+UINT32 opCVTDPZ(void)
 {
 	UINT16 apph;
 
@@ -958,7 +927,7 @@ static UINT32 opCVTDPZ(void)
 	F7CEND();
 }
 
-static UINT32 opCVTDZP(void)
+UINT32 opCVTDZP(void)
 {
 	UINT8 appb;
 	F7cDecodeOperands(ReadAM, 1, ReadAMAddress, 0);
@@ -982,41 +951,41 @@ static UINT32 opCVTDZP(void)
 	F7CEND();
 }
 
-static UINT32 op58UNHANDLED(void)
+UINT32 op58UNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 58 opcode at PC: /%06x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 58 opcode at PC: /%06x\n", PC);
+	abort();
 }
 
-static UINT32 op5AUNHANDLED(void)
+UINT32 op5AUNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 5A opcode at PC: /%06x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 5A opcode at PC: /%06x\n", PC);
+	abort();
 }
 
-static UINT32 op5BUNHANDLED(void)
+UINT32 op5BUNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 5B opcode at PC: /%06x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 5B opcode at PC: /%06x\n", PC);
+	abort();
 }
 
-static UINT32 op5DUNHANDLED(void)
+UINT32 op5DUNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 5D opcode at PC: /%06x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 5D opcode at PC: /%06x\n", PC);
+	abort();
 }
 
-static UINT32 op59UNHANDLED(void)
+UINT32 op59UNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, "Unhandled 59 opcode at PC: /%06x", PC);
-	return 0; /* never reached, fatalerror won't return */
+	logerror("Unhandled 59 opcode at PC: /%06x\n", PC);
+	abort();
 }
 
-static UINT32 (*const Op59Table[32])(void) =
+UINT32 (*Op59Table[32])(void) =
 {
 	opADDDC,
 	opSUBDC,
-	opSUBRDC,
+	op59UNHANDLED,
 	op59UNHANDLED,
 	op59UNHANDLED,
 	op59UNHANDLED,
@@ -1049,44 +1018,28 @@ static UINT32 (*const Op59Table[32])(void) =
 };
 
 
-static UINT32 (*const Op5BTable[32])(void) =
+UINT32 (*Op5BTable[32])(void) =
 {
-	opSCH0BSU,
-	op5BUNHANDLED,
-	opSCH1BSU,
-    	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	opMOVBSU,
-	opMOVBSD,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED,
-	op5BUNHANDLED
+	opSCH0BSU,		op5BUNHANDLED,
+	opSCH1BSU,    	op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	opMOVBSU,		opMOVBSD,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED,
+	op5BUNHANDLED,op5BUNHANDLED
 };
 
 
-static UINT32 (*const Op5DTable[32])(void) =
+UINT32 (*Op5DTable[32])(void) =
 {
 	op5DUNHANDLED,
 	op5DUNHANDLED,
@@ -1122,107 +1075,71 @@ static UINT32 (*const Op5DTable[32])(void) =
 	op5DUNHANDLED
 };
 
-static UINT32 (*const Op58Table[32])(void) =
+UINT32 (*Op585ATable[32][2])(void) =
 {
-	opCMPCB,
-	opCMPCFB,
-	opCMPCSB,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	opMOVCUB,
-	opMOVCDB,
-	opMOVCFUB,
-	opMOVCFDB,
-	opMOVCSUB,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	opSCHCUB,
-	opSCHCDB,
-	opSKPCUB,
-	opSKPCDB,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED,
-	op58UNHANDLED
+	{	opCMPCB      ,		opCMPCH      	},
+	{	opCMPCFB     ,		opCMPCFH     	},
+	{	opCMPCSB     ,		opCMPCSH      },
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	opMOVCUB     ,		opMOVCUH     	},
+	{	opMOVCDB     ,		opMOVCDH		},
+	{	opMOVCFUB    ,		opMOVCFUH    	},
+	{	opMOVCFDB    ,		opMOVCFDH    	},
+	{	opMOVCSUB    ,		opMOVCSUH	    },
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	opSCHCUB     ,		opSCHCUH     	},
+	{	opSCHCDB     ,		opSCHCDH     	},
+	{	opSKPCUB     ,		opSKPCUH     	},
+	{	opSKPCDB     ,		opSKPCDH		},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	},
+	{	op58UNHANDLED,		op5AUNHANDLED	}
 };
 
-static UINT32 (*const Op5ATable[32])(void) =
-{
-	opCMPCH,
-	opCMPCFH,
-	opCMPCSH,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	opMOVCUH,
-	opMOVCDH,
-	opMOVCFUH,
-	opMOVCFDH,
-	opMOVCSUH,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	opSCHCUH,
-	opSCHCDH,
-	opSKPCUH,
-	opSKPCDH,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED,
-	op5AUNHANDLED
-};
-
-static UINT32 op58(void)
+UINT32 op58(void)
 {
 	subOp = OpRead8(PC + 1);
 
-	return Op58Table[subOp&0x1F]();
+	return Op585ATable[subOp&0x1F][0]();
 }
 
-static UINT32 op5A(void)
+UINT32 op5A(void)
 {
 	subOp = OpRead8(PC + 1);
 
-	return Op5ATable[subOp&0x1F]();
+	return Op585ATable[subOp&0x1F][1]();
 }
 
-static UINT32 op5B(void)
+UINT32 op5B(void)
 {
 	subOp = OpRead8(PC + 1);
 
 	return Op5BTable[subOp&0x1F]();
 }
 
-static UINT32 op5D(void)
+UINT32 op5D(void)
 {
 	subOp = OpRead8(PC + 1);
 
 	return Op5DTable[subOp&0x1F]();
 }
 
-static UINT32 op59(void)
+UINT32 op59(void)
 {
 	subOp = OpRead8(PC + 1);
 
