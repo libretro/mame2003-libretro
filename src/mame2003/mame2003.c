@@ -694,7 +694,7 @@ int osd_update_audio_stream(INT16 *buffer)
 	int i,j;
 	if ( Machine->sample_rate !=0 && buffer)
 	{
-		if (!audio_stream_active)
+		if (cpu_pause_state)
 			memset(samples_buffer, 0,      samples_per_frame * (usestereo ? 4 : 2));
 		else
 			memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
@@ -709,7 +709,7 @@ int osd_update_audio_stream(INT16 *buffer)
 			}
 			audio_batch_cb(conversion_buffer,samples_per_frame);
 		}
-		if (!audio_stream_active)
+		if (cpu_pause_state)
 			return samples_per_frame;
 
 		/*process next frame */
