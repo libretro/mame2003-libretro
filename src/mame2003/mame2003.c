@@ -369,6 +369,28 @@ void retro_reset (void)
     machine_reset(); /* use internal core function */
 }
 
+void cpu_pause(bool pause)
+{
+  int cpunum;
+
+  for (cpunum = 0; cpunum < cpu_gettotalcpu(); cpunum++)
+  {
+    if (pause)
+      cpunum_suspend(cpunum, SUSPEND_REASON_DISABLE, 1);
+    else
+      cpunum_resume(cpunum, SUSPEND_ANY_REASON);
+  }
+
+  /* disarm watchdog to prevent reset */
+  if (pause) watchdog_disarm_w(0, 0);
+
+  /* cut audio stream */
+  if (pause)
+    audio_stream_active = false;
+  else
+    audio_stream_active = true;
+}
+
 /* get pointer axis vector from coord */
 int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
 {
