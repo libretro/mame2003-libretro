@@ -1055,7 +1055,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 	pen_t *colortable = NULL;
 	static const struct rectangle fullrect = { 0, 10000, 0, 10000 };
 
-  
+
 		/* mark the whole thing dirty */
 		ui_markdirty(&fullrect);
 
@@ -3274,6 +3274,8 @@ int handle_user_interface(struct mame_bitmap *bitmap)
       setup_via_menu = 1;
 	    setup_menu_init();      
     }
+
+      if (setup_active()) cpu_pause(true);
   }
 
 	if (setup_selected && setup_via_menu && !options.display_setup)
@@ -3326,10 +3328,15 @@ int handle_user_interface(struct mame_bitmap *bitmap)
 			skip_tmap = 0;
 			tilemap_xpos = 0;
 			tilemap_ypos = 0;
+
+			cpu_pause(true);
 		}
 	}
 
 	if(toggle_gfx) showcharset(bitmap);
+
+	if (!setup_active() && !toggle_gfx && cpu_pause_state)
+		cpu_pause(false);
 
 	return 0;
 }
