@@ -3521,7 +3521,7 @@ void draw_crosshair(struct mame_bitmap *bitmap,int x,int y,const struct rectangl
 	unsigned long black,white;
 	int i;
 
-	if (!options.crosshair_enable)
+	if (!options.crosshair_enable || cpu_pause_state)
 		return;
 
 	black = Machine->uifont->colortable[0];
