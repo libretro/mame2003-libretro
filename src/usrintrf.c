@@ -3274,6 +3274,8 @@ int handle_user_interface(struct mame_bitmap *bitmap)
       setup_via_menu = 1;
 	    setup_menu_init();      
     }
+
+      if (setup_active()) cpu_pause(true);
   }
 
 	if (setup_selected && setup_via_menu && !options.display_setup)
@@ -3332,6 +3334,9 @@ int handle_user_interface(struct mame_bitmap *bitmap)
 	}
 
 	if(toggle_gfx) showcharset(bitmap);
+
+	if (!setup_active() && !toggle_gfx && cpu_pause_state)
+		cpu_pause(false);
 
 	return 0;
 }
