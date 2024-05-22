@@ -489,6 +489,7 @@ void osd_update_video_and_audio(struct mame_display *display)
    }
 
    gotFrame = 1;
+  
 
    RETRO_PERFORMANCE_STOP(perf_cb, update_video_and_audio);
 }
