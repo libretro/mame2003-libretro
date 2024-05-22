@@ -413,6 +413,8 @@ void cpu_pause(bool pause)
     cpu_pause_state = false;
 }
 
+extern UINT8 frameskip_counter;
+
 void retro_run (void)
 {
 	int i;
@@ -526,8 +528,17 @@ void retro_run (void)
         retroJsState[20 + offset] = analogjoy[i][3] < -0x4000 ? 1 : 0;
 	    }
   }
-
    mame_frame();
+  if(frameskip_counter <= 11)
+    frameskip_counter++;
+
+  else
+    frameskip_counter = 0;
+
+ frameskip_counter = (frameskip_counter ) % 12;
+
+ /*log_cb(RETRO_LOG_DEBUG, LOGPRE "frameskip_counter %d\n",frameskip_counter);*/
+
 }
 
 void retro_unload_game(void)
