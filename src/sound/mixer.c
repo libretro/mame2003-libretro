@@ -81,6 +81,7 @@ struct mixer_channel_data
 	int is_stream;
 	int is_playing;
 	int is_looping;
+	int is_paused;
 	int is_16bit;
 	void* data_start;
 	void* data_end;
@@ -714,6 +715,8 @@ void mixer_update_channel(struct mixer_channel_data *channel, int total_sample_c
 	if (samples_to_generate <= 0)
 		return;
 
+  if ( channel->is_paused || cpu_pause_state ) return;
+
         /* if we're playing, mix in the data */
 	if (channel->is_playing)
 	{
@@ -832,7 +835,7 @@ int mixer_allocate_channels(int channels, const int *default_mixing_levels)
 	/* make sure we didn't overrun the number of available channels */
 	if (first_free_channel + channels > MIXER_MAX_CHANNELS)
 	{
-		logerror("Too many mixer channels (requested %d, available %d)\n", first_free_channel + channels, MIXER_MAX_CHANNELS);
+		log_cb(RETRO_LOG_DEBUG, LOGPRE "Too many mixer channels (requested %d, available %d)\n", first_free_channel + channels, MIXER_MAX_CHANNELS);
 		exit(1);
 	}
 
@@ -931,6 +934,17 @@ void mixer_set_volume(int ch, int volume)
 	channel->right_volume = volume;
 }
 
+/***************************************************************************
+	mixer_set_Pause
+***************************************************************************/
+
+void mixer_set_pause(int ch, int pause)
+{
+	struct mixer_channel_data *channel = &mixer_channel[ch];
+
+	mixer_update_channel(channel, sound_scalebufferpos(samples_this_frame));
+	channel->is_paused  = pause;
+}
 
 /***************************************************************************
 	mixer_set_mixing_level
@@ -1096,7 +1110,7 @@ int mixer_samples_this_frame(void)
 /***************************************************************************
 	mixer_need_samples_this_frame
 ***************************************************************************/
-#define EXTRA_SAMPLES 1    // safety margin for sampling rate conversion
+#define EXTRA_SAMPLES 1    /* safety margin for sampling rate conversion*/
 int mixer_need_samples_this_frame(int channel,int freq)
 {
 	return (samples_this_frame - mixer_channel[channel].samples_available)

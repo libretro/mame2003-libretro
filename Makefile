@@ -752,7 +752,11 @@ else ifneq (,$(findstring windows_msvc2017,$(platform)))
 else
 	TARGET := $(TARGET_NAME)_libretro.dll
 	CC ?= gcc
-	LDFLAGS += -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=link.T
+	LDFLAGS += -shared -static-libgcc -static-libstdc++
+	ifneq ($(DEBUG), 1)
+	LDFLAGS += -s
+	endif  
+	LDFLAGS += -Wl,--version-script=link.T
 	CFLAGS += -D__WIN32__
 endif
 
@@ -844,7 +848,7 @@ DEFS = $(COREDEFINES) -Dasm=__asm__
 CFLAGS += $(INCFLAGS) $(INCFLAGS_PLATFORM)
 
 # combine the various definitions to one
-CDEFS = $(DEFS) $(COREDEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS)
+CDEFS = $(DEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS)
 
 OBJECTS := $(SOURCES_C:.c=.o) $(SOURCES_ASM:.s=.o)
 

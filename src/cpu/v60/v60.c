@@ -1,7 +1,7 @@
-/* V60.C*/
-/* Undiscover the beast!*/
-/* Main hacking and coding by Farfetch'd*/
-/* Portability fixes by Richter Belmont*/
+// V60.C
+// Undiscover the beast!
+// Main hacking and coding by Farfetch'd
+// Portability fixes by Richter Belmont
 
 #include "cpuintrf.h"
 #include "osd_cpu.h"
@@ -13,15 +13,15 @@
 #include <stdarg.h>
 #include "v60.h"
 
-/* memory accessors*/
+// memory accessors
 #include "v60mem.c"
 
 
-/* macros stolen from MAME for flags calc*/
-/* note that these types are in x86 naming:*/
-/* byte = 8 bit, word = 16 bit, long = 32 bit*/
+// macros stolen from MAME for flags calc
+// note that these types are in x86 naming:
+// byte = 8 bit, word = 16 bit, long = 32 bit
 
-/* parameter x = result, y = source 1, z = source 2*/
+// parameter x = result, y = source 1, z = source 2
 
 #define SetOFL_Add(x,y,z)	(_OV = (((x) ^ (y)) & ((x) ^ (z)) & 0x80000000) ? 1: 0)
 #define SetOFW_Add(x,y,z)	(_OV = (((x) ^ (y)) & ((x) ^ (z)) & 0x8000) ? 1 : 0)
@@ -42,17 +42,17 @@
 #define SetSZPF_Word(x) 	{_Z = ((UINT16)(x)==0);  _S = ((x)&0x8000) ? 1 : 0; }
 #define SetSZPF_Long(x) 	{_Z = ((UINT32)(x)==0);  _S = ((x)&0x80000000) ? 1 : 0; }
 
-#define ORB(dst,src)		{ (dst) |= (src); _OV = 0; SetSZPF_Byte(dst); }
-#define ORW(dst,src)		{ (dst) |= (src); _OV = 0; SetSZPF_Word(dst); }
-#define ORL(dst,src)		{ (dst) |= (src); _OV = 0; SetSZPF_Long(dst); }
+#define ORB(dst,src)		{ (dst) |= (src); _CY = _OV = 0; SetSZPF_Byte(dst); }
+#define ORW(dst,src)		{ (dst) |= (src); _CY = _OV = 0; SetSZPF_Word(dst); }
+#define ORL(dst,src)		{ (dst) |= (src); _CY = _OV = 0; SetSZPF_Long(dst); }
 
-#define ANDB(dst,src)		{ (dst) &= (src); _OV = 0; SetSZPF_Byte(dst); }
-#define ANDW(dst,src)		{ (dst) &= (src); _OV = 0; SetSZPF_Word(dst); }
-#define ANDL(dst,src)		{ (dst) &= (src); _OV = 0; SetSZPF_Long(dst); }
+#define ANDB(dst,src)		{ (dst) &= (src); _CY = _OV = 0; SetSZPF_Byte(dst); }
+#define ANDW(dst,src)		{ (dst) &= (src); _CY = _OV = 0; SetSZPF_Word(dst); }
+#define ANDL(dst,src)		{ (dst) &= (src); _CY = _OV = 0; SetSZPF_Long(dst); }
 
-#define XORB(dst,src)		{ (dst) ^= (src); _OV = 0; SetSZPF_Byte(dst); }
-#define XORW(dst,src)		{ (dst) ^= (src); _OV = 0; SetSZPF_Word(dst); }
-#define XORL(dst,src)		{ (dst) ^= (src); _OV = 0; SetSZPF_Long(dst); }
+#define XORB(dst,src)		{ (dst) ^= (src); _CY = _OV = 0; SetSZPF_Byte(dst); }
+#define XORW(dst,src)		{ (dst) ^= (src); _CY = _OV = 0; SetSZPF_Word(dst); }
+#define XORL(dst,src)		{ (dst) ^= (src); _CY = _OV = 0; SetSZPF_Long(dst); }
 
 #define SUBB(dst, src)		{ unsigned res=(dst)-(src); SetCFB(res); SetOFB_Sub(res,src,dst); SetSZPF_Byte(res); dst=(UINT8)res; }
 #define SUBW(dst, src)		{ unsigned res=(dst)-(src); SetCFW(res); SetOFW_Sub(res,src,dst); SetSZPF_Word(res); dst=(UINT16)res; }
@@ -65,7 +65,7 @@
 #define SETREG8(a, b)  (a) = ((a) & ~0xff) | ((b) & 0xff)
 #define SETREG16(a, b) (a) = ((a) & ~0xffff) | ((b) & 0xffff)
 
-/* Ultra Function Tables*/
+// Ultra Function Tables
 static UINT32 (*OpCodeTable[256])(void);
 
 typedef struct
@@ -81,7 +81,7 @@ typedef struct
 #undef PPC
 #endif
 
-/* v60 Register Inside (Hm... It's not a pentium inside :-))) )*/
+// v60 Register Inside (Hm... It's not a pentium inside :-))) )
 struct v60info {
 	struct cpu_info info;
 	UINT32 reg[68];
@@ -94,7 +94,6 @@ struct v60info {
 } v60;
 
 int v60_ICount;
-static int v60_stall_io;
 
 #define _CY v60.flags.CY
 #define _OV v60.flags.OV
@@ -102,7 +101,7 @@ static int v60_stall_io;
 #define _Z v60.flags.Z
 
 
-/* Defines of all v60 register...*/
+// Defines of all v60 register...
 #define R0 v60.reg[0]
 #define R1 v60.reg[1]
 #define R2 v60.reg[2]
@@ -141,7 +140,7 @@ static int v60_stall_io;
 
 #define PPC		v60.PPC
 
-/* Privileged registers*/
+// Privileged registers
 #define ISP		v60.reg[36]
 #define L0SP	v60.reg[37]
 #define L1SP	v60.reg[38]
@@ -152,7 +151,7 @@ static int v60_stall_io;
 #define SYCW	v60.reg[43]
 #define TKCW	v60.reg[44]
 #define PIR		v60.reg[45]
-/*10-14 reserved*/
+//10-14 reserved
 #define PSW2	v60.reg[51]
 #define ATBR0	v60.reg[52]
 #define ATLR0	v60.reg[53]
@@ -167,10 +166,10 @@ static int v60_stall_io;
 #define ADTR1	v60.reg[62]
 #define ADTMR0	v60.reg[63]
 #define ADTMR1	v60.reg[64]
-/*29-31 reserved*/
+//29-31 reserved
 #define TCB		v60.tcb
 
-/* Register names*/
+// Register names
 const char *v60_reg_names[69] = {
 	"R0", "R1", "R2", "R3",
 	"R4", "R5", "R6", "R7",
@@ -192,7 +191,7 @@ const char *v60_reg_names[69] = {
 	"TCB"
 };
 
-/* Defines...*/
+// Defines...
 #define UPDATEPSW()	\
 { \
   PSW &= 0xfffffff0; \
@@ -221,83 +220,41 @@ static void v60_try_irq(void);
 
 #define STACK_REG(IS,EL)	((IS)==0?37+(EL):36)
 
-static void v60SaveStack(void)
-{
-	if (PSW & 0x10000000)
-		ISP = SP;
-	else
-		v60.reg[37 + ((PSW >> 24) & 3)] = SP;
-}
 static UINT32 v60ReadPSW(void)
 {
-	PSW &= 0xfffffff0;
-	PSW |= (_Z?1:0) | (_S?2:0) | (_OV?4:0) | (_CY?8:0);
+	v60.reg[STACK_REG((v60.reg[33]>>28)&1, (v60.reg[33]>>24)&3)] = SP;
+	UPDATEPSW();
 	return PSW;
 }
 
-
 static void v60ReloadStack(void)
 {
-	if (PSW & 0x10000000)
-		SP = ISP;
-	else
-		SP = v60.reg[37 + ((PSW >> 24) & 3)];
+	SP = v60.reg[STACK_REG((v60.reg[33]>>28)&1, (v60.reg[33]>>24)&3)];
 }
 
-static  void v60WritePSW(UINT32 newval)
+static void v60WritePSW(UINT32 newval)
 {
-	/* determine if we need to save/restore the stacks */
-	int updateStack = 0;
+	UINT32 oldval = v60ReadPSW();
+	int oldIS, newIS, oldEL, newEL;
 
-	/* if the interrupt state is changing, we definitely need to update */
-	if ((newval ^ PSW) & 0x10000000)
-		updateStack = 1;
-
-	/* if we are not in interrupt mode and the level is changing, we also must update */
-	else if (!(PSW & 0x10000000) && ((newval ^ PSW) & 0x03000000))
-		updateStack = 1;
-
-	/* save the previous stack value */
-	if (updateStack)
-		v60SaveStack();
-
-	/* set the new value and update the flags */
 	PSW = newval;
-	_Z =  (UINT8)(PSW & 1);
-	_S =  (UINT8)(PSW & 2);
-	_OV = (UINT8)(PSW & 4);
-	_CY = (UINT8)(PSW & 8);
+	UPDATECPUFLAGS();
 
-	/* fetch the new stack value */
-	if (updateStack)
-		v60ReloadStack();
+	// Now check if we must swap SP
+	oldIS = (oldval >> 28) & 1;
+	newIS = (newval >> 28) & 1;
+
+	oldEL = (oldval >> 24) & 3;
+	newEL = (newval >> 24) & 3;
+
+	if (oldIS != newIS)
+	{
+		v60.reg[STACK_REG(oldIS,oldEL)] = SP;
+		SP = v60.reg[STACK_REG(newIS,newEL)];
+	}
 }
 
-UINT32 v60_update_psw_for_exception(int is_interrupt, int target_level)
-{
-	UINT32 oldPSW = v60ReadPSW();
-	UINT32 newPSW = oldPSW;
-
-	// Change to interrupt context
-	newPSW &= ~(3 << 24);  // PSW.EL = 0
-	newPSW |= target_level << 24; // set target level
-	newPSW &= ~(1 << 18);  // PSW.IE = 0
-	newPSW &= ~(1 << 16);  // PSW.TE = 0
-	newPSW &= ~(1 << 27);  // PSW.TP = 0
-	newPSW &= ~(1 << 17);  // PSW.AE = 0
-	newPSW &= ~(1 << 29);  // PSW.EM = 0
-	if (is_interrupt)
-		newPSW |=  (1 << 28);// PSW.IS = 1
-	newPSW |=  (1 << 31);  // PSW.ASA = 1
-	v60WritePSW(newPSW);
-
-	return oldPSW;
-}
-
-
-
-#define GETINTVECT(nint)	MemRead32((SBR & ~0xfff) + (nint)*4)
-#define EXCEPTION_CODE_AND_SIZE(code, size)	(((code) << 16) | (size))
+#define GETINTVECT(nint)	MemRead32(SBR + (nint)*4)
 
 static float u2f(UINT32 v)
 {
@@ -320,10 +277,10 @@ static UINT32 f2u(float f)
 }
 
 
-/* Addressing mode decoding functions*/
+// Addressing mode decoding functions
 #include "am.c"
 
-/* Opcode functions*/
+// Opcode functions
 #include "op12.c"
 #include "op2.c"
 #include "op3.c"
@@ -334,11 +291,11 @@ static UINT32 f2u(float f)
 
 UINT32 opUNHANDLED(void)
 {
-	log_cb(RETRO_LOG_DEBUG, LOGPRE "Unhandled OpCode found : %02x at %08x\n", OpRead16(PC), PC);
+	logerror("Unhandled OpCode found : %02x at %08x\n", OpRead16(PC), PC);
 	abort();
 }
 
-/* Opcode jump table*/
+// Opcode jump table
 #include "optable.c"
 
 static int v60_default_irq_cb(int irqline)
@@ -346,16 +303,17 @@ static int v60_default_irq_cb(int irqline)
 	return 0;
 }
 
-void v60_stall(void)
-{
-	v60_stall_io = 1;
-}
-
 static void base_init(const char *type)
 {
-	int cpu;
-	v60_stall_io = 0;
-	cpu = cpu_getactivecpu();
+	int cpu = cpu_getactivecpu();
+	static int opt_init = 0;
+	if(!opt_init) {
+		InitTables();	// set up opcode tables
+#ifdef MAME_DEBUG
+		v60_dasm_init();
+#endif
+		opt_init = 1;
+	}
 
 	v60.irq_cb = v60_default_irq_cb;
 	v60.irq_line = CLEAR_LINE;
@@ -375,8 +333,8 @@ static void base_init(const char *type)
 void v60_init(void)
 {
 	base_init("v60");
-	/* Set PIR (Processor ID) for NEC v60. LSB is reserved to NEC,*/
-	/* so I don't know what it contains.*/
+	// Set PIR (Processor ID) for NEC v60. LSB is reserved to NEC,
+	// so I don't know what it contains.
 	PIR = 0x00006000;
 	v60.info = v60_i;
 }
@@ -384,8 +342,8 @@ void v60_init(void)
 void v70_init(void)
 {
 	base_init("v70");
-	/* Set PIR (Processor ID) for NEC v70. LSB is reserved to NEC,*/
-	/* so I don't know what it contains.*/
+	// Set PIR (Processor ID) for NEC v70. LSB is reserved to NEC,
+	// so I don't know what it contains.
 	PIR = 0x00007000;
 	v60.info = v70_i;
 }
@@ -417,22 +375,22 @@ static void v60_do_irq(int vector)
 	UPDATEPSW();
 	tempPSW=PSW;
 	v60WritePSW(PSW|((1<<28)));	
-	/* Push PC and PSW onto the stack*/
+	// Push PC and PSW onto the stack
 	SP-=4;
 	MemWrite32(SP, tempPSW);
 	SP-=4;
 	MemWrite32(SP, PC);
 
-	/* Change to interrupt context*/
-	PSW &= ~(3 << 24);  /* PSW.EL = 0*/
-	PSW &= ~(1 << 18);  /* PSW.IE = 0*/
-	PSW &= ~(1 << 16);  /* PSW.TE = 0*/
-	PSW &= ~(1 << 27);  /* PSW.TP = 0*/
-	PSW &= ~(1 << 17);  /* PSW.AE = 0*/
-	PSW &= ~(1 << 29);  /* PSW.EM = 0*/
-	PSW |=  (1 << 31);  /* PSW.ASA = 1*/
+	// Change to interrupt context
+	PSW &= ~(3 << 24);  // PSW.EL = 0
+	PSW &= ~(1 << 18);  // PSW.IE = 0
+	PSW &= ~(1 << 16);  // PSW.TE = 0
+	PSW &= ~(1 << 27);  // PSW.TP = 0
+	PSW &= ~(1 << 17);  // PSW.AE = 0
+	PSW &= ~(1 << 29);  // PSW.EM = 0
+	PSW |=  (1 << 31);  // PSW.ASA = 1
 
-	/* Jump to vector for user interrupt*/
+	// Jump to vector for user interrupt
 	PC = GETINTVECT(vector);
 }
 
@@ -482,7 +440,7 @@ void v60_set_irq_callback(int (*irq_cb)(int irqline))
 	v60.irq_cb = irq_cb;
 }
 
-/* Actual cycles/instruction is unknown*/
+// Actual cycles/instruction is unknown
 
 int v60_execute(int cycles)
 {
@@ -492,7 +450,7 @@ int v60_execute(int cycles)
 	while(v60_ICount >= 0) {
 		PPC = PC;
 		CALL_MAME_DEBUG;
-		v60_ICount -= 8;
+		v60_ICount--;
 		PC += OpCodeTable[OpRead8(PC)]();
 		if(v60.irq_line != CLEAR_LINE)
 			v60_try_irq();
@@ -644,3 +602,4 @@ unsigned v70_dasm(char *buffer,  unsigned pc)
 	return 1;
 }
 #endif
+

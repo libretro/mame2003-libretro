@@ -110,15 +110,15 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 
 void retro_set_audio_buff_status_cb(void)
 {
-  if (options.frameskip >0 && options.frameskip >= 12)
+  log_cb(RETRO_LOG_INFO, "options.frameskip:%d\n",options.frameskip);
+  if (options.frameskip > 0 && options.frameskip >= 12)
   {
       buf_status_cb.callback = &retro_audio_buff_status_cb;
 
       if (!environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,
             &buf_status_cb))
       {
-         if (log_cb)
-            log_cb(RETRO_LOG_WARN, "Frameskip disabled - frontend does not support audio buffer status monitoring.\n");
+         log_cb(RETRO_LOG_WARN, "Frameskip disabled - frontend does not support audio buffer status monitoring.\n");
 
          retro_audio_buff_active    = false;
          retro_audio_buff_occupancy = 0;
@@ -126,7 +126,7 @@ void retro_set_audio_buff_status_cb(void)
       }
       else
       log_cb(RETRO_LOG_INFO, "Frameskip Enabled\n");
-  }
+   }
    else
       environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,NULL);
 
@@ -389,6 +389,30 @@ int16_t get_pointer_delta(int16_t coord, int16_t *prev_coord)
    return delta;
 }
 
+/* initialized in cpu_pre_run() */
+bool cpu_pause_state;
+
+void cpu_pause(bool pause)
+{
+  int cpunum;
+
+  for (cpunum = 0; cpunum < cpu_gettotalcpu(); cpunum++)
+  {
+    if (pause)
+      cpunum_suspend(cpunum, SUSPEND_REASON_DISABLE, 1);
+    else
+      cpunum_resume(cpunum, SUSPEND_ANY_REASON);
+  }
+
+  /* disarm watchdog to prevent reset */
+  if (pause) watchdog_disarm_w(0, 0);
+
+  /* update state */
+  cpu_pause_state = pause;
+}
+
+extern UINT8 frameskip_counter;
+
 void retro_run (void)
 {
 	int i;
@@ -502,8 +526,17 @@ void retro_run (void)
         retroJsState[20 + offset] = analogjoy[i][3] < -0x4000 ? 1 : 0;
 	    }
   }
-
    mame_frame();
+  if(frameskip_counter <= 11)
+    frameskip_counter++;
+
+  else
+    frameskip_counter = 0;
+
+ frameskip_counter = (frameskip_counter ) % 12;
+
+ /*log_cb(RETRO_LOG_DEBUG, LOGPRE "frameskip_counter %d\n",frameskip_counter);*/
+
 }
 
 void retro_unload_game(void)
@@ -668,27 +701,31 @@ int osd_start_audio_stream(int stereo)
 int osd_update_audio_stream(INT16 *buffer)
 {
 	int i,j;
-	if ( Machine->sample_rate !=0 && buffer )
+	if ( Machine->sample_rate !=0 && buffer)
 	{
-   		memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
+		if (cpu_pause_state)
+			memset(samples_buffer, 0,      samples_per_frame * (usestereo ? 4 : 2));
+		else
+			memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
 		if (usestereo)
 			audio_batch_cb(samples_buffer, samples_per_frame);
 		else
 		{
 			for (i = 0, j = 0; i < samples_per_frame; i++)
-        		{
+			{
 				conversion_buffer[j++] = samples_buffer[i];
 				conversion_buffer[j++] = samples_buffer[i];
-		        }
-         		audio_batch_cb(conversion_buffer,samples_per_frame);
+			}
+			audio_batch_cb(conversion_buffer,samples_per_frame);
 		}
+		if (cpu_pause_state)
+			return samples_per_frame;
 
-
-		//process next frame
+		/*process next frame */
 
 		if ( samples_per_frame  != orig_samples_per_frame ) samples_per_frame = orig_samples_per_frame;
 
-		// dont drop any sample frames some games like mk will drift with time
+		/* dont drop any sample frames some games like mk will drift with time */
 
 		delta_samples += (Machine->sample_rate / Machine->drv->frames_per_second) - orig_samples_per_frame;
 		if ( delta_samples >= 1.0f )
@@ -696,7 +733,7 @@ int osd_update_audio_stream(INT16 *buffer)
 
 			int integer_delta = (int)delta_samples;
 			if (integer_delta <= 16 )
-                        {
+			{
 				log_cb(RETRO_LOG_DEBUG,"sound: Delta added value %d added to frame\n",integer_delta);
 				samples_per_frame += integer_delta;
 			}
@@ -706,7 +743,7 @@ int osd_update_audio_stream(INT16 *buffer)
 
 		}
 	}
-        return samples_per_frame;
+	return samples_per_frame;
 }
 
 

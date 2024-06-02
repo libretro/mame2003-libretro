@@ -11,8 +11,8 @@
  * ROTC, UPDATE, UPDPTE
  */
 
-static UINT32 f12Op1, f12Op2;
-static UINT8 f12Flag1, f12Flag2;
+UINT32 f12Op1, f12Op2;
+UINT8 f12Flag1, f12Flag2;
 
 
 /*
@@ -76,11 +76,11 @@ static UINT8 f12Flag1, f12Flag2;
 #define F12END()									\
 	return amLength1 + amLength2 + 2;
 
-static UINT8 if12;
+UINT8 if12;
 
 // Decode the first operand of the instruction and prepare
 // writing to the second operand.
-static void F12DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
+void F12DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 {
 	if12 = OpRead8(PC + 1);
 
@@ -136,7 +136,7 @@ static void F12DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 	}
 }
 
-static void F12WriteSecondOperand(UINT8 dim2)
+void F12WriteSecondOperand(UINT8 dim2)
 {
 	modDim = dim2;
 
@@ -181,7 +181,7 @@ static void F12WriteSecondOperand(UINT8 dim2)
 
 
 // Decode both format 1/2 operands
-static void F12DecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
+void F12DecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*DecodeOp2)(void), UINT8 dim2)
 {
 	UINT8 _if12 = OpRead8(PC + 1);
 
@@ -271,7 +271,7 @@ static void F12DecodeOperands(UINT32 (*DecodeOp1)(void), UINT8 dim1, UINT32 (*De
 	}
 }
 
-static UINT32 opADDB(void) /* TRUSTED (C too!)*/
+UINT32 opADDB(void) /* TRUSTED (C too!)*/
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -284,7 +284,7 @@ static UINT32 opADDB(void) /* TRUSTED (C too!)*/
 	F12END();
 }
 
-static UINT32 opADDH(void) /* TRUSTED (C too!)*/
+UINT32 opADDH(void) /* TRUSTED (C too!)*/
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -297,7 +297,7 @@ static UINT32 opADDH(void) /* TRUSTED (C too!)*/
 	F12END();
 }
 
-static UINT32 opADDW(void) /* TRUSTED (C too!) */
+UINT32 opADDW(void) /* TRUSTED (C too!) */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -310,7 +310,7 @@ static UINT32 opADDW(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opADDCB(void)
+UINT32 opADDCB(void)
 {
 	UINT8 appb, temp;
 
@@ -325,7 +325,7 @@ static UINT32 opADDCB(void)
 	F12END();
 }
 
-static UINT32 opADDCH(void)
+UINT32 opADDCH(void)
 {
 	UINT16 apph, temp;
 
@@ -340,7 +340,7 @@ static UINT32 opADDCH(void)
 	F12END();
 }
 
-static UINT32 opADDCW(void)
+UINT32 opADDCW(void)
 {
 	UINT32 appw, temp;
 
@@ -355,7 +355,7 @@ static UINT32 opADDCW(void)
 	F12END();
 }
 
-static UINT32 opANDB(void) /* TRUSTED */
+UINT32 opANDB(void) /* TRUSTED */
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -371,7 +371,7 @@ static UINT32 opANDB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opANDH(void) /* TRUSTED */
+UINT32 opANDH(void) /* TRUSTED */
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -387,7 +387,7 @@ static UINT32 opANDH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opANDW(void) /* TRUSTED */
+UINT32 opANDW(void) /* TRUSTED */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -403,7 +403,7 @@ static UINT32 opANDW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opCALL(void) /* TRUSTED */
+UINT32 opCALL(void) /* TRUSTED */
 {
 	F12DecodeOperands(ReadAMAddress,0,ReadAMAddress,2);
 
@@ -419,7 +419,7 @@ static UINT32 opCALL(void) /* TRUSTED */
 	return 0;
 }
 
-static UINT32 opCHKAR(void)
+UINT32 opCHKAR(void)
 {
 	F12DecodeOperands(ReadAM,0,ReadAM,0);
 
@@ -431,7 +431,7 @@ static UINT32 opCHKAR(void)
 	F12END();
 }
 
-static UINT32 opCHKAW(void)
+UINT32 opCHKAW(void)
 {
 	F12DecodeOperands(ReadAM,0,ReadAM,0);
 
@@ -443,7 +443,7 @@ static UINT32 opCHKAW(void)
 	F12END();
 }
 
-static UINT32 opCHKAE(void)
+UINT32 opCHKAE(void)
 {
 	F12DecodeOperands(ReadAM,0,ReadAM,0);
 
@@ -455,27 +455,26 @@ static UINT32 opCHKAE(void)
 	F12END();
 }
 
-static UINT32 opCHLVL(void)
+UINT32 opCHLVL(void)
 {
-	UINT32 oldPSW;
-
 	F12DecodeOperands(ReadAM,0,ReadAM,0);
 
 	if (f12Op1>3)
 	{
-		log_cb(RETRO_LOG_DEBUG, "Illegal data field on opCHLVL, PC=%x", PC);
+		logerror("Illegal data field on opCHLVL, PC=%x\n", PC);
+		abort();
 	}
 
-	oldPSW = v60_update_psw_for_exception(0, f12Op1);
+	UPDATEPSW();
 
 	SP -= 4;
 	MemWrite32(SP,f12Op2);
 
 	SP -= 4;
-	MemWrite32(SP,EXCEPTION_CODE_AND_SIZE(0x1800 + f12Op1*0x100, 8));
+	MemWrite32(SP,0x1800 + f12Op1*0x100);
 
 	SP -= 4;
-	MemWrite32(SP,oldPSW);
+	MemWrite32(SP,PSW);
 
 	SP -= 4;
 	MemWrite32(SP,PC + amLength1 + amLength2 + 2);
@@ -486,7 +485,7 @@ static UINT32 opCHLVL(void)
 	return 0;
 }
 
-static UINT32 opCLR1(void) /* TRUSTED */
+UINT32 opCLR1(void) /* TRUSTED */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -502,7 +501,7 @@ static UINT32 opCLR1(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opCMPB(void) /* TRUSTED (C too!) */
+UINT32 opCMPB(void) /* TRUSTED (C too!) */
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAM,0);
@@ -513,7 +512,7 @@ static UINT32 opCMPB(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opCMPH(void) /* TRUSTED (C too!) */
+UINT32 opCMPH(void) /* TRUSTED (C too!) */
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAM,1);
@@ -525,7 +524,7 @@ static UINT32 opCMPH(void) /* TRUSTED (C too!) */
 }
 
 
-static UINT32 opCMPW(void) /* TRUSTED (C too!)*/
+UINT32 opCMPW(void) /* TRUSTED (C too!)*/
 {
 	F12DecodeOperands(ReadAM,2,ReadAM,2);
 
@@ -534,7 +533,7 @@ static UINT32 opCMPW(void) /* TRUSTED (C too!)*/
 	F12END();
 }
 
-static UINT32 opDIVB(void) /* TRUSTED */
+UINT32 opDIVB(void) /* TRUSTED */
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -551,7 +550,7 @@ static UINT32 opDIVB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opDIVH(void) /* TRUSTED */
+UINT32 opDIVH(void) /* TRUSTED */
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -568,7 +567,7 @@ static UINT32 opDIVH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opDIVW(void) /* TRUSTED */
+UINT32 opDIVW(void) /* TRUSTED */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -585,7 +584,7 @@ static UINT32 opDIVW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opDIVX(void)
+UINT32 opDIVX(void)
 {
 	UINT32 a,b;
 	INT64 dv;
@@ -625,7 +624,7 @@ static UINT32 opDIVX(void)
 	F12END();
 }
 
-static UINT32 opDIVUX(void)
+UINT32 opDIVUX(void)
 {
 	UINT32 a,b;
 	UINT64 dv;
@@ -665,7 +664,7 @@ static UINT32 opDIVUX(void)
 }
 
 
-static UINT32 opDIVUB(void) /* TRUSTED */
+UINT32 opDIVUB(void) /* TRUSTED */
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -681,7 +680,7 @@ static UINT32 opDIVUB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opDIVUH(void) /* TRUSTED */
+UINT32 opDIVUH(void) /* TRUSTED */
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -697,7 +696,7 @@ static UINT32 opDIVUH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opDIVUW(void) /* TRUSTED */
+UINT32 opDIVUW(void) /* TRUSTED */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -713,52 +712,31 @@ static UINT32 opDIVUW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opINB(void)
+UINT32 opINB(void)
 {
 	F12DecodeFirstOperand(ReadAMAddress,0);
 	modWriteValB=PortRead8(f12Op1);
-
-	if ( v60_stall_io )
-	{
-		v60_stall_io = 0;
-		return 0;
-	}
-
 	F12WriteSecondOperand(0);
 	F12END();
 }
 
-static UINT32 opINH(void)
+UINT32 opINH(void)
 {
 	F12DecodeFirstOperand(ReadAMAddress,1);
 	modWriteValH=PortRead16(f12Op1);
-
-	if ( v60_stall_io )
-	{
-		v60_stall_io = 0;
-		return 0;
-	}
-
 	F12WriteSecondOperand(1);
 	F12END();
 }
 
-static UINT32 opINW(void)
+UINT32 opINW(void)
 {
 	F12DecodeFirstOperand(ReadAMAddress,2);
 	modWriteValW=PortRead32(f12Op1);
-
-	if ( v60_stall_io )
-	{
-		v60_stall_io = 0;
-		return 0;
-	}
-
 	F12WriteSecondOperand(2);
 	F12END();
 }
 
-static UINT32 opLDPR(void)
+UINT32 opLDPR(void)
 {
 	F12DecodeOperands(ReadAMAddress,2,ReadAM,2);
 	if (f12Op2 >= 0 && f12Op2 <= 28)
@@ -770,19 +748,21 @@ static UINT32 opLDPR(void)
 	}
 	else
 	{
-		log_cb(RETRO_LOG_DEBUG, "Invalid operand on LDPR PC=%x", PC);
+		logerror("Invalid operand on LDPR PC=%x\n", PC);
+		abort();
 	}
 	F12END();
 }
 
-static UINT32 opLDTASK(void)
+UINT32 opLDTASK(void)
 {
 	int i;
 	F12DecodeOperands(ReadAMAddress,2,ReadAM,2);
 
-	v60WritePSW(v60ReadPSW() & 0xefffffff);
+	TCB = f12Op2;
 
-	TR = f12Op2;
+	UPDATEPSW();
+	v60WritePSW(PSW & 0xefffffff);
 
 	TKCW = MemRead32(f12Op2);
 	f12Op2 += 4;
@@ -817,7 +797,7 @@ static UINT32 opLDTASK(void)
 	F12END();
 }
 
-static UINT32 opMOVD(void) /* TRUSTED */
+UINT32 opMOVD(void) /* TRUSTED */
 {
 	UINT32 a,b;
 
@@ -848,7 +828,7 @@ static UINT32 opMOVD(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVB(void) /* TRUSTED */
+UINT32 opMOVB(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,0);
 	modWriteValB = (UINT8)f12Op1;
@@ -856,7 +836,7 @@ static UINT32 opMOVB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVH(void) /* TRUSTED */
+UINT32 opMOVH(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,1);
 	modWriteValH = (UINT16)f12Op1;
@@ -864,7 +844,7 @@ static UINT32 opMOVH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVW(void) /* TRUSTED */
+UINT32 opMOVW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,2);
 	modWriteValW = f12Op1;
@@ -872,7 +852,7 @@ static UINT32 opMOVW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVEAB(void) /* TRUSTED */
+UINT32 opMOVEAB(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAMAddress,0);
 	modWriteValW = f12Op1;
@@ -880,7 +860,7 @@ static UINT32 opMOVEAB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVEAH(void) /* TRUSTED */
+UINT32 opMOVEAH(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAMAddress,1);
 	modWriteValW = f12Op1;
@@ -888,7 +868,7 @@ static UINT32 opMOVEAH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVEAW(void) /* TRUSTED */
+UINT32 opMOVEAW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAMAddress,2);
 	modWriteValW = f12Op1;
@@ -896,7 +876,7 @@ static UINT32 opMOVEAW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVSBH(void) /* TRUSTED */
+UINT32 opMOVSBH(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,0);
 	modWriteValH = (INT8)(f12Op1&0xFF);
@@ -904,7 +884,7 @@ static UINT32 opMOVSBH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVSBW(void) /* TRUSTED */
+UINT32 opMOVSBW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,0);
 	modWriteValW = (INT8)(f12Op1&0xFF);
@@ -912,7 +892,7 @@ static UINT32 opMOVSBW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVSHW(void) /* TRUSTED */
+UINT32 opMOVSHW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,1);
 	modWriteValW = (INT16)(f12Op1&0xFFFF);
@@ -920,7 +900,7 @@ static UINT32 opMOVSHW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVTHB(void)
+UINT32 opMOVTHB(void)
 {
 	F12DecodeFirstOperand(ReadAM,1);
 	modWriteValB = (UINT8)(f12Op1&0xFF);
@@ -937,7 +917,7 @@ static UINT32 opMOVTHB(void)
 	F12END();
 }
 
-static UINT32 opMOVTWB(void)
+UINT32 opMOVTWB(void)
 {
 	F12DecodeFirstOperand(ReadAM,2);
 	modWriteValB = (UINT8)(f12Op1&0xFF);
@@ -954,7 +934,7 @@ static UINT32 opMOVTWB(void)
 	F12END();
 }
 
-static UINT32 opMOVTWH(void)
+UINT32 opMOVTWH(void)
 {
 	F12DecodeFirstOperand(ReadAM,2);
 	modWriteValH = (UINT16)(f12Op1&0xFFFF);
@@ -972,7 +952,7 @@ static UINT32 opMOVTWH(void)
 }
 
 
-static UINT32 opMOVZBH(void) /* TRUSTED */
+UINT32 opMOVZBH(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,0);
 	modWriteValH = (UINT16)f12Op1;
@@ -980,7 +960,7 @@ static UINT32 opMOVZBH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVZBW(void) /* TRUSTED */
+UINT32 opMOVZBW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,0);
 	modWriteValW = f12Op1;
@@ -988,7 +968,7 @@ static UINT32 opMOVZBW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMOVZHW(void) /* TRUSTED */
+UINT32 opMOVZHW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,1);
 	modWriteValW = f12Op1;
@@ -996,7 +976,7 @@ static UINT32 opMOVZHW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opMULB(void)
+UINT32 opMULB(void)
 {
 	UINT8 appb;
 	UINT32 tmp;
@@ -1004,6 +984,7 @@ static UINT32 opMULB(void)
 
 	F12LOADOP2BYTE();
 
+	// @@@ OV not set!!
 	tmp=(INT8)appb * (INT32)(INT8)f12Op1;
 	appb = tmp;
 	_Z = (appb == 0);
@@ -1014,7 +995,7 @@ static UINT32 opMULB(void)
 	F12END();
 }
 
-static UINT32 opMULH(void)
+UINT32 opMULH(void)
 {
 	UINT16 apph;
 	UINT32 tmp;
@@ -1022,6 +1003,7 @@ static UINT32 opMULH(void)
 
 	F12LOADOP2HALF();
 
+	// @@@ OV not set!!
 	tmp=(INT16)apph * (INT32)(INT16)f12Op1;
 	apph = tmp;
 	_Z = (apph == 0);
@@ -1032,7 +1014,7 @@ static UINT32 opMULH(void)
 	F12END();
 }
 
-static UINT32 opMULW(void)
+UINT32 opMULW(void)
 {
 	UINT32 appw;
 	UINT64 tmp;
@@ -1040,6 +1022,7 @@ static UINT32 opMULW(void)
 
 	F12LOADOP2WORD();
 
+	// @@@ OV not set!!
 	tmp=(INT32)appw * (INT64)(INT32)f12Op1;
 	appw = tmp;
 	_Z = (appw == 0);
@@ -1050,7 +1033,7 @@ static UINT32 opMULW(void)
 	F12END();
 }
 
-static UINT32 opMULUB(void)
+UINT32 opMULUB(void)
 {
 	UINT8 appb;
 	UINT32 tmp;
@@ -1058,6 +1041,7 @@ static UINT32 opMULUB(void)
 
 	F12LOADOP2BYTE();
 
+	// @@@ OV not set!!
 	tmp = appb * (UINT8)f12Op1;
 	appb = tmp;
 	_Z = (appb == 0);
@@ -1068,7 +1052,7 @@ static UINT32 opMULUB(void)
 	F12END();
 }
 
-static UINT32 opMULUH(void)
+UINT32 opMULUH(void)
 {
 	UINT16 apph;
 	UINT32 tmp;
@@ -1076,6 +1060,7 @@ static UINT32 opMULUH(void)
 
 	F12LOADOP2HALF();
 
+	// @@@ OV not set!!
 	tmp=apph * (UINT16)f12Op1;
 	apph = tmp;
 	_Z = (apph == 0);
@@ -1086,7 +1071,7 @@ static UINT32 opMULUH(void)
 	F12END();
 }
 
-static UINT32 opMULUW(void)
+UINT32 opMULUW(void)
 {
 	UINT32 appw;
 	UINT64 tmp;
@@ -1094,6 +1079,7 @@ static UINT32 opMULUW(void)
 
 	F12LOADOP2WORD();
 
+	// @@@ OV not set!!
 	tmp=(UINT64)appw * (UINT64)f12Op1;
 	appw = tmp;
 	_Z = (appw == 0);
@@ -1104,40 +1090,40 @@ static UINT32 opMULUW(void)
 	F12END();
 }
 
-static UINT32 opNEGB(void) /* TRUSTED  (C too!)*/
+UINT32 opNEGB(void) /* TRUSTED  (C too!)*/
 {
 	F12DecodeFirstOperand(ReadAM,0);
 
 	modWriteValB = 0;
 	SUBB(modWriteValB, (INT8)f12Op1);
-	_CY = modWriteValB ? 1 : 0;
+
 	F12WriteSecondOperand(0);
 	F12END();
 }
 
-static UINT32 opNEGH(void) /* TRUSTED  (C too!)*/
+UINT32 opNEGH(void) /* TRUSTED  (C too!)*/
 {
 	F12DecodeFirstOperand(ReadAM,1);
 
 	modWriteValH = 0;
 	SUBW(modWriteValH, (INT16)f12Op1);
-	_CY = modWriteValH ? 1 : 0;
+
 	F12WriteSecondOperand(1);
 	F12END();
 }
 
-static UINT32 opNEGW(void) /* TRUSTED  (C too!)*/
+UINT32 opNEGW(void) /* TRUSTED  (C too!)*/
 {
 	F12DecodeFirstOperand(ReadAM,2);
 
 	modWriteValW = 0;
 	SUBL(modWriteValW, (INT32)f12Op1);
-	_CY = modWriteValW ? 1 : 0;
+
 	F12WriteSecondOperand(2);
 	F12END();
 }
 
-static UINT32 opNOTB(void) /* TRUSTED */
+UINT32 opNOTB(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,0);
 	modWriteValB=~f12Op1;
@@ -1150,7 +1136,7 @@ static UINT32 opNOTB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opNOTH(void) /* TRUSTED */
+UINT32 opNOTH(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,1);
 	modWriteValH=~f12Op1;
@@ -1163,7 +1149,7 @@ static UINT32 opNOTH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opNOTW(void) /* TRUSTED */
+UINT32 opNOTW(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,2);
 	modWriteValW=~f12Op1;
@@ -1176,7 +1162,7 @@ static UINT32 opNOTW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opNOT1(void) /* TRUSTED */
+UINT32 opNOT1(void) /* TRUSTED */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -1195,7 +1181,7 @@ static UINT32 opNOT1(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opORB(void) /* TRUSTED  (C too!)*/
+UINT32 opORB(void) /* TRUSTED  (C too!)*/
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -1208,7 +1194,7 @@ static UINT32 opORB(void) /* TRUSTED  (C too!)*/
 	F12END();
 }
 
-static UINT32 opORH(void) /* TRUSTED (C too!)*/
+UINT32 opORH(void) /* TRUSTED (C too!)*/
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -1221,7 +1207,7 @@ static UINT32 opORH(void) /* TRUSTED (C too!)*/
 	F12END();
 }
 
-static UINT32 opORW(void) /* TRUSTED (C too!) */
+UINT32 opORW(void) /* TRUSTED (C too!) */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -1234,28 +1220,28 @@ static UINT32 opORW(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opOUTB(void)
+UINT32 opOUTB(void)
 {
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,2);
 	PortWrite8(f12Op2,(UINT8)f12Op1);
 	F12END();
 }
 
-static UINT32 opOUTH(void)
+UINT32 opOUTH(void)
 {
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,2);
 	PortWrite16(f12Op2,(UINT16)f12Op1);
 	F12END();
 }
 
-static UINT32 opOUTW(void)
+UINT32 opOUTW(void)
 {
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
 	PortWrite32(f12Op2,f12Op1);
 	F12END();
 }
 
-static UINT32 opREMB(void)
+UINT32 opREMB(void)
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -1272,7 +1258,7 @@ static UINT32 opREMB(void)
 	F12END();
 }
 
-static UINT32 opREMH(void)
+UINT32 opREMH(void)
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -1289,7 +1275,7 @@ static UINT32 opREMH(void)
 	F12END();
 }
 
-static UINT32 opREMW(void)
+UINT32 opREMW(void)
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -1306,7 +1292,7 @@ static UINT32 opREMW(void)
 	F12END();
 }
 
-static UINT32 opREMUB(void)
+UINT32 opREMUB(void)
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -1323,7 +1309,7 @@ static UINT32 opREMUB(void)
 	F12END();
 }
 
-static UINT32 opREMUH(void)
+UINT32 opREMUH(void)
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -1340,7 +1326,7 @@ static UINT32 opREMUH(void)
 	F12END();
 }
 
-static UINT32 opREMUW(void)
+UINT32 opREMUW(void)
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -1357,7 +1343,7 @@ static UINT32 opREMUW(void)
 	F12END();
 }
 
-static UINT32 opROTB(void) /* TRUSTED */
+UINT32 opROTB(void) /* TRUSTED */
 {
 	UINT8 appb;
 	INT8 i,count;
@@ -1393,7 +1379,7 @@ static UINT32 opROTB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opROTH(void) /* TRUSTED */
+UINT32 opROTH(void) /* TRUSTED */
 {
 	UINT16 apph;
 	INT8 i,count;
@@ -1429,7 +1415,7 @@ static UINT32 opROTH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opROTW(void) /* TRUSTED */
+UINT32 opROTW(void) /* TRUSTED */
 {
 	UINT32 appw;
 	INT8 i,count;
@@ -1465,7 +1451,7 @@ static UINT32 opROTW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opROTCB(void) /* TRUSTED */
+UINT32 opROTCB(void) /* TRUSTED */
 {
 	UINT8 appb;
 	INT8 i,cy,count;
@@ -1506,7 +1492,7 @@ static UINT32 opROTCB(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opROTCH(void) /* TRUSTED */
+UINT32 opROTCH(void) /* TRUSTED */
 {
 	UINT16 apph;
 	INT8 i,cy,count;
@@ -1547,7 +1533,7 @@ static UINT32 opROTCH(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opROTCW(void) /* TRUSTED */
+UINT32 opROTCW(void) /* TRUSTED */
 {
 	UINT32 appw;
 	INT8 i,cy,count;
@@ -1588,7 +1574,7 @@ static UINT32 opROTCW(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opRVBIT(void)
+UINT32 opRVBIT(void)
 {
 	F12DecodeFirstOperand(ReadAM,0);
 
@@ -1606,7 +1592,7 @@ static UINT32 opRVBIT(void)
 	F12END();
 }
 
-static UINT32 opRVBYT(void) /* TRUSTED */
+UINT32 opRVBYT(void) /* TRUSTED */
 {
 	F12DecodeFirstOperand(ReadAM,2);
 
@@ -1619,7 +1605,7 @@ static UINT32 opRVBYT(void) /* TRUSTED */
 	F12END();
 }
 
-static UINT32 opSET1(void) /* TRUSTED */
+UINT32 opSET1(void) /* TRUSTED */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -1636,7 +1622,7 @@ static UINT32 opSET1(void) /* TRUSTED */
 }
 
 
-static UINT32 opSETF(void)
+UINT32 opSETF(void)
 {
 	F12DecodeFirstOperand(ReadAM,0);
 
@@ -1717,12 +1703,12 @@ static UINT32 opSETF(void)
 /*
 #define SHIFTLEFT_OY(val, count, bitsize) \
 {\
-    UINT32 tmp = ((val) >> (bitsize-1)) & 1; \
-    tmp <<= count; \
-    tmp -= 1; \
-    tmp <<= (bitsize - (count)); \
-    _OV = (((val) & tmp) != tmp); \
-    _CY = (((val) & (1 << (count-1))) != 0); \
+	UINT32 tmp = ((val) >> (bitsize-1)) & 1; \
+	tmp <<= count; \
+	tmp -= 1; \
+	tmp <<= (bitsize - (count)); \
+	_OV = (((val) & tmp) != tmp); \
+	_CY = (((val) & (1 << (count-1))) != 0); \
 }
 */
 
@@ -1754,7 +1740,7 @@ static UINT32 opSETF(void)
 
 
 
-static UINT32 opSHAB(void)
+UINT32 opSHAB(void)
 {
 	UINT8 appb;
 	INT8 count;
@@ -1802,13 +1788,13 @@ static UINT32 opSHAB(void)
 		SetSZPF_Byte(appb);
 	}
 
-//  mame_printf_debug("SHAB: %x _CY: %d _Z: %d _OV: %d _S: %d\n", appb, _CY, _Z, _OV, _S);
+//	printf("SHAB: %x _CY: %d _Z: %d _OV: %d _S: %d\n", appb, _CY, _Z, _OV, _S);
 
 	F12STOREOP2BYTE();
 	F12END();
 }
 
-static UINT32 opSHAH(void)
+UINT32 opSHAH(void)
 {
 	UINT16 apph;
 	INT8 count;
@@ -1856,13 +1842,13 @@ static UINT32 opSHAH(void)
 		SetSZPF_Word(apph);
 	}
 
-//  mame_printf_debug("SHAH: %x >> %d = %x _CY: %d _Z: %d _OV: %d _S: %d\n", oldval, count, apph, _CY, _Z, _OV, _S);
+//	printf("SHAH: %x >> %d = %x _CY: %d _Z: %d _OV: %d _S: %d\n", oldval, count, apph, _CY, _Z, _OV, _S);
 
 	F12STOREOP2HALF();
 	F12END();
 }
 
-static UINT32 opSHAW(void)
+UINT32 opSHAW(void)
 {
 	UINT32 appw;
 	INT8 count;
@@ -1910,14 +1896,14 @@ static UINT32 opSHAW(void)
 		SetSZPF_Long(appw);
 	}
 
-//  mame_printf_debug("SHAW: %x >> %d = %x _CY: %d _Z: %d _OV: %d _S: %d\n", oldval, count, appw, _CY, _Z, _OV, _S);
+//	printf("SHAW: %x >> %d = %x _CY: %d _Z: %d _OV: %d _S: %d\n", oldval, count, appw, _CY, _Z, _OV, _S);
 
 	F12STOREOP2WORD();
 	F12END();
 }
 
 
-static UINT32 opSHLB(void) /* TRUSTED */
+UINT32 opSHLB(void) /* TRUSTED */
 {
 	UINT8 appb;
 	INT8 count;
@@ -1970,13 +1956,13 @@ static UINT32 opSHLB(void) /* TRUSTED */
 		}
 	}
 
-//  mame_printf_debug("SHLB: %x _CY: %d _Z: %d _OV: %d _S: %d\n", appb, _CY, _Z, _OV, _S);
+//	printf("SHLB: %x _CY: %d _Z: %d _OV: %d _S: %d\n", appb, _CY, _Z, _OV, _S);
 
 	F12STOREOP2BYTE();
 	F12END();
 }
 
-static UINT32 opSHLH(void) /* TRUSTED */
+UINT32 opSHLH(void) /* TRUSTED */
 {
 	UINT16 apph;
 	INT8 count;
@@ -1987,7 +1973,7 @@ static UINT32 opSHLH(void) /* TRUSTED */
 	F12LOADOP2HALF();
 
 	count=(INT8)(f12Op1&0xFF);
-//  mame_printf_debug("apph: %x count: %d  ", apph, count);
+//	printf("apph: %x count: %d  ", apph, count);
 	if (count>0)
 	{
 		// left shift flags:
@@ -2030,13 +2016,13 @@ static UINT32 opSHLH(void) /* TRUSTED */
 		}
 	}
 
-//  mame_printf_debug("SHLH: %x _CY: %d _Z: %d _OV: %d _S: %d\n", apph, _CY, _Z, _OV, _S);
+//	printf("SHLH: %x _CY: %d _Z: %d _OV: %d _S: %d\n", apph, _CY, _Z, _OV, _S);
 
 	F12STOREOP2HALF();
 	F12END();
 }
 
-static UINT32 opSHLW(void) /* TRUSTED */
+UINT32 opSHLW(void) /* TRUSTED */
 {
 	UINT32 appw;
 	INT8 count;
@@ -2089,27 +2075,28 @@ static UINT32 opSHLW(void) /* TRUSTED */
 		}
 	}
 
-//  mame_printf_debug("SHLW: %x _CY: %d _Z: %d _OV: %d _S: %d\n", appw, _CY, _Z, _OV, _S);
+//	printf("SHLW: %x _CY: %d _Z: %d _OV: %d _S: %d\n", appw, _CY, _Z, _OV, _S);
 
 	F12STOREOP2WORD();
 	F12END();
 }
 
-static UINT32 opSTPR(void)
+UINT32 opSTPR(void)
 {
 	F12DecodeFirstOperand(ReadAM,2);
 	if (f12Op1 >= 0 && f12Op1 <= 28)
 		modWriteValW = v60.reg[f12Op1 + 36];
 	else
 	{
-		log_cb(RETRO_LOG_DEBUG, "Invalid operand on STPR PC=%x", PC);
+		logerror("Invalid operand on STPR PC=%x\n", PC);
+		abort();
 	}
 	F12WriteSecondOperand(2);
 	F12END();
 }
 
 
-static UINT32 opSUBB(void) /* TRUSTED (C too!) */
+UINT32 opSUBB(void) /* TRUSTED (C too!) */
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -2122,7 +2109,7 @@ static UINT32 opSUBB(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opSUBH(void) /* TRUSTED (C too!) */
+UINT32 opSUBH(void) /* TRUSTED (C too!) */
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -2135,7 +2122,7 @@ static UINT32 opSUBH(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opSUBW(void) /* TRUSTED (C too!) */
+UINT32 opSUBW(void) /* TRUSTED (C too!) */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -2149,7 +2136,7 @@ static UINT32 opSUBW(void) /* TRUSTED (C too!) */
 }
 
 
-static UINT32 opSUBCB(void)
+UINT32 opSUBCB(void)
 {
 	UINT8 appb;
 	UINT8 src;
@@ -2164,7 +2151,7 @@ static UINT32 opSUBCB(void)
 	F12END();
 }
 
-static UINT32 opSUBCH(void)
+UINT32 opSUBCH(void)
 {
 	UINT16 apph;
 	UINT16 src;
@@ -2180,7 +2167,7 @@ static UINT32 opSUBCH(void)
 	F12END();
 }
 
-static UINT32 opSUBCW(void)
+UINT32 opSUBCW(void)
 {
 	UINT32 appw;
 	UINT32 src;
@@ -2196,7 +2183,7 @@ static UINT32 opSUBCW(void)
 	F12END();
 }
 
-static UINT32 opTEST1(void)
+UINT32 opTEST1(void)
 {
 	F12DecodeOperands(ReadAM,2,ReadAM,2);
 
@@ -2206,23 +2193,19 @@ static UINT32 opTEST1(void)
 	F12END();
 }
 
-static UINT32 opUPDPSWW(void)
+UINT32 opUPDPSWW(void)
 {
 	F12DecodeOperands(ReadAM,2,ReadAM,2);
 
-	/* can only modify condition code and control fields */
-	f12Op2 &= 0xFFFFFF;
-	f12Op1 &= 0xFFFFFF;
 	v60WritePSW((v60ReadPSW() & (~f12Op2)) | (f12Op1 & f12Op2));
 
 	F12END();
 }
 
-static UINT32 opUPDPSWH(void)
+UINT32 opUPDPSWH(void)
 {
 	F12DecodeOperands(ReadAM,2,ReadAM,2);
 
-	/* can only modify condition code fields */
 	f12Op2 &= 0xFFFF;
 	f12Op1 &= 0xFFFF;
 	v60WritePSW((v60ReadPSW() & (~f12Op2)) | (f12Op1 & f12Op2));
@@ -2230,7 +2213,7 @@ static UINT32 opUPDPSWH(void)
 	F12END();
 }
 
-static UINT32 opXCHB(void) /* TRUSTED */
+UINT32 opXCHB(void) /* TRUSTED */
 {
 	UINT8 appb, temp;
 
@@ -2246,7 +2229,7 @@ static UINT32 opXCHB(void) /* TRUSTED */
 	F12END()
 }
 
-static UINT32 opXCHH(void) /* TRUSTED */
+UINT32 opXCHH(void) /* TRUSTED */
 {
 	UINT16 apph, temp;
 
@@ -2262,7 +2245,7 @@ static UINT32 opXCHH(void) /* TRUSTED */
 	F12END()
 }
 
-static UINT32 opXCHW(void) /* TRUSTED */
+UINT32 opXCHW(void) /* TRUSTED */
 {
 	UINT32 appw, temp;
 
@@ -2278,7 +2261,7 @@ static UINT32 opXCHW(void) /* TRUSTED */
 	F12END()
 }
 
-static UINT32 opXORB(void) /* TRUSTED (C too!) */
+UINT32 opXORB(void) /* TRUSTED (C too!) */
 {
 	UINT8 appb;
 	F12DecodeOperands(ReadAM,0,ReadAMAddress,0);
@@ -2291,7 +2274,7 @@ static UINT32 opXORB(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opXORH(void) /* TRUSTED (C too!) */
+UINT32 opXORH(void) /* TRUSTED (C too!) */
 {
 	UINT16 apph;
 	F12DecodeOperands(ReadAM,1,ReadAMAddress,1);
@@ -2304,7 +2287,7 @@ static UINT32 opXORH(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opXORW(void) /* TRUSTED (C too!) */
+UINT32 opXORW(void) /* TRUSTED (C too!) */
 {
 	UINT32 appw;
 	F12DecodeOperands(ReadAM,2,ReadAMAddress,2);
@@ -2317,7 +2300,7 @@ static UINT32 opXORW(void) /* TRUSTED (C too!) */
 	F12END();
 }
 
-static UINT32 opMULX(void)
+UINT32 opMULX(void)
 {
 	INT32 a,b;
 	INT64 res;
@@ -2355,7 +2338,7 @@ static UINT32 opMULX(void)
 	F12END();
 }
 
-static UINT32 opMULUX(void)
+UINT32 opMULUX(void)
 {
 	INT32 a,b;
 	UINT64 res;
