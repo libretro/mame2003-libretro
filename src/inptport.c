@@ -7,17 +7,17 @@
 TODO:	remove the 1 analog device per port limitation
 		support for inputports producing interrupts
 		support for extra "real" hardware (PC throttle's, spinners etc)
-		
+
                  Controller-Specific Input Port Mappings
                  ---------------------------------------
 
-The main purpose of the controller-specific configuration is to remap 
-inputs.  This is handled via two mechanisms: key re-mapping and 
+The main purpose of the controller-specific configuration is to remap
+inputs.  This is handled via two mechanisms: key re-mapping and
 sequence re-mapping.
 
 Key re-mapping occurs at the most basic level.  The specified keycode is
-replaced where ever it occurs (in all sequences) with the specified 
-replacement.  Only single keycodes can be used as a replacement (that is, a 
+replaced where ever it occurs (in all sequences) with the specified
+replacement.  Only single keycodes can be used as a replacement (that is, a
 single key cannot be replaced with a key sequence).
 
 Sequence mapping occurs at a higher level.  In this case, the entire
@@ -27,15 +27,15 @@ sequence.
 Keycodes are specified as a single keyword.  Key sequences are specified
 as a series of keycodes separated by spaces (the full sequence must be
 enclosed in quotes if spaces exist).  Two special keywords are available
-for defining key sequences, CODE_OR and CODE_NOT (which can abbreviated | 
+for defining key sequences, CODE_OR and CODE_NOT (which can abbreviated |
 and ! respectively).
 
 When two keycodes are specified together (separated by only whitespace),
 the default action is a logical AND, such that both keys must be pressed
 at the same time for the action to occur.  Often it desired that either
-key can be pressed for the action to occur (for example LEFT CTRL and 
+key can be pressed for the action to occur (for example LEFT CTRL and
 Joystick Button 0), in which case the two keycodes need to be separated
-by a CODE_OR (|) keyword.  Finally, certain combinations may be 
+by a CODE_OR (|) keyword.  Finally, certain combinations may be
 undesirable and warrant no action by MAME.  For these, the keywords should
 be specified by a CODE_NOT (!) (for example, ALT-TAB on a windows machine).
 
@@ -57,9 +57,9 @@ Specifies the directory that contains the controller customization .ini files.
 
 -ctrlr "name"
 
-Specifies a controller name for customization.  The .ini files for the 
+Specifies a controller name for customization.  The .ini files for the
 controller are stored in either a directory or a .zip file with the same
-name as the specified controller.  
+name as the specified controller.
 
 The first file in the directory/zip to be scanned is the file default.ini.
 From there, game-specific files are scanned starting with the top-most
@@ -85,12 +85,12 @@ enabled on those games that require it.  If all games for this controller
 require joystick and/or mouse support, those keywords can be placed in
 the main default.ini file.
 
-All of the options that can be specified on the command-line or in the 
-main mame.ini file can be specified in the controller-specific ini files, 
-though because of when these files are parsed, the specified options may 
+All of the options that can be specified on the command-line or in the
+main mame.ini file can be specified in the controller-specific ini files,
+though because of when these files are parsed, the specified options may
 have no effect.  The only two general options guaranteed to be supported
 are mouse and joystick.  Note that command-line specification of these
-options takes precedence.  Since most front-ends, including MAME32, 
+options takes precedence.  Since most front-ends, including MAME32,
 specify these options through the command-line, the mouse and/or joystick
 options specified in the .ini files will be ignored.
 
@@ -98,7 +98,7 @@ Another custom keyword is:
 
 ctrlrname               "name"
 
-This keyword defines a detailed name for the selected controller.  Names 
+This keyword defines a detailed name for the selected controller.  Names
 that include spaces must be enclosed in quotes.
 
 
@@ -107,8 +107,8 @@ Keywords:
 
 Keywords are separated into two categories, keycodes and input port
 definitions.  To specify a key re-mapping, specify the keycode as the
-keyword to re-define (that is, on the left-hand side) followed by the 
-replacement code.  To specify a sequence re-map, specify the input port 
+keyword to re-define (that is, on the left-hand side) followed by the
+replacement code.  To specify a sequence re-map, specify the input port
 code to be re-defined on the left followed by the sequence.
 
 In addition to the standard codes, additional OSD specific codes may be
@@ -131,8 +131,8 @@ connected.  In the codes listed above, the Wingman Warrior was connected as
 the first joystick (J1).  If it had been configured as a different input,
 the generated codes would have a different Jx number.
 
-All keyword matching including the standard keywords is case sensitive.  
-Also, some of the automatically generated OSD codes may be redundant. 
+All keyword matching including the standard keywords is case sensitive.
+Also, some of the automatically generated OSD codes may be redundant.
 For example, J1_Button_0 is the same as JOYCODE_1_BUTTON1.  Standard codes
 are preferred over OSD codes.
 
@@ -240,15 +240,15 @@ P2_JOYSTICKLEFT_RIGHT
 
 P3_JOYSTICK_UP           P3_JOYSTICK_DOWN         P3_JOYSTICK_LEFT
 P3_JOYSTICK_RIGHT        P3_BUTTON1               P3_BUTTON2
-P3_BUTTON3               P3_BUTTON4               
+P3_BUTTON3               P3_BUTTON4
 
 P4_JOYSTICK_UP           P4_JOYSTICK_DOWN         P4_JOYSTICK_LEFT
 P4_JOYSTICK_RIGHT        P4_BUTTON1               P4_BUTTON2
-P4_BUTTON3               P4_BUTTON4               
+P4_BUTTON3               P4_BUTTON4
 
 P1_PEDAL                 P1_PEDAL_EXT             P2_PEDAL
 P2_PEDAL_EXT             P3_PEDAL                 P3_PEDAL_EXT
-P4_PEDAL                 P4_PEDAL_EXT             
+P4_PEDAL                 P4_PEDAL_EXT
 
 P1_PADDLE                P1_PADDLE_EXT            P2_PADDLE
 P2_PADDLE_EXT            P3_PADDLE                P3_PADDLE_EXT
@@ -266,19 +266,19 @@ P4_DIAL_V_EXT
 
 P1_TRACKBALL_X           P1_TRACKBALL_X_EXT       P2_TRACKBALL_X
 P2_TRACKBALL_X_EXT       P3_TRACKBALL_X           P3_TRACKBALL_X_EXT
-P4_TRACKBALL_X           P4_TRACKBALL_X_EXT       
+P4_TRACKBALL_X           P4_TRACKBALL_X_EXT
 
 P1_TRACKBALL_Y           P1_TRACKBALL_Y_EXT       P2_TRACKBALL_Y
 P2_TRACKBALL_Y_EXT       P3_TRACKBALL_Y           P3_TRACKBALL_Y_EXT
-P4_TRACKBALL_Y           P4_TRACKBALL_Y_EXT       
+P4_TRACKBALL_Y           P4_TRACKBALL_Y_EXT
 
 P1_AD_STICK_X            P1_AD_STICK_X_EXT        P2_AD_STICK_X
 P2_AD_STICK_X_EXT        P3_AD_STICK_X            P3_AD_STICK_X_EXT
-P4_AD_STICK_X            P4_AD_STICK_X_EXT        
+P4_AD_STICK_X            P4_AD_STICK_X_EXT
 
 P1_AD_STICK_Y            P1_AD_STICK_Y_EXT        P2_AD_STICK_Y
 P2_AD_STICK_Y_EXT        P3_AD_STICK_Y            P3_AD_STICK_Y_EXT
-P4_AD_STICK_Y            P4_AD_STICK_Y_EXT        
+P4_AD_STICK_Y            P4_AD_STICK_Y_EXT
 
 OSD_1                    OSD_2                    OSD_3
 OSD_4
@@ -290,6 +290,7 @@ OSD_4
 #include <math.h>
 #include "driver.h"
 #include "config.h"
+#include "cpuexec.h"
 
 
 /***************************************************************************
@@ -1673,7 +1674,7 @@ static void load_default_keys(void)
 		config_read_default_ports(cfg, inputport_defaults);
 		config_close(cfg);
 	}
-  
+
   osd_customize_inputport_defaults(inputport_defaults);
 }
 
@@ -1691,9 +1692,9 @@ static void save_default_keys(void)
 	memcpy(inputport_defaults,inputport_defaults_backup,sizeof(inputport_defaults_backup));
 }
 
-/* 
+/*
  * void reset_default_inputs(void)
- * repopulate mappings from the defaults specified in the inptport source 
+ * repopulate mappings from the defaults specified in the inptport source
  */
 void reset_default_inputs(void)
 {
@@ -1701,9 +1702,9 @@ void reset_default_inputs(void)
   save_default_keys();
 }
 
-/* 
+/*
  * void reset_default_inputs(void)
- * repopulate mappings from the defaults specified in the driver source 
+ * repopulate mappings from the defaults specified in the driver source
  */
 void reset_driver_inputs(void)
 {
@@ -1871,6 +1872,9 @@ void update_analog_port(int port)
 	InputSeq* decseq;
 	int keydelta;
 	int player;
+  int xwayjoy;
+  int last_frame;
+  static int last_frame_inc = 0, last_frame_dec = 0;
 
 	/* get input definition */
 	in = input_analog[port];
@@ -1942,7 +1946,7 @@ void update_analog_port(int port)
 	delta = 0;
 
 	player = IP_GET_PLAYER(in);
-    
+
     /* if second player on a dial, and dial sharing turned on, use Y axis from player 1 */
     if (options.dial_share_xy && type == IPT_DIAL && player == 1)
     {
@@ -1952,11 +1956,30 @@ void update_analog_port(int port)
 
 	delta = mouse_delta_axis[player][axis];
 
-	if (seq_pressed(decseq)) delta -= keydelta;
+  xwayjoy = (in+2)->type & IPF_XWAYJOY;
+  last_frame = cpu_getcurrentframe() - 1;
+
+	if (seq_pressed(decseq))
+    /* Don't register button press if xwayjoy is on, is DIAL(_V) type, and button was pressed last frame */
+    if (  !(    (xwayjoy == IPF_XWAYJOY)
+        && ((type == IPT_DIAL) || (type == IPT_DIAL_V))
+        && (last_frame == last_frame_dec)   )  )
+    {
+      delta -= keydelta;
+      last_frame_dec = last_frame + 1;
+    }
 
 	if (type != IPT_PEDAL && type != IPT_PEDAL2)
 	{
-		if (seq_pressed(incseq)) delta += keydelta;
+		if (seq_pressed(incseq))
+      /* Don't register button press if xwayjoy is on, is DIAL(_V) type, and button was pressed last frame */
+      if (  !(    (xwayjoy == IPF_XWAYJOY)
+          && ((type == IPT_DIAL) || (type == IPT_DIAL_V))
+          && (last_frame == last_frame_inc)   )  )
+      {
+        delta += keydelta;
+        last_frame_inc = last_frame + 1;
+      }
 	}
 	else
 	{
@@ -2250,19 +2273,19 @@ ScanJoysticks( struct InputPort *in )
 			  }
 
 		}
-    else if (options.restrict_4_way) //start use alternative code 
+    else if (options.restrict_4_way) //start use alternative code
     {
       if(options.content_flags[CONTENT_ROTATE_JOY_45])
       {
         if  ( (mJoyCurrent[i]) && (mJoyCurrent[i] !=1) &&
               (mJoyCurrent[i] !=2) && (mJoyCurrent[i] !=4) &&
-              (mJoyCurrent[i] !=8) )  	
-        {    
+              (mJoyCurrent[i] !=8) )
+        {
           if      (mJoyCurrent[i] == 9)  mJoy4Way[i]=1;
           else if (mJoyCurrent[i] == 6)  mJoy4Way[i]=2;
           else if (mJoyCurrent[i] == 5)  mJoy4Way[i]=4;
           else if (mJoyCurrent[i] == 10) mJoy4Way[i]=8;
-        }     
+        }
         else if (mJoy4Way[i])
           mJoy4Way[i]=0;
       }
@@ -2679,7 +2702,13 @@ struct InputPort* input_port_allocate(const struct InputPortTiny *src)
 		InputCode seq_default;
 
 		if (type > IPT_ANALOG_START && type < IPT_ANALOG_END)
-			src_end = src + 2;
+    {
+      if ((type == IPT_DIAL) || (type == IPT_DIAL_V))
+        /* third port stores additional data */
+        src_end = src + 3;
+      else
+			  src_end = src + 2;
+    }
 		else
 			src_end = src + 1;
 
