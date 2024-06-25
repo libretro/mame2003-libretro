@@ -239,8 +239,8 @@ is longer than 1/60th of a second, but less than 2/60ths of a second.):
         - Key/Joy Speed: 4
         - Sensitivity: 100%
         - X-Way Joystick: On
-    * Downtown
-        - Key/Joy Speed: 22
+    * DownTown
+        - Key/Joy Speed: 21
         - Sensitivity: 100%
         - X-Way Joystick: On
     * Guerrilla War
