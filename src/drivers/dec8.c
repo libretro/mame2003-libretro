@@ -32,7 +32,7 @@ To do:
 	Super Real Darwin 'Double' sprites appearing from the top of the screen are clipped
 	Strangely coloured butterfly on Garyo Retsuden water levels!
 
-  Thanks to José Miguel Morales Farreras for Super Real Darwin information!
+  Thanks to JosÃ© Miguel Morales Farreras for Super Real Darwin information!
 
 ***************************************************************************/
 
@@ -210,7 +210,7 @@ bb63           = Square things again
 (40)           = Grey bird
 (42)           = Crash (end of table)
 
-	The table below is hopefully correct thanks to José Miguel Morales Farreras,
+	The table below is hopefully correct thanks to JosÃ© Miguel Morales Farreras,
 	but Boss #6 is uncomfirmed as correct.
 
 */
@@ -1349,10 +1349,10 @@ INPUT_PORTS_START( gondo )
 	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_COIN2 )
 
 	PORT_START	/* player 1 12-way rotary control */
-	PORT_ANALOGX( 0xff, 0x00, IPT_DIAL | IPF_REVERSE, 25, 10, 0, 0, KEYCODE_Z, KEYCODE_X, IP_JOY_NONE, IP_JOY_NONE )
+	PORT_ANALOGX( 0xff, 0x0a, IPT_DIAL | IPF_REVERSE, 25, 10, 0, 0, KEYCODE_Z, KEYCODE_X, IP_JOY_NONE, IP_JOY_NONE )
 
 	PORT_START	/* player 2 12-way rotary control */
-	PORT_ANALOGX( 0xff, 0x00, IPT_DIAL | IPF_REVERSE | IPF_PLAYER2, 25, 10, 0, 0, KEYCODE_N, KEYCODE_M, IP_JOY_NONE, IP_JOY_NONE )
+	PORT_ANALOGX( 0xff, 0x0a, IPT_DIAL | IPF_REVERSE | IPF_PLAYER2, 25, 10, 0, 0, KEYCODE_N, KEYCODE_M, IP_JOY_NONE, IP_JOY_NONE )
 
 	PORT_START	/* Dip switch bank 1 */
 	PORT_DIPNAME( 0x03, 0x03, DEF_STR( Coin_A ) )
