@@ -243,6 +243,14 @@ is longer than 1/60th of a second, but less than 2/60ths of a second.):
         - Key/Joy Speed: 21
         - Sensitivity: 100%
         - X-Way Joystick: On
+    * Forgotten Worlds (arcade version used "roll" button, not rotary joystick)
+        - Key/Joy Speed: 65
+        - Sensitivity: 100%
+        - X-Way Joystick: On
+    * Gondomania
+        - Key/Joy Speed: 21
+        - Sensitivity: 100%
+        - X-Way Joystick: On
     * Guerrilla War
         - Key/Joy Speed: 16
         - Sensitivity: 100%
@@ -269,6 +277,10 @@ is longer than 1/60th of a second, but less than 2/60ths of a second.):
         - X-Way Joystick: On
     * SAR - Search and Rescue
         - Key/Joy Speed: 21
+        - Sensitivity: 100%
+        - X-Way Joystick: On
+    * T.A.N.K.
+        - Key/Joy Speed: 16
         - Sensitivity: 100%
         - X-Way Joystick: On
     * Time Soldiers
