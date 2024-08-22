@@ -140,7 +140,6 @@ int mame_debug; /* !0 when -debug option is specified */
 int bailing;	/* set to 1 if the startup is aborted to prevent multiple error messages */
 
 extern int16_t XsoundBuffer[2048];
-extern void (*pause_action)(void);
 
 /* the active machine */
 static struct RunningMachine active_machine;
@@ -521,9 +520,6 @@ void pause_action_start_emulator(void)
 
   /* run the emulation! */
   cpu_run();
-
-  /* Unpause */
-  pause_action = 0;
 }
 
 void run_machine_core_done(void)
@@ -1216,7 +1212,10 @@ void update_video_and_audio(void)
 int updatescreen(void)
 {
 	/* update sound */
-	sound_update();
+	if (pause_action)
+		osd_update_silent_stream();
+	else
+		sound_update();
 
 	/* if we're not skipping this frame, draw the screen */
 	if (osd_skip_this_frame() == 0)
