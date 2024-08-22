@@ -3361,6 +3361,7 @@ int handle_user_interface(struct mame_bitmap *bitmap)
   }
   else if(setup_selected)
   {
+    erase_screen(bitmap);
     setup_selected = setup_menu(bitmap, setup_selected);
   }
 
@@ -3409,7 +3410,7 @@ int handle_user_interface(struct mame_bitmap *bitmap)
 
 	if(toggle_showgfx) showcharset(bitmap);
 
-	if (!setup_active() && !toggle_showgfx && cpu_pause_state)
+	if (!setup_active() && !toggle_showgfx && pause_action)
 		cpu_pause(false);
 
 	return 0;
