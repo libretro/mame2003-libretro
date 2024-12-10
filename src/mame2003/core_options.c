@@ -827,7 +827,7 @@ void init_core_options(void)
 
 static void set_variables()
 {
-  static unsigned effective_options_count;         /* the number of core options in effect for the current content */
+  unsigned effective_options_count = 0;         /* the number of core options in effect for the current content */
   int option_index   = 0;
 
   for(option_index = 0; option_index < (OPT_end + 1); option_index++)
