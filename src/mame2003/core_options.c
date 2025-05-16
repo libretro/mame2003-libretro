@@ -1147,8 +1147,6 @@ void update_variables(bool first_time)
             options.mame_remapping = true;
           else
             options.mame_remapping = false;
-          if(!first_time)
-            setup_menu_init();
           break;
 
         case OPT_FRAMESKIP:
@@ -1233,6 +1231,9 @@ void update_variables(bool first_time)
   ledintf.set_led_state = NULL;
   environ_cb(RETRO_ENVIRONMENT_GET_LED_INTERFACE, &ledintf);
   led_state_cb = ledintf.set_led_state;
+
+  if(!first_time) /* update mame menu */
+    setup_menu_init();
 
   if(reset_control_descriptions) /* one of the option changes has flagged a need to re-describe the controls */
   {
