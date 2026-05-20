@@ -274,6 +274,26 @@ static void remove_slash (char* temp)
     log_cb(RETRO_LOG_INFO, LOGPRE "Trailing slash removal was not necessary for path given.\n");
 }
 
+/* Owning strdup for the libretro path/filename strings. These outlive the
+   per-game resource-tracking scope and are mutated in place by remove_slash(),
+   so they must be heap copies that we own outright (not auto_malloc'd, and
+   never aliases of frontend-owned memory). Freed in retro_unload_game(). */
+static char *mame2003_strdup(const char *src)
+{
+  char *dst;
+  size_t len;
+
+  if (!src)
+    return NULL;
+
+  len = strlen(src) + 1;
+  dst = (char *)malloc(len);
+  if (dst)
+    memcpy(dst, src, len);
+
+  return dst;
+}
+
 bool retro_load_game(const struct retro_game_info *game)
 {
   int              driverIndex    = 0;
@@ -293,7 +313,9 @@ bool retro_load_game(const struct retro_game_info *game)
     return false;
   }
   log_cb(RETRO_LOG_INFO, LOGPRE "Git Version %s\n",GIT_VERSION);
-  driver_lookup = auto_strdup(path_basename(game->path));
+  driver_lookup = mame2003_strdup(path_basename(game->path));
+  if (!driver_lookup)
+    return false;
   path_remove_extension(driver_lookup);
 
   log_cb(RETRO_LOG_INFO, LOGPRE "Content lookup name: %s\n", driver_lookup);
@@ -312,6 +334,7 @@ bool retro_load_game(const struct retro_game_info *game)
 	if(driverIndex == total_drivers -2) // we could fix the total drives in drivers c but the it pointless its taken into account here
 	{
       log_cb(RETRO_LOG_ERROR, LOGPRE "Driver index counter: %d. Game driver not found for %s!\n", driverIndex, driver_lookup);
+      free(driver_lookup);
       return false;
 	}
  }
@@ -321,28 +344,38 @@ bool retro_load_game(const struct retro_game_info *game)
 
   set_content_flags();
 
-  options.libretro_content_path = auto_strdup(game->path);
+  options.libretro_content_path = mame2003_strdup(game->path);
   path_basedir(options.libretro_content_path);
 
-  /* Get system directory from frontend */
-  options.libretro_system_path = NULL;
-  environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY,&options.libretro_system_path);
-  if (options.libretro_system_path == NULL || options.libretro_system_path[0] == '\0')
+  /* Get system directory from frontend. The string returned by the
+     environment callback is owned by the frontend and must not be modified,
+     so take our own copy before remove_slash() trims it. */
   {
+    const char *frontend_system_path = NULL;
+    environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &frontend_system_path);
+    if (frontend_system_path == NULL || frontend_system_path[0] == '\0')
+    {
       log_cb(RETRO_LOG_INFO, LOGPRE "libretro system path not set by frontend, using content path\n");
-      options.libretro_system_path = options.libretro_content_path;
+      options.libretro_system_path = mame2003_strdup(options.libretro_content_path);
+    }
+    else
+      options.libretro_system_path = mame2003_strdup(frontend_system_path);
   }
 
-  /* Get save directory from frontend */
-  options.libretro_save_path = NULL;
-  environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY,&options.libretro_save_path);
-  if (options.libretro_save_path == NULL || options.libretro_save_path[0] == '\0')
+  /* Get save directory from frontend (same ownership rules as above). */
   {
+    const char *frontend_save_path = NULL;
+    environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &frontend_save_path);
+    if (frontend_save_path == NULL || frontend_save_path[0] == '\0')
+    {
       log_cb(RETRO_LOG_INFO,  LOGPRE "libretro save path not set by frontend, using content path\n");
-      options.libretro_save_path = options.libretro_content_path;
+      options.libretro_save_path = mame2003_strdup(options.libretro_content_path);
+    }
+    else
+      options.libretro_save_path = mame2003_strdup(frontend_save_path);
   }
 
-  /* Remove trailing slashes for specified systems */
+  /* Remove trailing slashes (operates only on our owned copies) */
   remove_slash(options.libretro_content_path);
   remove_slash(options.libretro_system_path);
   remove_slash(options.libretro_save_path);
@@ -537,9 +570,19 @@ void retro_run (void)
 void retro_unload_game(void)
 {
     mame_done();
-    /* do we need to be freeing things here? */
 
+    /* Free the path/filename strings we allocated in retro_load_game().
+       romset_filename_noext is the same allocation as driver_lookup. These
+       are owned heap copies (mame2003_strdup), not auto_malloc'd, so they are
+       not touched by the resource tracker. */
     free(options.romset_filename_noext);
+    free(options.libretro_content_path);
+    free(options.libretro_system_path);
+    free(options.libretro_save_path);
+    options.romset_filename_noext = NULL;
+    options.libretro_content_path = NULL;
+    options.libretro_system_path  = NULL;
+    options.libretro_save_path    = NULL;
 }
 
 void retro_deinit(void)
