@@ -256,7 +256,10 @@ static INLINE void bail_and_print(const char *message)
 
 bool init_game(int game)
 {
-	begin_resource_tracking();
+	/* NB: resource tracking for the running machine is opened by run_game()
+	   and closed by run_game_done(); init_game() must not open a scope of its
+	   own, otherwise the tag is left permanently incremented (one unmatched
+	   begin per content load) and anything tracked at that level leaks. */
 
 #ifdef MAME_DEBUG
 	/* validity checks -- debug build only */
