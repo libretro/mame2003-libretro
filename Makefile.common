@@ -52,7 +52,6 @@ SOURCES_C += \
 	$(CORE_DIR)/input.c \
 	$(CORE_DIR)/mame-memory.c \
 	$(CORE_DIR)/mame.c \
-	$(CORE_DIR)/mamedbg.c \
 	$(CORE_DIR)/mame_unzip.c \
 	$(CORE_DIR)/palette.c \
 	$(CORE_DIR)/png.c \
@@ -62,9 +61,13 @@ SOURCES_C += \
 	$(CORE_DIR)/tilemap.c \
 	$(CORE_DIR)/timer.c \
 	$(CORE_DIR)/ui_text.c \
-	$(CORE_DIR)/usrintrf.c \
-	$(CORE_DIR)/window.c \
-	$(CORE_DIR)/x86drc.c
+	$(CORE_DIR)/usrintrf.c
+
+# x86drc.c only provides the x86 dynamic recompiler back-end used by the
+# MIPS3 DRC core; it is built (below) only when X86_MIPS3_DRC is set.
+# mamedbg.c / window.c are the text-mode MAME debugger, whose bodies are
+# entirely #ifdef MAME_DEBUG -- never defined in this core -- so they are
+# not compiled.
 
 SOURCES_C += \
 	$(CORE_DIR)/machine/6522via.c \
@@ -1929,6 +1932,7 @@ endif
 ifeq ($(HAS_MIPS3),1)
 ifdef X86_MIPS3_DRC
 SOURCES_C += $(CORE_DIR)/cpu/mips/mips3drc.c
+SOURCES_C += $(CORE_DIR)/x86drc.c
 else
 SOURCES_C += $(CORE_DIR)/cpu/mips/mips3.c
 endif
