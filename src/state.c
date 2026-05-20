@@ -112,6 +112,8 @@ static UINT32 ss_get_signature(void)
 	}
 
 	info = malloc(size);
+	if (!info)
+		return 0;
 
 	/* Pass 2 : write signature info*/
 
@@ -499,7 +501,14 @@ void state_save_save_finish(void)
 	ss_dump_array[8] = 1;
 	ss_dump_array[9] = flags;
 	memset(ss_dump_array+0xa, 0, 10);
-	strcpy((char *)ss_dump_array+0xa, Machine->gamedrv->name);
+	{
+		/* the name field is 10 bytes (0x0a..0x13); copy at most 9 so the
+		   field stays NUL-terminated and never runs into the signature */
+		size_t namelen = strlen(Machine->gamedrv->name);
+		if (namelen > 9)
+			namelen = 9;
+		memcpy((char *)ss_dump_array+0xa, Machine->gamedrv->name, namelen);
+	}
 
 	ss_dump_array[0x14] = signature;
 	ss_dump_array[0x15] = signature >> 8;
