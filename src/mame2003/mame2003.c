@@ -599,8 +599,11 @@ bool retro_serialize(void *data, size_t size)
 bool retro_unserialize(const void * data, size_t size)
 {
     int cpunum;
-	/* if successful, load it */
-	if ( (retro_serialize_size() ) && ( data ) && ( size ) && ( !state_save_load_begin((void*)data, size) ) )
+	/* if successful, load it. Require the incoming size to match the
+	   expected dump size exactly: the load path walks fixed offsets derived
+	   from the registry (not from 'size'), so a short buffer would otherwise
+	   be read out of bounds. This mirrors the check in retro_serialize(). */
+	if ( retro_serialize_size() == size && size && data && !state_save_load_begin((void*)data, size) )
 	{
         /* read tag 0 */
         state_save_set_current_tag(0);

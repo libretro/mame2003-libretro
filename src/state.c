@@ -523,6 +523,14 @@ int state_save_load_begin(void *array, size_t size)
 	ss_dump_size = size;
 	ss_dump_array = array;
 
+	/* the 0x18-byte header is read unconditionally below (magic, version,
+	   flags and signature); reject anything shorter so we never read past
+	   the caller-supplied buffer */
+	if(size < 0x18) {
+		usrintf_showmessage("Error: Truncated save file");
+		goto bad;
+	}
+
 	if(memcmp(ss_dump_array, "MAMESAVE", 8)) {
 		usrintf_showmessage("Error: This is not a mame save file");
 		goto bad;
