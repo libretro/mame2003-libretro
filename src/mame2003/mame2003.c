@@ -732,6 +732,13 @@ int osd_start_audio_stream(int stereo)
 
   if (Machine->sample_rate == 0) return 0;
 
+  /* free any buffers left over from a previous stream (e.g. after a reset or
+     a sample-rate change) before allocating new ones */
+  free(samples_buffer);
+  free(conversion_buffer);
+  samples_buffer    = NULL;
+  conversion_buffer = NULL;
+
   samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
   if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
 
@@ -806,6 +813,10 @@ void osd_update_silent_stream(void)
 
 void osd_stop_audio_stream(void)
 {
+	free(samples_buffer);
+	free(conversion_buffer);
+	samples_buffer    = NULL;
+	conversion_buffer = NULL;
 }
 
 
