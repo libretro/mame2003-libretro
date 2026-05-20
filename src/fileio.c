@@ -738,7 +738,7 @@ UINT32 mame_fread_swap(mame_file *file, void *buffer, UINT32 length)
 
 	/* swap the result */
 	buf = buffer;
-	for (i = 0; i < res; i += 2)
+	for (i = 0; i + 1 < res; i += 2)
 	{
 		temp = buf[i];
 		buf[i] = buf[i + 1];
@@ -762,7 +762,7 @@ UINT32 mame_fwrite_swap(mame_file *file, const void *buffer, UINT32 length)
 
 	/* swap the data first */
 	buf = (UINT8 *)buffer;
-	for (i = 0; i < length; i += 2)
+	for (i = 0; i + 1 < length; i += 2)
 	{
 		temp = buf[i];
 		buf[i] = buf[i + 1];
@@ -773,7 +773,7 @@ UINT32 mame_fwrite_swap(mame_file *file, const void *buffer, UINT32 length)
 	res = mame_fwrite(file, buffer, length);
 
 	/* swap the data back */
-	for (i = 0; i < length; i += 2)
+	for (i = 0; i + 1 < length; i += 2)
 	{
 		temp = buf[i];
 		buf[i] = buf[i + 1];
