@@ -1047,15 +1047,15 @@ void update_variables(bool first_time)
               char cfg_file_path[PATH_MAX_LENGTH];
               char buffer[PATH_MAX_LENGTH];
               osd_get_path(FILETYPE_CONFIG, buffer);
-              sprintf(cfg_file_path, "%s%s%s.cfg", buffer, PATH_DEFAULT_SLASH(), options.romset_filename_noext);
+              snprintf(cfg_file_path, sizeof(cfg_file_path), "%s%s%s.cfg", buffer, PATH_DEFAULT_SLASH(), options.romset_filename_noext);
               buffer[0] = '\0';
 
               if(path_is_valid(cfg_file_path))
               {
-                if(!remove(cfg_file_path) == 0)
-                  sprintf(buffer, "%s.cfg exists but cannot be deleted!\n", options.romset_filename_noext);
+                if(remove(cfg_file_path) != 0)
+                  snprintf(buffer, sizeof(buffer), "%s.cfg exists but cannot be deleted!", options.romset_filename_noext);
                 else
-                  sprintf(buffer, "%s.cfg exists but cannot be deleted!\n", options.romset_filename_noext);
+                  snprintf(buffer, sizeof(buffer), "Deleted %s.cfg.", options.romset_filename_noext);
               }
               log_cb(RETRO_LOG_INFO, LOGPRE "%s Reloading input maps.\n", buffer);
               usrintf_showmessage_secs(4, "%s Reloading input maps.", buffer);
