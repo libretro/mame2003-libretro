@@ -308,6 +308,15 @@ struct zipent* readzip(ZIP* zip) {
 	if (zip->cd_pos >= zip->size_of_cent_dir)
 		return 0;
 
+	/* the fixed-size central directory header (ZIPCFN bytes) is read in full
+	   below; make sure it fits inside the buffer before touching it, otherwise
+	   a truncated/crafted central directory causes an out-of-bounds read */
+	if (zip->cd_pos + ZIPCFN > zip->size_of_cent_dir)
+	{
+		errormsg("Invalid central directory entry", ERROR_CORRUPT, zip->zip);
+		return 0;
+	}
+
 	/* compile zipent info */
 	zip->ent.cent_file_header_sig = read_dword (zip->cd+zip->cd_pos+ZIPCENSIG);
 	zip->ent.version_made_by = *(zip->cd+zip->cd_pos+ZIPCVER);
