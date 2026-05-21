@@ -135,7 +135,7 @@ static READ16_HANDLER( shared_ram_r )
 		if (ppc < 0xa0000)
 		{
 			int cpunum = cpu_getactivecpu();
-			UINT16 opcode = rom_base[cpunum][ppc / 2];
+			uint16_t opcode = rom_base[cpunum][ppc / 2];
 
 			/* look for TAS or BTST #$7; both CPUs spin waiting for these in order to */
 			/* coordinate communications. Some spins have timeouts that reset the machine */

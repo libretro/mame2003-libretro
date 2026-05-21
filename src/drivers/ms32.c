@@ -1434,7 +1434,7 @@ static struct GfxDecodeInfo ms32_gfxdecodeinfo[] =
    10 - 6d4 - big, vbl?
 */
 
-static UINT16 irqreq;
+static uint16_t irqreq;
 
 static int irq_callback(int irqline)
 {

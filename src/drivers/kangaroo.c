@@ -152,7 +152,7 @@ static MACHINE_INIT( kangaroo )
  *
  *************************************/
 
-static UINT8 kangaroo_clock=0;
+static uint8_t kangaroo_clock=0;
 
 
 /* I have no idea what the security chip is nor whether it really does,

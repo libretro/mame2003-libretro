@@ -40,24 +40,24 @@ TO DO:
 
 static data8_t *cfb_ram;
 
-static UINT32 VCU_gfx_addr = 0;
-static UINT32 VCU_gfx_param_addr = 0;
-static UINT32 xpos=0, ypos=0, pix_xsize=0, pix_ysize=0;
-static UINT8 color=0, color2=0, mode=0, plane=0;
-static UINT8 vbank = 0; /* video page select signal, likely for double buffering ?*/
+static uint32_t VCU_gfx_addr = 0;
+static uint32_t VCU_gfx_param_addr = 0;
+static uint32_t xpos=0, ypos=0, pix_xsize=0, pix_ysize=0;
+static uint8_t color=0, color2=0, mode=0, plane=0;
+static uint8_t vbank = 0; /* video page select signal, likely for double buffering ?*/
 
-static UINT32 gfx_rom_bank = 0xff;	/* graphics ROMs are banked */
+static uint32_t gfx_rom_bank = 0xff;	/* graphics ROMs are banked */
 
 
 
 
 #define MAZERBLA 0x01
 #define GREATGUN 0x02
-static UINT8 game_id = 0; /* hacks per game */
+static uint8_t game_id = 0; /* hacks per game */
 
 
 
-static UINT8 lookup_RAM[0x100*4];
+static uint8_t lookup_RAM[0x100*4];
 
 
 
@@ -133,7 +133,7 @@ VIDEO_UPDATE( test_vcu )
 	int j,trueorientation;
 	char buf[128];
 
-	UINT32 color_base=0;
+	uint32_t color_base=0;
 
 	if (game_id==MAZERBLA)
 		color_base = 0x80;	/* 0x80 constant: matches Mazer Blazer movie */
@@ -254,7 +254,7 @@ VIDEO_UPDATE( test_vcu )
 VIDEO_UPDATE( greatgun )
 {
 
-	UINT32 color_base=0;
+	uint32_t color_base=0;
 
 	if (game_id==MAZERBLA)
 		color_base = 0x80;	/* 0x80 constant: matches Mazer Blazer movie */
@@ -273,7 +273,7 @@ VIDEO_UPDATE( greatgun )
 VIDEO_UPDATE( mazerbla )
 {
 
-	UINT32 color_base=0;
+	uint32_t color_base=0;
 
 	if (game_id==MAZERBLA)
 		color_base = 0x80;	/* 0x80 constant: matches Mazer Blazer movie */
@@ -290,7 +290,7 @@ VIDEO_UPDATE( mazerbla )
 }
 
 
-static UINT8 zpu_int_vector;
+static uint8_t zpu_int_vector;
 
 static WRITE_HANDLER( cfb_zpu_int_req_set_w )
 {
@@ -342,8 +342,8 @@ static READ_HANDLER ( sharedram_CFB_ZPU_r )
 
 
 
-static UINT8 ls670_0[4];
-static UINT8 ls670_1[4];
+static uint8_t ls670_0[4];
+static uint8_t ls670_1[4];
 
 static READ_HANDLER( ls670_0_r )
 {
@@ -393,7 +393,7 @@ static WRITE_HANDLER( ls670_1_w )
 
 
 /* bcd decoder used a input select (a mux) for reads from port 0x62 */
-static UINT8 bcd_7445 = 0;
+static uint8_t bcd_7445 = 0;
 
 static WRITE_HANDLER(zpu_bcd_decoder_w)
 {
@@ -448,7 +448,7 @@ Vertical movement of gun is Strobe 9, Bits 0-7.
 
 static READ_HANDLER( zpu_inputs_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (bcd_7445<10)
 	{
@@ -512,7 +512,7 @@ MEMORY_END
 
 
 
-static UINT8 vsb_ls273;
+static uint8_t vsb_ls273;
 static WRITE_HANDLER( vsb_ls273_audio_control_w )
 {
 	vsb_ls273 = data;
@@ -565,7 +565,7 @@ static WRITE_HANDLER(cfb_led_w)
 }
 
 
-static UINT8 bknd_col = 0xaa;
+static uint8_t bknd_col = 0xaa;
 static WRITE_HANDLER(cfb_backgnd_color_w)
 {
 
@@ -624,7 +624,7 @@ static WRITE_HANDLER(cfb_rom_bank_sel_w_gg)	/* great guns */
 
 
 /* ????????????? */
-static UINT8 port02_status = 0;
+static uint8_t port02_status = 0;
 static READ_HANDLER( cfb_port_02_r )
 {
 	port02_status ^= 0xff;
@@ -655,7 +655,7 @@ PORT_END
 
 
 
-static UINT8 VCU_video_reg[4];
+static uint8_t VCU_video_reg[4];
 static WRITE_HANDLER( VCU_video_reg_w )
 {
 	if (VCU_video_reg[offset] != data)
@@ -691,7 +691,7 @@ int offs;
 int x,y;
 int bits = 0;
 
-UINT8 color_base=0;
+uint8_t color_base=0;
 
 unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x10000;
 
@@ -741,9 +741,9 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 		{
 			for (x = 0; x <= pix_xsize; x++)
 			{
-				UINT8 pixeldata = rom[offs + (bits>>3)];
-				UINT8 data = (pixeldata>>(6-(bits&7))) & 3;
-				UINT8 col = 0;
+				uint8_t pixeldata = rom[offs + (bits>>3)];
+				uint8_t data = (pixeldata>>(6-(bits&7))) & 3;
+				uint8_t col = 0;
 
 				switch(data)
 				{
@@ -791,8 +791,8 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 		{
 			for (x = 0; x <= pix_xsize; x++)
 			{
-				UINT8 pixeldata = rom[offs + (bits>>3)];
-				UINT8 data = (pixeldata>>(7-(bits&7))) & 1;
+				uint8_t pixeldata = rom[offs + (bits>>3)];
+				uint8_t data = (pixeldata>>(7-(bits&7))) & 1;
 
 				/* color = 4 MSB = front PEN, 4 LSB = background PEN */
 
@@ -826,9 +826,9 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 		{
 			for (x = 0; x <= pix_xsize; x++)
 			{
-				UINT8 pixeldata = rom[offs + (bits>>3)];
-				UINT8 data = (pixeldata>>(4-(bits&7))) & 15;
-				UINT8 col = 0;
+				uint8_t pixeldata = rom[offs + (bits>>3)];
+				uint8_t data = (pixeldata>>(4-(bits&7))) & 15;
+				uint8_t col = 0;
 
 				col = color_base | data;
 
@@ -856,7 +856,7 @@ int offs;
 int x,y;
 int bits = 0;
 
-UINT8 color_base=0;
+uint8_t color_base=0;
 
 unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x10000;
 
@@ -913,9 +913,9 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 		{
 			for (x = 0; x <= pix_xsize; x++)
 			{
-				UINT8 pixeldata = rom[offs + (bits>>3)];
-				UINT8 data = (pixeldata>>(6-(bits&7))) & 3;
-				UINT8 col = 0;
+				uint8_t pixeldata = rom[offs + (bits>>3)];
+				uint8_t data = (pixeldata>>(6-(bits&7))) & 3;
+				uint8_t col = 0;
 
 				switch(data)
 				{
@@ -962,7 +962,7 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 				{
 					for (x=0; x<16; x++)
 					{
-						UINT8 colour = cfb_ram[ offs + x + y*16 ];
+						uint8_t colour = cfb_ram[ offs + x + y*16 ];
 
 						/* red component */
 						bit1 = (colour >> 7) & 0x01;
@@ -997,7 +997,7 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 				{
 					for (x=0; x<16; x++)
 					{
-						UINT8 dat = cfb_ram[ offs + x + y*16 ];
+						uint8_t dat = cfb_ram[ offs + x + y*16 ];
 						lookup_RAM[ lookup_offs + x + y*16 ] = dat;
 					}
 				}
@@ -1011,7 +1011,7 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 				{
 					for (x=0; x<16; x++)
 					{
-						UINT8 dat = cfb_ram[ offs + x + y*16 ];
+						uint8_t dat = cfb_ram[ offs + x + y*16 ];
 						lookup_RAM[ lookup_offs + x + y*16 ] = dat;
 					}
 				}
@@ -1025,7 +1025,7 @@ unsigned char * rom = memory_region(REGION_CPU3) + (gfx_rom_bank * 0x2000) + 0x1
 				{
 					for (x=0; x<16; x++)
 					{
-						UINT8 dat = cfb_ram[ offs + x + y*16 ];
+						uint8_t dat = cfb_ram[ offs + x + y*16 ];
 						lookup_RAM[ lookup_offs + x + y*16 ] = dat;
 					}
 				}
@@ -1072,7 +1072,7 @@ MEMORY_END
 
 /* Great Guns */
 
-static UINT8 soundlatch;
+static uint8_t soundlatch;
 
 static READ_HANDLER( soundcommand_r )
 {

@@ -35,7 +35,7 @@ extern VIDEO_UPDATE( kncljoe );
 extern WRITE_HANDLER(kncljoe_videoram_w);
 extern WRITE_HANDLER(kncljoe_control_w);
 extern WRITE_HANDLER(kncljoe_scroll_w);
-extern UINT8 *kncljoe_scrollregs;
+extern uint8_t *kncljoe_scrollregs;
 
 
 static MEMORY_READ_START( readmem )

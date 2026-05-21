@@ -12,10 +12,10 @@ extern VIDEO_UPDATE( sprint8 );
 
 extern WRITE_HANDLER( sprint8_video_ram_w );
 
-extern UINT8* sprint8_video_ram;
-extern UINT8* sprint8_pos_h_ram;
-extern UINT8* sprint8_pos_v_ram;
-extern UINT8* sprint8_pos_d_ram;
+extern uint8_t* sprint8_video_ram;
+extern uint8_t* sprint8_pos_h_ram;
+extern uint8_t* sprint8_pos_v_ram;
+extern uint8_t* sprint8_pos_d_ram;
 
 static int steer_dir[8];
 static int steer_flag[8];
@@ -37,13 +37,13 @@ void sprint8_collision_callback(int n)
 
 static void input_callback(int dummy)
 {
-	static UINT8 dial[8];
+	static uint8_t dial[8];
 
 	int i;
 
 	for (i = 0; i < 8; i++)
 	{
-		UINT8 val = readinputport(8 + i) >> 4;
+		uint8_t val = readinputport(8 + i) >> 4;
 
 		signed char delta = (val - dial[i]) & 15;
 
@@ -139,7 +139,7 @@ static READ_HANDLER( sprint8_collision_r )
 
 static READ_HANDLER( sprint8_input_r )
 {
-	UINT8 val = readinputport(offset);
+	uint8_t val = readinputport(offset);
 
 	if (steer_dir[offset])
 	{

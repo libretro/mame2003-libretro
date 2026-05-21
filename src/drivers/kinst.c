@@ -31,7 +31,7 @@ static data32_t *rombase, *rambase1, *rambase2;
 static data32_t *kinst_control;
 static data32_t *kinst_speedup;
 
-static const UINT8 *control_map;
+static const uint8_t *control_map;
 
 
 
@@ -128,7 +128,7 @@ static WRITE32_HANDLER( ide_controller_extra_w )
 static READ32_HANDLER( kinst_control_r )
 {
 	data32_t result;
-	UINT32 temp;
+	uint32_t temp;
 
 	offset = control_map[offset / 2];
 	result = kinst_control[offset];
@@ -208,8 +208,8 @@ static READ32_HANDLER( kinst_speedup_r )
 	if (activecpu_get_pc() == 0x88029890 ||	/* KI */
 		activecpu_get_pc() == 0x8802c2d0	/* KI2 */)
 	{
-		UINT32 r3 = activecpu_get_reg(MIPS3_R3);
-		UINT32 r26 = activecpu_get_reg(MIPS3_R26) - *kinst_speedup;
+		uint32_t r3 = activecpu_get_reg(MIPS3_R3);
+		uint32_t r26 = activecpu_get_reg(MIPS3_R26) - *kinst_speedup;
 		if (r26 < r3)
 		{
 			timer_set(TIME_IN_CYCLES((r3 - r26) * 2, 0), 0, end_spin);
@@ -462,8 +462,8 @@ ROM_END
 
 static DRIVER_INIT( kinst )
 {
-	static const UINT8 kinst_control_map[8] = { 0,1,2,3,4,5,6,7 };
-	UINT8 *features;
+	static const uint8_t kinst_control_map[8] = { 0,1,2,3,4,5,6,7 };
+	uint8_t *features;
 
 	dcs_init();
 	memcpy(rombase, memory_region(REGION_USER1), memory_region_length(REGION_USER1));
@@ -497,8 +497,8 @@ static DRIVER_INIT( kinst )
 
 static DRIVER_INIT( kinst2 )
 {
-	static const UINT8 kinst2_control_map[8] = { 2,4,1,0,3,5,6,7 };
-	UINT8 *features;
+	static const uint8_t kinst2_control_map[8] = { 2,4,1,0,3,5,6,7 };
+	uint8_t *features;
 
 	// read: $80 on ki2 = $90 on ki
 	// read: $88 on ki2 = $a0 on ki

@@ -13,8 +13,8 @@
 #include "vidhrdw/generic.h"
 #include "cpu/m6809/m6809.h"
 
-extern UINT8 *battlane_spriteram;
-extern UINT8 *battlane_tileram;
+extern uint8_t *battlane_spriteram;
+extern uint8_t *battlane_tileram;
 
 extern struct tilemap *bg_tilemap;
 
@@ -98,13 +98,13 @@ WRITE_HANDLER( battlane_cpu_command_w )
 
 WRITE_HANDLER( battlane_shared_ram_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	RAM[offset] = data;
 }
 
 READ_HANDLER( battlane_shared_ram_r )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	return RAM[offset];
 }
 

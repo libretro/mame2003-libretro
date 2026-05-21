@@ -97,7 +97,7 @@ draw_spriteC355( int page, struct mame_bitmap *bitmap, const struct rectangle *c
 {
 	unsigned screen_height_remaining, screen_width_remaining;
 	unsigned source_height_remaining, source_width_remaining;
-	INT32 hpos,vpos;
+	int32_t hpos,vpos;
 	data16_t hsize,vsize;
 	data16_t palette;
 	data16_t linkno;
@@ -109,7 +109,7 @@ draw_spriteC355( int page, struct mame_bitmap *bitmap, const struct rectangle *c
 	int row,col;
 	int sx,sy,tile;
 	int flipx,flipy;
-	UINT32 zoomx, zoomy;
+	uint32_t zoomx, zoomy;
 	int tile_screen_width;
 	int tile_screen_height;
 	const data16_t *spriteformat16 = &spriteram16[0x4000/2];
@@ -471,7 +471,7 @@ roz_get_info( int tile_index,int which )
 		break;
 	}
 	SET_TILE_INFO( mRozGfxBank,mangle,0/*color*/,0 );
-	tile_info.mask_data = 32*tile + (UINT8 *)memory_region( mRozMaskRegion );
+	tile_info.mask_data = 32*tile + (uint8_t *)memory_region( mRozMaskRegion );
 } /* roz_get_info */
 
 static void roz_get_info0( int tile_index )
@@ -579,25 +579,25 @@ void namco_roz_draw(
 			if( roz_pri==pri )
 			{
 				int bDirty;
-				UINT32 startx,starty;
+				uint32_t startx,starty;
 				int incxx,incxy,incyx,incyy;
 				data16_t temp;
 
 				temp = pSource[2];
 				if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-				incxx = (INT16)temp;
+				incxx = (int16_t)temp;
 
 				temp = pSource[3];
 				if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-				incxy =  (INT16)temp;
+				incxy =  (int16_t)temp;
 
 				temp = pSource[4];
 				if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-				incyx =  (INT16)temp;
+				incyx =  (int16_t)temp;
 
-				incyy =  (INT16)pSource[5];
-				startx = (INT16)pSource[6];
-				starty = (INT16)pSource[7];
+				incyy =  (int16_t)pSource[5];
+				startx = (int16_t)pSource[6];
+				starty = (int16_t)pSource[7];
 
 				startx <<= 4;
 				starty <<= 4;
@@ -860,7 +860,7 @@ UpdateRoad( void )
 				decodechar(
 					Machine->gfx[mRoadGfxBank],
 					i,
-					0x10000+(UINT8 *)mpRoadRAM,
+					0x10000+(uint8_t *)mpRoadRAM,
 					&RoadTileLayout );
 				mpRoadDirty[i] = 0;
 			}
@@ -890,7 +890,7 @@ namco_road_init( int gfxbank )
 		mpRoadRAM = auto_malloc(0x20000);
 		if( mpRoadRAM )
 		{
-			struct GfxElement *pGfx = decodegfx( 0x10000+(UINT8 *)mpRoadRAM, &RoadTileLayout );
+			struct GfxElement *pGfx = decodegfx( 0x10000+(uint8_t *)mpRoadRAM, &RoadTileLayout );
 			if( pGfx )
 			{
 				pGfx->colortable = &Machine->remapped_colortable[0xf00];
@@ -938,7 +938,7 @@ namco_road_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, i
 
 	for( i=cliprect->min_y; i<=cliprect->max_y; i++ )
 	{
-		UINT16 *pDest = bitmap->line[i];
+		uint16_t *pDest = bitmap->line[i];
 		int screenx	= mpRoadRAM[0x1fa00/2+i+15];
 
 		if( pri == ((screenx&0xe000)>>13) )
@@ -947,7 +947,7 @@ namco_road_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, i
 			if( zoomx )
 			{
 				unsigned sourcey = mpRoadRAM[0x1fc00/2+i+15]+yscroll;
-				const UINT16 *pSourceGfx = pSourceBitmap->line[sourcey&(ROAD_TILEMAP_HEIGHT-1)];
+				const uint16_t *pSourceGfx = pSourceBitmap->line[sourcey&(ROAD_TILEMAP_HEIGHT-1)];
 				unsigned dsourcex = (ROAD_TILEMAP_WIDTH<<16)/zoomx;
 				unsigned sourcex = 0;
 				int numpixels = (44*ROAD_TILE_SIZE<<16)/dsourcex;

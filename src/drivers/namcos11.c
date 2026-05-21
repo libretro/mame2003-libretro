@@ -280,7 +280,7 @@ static READ32_HANDLER( keycus_c411_r )
 static READ32_HANDLER( keycus_c430_r )
 {
 	data32_t data;
-	UINT16 n_value;
+	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 2 ] & 0x0000ffff ) == 0x0000e296 )
 	{
@@ -314,7 +314,7 @@ static READ32_HANDLER( keycus_c430_r )
 static READ32_HANDLER( keycus_c431_r )
 {
 	data32_t data;
-	UINT16 n_value;
+	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 0 ] & 0x0000ffff ) == 0x00009e61 )
 	{
@@ -346,7 +346,7 @@ static READ32_HANDLER( keycus_c431_r )
 static READ32_HANDLER( keycus_c442_r )
 {
 	/* todo: verify behaviour */
-	UINT32 data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 
@@ -367,7 +367,7 @@ static READ32_HANDLER( keycus_c442_r )
 static READ32_HANDLER( keycus_c443_r )
 {
 	/* todo: verify behaviour */
-	UINT32 data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 
@@ -408,9 +408,9 @@ static READ32_HANDLER( sharedram_r )
 
 static INTERRUPT_GEN( namcos11_vblank )
 {
-	UINT16 n_coin;
-	UINT32 n_input;
-	static UINT16 n_oldcoin = 0;
+	uint16_t n_coin;
+	uint32_t n_input;
+	static uint16_t n_oldcoin = 0;
 
 	n_input = readinputport( 0 ) | ( readinputport( 1 ) << 16 );
 	SHRAM( 0xbd00 ) = n_input | ( ( n_input & ~SHRAM( 0xbd00 ) ) >> 8 );
@@ -444,8 +444,8 @@ static INTERRUPT_GEN( namcos11_vblank )
 	psx_vblank();
 }
 
-static UINT32 m_n_bankoffset;
-static UINT32 m_p_n_bankoffset[ 8 ];
+static uint32_t m_n_bankoffset;
+static uint32_t m_p_n_bankoffset[ 8 ];
 
 static INLINE void bankswitch_update( int n_bank )
 {
@@ -779,7 +779,7 @@ static INTERRUPT_GEN( c76_interrupt )
    at 0, the 16k C76 BIOS at 0x40000), then the standard namcos11 init. */
 MACHINE_INIT( namcos11_c76 )
 {
-	UINT8 *rom = memory_region( REGION_CPU2 );
+	uint8_t *rom = memory_region( REGION_CPU2 );
 
 	/* Banks 1-14 are owned by the main CPU (scratchpad/BIOS/RAM/ROM windows);
 	   mame2003 banks are global, so the C76 must use its own free banks. */

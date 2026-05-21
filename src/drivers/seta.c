@@ -8155,8 +8155,8 @@ DRIVER_INIT ( blandia )
 	/* rearrange the gfx data so it can be decoded in the same way as the other set */
 
 	int rom_size;
-	UINT8 *buf;
-	UINT8 *rom;
+	uint8_t *buf;
+	uint8_t *rom;
 	int rpos;
 
 	rom_size = 0x80000;

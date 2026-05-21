@@ -22,12 +22,12 @@
 static data16_t *code_rom;
 static data16_t *main_speedup;
 
-static UINT8 main_to_sound_data;
-static UINT8 main_to_sound_ready;
+static uint8_t main_to_sound_data;
+static uint8_t main_to_sound_ready;
 
-static UINT8 sound_to_main_data;
-static UINT8 sound_to_main_ready;
-static UINT8 sound_int_state;
+static uint8_t sound_to_main_data;
+static uint8_t sound_to_main_ready;
+static uint8_t sound_int_state;
 
 
 
@@ -163,8 +163,8 @@ static READ_HANDLER( bsmt_ready_r )
 
 static WRITE_HANDLER( bsmt2000_port_w )
 {
-	UINT16 reg = offset >> 8;
-	UINT16 val = ((offset & 0xff) << 8) | data;
+	uint16_t reg = offset >> 8;
+	uint16_t val = ((offset & 0xff) << 8) | data;
 	BSMT2000_data_0_w(reg, val, 0);
 }
 

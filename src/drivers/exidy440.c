@@ -220,20 +220,20 @@
 
 
 /* globals */
-UINT8 exidy440_bank;
-UINT8 exidy440_topsecret;
+uint8_t exidy440_bank;
+uint8_t exidy440_topsecret;
 
 
 /* local variables */
-static UINT8 port_0_xor;
-static UINT8 port_2_xor;
-static UINT8 port_3_xor;
-static UINT8 mirror_vblank_bit;
-static UINT8 mirror_trigger_bit;
-static UINT8 copy_protection_read;
-static UINT8 coin_state;
-static UINT8 last_coins;
-static UINT8 showdown_bank_triggered;
+static uint8_t port_0_xor;
+static uint8_t port_2_xor;
+static uint8_t port_3_xor;
+static uint8_t mirror_vblank_bit;
+static uint8_t mirror_trigger_bit;
+static uint8_t copy_protection_read;
+static uint8_t coin_state;
+static uint8_t last_coins;
+static uint8_t showdown_bank_triggered;
 
 
 
@@ -497,7 +497,7 @@ READ_HANDLER( showdown_pld_select1_r )
 	/* bank 0 is where the PLD lives - a read here after a trigger will set bank "1" */
 	if (exidy440_bank == 0 && showdown_bank_triggered)
 	{
-		static const UINT8 bankdata[0x18] =
+		static const uint8_t bankdata[0x18] =
 		{
 			0x15,0x40,0xc1,0x8d,0x4c,0x84,0x0e,0xce,
 			0x52,0xd0,0x99,0x48,0x80,0x09,0xc9,0x45,
@@ -519,7 +519,7 @@ READ_HANDLER( showdown_pld_select2_r )
 	/* bank 0 is where the PLD lives - a read here after a trigger will set bank "2" */
 	if (exidy440_bank == 0 && showdown_bank_triggered)
 	{
-		static const UINT8 bankdata[0x18] =
+		static const uint8_t bankdata[0x18] =
 		{
 			0x11,0x51,0xc0,0x89,0x4d,0x85,0x0c,0xcc,
 			0x46,0xd2,0x98,0x59,0x91,0x08,0xc8,0x41,

@@ -193,7 +193,7 @@ static MEMORY_WRITE_START( mimonkey_writemem )
 MEMORY_END
 
 
-static UINT8 *scobra_soundram;
+static uint8_t *scobra_soundram;
 
 static READ_HANDLER(scobra_soundram_r)
 {

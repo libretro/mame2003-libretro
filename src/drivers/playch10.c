@@ -350,7 +350,7 @@ extern int pc10_dog_di;
 /******************************************************************************/
 
 /* local stuff */
-static UINT8 *work_ram, *ram_8w;
+static uint8_t *work_ram, *ram_8w;
 static int up_8w;
 
 static WRITE_HANDLER( up8w_w )
@@ -393,7 +393,7 @@ static WRITE_HANDLER( sprite_dma_w )
 
 static NVRAM_HANDLER( playch10 )
 {
-	UINT8 *mem = memory_region( REGION_CPU2 ) + 0x6000;
+	uint8_t *mem = memory_region( REGION_CPU2 ) + 0x6000;
 
 	if ( read_or_write )
 		mame_fwrite( file, mem, 0x1000 );

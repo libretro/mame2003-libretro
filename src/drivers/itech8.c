@@ -169,9 +169,9 @@
  *
  *************************************/
 
-static UINT8 blitter_int;
-static UINT8 tms34061_int;
-static UINT8 periodic_int;
+static uint8_t blitter_int;
+static uint8_t tms34061_int;
+static uint8_t periodic_int;
 
 static data8_t sound_data;
 

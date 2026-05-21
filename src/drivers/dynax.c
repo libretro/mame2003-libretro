@@ -85,9 +85,9 @@ TODO:
 								Sports Match
 ***************************************************************************/
 
-UINT8 dynax_blitter_irq;
-UINT8 dynax_sound_irq;
-UINT8 dynax_vblank_irq;
+uint8_t dynax_blitter_irq;
+uint8_t dynax_sound_irq;
+uint8_t dynax_vblank_irq;
 
 /* It runs in IM 0, thus needs an opcode on the data bus */
 void sprtmtch_update_irq(void)
@@ -719,7 +719,7 @@ static READ_HANDLER( yarunara_input_r )
 
 static WRITE_HANDLER( yarunara_rombank_w )
 {
-	UINT8 *rom = memory_region(REGION_CPU1) + 0x10000 + 0x8000 * data;
+	uint8_t *rom = memory_region(REGION_CPU1) + 0x10000 + 0x8000 * data;
 	cpu_setbank(1, rom);
 
 	hnoridur_bank = data;

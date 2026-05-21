@@ -1392,7 +1392,7 @@ static DRIVER_INIT( xevios )
 	/* convert one of the sprite ROMs to the format used by Xevious */
 	for (A = 0x2000;A < 0x4000;A++)
 	{
-		UINT8 *rom = memory_region(REGION_GFX3);
+		uint8_t *rom = memory_region(REGION_GFX3);
 
 		rom[A] = BITSWAP8(rom[A],1,3,5,7,0,2,4,6);
 	}
@@ -1400,7 +1400,7 @@ static DRIVER_INIT( xevios )
 	/* convert one of tile map ROMs to the format used by Xevious */
 	for (A = 0x0000;A < 0x1000;A++)
 	{
-		UINT8 *rom = memory_region(REGION_GFX4);
+		uint8_t *rom = memory_region(REGION_GFX4);
 
 		rom[A] = BITSWAP8(rom[A],3,7,5,1,2,6,4,0);
 	}

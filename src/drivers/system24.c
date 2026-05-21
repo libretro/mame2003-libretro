@@ -256,7 +256,7 @@ static WRITE16_HANDLER( fdc_ctrl_w )
 
 // I/O Mappers
 
-static UINT8 hotrod_io_r(int port)
+static uint8_t hotrod_io_r(int port)
 {
 	switch(port) {
 	case 0:
@@ -279,11 +279,11 @@ static UINT8 hotrod_io_r(int port)
 	return 0x00;
 }
 
-static UINT8 dcclub_io_r(int port)
+static uint8_t dcclub_io_r(int port)
 {
 	switch(port) {
 	case 0: {
-		static UINT8 pos[16] = { 0, 1, 3, 2, 6, 4, 12, 8, 9 };
+		static uint8_t pos[16] = { 0, 1, 3, 2, 6, 4, 12, 8, 9 };
 		return (readinputport(0) & 0xf) | ((~pos[readinputport(5)>>4]<<4) & 0xf0);
 	}
 	case 1:
@@ -306,7 +306,7 @@ static UINT8 dcclub_io_r(int port)
 
 static int cur_input_line;
 
-static UINT8 mahmajn_io_r(int port)
+static uint8_t mahmajn_io_r(int port)
 {
 	switch(port) {
 	case 0:
@@ -329,7 +329,7 @@ static UINT8 mahmajn_io_r(int port)
 	return 0x00;
 }
 
-static void mahmajn_io_w(int port, UINT8 data)
+static void mahmajn_io_w(int port, uint8_t data)
 {
 	switch(port) {
 	case 3:
@@ -344,7 +344,7 @@ static void mahmajn_io_w(int port, UINT8 data)
 	}
 }
 
-static void hotrod_io_w(int port, UINT8 data)
+static void hotrod_io_w(int port, uint8_t data)
 {
 	switch(port) {
 	case 3: // Lamps
@@ -357,7 +357,7 @@ static void hotrod_io_w(int port, UINT8 data)
 	}
 }
 
-static UINT8 hotrod_ctrl_cur;
+static uint8_t hotrod_ctrl_cur;
 
 static WRITE16_HANDLER( hotrod3_ctrl_w )
 {
@@ -434,7 +434,7 @@ static void reset_reset(void)
 	prev_resetcontrol = resetcontrol;
 }
 
-static void resetcontrol_w(UINT8 data)
+static void resetcontrol_w(uint8_t data)
 {
 	resetcontrol = data;
 	logerror("Reset control %02x (%x:%x)\n", resetcontrol, cpu_getactivecpu(), activecpu_get_pc());
@@ -445,11 +445,11 @@ static void resetcontrol_w(UINT8 data)
 // Rom board bank access
 
 static unsigned char curbank;
-static const UINT16 *rom_base;
+static const uint16_t *rom_base;
 
 static void reset_bank(void)
 {
-	rom_base = (UINT16 *)(memory_region(REGION_USER1) + curbank * 0x40000);
+	rom_base = (uint16_t *)(memory_region(REGION_USER1) + curbank * 0x40000);
 }
 
 static READ16_HANDLER( curbank_r )
@@ -474,7 +474,7 @@ static READ16_HANDLER(rombank_r)
 
 // Shared banks access
 
-static UINT16 *ramlo, *ramhi, *ramprg;
+static uint16_t *ramlo, *ramhi, *ramprg;
 
 static READ16_HANDLER( ramlo_r )
 {
@@ -508,7 +508,7 @@ static WRITE16_HANDLER( ramprg_w )
 
 static READ16_HANDLER( rom_r )
 {
-	return ((UINT16 *)memory_region(REGION_CPU1))[offset];
+	return ((uint16_t *)memory_region(REGION_CPU1))[offset];
 }
 
 
@@ -534,15 +534,15 @@ static WRITE16_HANDLER( ym_data_w )
 
 // Protection magic latch
 
-static UINT8  mahmajn_mlt[8] = { 5, 1, 6, 2, 3, 7, 4, 0 };
-static UINT8 mahmajn2_mlt[8] = { 6, 0, 5, 3, 1, 4, 2, 7 };
-static UINT8      gqh_mlt[8] = { 3, 7, 4, 0, 2, 6, 5, 1 };
-static UINT8 bnzabros_mlt[8] = { 2, 4, 0, 5, 7, 3, 1, 6 };
-static UINT8   qrouka_mlt[8] = { 1, 6, 4, 7, 0, 5, 3, 2 };
-static UINT8 quizmeku_mlt[8] = { 0, 3, 2, 4, 6, 1, 7, 5 };
-static UINT8   dcclub_mlt[8] = { 4, 3, 7, 0, 2, 6, 1, 5 };
+static uint8_t  mahmajn_mlt[8] = { 5, 1, 6, 2, 3, 7, 4, 0 };
+static uint8_t mahmajn2_mlt[8] = { 6, 0, 5, 3, 1, 4, 2, 7 };
+static uint8_t      gqh_mlt[8] = { 3, 7, 4, 0, 2, 6, 5, 1 };
+static uint8_t bnzabros_mlt[8] = { 2, 4, 0, 5, 7, 3, 1, 6 };
+static uint8_t   qrouka_mlt[8] = { 1, 6, 4, 7, 0, 5, 3, 2 };
+static uint8_t quizmeku_mlt[8] = { 0, 3, 2, 4, 6, 1, 7, 5 };
+static uint8_t   dcclub_mlt[8] = { 4, 3, 7, 0, 2, 6, 1, 5 };
 
-static UINT8 mlatch;
+static uint8_t mlatch;
 static const unsigned char *mlatch_table;
 
 static READ16_HANDLER( mlatch_r )
@@ -585,9 +585,9 @@ enum {
 	IRQ_SPRITE = 4
 };
 
-static UINT16 irq_timera;
-static UINT8  irq_timerb;
-static UINT8  irq_allow0, irq_allow1;
+static uint16_t irq_timera;
+static uint8_t  irq_timerb;
+static uint8_t  irq_allow0, irq_allow1;
 static int    irq_timer_pend0, irq_timer_pend1, irq_yms;
 static void  *irq_timer;
 
@@ -624,7 +624,7 @@ static WRITE16_HANDLER(irq_w)
 {
 	switch(offset) {
 	case 0: {
-		UINT16 old_ta = irq_timera;
+		uint16_t old_ta = irq_timera;
 		COMBINE_DATA(&irq_timera);
 		if(old_ta != irq_timera)
 			irq_timer_reset();
@@ -632,7 +632,7 @@ static WRITE16_HANDLER(irq_w)
 	}
 	case 1:
 		if(ACCESSING_LSB) {
-			UINT8 old_tb = irq_timerb;
+			uint8_t old_tb = irq_timerb;
 			irq_timerb = data;
 			if(old_tb != irq_timerb)
 				irq_timer_reset();

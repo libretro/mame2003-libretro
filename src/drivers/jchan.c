@@ -403,8 +403,8 @@ GAMEX( 1995, jchan, 0, jchan, jchan, 0, ROT0, "Kaneko", "Jackie Chan - Kung Fu M
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 
-	const UINT16 *source = jchan_spriteram;
-	const UINT16 *finish = source+0x2000;  // or whatever size ..
+	const uint16_t *source = jchan_spriteram;
+	const uint16_t *finish = source+0x2000;  // or whatever size ..
 	const struct GfxElement *gfx = Machine->gfx[0];
 
 	while( source<finish )

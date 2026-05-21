@@ -19,9 +19,9 @@ Main CPU:
 #include "vidhrdw/generic.h"
 
 /* from vidhrdw */
-extern UINT8 *kingofb_videoram2;
-extern UINT8 *kingofb_colorram2;
-extern UINT8 *kingofb_scroll_y;
+extern uint8_t *kingofb_videoram2;
+extern uint8_t *kingofb_colorram2;
+extern uint8_t *kingofb_scroll_y;
 
 extern WRITE_HANDLER( kingofb_videoram_w );
 extern WRITE_HANDLER( kingofb_colorram_w );
@@ -38,8 +38,8 @@ extern PALETTE_INIT( ringking );
 extern VIDEO_START( ringking );
 extern VIDEO_UPDATE( ringking );
 
-static UINT8 *video_shared;
-static UINT8 *sprite_shared;
+static uint8_t *video_shared;
+static uint8_t *sprite_shared;
 int kingofb_nmi_enable = 0;
 
 static READ_HANDLER( video_shared_r ) {
@@ -813,7 +813,7 @@ ROM_END
 static DRIVER_INIT( ringkin3 )
 {
 	int i;
-	UINT8 *RAM = memory_region(REGION_PROMS);
+	uint8_t *RAM = memory_region(REGION_PROMS);
 
 	/* expand the first color PROM to look like the kingofb ones... */
 	for (i = 0;i < 0x100;i++)

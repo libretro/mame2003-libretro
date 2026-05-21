@@ -798,7 +798,7 @@ void system32_set_colour (int offset)
 	int data;
 	int r,g,b;
 	int r2,g2,b2;
-	UINT16 r_bright, g_bright, b_bright;
+	uint16_t r_bright, g_bright, b_bright;
 
 	data = paletteram16[offset];
 
@@ -932,7 +932,7 @@ static MEMORY_WRITE16_START( system32_writemem )
 	{ 0xf00000, 0xffffff, MWA16_ROM },
 MEMORY_END
 
-static UINT8 *sys32_SoundMemBank;
+static uint8_t *sys32_SoundMemBank;
 
 static READ_HANDLER( system32_bank_r )
 {
@@ -1120,7 +1120,7 @@ between -96 and 96 each frame or sonic's code will reject them.
 
 */
 
-static UINT8 last[6];
+static uint8_t last[6];
 
 static WRITE16_HANDLER( sonic_track_reset_w )
 {

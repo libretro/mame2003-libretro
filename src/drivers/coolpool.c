@@ -55,13 +55,13 @@ VIDEO_START( coolpool )
 	return 0;
 }
 
-void coolpool_to_shiftreg(unsigned int address, UINT16* shiftreg)
+void coolpool_to_shiftreg(unsigned int address, uint16_t* shiftreg)
 {
 //logerror("%08x:coolpool_to_shiftreg(%08x)\n", activecpu_get_pc(), address);
 	memcpy(shiftreg, &ram_base[TOWORD(address)], TOBYTE(0x1000));
 }
 
-void coolpool_from_shiftreg(unsigned int address, UINT16* shiftreg)
+void coolpool_from_shiftreg(unsigned int address, uint16_t* shiftreg)
 {
 //logerror("%08x:coolpool_from_shiftreg(%08x)\n", activecpu_get_pc(), address);
 	memcpy(&ram_base[TOWORD(address)], shiftreg, TOBYTE(0x1000));
@@ -104,7 +104,7 @@ VIDEO_UPDATE( amerdart )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 scanline[320];
+		uint8_t scanline[320];
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
 			data16_t pixels = base[x / 4];
@@ -171,7 +171,7 @@ VIDEO_UPDATE( coolpool )
 	/* render the visible section */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 scanline[320];
+		uint8_t scanline[320];
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
 			data16_t pixels = ram_base[(offset & ~dumask & TOWORD(0x1fffff)) | ((offset + x/2) & dumask)];

@@ -79,8 +79,8 @@ static DRIVER_INIT( otonano )
 
 static DRIVER_INIT( mjcamera )
 {
-	UINT8 *rom = memory_region(REGION_SOUND1) + 0x20000;
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_SOUND1) + 0x20000;
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the
@@ -99,7 +99,7 @@ static DRIVER_INIT( mjcamera )
 static DRIVER_INIT( kanatuen )
 {
 	/* uses the same protection data as mjcamer, but a different check */
-	UINT8 *rom = memory_region(REGION_SOUND1) + 0x30000;
+	uint8_t *rom = memory_region(REGION_SOUND1) + 0x30000;
 
 	rom[0x0004] = 0x09;
 	rom[0x0103] = 0x0e;
@@ -111,8 +111,8 @@ static DRIVER_INIT( kanatuen )
 
 static DRIVER_INIT( idhimitu )
 {
-	UINT8 *rom = memory_region(REGION_SOUND1) + 0x20000;
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_SOUND1) + 0x20000;
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the

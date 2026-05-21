@@ -32,9 +32,9 @@ f000-ffff MCU internal ROM
 #include "cpu/m6800/m6800.h"
 
 
-static UINT8 *sharedram1;
+static uint8_t *sharedram1;
 
-extern UINT8 *pacland_videoram2;
+extern uint8_t *pacland_videoram2;
 
 extern WRITE_HANDLER( pacland_videoram_w );
 extern WRITE_HANDLER( pacland_videoram2_w );

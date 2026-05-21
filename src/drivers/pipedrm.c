@@ -110,8 +110,8 @@
 #include <math.h>
 
 
-static UINT8 pending_command;
-static UINT8 sound_command;
+static uint8_t pending_command;
+static uint8_t sound_command;
 
 
 
@@ -123,7 +123,7 @@ static UINT8 sound_command;
 
 MACHINE_INIT( pipedrm )
 {
-	UINT8 *ram;
+	uint8_t *ram;
 
 	/* initialize main Z80 bank */
 	ram = memory_region(REGION_CPU1);
@@ -149,7 +149,7 @@ static WRITE_HANDLER( pipedrm_bankswitch_w )
 	*/
 
 	/* set the memory bank on the Z80 using the low 3 bits */
-	UINT8 *ram = memory_region(REGION_CPU1);
+	uint8_t *ram = memory_region(REGION_CPU1);
 	cpu_setbank(1, &ram[0x10000 + (data & 0x7) * 0x2000]);
 
 	/* map to the fromance gfx register */
@@ -160,7 +160,7 @@ static WRITE_HANDLER( pipedrm_bankswitch_w )
 
 static WRITE_HANDLER( sound_bankswitch_w )
 {
-	UINT8 *ram = memory_region(REGION_CPU2);
+	uint8_t *ram = memory_region(REGION_CPU2);
 	cpu_setbank(2, &ram[0x10000 + (data & 0x01) * 0x8000]);
 }
 

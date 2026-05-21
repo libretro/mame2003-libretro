@@ -110,7 +110,7 @@ void galpani2_mcu_run(void)
 
 static void galpani2_mcu_nmi(void)
 {
-	UINT32 mcu_list, mcu_command, mcu_address, mcu_src, mcu_dst, mcu_size;
+	uint32_t mcu_list, mcu_command, mcu_address, mcu_src, mcu_dst, mcu_size;
 
 	/* "Last Check" */
 	galpani2_write_kaneko();

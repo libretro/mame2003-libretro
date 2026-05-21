@@ -25,8 +25,8 @@ MAIN BOARD:
 extern void konami1_decode(void);
 
 
-extern UINT8 *trackfld_scroll;
-extern UINT8 *trackfld_scroll2;
+extern uint8_t *trackfld_scroll;
+extern uint8_t *trackfld_scroll2;
 
 extern WRITE_HANDLER( trackfld_videoram_w );
 extern WRITE_HANDLER( trackfld_colorram_w );
@@ -69,7 +69,7 @@ static READ_HANDLER( konami_IN1_r )
 /*
  Track'n'Field has 1k of battery backed RAM which can be erased by setting a dipswitch
 */
-static UINT8 *nvram;
+static uint8_t *nvram;
 static size_t nvram_size;
 static int we_flipped_the_switch;
 
@@ -775,7 +775,7 @@ static DRIVER_INIT( trackfld )
 
 static DRIVER_INIT( mastkin )
 {
-	UINT8 *prom = memory_region(REGION_PROMS);
+	uint8_t *prom = memory_region(REGION_PROMS);
 	int i;
 
 	/* build a fake palette so the screen won't be all black */

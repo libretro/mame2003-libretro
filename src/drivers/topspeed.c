@@ -197,7 +197,7 @@ WRITE_HANDLER( rastan_adpcm_trigger_w );
 WRITE_HANDLER( rastan_c000_w );
 WRITE_HANDLER( rastan_d000_w );
 
-static UINT16 cpua_ctrl = 0xff;
+static uint16_t cpua_ctrl = 0xff;
 static int ioc220_port = 0;
 
 extern data16_t *topspeed_spritemap;
@@ -280,7 +280,7 @@ static INTERRUPT_GEN( topspeed_cpub_interrupt )
 
 static READ16_HANDLER( topspeed_input_bypass_r )
 {
-	UINT8 port = TC0220IOC_port_r(0);	/* read port number */
+	uint8_t port = TC0220IOC_port_r(0);	/* read port number */
 	int steer = 0;
 	int analogue_steer = input_port_5_word_r(0,0);
 	int fake = input_port_6_word_r(0,0);

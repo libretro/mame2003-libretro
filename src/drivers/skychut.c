@@ -20,14 +20,14 @@ TODO:
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8* iremm15_chargen;
+extern uint8_t* iremm15_chargen;
 
 VIDEO_UPDATE( skychut );
 VIDEO_UPDATE( iremm15 );
 WRITE_HANDLER( skychut_colorram_w );
 WRITE_HANDLER( skychut_ctrl_w );
 
-static UINT8 *memory;
+static uint8_t *memory;
 
 
 static PALETTE_INIT( skychut )

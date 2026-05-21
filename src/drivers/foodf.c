@@ -87,7 +87,7 @@
  *
  *************************************/
 
-static UINT8 whichport = 0;
+static uint8_t whichport = 0;
 
 
 

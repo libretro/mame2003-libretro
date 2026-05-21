@@ -709,7 +709,7 @@ WRITE16_HANDLER( sci_spriteframe_w );
 READ16_HANDLER ( TC0150ROD_word_r );	/* Road generator */
 WRITE16_HANDLER( TC0150ROD_word_w );
 
-static UINT16 cpua_ctrl = 0xff;
+static uint16_t cpua_ctrl = 0xff;
 static int sci_int6 = 0;
 static int dblaxle_int6 = 0;
 static int ioc220_port = 0;

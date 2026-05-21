@@ -54,7 +54,7 @@
 VIDEO_START( gunbustr );
 VIDEO_UPDATE( gunbustr );
 
-static UINT16 coin_word;
+static uint16_t coin_word;
 static data32_t *gunbustr_ram;
 extern data32_t *f3_shared_ram;
 

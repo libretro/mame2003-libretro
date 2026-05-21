@@ -11,9 +11,9 @@ extern VIDEO_UPDATE( destroyr );
 extern int destroyr_wavemod;
 extern int destroyr_cursor;
 
-extern UINT8* destroyr_major_obj_ram;
-extern UINT8* destroyr_minor_obj_ram;
-extern UINT8* destroyr_alpha_num_ram;
+extern uint8_t* destroyr_major_obj_ram;
+extern uint8_t* destroyr_minor_obj_ram;
+extern uint8_t* destroyr_alpha_num_ram;
 
 static int destroyr_potmask[2];
 static int destroyr_potsense[2];
@@ -21,7 +21,7 @@ static int destroyr_attract;
 static int destroyr_motor_speed;
 static int destroyr_noise;
 
-static UINT8* destroyr_zero_page;
+static uint8_t* destroyr_zero_page;
 
 
 static void destroyr_dial_callback(int dial)
@@ -147,7 +147,7 @@ READ_HANDLER( destroyr_input_r )
 
 	if (offset == 0)
 	{
-		UINT8 ret = readinputport(0);
+		uint8_t ret = readinputport(0);
 
 		if (destroyr_potsense[0] && destroyr_potmask[0])
 			ret |= 4;

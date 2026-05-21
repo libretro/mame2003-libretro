@@ -28,7 +28,7 @@ always false - counter was reloaded and incremented before interrupt occurs
 data8_t *tugboat_ram,*tugboat_score;
 
 
-static UINT8 hd46505_0_reg[18],hd46505_1_reg[18];
+static uint8_t hd46505_0_reg[18],hd46505_1_reg[18];
 
 
 /*  there isn't the usual resistor array anywhere near the color prom,

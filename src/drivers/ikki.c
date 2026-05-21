@@ -14,7 +14,7 @@ Ikki (c) 1985 Sun Electronics
 PALETTE_INIT( ikki );
 VIDEO_UPDATE( ikki );
 
-static UINT8 *ikki_sharedram;
+static uint8_t *ikki_sharedram;
 
 /****************************************************************************/
 

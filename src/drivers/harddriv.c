@@ -3471,7 +3471,7 @@ static void find_cpus(void)
 }
 
 
-static const UINT16 default_eeprom[] =
+static const uint16_t default_eeprom[] =
 {
 	1,
 	0xff00,0xff00,0xff00,0xff00,0xff00,0xff00,0xff00,0xff00,
@@ -3803,8 +3803,8 @@ READ32_HANDLER( rddsp32_speedup_r )
 {
 	if (activecpu_get_pc() == rddsp32_speedup_pc && (*rddsp32_speedup >> 16) == 0)
 	{
-		UINT32 r14 = activecpu_get_reg(DSP32_R14);
-		UINT32 r1 = cpu_readmem24ledw_word(r14 - 0x14);
+		uint32_t r14 = activecpu_get_reg(DSP32_R14);
+		uint32_t r1 = cpu_readmem24ledw_word(r14 - 0x14);
 		int cycles_to_burn = 17 * 4 * (0x2bc - r1 - 2);
 		if (cycles_to_burn > 20 * 4)
 		{

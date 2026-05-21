@@ -1223,7 +1223,7 @@ static void init_djmain_common(void)
 	state_save_register_UINT8 ("djmain", 0, "sndram",         memory_region(REGION_SOUND1), 0x80000 * 32);
 	state_save_register_int   ("djmain", 0, "pending_vb_int", &pending_vb_int);
 	state_save_register_UINT16("djmain", 0, "v_ctrl",         &v_ctrl,  1);
-	state_save_register_UINT32("djmain", 0, "obj_regs",       obj_regs, sizeof (obj_regs) / sizeof (UINT32));
+	state_save_register_UINT32("djmain", 0, "obj_regs",       obj_regs, sizeof (obj_regs) / sizeof (uint32_t));
 
 	state_save_register_func_postload(sndram_set_bank);
 }
@@ -1235,7 +1235,7 @@ static DRIVER_INIT( beatmania )
 	game_type = BEATMANIA;
 }
 
-static UINT8 beatmania_master_password[2 + 32] =
+static uint8_t beatmania_master_password[2 + 32] =
 {
 	0x01, 0x00,
 	0x4d, 0x47, 0x43, 0x28, 0x4b, 0x29, 0x4e, 0x4f,
@@ -1246,7 +1246,7 @@ static UINT8 beatmania_master_password[2 + 32] =
 
 static DRIVER_INIT( hmcompmx )
 {
-	static UINT8 hmcompmx_user_password[2 + 32] =
+	static uint8_t hmcompmx_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3a, 0x34, 0x38, 0x2a,
@@ -1263,7 +1263,7 @@ static DRIVER_INIT( hmcompmx )
 
 static DRIVER_INIT( bm4thmix )
 {
-	static UINT8 bm4thmix_user_password[2 + 32] =
+	static uint8_t bm4thmix_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x29, 0x4b, 0x2f, 0x2c, 0x4c, 0x32,
@@ -1279,7 +1279,7 @@ static DRIVER_INIT( bm4thmix )
 
 static DRIVER_INIT( hmcompm2 )
 {
-	static UINT8 hmcompm2_user_password[2 + 32] =
+	static uint8_t hmcompm2_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x3b, 0x39, 0x24, 0x3e, 0x4e, 0x59, 0x5c, 0x32,
@@ -1296,7 +1296,7 @@ static DRIVER_INIT( hmcompm2 )
 
 static DRIVER_INIT( bmdct )
 {
-	static UINT8 bmdct_user_password[2 + 32] =
+	static uint8_t bmdct_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x52, 0x47, 0x30, 0x3f, 0x2f, 0x39, 0x54, 0x5e,
@@ -1313,7 +1313,7 @@ static DRIVER_INIT( bmdct )
 
 static DRIVER_INIT( bmcorerm )
 {
-	static UINT8 bmcorerm_user_password[2 + 32] =
+	static uint8_t bmcorerm_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3f, 0x4d, 0x4a, 0x27,

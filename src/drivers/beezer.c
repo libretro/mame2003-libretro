@@ -12,7 +12,7 @@
 #include "cpu/m6809/m6809.h"
 
 /* from vidhrdw/beezer.c */
-extern UINT8 *videoram;
+extern uint8_t *videoram;
 INTERRUPT_GEN( beezer_interrupt );
 VIDEO_UPDATE( beezer );
 WRITE_HANDLER( beezer_ram_w );

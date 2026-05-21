@@ -56,10 +56,10 @@ To Do:
 ***************************************************************************/
 
 static int time_vblank_irq = 2000;
-static UINT8 vblank_irq;
-static UINT8 sound_irq;
-static UINT8 unknown_irq;
-static UINT8 agallet_vblank_irq;
+static uint8_t vblank_irq;
+static uint8_t sound_irq;
+static uint8_t unknown_irq;
+static uint8_t agallet_vblank_irq;
 
 /* Update the IRQ state based on all possible causes */
 static void update_irq_state(void)
@@ -3555,7 +3555,7 @@ DRIVER_INIT( esprade )
 
 #if 0		//ROM PATCH
 	{
-		UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+		uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 		rom[0x118A/2] = 0x4e71;			//palette fix	118A: 5548				SUBQ.W	#2,A0		--> NOP
 	}
 #endif
@@ -3669,7 +3669,7 @@ DRIVER_INIT( pwrinst2 )
 
 #if 1		//ROM PATCH
 	{
-		UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+		uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 		rom[0xD46C/2] = 0xD482;			// kurara dash fix  0xd400 -> 0xd482
 	}
 #endif

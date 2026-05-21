@@ -32,8 +32,8 @@ static unsigned char *back_data,*fore_data,*mid_data;
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect ,int pri_mask )
 {
 
-	const UINT8 *source = spriteram+0x1000-8;
-	const UINT8 *finish = spriteram;
+	const uint8_t *source = spriteram+0x1000-8;
+	const uint8_t *finish = spriteram;
 
 	const struct GfxElement *gfx = Machine->gfx[1];
 

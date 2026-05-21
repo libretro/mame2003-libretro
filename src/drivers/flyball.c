@@ -9,18 +9,18 @@ Atari Flyball Driver
 extern VIDEO_START( flyball );
 extern VIDEO_UPDATE( flyball );
 
-extern UINT8 flyball_pitcher_pic;
-extern UINT8 flyball_pitcher_vert;
-extern UINT8 flyball_pitcher_horz;
-extern UINT8 flyball_ball_vert;
-extern UINT8 flyball_ball_horz;
+extern uint8_t flyball_pitcher_pic;
+extern uint8_t flyball_pitcher_vert;
+extern uint8_t flyball_pitcher_horz;
+extern uint8_t flyball_ball_vert;
+extern uint8_t flyball_ball_horz;
 
-extern UINT8* flyball_playfield_ram;
+extern uint8_t* flyball_playfield_ram;
 
-static UINT8 flyball_potmask;
-static UINT8 flyball_potsense;
+static uint8_t flyball_potmask;
+static uint8_t flyball_potsense;
 
-static UINT8* flyball_zero_page;
+static uint8_t* flyball_zero_page;
 
 
 static void flyball_joystick_callback(int potsense)
@@ -69,7 +69,7 @@ static MACHINE_INIT( flyball )
 
 	/* address bits 0 through 8 are inverted */
 
-	UINT8* ROM = memory_region(REGION_CPU1);
+	uint8_t* ROM = memory_region(REGION_CPU1);
 
 	for (i = 0; i < 0x1000; i++)
 	{

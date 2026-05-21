@@ -189,7 +189,7 @@ extern WRITE_HANDLER( vsnes_in0_1_w );
 /******************************************************************************/
 
 /* local stuff */
-static UINT8 *work_ram, *work_ram_1;
+static uint8_t *work_ram, *work_ram_1;
 static int coin;
 
 static READ_HANDLER( mirror_ram_r )

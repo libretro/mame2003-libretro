@@ -65,7 +65,7 @@ static void set_bg2_page( int data ){
 
 /***************************************************************************/
 
-static UINT8 *sys18_SoundMemBank;
+static uint8_t *sys18_SoundMemBank;
 
 static READ_HANDLER( system18_bank_r ){
 	return sys18_SoundMemBank[offset];
@@ -226,7 +226,7 @@ static DRIVER_INIT( shdancer ){
 /*
 static READ_HANDLER( shdancer_skip_r ){
 	if (activecpu_get_pc()==0x2f76) {cpu_spinuntil_int(); return 0xffff;}
-	return (*(UINT16 *)(&sys16_workingram[0x0000]));
+	return (*(uint16_t *)(&sys16_workingram[0x0000]));
 }
 */
 

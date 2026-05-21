@@ -117,11 +117,11 @@ static data32_t *	rom_base;
 
 static double		hblank_offset;
 
-static UINT8		irq_line_state;
-static UINT8		irq_enable[3];
-static UINT8		irq_state[3];
+static uint8_t		irq_line_state;
+static uint8_t		irq_enable[3];
+static uint8_t		irq_state[3];
 
-static UINT8		eeprom_enabled;
+static uint8_t		eeprom_enabled;
 
 
 #define MAX_SCANLINES	262
@@ -523,8 +523,8 @@ static READ32_HANDLER( movie_speedup_r )
 	if ((activecpu_get_previouspc() & 0xfffff) == 0x00a88 && (activecpu_get_reg(ASAP_R28) & 0xfffff) == 0x397c0 &&
 		movie_speedup_data[4] == activecpu_get_reg(ASAP_R1))
 	{
-		UINT32 temp = (INT16)result + movie_speedup_data[4] * 262;
-		if (temp - (UINT32)activecpu_get_reg(ASAP_R15) < (UINT32)activecpu_get_reg(ASAP_R23))
+		uint32_t temp = (int16_t)result + movie_speedup_data[4] * 262;
+		if (temp - (uint32_t)activecpu_get_reg(ASAP_R15) < (uint32_t)activecpu_get_reg(ASAP_R23))
 			cpu_spinuntil_int();
 	}
 	return result;

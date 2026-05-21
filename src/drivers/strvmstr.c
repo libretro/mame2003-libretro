@@ -22,7 +22,7 @@
 #include "vidhrdw/generic.h"
 
 static int strvmstr_control = 0;
-static UINT8 *bg_videoram, *fg_videoram;
+static uint8_t *bg_videoram, *fg_videoram;
 static struct tilemap *bg_tilemap, *fg_tilemap;
 
 static WRITE_HANDLER( strvmstr_fg_w )

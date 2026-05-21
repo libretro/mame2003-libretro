@@ -185,7 +185,7 @@ WRITE16_HANDLER( shadfrce_flip_screen )
 #if USE_SHADFRCE_FAKE_INPUT_PORTS
 static READ16_HANDLER( shadfrce_input_ports_r )
 {
-	UINT16 data = 0xffff;
+	uint16_t data = 0xffff;
 
 	switch (offset)
 	{

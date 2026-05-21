@@ -9,8 +9,8 @@ Atari Drag Race Driver
 extern VIDEO_START( dragrace );
 extern VIDEO_UPDATE( dragrace );
 
-extern UINT8* dragrace_playfield_ram;
-extern UINT8* dragrace_position_ram;
+extern uint8_t* dragrace_playfield_ram;
+extern uint8_t* dragrace_position_ram;
 
 static unsigned dragrace_misc_flags = 0;
 
@@ -96,7 +96,7 @@ static void dragrace_update_misc_flags(void)
 WRITE_HANDLER( dragrace_misc_w )
 {
 	/* Set/clear individual bit */
-	UINT32 mask = 1 << offset;
+	uint32_t mask = 1 << offset;
 	if (data & 0x01)
 		dragrace_misc_flags |= mask;
 	else
@@ -108,7 +108,7 @@ WRITE_HANDLER( dragrace_misc_w )
 WRITE_HANDLER( dragrace_misc_clear_w )
 {
 	/* Clear 8 bits */
-	UINT32 mask = 0xff << (((offset >> 3) & 0x03) * 8);
+	uint32_t mask = 0xff << (((offset >> 3) & 0x03) * 8);
 	dragrace_misc_flags &= (~mask);
 	logerror("Clear %#6x, Mask=%#10x, Flag=%#10x, Data=%x\n", 0x0920+offset, mask, dragrace_misc_flags, data & 0x01);
 	dragrace_update_misc_flags();
@@ -118,8 +118,8 @@ READ_HANDLER( dragrace_input_r )
 {
 	int val = readinputport(2);
 
-	UINT8 maskA = 1 << (offset % 8);
-	UINT8 maskB = 1 << (offset / 8);
+	uint8_t maskA = 1 << (offset % 8);
+	uint8_t maskB = 1 << (offset / 8);
 
 	int i;
 

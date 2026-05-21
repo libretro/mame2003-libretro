@@ -77,7 +77,7 @@ PS / PD :  key matrix
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 extern WRITE_HANDLER( speedatk_videoram_w );
 extern WRITE_HANDLER( speedatk_colorram_w );

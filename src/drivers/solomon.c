@@ -9,8 +9,8 @@ driver by Mirko Buffoni
 #include "vidhrdw/generic.h"
 #include "cpu/z80/z80.h"
 
-extern UINT8 *solomon_videoram2;
-extern UINT8 *solomon_colorram2;
+extern uint8_t *solomon_videoram2;
+extern uint8_t *solomon_colorram2;
 
 extern WRITE_HANDLER( solomon_videoram_w );
 extern WRITE_HANDLER( solomon_colorram_w );

@@ -12,8 +12,8 @@ Driver by Takahiro Nogi (nogi@kt.rim.or.jp) 1999/10/04
 #include "cpu/m6502/m6502.h"
 #include "cpu/m6809/m6809.h"
 
-extern UINT8 *ssozumo_videoram2;
-extern UINT8 *ssozumo_colorram2;
+extern uint8_t *ssozumo_videoram2;
+extern uint8_t *ssozumo_colorram2;
 
 extern WRITE_HANDLER( ssozumo_videoram_w );
 extern WRITE_HANDLER( ssozumo_colorram_w );

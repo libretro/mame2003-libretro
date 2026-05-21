@@ -134,7 +134,7 @@ static WRITE16_HANDLER( galpanic_6295_bankswitch_w )
 {
 	if (ACCESSING_MSB)
 	{
-		UINT8 *rom = memory_region(REGION_SOUND1);
+		uint8_t *rom = memory_region(REGION_SOUND1);
 
 		memcpy(&rom[0x30000],&rom[0x40000 + ((data >> 8) & 0x0f) * 0x10000],0x10000);
 	}
@@ -144,17 +144,17 @@ static WRITE16_HANDLER( galpanic_6295_bankswitch_w )
 static data16_t *galpanib_calc_data;
 
 static struct {
-	UINT16 x1p, y1p, x1s, y1s;
-	UINT16 x2p, y2p, x2s, y2s;
+	uint16_t x1p, y1p, x1s, y1s;
+	uint16_t x2p, y2p, x2s, y2s;
 
-	INT16 x12, y12, x21, y21;
+	int16_t x12, y12, x21, y21;
 
-	UINT16 mult_a, mult_b;
+	uint16_t mult_a, mult_b;
 } hit;
 
 static READ16_HANDLER(galpanib_calc_r)
 {
-	UINT16 data = 0;
+	uint16_t data = 0;
 
 	switch (offset)
 	{
@@ -187,9 +187,9 @@ static READ16_HANDLER(galpanib_calc_r)
 			return data;
 
 		case 0x10 >> 1:
-			return (((UINT32)hit.mult_a * (UINT32)hit.mult_b) >> 16);
+			return (((uint32_t)hit.mult_a * (uint32_t)hit.mult_b) >> 16);
 		case 0x12 >> 1:
-			return (((UINT32)hit.mult_a * (UINT32)hit.mult_b) & 0xffff);
+			return (((uint32_t)hit.mult_a * (uint32_t)hit.mult_b) & 0xffff);
 
 		case 0x14 >> 1:
 			return (mame_rand() & 0xffff);

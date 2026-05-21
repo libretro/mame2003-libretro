@@ -287,7 +287,7 @@ unsigned int neogeo_frame_counter_speed=4;
 
 static int irq2start=1000,irq2control;
 static int current_rastercounter,current_rasterline,scanline_read;
-static UINT32 irq2pos_value;
+static uint32_t irq2pos_value;
 static int vblank_int,scanline_int;
 
 /*	flags for irq2control:
@@ -720,9 +720,9 @@ static WRITE16_HANDLER( neo_irq2pos_16_w )
 	logerror("%06x: neo_irq2pos_16_w offset %d %04x\n",activecpu_get_pc(),offset,data);
 
 	if (offset)
-		irq2pos_value = (irq2pos_value & 0xffff0000) | (UINT32)data;
+		irq2pos_value = (irq2pos_value & 0xffff0000) | (uint32_t)data;
 	else
-		irq2pos_value = (irq2pos_value & 0x0000ffff) | ((UINT32)data << 16);
+		irq2pos_value = (irq2pos_value & 0x0000ffff) | ((uint32_t)data << 16);
 
 	if (irq2control & IRQ2CTRL_LOAD_RELATIVE)
 	{
@@ -846,7 +846,7 @@ static MEMORY_WRITE_START( sound_writemem )
 MEMORY_END
 
 
-static UINT32 bank[4] = {
+static uint32_t bank[4] = {
 	0x08000,
 	0x0c000,
 	0x0e000,
@@ -885,7 +885,7 @@ static READ_HANDLER( z80_port_r )
 
 	case 0x08:
 		{
-			UINT8 *mem08 = memory_region(REGION_CPU2);
+			uint8_t *mem08 = memory_region(REGION_CPU2);
 			bank[3] = 0x0800 * ((offset >> 8) & 0x7f) + 0x10000;
 			cpu_setbank(8,&mem08[bank[3]]);
 			return 0;
@@ -894,7 +894,7 @@ static READ_HANDLER( z80_port_r )
 
 	case 0x09:
 		{
-			UINT8 *mem08 = memory_region(REGION_CPU2);
+			uint8_t *mem08 = memory_region(REGION_CPU2);
 			bank[2] = 0x1000 * ((offset >> 8) & 0x3f) + 0x10000;
 			cpu_setbank(7,&mem08[bank[2]]);
 			return 0;
@@ -903,7 +903,7 @@ static READ_HANDLER( z80_port_r )
 
 	case 0x0a:
 		{
-			UINT8 *mem08 = memory_region(REGION_CPU2);
+			uint8_t *mem08 = memory_region(REGION_CPU2);
 			bank[1] = 0x2000 * ((offset >> 8) & 0x1f) + 0x10000;
 			cpu_setbank(6,&mem08[bank[1]]);
 			return 0;
@@ -912,7 +912,7 @@ static READ_HANDLER( z80_port_r )
 
 	case 0x0b:
 		{
-			UINT8 *mem08 = memory_region(REGION_CPU2);
+			uint8_t *mem08 = memory_region(REGION_CPU2);
 			bank[0] = 0x4000 * ((offset >> 8) & 0x0f) + 0x10000;
 			cpu_setbank(5,&mem08[bank[0]]);
 			return 0;
@@ -5925,8 +5925,8 @@ DRIVER_INIT( nitd )
 
 static void kof98P1decode(void)
 {
-	UINT8 *src = memory_region(REGION_CPU1);
-	UINT8 *dst = malloc(0x200000);
+	uint8_t *src = memory_region(REGION_CPU1);
+	uint8_t *dst = malloc(0x200000);
 	int i, j, k;
 	unsigned int sec[]={0x000000,0x100000,0x000004,0x100004,0x10000a,0x00000a,0x10000e,0x00000e};
 	unsigned int pos[]={0x000,0x004,0x00a,0x00e};
@@ -5971,7 +5971,7 @@ static void kof98P1decode(void)
 WRITE16_HANDLER ( kof98_prot_w )
 {
 	/* info from razoola */
-	UINT16* mem16 = (UINT16*)memory_region(REGION_CPU1);
+	uint16_t* mem16 = (uint16_t*)memory_region(REGION_CPU1);
 
 	switch (data)
 	{
@@ -6023,9 +6023,9 @@ DRIVER_INIT( popbounc )
 
 /******************************************************************************/
 
-static UINT32 cpu1_second_bankaddress;
+static uint32_t cpu1_second_bankaddress;
 
-void neogeo_set_cpu1_second_bank(UINT32 bankaddress)
+void neogeo_set_cpu1_second_bank(uint32_t bankaddress)
 {
 	data8_t *RAM = memory_region(REGION_CPU1);
 
@@ -6035,7 +6035,7 @@ void neogeo_set_cpu1_second_bank(UINT32 bankaddress)
 
 void neogeo_init_cpu2_setbank(void)
 {
-	UINT8 *mem08 = memory_region(REGION_CPU2);
+	uint8_t *mem08 = memory_region(REGION_CPU2);
 
 	cpu_setbank(5,&mem08[bank[0]]);
 	cpu_setbank(6,&mem08[bank[1]]);

@@ -21,8 +21,8 @@ Notes:
 #include "cpu/z80/z80.h"
 
 
-extern UINT8 *popeye_background_pos;
-extern UINT8 *popeye_palettebank;
+extern uint8_t *popeye_background_pos;
+extern uint8_t *popeye_palettebank;
 
 extern WRITE_HANDLER( popeye_videoram_w );
 extern WRITE_HANDLER( popeye_colorram_w );
@@ -667,8 +667,8 @@ ROM_END
 
 DRIVER_INIT( skyskipr )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int len = 0x10000;
 
 	/* decrypt the program ROMs */
@@ -684,8 +684,8 @@ DRIVER_INIT( skyskipr )
 
 DRIVER_INIT( popeye )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int len = 0x10000;
 
 	/* decrypt the program ROMs */

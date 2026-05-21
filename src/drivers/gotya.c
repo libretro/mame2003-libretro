@@ -31,8 +31,8 @@ TODO: Emulated sound
 #include "vidhrdw/generic.h"
 
 
-extern UINT8 *gotya_scroll;
-extern UINT8 *gotya_videoram2;
+extern uint8_t *gotya_scroll;
+extern uint8_t *gotya_videoram2;
 
 extern WRITE_HANDLER( gotya_videoram_w );
 extern WRITE_HANDLER( gotya_colorram_w );

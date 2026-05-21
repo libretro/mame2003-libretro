@@ -13,12 +13,12 @@ XX Mission (c) 1986 UPL
 
 VIDEO_UPDATE( xxmissio );
 
-extern UINT8 *xxmissio_fgram;
+extern uint8_t *xxmissio_fgram;
 extern size_t xxmissio_fgram_size;
 
-static UINT8 *shared_workram;
+static uint8_t *shared_workram;
 
-static UINT8 xxmissio_status;
+static uint8_t xxmissio_status;
 
 
 WRITE_HANDLER( xxmissio_scroll_x_w );
@@ -44,8 +44,8 @@ READ_HANDLER( shared_workram_r )
 
 WRITE_HANDLER( xxmissio_bank_sel_w )
 {
-	UINT8 *BANK = memory_region(REGION_USER1);
-	UINT32 bank_address = (data & 0x07) * 0x4000;
+	uint8_t *BANK = memory_region(REGION_USER1);
+	uint32_t bank_address = (data & 0x07) * 0x4000;
 	cpu_setbank(1, &BANK[bank_address]);
 }
 

@@ -83,16 +83,16 @@ READ_HANDLER( bigevglf_mcu_status_r );
 WRITE_HANDLER( beg_gfxcontrol_w );
 WRITE_HANDLER( beg_palette_w );
 
-extern UINT8 *beg_spriteram1;
-extern UINT8 *beg_spriteram2;
+extern uint8_t *beg_spriteram1;
+extern uint8_t *beg_spriteram2;
 
-static UINT32 beg_bank=0;
-UINT8 *beg_sharedram;
+static uint32_t beg_bank=0;
+uint8_t *beg_sharedram;
 
 static int sound_nmi_enable=0,pending_nmi=0;
-static UINT8 for_sound = 0;
-static UINT8 from_sound = 0;
-static UINT8 sound_state = 0;
+static uint8_t for_sound = 0;
+static uint8_t from_sound = 0;
+static uint8_t sound_state = 0;
 
 static WRITE_HANDLER( beg_banking_w )
 {
@@ -123,7 +123,7 @@ static READ_HANDLER(beg_fromsound_r)
 
 static READ_HANDLER(beg_soundstate_r)
 {
-	UINT8 ret = sound_state;
+	uint8_t ret = sound_state;
 	/* set a timer to force synchronization after the read */
 	timer_set(TIME_NOW, 0, NULL);
 	sound_state &= ~2; /* read from port 21 clears bit 1 in status */
@@ -170,7 +170,7 @@ static WRITE_HANDLER( nmi_enable_w )
 	}
 }
 
-static UINT8 beg13_ls74[2];
+static uint8_t beg13_ls74[2];
 
 static void deferred_ls74_w( int param )
 {

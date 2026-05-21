@@ -8,7 +8,7 @@ Atari Wolf Pack (prototype) driver
 
 extern int wolfpack_collision;
 
-extern UINT8* wolfpack_alpha_num_ram;
+extern uint8_t* wolfpack_alpha_num_ram;
 
 extern VIDEO_UPDATE( wolfpack );
 extern VIDEO_START( wolfpack );
@@ -60,7 +60,7 @@ static PALETTE_INIT( wolfpack )
 
 	for (i = 0; i < 4; i++)
 	{
-		UINT8 r, g, b;
+		uint8_t r, g, b;
 
 		palette_get_color(i, &r, &g, &b);
 
@@ -89,7 +89,7 @@ static READ_HANDLER( wolfpack_zeropage_r )
 
 static READ_HANDLER( wolfpack_input_r )
 {
-	UINT8 val = readinputport(0);
+	uint8_t val = readinputport(0);
 
 	if (((readinputport(2) + 0) / 2) & 1)
 	{
@@ -106,7 +106,7 @@ static READ_HANDLER( wolfpack_input_r )
 
 static READ_HANDLER( wolfpack_misc_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	/* BIT0 => SPEECH BUSY */
 	/* BIT1 => COMP SIREN  */

@@ -39,7 +39,7 @@ extern WRITE_HANDLER( canyon_videoram_w );
 extern VIDEO_START( canyon );
 extern VIDEO_UPDATE( canyon );
 
-extern UINT8* canyon_videoram;
+extern uint8_t* canyon_videoram;
 
 
 /*************************************
@@ -69,7 +69,7 @@ static PALETTE_INIT( canyon )
 
 static READ_HANDLER( canyon_switches_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if ((readinputport(2) >> (offset & 7)) & 1)
 	{

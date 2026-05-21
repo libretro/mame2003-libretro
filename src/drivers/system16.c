@@ -1808,10 +1808,10 @@ static MACHINE_INIT( bodyslam ){
 // timer in the code and this seems to work ok.
 static void bodyslam_irq_timer(void)
 {
-	int flag=(*(UINT16 *)(&sys16_workingram[0x200/2]))>>8;
-	int tick=(*(UINT16 *)(&sys16_workingram[0x200/2]))&0xff;
-	int sec=(*(UINT16 *)(&sys16_workingram[0x202/2]))>>8;
-	int min=(*(UINT16 *)(&sys16_workingram[0x202/2]))&0xff;
+	int flag=(*(uint16_t *)(&sys16_workingram[0x200/2]))>>8;
+	int tick=(*(uint16_t *)(&sys16_workingram[0x200/2]))&0xff;
+	int sec=(*(uint16_t *)(&sys16_workingram[0x202/2]))>>8;
+	int min=(*(uint16_t *)(&sys16_workingram[0x202/2]))&0xff;
 
 	if(tick == 0 && sec == 0 && min == 0)
 		flag=1;
@@ -1984,7 +1984,7 @@ static void dduxbl_update_proc( void ){
 
 		if (lu==4 && ld==4 && ru==5 && rd==5)
 		{ // fix a bug in chicago round (un-tested in MAME)
-			int vs=(*(UINT16 *)(&sys16_workingram[0x36ec]));
+			int vs=(*(uint16_t *)(&sys16_workingram[0x36ec]));
 			sys16_bg_scrolly = vs & 0xff;
 			sys16_fg_scrolly = vs & 0xff;
 			if (vs >= 0x100)
@@ -4188,7 +4188,7 @@ static void quartet_update_proc( void ){
 	sys16_fg_scrolly = sys16_textram[0x0f24/2] & 0x00ff;
 	sys16_bg_scrolly = sys16_textram[0x0f26/2] & 0x01ff;
 
-//	if(((*(UINT16 *)(&sys16_extraram[4])) & 0xff) == 1)
+//	if(((*(uint16_t *)(&sys16_extraram[4])) & 0xff) == 1)
 //		\=1;
 //	else
 		sys16_quartet_title_kludge=0;
@@ -4416,7 +4416,7 @@ static void quartet2_update_proc( void ){
 	sys16_bg_scrolly = sys16_textram[0x793] & 0x01ff;
 
 //let's fix this properly
-//	if(((*(UINT16 *)(&sys16_extraram[4])) & 0xff) == 1)
+//	if(((*(uint16_t *)(&sys16_extraram[4])) & 0xff) == 1)
 //		sys16_quartet_title_kludge=1;
 //	else
 		sys16_quartet_title_kludge=0;

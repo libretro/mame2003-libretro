@@ -562,7 +562,7 @@ static WRITE_HANDLER( champwr_adpcm_lo_w )
 
 static WRITE_HANDLER( champwr_adpcm_hi_w )
 {
-	UINT8 *rom = memory_region(REGION_SOUND1);
+	uint8_t *rom = memory_region(REGION_SOUND1);
 	int romlen = memory_region_length(REGION_SOUND1);
 	int length;
 	int i;

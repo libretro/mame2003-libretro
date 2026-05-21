@@ -21,9 +21,9 @@ TODO:
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *zodiack_videoram2;
-extern UINT8 *zodiack_attributesram;
-extern UINT8 *zodiack_bulletsram;
+extern uint8_t *zodiack_videoram2;
+extern uint8_t *zodiack_attributesram;
+extern uint8_t *zodiack_bulletsram;
 extern size_t zodiack_bulletsram_size;
 
 extern WRITE_HANDLER( zodiack_videoram_w );

@@ -130,7 +130,7 @@ WRITE_HANDLER( gionbana_paltbl_w );
 
 static DRIVER_INIT( gionbana )
 {
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the
@@ -161,7 +161,7 @@ static DRIVER_INIT( msjiken )
 
 static DRIVER_INIT( telmahjn )
 {
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the
@@ -180,7 +180,7 @@ static DRIVER_INIT( telmahjn )
 
 static DRIVER_INIT( mgmen89 )
 {
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the
@@ -199,7 +199,7 @@ static DRIVER_INIT( mgmen89 )
 
 static DRIVER_INIT( mjfocus )
 {
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *prot = memory_region(REGION_USER1);
 	unsigned char *ram = memory_region(REGION_CPU1) + 0xf800;
 	int i;
 
@@ -255,7 +255,7 @@ static DRIVER_INIT( mjnanpas )
 {
 	/* they forgot to enable the protection check in this game... */
 #if 0
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	memory_region(REGION_CPU1)[0x003d] = 0x01;	// force the protection check to be executed
@@ -313,7 +313,7 @@ static DRIVER_INIT( hanaoji )
 
 static DRIVER_INIT( pairsten )
 {
-	UINT8 *prot = memory_region(REGION_USER1);
+	uint8_t *prot = memory_region(REGION_USER1);
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the

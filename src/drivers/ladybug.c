@@ -696,9 +696,9 @@ DRIVER_INIT( dorodon )
 	/* Decode the opcodes */
 
 	offs_t i;
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	offs_t diff = memory_region_length(REGION_CPU1) / 2;
-	UINT8 *table = memory_region(REGION_USER1);
+	uint8_t *table = memory_region(REGION_USER1);
 
 	memory_set_opcode_base(0,rom+diff);
 

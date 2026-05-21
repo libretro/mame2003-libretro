@@ -36,11 +36,11 @@ Notes:
 #include "vidhrdw/generic.h"
 
 
-UINT16 tetrisp2_systemregs[0x10];
+uint16_t tetrisp2_systemregs[0x10];
 
-UINT16 rockn_protectdata;
-UINT16 rockn_adpcmbank;
-UINT16 rockn_soundvolume;
+uint16_t rockn_protectdata;
+uint16_t rockn_adpcmbank;
+uint16_t rockn_soundvolume;
 
 static void *rockn_timer_l4;
 
@@ -129,7 +129,7 @@ static READ16_HANDLER( rockn_adpcmbank_r )
 
 static WRITE16_HANDLER( rockn_adpcmbank_w )
 {
-	UINT8 *SNDROM = memory_region(REGION_SOUND1);
+	uint8_t *SNDROM = memory_region(REGION_SOUND1);
 	int bank;
 
 	rockn_adpcmbank = data;

@@ -201,9 +201,9 @@ Video sync   6 F   Video sync                 Post   6 F   Post
 #define CLIP_H              (VIS_MAXY - VIS_MINY + 1)
 #define CLIP_BYTEW          (CLIP_W << 1)
 
-typedef UINT8  BYTE;
-typedef UINT16 WORD;
-typedef UINT32 DWORD;
+typedef uint8_t  BYTE;
+typedef uint16_t WORD;
+typedef uint32_t DWORD;
 
 static WORD *render_layer[MAX_LAYERS];
 static BYTE sound_fifo[MAX_SOUNDS];
@@ -1108,8 +1108,8 @@ static void halleys_decode_rgb(DWORD *r, DWORD *g, DWORD *b, int addr, int data)
 		00 00 00 00 01 61 29 26 0b f5 e2 17 57 fb cf f7
 */
 	int latch1_273, latch2_273;
-	UINT8 *sram_189;
-	UINT8 *prom_6330;
+	uint8_t *sram_189;
+	uint8_t *prom_6330;
 
 	int bit0, bit1, bit2, bit3, bit4;
 

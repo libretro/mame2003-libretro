@@ -47,7 +47,7 @@ static int just_been_reset;
 
 DRIVER_INIT( blockade )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 	/* Merge nibble-wide roms together,
@@ -65,7 +65,7 @@ DRIVER_INIT( blockade )
 
 DRIVER_INIT( comotion )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 	/* Merge nibble-wide roms together,

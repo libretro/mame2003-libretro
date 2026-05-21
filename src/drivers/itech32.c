@@ -54,12 +54,12 @@
  *
  *************************************/
 
-static UINT8 vint_state;
-static UINT8 xint_state;
-static UINT8 qint_state;
+static uint8_t vint_state;
+static uint8_t xint_state;
+static uint8_t qint_state;
 
 static data8_t sound_data;
-static UINT8 sound_int_state;
+static uint8_t sound_int_state;
 
 static data8_t *via6522;
 static data16_t via6522_timer_count[2];
@@ -77,7 +77,7 @@ static offs_t itech020_prot_address;
 static data8_t *sound_speedup_data;
 static data16_t sound_speedup_pc;
 
-static UINT8 is_drivedge;
+static uint8_t is_drivedge;
 
 
 
@@ -567,7 +567,7 @@ static NVRAM_HANDLER( itech32 )
 		mame_fread(file, main_ram, main_ram_size);
 	else
 		for (i = 0x80; i < main_ram_size; i++)
-			((UINT8 *)main_ram)[i] = rand();
+			((uint8_t *)main_ram)[i] = rand();
 }
 
 
@@ -581,7 +581,7 @@ static NVRAM_HANDLER( itech020 )
 		mame_fread(file, nvram, nvram_size);
 	else
 		for (i = 0; i < nvram_size; i++)
-			((UINT8 *)nvram)[i] = rand();
+			((uint8_t *)nvram)[i] = rand();
 }
 
 

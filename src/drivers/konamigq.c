@@ -59,9 +59,9 @@
 static data8_t sndto000[ 16 ];
 static data8_t sndtor3k[ 16 ];
 static data8_t sector_buffer[512];
-static UINT8 *m_p_n_ram;
+static uint8_t *m_p_n_ram;
 
-static INLINE void psxwritebyte( UINT32 n_address, UINT8 n_data )
+static INLINE void psxwritebyte( uint32_t n_address, uint8_t n_data )
 {
 	m_p_n_ram[ BYTE_XOR_LE( n_address ) ] = n_data;
 }
@@ -370,10 +370,10 @@ static struct K054539interface k054539_interface =
 	{ NULL }
 };
 
-static void scsi_dma_read( UINT32 n_address, INT32 n_size )
+static void scsi_dma_read( uint32_t n_address, int32_t n_size )
 {
 	int i;
-	UINT32 dest = n_address;
+	uint32_t dest = n_address;
 
 	/* dma size is in 32-bit words */
 	n_size <<= 2;
@@ -402,7 +402,7 @@ static void scsi_dma_read( UINT32 n_address, INT32 n_size )
 	}
 }
 
-static void scsi_dma_write( UINT32 n_address, INT32 n_size )
+static void scsi_dma_write( uint32_t n_address, int32_t n_size )
 {
 }
 

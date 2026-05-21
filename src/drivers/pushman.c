@@ -31,8 +31,8 @@ WRITE16_HANDLER( pushman_scroll_w );
 WRITE16_HANDLER( pushman_videoram_w );
 VIDEO_START( pushman );
 
-static UINT8 shared_ram[8];
-static UINT16 latch,new_latch=0;
+static uint8_t shared_ram[8];
+static uint16_t latch,new_latch=0;
 
 /******************************************************************************/
 
@@ -443,7 +443,7 @@ static struct YM2203interface ym2203_interface =
 };
 
 
-static UINT32 amask_m68705 = 0xfff;
+static uint32_t amask_m68705 = 0xfff;
 
 static MACHINE_DRIVER_START( pushman )
 

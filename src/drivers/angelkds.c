@@ -429,7 +429,7 @@ sound related ?
 
 */
 
-static UINT8 angelkds_sound[4];
+static uint8_t angelkds_sound[4];
 
 static WRITE_HANDLER( angelkds_sound_w )
 {

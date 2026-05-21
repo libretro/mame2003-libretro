@@ -39,14 +39,14 @@ extern WRITE_HANDLER( ninjakun_paletteram_w );
 
 /******************************************************************************/
 
-static UINT8 *ninjakid_gfx_rom;
+static uint8_t *ninjakid_gfx_rom;
 
 static READ_HANDLER( ninjakid_shared_rom_r ){
 	return ninjakid_gfx_rom[offset];
 }
 
 /* working RAM is shared, but an address line is inverted */
-static UINT8 *shareram;
+static uint8_t *shareram;
 
 static WRITE_HANDLER( shareram_w ){
 	shareram[offset^0x400] = data;
@@ -59,7 +59,7 @@ static READ_HANDLER( shareram_r ){
  0xA000 Read / Write Handlers
 *******************************************************************************/
 
-static UINT8 ninjakun_io_a002_ctrl;
+static uint8_t ninjakun_io_a002_ctrl;
 
 static READ_HANDLER( ninjakun_io_A002_r ){
 	return ninjakun_io_a002_ctrl | readinputport(2); /* vblank */

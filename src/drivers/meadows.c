@@ -130,10 +130,10 @@
  *************************************/
 
 static int cycles_at_vsync;
-static UINT8 main_sense_state;
-static UINT8 sound_sense_state;
-static UINT8 coin1_state;
-static UINT8 minferno_sense;
+static uint8_t main_sense_state;
+static uint8_t sound_sense_state;
+static uint8_t coin1_state;
+static uint8_t minferno_sense;
 
 
 
@@ -146,7 +146,7 @@ static UINT8 minferno_sense;
 static READ_HANDLER( hsync_chain_r )
 {
 	/* horizontal sync divider chain */
-	UINT8 val = (cycles_currently_ran() - cycles_at_vsync) & 0xff;
+	uint8_t val = (cycles_currently_ran() - cycles_at_vsync) & 0xff;
 	return BITSWAP8(val,0,1,2,3,4,5,6,7);
 }
 
@@ -154,7 +154,7 @@ static READ_HANDLER( hsync_chain_r )
 static READ_HANDLER( vsync_chain_hi_r )
 {
 	/* vertical sync divider chain */
-	UINT8 val = cpu_getscanline();
+	uint8_t val = cpu_getscanline();
 	return ((val >> 1) & 0x08) | ((val >> 3) & 0x04) | ((val >> 5) & 0x02) | (val >> 7);
 }
 
@@ -162,7 +162,7 @@ static READ_HANDLER( vsync_chain_hi_r )
 static READ_HANDLER( vsync_chain_lo_r )
 {
 	/* vertical sync divider chain */
-	UINT8 val = cpu_getscanline();
+	uint8_t val = cpu_getscanline();
 	return val & 0x0f;
 }
 

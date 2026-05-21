@@ -50,9 +50,9 @@ extern PALETTE_INIT( grchamp );
 extern VIDEO_START( grchamp );
 extern VIDEO_UPDATE( grchamp );
 extern WRITE_HANDLER( grchamp_videoram_w );
-extern UINT8 *grchamp_videoram;
-extern UINT8 *grchamp_radar;
-extern UINT8 grchamp_player_ypos;
+extern uint8_t *grchamp_videoram;
+extern uint8_t *grchamp_radar;
+extern uint8_t grchamp_player_ypos;
 
 extern WRITE_HANDLER( grchamp_player_xpos_w );
 extern WRITE_HANDLER( grchamp_player_ypos_w );
@@ -76,11 +76,11 @@ extern int grchamp_collision;
 
 /***************************************************************************/
 
-static UINT8 grchamp_led_data0;
-static UINT8 grchamp_led_data1;
-static UINT8 grchamp_led_data2;
+static uint8_t grchamp_led_data0;
+static uint8_t grchamp_led_data1;
+static uint8_t grchamp_led_data2;
 
-UINT8 grchamp_led_reg[8][3];
+uint8_t grchamp_led_reg[8][3];
 /*	5 digits for score
 **	2 digits for time
 **	1 digit for rank (?)
@@ -242,7 +242,7 @@ static struct GfxDecodeInfo gfxdecodeinfo[] =
 
 /***************************************************************************/
 #if 0
-static UINT8 *shareram;
+static uint8_t *shareram;
 static WRITE_HANDLER( shareram_w )
 {
 	shareram[offset] = data;

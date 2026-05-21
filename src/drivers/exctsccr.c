@@ -36,7 +36,7 @@ extern VIDEO_START( exctsccr );
 extern VIDEO_UPDATE( exctsccr );
 
 /* from machine */
-extern UINT8 *exctsccr_mcu_ram;
+extern uint8_t *exctsccr_mcu_ram;
 extern WRITE_HANDLER( exctsccr_mcu_w );
 extern WRITE_HANDLER( exctsccr_mcu_control_w );
 

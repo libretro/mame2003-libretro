@@ -47,7 +47,7 @@ static data8_t main_to_sound_data, sound_to_main_data;
 
 static WRITE_HANDLER( rom_bank_select_w )
 {
-	UINT8 *region_base = memory_region(REGION_CPU1);
+	uint8_t *region_base = memory_region(REGION_CPU1);
 	cpu_setbank(1, region_base + 0x10000 + (data & 15) * 0x2000);
 }
 

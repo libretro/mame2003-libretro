@@ -279,8 +279,8 @@
 
 
 static int oldpos[4];
-static UINT8 sign[4];
-static UINT8 dsw_select;
+static uint8_t sign[4];
+static uint8_t dsw_select;
 
 
 /*************************************

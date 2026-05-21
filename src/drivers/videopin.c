@@ -13,7 +13,7 @@
 #include "driver.h"
 #include "artwork.h"
 
-extern UINT8* videopin_video_ram;
+extern uint8_t* videopin_video_ram;
 
 extern WRITE_HANDLER( videopin_video_ram_w );
 extern WRITE_HANDLER( videopin_ball_w );
@@ -24,8 +24,8 @@ extern VIDEO_UPDATE( videopin );
 static double time_pushed;
 static double time_released;
 
-static UINT8 prev = 0;
-static UINT8 mask = 0;
+static uint8_t prev = 0;
+static uint8_t mask = 0;
 
 static WRITE_HANDLER(videopin_out1_w);
 static WRITE_HANDLER(videopin_out2_w);
@@ -33,7 +33,7 @@ static WRITE_HANDLER(videopin_out2_w);
 
 static void update_plunger(void)
 {
-	UINT8 val = readinputport(3);
+	uint8_t val = readinputport(3);
 
 	if (prev != val)
 	{
@@ -103,7 +103,7 @@ static READ_HANDLER( videopin_misc_r )
 	// signals received. This results in the MPU displaying the
 	// ball being shot onto the playfield at a certain speed.
 
-	UINT8 val = readinputport(2);
+	uint8_t val = readinputport(2);
 
 	if (plunger >= 0.000 && plunger <= 0.001)
 	{

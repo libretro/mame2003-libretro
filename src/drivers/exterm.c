@@ -226,7 +226,7 @@ WRITE16_HANDLER( exterm_slave_speedup_w )
 
 READ_HANDLER( exterm_sound_dac_speedup_r )
 {
-	UINT8 *RAM = memory_region(REGION_CPU3);
+	uint8_t *RAM = memory_region(REGION_CPU3);
 	int value = RAM[0x0007];
 
 	/* Suspend cpu if it's waiting for an interrupt */
@@ -240,7 +240,7 @@ READ_HANDLER( exterm_sound_ym2151_speedup_r )
 {
 	/* Doing this won't flash the LED, but we're not emulating that anyhow, so
 	   it doesn't matter */
-	UINT8 *RAM = memory_region(REGION_CPU4);
+	uint8_t *RAM = memory_region(REGION_CPU4);
 	int value = RAM[0x02b6];
 
 	/* Suspend cpu if it's waiting for an interrupt */

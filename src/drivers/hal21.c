@@ -57,8 +57,8 @@ AT08XX03:
 #include "cpu/z80/z80.h"
 #include "snk.h"
 
-static UINT8 *shared_ram, *shared_auxram;
-static UINT8 *hal21_vreg, *hal21_sndfifo;
+static uint8_t *shared_ram, *shared_auxram;
+static uint8_t *hal21_vreg, *hal21_sndfifo;
 
 /**************************************************************************/
 // Test Handlers
@@ -229,7 +229,7 @@ static void hal21_draw_sprites( struct mame_bitmap *bitmap, int scrollx, int scr
 								const struct GfxElement *gfx )
 {
 	struct rectangle *cliprect;
-	UINT8 *sprptr, *endptr;
+	uint8_t *sprptr, *endptr;
 	int attrs, tile, x, y, color, fy;
 
 	cliprect = &Machine->visible_area;
@@ -238,7 +238,7 @@ static void hal21_draw_sprites( struct mame_bitmap *bitmap, int scrollx, int scr
 
 	for (; sprptr<endptr; sprptr+=4)
 	{
-		if (*(UINT32*)sprptr == 0 || *(UINT32*)sprptr == -1) continue;
+		if (*(uint32_t*)sprptr == 0 || *(uint32_t*)sprptr == -1) continue;
 
 		attrs = sprptr[3];
 		tile  = sprptr[1] + (attrs<<2 & 0x100);
@@ -293,7 +293,7 @@ static void aso_draw_sprites( struct mame_bitmap *bitmap, int scrollx, int scrol
 								const struct GfxElement *gfx )
 {
 	struct rectangle *cliprect;
-	UINT8 *sprptr, *endptr;
+	uint8_t *sprptr, *endptr;
 	int attrs, tile, x, y, color;
 
 	cliprect = &Machine->visible_area;
@@ -302,7 +302,7 @@ static void aso_draw_sprites( struct mame_bitmap *bitmap, int scrollx, int scrol
 
 	for (; sprptr<endptr; sprptr+=4)
 	{
-		if (*(UINT32*)sprptr == 0 || *(UINT32*)sprptr == -1) continue;
+		if (*(uint32_t*)sprptr == 0 || *(uint32_t*)sprptr == -1) continue;
 
 		attrs = sprptr[3]; /* YBBX.CCCC */
 		tile  = sprptr[1] + (attrs<<2 & 0x100) + (~attrs<<4 & 0x200);
@@ -322,7 +322,7 @@ static void aso_draw_sprites( struct mame_bitmap *bitmap, int scrollx, int scrol
 
 VIDEO_UPDATE( aso )
 {
-	UINT8 *ram = memory_region(REGION_CPU1);
+	uint8_t *ram = memory_region(REGION_CPU1);
 	int attr, msbs, spsy, spsx, bgsy, bgsx, bank, i;
 
 	attr = (int)hal21_vreg[0];

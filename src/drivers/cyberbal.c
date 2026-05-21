@@ -524,7 +524,7 @@ static MACHINE_DRIVER_START( cyberbal )
 	
 	MDRV_CPU_ADD(M6502, ATARI_CLOCK_14MHz/8)
 	MDRV_CPU_MEMORY(sound_readmem,sound_writemem)
-	MDRV_CPU_PERIODIC_INT(atarigen_6502_irq_gen,(UINT32)(1000000000.0/((double)ATARI_CLOCK_14MHz/4/4/16/16/14)))
+	MDRV_CPU_PERIODIC_INT(atarigen_6502_irq_gen,(uint32_t)(1000000000.0/((double)ATARI_CLOCK_14MHz/4/4/16/16/14)))
 	
 	MDRV_CPU_ADD(M68000, ATARI_CLOCK_14MHz/2)
 	MDRV_CPU_MEMORY(extra_readmem,extra_writemem)

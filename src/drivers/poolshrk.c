@@ -9,17 +9,17 @@ Atari Poolshark Driver
 extern VIDEO_START( poolshrk );
 extern VIDEO_UPDATE( poolshrk );
 
-extern UINT8* poolshrk_playfield_ram;
-extern UINT8* poolshrk_hpos_ram;
-extern UINT8* poolshrk_vpos_ram;
+extern uint8_t* poolshrk_playfield_ram;
+extern uint8_t* poolshrk_hpos_ram;
+extern uint8_t* poolshrk_vpos_ram;
 
 static int poolshrk_da_latch;
 
 
 static DRIVER_INIT( poolshrk )
 {
-	UINT8* pSprite = memory_region(REGION_GFX1);
-	UINT8* pOffset = memory_region(REGION_PROMS);
+	uint8_t* pSprite = memory_region(REGION_GFX1);
+	uint8_t* pOffset = memory_region(REGION_PROMS);
 
 	int i;
 	int j;
@@ -30,7 +30,7 @@ static DRIVER_INIT( poolshrk )
 	{
 		for (j = 0; j < 16; j++)
 		{
-			UINT16 v =
+			uint16_t v =
 				(pSprite[0] << 0xC) |
 				(pSprite[1] << 0x8) |
 				(pSprite[2] << 0x4) |
@@ -72,7 +72,7 @@ WRITE_HANDLER( poolshrk_led_w )
 
 READ_HANDLER( poolshrk_input_r )
 {
-	UINT8 val = readinputport(offset);
+	uint8_t val = readinputport(offset);
 
 	int x = readinputport(4 + (offset & 1));
 	int y = readinputport(6 + (offset & 1));

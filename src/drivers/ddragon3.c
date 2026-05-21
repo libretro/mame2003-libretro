@@ -30,9 +30,9 @@
 #include "cpu/m68000/m68000.h"
 
 
-extern UINT16 *ddragon3_bg_videoram16;
-extern UINT16 *ddragon3_fg_videoram16;
-extern UINT16 ddragon3_vreg;
+extern uint16_t *ddragon3_bg_videoram16;
+extern uint16_t *ddragon3_fg_videoram16;
+extern uint16_t ddragon3_vreg;
 
 extern WRITE16_HANDLER( ddragon3_bg_videoram16_w );
 extern WRITE16_HANDLER( ddragon3_fg_videoram16_w );
@@ -52,7 +52,7 @@ static WRITE_HANDLER( oki_bankswitch_w )
 
 static WRITE16_HANDLER( ddragon3_io16_w )
 {
-	static UINT16 reg[8];
+	static uint16_t reg[8];
 
 	COMBINE_DATA(&reg[offset]);
 

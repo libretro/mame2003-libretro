@@ -156,7 +156,7 @@ MACHINE_INIT( ninjaw );
 VIDEO_START( ninjaw );
 VIDEO_UPDATE( ninjaw );
 
-static UINT16 cpua_ctrl = 0xff;
+static uint16_t cpua_ctrl = 0xff;
 
 static size_t sharedram_size;
 static data16_t *sharedram;

@@ -213,7 +213,7 @@ static WRITE16_HANDLER( archrivl_control_w )
  *
  *************************************/
 
-static UINT8 protection_data[5];
+static uint8_t protection_data[5];
 static WRITE16_HANDLER( pigskin_protection_w )
 {
 	/* ignore upper-byte only */
@@ -294,8 +294,8 @@ static READ16_HANDLER( pigskin_port_2_r )
 
 static READ16_HANDLER( trisport_port_1_r )
 {
-	int xaxis = (INT8)readinputport(3);
-	int yaxis = (INT8)readinputport(4);
+	int xaxis = (int8_t)readinputport(3);
+	int yaxis = (int8_t)readinputport(4);
 	int result = readinputport(1);
 
 	result |= (xaxis & 0x3c) << 6;

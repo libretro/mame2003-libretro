@@ -75,8 +75,8 @@ static READ32_HANDLER( sharedram_r )
 
 static INTERRUPT_GEN( namcos12_vblank )
 {
-	UINT16 n_coin;
-	static UINT16 n_oldcoin = 0;
+	uint16_t n_coin;
+	static uint16_t n_oldcoin = 0;
 
 	SHRAM( 0x3000 ) = ( SHRAM( 0x3000 ) & 0x0000ffff ) | 0x76010000;
 	SHRAM( 0x30f0 ) = ( SHRAM( 0x30f0 ) & 0xffff0000 ) | 0x00000000;
@@ -154,11 +154,11 @@ static WRITE32_HANDLER( dmaoffset_w )
 	verboselog( 1, "dmaoffset_w( %08x, %08x, %08x ) %08x\n", offset, data, mem_mask, m_n_dmaoffset );
 }
 
-static void namcos12_rom_read( UINT32 n_address, INT32 n_size )
+static void namcos12_rom_read( uint32_t n_address, int32_t n_size )
 {
-	INT32 n_left;
-	UINT32 *p_n_src;
-	UINT32 *p_n_dst;
+	int32_t n_left;
+	uint32_t *p_n_src;
+	uint32_t *p_n_dst;
 
 	verboselog( 1, "namcos12_rom_read( %08x, %08x )\n", n_address, n_size );
 

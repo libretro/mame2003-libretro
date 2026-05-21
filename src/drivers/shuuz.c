@@ -79,8 +79,8 @@ static READ16_HANDLER( leta_r )
 	/* when reading the even ports, do a real analog port update */
 	if (which == 0)
 	{
-		int dx = (INT8)readinputport(2);
-		int dy = (INT8)readinputport(3);
+		int dx = (int8_t)readinputport(2);
+		int dy = (int8_t)readinputport(3);
 
 		cur[0] = dx + dy;
 		cur[1] = dx - dy;

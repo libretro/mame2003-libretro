@@ -80,7 +80,7 @@ TODO:
 #include "cpu/z80/z80.h"
 
 
-static UINT8 *pixmap[8];
+static uint8_t *pixmap[8];
 static struct mame_bitmap *framebuffer;
 static int extra_layers;
 
@@ -169,7 +169,7 @@ static void do_plot(int x,int y,int pen)
 }
 
 
-static INLINE int fetch_bit(UINT8 *src_data,int src_len,int *bit_addr)
+static INLINE int fetch_bit(uint8_t *src_data,int src_len,int *bit_addr)
 {
 	int baddr = (*bit_addr)++;
 
@@ -184,7 +184,7 @@ static INLINE int fetch_bit(UINT8 *src_data,int src_len,int *bit_addr)
 	return (src_data[baddr / 8] >> (7 - (baddr & 7))) & 1;
 }
 
-static INLINE int fetch_word(UINT8 *src_data,int src_len,int *bit_addr,int word_len)
+static INLINE int fetch_word(uint8_t *src_data,int src_len,int *bit_addr,int word_len)
 {
 	int res = 0;
 
@@ -199,7 +199,7 @@ static INLINE int fetch_word(UINT8 *src_data,int src_len,int *bit_addr,int word_
 
 static int blit_draw(int src,int sx,int flags)
 {
-	UINT8 *src_data = memory_region(REGION_GFX1);
+	uint8_t *src_data = memory_region(REGION_GFX1);
 	int src_len = memory_region_length(REGION_GFX1);
 	int bit_addr = src * 8;	/* convert to bit address */
 	int pen_size, arg_size, cmd;
@@ -686,7 +686,7 @@ if (palbase == 0xff) palbase = 0;	// workaround for ddenlovr dynax logo
 				int pen = pixmap[layer][512 * ((y + scrolly) & 0x1ff) + ((x + scrollx) & 0x1ff)];
 				if (pen & 0x0f)
 				{
-					((UINT16 *)bitmap->line[y])[x] = pen | palbase;
+					((uint16_t *)bitmap->line[y])[x] = pen | palbase;
 				}
 			}
 		}
@@ -1178,7 +1178,7 @@ READ_HANDLER( rongrong_input_r )
 
 WRITE_HANDLER( rongrong_select_w )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 //logerror("%04x: rongrong_select_w %02x\n",activecpu_get_pc(),data);
 	/* bits 0-4 = **both** ROM bank **AND** input select */
@@ -1299,7 +1299,7 @@ static WRITE_HANDLER( mmpanic_select_w )
 
 static WRITE_HANDLER( mmpanic_rombank_w )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	cpu_setbank(1, &rom[0x10000 + 0x8000 * (data & 0x7)]);
 	/* Bit 4? */
 }

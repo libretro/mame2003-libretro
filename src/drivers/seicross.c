@@ -45,7 +45,7 @@ This info came from http://www.ne.jp/asahi/cc-sakura/akkun/old/fryski.html
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *seicross_row_scroll;
+extern uint8_t *seicross_row_scroll;
 
 extern WRITE_HANDLER( seicross_videoram_w );
 extern WRITE_HANDLER( seicross_colorram_w );
@@ -54,7 +54,7 @@ extern PALETTE_INIT( seicross );
 extern VIDEO_START( seicross );
 extern VIDEO_UPDATE( seicross );
 
-static UINT8 *nvram;
+static uint8_t *nvram;
 static size_t nvram_size;
 
 static NVRAM_HANDLER( seicross )
@@ -113,7 +113,7 @@ static WRITE_HANDLER( friskyt_portB_w )
 }
 
 
-static UINT8 *sharedram;
+static uint8_t *sharedram;
 
 static READ_HANDLER( sharedram_r )
 {
@@ -620,7 +620,7 @@ ROM_END
 static DRIVER_INIT( friskyt )
 {
 	int A;
-	UINT8 *src,*dest;
+	uint8_t *src,*dest;
 
 	/* the protection mcu shares the main program ROMs and RAM with the main CPU. */
 

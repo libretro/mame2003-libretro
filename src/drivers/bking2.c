@@ -42,7 +42,7 @@ READ_HANDLER( bking2_input_port_5_r );
 READ_HANDLER( bking2_input_port_6_r );
 READ_HANDLER( bking2_pos_r );
 
-UINT8* bking2_playfield_ram;
+uint8_t* bking2_playfield_ram;
 
 
 static int sndnmi_enable = 1;

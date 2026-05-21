@@ -43,7 +43,7 @@ static WRITE_HANDLER ( funybubl_paldatawrite )
 {
 	int colchanged ;
 
-	UINT32 coldat;
+	uint32_t coldat;
 	int r,g,b;
 
 	funybubl_paletteram[offset] = data;
@@ -254,8 +254,8 @@ VIDEO_START(funybubl)
 
 static void funybubl_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-  UINT8 *source = &banked_videoram[0x2000-0x20];
-  UINT8 *finish = source - 0x1000;
+  uint8_t *source = &banked_videoram[0x2000-0x20];
+  uint8_t *finish = source - 0x1000;
 
   while( source>finish )
   {

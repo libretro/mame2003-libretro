@@ -4383,7 +4383,7 @@ DRIVER_INIT( gollygho ){
 }
 
 DRIVER_INIT( luckywld ){
-	UINT8 *pData = (UINT8 *)memory_region( REGION_GFX5 );
+	uint8_t *pData = (uint8_t *)memory_region( REGION_GFX5 );
 	int i;
 	for( i=0; i<32*0x4000; i++ )
 	{ /* unscramble gfx mask */

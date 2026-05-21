@@ -38,8 +38,8 @@ Notes:
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *sidearms_bg_scrollx;
-extern UINT8 *sidearms_bg_scrolly;
+extern uint8_t *sidearms_bg_scrollx;
+extern uint8_t *sidearms_bg_scrolly;
 
 extern WRITE_HANDLER( sidearms_videoram_w );
 extern WRITE_HANDLER( sidearms_colorram_w );

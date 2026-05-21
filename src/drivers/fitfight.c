@@ -93,7 +93,7 @@ data16_t *fof_mid_tileram;
 data16_t *fof_txt_tileram;
 char bbprot_kludge;
 
-static UINT16 fitfight_700000_data = 0;
+static uint16_t fitfight_700000_data = 0;
 
 WRITE16_HANDLER( fof_bak_tileram_w );
 WRITE16_HANDLER( fof_mid_tileram_w );
@@ -129,7 +129,7 @@ static READ16_HANDLER(fitfight_700000_r)
 	/* D3 (write to 0x700000) - D2 (read from 0x700000)
 	   D3 = D2 >> 2, so D2 = D3 << 2 */
 
-	UINT16 data = fitfight_700000_data;
+	uint16_t data = fitfight_700000_data;
 
 	return (data << 2);
 }
@@ -168,7 +168,7 @@ static READ16_HANDLER(histryma_700000_r)
 	   D3 = ((D2 & 0x55) << 2) | (D2 & 0xaa), so D2 = ???
 	   (please help me in finding the formula to avoid the table) */
 
-	static const UINT16 table[128] =
+	static const uint16_t table[128] =
 	{
 		0x00, 0x02, 0x01, 0x03, 0x08, 0x0a, 0x09, 0x0b,		// 0x00 .. 0x0e
 		0x04, 0x06, 0x05, 0x07, 0x0c, 0x0e, 0x0d, 0x0f,		// 0x10 .. 0x1e
@@ -188,7 +188,7 @@ static READ16_HANDLER(histryma_700000_r)
 		0xb4, 0xb6, 0xb5, 0xb7, 0xbc, 0xbe, 0xbd, 0xbf,		// 0xf0 .. 0xfe
 	};
 
-	UINT16 data = fitfight_700000_data;
+	uint16_t data = fitfight_700000_data;
 
 	return (table[data/2]);
 }
@@ -329,7 +329,7 @@ static READ16_HANDLER(bbprot_700000_r)
 	     - bit  5 is << 2
 	*/
 
-	UINT16 data = 0;
+	uint16_t data = 0;
 
 	data  =  (fitfight_700000_data & 0x000b);
 	data |= ((fitfight_700000_data & 0x01d0) >> 2);

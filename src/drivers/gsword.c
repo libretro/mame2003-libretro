@@ -152,9 +152,9 @@ extern VIDEO_UPDATE( gsword );
 
 extern size_t gsword_spritexy_size;
 
-extern UINT8 *gsword_spritexy_ram;
-extern UINT8 *gsword_spritetile_ram;
-extern UINT8 *gsword_spriteattrib_ram;
+extern uint8_t *gsword_spritexy_ram;
+extern uint8_t *gsword_spritetile_ram;
+extern uint8_t *gsword_spriteattrib_ram;
 
 static int coins;
 static int fake8910_0,fake8910_1;
@@ -734,7 +734,7 @@ ROM_END
 
 static DRIVER_INIT( gsword )
 {
-	UINT8 *ROM2 = memory_region(REGION_CPU2);
+	uint8_t *ROM2 = memory_region(REGION_CPU2);
 
 	ROM2[0x1da] = 0xc3; /* patch for rom self check */
 	ROM2[0x726] = 0;    /* patch for sound protection or time out function */

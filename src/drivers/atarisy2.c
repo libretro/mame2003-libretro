@@ -137,19 +137,19 @@
  *
  *************************************/
 
-static UINT8 interrupt_enable;
+static uint8_t interrupt_enable;
 static data16_t *bankselect;
 
-static INT8 pedal_count;
+static int8_t pedal_count;
 
-static UINT8 has_tms5220;
-static UINT8 tms5220_data;
-static UINT8 tms5220_data_strobe;
+static uint8_t has_tms5220;
+static uint8_t tms5220_data;
+static uint8_t tms5220_data_strobe;
 
-static UINT8 which_adc;
+static uint8_t which_adc;
 
-static UINT8 p2portwr_state;
-static UINT8 p2portrd_state;
+static uint8_t p2portwr_state;
+static uint8_t p2portrd_state;
 
 
 
@@ -300,7 +300,7 @@ static WRITE16_HANDLER( bankselect_w )
 	};
 
 	int newword = bankselect[offset];
-	UINT8 *base;
+	uint8_t *base;
 
 	COMBINE_DATA(&newword);
 	bankselect[offset] = newword;
@@ -1185,7 +1185,7 @@ static MACHINE_DRIVER_START( atarisy2 )
 	
 	MDRV_CPU_ADD_TAG("sound", M6502, ATARI_CLOCK_14MHz/8)
 	MDRV_CPU_MEMORY(sound_readmem,sound_writemem)
-	MDRV_CPU_PERIODIC_INT(atarigen_6502_irq_gen,(UINT32)(1000000000.0/((double)ATARI_CLOCK_20MHz/2/16/16/16/10)))
+	MDRV_CPU_PERIODIC_INT(atarigen_6502_irq_gen,(uint32_t)(1000000000.0/((double)ATARI_CLOCK_20MHz/2/16/16/16/10)))
 	
 	MDRV_FRAMES_PER_SECOND(60)
 	MDRV_VBLANK_DURATION(DEFAULT_REAL_60HZ_VBLANK_DURATION)

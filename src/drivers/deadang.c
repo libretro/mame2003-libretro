@@ -19,8 +19,8 @@
 #include "sndhrdw/seibu.h"
 
 
-static UINT8 *deadang_shared_ram;
-extern UINT8 *deadang_video_data, *deadang_scroll_ram;
+static uint8_t *deadang_shared_ram;
+extern uint8_t *deadang_video_data, *deadang_scroll_ram;
 
 extern WRITE_HANDLER( deadang_foreground_w );
 extern WRITE_HANDLER( deadang_text_w );

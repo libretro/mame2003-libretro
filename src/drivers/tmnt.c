@@ -1024,7 +1024,7 @@ static data16_t *tmnt2_1c0800,*sunset_104000;
 static data16_t *tmnt2_rom;
 
 #if 1 //*
-static INLINE UINT32 tmnt2_get_word(UINT32 addr)
+static INLINE uint32_t tmnt2_get_word(uint32_t addr)
 {
 	if (addr <= 0x07ffff/2) return(tmnt2_rom[addr]); else
 	if (addr >= 0x104000/2 && addr <= 0x107fff/2) return(sunset_104000[addr-0x104000/2]); else
@@ -1032,9 +1032,9 @@ static INLINE UINT32 tmnt2_get_word(UINT32 addr)
 	return(0);
 }
 
-static void tmnt2_put_word(UINT32 addr, UINT16 data)
+static void tmnt2_put_word(uint32_t addr, uint16_t data)
 {
-	UINT32 offs;
+	uint32_t offs;
 	if (addr >= 0x180000/2 && addr <= 0x183fff/2)
 	{
 		spriteram16[addr-0x180000/2] = data;
@@ -1050,11 +1050,11 @@ static void tmnt2_put_word(UINT32 addr, UINT16 data)
 
 WRITE16_HANDLER( tmnt2_1c0800_w )
 {
-	UINT32 src_addr, dst_addr, mod_addr, attr1, code, attr2, cbase, cmod, color;
+	uint32_t src_addr, dst_addr, mod_addr, attr1, code, attr2, cbase, cmod, color;
 	int xoffs, yoffs, xmod, ymod, zmod, xzoom, yzoom, i;
-	UINT16 *mcu;
-	UINT16 src[4], mod[24];
-	UINT8 keepaspect, xlock, ylock, zlock;
+	uint16_t *mcu;
+	uint16_t src[4], mod[24];
+	uint8_t keepaspect, xlock, ylock, zlock;
 
 	COMBINE_DATA(tmnt2_1c0800 + offset);
 
@@ -1080,8 +1080,8 @@ WRITE16_HANDLER( tmnt2_1c0800_w )
 	cmod  = mod[0x2a/2]>>8;
 	color = (cbase != 0x0f && cmod <= 0x1f && !zlock) ? cmod : cbase;
 
-	xoffs = (INT16)src[2];	// local x
-	yoffs = (INT16)src[3];	// local y
+	xoffs = (int16_t)src[2];	// local x
+	yoffs = (int16_t)src[3];	// local y
 
 	i = mod[0];
 	attr2 |= i & 0x0060;	// priority
@@ -1091,9 +1091,9 @@ WRITE16_HANDLER( tmnt2_1c0800_w )
 //	if (i & 0x????) { attr1 ^= 0x2000; yoffs = -yoffs; }	// flip y (not used?)
 	if (i & 0x4000) { attr1 ^= 0x1000; xoffs = -xoffs; }	// flip x
 
-	xmod = (INT16)mod[6];	// global x
-	ymod = (INT16)mod[7];	// global y
-	zmod = (INT16)mod[8];	// global z
+	xmod = (int16_t)mod[6];	// global x
+	ymod = (int16_t)mod[7];	// global y
+	zmod = (int16_t)mod[8];	// global z
 	xzoom = mod[0x1c/2];
 	yzoom = (keepaspect) ? xzoom : mod[0x1e/2];
 
@@ -1159,8 +1159,8 @@ WRITE16_HANDLER( tmnt2_1c0800_w )
 
 	tmnt2_put_word(dst_addr +  0, attr1);
 	tmnt2_put_word(dst_addr +  2, code);
-	tmnt2_put_word(dst_addr +  4, (UINT32)yoffs);
-	tmnt2_put_word(dst_addr +  6, (UINT32)xoffs);
+	tmnt2_put_word(dst_addr +  4, (uint32_t)yoffs);
+	tmnt2_put_word(dst_addr +  6, (uint32_t)xoffs);
 	tmnt2_put_word(dst_addr + 12, attr2 | color);
 }
 #else // for reference; do not remove
@@ -4014,10 +4014,10 @@ static DRIVER_INIT( tmnt )
 	free(temp);
 }
 
-static void shuffle(UINT8 *buf,int len)
+static void shuffle(uint8_t *buf,int len)
 {
 	int i;
-	UINT8 t;
+	uint8_t t;
 
 	if (len == 2) return;
 

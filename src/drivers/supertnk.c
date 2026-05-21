@@ -101,7 +101,7 @@ CRU lines:
 static int supertnk_rom_bank;
 static int supertnk_video_bitplane;
 
-static UINT8 *supertnk_videoram;
+static uint8_t *supertnk_videoram;
 
 
 
@@ -194,7 +194,7 @@ WRITE_HANDLER( supertnk_intack )
 WRITE_HANDLER( supertnk_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *ROM = memory_region(REGION_CPU1);
+	uint8_t *ROM = memory_region(REGION_CPU1);
 	switch (offset)
 	{
 		case 0:
@@ -411,8 +411,8 @@ ROM_END
 
 DRIVER_INIT( supertnk ){
 	/* decode the TMS9980 ROMs */
-	UINT8 *pMem = memory_region( REGION_CPU1 );
-	UINT8 raw, code;
+	uint8_t *pMem = memory_region( REGION_CPU1 );
+	uint8_t raw, code;
 	int i;
 	for( i=0; i<0x8000; i++ )
 	{

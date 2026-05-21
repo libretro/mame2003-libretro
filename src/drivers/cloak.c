@@ -110,7 +110,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-static UINT8 *cloak_sharedram;
+static uint8_t *cloak_sharedram;
 static int cloak_nvram_enabled;
 
 extern WRITE_HANDLER( cloak_videoram_w );

@@ -85,11 +85,11 @@ static void generate_gr_screen(
 	int w,int bitmap_width,int skip,
 	int start_color,int end_color, int source_size )
 {
-	UINT8 *buf = malloc( source_size );
-	UINT8 *buf_base = buf;
+	uint8_t *buf = malloc( source_size );
+	uint8_t *buf_base = buf;
 	if( buf ){
-		UINT8 *gr = memory_region(REGION_GFX3);
-		UINT8 *grr = NULL;
+		uint8_t *gr = memory_region(REGION_GFX3);
+		uint8_t *grr = NULL;
 	    int i,j,k;
 	    int center_offset=0;
 		sys16_gr_bitmap_width = bitmap_width;
@@ -107,8 +107,8 @@ static void generate_gr_screen(
 		}
 
 		for (i=0; i<256; i++){ // build gr_bitmap
-			UINT8 last_bit;
-			UINT8 color_data[4];
+			uint8_t last_bit;
+			uint8_t color_data[4];
 			color_data[0]=start_color;
 			color_data[1]=start_color+1;
 			color_data[2]=start_color+2;
@@ -117,7 +117,7 @@ static void generate_gr_screen(
 			last_bit = ((buf[0]&0x80)==0)|(((buf[0x4000]&0x80)==0)<<1);
 			for (j=0; j<w/8; j++){
 				for (k=0; k<8; k++){
-					UINT8 bit=((buf[0]&0x80)==0)|(((buf[0x4000]&0x80)==0)<<1);
+					uint8_t bit=((buf[0]&0x80)==0)|(((buf[0x4000]&0x80)==0)<<1);
 					if (bit!=last_bit && bit==0 && i>1){ // color flipped to 0,advance color[0]
 						if (color_data[0]+end_color <= end_color){
 							color_data[0]+=end_color;
@@ -134,7 +134,7 @@ static void generate_gr_screen(
 			}
 
 			if (grr!=NULL){ // need mirrored RHS
-				const UINT8 *temp = gr-1-skip;
+				const uint8_t *temp = gr-1-skip;
 				for (j=0; j<w-skip; j++){
 					*gr++ = *temp--;
 				}
@@ -920,8 +920,8 @@ static DRIVER_INIT( outrunb )
 
 	for( i=0;i<0x40000;i+=2 ){
 		data16_t word = RAM[i/2];
-		UINT8 even = word>>8;
-		UINT8 odd = word&0xff;
+		uint8_t even = word>>8;
+		uint8_t odd = word&0xff;
 
 		// even byte
 		if((even&0x28) == 0x20 || (even&0x28) == 0x08) even^=0x28;
@@ -942,8 +942,8 @@ static DRIVER_INIT( outrunb )
 	for(i=0;i<0x40000;i+=2)
 	{
 		data16_t word = RAM[i/2];
-		UINT8 even = word>>8;
-		UINT8 odd = word&0xff;
+		uint8_t even = word>>8;
+		uint8_t odd = word&0xff;
 
 		// even byte
 		if((even&0xc0) == 0x80 || (even&0xc0) == 0x40) even^=0xc0;
@@ -965,7 +965,7 @@ static DRIVER_INIT( outrunb )
   I don't know why there's 2 road roms, but I'm using orun_me.rom
 */
 	{
-		UINT8 *mem = memory_region(REGION_GFX3);
+		uint8_t *mem = memory_region(REGION_GFX3);
 		for(i=0;i<0x8000;i++){
 			if( (mem[i]&0x60) == 0x20 || (mem[i]&0x60) == 0x40 ) mem[i]^=0x60;
 		}
@@ -981,7 +981,7 @@ static DRIVER_INIT( outrunb )
 
 */
 	{
-		UINT8 *mem = memory_region(REGION_CPU2);
+		uint8_t *mem = memory_region(REGION_CPU2);
 		for(i=0;i<0x8000;i++){
 			if( (mem[i]&0x60) == 0x20 || (mem[i]&0x60) == 0x40 ) mem[i]^=0x60;
 		}

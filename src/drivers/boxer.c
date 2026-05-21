@@ -10,13 +10,13 @@ Atari Boxer (prototype) driver
 
 #include "driver.h"
 
-extern UINT8* boxer_tile_ram;
-extern UINT8* boxer_sprite_ram;
+extern uint8_t* boxer_tile_ram;
+extern uint8_t* boxer_sprite_ram;
 
 extern VIDEO_UPDATE( boxer );
 
-static UINT8 pot_state;
-static UINT8 pot_latch;
+static uint8_t pot_state;
+static uint8_t pot_latch;
 
 
 static void pot_interrupt(int mask)
@@ -36,7 +36,7 @@ static void periodic_callback(int scanline)
 
 	if (scanline == 0)
 	{
-		UINT8 mask[256];
+		uint8_t mask[256];
 
 		int i;
 
@@ -93,7 +93,7 @@ static MACHINE_INIT( boxer )
 
 static READ_HANDLER( boxer_input_r )
 {
-	UINT8 val = readinputport(0);
+	uint8_t val = readinputport(0);
 
 	if (readinputport(9) < cpu_getscanline())
 	{
@@ -106,7 +106,7 @@ static READ_HANDLER( boxer_input_r )
 
 static READ_HANDLER( boxer_misc_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	switch (offset & 3)
 	{

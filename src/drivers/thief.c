@@ -30,7 +30,7 @@ Credits:
 #include "cpu/z80/z80.h"
 #include "vidhrdw/generic.h"
 
-static UINT8 thief_input_select;
+static uint8_t thief_input_select;
 
 READ_HANDLER( thief_context_ram_r );
 WRITE_HANDLER( thief_context_ram_w );
@@ -638,8 +638,8 @@ ROM_END
 
 static DRIVER_INIT( thief )
 {
-	UINT8 *dest = memory_region( REGION_CPU1 );
-	const UINT8 *source = memory_region( REGION_CPU2 );
+	uint8_t *dest = memory_region( REGION_CPU1 );
+	const uint8_t *source = memory_region( REGION_CPU2 );
 
 	/* C8 is mapped (banked) in CPU1's address space; it contains Z80 code */
 	memcpy( &dest[0xe010], &source[0x290], 0x20 );

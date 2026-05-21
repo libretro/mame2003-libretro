@@ -83,9 +83,9 @@ WRITE16_HANDLER(f3_es5505_bank_w);
 void f3_68681_reset(void);
 extern data32_t *f3_shared_ram;
 
-static UINT16 coin_word, frame_counter=0;
-static UINT16 port_sel = 0;
-extern UINT16 groundfx_rotate_ctrl[8];
+static uint16_t coin_word, frame_counter=0;
+static uint16_t port_sel = 0;
+extern uint16_t groundfx_rotate_ctrl[8];
 static data32_t *groundfx_ram;
 
 /***********************************************************
@@ -547,7 +547,7 @@ static READ32_HANDLER( irq_speedup_r_groundfx )
 DRIVER_INIT( groundfx )
 {
 	unsigned int offset,i;
-	UINT8 *gfx = memory_region(REGION_GFX3);
+	uint8_t *gfx = memory_region(REGION_GFX3);
 	int size=memory_region_length(REGION_GFX3);
 	int data;
 

@@ -12,7 +12,7 @@
 #include "vidhrdw/generic.h"
 #include "cpu/m6502/m6502.h"
 
-extern UINT8 *bogeyman_videoram2, *bogeyman_colorram2;
+extern uint8_t *bogeyman_videoram2, *bogeyman_colorram2;
 
 extern WRITE_HANDLER( bogeyman_videoram_w );
 extern WRITE_HANDLER( bogeyman_colorram_w );

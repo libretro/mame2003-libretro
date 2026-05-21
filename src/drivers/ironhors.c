@@ -11,8 +11,8 @@ driver by Mirko Buffoni
 #include "cpu/m6809/m6809.h"
 
 
-extern UINT8 *ironhors_scroll;
-static UINT8 *ironhors_interrupt_enable;
+extern uint8_t *ironhors_scroll;
+static uint8_t *ironhors_interrupt_enable;
 
 extern WRITE_HANDLER( ironhors_videoram_w );
 extern WRITE_HANDLER( ironhors_colorram_w );

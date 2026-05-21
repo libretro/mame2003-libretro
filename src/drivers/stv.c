@@ -134,13 +134,13 @@ static data16_t* scsp_regs;
 
 int stv_vblank;
 /*SMPC stuff*/
-static UINT8 SCSP_reset;
+static uint8_t SCSP_reset;
 static void system_reset(void);
 static data8_t en_68k;
 /*SCU stuff*/
 static int 	  timer_0;				/* Counter for Timer 0 irq*/
 /*Maybe add these in a struct...*/
-static UINT32 scu_src_0,		/* Source DMA lv 0 address*/
+static uint32_t scu_src_0,		/* Source DMA lv 0 address*/
 			  scu_src_1,		/* lv 1*/
 			  scu_src_2,		/* lv 2*/
 			  scu_dst_0,		/* Destination DMA lv 0 address*/
@@ -152,7 +152,7 @@ static UINT32 scu_src_0,		/* Source DMA lv 0 address*/
 			  scu_dst_add_0,	/* Destination Addition for DMA lv 0*/
 			  scu_dst_add_1,	/* lv 1*/
 			  scu_dst_add_2;	/* lv 2*/
-static INT32  scu_size_0,		/* Transfer DMA size lv 0*/
+static int32_t  scu_size_0,		/* Transfer DMA size lv 0*/
 			  scu_size_1,		/* lv 1*/
 			  scu_size_2;		/* lv 2*/
 
@@ -314,16 +314,16 @@ void cdb_reset(void){
 
 void do_cd_command(void){
 
-	UINT32 fid,pn, sp, sn;
-	UINT32 count;
-	UINT8 pm; /* play mode */
-	UINT32 rf;
+	uint32_t fid,pn, sp, sn;
+	uint32_t count;
+	uint8_t pm; /* play mode */
+	uint32_t rf;
 	int ii;
 	sect_t * s;
-	UINT32  fad;
-	UINT32 i, j, nearest = 0, fad2 = 0;
-	UINT32 size;
-	UINT32 off;
+	uint32_t  fad;
+	uint32_t i, j, nearest = 0, fad2 = 0;
+	uint32_t size;
+	uint32_t off;
 	//based on sthief SSE source code
 	switch (CR1 >> 8){
 
@@ -570,8 +570,8 @@ void do_cd_command(void){
 
 						// play track
 
-						UINT32 tn0, idx0;
-						UINT32 tn1, idx1;
+						uint32_t tn0, idx0;
+						uint32_t tn1, idx1;
 
 						tn0 = CR2 >> 8;
 						tn1 = CR4 >> 8;
@@ -1577,7 +1577,7 @@ void do_cd_command(void){
 
 static READ32_HANDLER ( cdregister_r ){
 
-	UINT16 d;
+	uint16_t d;
 
 	offset=offset*4;
 
@@ -1619,8 +1619,8 @@ static READ32_HANDLER ( cdregister_r ){
 				exit(1);
 			}
 */
-			d = ((UINT16)((UINT8)CD_info_ptr[CD_info_count+0]) << 8) |
-	     		     (UINT16)((UINT8)CD_info_ptr[CD_info_count+1]);
+			d = ((uint16_t)((uint8_t)CD_info_ptr[CD_info_count+0]) << 8) |
+	     		     (uint16_t)((uint8_t)CD_info_ptr[CD_info_count+1]);
 
 			//clog("read info : %06i/%06i = %04x\n", cdb_info_count, cdb_info_size, d);
 
@@ -1815,12 +1815,12 @@ static WRITE32_HANDLER ( cdregister_w ){
 7e
 7f -w EXLE2/1
 */
-UINT8 IOSEL1;
-UINT8 IOSEL2;
-UINT8 EXLE1;
-UINT8 EXLE2;
-UINT8 PDR1;
-UINT8 PDR2;
+uint8_t IOSEL1;
+uint8_t IOSEL2;
+uint8_t EXLE1;
+uint8_t EXLE2;
+uint8_t PDR1;
+uint8_t PDR2;
 
 #define SH2_DIRECT_MODE_PORT_1 IOSEL1 = 1
 #define SH2_DIRECT_MODE_PORT_2 IOSEL2 = 1
@@ -1840,7 +1840,7 @@ static void system_reset()
 	/*Order is surely wrong but whatever...*/
 }
 
-static UINT8 stv_SMPC_r8 (int offset)
+static uint8_t stv_SMPC_r8 (int offset)
 {
 	int return_data;
 
@@ -1867,7 +1867,7 @@ static UINT8 stv_SMPC_r8 (int offset)
 	return return_data;
 }
 
-static void stv_SMPC_w8 (int offset, UINT8 data)
+static void stv_SMPC_w8 (int offset, uint8_t data)
 {
 	time_t ltime;
 	struct tm *today;
@@ -2228,12 +2228,12 @@ offsets:
 	7h
 	7l PORT-AD
 */
-static UINT8 port_ad[] =
+static uint8_t port_ad[] =
 {
 	0xcc,0xb2,0x99,0x7f,0x66,0x4c,0x33,0x19
 };
 
-static UINT8 port_sel,mux_data;
+static uint8_t port_sel,mux_data;
 
 #define HI_WORD_ACCESS (mem_mask & 0x00ff0000) == 0
 #define LO_WORD_ACCESS (mem_mask & 0x000000ff) == 0
@@ -2701,7 +2701,7 @@ WRITE32_HANDLER( stv_scu_w32 )
 
 static void dma_direct_lv0()
 {
-	static UINT32 tmp_src,tmp_dst,tmp_size;
+	static uint32_t tmp_src,tmp_dst,tmp_size;
 	logerror("DMA lv 0 transfer START\n"
 			 "Start %08x End %08x Size %04x\n",scu_src_0,scu_dst_0,scu_size_0);
 	logerror("Start Add %04x Destination Add %04x\n",scu_src_add_0,scu_dst_add_0);
@@ -2736,7 +2736,7 @@ static void dma_direct_lv0()
 
 static void dma_direct_lv1()
 {
-	static UINT32 tmp_src,tmp_dst,tmp_size;
+	static uint32_t tmp_src,tmp_dst,tmp_size;
 	logerror("DMA lv 1 transfer START\n"
 			 "Start %08x End %08x Size %04x\n",scu_src_1,scu_dst_1,scu_size_1);
 	logerror("Start Add %04x Destination Add %04x\n",scu_src_add_1,scu_dst_add_1);
@@ -2771,7 +2771,7 @@ static void dma_direct_lv1()
 
 static void dma_direct_lv2()
 {
-	static UINT32 tmp_src,tmp_dst,tmp_size;
+	static uint32_t tmp_src,tmp_dst,tmp_size;
 	logerror("DMA lv 2 transfer START\n"
 			 "Start %08x End %08x Size %04x\n",scu_src_2,scu_dst_2,scu_size_2);
 	logerror("Start Add %04x Destination Add %04x\n",scu_src_add_2,scu_dst_add_2);
@@ -2807,9 +2807,9 @@ static void dma_direct_lv2()
 static void dma_indirect_lv0()
 {
 	/*Helper to get out of the cycle*/
-	UINT8 job_done = 0;
+	uint8_t job_done = 0;
 	/*temporary storage for the transfer data*/
-	UINT32 tmp_src;
+	uint32_t tmp_src;
 
 	SET_D0MV_FROM_0_TO_1;
 
@@ -2868,9 +2868,9 @@ static void dma_indirect_lv0()
 static void dma_indirect_lv1()
 {
 	/*Helper to get out of the cycle*/
-	UINT8 job_done = 0;
+	uint8_t job_done = 0;
 	/*temporary storage for the transfer data*/
-	UINT32 tmp_src;
+	uint32_t tmp_src;
 
 	SET_D1MV_FROM_0_TO_1;
 
@@ -2930,9 +2930,9 @@ static void dma_indirect_lv1()
 static void dma_indirect_lv2()
 {
 	/*Helper to get out of the cycle*/
-	UINT8 job_done = 0;
+	uint8_t job_done = 0;
 	/*temporary storage for the transfer data*/
-	UINT32 tmp_src;
+	uint32_t tmp_src;
 
 	SET_D2MV_FROM_0_TO_1;
 

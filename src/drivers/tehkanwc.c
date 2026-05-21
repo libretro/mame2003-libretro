@@ -83,7 +83,7 @@ TO DO :
 #include "cpu/z80/z80.h"
 
 
-extern UINT8 *tehkanwc_videoram2;
+extern uint8_t *tehkanwc_videoram2;
 
 extern WRITE_HANDLER( tehkanwc_videoram_w );
 extern WRITE_HANDLER( tehkanwc_colorram_w );
@@ -99,7 +99,7 @@ extern VIDEO_START( tehkanwc );
 extern VIDEO_UPDATE( tehkanwc );
 
 
-static UINT8 *shared_ram;
+static uint8_t *shared_ram;
 
 static READ_HANDLER( shared_r )
 {
@@ -211,7 +211,7 @@ void tehkanwc_adpcm_int (int data)
 {
 	static int toggle;
 
-	UINT8 *SAMPLES = memory_region(REGION_SOUND1);
+	uint8_t *SAMPLES = memory_region(REGION_SOUND1);
 	int msm_data = SAMPLES[msm_data_offs & 0x7fff];
 
 	if (toggle == 0)

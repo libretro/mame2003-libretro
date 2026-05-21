@@ -453,10 +453,10 @@ ROM_END
 	(it could be easily converted into an iterative one).
 	It's called shuffle because it mimics the shuffling of a deck of cards.
 */
-static void shuffle(UINT8 *buf,int len)
+static void shuffle(uint8_t *buf,int len)
 {
 	int i;
-	UINT8 t;
+	uint8_t t;
 
 	if (len == 2) return;
 

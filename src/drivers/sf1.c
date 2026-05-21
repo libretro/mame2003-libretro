@@ -61,7 +61,7 @@ static WRITE16_HANDLER( soundcmd_w )
 /* The protection of the japanese version */
 /* I'd love to see someone dump the 68705 rom */
 
-static void write_dword(offs_t offset,UINT32 data)
+static void write_dword(offs_t offset,uint32_t data)
 {
 	cpu_writemem24bew_word(offset,data >> 16);
 	cpu_writemem24bew_word(offset+2,data);

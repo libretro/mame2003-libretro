@@ -91,8 +91,8 @@ Interrupts: VBlank causes an IRQ. Coin insertion causes a NMI.
 #include "vidhrdw/crtc6845.h"
 
 
-extern UINT8 *rockola_videoram2;
-extern UINT8 *rockola_charram;
+extern uint8_t *rockola_videoram2;
+extern uint8_t *rockola_charram;
 
 extern const char *vanguard_sample_names[];
 

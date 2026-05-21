@@ -140,7 +140,7 @@ void multi32_set_colour (int offset, int monitor)
 	int data;
 	int r,g,b;
 	int r2,g2,b2;
-	UINT16 r_bright, g_bright, b_bright;
+	uint16_t r_bright, g_bright, b_bright;
 
 	/* Although the hardware writes to all 65536 colours on both monitors, the
 	   games do not use more than 16384 colours per monitor.  We discard any
@@ -606,7 +606,7 @@ static struct GfxDecodeInfo gfxdecodeinfo[] =
 	{ -1 } /* end of array */
 };
 
-static UINT8 *sys32_SoundMemBank;
+static uint8_t *sys32_SoundMemBank;
 
 static READ_HANDLER( system32_bank_r )
 {

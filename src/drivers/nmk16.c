@@ -381,7 +381,7 @@ static READ16_HANDLER( macross2_sound_result_r )
 
 static WRITE_HANDLER( macross2_sound_bank_w )
 {
-	const UINT8 *rom = memory_region(REGION_CPU2) + 0x10000;
+	const uint8_t *rom = memory_region(REGION_CPU2) + 0x10000;
 
 	cpu_setbank(1,rom + (data & 0x07) * 0x4000);
 }

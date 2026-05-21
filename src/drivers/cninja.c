@@ -1683,7 +1683,7 @@ ROM_END
 
 static void cninja_patch(void)
 {
-	data16_t *RAM = (UINT16 *)memory_region(REGION_CPU1);
+	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 	int i;
 
 	for (i=0; i<0x80000/2; i++) {

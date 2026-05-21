@@ -52,7 +52,7 @@ Stephh's notes :
 
 static WRITE_HANDLER( iqblock_prot_w )
 {
-    UINT8 *mem = memory_region( REGION_CPU1 );
+    uint8_t *mem = memory_region( REGION_CPU1 );
 
     mem[0xfe26] = data;
     mem[0xfe27] = data;
@@ -61,7 +61,7 @@ static WRITE_HANDLER( iqblock_prot_w )
 
 static WRITE_HANDLER( grndtour_prot_w )
 {
-    UINT8 *mem = memory_region( REGION_CPU1 );
+    uint8_t *mem = memory_region( REGION_CPU1 );
 
 	mem[0xfe39] = data;
     mem[0xfe3a] = data;
@@ -411,7 +411,7 @@ ROM_END
 
 static DRIVER_INIT( iqblock )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 	/* decrypt the program ROM */
@@ -433,7 +433,7 @@ static DRIVER_INIT( iqblock )
 
 static DRIVER_INIT( grndtour )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 	/* decrypt the program ROM */
@@ -456,7 +456,7 @@ static DRIVER_INIT( grndtour )
 
 static DRIVER_INIT( cabaret )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 	/* decrypt the program ROM */

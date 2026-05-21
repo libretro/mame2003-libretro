@@ -24,7 +24,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *bsktball_motion;
+extern uint8_t *bsktball_motion;
 
 extern WRITE_HANDLER( bsktball_videoram_w );
 

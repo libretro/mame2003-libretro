@@ -25,15 +25,15 @@
 static data16_t *control;
 static data16_t *ram_base;
 
-static UINT8 tms_irq, hack_irq;
+static uint8_t tms_irq, hack_irq;
 
-static UINT8 prot_input[16];
-static UINT8 prot_input_index;
-static UINT8 prot_output[16];
-static UINT8 prot_output_index;
-static UINT8 prot_output_bit;
-static UINT8 prot_bit_index;
-static UINT16 prot_save;
+static uint8_t prot_input[16];
+static uint8_t prot_input_index;
+static uint8_t prot_output[16];
+static uint8_t prot_output_index;
+static uint8_t prot_output_bit;
+static uint8_t prot_bit_index;
+static uint16_t prot_save;
 
 static void (*protection_handler)(void);
 
@@ -162,15 +162,15 @@ static void ultennis_protection(void)
 		case 0x01:	/* 01 aaaa bbbb cccc dddd (xxxx) */
 			if (prot_input_index == 9)
 			{
-				UINT16 a = prot_input[1] | (prot_input[2] << 8);
-				UINT16 b = prot_input[3] | (prot_input[4] << 8);
-				UINT16 c = prot_input[5] | (prot_input[6] << 8);
-				UINT16 d = prot_input[7] | (prot_input[8] << 8);
-				UINT16 x = a - b;
-				if ((INT16)x >= 0)
+				uint16_t a = prot_input[1] | (prot_input[2] << 8);
+				uint16_t b = prot_input[3] | (prot_input[4] << 8);
+				uint16_t c = prot_input[5] | (prot_input[6] << 8);
+				uint16_t d = prot_input[7] | (prot_input[8] << 8);
+				uint16_t x = a - b;
+				if ((int16_t)x >= 0)
 					x = (x * c) >> 16;
 				else
-					x = -(((UINT16)-x * c) >> 16);
+					x = -(((uint16_t)-x * c) >> 16);
 				x += d;
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
@@ -196,10 +196,10 @@ static void ultennis_protection(void)
 			*/
 			if (prot_input_index == 7)
 			{
-				UINT16 a = (INT16)(prot_input[1] | (prot_input[2] << 8));
-				UINT16 b = (INT16)(prot_input[3] | (prot_input[4] << 8));
-				/*UINT16 c = (INT16)(prot_input[5] | (prot_input[6] << 8));*/
-				UINT32 x = a * a * (b/2);
+				uint16_t a = (int16_t)(prot_input[1] | (prot_input[2] << 8));
+				uint16_t b = (int16_t)(prot_input[3] | (prot_input[4] << 8));
+				/*uint16_t c = (int16_t)(prot_input[5] | (prot_input[6] << 8));*/
+				uint32_t x = a * a * (b/2);
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
 				prot_output[2] = x >> 16;
@@ -213,7 +213,7 @@ static void ultennis_protection(void)
 		case 0x03:	/* 03 (xxxx) */
 			if (prot_input_index == 1)
 			{
-				UINT16 x = prot_save;
+				uint16_t x = prot_save;
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
 				prot_output_index = 0;
@@ -225,7 +225,7 @@ static void ultennis_protection(void)
 		case 0x04:	/* 04 aaaa */
 			if (prot_input_index == 3)
 			{
-				UINT16 a = prot_input[1] | (prot_input[2] << 8);
+				uint16_t a = prot_input[1] | (prot_input[2] << 8);
 				prot_save = a;
 				prot_input_index = prot_output_index = 0;
 			}
@@ -252,15 +252,15 @@ static void cheesech_protection(void)
 		case 0x01:	/* 01 aaaa bbbb (xxxx) */
 			if (prot_input_index == 5)
 			{
-				UINT16 a = prot_input[1] | (prot_input[2] << 8);
-				UINT16 b = prot_input[3] | (prot_input[4] << 8);
-				UINT16 c = 0x4000;		/* seems to be hard-coded */
-				UINT16 d = 0x00a0;		/* seems to be hard-coded */
-				UINT16 x = a - b;
-				if ((INT16)x >= 0)
+				uint16_t a = prot_input[1] | (prot_input[2] << 8);
+				uint16_t b = prot_input[3] | (prot_input[4] << 8);
+				uint16_t c = 0x4000;		/* seems to be hard-coded */
+				uint16_t d = 0x00a0;		/* seems to be hard-coded */
+				uint16_t x = a - b;
+				if ((int16_t)x >= 0)
 					x = (x * c) >> 16;
 				else
-					x = -(((UINT16)-x * c) >> 16);
+					x = -(((uint16_t)-x * c) >> 16);
 				x += d;
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
@@ -273,7 +273,7 @@ static void cheesech_protection(void)
 		case 0x03:	/* 03 (xxxx) */
 			if (prot_input_index == 1)
 			{
-				UINT16 x = prot_save;
+				uint16_t x = prot_save;
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
 				prot_output_index = 0;
@@ -285,7 +285,7 @@ static void cheesech_protection(void)
 		case 0x04:	/* 04 aaaa */
 			if (prot_input_index == 3)
 			{
-				UINT16 a = prot_input[1] | (prot_input[2] << 8);
+				uint16_t a = prot_input[1] | (prot_input[2] << 8);
 				prot_save = a;
 				prot_input_index = prot_output_index = 0;
 			}
@@ -307,15 +307,15 @@ static void stonebal_protection(void)
 		case 0x01:	/* 01 aaaa bbbb cccc dddd (xxxx) */
 			if (prot_input_index == 9)
 			{
-				UINT16 a = prot_input[1] | (prot_input[2] << 8);
-				UINT16 b = prot_input[3] | (prot_input[4] << 8);
-				UINT16 c = prot_input[5] | (prot_input[6] << 8);
-				UINT16 d = prot_input[7] | (prot_input[8] << 8);
-				UINT16 x = a - b;
-				if ((INT16)x >= 0)
+				uint16_t a = prot_input[1] | (prot_input[2] << 8);
+				uint16_t b = prot_input[3] | (prot_input[4] << 8);
+				uint16_t c = prot_input[5] | (prot_input[6] << 8);
+				uint16_t d = prot_input[7] | (prot_input[8] << 8);
+				uint16_t x = a - b;
+				if ((int16_t)x >= 0)
 					x = (x * d) >> 16;
 				else
-					x = -(((UINT16)-x * d) >> 16);
+					x = -(((uint16_t)-x * d) >> 16);
 				x += c;
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
@@ -328,8 +328,8 @@ static void stonebal_protection(void)
 		case 0x02:	/* 02 aaaa (xx) */
 			if (prot_input_index == 3)
 			{
-				/*UINT16 a = prot_input[1] | (prot_input[2] << 8);*/
-				UINT8 x = 0xa5;
+				/*uint16_t a = prot_input[1] | (prot_input[2] << 8);*/
+				uint8_t x = 0xa5;
 				prot_output[0] = x;
 				prot_output_index = 0;
 			}
@@ -340,7 +340,7 @@ static void stonebal_protection(void)
 		case 0x03:	/* 03 (xxxx) */
 			if (prot_input_index == 1)
 			{
-				UINT16 x = prot_save;
+				uint16_t x = prot_save;
 				prot_output[0] = x;
 				prot_output[1] = x >> 8;
 				prot_output_index = 0;
@@ -352,7 +352,7 @@ static void stonebal_protection(void)
 		case 0x04:	/* 04 aaaa */
 			if (prot_input_index == 3)
 			{
-				UINT16 a = prot_input[1] | (prot_input[2] << 8);
+				uint16_t a = prot_input[1] | (prot_input[2] << 8);
 				prot_save = a;
 				prot_input_index = prot_output_index = 0;
 			}

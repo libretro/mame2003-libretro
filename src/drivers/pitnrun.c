@@ -79,7 +79,7 @@ READ_HANDLER( pitnrun_mcu_data_r );
 READ_HANDLER( pitnrun_mcu_status_r );
 WRITE_HANDLER( pitnrun_mcu_data_w );
 
-extern UINT8* videoram2;
+extern uint8_t* videoram2;
 
 WRITE_HANDLER( pitnrun_videoram_w );
 WRITE_HANDLER( pitnrun_videoram2_w );

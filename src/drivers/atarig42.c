@@ -32,7 +32,7 @@
  *
  *************************************/
 
-static UINT8 analog_data;
+static uint8_t analog_data;
 static data16_t *mo_command;
 
 static int sloop_bank;
@@ -280,7 +280,7 @@ static WRITE16_HANDLER( roadriot_sloop_data_w )
 
 static void guardians_sloop_tweak(int offset)
 {
-	static UINT32 last_accesses[8];
+	static uint32_t last_accesses[8];
 	
 	if (offset >= 0x7f7c0/2)
 	{
@@ -645,7 +645,7 @@ ROM_END
 
 static DRIVER_INIT( roadriot )
 {
-	static const UINT16 default_eeprom[] =
+	static const uint16_t default_eeprom[] =
 	{
 		0x0001,0x01B7,0x01AF,0x01E4,0x0100,0x0130,0x0300,0x01CC,
 		0x0700,0x01FE,0x0500,0x0102,0x0200,0x0108,0x011B,0x01C8,
@@ -694,7 +694,7 @@ static DRIVER_INIT( roadriot )
 
 static DRIVER_INIT( guardian )
 {
-	static const UINT16 default_eeprom[] =
+	static const uint16_t default_eeprom[] =
 	{
 		0x0001,0x01FD,0x01FF,0x01EF,0x0100,0x01CD,0x0300,0x0104,
 		0x0700,0x0117,0x0F00,0x0133,0x1F00,0x0133,0x2400,0x0120,

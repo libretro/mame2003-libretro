@@ -10,8 +10,8 @@ driver by Nicola Salmoria
 #include "vidhrdw/generic.h"
 #include "machine/8255ppi.h"
 
-static UINT8 drawctrl[3];
-static UINT8 color[8];
+static uint8_t drawctrl[3];
+static uint8_t color[8];
 
 
 VIDEO_UPDATE( findout )

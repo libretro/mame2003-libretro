@@ -208,7 +208,7 @@
 #define IN0_VG_HALT (1<<6)
 
 
-UINT8 rb_input_select;
+uint8_t rb_input_select;
 
 
 
@@ -253,7 +253,7 @@ READ_HANDLER( bzone_IN0_r )
 
 
 /* Translation table for one-joystick emulation */
-static UINT8 one_joy_trans[] =
+static uint8_t one_joy_trans[] =
 {
 	0x00,0x0A,0x05,0x00,0x06,0x02,0x01,0x00,
 	0x09,0x08,0x04,0x00,0x00,0x00,0x00,0x00
@@ -858,7 +858,7 @@ ROM_END
  *
  *************************************/
 
-static UINT8 analog_data;
+static uint8_t analog_data;
 
 static READ_HANDLER( analog_data_r )
 {

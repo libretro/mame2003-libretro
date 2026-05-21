@@ -37,7 +37,7 @@
  *
  *************************************/
 
-UINT8 atarigt_is_primrage;
+uint8_t atarigt_is_primrage;
 
 static data32_t *	mo_command;
 
@@ -272,11 +272,11 @@ static WRITE32_HANDLER( sound_data_w )
 #define ADDRSEQ_COUNT	4
 
 static offs_t protaddr[ADDRSEQ_COUNT];
-static UINT8 protmode;
-static UINT16 protresult;
-static UINT8 protdata[0x800];
+static uint8_t protmode;
+static uint16_t protresult;
+static uint8_t protdata[0x800];
 
-static UINT8 ignore_writes = 0;
+static uint8_t ignore_writes = 0;
 
 static void tmek_update_mode(offs_t offset)
 {
@@ -290,7 +290,7 @@ static void tmek_update_mode(offs_t offset)
 }
 
 
-static void tmek_protection_w(offs_t offset, UINT16 data)
+static void tmek_protection_w(offs_t offset, uint16_t data)
 {
 #if LOG_PROTECTION
 	logerror("%06X:Protection W@%06X = %04X\n", activecpu_get_previouspc(), offset, data);
@@ -379,7 +379,7 @@ static void primrage_protection_w(offs_t offset, data16_t data)
 {
 #if LOG_PROTECTION
 {
-	UINT32 pc = activecpu_get_previouspc();
+	uint32_t pc = activecpu_get_previouspc();
 	switch (pc)
 	{
 		/* protection code from 20f90 - 21000 */
@@ -453,8 +453,8 @@ static void primrage_protection_r(offs_t offset, data16_t *data)
 
 #if LOG_PROTECTION
 {
-	UINT32 pc = activecpu_get_previouspc();
-	UINT32 p1, p2, a6;
+	uint32_t pc = activecpu_get_previouspc();
+	uint32_t p1, p2, a6;
 	switch (pc)
 	{
 		/* protection code from 20f90 - 21000 */

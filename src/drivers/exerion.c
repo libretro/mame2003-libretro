@@ -60,8 +60,8 @@ static INTERRUPT_GEN( exerion_interrupt )
 
 /* This is the first of many Exerion "features." No clue if it's */
 /* protection or some sort of timer. */
-static UINT8 porta;
-static UINT8 portb;
+static uint8_t porta;
+static uint8_t portb;
 
 static READ_HANDLER( exerion_porta_r )
 {
@@ -82,7 +82,7 @@ static WRITE_HANDLER( exerion_portb_w )
 
 static READ_HANDLER( exerion_protection_r )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	if (activecpu_get_pc() == 0x4143)
 		return RAM[0x33c0 + (RAM[0x600d] << 2) + offset];
@@ -442,8 +442,8 @@ ROM_END
 
 static DRIVER_INIT( exerion )
 {
-	UINT32 oldaddr, newaddr, length;
-	UINT8 *src, *dst, *temp;
+	uint32_t oldaddr, newaddr, length;
+	uint8_t *src, *dst, *temp;
 
 	/* allocate some temporary space */
 	temp = malloc(0x10000);
@@ -493,7 +493,7 @@ static DRIVER_INIT( exerion )
 
 static DRIVER_INIT( exerionb )
 {
-	UINT8 *ram = memory_region(REGION_CPU1);
+	uint8_t *ram = memory_region(REGION_CPU1);
 	int addr;
 
 	/* the program ROMs have data lines D1 and D2 swapped. Decode them. */

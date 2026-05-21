@@ -173,11 +173,11 @@ static void mcu63705_update_inputs(void)
 #define A 0x10
 #define D 0x20
 
-	static UINT8 tapc[4] = {0,0,0,0};	// R1, R2, L1, L2
-	static UINT8 last_port[2] = {0,0};
-	static UINT8 last_dash[2] = {0,0};
-	UINT8 curr_port[2];
-	UINT8 curr_dash[2];
+	static uint8_t tapc[4] = {0,0,0,0};	// R1, R2, L1, L2
+	static uint8_t last_port[2] = {0,0};
+	static uint8_t last_dash[2] = {0,0};
+	uint8_t curr_port[2];
+	uint8_t curr_dash[2];
 	int p;
 
 	for (p=0; p<=1; p++)

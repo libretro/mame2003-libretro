@@ -25,12 +25,12 @@ WRITE_HANDLER( goindol_fg_videoram_w );
 WRITE_HANDLER( goindol_bg_videoram_w );
 VIDEO_UPDATE( goindol );
 
-extern UINT8 *goindol_fg_scrollx;
-extern UINT8 *goindol_fg_scrolly;
-extern UINT8 *goindol_fg_videoram;
-extern UINT8 *goindol_bg_videoram;
-extern UINT8 *spriteram_1;
-extern UINT8 *spriteram_2;
+extern uint8_t *goindol_fg_scrollx;
+extern uint8_t *goindol_fg_scrolly;
+extern uint8_t *goindol_fg_videoram;
+extern uint8_t *goindol_bg_videoram;
+extern uint8_t *spriteram_1;
+extern uint8_t *spriteram_2;
 extern size_t goindol_fg_videoram_size;
 extern size_t goindol_bg_videoram_size;
 extern int goindol_char_bank;
@@ -39,7 +39,7 @@ extern int goindol_char_bank;
 WRITE_HANDLER( goindol_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	bankaddress = 0x10000 + ((data & 3) * 0x4000);
 	cpu_setbank(1,&RAM[bankaddress]);
@@ -66,7 +66,7 @@ static READ_HANDLER( prot_f422_r )
 }
 
 
-static UINT8 *ram;
+static uint8_t *ram;
 
 static WRITE_HANDLER( prot_fc44_w )
 {
@@ -467,7 +467,7 @@ ROM_END
 
 DRIVER_INIT( goindol )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 
 	/* I hope that's all patches to avoid protection */

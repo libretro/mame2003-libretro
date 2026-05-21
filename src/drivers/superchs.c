@@ -43,7 +43,7 @@
 VIDEO_START( superchs );
 VIDEO_UPDATE( superchs );
 
-static UINT16 coin_word;
+static uint16_t coin_word;
 static data32_t *superchs_ram;
 static data32_t *shared_ram;
 extern data32_t *f3_shared_ram;

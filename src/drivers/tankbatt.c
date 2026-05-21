@@ -59,7 +59,7 @@ Known issues:
 #include "vidhrdw/generic.h"
 #include "cpu/m6502/m6502.h"
 
-extern UINT8 *tankbatt_bulletsram;
+extern uint8_t *tankbatt_bulletsram;
 extern size_t tankbatt_bulletsram_size;
 
 static int tankbatt_nmi_enable; /* No need to init this - the game will set it on reset */

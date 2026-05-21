@@ -35,7 +35,7 @@
 #include "vidhrdw/generic.h"
 
 /* From vidhrdw/nova2001.c */
-extern UINT8 *nova2001_videoram2, *nova2001_colorram2;
+extern uint8_t *nova2001_videoram2, *nova2001_colorram2;
 
 extern WRITE_HANDLER( nova2001_videoram_w );
 extern WRITE_HANDLER( nova2001_colorram_w );

@@ -22,9 +22,9 @@ MAIN BOARD:
 
 extern void konami1_decode(void);
 
-extern UINT8 *sbasketb_scroll;
-extern UINT8 *sbasketb_palettebank;
-extern UINT8 *sbasketb_spriteram_select;
+extern uint8_t *sbasketb_scroll;
+extern uint8_t *sbasketb_palettebank;
+extern uint8_t *sbasketb_spriteram_select;
 
 extern WRITE_HANDLER( sbasketb_videoram_w );
 extern WRITE_HANDLER( sbasketb_colorram_w );

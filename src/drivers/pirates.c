@@ -370,7 +370,7 @@ ROM_END
 static void pirates_decrypt_68k(void)
 {
     int rom_size;
-    UINT16 *buf, *rom;
+    uint16_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(REGION_CPU1);
@@ -379,7 +379,7 @@ static void pirates_decrypt_68k(void)
 
     if (!buf) return;
 
-    rom = (UINT16 *)memory_region(REGION_CPU1);
+    rom = (uint16_t *)memory_region(REGION_CPU1);
     memcpy (buf, rom, rom_size);
 
     for (i=0; i<rom_size/2; i++)
@@ -401,7 +401,7 @@ static void pirates_decrypt_68k(void)
 static void pirates_decrypt_p(void)
 {
     int rom_size;
-    UINT8 *buf, *rom;
+    uint8_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(REGION_GFX1);
@@ -427,7 +427,7 @@ static void pirates_decrypt_p(void)
 static void pirates_decrypt_s(void)
 {
     int rom_size;
-    UINT8 *buf, *rom;
+    uint8_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(REGION_GFX2);
@@ -454,7 +454,7 @@ static void pirates_decrypt_s(void)
 static void pirates_decrypt_oki(void)
 {
     int rom_size;
-    UINT8 *buf, *rom;
+    uint8_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(REGION_SOUND1);

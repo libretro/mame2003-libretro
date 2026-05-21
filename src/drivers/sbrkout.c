@@ -40,8 +40,8 @@ extern INTERRUPT_GEN( sbrkout_interrupt );
 extern READ_HANDLER( sbrkout_select1_r );
 extern READ_HANDLER( sbrkout_select2_r );
 
-extern UINT8 *sbrkout_horiz_ram;
-extern UINT8 *sbrkout_vert_ram;
+extern uint8_t *sbrkout_horiz_ram;
+extern uint8_t *sbrkout_vert_ram;
 
 extern WRITE_HANDLER( sbrkout_videoram_w );
 
@@ -73,7 +73,7 @@ OVERLAY_END
 
 #define TIME_4V 4.075/4
 
-static UINT8 *sbrkout_sound;
+static uint8_t *sbrkout_sound;
 
 static WRITE_HANDLER( sbrkout_dac_w )
 {

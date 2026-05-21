@@ -917,7 +917,7 @@ static void
 SimulatePropCycleMCU( void )
 {
 		int dx,dy;
-		UINT16 data;
+		uint16_t data;
 		static data16_t pedal;
 
 		namcos22_shareram[(0xa0bd00-0xa04000)/4] = readinputport(1)<<8;
@@ -934,7 +934,7 @@ SimulatePropCycleMCU( void )
 
 		if( readinputport( 2 ) & 0x10 ) pedal+=0x10;
 
-		namcos22_shareram[(0xa0bd08-0xa04000)/4] = (UINT16)(dx*0x7fff);
+		namcos22_shareram[(0xa0bd08-0xa04000)/4] = (uint16_t)(dx*0x7fff);
 		namcos22_shareram[(0xa0bd0c-0xa04000)/4] = (dy*0x7fff)<<16;
 		namcos22_shareram[(0xa0bd1c-0xa04000)/4] = pedal<<16;
 }
@@ -2297,11 +2297,11 @@ static void PutPolyData( unsigned addr, unsigned data )
  * and avoids absurdly-sized polygons which make scenes unrecognizable.
  */
 static void
-FixQuads( INT32 *pIndex )
+FixQuads( int32_t *pIndex )
 {
 	int i;
-	INT32 addr = *pIndex;
-	INT32 size = GetPolyData(addr++);
+	int32_t addr = *pIndex;
+	int32_t size = GetPolyData(addr++);
 
 	*pIndex = addr+(size&0xff);
 
@@ -2321,7 +2321,7 @@ FixQuads( INT32 *pIndex )
 		case 0x17:
 			for( i=3+8; i<3+12+8; i++ )
 			{
-				UINT32 data = GetPolyData(addr+i);
+				uint32_t data = GetPolyData(addr+i);
 				if( data&0x800000 ) data |= 0x00ff00; else data &= 0xff00ff; /* replace middle byte with -1 or 0 */
 				PutPolyData( addr+i, data );
 			}
@@ -2330,7 +2330,7 @@ FixQuads( INT32 *pIndex )
 		case 0x18:
 			for( i=4+8; i<4+12+8; i++ )
 			{
-				UINT32 data = GetPolyData(addr+i);
+				uint32_t data = GetPolyData(addr+i);
 				if( data&0x800000 ) data |= 0x00ff00; else data &= 0xff00ff; /* replace middle byte with -1 or 0 */
 				PutPolyData( addr+i, data );
 			}
@@ -2374,10 +2374,10 @@ DecryptPointROMs( void )
 
 	/* process each polygon */
 	{
-		INT32 iFinish = GetPolyData(3);
-		INT32 iDest   = GetPolyData(0x45);
-		INT32 iIndex  = GetPolyData(iDest);
-		INT32 iMaster = 0x45;
+		int32_t iFinish = GetPolyData(3);
+		int32_t iDest   = GetPolyData(0x45);
+		int32_t iIndex  = GetPolyData(iDest);
+		int32_t iMaster = 0x45;
 		while( iIndex<iFinish )
 		{
 			int count = GetPolyData(iMaster+1) - GetPolyData(iMaster) - 1;

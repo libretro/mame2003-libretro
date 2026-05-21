@@ -117,7 +117,7 @@ from Dragon Gun.
 static data32_t *deco32_ram;
 static int raster_enable,raster_offset;
 static void *raster_irq_timer;
-static UINT8 nslasher_sound_irq;
+static uint8_t nslasher_sound_irq;
 
 extern data32_t *deco32_ace_ram;
 extern VIDEO_START( nslasher );
@@ -1781,7 +1781,7 @@ static struct BSMT2000interface bsmt2000_interface =
 	{ 100 }
 };
 
-static const UINT8 tattass_default_eprom[0x160] =
+static const uint8_t tattass_default_eprom[0x160] =
 {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x4a,0x45,0x4b,0x19,
 	0x4e,0x4c,0x4b,0x14,0x4b,0x4a,0x4d,0x0f, 0x42,0x4c,0x53,0x0c,0x4a,0x57,0x43,0x0a,
@@ -2917,7 +2917,7 @@ static READ32_HANDLER( nslasher_skip )
 {
 	int pc = activecpu_get_pc();
 	int left=cycles_left_to_run();
-	UINT32 ret=deco32_ram[0];
+	uint32_t ret=deco32_ram[0];
 
 	if ((pc==0x9c8 || pc== 0xa84)&& left>32 && (ret&0x80)) {
 		cpu_spinuntil_int();
@@ -2940,7 +2940,7 @@ static DRIVER_INIT( captaven )
 
 static DRIVER_INIT( dragngun )
 {
-	data32_t *ROM = (UINT32 *)memory_region(REGION_CPU1);
+	data32_t *ROM = (uint32_t *)memory_region(REGION_CPU1);
 	const data8_t *SRC_RAM = memory_region(REGION_GFX1);
 	data8_t *DST_RAM = memory_region(REGION_GFX2);
 
@@ -2966,7 +2966,7 @@ static DRIVER_INIT( fghthist )
 static DRIVER_INIT( lockload )
 {
 	data8_t *RAM = memory_region(REGION_CPU1);
-/*	data32_t *ROM = (UINT32 *)memory_region(REGION_CPU1);*/
+/*	data32_t *ROM = (uint32_t *)memory_region(REGION_CPU1);*/
 
 	deco74_decrypt(REGION_GFX1);
 	deco74_decrypt(REGION_GFX2);

@@ -13,7 +13,7 @@
 #include "vidhrdw/generic.h"
 #include "cpu/s2650/s2650.h"
 
-extern UINT8 *s2636ram;
+extern uint8_t *s2636ram;
 
 extern WRITE_HANDLER( tinvader_videoram_w );
 extern WRITE_HANDLER( zac_s2636_w );

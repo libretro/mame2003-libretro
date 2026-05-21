@@ -54,11 +54,11 @@ static data32_t pci_bridge_regs[0x40];
 static data32_t pci_3dfx_regs[0x40];
 
 static void *timer[4];
-static UINT32 timer_count[4];
-static UINT8 timer_active[4];
+static uint32_t timer_count[4];
+static uint8_t timer_active[4];
 
-static UINT8 vblank_signalled;
-static UINT8 vblank_irq;
+static uint8_t vblank_signalled;
+static uint8_t vblank_irq;
 static data32_t *vblank_config;
 static data32_t *vblank_enable;
 
@@ -66,7 +66,7 @@ static data32_t *vblank_enable;
    actually present. An unbound player-2 gun stays pinned at analog neutral
    (0x80); the latch trips the first frame it moves off neutral and stays set
    until the machine is reset. */
-static UINT8 carnevil_p2_active;
+static uint8_t carnevil_p2_active;
 
 static data32_t *asic_reset;
 
@@ -239,14 +239,14 @@ static READ32_HANDLER( cmos_r )
  *
  *************************************/
 
-static void pci_bridge_w(UINT8 reg, UINT8 type, data32_t data)
+static void pci_bridge_w(uint8_t reg, uint8_t type, data32_t data)
 {
 	pci_bridge_regs[reg] = data;
 	logerror("%06X:PCI bridge write: reg %d type %d = %08X\n", activecpu_get_pc(), reg, type, data);
 }
 
 
-static void pci_3dfx_w(UINT8 reg, UINT8 type, data32_t data)
+static void pci_3dfx_w(uint8_t reg, uint8_t type, data32_t data)
 {
 	pci_3dfx_regs[reg] = data;
 
@@ -273,7 +273,7 @@ static void pci_3dfx_w(UINT8 reg, UINT8 type, data32_t data)
  *
  *************************************/
 
-static data32_t pci_bridge_r(UINT8 reg, UINT8 type)
+static data32_t pci_bridge_r(uint8_t reg, uint8_t type)
 {
 	data32_t result = pci_bridge_regs[reg];
 
@@ -283,7 +283,7 @@ static data32_t pci_bridge_r(UINT8 reg, UINT8 type)
 }
 
 
-static data32_t pci_3dfx_r(UINT8 reg, UINT8 type)
+static data32_t pci_3dfx_r(uint8_t reg, uint8_t type)
 {
 	data32_t result = pci_3dfx_regs[reg];
 
@@ -624,7 +624,7 @@ static READ32_HANDLER( galileo_r )
 			result = timer_count[which];
 			if (timer_active[which])
 			{
-				UINT32 elapsed = (UINT32)(timer_timeelapsed(timer[which]) / TIMER_CLOCK);
+				uint32_t elapsed = (uint32_t)(timer_timeelapsed(timer[which]) / TIMER_CLOCK);
 				result = (result > elapsed) ? (result - elapsed) : 0;
 			}
 
@@ -677,7 +677,7 @@ static READ32_HANDLER( galileo_r )
 
 static WRITE32_HANDLER( galileo_w )
 {
-	UINT32 oldata = galileo_regs[offset];
+	uint32_t oldata = galileo_regs[offset];
 	COMBINE_DATA(&galileo_regs[offset]);
 
 	/* switch off the offset for special cases */
@@ -738,7 +738,7 @@ static WRITE32_HANDLER( galileo_w )
 				}
 				else if (timer_active[which] && !(data & mask))
 				{
-					UINT32 elapsed = (UINT32)(timer_timeelapsed(timer[which]) / TIMER_CLOCK);
+					uint32_t elapsed = (uint32_t)(timer_timeelapsed(timer[which]) / TIMER_CLOCK);
 					timer_active[which] = 0;
 					timer_count[which] = (timer_count[which] > elapsed) ? (timer_count[which] - elapsed) : 0;
 					timer_adjust(timer[which], TIME_NEVER, which, 0);

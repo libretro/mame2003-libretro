@@ -130,8 +130,8 @@
  *
  *************************************/
 
-static UINT8 speech_val;
-static UINT8 last_speech_write;
+static uint8_t speech_val;
+static uint8_t last_speech_write;
 static data16_t sound_reset_val;
 
 
@@ -1613,8 +1613,8 @@ static DRIVER_INIT( gauntlet2 )
 
 static DRIVER_INIT( vindctr2 )
 {
-	UINT8 *gfx2_base = memory_region(REGION_GFX2);
-	UINT8 *data = malloc(0x8000);
+	uint8_t *gfx2_base = memory_region(REGION_GFX2);
+	uint8_t *data = malloc(0x8000);
 	int i;
 
 	common_init(118, 1);

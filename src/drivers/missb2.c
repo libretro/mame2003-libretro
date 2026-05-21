@@ -47,8 +47,8 @@ VIDEO_UPDATE( missb2 )
 	int offs;
 	int sx,sy,xc,yc;
 	int gfx_num,gfx_attr,gfx_offs;
-	const UINT8 *prom_line;
-	UINT16 bg_offs;
+	const uint8_t *prom_line;
+	uint16_t bg_offs;
 
 	/* Bubble Bobble doesn't have a real video RAM. All graphics (characters */
 	/* and sprites) are stored in the same memory region, and information on */
@@ -77,7 +77,7 @@ VIDEO_UPDATE( missb2 )
 	for (offs = 0;offs < bublbobl_objectram_size;offs += 4)
     {
 		/* skip empty sprites */
-		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
+		/* this is dword aligned so the uint32_t * cast shouldn't give problems */
 		/* on any architecture */
 		if (retro_unaligned32(&bublbobl_objectram[offs]) == 0)
 			continue;

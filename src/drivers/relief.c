@@ -29,9 +29,9 @@
  *
  *************************************/
 
-static UINT8 ym2413_volume;
-static UINT8 overall_volume;
-static UINT32 adpcm_bank_base;
+static uint8_t ym2413_volume;
+static uint8_t overall_volume;
+static uint32_t adpcm_bank_base;
 
 
 
@@ -444,7 +444,7 @@ ROM_END
 
 static void init_common(const data16_t *def_eeprom)
 {
-	UINT8 *sound_base = memory_region(REGION_SOUND1);
+	uint8_t *sound_base = memory_region(REGION_SOUND1);
 
 	atarigen_eeprom_default = def_eeprom;
 

@@ -45,17 +45,17 @@ static READ_HANDLER( embargo_input_r )
 
 static READ_HANDLER( embargo_dial_r )
 {
-	UINT8 lo = 0;
-	UINT8 hi = 0;
+	uint8_t lo = 0;
+	uint8_t hi = 0;
 
-	UINT8 mapped_lo = 0;
-	UINT8 mapped_hi = 0;
+	uint8_t mapped_lo = 0;
+	uint8_t mapped_hi = 0;
 
 	int i;
 
 	/* game reads 4 bits per dial and maps them onto clock directions */
 
-	static const UINT8 map[] =
+	static const uint8_t map[] =
 	{
 		0x0, 0xB, 0x1, 0x2, 0x4, 0x4, 0x2, 0x3,
 		0x9, 0xA, 0x8, 0x9, 0x8, 0x5, 0x7, 0x6

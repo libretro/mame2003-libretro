@@ -290,7 +290,7 @@ static READ16_HANDLER( player2_r )	// players 2 and 4
 
 static WRITE16_HANDLER( moo_prot_w )
 {
-	UINT32 src1, src2, dst, length, a, b, res;
+	uint32_t src1, src2, dst, length, a, b, res;
 
 	COMBINE_DATA(&protram[offset]);
 
@@ -866,8 +866,8 @@ static DRIVER_INIT( moo )
 	konami_rom_deinterleave_2(REGION_GFX1);
 	konami_rom_deinterleave_4(REGION_GFX2);
 
-	state_save_register_INT32("Moo", 0, "control2", (INT32 *)&cur_control2, 1);
-	state_save_register_UINT16("Moo", 0, "protram", (UINT16 *)protram, 1);
+	state_save_register_INT32("Moo", 0, "control2", (int32_t *)&cur_control2, 1);
+	state_save_register_UINT16("Moo", 0, "protram", (uint16_t *)protram, 1);
 
 	game_type = (!strcmp(Machine->gamedrv->name, "bucky") || !strcmp(Machine->gamedrv->name, "buckyua"));
 }

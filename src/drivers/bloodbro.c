@@ -763,7 +763,7 @@ ROM_END
 
 static DRIVER_INIT( weststry )
 {
-	UINT8 *gfx = memory_region(REGION_GFX3);
+	uint8_t *gfx = memory_region(REGION_GFX3);
 	int i;
 
 	/* invert sprite data */

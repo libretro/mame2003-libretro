@@ -11,7 +11,7 @@ Based on drivers from Juno First emulator by Chris Hardy (chrish@kcbbs.gen.nz)
 
 extern void konami1_decode(void);
 
-extern UINT8 *hyperspt_scroll;
+extern uint8_t *hyperspt_scroll;
 
 extern WRITE_HANDLER( hyperspt_videoram_w );
 extern WRITE_HANDLER( hyperspt_colorram_w );
@@ -63,7 +63,7 @@ static READ_HANDLER( konami_IN1_r )
 /*
  Track'n'Field has 1k of battery backed RAM which can be erased by setting a dipswitch
 */
-static UINT8 *nvram;
+static uint8_t *nvram;
 static size_t nvram_size;
 static int we_flipped_the_switch;
 

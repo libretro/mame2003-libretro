@@ -53,7 +53,7 @@ Games by Nihon Game/Culture Brain:
 #include "cpu/z80/z80.h"
 
 /* from vidhrdw/shangkid.c */
-extern UINT8 *shangkid_videoreg;
+extern uint8_t *shangkid_videoreg;
 extern int shangkid_gfx_type;
 
 VIDEO_START( shangkid );

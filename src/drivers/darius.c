@@ -145,8 +145,8 @@ MACHINE_INIT( darius );
 VIDEO_START( darius );
 VIDEO_UPDATE( darius );
 
-static UINT16 cpua_ctrl;
-static UINT16 coin_word=0;
+static uint16_t cpua_ctrl;
+static uint16_t coin_word=0;
 
 extern data16_t *darius_fg_ram;
 READ16_HANDLER ( darius_fg_layer_r );
@@ -354,12 +354,12 @@ static WRITE_HANDLER( display_value )
                Sound mixer/pan control
 *****************************************************/
 
-static UINT32 darius_def_vol[0x10];
+static uint32_t darius_def_vol[0x10];
 
 #define DARIUS_VOL_MAX    (3*2 + 2)
 #define DARIUS_PAN_MAX    (2 + 2 + 1)	/* FM 2port + PSG 2port + DA 1port */
-static UINT8 darius_vol[DARIUS_VOL_MAX];
-static UINT8 darius_pan[DARIUS_PAN_MAX];
+static uint8_t darius_vol[DARIUS_VOL_MAX];
+static uint8_t darius_pan[DARIUS_PAN_MAX];
 
 static void update_fm0( void )
 {

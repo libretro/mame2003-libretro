@@ -278,7 +278,7 @@ ROM_END
 
 static DRIVER_INIT( bishi )
 {
-	state_save_register_INT32("bishi", 0, "control2", (INT32 *)&cur_control, 1);
+	state_save_register_INT32("bishi", 0, "control2", (int32_t *)&cur_control, 1);
 }
 
 GAMEX( 1996, bishi,     0,       bishi,     bishi,     bishi,      ROT0, "Konami", "Bishi Bashi Championship Mini Game Senshuken", GAME_IMPERFECT_GRAPHICS)

@@ -162,16 +162,16 @@
 
 /*-- Variables --*/
 
-static UINT8 segae_8000bank;	/* Current VDP Bank Selected for 0x8000 - 0xbfff writes */
-static UINT8 port_fa_last;		/* Last thing written to port 0xfa (control related) */
-static UINT8 hintcount;			/* line interrupt counter, decreased each scanline */
-UINT8 vintpending;				/* vertical interrupt pending flag */
-UINT8 hintpending;				/* scanline interrupt pending flag */
+static uint8_t segae_8000bank;	/* Current VDP Bank Selected for 0x8000 - 0xbfff writes */
+static uint8_t port_fa_last;		/* Last thing written to port 0xfa (control related) */
+static uint8_t hintcount;			/* line interrupt counter, decreased each scanline */
+uint8_t vintpending;				/* vertical interrupt pending flag */
+uint8_t hintpending;				/* scanline interrupt pending flag */
 
 /*- in (vidhrdw/segasyse.c) -*/
-extern UINT8 segae_vdp_vrambank[];	/* vdp's vram bank */
-extern UINT8 *segae_vdp_vram[];		/* pointer to start of vdp's vram */
-extern UINT8 *segae_vdp_regs[];		/* pointer to vdp's registers */
+extern uint8_t segae_vdp_vrambank[];	/* vdp's vram bank */
+extern uint8_t *segae_vdp_vram[];		/* pointer to start of vdp's vram */
+extern uint8_t *segae_vdp_regs[];		/* pointer to vdp's registers */
 
 /*-- Prototypes --*/
 
@@ -191,10 +191,10 @@ static WRITE_HANDLER (segae_port_be_bf_w);
 VIDEO_START( segae );
 VIDEO_UPDATE( segae );
 
-unsigned char segae_vdp_ctrl_r ( UINT8 chip );
-unsigned char segae_vdp_data_r ( UINT8 chip );
-void segae_vdp_ctrl_w ( UINT8 chip, UINT8 data );
-void segae_vdp_data_w ( UINT8 chip, UINT8 data );
+unsigned char segae_vdp_ctrl_r ( uint8_t chip );
+unsigned char segae_vdp_data_r ( uint8_t chip );
+void segae_vdp_ctrl_w ( uint8_t chip, uint8_t data );
+void segae_vdp_data_w ( uint8_t chip, uint8_t data );
 
 void segae_drawscanline(int line, int chips, int blank);
 
@@ -283,7 +283,7 @@ static WRITE_HANDLER (segae_mem_8000_w)
 
 ***************************************/
 
-UINT8 rombank;
+uint8_t rombank;
 
 void segae_bankswitch (void)
 {
@@ -307,8 +307,8 @@ static WRITE_HANDLER (segae_port_f7_w)
 
 static READ_HANDLER (segae_port_7e_7f_r)
 {
-	UINT8 temp = 0;
-	UINT16 sline;
+	uint8_t temp = 0;
+	uint16_t sline;
 
 	switch (offset)
 	{
@@ -329,7 +329,7 @@ static READ_HANDLER (segae_port_7e_7f_r)
 static READ_HANDLER (segae_port_ba_bb_r)
 {
 	/* These Addresses access the Back Layer VDP (0) */
-	UINT8 temp = 0;
+	uint8_t temp = 0;
 
 	switch (offset)
 	{
@@ -344,7 +344,7 @@ static READ_HANDLER (segae_port_ba_bb_r)
 static READ_HANDLER (segae_port_be_bf_r)
 {
 	/* These Addresses access the Front Layer VDP (1) */
-	UINT8 temp = 0;
+	uint8_t temp = 0;
 
 	switch (offset)
 	{
@@ -384,7 +384,7 @@ static WRITE_HANDLER (segae_port_be_bf_w)
 
 static READ_HANDLER (segae_hangonjr_port_f8_r)
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	temp = 0;
 

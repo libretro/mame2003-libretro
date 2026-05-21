@@ -31,10 +31,10 @@
 
 
 /* Local variables */
-static UINT8 *slapstic_source;
-static UINT8 *slapstic_base;
-static UINT8 current_bank;
-static UINT8 is_esb;
+static uint8_t *slapstic_source;
+static uint8_t *slapstic_base;
+static uint8_t current_bank;
+static uint8_t is_esb;
 
 
 

@@ -1851,7 +1851,7 @@ ROM_END
 /*
 Copy this code into the init function and modify:
 {
-	UINT8 *ram = memory_region(REGION_CPU1);
+	uint8_t *ram = memory_region(REGION_CPU1);
 	FILE *output;
 
 	output = fopen("indyheat.m", "w");
@@ -1874,12 +1874,12 @@ Copy this code into the init function and modify:
 	fclose(output);
 }
 */
-static void dasm_chunk(char *tag, UINT8 *base, UINT16 pc, UINT32 length, FILE *output)
+static void dasm_chunk(char *tag, uint8_t *base, uint16_t pc, uint32_t length, FILE *output)
 {
 	extern unsigned DasmZ80(char *buffer, unsigned _pc);
 
-	UINT8 *old_rom = OP_ROM;
-	UINT8 *old_ram = OP_RAM;
+	uint8_t *old_rom = OP_ROM;
+	uint8_t *old_ram = OP_RAM;
 	char buffer[256];
 	int count, offset, i;
 
@@ -1907,7 +1907,7 @@ static void dasm_chunk(char *tag, UINT8 *base, UINT16 pc, UINT32 length, FILE *o
 #endif
 
 
-static void init_master_ports(UINT8 mvram_base, UINT8 io_base)
+static void init_master_ports(uint8_t mvram_base, uint8_t io_base)
 {
 	/* set up the master CPU VRAM I/O */
 	install_port_read_handler(0, mvram_base, mvram_base + 0x1f, leland_mvram_port_r);
@@ -1922,7 +1922,7 @@ static void init_master_ports(UINT8 mvram_base, UINT8 io_base)
 static DRIVER_INIT( cerberus )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 cerberus_eeprom_data[] =
+	static const uint16_t cerberus_eeprom_data[] =
 	{
 		0x05,0x0001,
 		0x06,0x0001,
@@ -1955,7 +1955,7 @@ static DRIVER_INIT( cerberus )
 static DRIVER_INIT( mayhem )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 mayhem_eeprom_data[] =
+	static const uint16_t mayhem_eeprom_data[] =
 	{
 		0x05,0x0001,
 		0x06,0x0001,
@@ -1996,7 +1996,7 @@ static DRIVER_INIT( mayhem )
 static DRIVER_INIT( powrplay )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 powrplay_eeprom_data[] =
+	static const uint16_t powrplay_eeprom_data[] =
 	{
 		0x21,0xfffe,
 		0x22,0xfffe,
@@ -2025,7 +2025,7 @@ static DRIVER_INIT( powrplay )
 static DRIVER_INIT( wseries )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 wseries_eeprom_data[] =
+	static const uint16_t wseries_eeprom_data[] =
 	{
 		0x19,0xfefe,
 		0x1a,0xfefe,
@@ -2046,7 +2046,7 @@ static DRIVER_INIT( wseries )
 static DRIVER_INIT( alleymas )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 alleymas_eeprom_data[] =
+	static const uint16_t alleymas_eeprom_data[] =
 	{
 		0x13,0xfefe,
 		0x14,0xfefe,
@@ -2074,7 +2074,7 @@ static DRIVER_INIT( alleymas )
 static DRIVER_INIT( dangerz )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 dangerz_eeprom_data[] =
+	static const uint16_t dangerz_eeprom_data[] =
 	{
 		0x17,0xfefe,
 		0x18,0xfefe,
@@ -2104,7 +2104,7 @@ static DRIVER_INIT( dangerz )
 static DRIVER_INIT( basebal2 )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 basebal2_eeprom_data[] =
+	static const uint16_t basebal2_eeprom_data[] =
 	{
 		0x19,0xfefe,
 		0x1a,0xfefe,
@@ -2125,7 +2125,7 @@ static DRIVER_INIT( basebal2 )
 static DRIVER_INIT( dblplay )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 dblplay_eeprom_data[] =
+	static const uint16_t dblplay_eeprom_data[] =
 	{
 		0x18,0xfefe,
 		0x19,0xfefe,
@@ -2147,7 +2147,7 @@ static DRIVER_INIT( dblplay )
 static DRIVER_INIT( strkzone )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 strkzone_eeprom_data[] =
+	static const uint16_t strkzone_eeprom_data[] =
 	{
 		0x16,0xfefe,
 		0x17,0xfefe,
@@ -2169,7 +2169,7 @@ static DRIVER_INIT( strkzone )
 static DRIVER_INIT( redlin2p )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 redlin2p_eeprom_data[] =
+	static const uint16_t redlin2p_eeprom_data[] =
 	{
 		0x1f,0xfefe,
 		0x20,0xfffb,
@@ -2201,7 +2201,7 @@ static DRIVER_INIT( redlin2p )
 static DRIVER_INIT( quarterb )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 quarterb_eeprom_data[] =
+	static const uint16_t quarterb_eeprom_data[] =
 	{
 		0x34,0xfefe,
 		0x35,0xfefe,
@@ -2229,7 +2229,7 @@ static DRIVER_INIT( quarterb )
 static DRIVER_INIT( viper )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 viper_eeprom_data[] =
+	static const uint16_t viper_eeprom_data[] =
 	{
 		0x13,0xfefe,
 		0x14,0xfefe,
@@ -2264,7 +2264,7 @@ static DRIVER_INIT( viper )
 static DRIVER_INIT( teamqb )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 teamqb_eeprom_data[] =
+	static const uint16_t teamqb_eeprom_data[] =
 	{
 		0x36,0xfefe,
 		0x37,0xfefe,
@@ -2297,7 +2297,7 @@ static DRIVER_INIT( teamqb )
 static DRIVER_INIT( aafb )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 aafb_eeprom_data[] =
+	static const uint16_t aafb_eeprom_data[] =
 	{
 		0x36,0xfefe,
 		0x37,0xfefe,
@@ -2330,7 +2330,7 @@ static DRIVER_INIT( aafb )
 static DRIVER_INIT( aafbb )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 aafb_eeprom_data[] =
+	static const uint16_t aafb_eeprom_data[] =
 	{
 		0x36,0xfefe,
 		0x37,0xfefe,
@@ -2363,7 +2363,7 @@ static DRIVER_INIT( aafbb )
 static DRIVER_INIT( aafbd2p )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 aafb_eeprom_data[] =
+	static const uint16_t aafb_eeprom_data[] =
 	{
 		0x36,0xfefe,
 		0x37,0xfefe,
@@ -2396,7 +2396,7 @@ static DRIVER_INIT( aafbd2p )
 static DRIVER_INIT( offroad )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 offroad_eeprom_data[] =
+	static const uint16_t offroad_eeprom_data[] =
 	{
 		0x09,0xfefe,
 		0x0a,0xfffb,
@@ -2436,7 +2436,7 @@ static DRIVER_INIT( offroad )
 static DRIVER_INIT( offroadt )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 offroadt_eeprom_data[] =
+	static const uint16_t offroadt_eeprom_data[] =
 	{
 		0x09,0xfefe,
 		0x0a,0xfffb,
@@ -2475,7 +2475,7 @@ static DRIVER_INIT( offroadt )
 static DRIVER_INIT( pigout )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 pigout_eeprom_data[] =
+	static const uint16_t pigout_eeprom_data[] =
 	{
 		0x09,0xfefe,
 		0x0a,0xfefb,

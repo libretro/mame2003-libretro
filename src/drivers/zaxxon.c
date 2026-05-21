@@ -159,10 +159,10 @@ NMI causes a ROM/RAM test.
 #include "machine/segacrpt.h"
 
 extern int zaxxon_vid_type;
-extern UINT8 *zaxxon_char_color_bank;
-extern UINT8 *zaxxon_background_position;
-extern UINT8 *zaxxon_background_color_bank;
-extern UINT8 *zaxxon_background_enable;
+extern uint8_t *zaxxon_char_color_bank;
+extern uint8_t *zaxxon_background_position;
+extern uint8_t *zaxxon_background_color_bank;
+extern uint8_t *zaxxon_background_enable;
 
 extern WRITE_HANDLER( zaxxon_videoram_w );
 extern WRITE_HANDLER( congo_colorram_w );
@@ -215,7 +215,7 @@ static READ_HANDLER( razmataz_unknown2_r )
 
 static int razmataz_dial_r(int num)
 {
-	static UINT8 pos[2];
+	static uint8_t pos[2];
 	int delta,res;
 
 	delta = readinputport(num);
@@ -1599,13 +1599,13 @@ static DRIVER_INIT( zaxxonb )
 	(e.g. 0xc0 is XORed with H)
 	therefore in the following tables we only keep track of A, B, C, D, E, F, G and H.
 */
-	static const UINT8 data_xortable[2][8] =
+	static const uint8_t data_xortable[2][8] =
 	{
 		{ 0x0a,0x0a,0x22,0x22,0xaa,0xaa,0x82,0x82 },	/* ...............0 */
 		{ 0xa0,0xaa,0x28,0x22,0xa0,0xaa,0x28,0x22 },	/* ...............1 */
 	};
 
-	static const UINT8 opcode_xortable[8][8] =
+	static const uint8_t opcode_xortable[8][8] =
 	{
 		{ 0x8a,0x8a,0x02,0x02,0x8a,0x8a,0x02,0x02 },	/* .......0...0...0 */
 		{ 0x80,0x80,0x08,0x08,0xa8,0xa8,0x20,0x20 },	/* .......0...0...1 */
@@ -1618,7 +1618,7 @@ static DRIVER_INIT( zaxxonb )
 	};
 
 	int A;
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int diff = memory_region_length(REGION_CPU1) / 2;
 
 	memory_set_opcode_base(0, rom + diff);
@@ -1626,7 +1626,7 @@ static DRIVER_INIT( zaxxonb )
 	for (A = 0x0000; A < 0x8000; A++)
 	{
 		int i,j;
-		UINT8 src;
+		uint8_t src;
 
 		src = rom[A];
 

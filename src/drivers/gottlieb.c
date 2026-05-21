@@ -149,7 +149,7 @@ VBlank duration: 1/VSYNC * (16/256) = 1017.6 us
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *gottlieb_charram;
+extern uint8_t *gottlieb_charram;
 
 extern WRITE_HANDLER( gottlieb_videoram_w );
 extern WRITE_HANDLER( gottlieb_charram_w );
@@ -162,7 +162,7 @@ extern VIDEO_UPDATE( gottlieb );
 
 extern WRITE_HANDLER( gottlieb_sh_w );
 
-extern UINT8 *riot_ram;
+extern uint8_t *riot_ram;
 extern READ_HANDLER( riot_ram_r );
 extern READ_HANDLER( gottlieb_riot_r );
 extern WRITE_HANDLER( riot_ram_w );
@@ -177,11 +177,11 @@ extern WRITE_HANDLER( gottlieb_nmi_rate_w );
 extern WRITE_HANDLER( gottlieb_cause_dac_nmi_w );
 
 
-static UINT8 *audiobuffer_region;
+static uint8_t *audiobuffer_region;
 
 MACHINE_INIT( gottlieb )
 {
-	UINT8 *ram = memory_region(REGION_CPU1);
+	uint8_t *ram = memory_region(REGION_CPU1);
 	cpu_setbank(1, &ram[0x8000]);
 	cpu_setbank(2, &ram[0x0000]);
 	audiobuffer_region = memory_region(REGION_USER1);

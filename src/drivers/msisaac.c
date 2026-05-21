@@ -114,8 +114,8 @@ static WRITE_HANDLER( ms_unknown_w )
 //#define USE_MCU
 
 #ifndef USE_MCU
-static UINT8 mcu_val = 0;
-static UINT8 direction = 0;
+static uint8_t mcu_val = 0;
+static uint8_t direction = 0;
 #endif
 
 
@@ -157,7 +157,7 @@ MCU simulation TODO:
  			//6-down
  			//7-leftdwn
 
- 			UINT8 val= (readinputport(4)>>2) & 0x0f;
+ 			uint8_t val= (readinputport(4)>>2) & 0x0f;
  			/* bit0 = left
  			   bit1 = right
  			   bit2 = down
@@ -173,7 +173,7 @@ MCU simulation TODO:
  			/*		 0000   0001   0010   0011      0100   0101   0110   0111     1000   1001   1010   1011   1100   1101   1110   1111 */
  			/*		nochange left  right nochange   down downlft dwnrght down     up     upleft uprgt  up    nochnge left   right  nochange */
 
- 			INT8 table[16] = { -1,    2,    6,     -1,       0,   1,      7,      0,       4,     3,     5,    4,     -1,     2,     6,    -1 };
+ 			int8_t table[16] = { -1,    2,    6,     -1,       0,   1,      7,      0,       4,     3,     5,    4,     -1,     2,     6,    -1 };
 
  			if (table[val] >= 0 )
  				direction = table[val];
@@ -303,8 +303,8 @@ static MACHINE_INIT( ta7630 )
 */
 }
 
-static UINT8 snd_ctrl0=0;
-static UINT8 snd_ctrl1=0;
+static uint8_t snd_ctrl0=0;
+static uint8_t snd_ctrl1=0;
 
 static WRITE_HANDLER( sound_control_0_w )
 {

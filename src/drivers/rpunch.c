@@ -122,10 +122,10 @@ extern data16_t *rpunch_bitmapram;
 extern size_t rpunch_bitmapram_size;
 extern int rpunch_sprite_palette;
 
-static UINT8 sound_data;
-static UINT8 sound_busy;
-static UINT8 ym2151_irq;
-static UINT8 upd_rom_bank;
+static uint8_t sound_data;
+static uint8_t sound_busy;
+static uint8_t ym2151_irq;
+static uint8_t upd_rom_bank;
 
 WRITE16_HANDLER( rpunch_bitmap_w );
 WRITE16_HANDLER( rpunch_videoram_w );

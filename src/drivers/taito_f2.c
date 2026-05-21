@@ -6589,7 +6589,7 @@ DRIVER_INIT( finalb )
 	int i;
 	unsigned char data;
 	unsigned int offset;
-	UINT8 *gfx = memory_region(REGION_GFX2);
+	uint8_t *gfx = memory_region(REGION_GFX2);
 
 	offset = 0x100000;
 	for (i = 0x180000; i<0x200000; i++)
@@ -6616,7 +6616,7 @@ DRIVER_INIT( finalb )
 DRIVER_INIT( mjnquest )
 {
 	int i;
-	UINT8 *gfx = memory_region(REGION_GFX2);
+	uint8_t *gfx = memory_region(REGION_GFX2);
 
 	/* the bytes in each longword are in reversed order, put them in the
 	   order used by the other games. */

@@ -70,7 +70,7 @@ data32_t *jaguar_gpu_ram;
 data32_t *jaguar_gpu_clut;
 data32_t *jaguar_dsp_ram;
 data32_t *jaguar_wave_rom;
-UINT8 cojag_is_r3000;
+uint8_t cojag_is_r3000;
 
 
 
@@ -81,7 +81,7 @@ UINT8 cojag_is_r3000;
  *************************************/
 
 static data32_t misc_control_data;
-static UINT8 eeprom_enable;
+static uint8_t eeprom_enable;
 
 static data32_t *rom_base;
 static size_t rom_size;
@@ -262,9 +262,9 @@ static WRITE32_HANDLER( latch_w )
 static READ32_HANDLER( eeprom_data_r )
 {
 	if (cojag_is_r3000)
-		return ((UINT32 *)generic_nvram)[offset] | 0xffffff00;
+		return ((uint32_t *)generic_nvram)[offset] | 0xffffff00;
 	else
-		return ((UINT32 *)generic_nvram)[offset] | 0x00ffffff;
+		return ((uint32_t *)generic_nvram)[offset] | 0x00ffffff;
 }
 
 
@@ -279,9 +279,9 @@ static WRITE32_HANDLER( eeprom_data_w )
 //	if (eeprom_enable)
 	{
 		if (cojag_is_r3000)
-			((UINT32 *)generic_nvram)[offset] = data & 0x000000ff;
+			((uint32_t *)generic_nvram)[offset] = data & 0x000000ff;
 		else
-			((UINT32 *)generic_nvram)[offset] = data & 0xff000000;
+			((uint32_t *)generic_nvram)[offset] = data & 0xff000000;
 	}
 //	else
 //		logerror("%08X:error writing to disabled EEPROM\n", activecpu_get_previouspc());
@@ -318,7 +318,7 @@ static WRITE32_HANDLER( eeprom_data_w )
 */
 
 static data32_t *gpu_jump_address;
-static UINT8 gpu_command_pending;
+static uint8_t gpu_command_pending;
 static data32_t gpu_spin_pc;
 
 static void gpu_sync_timer(int param)
@@ -386,12 +386,12 @@ static READ32_HANDLER( gpu_jump_r )
 
 static data32_t *main_speedup;
 static int main_speedup_hits;
-static UINT32 main_speedup_last_cycles;
-static UINT32 main_speedup_max_cycles;
+static uint32_t main_speedup_last_cycles;
+static uint32_t main_speedup_max_cycles;
 
 static READ32_HANDLER( cojagr3k_main_speedup_r )
 {
-	UINT32 curcycles = activecpu_gettotalcycles();
+	uint32_t curcycles = activecpu_gettotalcycles();
 
 	/* if it's been less than main_speedup_max_cycles cycles since the last time */
 	if (curcycles - main_speedup_last_cycles < main_speedup_max_cycles)
@@ -436,7 +436,7 @@ static READ32_HANDLER( cojagr3k_main_speedup_r )
 
 static WRITE32_HANDLER( area51_main_speedup_w )
 {
-	UINT32 curcycles = activecpu_gettotalcycles();
+	uint32_t curcycles = activecpu_gettotalcycles();
 
 	/* store the data */
 	COMBINE_DATA(main_speedup);
@@ -470,7 +470,7 @@ static WRITE32_HANDLER( area51_main_speedup_w )
 
 static WRITE32_HANDLER( area51mx_main_speedup_w )
 {
-	UINT32 curcycles = activecpu_gettotalcycles();
+	uint32_t curcycles = activecpu_gettotalcycles();
 
 	/* store the data */
 	COMBINE_DATA(&main_speedup[offset]);
@@ -980,7 +980,7 @@ ROM_END
  *
  *************************************/
 
-static void common_init(UINT8 crosshair, UINT16 gpu_jump_offs, UINT16 spin_pc)
+static void common_init(uint8_t crosshair, uint16_t gpu_jump_offs, uint16_t spin_pc)
 {
 	/* copy over the ROM */
 	memcpy(rom_base, memory_region(REGION_USER1), rom_size);

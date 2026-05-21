@@ -18,8 +18,8 @@ extern VIDEO_START( qwak );
 extern VIDEO_UPDATE( runaway );
 extern VIDEO_UPDATE( qwak );
 
-extern UINT8* runaway_video_ram;
-extern UINT8* runaway_sprite_ram;
+extern uint8_t* runaway_video_ram;
+extern uint8_t* runaway_sprite_ram;
 
 extern WRITE_HANDLER( runaway_paletteram_w );
 extern WRITE_HANDLER( runaway_video_ram_w );
@@ -51,7 +51,7 @@ static MACHINE_INIT( runaway )
 
 static READ_HANDLER( runaway_input_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if (readinputport(0) & (1 << offset))
 	{

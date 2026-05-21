@@ -38,15 +38,15 @@ Known issues :
 
 ***************************************************************************/
 
-static UINT8 *exzisus_sharedram_ac;
-static UINT8 *exzisus_sharedram_bc;
+static uint8_t *exzisus_sharedram_ac;
+static uint8_t *exzisus_sharedram_bc;
 static int exzisus_cpua_bank = 0;
 static int exzisus_cpub_bank = 0;
 
-extern UINT8 *exzisus_videoram0;
-extern UINT8 *exzisus_videoram1;
-extern UINT8 *exzisus_objectram0;
-extern UINT8 *exzisus_objectram1;
+extern uint8_t *exzisus_videoram0;
+extern uint8_t *exzisus_videoram1;
+extern uint8_t *exzisus_objectram0;
+extern uint8_t *exzisus_objectram1;
 extern size_t  exzisus_objectram_size0;
 extern size_t  exzisus_objectram_size1;
 
@@ -70,7 +70,7 @@ VIDEO_UPDATE( exzisus );
 
 static WRITE_HANDLER( exzisus_cpua_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	if ( (data & 0x0f) != exzisus_cpua_bank )
 	{
@@ -86,7 +86,7 @@ static WRITE_HANDLER( exzisus_cpua_bankswitch_w )
 
 static WRITE_HANDLER( exzisus_cpub_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU4);
+	uint8_t *RAM = memory_region(REGION_CPU4);
 
 	if ( (data & 0x0f) != exzisus_cpub_bank )
 	{
@@ -137,7 +137,7 @@ static WRITE_HANDLER( exzisus_sharedram_bc_w )
 
 static DRIVER_INIT( exzisus )
 {
-	UINT8 *RAM = memory_region(REGION_CPU4);
+	uint8_t *RAM = memory_region(REGION_CPU4);
 
 	/* Fix ROM 1 error */
 	RAM[0x6829] = 0x18;

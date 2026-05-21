@@ -34,7 +34,7 @@
  *************************************/
 
 #if 0
-static UINT8 		which_input;
+static uint8_t 		which_input;
 #endif
 static data32_t *	mo_command;
 static data32_t *	protection_base;
@@ -195,7 +195,7 @@ static WRITE32_HANDLER( atarigx2_protection_w )
 
 static READ32_HANDLER( atarigx2_protection_r )
 {
-	static const UINT32 lookup_table[][2] =
+	static const uint32_t lookup_table[][2] =
 	{
 		// sprite flipping
 		{ 0x0000e54f, 0<<11 },
@@ -1130,7 +1130,7 @@ static READ32_HANDLER( atarigx2_protection_r )
 		result |= 0x80000000;
 	if (offset == 0x3f0)
 	{
-		UINT32 tag = (last_write_offset << 17) | last_write;
+		uint32_t tag = (last_write_offset << 17) | last_write;
 		int i = 0;
 
 		while (lookup_table[i][0] != 0xffffffff)

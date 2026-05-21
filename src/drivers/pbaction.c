@@ -38,7 +38,7 @@ Notes:
 #include "machine/z80fmly.h"
 
 
-extern UINT8 *pbaction_videoram2,*pbaction_colorram2;
+extern uint8_t *pbaction_videoram2,*pbaction_colorram2;
 
 extern WRITE_HANDLER( pbaction_videoram_w );
 extern WRITE_HANDLER( pbaction_colorram_w );

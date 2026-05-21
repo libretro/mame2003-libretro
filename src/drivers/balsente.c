@@ -2168,26 +2168,26 @@ ROM_END
 #define EXPAND_NONE		0x3f
 #define SWAP_HALVES		0x80
 
-static void expand_roms(UINT8 cd_rom_mask)
+static void expand_roms(uint8_t cd_rom_mask)
 {
 	/* load AB bank data from 0x10000-0x20000 */
 	/* load CD bank data from 0x20000-0x2e000 */
 	/* load EF           from 0x2e000-0x30000 */
 	/* ROM region must be 0x40000 total */
 
-	UINT8 *temp = malloc(0x20000);
+	uint8_t *temp = malloc(0x20000);
 	if (temp)
 	{
-		UINT8 *rom = memory_region(REGION_CPU1);
-		UINT32 base;
+		uint8_t *rom = memory_region(REGION_CPU1);
+		uint32_t base;
 
 		for (base = 0x10000; base < memory_region_length(REGION_CPU1); base += 0x30000)
 		{
-			UINT8 *ab_base = &temp[0x00000];
-			UINT8 *cd_base = &temp[0x10000];
-			UINT8 *cd_common = &temp[0x1c000];
-			UINT8 *ef_common = &temp[0x1e000];
-			UINT32 dest;
+			uint8_t *ab_base = &temp[0x00000];
+			uint8_t *cd_base = &temp[0x10000];
+			uint8_t *cd_common = &temp[0x1c000];
+			uint8_t *ef_common = &temp[0x1e000];
+			uint32_t dest;
 
 			for (dest = 0x00000; dest < 0x20000; dest += 0x02000)
 			{

@@ -6,9 +6,9 @@ Atari Sky Raider driver
 
 #include "driver.h"
 
-extern UINT8* skyraid_alpha_num_ram;
-extern UINT8* skyraid_pos_ram;
-extern UINT8* skyraid_obj_ram;
+extern uint8_t* skyraid_alpha_num_ram;
+extern uint8_t* skyraid_pos_ram;
+extern uint8_t* skyraid_obj_ram;
 
 extern int skyraid_scroll;
 
@@ -58,7 +58,7 @@ static READ_HANDLER( skyraid_alpha_num_r)
 
 static READ_HANDLER( skyraid_port_0_r )
 {
-	UINT8 val = readinputport(0);
+	uint8_t val = readinputport(0);
 
 	if (readinputport(4) > analog_range)
 		val |= 0x40;

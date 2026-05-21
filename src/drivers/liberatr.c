@@ -138,7 +138,7 @@
 #include "liberatr.h"
 
 
-static UINT8 *liberatr_ctrld;
+static uint8_t *liberatr_ctrld;
 
 
 

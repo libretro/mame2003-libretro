@@ -70,7 +70,7 @@ static void starshp1_write_palette(int inverse)
 
 static PALETTE_INIT( starshp1 )
 {
-	static const UINT16 colortable_source[] =
+	static const uint16_t colortable_source[] =
 	{
 		0, 3,       /* for the alpha numerics */
 		0, 2,       /* for the sprites (Z=0) */

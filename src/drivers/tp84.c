@@ -85,7 +85,7 @@ C004      76489 #4 trigger
 #include "vidhrdw/generic.h"
 
 
-extern UINT8 *tp84_videoram2, *tp84_colorram2;
+extern uint8_t *tp84_videoram2, *tp84_colorram2;
 
 extern WRITE_HANDLER( tp84_videoram_w );
 extern WRITE_HANDLER( tp84_colorram_w );
@@ -105,7 +105,7 @@ extern VIDEO_UPDATE( tp84 );
 extern INTERRUPT_GEN( tp84_6809_interrupt );
 
 
-static UINT8 *sharedram;
+static uint8_t *sharedram;
 
 static READ_HANDLER( sharedram_r )
 {

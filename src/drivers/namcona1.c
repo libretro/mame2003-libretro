@@ -88,7 +88,7 @@ int namcona1_gametype;
 
 /*************************************************************************/
 
-static const UINT8 ExvaniaDefaultNvMem[] =
+static const uint8_t ExvaniaDefaultNvMem[] =
 {
 /* This data oughtn't be necessary; when Exbania's EPROM area is uninitialized,
  * the game software automatically writes these values there, but then jumps
@@ -116,7 +116,7 @@ static const UINT8 ExvaniaDefaultNvMem[] =
 	0x2d,0x01,0x1c,0xd7,0x28,0x43,0x30,0xe7,0xb0,0x08,0xed,0x79
 }; /* ExvaniaDefaultNvMem */
 
-static const UINT8 QuiztouDefaultNvMem[] =
+static const uint8_t QuiztouDefaultNvMem[] =
 {
 /* This data oughtn't be necessary; when QuiztouDefaultNvMem's EPROM area is uninitialized,
  * the game software automatically writes these values there, but then jumps
@@ -668,7 +668,7 @@ static READ16_HANDLER( namcona1_vreg_r )
 } /* namcona1_vreg_r */
 
 static int
-transfer_dword( UINT32 dest, UINT32 source )
+transfer_dword( uint32_t dest, uint32_t source )
 {
 	data16_t data;
 
@@ -825,8 +825,8 @@ static void namcona1_blit( void )
 	int gfxbank = namcona1_vreg[0x6];
 
 	/* dest and source are provided as dword offsets */
-	UINT32 src_baseaddr	= 2*((namcona1_vreg[0x7]<<16)|namcona1_vreg[0x8]);
-	UINT32 dst_baseaddr	= 2*((namcona1_vreg[0x9]<<16)|namcona1_vreg[0xa]);
+	uint32_t src_baseaddr	= 2*((namcona1_vreg[0x7]<<16)|namcona1_vreg[0x8]);
+	uint32_t dst_baseaddr	= 2*((namcona1_vreg[0x9]<<16)|namcona1_vreg[0xa]);
 
 	int num_bytes = namcona1_vreg[0xb];
 

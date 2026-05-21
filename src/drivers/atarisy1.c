@@ -128,17 +128,17 @@
  *
  *************************************/
 
-static UINT8 joystick_type;
-static UINT8 trackball_type;
+static uint8_t joystick_type;
+static uint8_t trackball_type;
 
 static void *joystick_timer;
-static UINT8 joystick_int;
-static UINT8 joystick_int_enable;
-static UINT8 joystick_value;
+static uint8_t joystick_int;
+static uint8_t joystick_int_enable;
+static uint8_t joystick_value;
 
-static UINT8 m6522_ddra, m6522_ddrb;
-static UINT8 m6522_dra, m6522_drb;
-static UINT8 m6522_regs[16];
+static uint8_t m6522_ddra, m6522_ddrb;
+static uint8_t m6522_dra, m6522_drb;
+static uint8_t m6522_regs[16];
 
 
 
@@ -257,24 +257,24 @@ static READ16_HANDLER( trakball_r )
 	/* Marble Madness trackball type -- rotated 45 degrees! */
 	if (trackball_type == 1)
 	{
-		static UINT8 cur[2][2];
+		static uint8_t cur[2][2];
 		int player = (offset >> 1) & 1;
 		int which = offset & 1;
 
 		/* when reading the even ports, do a real analog port update */
 		if (which == 0)
 		{
-			UINT8 posx,posy;
+			uint8_t posx,posy;
 
 			if (player == 0)
 			{
-				posx = (INT8)readinputport(0);
-				posy = (INT8)readinputport(1);
+				posx = (int8_t)readinputport(0);
+				posy = (int8_t)readinputport(1);
 			}
 			else
 			{
-				posx = (INT8)readinputport(2);
-				posy = (INT8)readinputport(3);
+				posx = (int8_t)readinputport(2);
+				posy = (int8_t)readinputport(3);
 			}
 
 			cur[player][0] = posx + posy;

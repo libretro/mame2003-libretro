@@ -52,10 +52,10 @@ Notes:
 VIDEO_START( ladyfrog );
 VIDEO_UPDATE( ladyfrog );
 
-extern UINT8 *ladyfrog_scrlram;
+extern uint8_t *ladyfrog_scrlram;
 static int sound_nmi_enable=0,pending_nmi=0;
 static int snd_flag;
-static UINT8 snd_data;
+static uint8_t snd_data;
 
 WRITE_HANDLER( ladyfrog_videoram_w );
 WRITE_HANDLER( ladyfrog_spriteram_w );

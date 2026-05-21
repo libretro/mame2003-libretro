@@ -811,9 +811,9 @@ WRITE16_HANDLER( kaneko16_coin_lockout_w )
 
 /* Sand Scorpion */
 
-static UINT8 sprite_irq;
-static UINT8 unknown_irq;
-static UINT8 vblank_irq;
+static uint8_t sprite_irq;
+static uint8_t unknown_irq;
+static uint8_t vblank_irq;
 
 
 /* Update the IRQ state based on all possible causes */

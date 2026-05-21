@@ -76,9 +76,9 @@
 
 
 /* local variables */
-static UINT8 custom_cpu_reset;
-static UINT8 custom_cpu_busy;
-static UINT8 *custom_cpu_ram;
+static uint8_t custom_cpu_reset;
+static uint8_t custom_cpu_busy;
+static uint8_t *custom_cpu_ram;
 
 
 

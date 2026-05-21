@@ -103,8 +103,8 @@
 #define LOG_SOUND		0
 
 
-static UINT8 sound_response;
-static UINT8 sound_response_ack_clk;
+static uint8_t sound_response;
+static uint8_t sound_response_ack_clk;
 
 
 /* sound driver data & functions */
@@ -120,7 +120,7 @@ WRITE_HANDLER( exidy_sfxctrl_w );
 
 
 /* video driver data & functions */
-extern UINT8 *victory_charram;
+extern uint8_t *victory_charram;
 
 VIDEO_START( victory );
 VIDEO_EOF( victory );

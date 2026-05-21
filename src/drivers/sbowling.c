@@ -47,9 +47,9 @@ static int bgmap = 0;
 
 static int sbw_system = 0;
 static struct tilemap *sb_tilemap;
-static UINT32 color_prom_address = 0;
-static UINT8 pix_sh = 0;
-static UINT8 pix[2] = {0, 0};
+static uint32_t color_prom_address = 0;
+static uint8_t pix_sh = 0;
+static uint8_t pix[2] = {0, 0};
 
 static void get_sb_tile_info(int tile_index)
 {
@@ -117,7 +117,7 @@ static WRITE_HANDLER( pix_data_w )
 }
 static READ_HANDLER( pix_data_r )
 {
-	UINT32 p1, p0;
+	uint32_t p1, p0;
 	int res;
 	int sh = pix_sh & 7;
 

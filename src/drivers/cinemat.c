@@ -42,7 +42,7 @@
 
 static READ16_HANDLER( sundance_input_port_1_r )
 {
-	UINT16 val = readinputport(1);
+	uint16_t val = readinputport(1);
 
 	switch (readinputport(4) & 0x1ff) /* player 1 keypad */
 	{
@@ -81,7 +81,7 @@ static READ16_HANDLER( sundance_input_port_1_r )
  *
  *************************************/
 
-static UINT8 speedfrk_steer[] = {0xe, 0x6, 0x2, 0x0, 0x3, 0x7, 0xf};
+static uint8_t speedfrk_steer[] = {0xe, 0x6, 0x2, 0x0, 0x3, 0x7, 0xf};
 
 static READ16_HANDLER( speedfrk_input_port_1_r )
 {

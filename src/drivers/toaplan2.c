@@ -259,10 +259,10 @@ static int mcu_data = 0;
 static int video_status;
 static int prev_scanline;
 //static int prev_beampos;
-static INT8 old_p1_paddle_h;			/* For Ghox */
-static INT8 old_p1_paddle_v;
-static INT8 old_p2_paddle_h;
-static INT8 old_p2_paddle_v;
+static int8_t old_p1_paddle_h;			/* For Ghox */
+static int8_t old_p1_paddle_v;
+static int8_t old_p2_paddle_h;
+static int8_t old_p2_paddle_v;
 static int current_bank = 2;			/* Z80 bank used in Battle Garegga and Batrider */
 static int raizing_Z80_busreq;
 static int bbakraid_unlimited_ver;
@@ -651,7 +651,7 @@ static WRITE16_HANDLER( pipibibi_z80_task_w )
 
 static READ16_HANDLER( ghox_p1_h_analog_r )
 {
-	INT8 value, new_value;
+	int8_t value, new_value;
 
 	new_value = input_port_7_r(0);
 	if (new_value == old_p1_paddle_h) return 0;
@@ -662,7 +662,7 @@ static READ16_HANDLER( ghox_p1_h_analog_r )
 
 static READ16_HANDLER( ghox_p1_v_analog_r )
 {
-	INT8 new_value;
+	int8_t new_value;
 
 	new_value = input_port_9_r(0);		/* fake vertical movement */
 	if (new_value == old_p1_paddle_v) return input_port_1_r(0);
@@ -677,7 +677,7 @@ static READ16_HANDLER( ghox_p1_v_analog_r )
 
 static READ16_HANDLER( ghox_p2_h_analog_r )
 {
-	INT8 value, new_value;
+	int8_t value, new_value;
 
 	new_value = input_port_8_r(0);
 	if (new_value == old_p2_paddle_h) return 0;
@@ -688,7 +688,7 @@ static READ16_HANDLER( ghox_p2_h_analog_r )
 
 static READ16_HANDLER( ghox_p2_v_analog_r )
 {
-	INT8 new_value;
+	int8_t new_value;
 
 	new_value = input_port_10_r(0);		/* fake vertical movement */
 	if (new_value == old_p2_paddle_v) return input_port_2_r(0);

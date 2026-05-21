@@ -41,9 +41,9 @@ TODO:
 #include "vidhrdw/generic.h"
 
 
-static UINT8 *safarir_ram1, *safarir_ram2;
+static uint8_t *safarir_ram1, *safarir_ram2;
 static size_t safarir_ram_size;
-static UINT8 safarir_ram_bank;
+static uint8_t safarir_ram_bank;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 
@@ -78,7 +78,7 @@ WRITE_HANDLER( safarir_ram_bank_w )
 static void get_bg_tile_info(int tile_index)
 {
 	int color;
-	UINT8 code = safarir_ram_r(tile_index | 0x400);
+	uint8_t code = safarir_ram_r(tile_index | 0x400);
 
 	if (code & 0x80)
 		color = 6;	/* yellow */
@@ -98,7 +98,7 @@ static void get_bg_tile_info(int tile_index)
 static void get_fg_tile_info(int tile_index)
 {
 	int color, flags;
-	UINT8 code = safarir_ram_r(tile_index);
+	uint8_t code = safarir_ram_r(tile_index);
 
 	if (code & 0x80)
 		color = 7;	/* white */
@@ -161,13 +161,13 @@ VIDEO_UPDATE( safarir )
 #define CHANNEL_SOUND5		4
 #define CHANNEL_SOUND6		5
 
-static UINT8 port_last;
-static UINT8 port_last2;
+static uint8_t port_last;
+static uint8_t port_last2;
 
 
 WRITE_HANDLER( safarir_audio_w )
 {
-	UINT8 rising_bits = data & ~port_last;
+	uint8_t rising_bits = data & ~port_last;
 
 	if (rising_bits == 0x12) sample_start(CHANNEL_SOUND1, SAMPLE_SOUND1_1, 0);
 	if (rising_bits == 0x02) sample_start(CHANNEL_SOUND1, SAMPLE_SOUND1_2, 0);

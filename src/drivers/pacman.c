@@ -183,7 +183,7 @@ Dave Widel
 #include "cpu/s2650/s2650.h"
 
 
-static UINT8 speedcheat = 0;	/* a well known hack allows to make Pac Man run at four times */
+static uint8_t speedcheat = 0;	/* a well known hack allows to make Pac Man run at four times */
 								/* his usual speed. When we start the emulation, we check if the */
 								/* hack can be applied, and set this flag accordingly. */
 
@@ -561,7 +561,7 @@ static READ_HANDLER( korosuke_special_port3_r )
 
 static READ_HANDLER( mschamp_kludge_r )
 {
-	static UINT8 counter;
+	static uint8_t counter;
 	return counter++;
 }
 
@@ -581,8 +581,8 @@ static WRITE_HANDLER( bigbucks_bank_w )
 static READ_HANDLER( bigbucks_question_r )
 {
 
-	UINT8 *question = memory_region(REGION_USER1);
-	UINT8 ret;
+	uint8_t *question = memory_region(REGION_USER1);
+	uint8_t ret;
 
 	ret = question[(bigbucks_bank << 16) | (offset ^ 0xffff)];
 
@@ -4294,7 +4294,7 @@ static DRIVER_INIT( jumpshot )
 
 static DRIVER_INIT( 8bpm )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int i;
 
 	/* Data lines D0 and D6 swapped */
@@ -4306,7 +4306,7 @@ static DRIVER_INIT( 8bpm )
 
 static DRIVER_INIT( porky )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int i;
 
 	/* Data lines D0 and D4 swapped */

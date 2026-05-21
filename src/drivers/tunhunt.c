@@ -66,7 +66,7 @@ extern VIDEO_UPDATE( tunhunt );
  *
  *************************************/
 
-UINT8 tunhunt_control;
+uint8_t tunhunt_control;
 
 WRITE_HANDLER( tunhunt_control_w )
 {

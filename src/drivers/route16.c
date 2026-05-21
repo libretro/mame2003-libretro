@@ -653,7 +653,7 @@ DRIVER_INIT( route16 )
 
 DRIVER_INIT( route16a )
 {
-	UINT8 *ROM = memory_region(REGION_CPU1);
+	uint8_t *ROM = memory_region(REGION_CPU1);
 	/* TO DO : Replace these patches with simulation of the protection device */
 
 	/* patch the protection */

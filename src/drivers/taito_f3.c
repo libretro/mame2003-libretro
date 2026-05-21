@@ -2816,7 +2816,7 @@ static void tile_decode(int uses_5bpp_tiles)
 {
 	unsigned char lsb,msb;
 	unsigned int offset,i;
-	UINT8 *gfx = memory_region(REGION_GFX2);
+	uint8_t *gfx = memory_region(REGION_GFX2);
 	int size=memory_region_length(REGION_GFX2);
 	int half=size/2,data;
 
@@ -2982,7 +2982,7 @@ static DRIVER_INIT( trstaroj )
 
 static DRIVER_INIT( scfinals )
 {
-	data32_t *RAM = (UINT32 *)memory_region(REGION_CPU1);
+	data32_t *RAM = (uint32_t *)memory_region(REGION_CPU1);
 
 	/* Doesn't boot without this - eprom related? */
     RAM[0x5af0/4]=0x4e710000|(RAM[0x5af0/4]&0xffff);
@@ -3087,7 +3087,7 @@ static DRIVER_INIT( landmakr )
 
 static DRIVER_INIT( landmkrp )
 {
-	data32_t *RAM = (UINT32 *)memory_region(REGION_CPU1);
+	data32_t *RAM = (uint32_t *)memory_region(REGION_CPU1);
 
 	/* For some reason the least significant byte in the last 2 long words of
 	ROM is swapped.  As the roms have been verified ok, I assume this is some

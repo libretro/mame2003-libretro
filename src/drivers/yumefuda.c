@@ -106,8 +106,8 @@ static WRITE_HANDLER( yumefuda_vram_w )
 	}
 }
 
-static UINT8 *cus_ram;
-static UINT8 prot_lock,nvram_lock;
+static uint8_t *cus_ram;
+static uint8_t prot_lock,nvram_lock;
 /*Custom RAM (Protection)*/
 static READ_HANDLER( custom_ram_r )
 {
@@ -336,7 +336,7 @@ ROM_END
 DRIVER_INIT( yumefuda )
 {
 	unsigned char *ROM = memory_region(REGION_CPU1);
-	UINT32 bankaddress;
+	uint32_t bankaddress;
 
 	/*Temp until the bankswitch memory address is found...*/
 	bankaddress = 0x10000;

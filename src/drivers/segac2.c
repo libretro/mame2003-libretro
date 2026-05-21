@@ -158,25 +158,25 @@
 ******************************************************************************/
 
 /* interrupt states */
-static UINT8		ym3438_int;			/* INT2 - from YM3438 */
-static UINT8		scanline_int;		/* INT4 - programmable */
-static UINT8		vblank_int;			/* INT6 - on every VBLANK */
+static uint8_t		ym3438_int;			/* INT2 - from YM3438 */
+static uint8_t		scanline_int;		/* INT4 - programmable */
+static uint8_t		vblank_int;			/* INT6 - on every VBLANK */
 
 /* internal states */
-static UINT8		iochip_reg[0x10];	/* holds values written to the I/O chip */
+static uint8_t		iochip_reg[0x10];	/* holds values written to the I/O chip */
 
 /* protection-related tracking */
-static const UINT32 *prot_table;		/* table of protection values */
-static UINT16 		prot_write_buf;		/* remembers what was written */
-static UINT16		prot_read_buf;		/* remembers what was returned */
+static const uint32_t *prot_table;		/* table of protection values */
+static uint16_t 		prot_write_buf;		/* remembers what was written */
+static uint16_t		prot_read_buf;		/* remembers what was returned */
 
 /* Ribbit! palette swizzling */
 static data16_t *	ribbit_palette_select;	/* pointer to base of ROM we're interested in */
 static offs_t		swizzle_table_index;/* which kind of swizzling is active? */
 
 /* sound-related variables */
-static UINT8		sound_banks;		/* number of sound banks */
-static UINT8		bloxeed_sound;		/* use kludge for bloxeed sound? */
+static uint8_t		sound_banks;		/* number of sound banks */
+static uint8_t		bloxeed_sound;		/* use kludge for bloxeed sound? */
 
 /* RAM pointers */
 static data16_t *	main_ram;			/* pointer to main RAM */
@@ -204,7 +204,7 @@ unsigned int bios_mode = MP_ROM;  // determines whether ROM banks or Game data
 unsigned int bios_width;  // determines the way the game info ROM is read
 
 unsigned int readpos = 1;  // serial bank selection position (9-bit)
-extern UINT16 scanbase;
+extern uint16_t scanbase;
 
 /******************************************************************************
 	Interrupt handling
@@ -404,7 +404,7 @@ static WRITE16_HANDLER( ym3438_w )
 	/* only works if we're accessing the low byte */
 	if (ACCESSING_LSB)
 	{
-		static UINT8 last_port;
+		static uint8_t last_port;
 
 		/* kludge for Bloxeed - it seems to accidentally trip timer 2  */
 		/* and has no recourse for clearing the interrupt; until we    */
@@ -530,7 +530,7 @@ static WRITE16_HANDLER( palette_w )
 
 ******************************************************************************/
 
-static const UINT8 swizzle_table[][32] =
+static const uint8_t swizzle_table[][32] =
 {
 	{	/* case 0 */
 		0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
@@ -1185,7 +1185,7 @@ READ16_HANDLER ( genesis_io_r )
 {
 	/* 8-bit only, data is mirrored in both halves */
 
-	UINT8 return_value = 0;
+	uint8_t return_value = 0;
 
 	switch (offset)
 	{
@@ -1252,7 +1252,7 @@ READ16_HANDLER ( megaplay_genesis_io_r )
 {
 	/* 8-bit only, data is mirrored in both halves */
 
-	UINT8 return_value = 0;
+	uint8_t return_value = 0;
 
 	switch (offset)
 	{
@@ -1751,14 +1751,14 @@ MEMORY_END
 
 
 /* basically from src/drivers/segasyse.c */
-unsigned char segae_vdp_ctrl_r ( UINT8 chip );
-unsigned char segae_vdp_data_r ( UINT8 chip );
-void segae_vdp_ctrl_w ( UINT8 chip, UINT8 data );
-void segae_vdp_data_w ( UINT8 chip, UINT8 data );
+unsigned char segae_vdp_ctrl_r ( uint8_t chip );
+unsigned char segae_vdp_data_r ( uint8_t chip );
+void segae_vdp_ctrl_w ( uint8_t chip, uint8_t data );
+void segae_vdp_data_w ( uint8_t chip, uint8_t data );
 
 static READ_HANDLER (megatech_bios_port_be_bf_r)
 {
-	UINT8 temp = 0;
+	uint8_t temp = 0;
 
 	switch (offset)
 	{
@@ -1831,10 +1831,10 @@ static PORT_WRITE_START( megaplay_bios_writeport )
 	{ 0xbe, 0xbf, megatech_bios_port_be_bf_w },			/* VDP */
 PORT_END
 
-static UINT8 hintcount;			/* line interrupt counter, decreased each scanline */
-extern UINT8 vintpending;
-extern UINT8 hintpending;
-extern UINT8 *segae_vdp_regs[];		/* pointer to vdp's registers */
+static uint8_t hintcount;			/* line interrupt counter, decreased each scanline */
+extern uint8_t vintpending;
+extern uint8_t hintpending;
+extern uint8_t *segae_vdp_regs[];		/* pointer to vdp's registers */
 
 // Interrupt handler - from drivers/segasyse.c
 INTERRUPT_GEN (megatech_irq)
@@ -4060,7 +4060,7 @@ static DRIVER_INIT( bloxeedc )
 
 static DRIVER_INIT( columns )
 {
-	static const UINT32 columns_table[256/8] =
+	static const uint32_t columns_table[256/8] =
 	{
 		0x20a41397, 0x64e057d3, 0x20a41397, 0x64e057d3,
 		0x20a41397, 0x64e057d3, 0xa8249b17, 0xec60df53,
@@ -4078,7 +4078,7 @@ static DRIVER_INIT( columns )
 
 static DRIVER_INIT( columns2 )
 {
-	static const UINT32 columns2_table[256/8] =
+	static const uint32_t columns2_table[256/8] =
 	{
 		0x0015110c, 0x0015110c, 0x889d9984, 0xcedb9b86,
 		0x4455554c, 0x4455554c, 0xddddccc4, 0x9b9bcec6,
@@ -4096,7 +4096,7 @@ static DRIVER_INIT( columns2 )
 
 static DRIVER_INIT( borench )
 {
-	static const UINT32 borench_table[256/8] =
+	static const uint32_t borench_table[256/8] =
 	{
 		0x12fe56ba, 0x56ba56ba, 0x00aa44ee, 0xcceeccee,
 		0x13ff57bb, 0x759957bb, 0x11bb55ff, 0xffddddff,
@@ -4114,7 +4114,7 @@ static DRIVER_INIT( borench )
 
 static DRIVER_INIT( tfrceac )
 {
-	static const UINT32 tfrceac_table[256/8] =
+	static const uint32_t tfrceac_table[256/8] =
 	{
 		0x3a3a6f6f, 0x38386d6d, 0x3a3a6f6f, 0x28287d7d,
 		0x3a3a6f6f, 0x38386d6d, 0x3a3a6f6f, 0x28287d7d,
@@ -4138,7 +4138,7 @@ static DRIVER_INIT( tfrceacb )
 
 static DRIVER_INIT( ribbit )
 {
-	static const UINT32 ribbit_table[256/8] =
+	static const uint32_t ribbit_table[256/8] =
 	{
 		0xffeeddcc, 0xffeeddcc, 0xfeeffeef, 0xfeeffeef,
 		0xbb8899aa, 0xffccddee, 0xba89ba89, 0xfecdfecd,
@@ -4164,7 +4164,7 @@ static DRIVER_INIT( ribbit )
 
 static DRIVER_INIT( tantr )
 {
-	static const UINT32 tantr_table[256/8] =
+	static const uint32_t tantr_table[256/8] =
 	{
 		0x91ddd19d, 0x91ddd19d, 0xd4dc949c, 0xf6feb6be,
 		0x91bbd1fb, 0x91bbd1fb, 0xd4fe94be, 0xf6feb6be,
@@ -4182,7 +4182,7 @@ static DRIVER_INIT( tantr )
 
 static DRIVER_INIT( ichidant )
 {
-	static const UINT32 ichidant_table[256/8] =
+	static const uint32_t ichidant_table[256/8] =
 	{
 		0x55116622, 0x55116622, 0x55117733, 0x55117733,
 		0x8800aa22, 0x8800aa22, 0x8800bb33, 0x8800bb33,
@@ -4200,7 +4200,7 @@ static DRIVER_INIT( ichidant )
 
 static DRIVER_INIT( ichidnte )
 {
-	static const UINT32 ichidnte_table[256/8] =
+	static const uint32_t ichidnte_table[256/8] =
 	{
 		0x4c4c4c4c, 0x08080808, 0x5d5d4c4c, 0x19190808,
 		0x33332222, 0x33332222, 0x22222222, 0x22222222,
@@ -4222,7 +4222,7 @@ static DRIVER_INIT( potopoto )
 	/* note: this is not the real table; Poto Poto only tests one  */
 	/* very specific case, so we don't have enough data to provide */
 	/* the correct table in its entirety */
-	static const UINT32 potopoto_table[256/8] =
+	static const uint32_t potopoto_table[256/8] =
 	{
 		0x00000000, 0x00000000, 0x00000000, 0x00000000,
 		0x00000000, 0x00000000, 0x00000000, 0x00000000,
@@ -4240,7 +4240,7 @@ static DRIVER_INIT( potopoto )
 
 static DRIVER_INIT( puyopuyo )
 {
-	static const UINT32 puyopuyo_table[256/8] =
+	static const uint32_t puyopuyo_table[256/8] =
 	{
 		0x33aa55cc, 0x33aa55cc, 0xba22fe66, 0xba22fe66,
 		0x77ee55cc, 0x55cc77ee, 0xfe66fe66, 0xdc44dc44,
@@ -4262,7 +4262,7 @@ static DRIVER_INIT( puyopuy2 )
 	/* store the original table; instead it loops through all */
 	/* combinations 0-255 and expects the following results;  */
 	/* to work around this, we install a custom read handler  */
-	static const UINT32 puyopuy2_table[256/8] =
+	static const uint32_t puyopuy2_table[256/8] =
 	{
 		0x00008383, 0xb3b33030, 0xcccc4f4f, 0x7f7ffcfc,
 		0x02028181, 0xb1b13232, 0xcece4d4d, 0x7d7dfefe,
@@ -4282,7 +4282,7 @@ static DRIVER_INIT( puyopuy2 )
 
 static DRIVER_INIT( stkclmns )
 {
-	static const UINT32 stkclmns_table[256/8] =
+	static const uint32_t stkclmns_table[256/8] =
 	{
 		0xcc88cc88, 0xcc88cc88, 0xcc99cc99, 0xcc99cc99,
 		0x00001111, 0x88889999, 0x00111100, 0x88999988,
@@ -4309,7 +4309,7 @@ static DRIVER_INIT( stkclmns )
 
 static DRIVER_INIT( zunkyou )
 {
-	static const UINT32 zunkyou_table[256/8] =
+	static const uint32_t zunkyou_table[256/8] =
 	{
 		0xa0a06c6c, 0x82820a0a, 0xecec2020, 0xecec6464,
 		0xa2a26e6e, 0x80800808, 0xaaaa6666, 0xaaaa2222,
@@ -4341,7 +4341,7 @@ static WRITE16_HANDLER( print_club_camera_w )
 
 static DRIVER_INIT( pclub )
 {
-	static const UINT32 printc1_table[256/8] =
+	static const uint32_t printc1_table[256/8] =
 	{
 		0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff,
 		0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff,
@@ -4500,7 +4500,7 @@ GAMEX( 1996, pclubjv5, pclubj,   segac2, pclub,    pclub,    ROT0, "Atlus",     
 static READ_HANDLER ( megaplay_kludge_r) { return 0xff; }
 static DRIVER_INIT (megaplay)
 {
-	UINT8 *src = memory_region(REGION_CPU3);
+	uint8_t *src = memory_region(REGION_CPU3);
 
 	memcpy(src+0x10000,src+0x8000,0x18000);
 

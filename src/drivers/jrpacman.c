@@ -103,7 +103,7 @@
 #include "jrpacman.h"
 
 
-static UINT8 speedcheat = 0;	/* a well known hack allows to make JrPac Man run at four times */
+static uint8_t speedcheat = 0;	/* a well known hack allows to make JrPac Man run at four times */
 				/* his usual speed. When we start the emulation, we check if the */
 				/* hack can be applied, and set this flag accordingly. */
 

@@ -120,13 +120,13 @@
 
 
 /* local variables */
-static UINT8 control_num;
-static UINT8 sound_latch;
-static UINT8 sound_ack_latch;
-static UINT8 sound_comm_stat;
-static UINT8 speech_write_buffer;
-static UINT8 speech_strobe_state;
-static UINT8 nvram_enabled;
+static uint8_t control_num;
+static uint8_t sound_latch;
+static uint8_t sound_ack_latch;
+static uint8_t sound_comm_stat;
+static uint8_t speech_write_buffer;
+static uint8_t speech_strobe_state;
+static uint8_t nvram_enabled;
 
 
 /*************************************
@@ -186,7 +186,7 @@ static MACHINE_INIT( jedi )
 
 static WRITE_HANDLER( rom_banksel_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
     if (data & 0x01) cpu_setbank(1, &RAM[0x10000]);
     if (data & 0x02) cpu_setbank(1, &RAM[0x14000]);

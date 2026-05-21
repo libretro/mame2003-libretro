@@ -85,7 +85,7 @@
 #include "mcr.h"
 
 
-static UINT8 wacko_mux_select;
+static uint8_t wacko_mux_select;
 
 
 

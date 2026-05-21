@@ -15,9 +15,9 @@ TODO:
 
 /* vidhrdw */
 
-UINT8 *hanaroku_spriteram1;
-UINT8 *hanaroku_spriteram2;
-UINT8 *hanaroku_spriteram3;
+uint8_t *hanaroku_spriteram1;
+uint8_t *hanaroku_spriteram2;
+uint8_t *hanaroku_spriteram3;
 
 
 PALETTE_INIT( hanaroku )

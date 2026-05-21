@@ -22,15 +22,15 @@ Atari Orbit Driver
 extern VIDEO_START( orbit );
 extern VIDEO_UPDATE( orbit );
 
-extern UINT8* orbit_playfield_ram;
-extern UINT8* orbit_sprite_ram;
+extern uint8_t* orbit_playfield_ram;
+extern uint8_t* orbit_sprite_ram;
 
 extern WRITE_HANDLER( orbit_playfield_w );
 extern WRITE_HANDLER( orbit_sprite_w );
 
 static int orbit_nmi_enable;
 
-static UINT8 orbit_misc_flags;
+static uint8_t orbit_misc_flags;
 
 
 static INTERRUPT_GEN( orbit_interrupt )
@@ -42,7 +42,7 @@ static INTERRUPT_GEN( orbit_interrupt )
 }
 
 
-static void update_misc_flags(UINT8 val)
+static void update_misc_flags(uint8_t val)
 {
 	orbit_misc_flags = val;
 
@@ -97,7 +97,7 @@ WRITE_HANDLER( orbit_noise_rst_w )
 
 WRITE_HANDLER( orbit_misc_w )
 {
-	UINT8 bit = offset >> 1;
+	uint8_t bit = offset >> 1;
 
 	if (offset & 1)
 	{

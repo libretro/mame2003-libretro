@@ -82,7 +82,7 @@ extern VIDEO_UPDATE( exprraid );
 
 static READ_HANDLER( exprraid_prot_0_r )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	return RAM[0x02a9];
 }
@@ -515,7 +515,7 @@ static void exprraid_gfx_expand(void)
 {
 	/* Expand the background rom so we can use regular decode routines */
 
-	UINT8	*gfx = memory_region(REGION_GFX3);
+	uint8_t	*gfx = memory_region(REGION_GFX3);
 	int				offs = 0x10000-0x1000;
 	int				i;
 
@@ -535,7 +535,7 @@ static void exprraid_gfx_expand(void)
 
 static DRIVER_INIT( wexpress )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 
@@ -557,7 +557,7 @@ static DRIVER_INIT( wexpress )
 
 static DRIVER_INIT( exprraid )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 
 	/* decode vectors */

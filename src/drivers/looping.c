@@ -158,10 +158,10 @@ WRITE_HANDLER( looping_videoram_w )
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-	const UINT8 *source = spriteram;
-	const UINT8 *finish = source + 0x10*4; /* ? */
+	const uint8_t *source = spriteram;
+	const uint8_t *finish = source + 0x10*4; /* ? */
 
-	UINT8 sx, sy;
+	uint8_t sx, sy;
 	int flipx, flipy, code, color;
 
 	while( source < finish )
@@ -555,8 +555,8 @@ ROM_END
 
 DRIVER_INIT( looping ){
 	/* unscramble the TMS9995 ROMs */
-	UINT8 *pMem = memory_region( REGION_CPU1 );
-	UINT8 raw,code;
+	uint8_t *pMem = memory_region( REGION_CPU1 );
+	uint8_t raw,code;
 	int i;
 	for( i=0; i<0x8000; i++ )
 	{

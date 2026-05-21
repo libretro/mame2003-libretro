@@ -310,11 +310,11 @@ static WRITE16_HANDLER( hyprduel_blitter_w )
 		data8_t *src	=	memory_region(region);
 		size_t  src_len	=	memory_region_length(region);
 
-		UINT32 tmap		=	(hyprduel_blitter_regs[ 0x00 / 2 ] << 16 ) +
+		uint32_t tmap		=	(hyprduel_blitter_regs[ 0x00 / 2 ] << 16 ) +
 							 hyprduel_blitter_regs[ 0x02 / 2 ];
-		UINT32 src_offs	=	(hyprduel_blitter_regs[ 0x04 / 2 ] << 16 ) +
+		uint32_t src_offs	=	(hyprduel_blitter_regs[ 0x04 / 2 ] << 16 ) +
 							 hyprduel_blitter_regs[ 0x06 / 2 ];
-		UINT32 dst_offs	=	(hyprduel_blitter_regs[ 0x08 / 2 ] << 16 ) +
+		uint32_t dst_offs	=	(hyprduel_blitter_regs[ 0x08 / 2 ] << 16 ) +
 							 hyprduel_blitter_regs[ 0x0a / 2 ];
 
 		int shift			=	(dst_offs & 0x80) ? 0 : 8;

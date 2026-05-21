@@ -60,7 +60,7 @@ for the colours, goal has to be black otherwise it would register
 rom writes when finishing a game
 	worth looking at before the collision is correct?
 playing dot hit when eaten by a shark?
-dont use any ints, s/b UINT8?
+dont use any ints, s/b uint8_t?
 enemy sprite not disabled at end of game
 tilemap
 palette may only be around 4 colours

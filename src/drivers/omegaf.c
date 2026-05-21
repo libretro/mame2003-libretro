@@ -50,15 +50,15 @@ NOTE :
   Variables
 **************************************************************************/
 
-extern UINT8 *omegaf_fg_videoram;
+extern uint8_t *omegaf_fg_videoram;
 extern size_t omegaf_fgvideoram_size;
 
-extern UINT8 *omegaf_bg0_scroll_x;
-extern UINT8 *omegaf_bg1_scroll_x;
-extern UINT8 *omegaf_bg2_scroll_x;
-extern UINT8 *omegaf_bg0_scroll_y;
-extern UINT8 *omegaf_bg1_scroll_y;
-extern UINT8 *omegaf_bg2_scroll_y;
+extern uint8_t *omegaf_bg0_scroll_x;
+extern uint8_t *omegaf_bg1_scroll_x;
+extern uint8_t *omegaf_bg2_scroll_x;
+extern uint8_t *omegaf_bg0_scroll_y;
+extern uint8_t *omegaf_bg1_scroll_y;
+extern uint8_t *omegaf_bg2_scroll_y;
 
 extern WRITE_HANDLER( omegaf_bg0_bank_w );
 extern WRITE_HANDLER( omegaf_bg1_bank_w );
@@ -98,7 +98,7 @@ static int omegaf_bank_latch = 2;
 
 static DRIVER_INIT( omegaf )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/* Hack the input protection. $00 and $01 code is written to $C005 */
 	/* and $C006.                                                      */
@@ -359,7 +359,7 @@ INPUT_PORTS_END
 
 static WRITE_HANDLER( omegaf_bankselect_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bankaddress;
 
 	if ( (data & 0x0f) != omegaf_bank_latch )

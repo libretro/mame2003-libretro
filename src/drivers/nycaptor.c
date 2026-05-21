@@ -153,8 +153,8 @@ VIDEO_START( nycaptor );
 VIDEO_UPDATE( nycaptor );
 
 
-extern UINT8 *nycaptor_scrlram;
-UINT8 *nycaptor_sharedram;
+extern uint8_t *nycaptor_scrlram;
+uint8_t *nycaptor_sharedram;
 static int generic_control_reg = 0;
 static int sound_nmi_enable=0,pending_nmi=0;
 
@@ -191,7 +191,7 @@ static WRITE_HANDLER( sub_cpu_halt_w )
 	cpu_set_halt_line(1, (data )? ASSERT_LINE : CLEAR_LINE);
 }
 
-static UINT8 snd_data;
+static uint8_t snd_data;
 
 READ_HANDLER( from_snd_r )
 {

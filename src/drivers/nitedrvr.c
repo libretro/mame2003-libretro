@@ -36,7 +36,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *nitedrvr_ram;
+extern uint8_t *nitedrvr_ram;
 
 extern int nitedrvr_gear;
 extern int nitedrvr_track;
@@ -51,7 +51,7 @@ extern WRITE_HANDLER( nitedrvr_out1_w );
 extern WRITE_HANDLER( nitedrvr_ram_w );
 extern void nitedrvr_crash_toggle(int dummy);
 
-extern UINT8 *nitedrvr_hvc;
+extern uint8_t *nitedrvr_hvc;
 
 extern WRITE_HANDLER( nitedrvr_videoram_w );
 extern WRITE_HANDLER( nitedrvr_hvc_w );

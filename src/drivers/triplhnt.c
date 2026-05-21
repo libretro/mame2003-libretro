@@ -11,20 +11,20 @@ Atari Triple Hunt Driver
 extern VIDEO_START( triplhnt );
 extern VIDEO_UPDATE( triplhnt );
 
-extern UINT8* triplhnt_playfield_ram;
-extern UINT8* triplhnt_vpos_ram;
-extern UINT8* triplhnt_hpos_ram;
-extern UINT8* triplhnt_code_ram;
-extern UINT8* triplhnt_orga_ram;
+extern uint8_t* triplhnt_playfield_ram;
+extern uint8_t* triplhnt_vpos_ram;
+extern uint8_t* triplhnt_hpos_ram;
+extern uint8_t* triplhnt_code_ram;
+extern uint8_t* triplhnt_orga_ram;
 
 extern int triplhnt_sprite_zoom;
 extern int triplhnt_sprite_bank;
 
-static UINT8 triplhnt_cmos[16];
-static UINT8 triplhnt_da_latch;
-static UINT8 triplhnt_misc_flags;
-static UINT8 triplhnt_cmos_latch;
-static UINT8 triplhnt_hit_code;
+static uint8_t triplhnt_cmos[16];
+static uint8_t triplhnt_da_latch;
+static uint8_t triplhnt_misc_flags;
+static uint8_t triplhnt_cmos_latch;
+static uint8_t triplhnt_hit_code;
 
 
 static DRIVER_INIT( triplhnt )
@@ -44,7 +44,7 @@ void triplhnt_hit_callback(int code)
 
 static void triplhnt_update_misc(int offset)
 {
-	UINT8 bit = offset >> 1;
+	uint8_t bit = offset >> 1;
 
 	/* BIT0 => UNUSED      */
 	/* BIT1 => LAMP        */

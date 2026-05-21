@@ -155,14 +155,14 @@ static WRITE16_HANDLER( protection_w )
 
 	if (offset == 1)
 	{
-		UINT32 cmd = (prot[0] << 16) | prot[1];
+		uint32_t cmd = (prot[0] << 16) | prot[1];
 		switch (cmd >> 24)
 		{
 		case 0x64:
 		{
-			UINT32 param1 = (cpu_readmem24bew_word(cmd & 0xffffff) << 16)
+			uint32_t param1 = (cpu_readmem24bew_word(cmd & 0xffffff) << 16)
 				| cpu_readmem24bew_word((cmd & 0xffffff) + 2);
-			UINT32 param2 = (cpu_readmem24bew_word((cmd & 0xffffff) + 4) << 16)
+			uint32_t param2 = (cpu_readmem24bew_word((cmd & 0xffffff) + 4) << 16)
 				| cpu_readmem24bew_word((cmd & 0xffffff) + 6);
 
 			switch (param1 >> 24)

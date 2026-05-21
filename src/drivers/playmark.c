@@ -108,7 +108,7 @@ static NVRAM_HANDLER( wbeachvl )
 			EEPROM_load(file);
 		else
 		{
-			UINT8 init[128];
+			uint8_t init[128];
 			memset(init,0,128);
 			EEPROM_set_data(init,128);
 		}
@@ -689,7 +689,7 @@ ROM_START( wbeachvl )
 ROM_END
 
 
-static UINT8 playmark_asciitohex(UINT8 data)
+static uint8_t playmark_asciitohex(uint8_t data)
 {
 	/* Convert ASCII data to HEX */
 
@@ -705,10 +705,10 @@ static DRIVER_INIT( bigtwin )
 {
 	data8_t *playmark_PICROM_HEX = memory_region(REGION_USER1);
 	data8_t *playmark_PICROM = memory_region(REGION_CPU2);
-	INT32   offs, data;
-	UINT16  src_pos = 0;
-	UINT16  dst_pos = 0;
-	UINT8   data_hi, data_lo;
+	int32_t   offs, data;
+	uint16_t  src_pos = 0;
+	uint16_t  dst_pos = 0;
+	uint8_t   data_hi, data_lo;
 
 
 	playmark_snd_flag = 0;

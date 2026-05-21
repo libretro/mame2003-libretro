@@ -335,7 +335,7 @@ READ_HANDLER( psychic5_bankselect_r )
 
 WRITE_HANDLER( psychic5_bankselect_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bankaddress;
 
 	if (data != psychic5_bank_latch)

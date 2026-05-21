@@ -125,7 +125,7 @@ VIDEO_UPDATE( metro );
 
 static int irq_line, blitter_bit;
 
-static UINT8 requested_int[8];
+static uint8_t requested_int[8];
 
 static data16_t *metro_irq_levels, *metro_irq_vectors, *metro_irq_enable;
 
@@ -750,11 +750,11 @@ WRITE16_HANDLER( metro_blitter_w )
 		data8_t *src	=	memory_region(region);
 		size_t  src_len	=	memory_region_length(region);
 
-		UINT32 tmap		=	(metro_blitter_regs[ 0x00 / 2 ] << 16 ) +
+		uint32_t tmap		=	(metro_blitter_regs[ 0x00 / 2 ] << 16 ) +
 							 metro_blitter_regs[ 0x02 / 2 ];
-		UINT32 src_offs	=	(metro_blitter_regs[ 0x04 / 2 ] << 16 ) +
+		uint32_t src_offs	=	(metro_blitter_regs[ 0x04 / 2 ] << 16 ) +
 							 metro_blitter_regs[ 0x06 / 2 ];
-		UINT32 dst_offs	=	(metro_blitter_regs[ 0x08 / 2 ] << 16 ) +
+		uint32_t dst_offs	=	(metro_blitter_regs[ 0x08 / 2 ] << 16 ) +
 							 metro_blitter_regs[ 0x0a / 2 ];
 
 		int shift			=	(dst_offs & 0x80) ? 0 : 8;

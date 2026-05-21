@@ -82,7 +82,7 @@
 #include "mcr.h"
 
 
-static const UINT8 *nvram_init;
+static const uint8_t *nvram_init;
 
 
 /*************************************
@@ -480,7 +480,7 @@ ROM_END
 
 static DRIVER_INIT( solarfox )
 {
-	static const UINT8 hiscore_init[] = { 0,0,1,1,1,1,1,3,3,3,7 };
+	static const uint8_t hiscore_init[] = { 0,0,1,1,1,1,1,3,3,3,7 };
 	nvram_init = hiscore_init;
 
 	MCR_CONFIGURE_SOUND(MCR_SSIO);

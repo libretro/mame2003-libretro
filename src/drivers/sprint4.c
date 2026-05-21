@@ -15,7 +15,7 @@ extern VIDEO_UPDATE( sprint4 );
 
 extern WRITE_HANDLER( sprint4_video_ram_w );
 
-extern UINT8* sprint4_video_ram;
+extern uint8_t* sprint4_video_ram;
 
 extern int sprint4_collision[4];
 
@@ -46,7 +46,7 @@ static PALETTE_INIT( sprint4 )
 
 static void input_callback(int dummy)
 {
-	static UINT8 dial[4];
+	static uint8_t dial[4];
 
 	/* handle steering wheels and gear shift levers */
 
@@ -118,7 +118,7 @@ static READ_HANDLER( sprint4_analog_r )
 {
 	int n = (offset >> 1) & 3;
 
-	UINT8 val;
+	uint8_t val;
 
 	if (offset & 1)
 	{
@@ -141,7 +141,7 @@ static READ_HANDLER( sprint4_coin_r )
 
 static READ_HANDLER( sprint4_gas_r )
 {
-	UINT8 val = readinputport(0);
+	uint8_t val = readinputport(0);
 
 	if (sprint4_collision[0]) val |= 0x02;
 	if (sprint4_collision[1]) val |= 0x08;

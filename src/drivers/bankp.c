@@ -37,8 +37,8 @@ write:
 #include "vidhrdw/generic.h"
 
 
-extern UINT8 *bankp_videoram2;
-extern UINT8 *bankp_colorram2;
+extern uint8_t *bankp_videoram2;
+extern uint8_t *bankp_colorram2;
 
 extern WRITE_HANDLER( bankp_videoram_w );
 extern WRITE_HANDLER( bankp_colorram_w );

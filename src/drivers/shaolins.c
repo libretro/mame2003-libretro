@@ -10,7 +10,7 @@ driver by Allard Van Der Bas
 #include "vidhrdw/generic.h"
 
 
-UINT8 shaolins_nmi_enable;
+uint8_t shaolins_nmi_enable;
 
 extern WRITE_HANDLER( shaolins_videoram_w );
 extern WRITE_HANDLER( shaolins_colorram_w );

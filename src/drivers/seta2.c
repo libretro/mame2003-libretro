@@ -399,7 +399,7 @@ MEMORY_END
 	The offset to use is stored in RAM at address 0x20BA16 */
 READ16_HANDLER( pzlbowl_protection_r )
 {
-	UINT32 address = (cpu_readmem24bew_word(0x20ba16) << 16) | cpu_readmem24bew_word(0x20ba18);
+	uint32_t address = (cpu_readmem24bew_word(0x20ba16) << 16) | cpu_readmem24bew_word(0x20ba18);
 	return memory_region(REGION_CPU1)[address - 2];
 }
 

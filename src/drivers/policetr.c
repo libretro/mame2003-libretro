@@ -84,8 +84,8 @@ static data32_t bsmt_data_bank;
 static data32_t bsmt_data_offset;
 
 static data32_t *speedup_data;
-static UINT32 last_cycles;
-static UINT32 loop_count;
+static uint32_t last_cycles;
+static uint32_t loop_count;
 
 static offs_t speedup_pc;
 
@@ -212,7 +212,7 @@ static WRITE32_HANDLER( speedup_w )
 	/* see if the PC matches */
 	if ((activecpu_get_previouspc() & 0x1fffffff) == speedup_pc)
 	{
-		UINT32 curr_cycles = activecpu_gettotalcycles();
+		uint32_t curr_cycles = activecpu_gettotalcycles();
 
 		/* if less than 50 cycles from the last time, count it */
 		if (curr_cycles - last_cycles < 50)

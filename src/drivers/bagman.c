@@ -66,7 +66,7 @@ extern MACHINE_INIT( bagman );
 extern WRITE_HANDLER( bagman_pal16r6_w );
 
 
-extern UINT8 *bagman_video_enable;
+extern uint8_t *bagman_video_enable;
 
 extern WRITE_HANDLER( bagman_videoram_w );
 extern WRITE_HANDLER( bagman_colorram_w );
@@ -79,7 +79,7 @@ extern VIDEO_UPDATE( bagman );
 
 static int speech_rom_address = 0;
 
-static UINT8 ls259_buf[8] = {0,0,0,0,0,0,0,0};
+static uint8_t ls259_buf[8] = {0,0,0,0,0,0,0,0};
 
 
 static void start_talking (void)
@@ -126,7 +126,7 @@ static void reset_talking (void)
 
 int bagman_speech_rom_read_bit(void)
 {
-	UINT8 *ROM = memory_region(REGION_SOUND1);
+	uint8_t *ROM = memory_region(REGION_SOUND1);
 	int bit_no = (ls259_buf[0]<<2) | (ls259_buf[1]<<1) | (ls259_buf[2]<<0);
 	int byte = 0;
 

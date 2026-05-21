@@ -25,7 +25,7 @@ TODO:
 #include "cpu/i8039/i8039.h"
 
 
-UINT8 *wilytowr_videoram2, *wilytowr_scrollram;
+uint8_t *wilytowr_videoram2, *wilytowr_scrollram;
 
 static int pal_bank;
 

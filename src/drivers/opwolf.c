@@ -186,8 +186,8 @@ static MEMORY_READ_START( z80_readmem )
 	{ 0xa001, 0xa001, taitosound_slave_comm_r },
 MEMORY_END
 
-static UINT8 adpcm_b[0x08];
-static UINT8 adpcm_c[0x08];
+static uint8_t adpcm_b[0x08];
+static uint8_t adpcm_c[0x08];
 
 //static unsigned char adpcm_d[0x08];
 //0 - start ROM offset LSB

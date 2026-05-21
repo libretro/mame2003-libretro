@@ -280,12 +280,12 @@ static DRIVER_INIT( mustache )
 	#define G1 (memory_region_length(REGION_GFX1)/3)
 	#define G2 (memory_region_length(REGION_GFX2)/2)
 
-	UINT8 *buf=auto_malloc(G2*2);
+	uint8_t *buf=auto_malloc(G2*2);
 
 	/* BG data lines */
 	for (i=0;i<G1; i++)
 	{
-		UINT16 w;
+		uint16_t w;
 
 		buf[i] = BITSWAP8(memory_region(REGION_GFX1)[i], 0,5,2,6,4,1,7,3);
 
@@ -303,7 +303,7 @@ static DRIVER_INIT( mustache )
 	/* SPR data lines */
 	for (i=0;i<G2; i++)
 	{
-		UINT16 w;
+		uint16_t w;
 
 		w = (memory_region(REGION_GFX2)[i] << 8) | memory_region(REGION_GFX2)[i+G2];
 		w = BITSWAP16(w, 5,7,11,4,15,10,3,14, 9,2,13,8,1,12,0,6 );

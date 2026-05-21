@@ -1114,7 +1114,7 @@ ROM_END
 
 /******************************************************************************/
 
-void tumblep_patch_code(UINT16 offset)
+void tumblep_patch_code(uint16_t offset)
 {
 	/* A hack which enables all Dip Switches effects */
 	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);

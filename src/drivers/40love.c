@@ -322,8 +322,8 @@ static WRITE_HANDLER( bank_select_w )
 }
 
 
-static UINT8 pix1;
-static UINT8 pix2[2];
+static uint8_t pix1;
+static uint8_t pix2[2];
 
 static WRITE_HANDLER( pix1_w )
 {
@@ -366,9 +366,9 @@ static READ_HANDLER( pix2_r )
 static int from_mcu;
 static int mcu_cmd;
 
-static UINT8 mcu_in[2][16],mcu_out[2][16];
+static uint8_t mcu_in[2][16],mcu_out[2][16];
 
-static const UINT8 mcu_data0[0x80] =
+static const uint8_t mcu_data0[0x80] =
 {
 	0x0a,0x08,0x0f,0x07,0x06,0x05,0x04,0x00,
 	0x0a,0x0b,0x15,0x02,0x03,0x15,0x0a,0x08,
@@ -389,7 +389,7 @@ static const UINT8 mcu_data0[0x80] =
 	0x23,0xc5,0xc9,0xee,0x37,0x28,0xc0,0xc5
 };
 
-static const UINT8 mcu_data1[0x80] =
+static const uint8_t mcu_data1[0x80] =
 {
 	0x00,0x78,0xef,0x66,0xdc,0x50,0xc2,0x33,
 	0xa1,0x0c,0x74,0xd9,0x3a,0x96,0xef,0x42,
@@ -409,7 +409,7 @@ static const UINT8 mcu_data1[0x80] =
 	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff
 };
 
-static const UINT8 mcu_data2[0x80] =
+static const uint8_t mcu_data2[0x80] =
 {
 	0x00,0x04,0x08,0x00,0x11,0x16,0x1a,0x1f,
 	0x23,0x28,0x2c,0x30,0x35,0x39,0x3d,0x42,
@@ -433,7 +433,7 @@ static const UINT8 mcu_data2[0x80] =
 static WRITE_HANDLER( undoukai_mcu_w )
 {
 	data8_t *RAM = memory_region(REGION_CPU1);
-	UINT16 ram_adr = RAM[0xa1b5]*0x100 + RAM[0xa1b4];
+	uint16_t ram_adr = RAM[0xa1b5]*0x100 + RAM[0xa1b4];
 
 	int d;
 	int i;
@@ -639,8 +639,8 @@ static DRIVER_INIT( 40love )
 
 /***************************************************************************/
 
-static UINT8 snd_data;
-static UINT8 snd_flag;
+static uint8_t snd_data;
+static uint8_t snd_flag;
 
 static READ_HANDLER( from_snd_r )
 {
@@ -812,10 +812,10 @@ static MACHINE_INIT( ta7630 )
 */
 }
 
-static UINT8 snd_ctrl0=0;
-static UINT8 snd_ctrl1=0;
-static UINT8 snd_ctrl2=0;
-static UINT8 snd_ctrl3=0;
+static uint8_t snd_ctrl0=0;
+static uint8_t snd_ctrl1=0;
+static uint8_t snd_ctrl2=0;
+static uint8_t snd_ctrl3=0;
 
 static WRITE_HANDLER( sound_control_0_w )
 {

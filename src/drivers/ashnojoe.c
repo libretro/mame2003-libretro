@@ -82,7 +82,7 @@ extern WRITE16_HANDLER( joe_tilemaps_yscroll_w );
 extern VIDEO_START( ashnojoe );
 extern VIDEO_UPDATE( ashnojoe );
 
-static UINT8 adpcm_byte;
+static uint8_t adpcm_byte;
 static int soundlatch_status;
 static int msm5205_vclk_toggle;
 

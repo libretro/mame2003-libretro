@@ -1028,7 +1028,7 @@ static DRIVER_INIT( wndrplnt )
 
 static DRIVER_INIT( chelnov )
 {
-	data16_t *RAM = (UINT16 *)memory_region(REGION_CPU1);
+	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	microcontroller_id=CHELNOV;
 	coin_mask=0xe0;
@@ -1038,7 +1038,7 @@ static DRIVER_INIT( chelnov )
 
 static DRIVER_INIT( chelnovw )
 {
-	data16_t *RAM = (UINT16 *)memory_region(REGION_CPU1);
+	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	microcontroller_id=CHELNOVW;
 	coin_mask=0xe0;
@@ -1048,7 +1048,7 @@ static DRIVER_INIT( chelnovw )
 
 static DRIVER_INIT( chelnovj )
 {
-	data16_t *RAM = (UINT16 *)memory_region(REGION_CPU1);
+	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	microcontroller_id=CHELNOVJ;
 	coin_mask=0xe0;

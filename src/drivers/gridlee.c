@@ -89,12 +89,12 @@
 
 
 /* local variables */
-static UINT8 last_analog_input[2];
-static UINT8 last_analog_output[2];
+static uint8_t last_analog_input[2];
+static uint8_t last_analog_output[2];
 
 /* random number generator states */
-static UINT8 *poly17 = NULL;
-static UINT8 *rand17 = NULL;
+static uint8_t *poly17 = NULL;
+static uint8_t *rand17 = NULL;
 
 
 
@@ -170,7 +170,7 @@ static MACHINE_INIT( gridlee )
 static READ_HANDLER( analog_port_r )
 {
 	int delta, sign, magnitude;
-	UINT8 newval;
+	uint8_t newval;
 
 	/* first read the new trackball value and compute the signed delta */
 	newval = readinputport(offset + 2 * gridlee_cocktail_flip);
@@ -220,8 +220,8 @@ static READ_HANDLER( analog_port_r )
 
 static void poly17_init(void)
 {
-	UINT32 i, x = 0;
-	UINT8 *p, *r;
+	uint32_t i, x = 0;
+	uint8_t *p, *r;
 
 	/* allocate memory */
 	p = poly17 = auto_malloc(2 * (POLY17_SIZE + 1));

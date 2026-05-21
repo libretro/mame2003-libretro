@@ -1,7 +1,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 *kopunch_videoram2;
+extern uint8_t *kopunch_videoram2;
 
 extern WRITE_HANDLER( kopunch_videoram_w );
 extern WRITE_HANDLER( kopunch_videoram2_w );
@@ -237,7 +237,7 @@ ROM_END
 
 static DRIVER_INIT( kopunch )
 {
-//	UINT8 *rom = memory_region(REGION_CPU1);
+//	uint8_t *rom = memory_region(REGION_CPU1);
 
 	/* It looks like there is a security chip, that changes instruction of the form:
 		0334: 3E 0C       ld   a,$0C

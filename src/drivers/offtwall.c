@@ -128,7 +128,7 @@ static WRITE16_HANDLER( io_latch_w )
 
 static data16_t *bankswitch_base;
 static data16_t *bankrom_base;
-static UINT32 bank_offset;
+static uint32_t bank_offset;
 
 
 static READ16_HANDLER( bankswitch_r )

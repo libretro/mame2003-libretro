@@ -97,9 +97,9 @@ ae500w07.ad1 - M6295 Samples (23c4001)
 
 static data16_t* protram;
 
-static UINT8 device[0x10000];
-static UINT32 device_read_ptr = 0;
-static UINT32 device_write_ptr = 0;
+static uint8_t device[0x10000];
+static uint32_t device_read_ptr = 0;
+static uint32_t device_write_ptr = 0;
 
 enum DEV_STATUS
 {
@@ -110,11 +110,11 @@ enum DEV_STATUS
 	DS_READ_ACK
 };
 
-static UINT8 device_status = DS_CMD;
+static uint8_t device_status = DS_CMD;
 
 static READ16_HANDLER(reg_f80000_r)
 {
-	UINT16 dt;
+	uint16_t dt;
 
 	// 0 means ok, no errors. -1 means error
 	if (device_status == DS_CMD)
@@ -207,7 +207,7 @@ static WRITE16_HANDLER(reg_e80000_w)
 		return;
 	}
 
-	device[device_write_ptr] = (UINT8)data;
+	device[device_write_ptr] = (uint8_t)data;
 	device_write_ptr++;
 	device_status = DS_WRITE_ACK;
 

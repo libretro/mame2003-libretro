@@ -718,7 +718,7 @@ ROM_END
 static DRIVER_INIT( ataxx )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 ataxx_eeprom_data[] =
+	static const uint16_t ataxx_eeprom_data[] =
 	{
 		0x09,0x0101,
 		0x0a,0x0104,
@@ -745,7 +745,7 @@ static DRIVER_INIT( ataxx )
 static DRIVER_INIT( ataxxj )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 ataxxj_eeprom_data[] =
+	static const uint16_t ataxxj_eeprom_data[] =
 	{
 		0x09,0x0101,
 		0x0a,0x0104,
@@ -771,7 +771,7 @@ static DRIVER_INIT( ataxxj )
 static DRIVER_INIT( wsf )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 wsf_eeprom_data[] =
+	static const uint16_t wsf_eeprom_data[] =
 	{
 		0x04,0x0101,
 		0x0b,0x04ff,
@@ -799,7 +799,7 @@ static DRIVER_INIT( wsf )
 static DRIVER_INIT( indyheat )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 indyheat_eeprom_data[] =
+	static const uint16_t indyheat_eeprom_data[] =
 	{
 		0x2c,0x0100,
 		0x2d,0x0401,
@@ -832,7 +832,7 @@ static DRIVER_INIT( indyheat )
 static DRIVER_INIT( brutforc )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 brutforc_eeprom_data[] =
+	static const uint16_t brutforc_eeprom_data[] =
 	{
 		0x27,0x0303,
 		0x28,0x0003,
@@ -860,7 +860,7 @@ static DRIVER_INIT( brutforc )
 static DRIVER_INIT( asylum )
 {
 	/* initialize the default EEPROM state */
-	static const UINT16 asylum_eeprom_data[] =
+	static const uint16_t asylum_eeprom_data[] =
 	{
 		0x02,0x0101,
 		0x03,0x0101,

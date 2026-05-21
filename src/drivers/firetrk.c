@@ -71,7 +71,7 @@ static void periodic_callback(int scanline)
 
 static void frame_callback(int dummy)
 {
-	static UINT8 dial[2];
+	static uint8_t dial[2];
 
 	int i;
 
@@ -123,7 +123,7 @@ static void frame_callback(int dummy)
 }
 
 
-static void write_output(UINT8 flags)
+static void write_output(uint8_t flags)
 {
 	if (GAME_IS_FIRETRUCK)
 	{
@@ -210,7 +210,7 @@ static MACHINE_INIT( firetrk )
 
 static PALETTE_INIT( firetrk )
 {
-	static const UINT16 colortable_source[] =
+	static const uint16_t colortable_source[] =
 	{
 		0, 0, 1, 0,
 		2, 0, 3, 0,
@@ -230,7 +230,7 @@ static PALETTE_INIT( firetrk )
 }
 
 
-static void prom_to_palette(int number, UINT8 val)
+static void prom_to_palette(int number, uint8_t val)
 {
 	palette_set_color(number,
 		(val & 4) ? 0xff : 0x00,
@@ -241,7 +241,7 @@ static void prom_to_palette(int number, UINT8 val)
 
 static PALETTE_INIT( montecar )
 {
-	static const UINT16 colortable_source[] =
+	static const uint16_t colortable_source[] =
 	{
 		0x00, 0x00, 0x00, 0x01,
 		0x00, 0x02, 0x00, 0x03,
@@ -275,7 +275,7 @@ static PALETTE_INIT( montecar )
 	 *
 	 */
 
-	const UINT8* p = memory_region(REGION_PROMS);
+	const uint8_t* p = memory_region(REGION_PROMS);
 
 	int number = 0;
 
@@ -330,8 +330,8 @@ static READ_HANDLER( firetrk_playfield_r )
 
 static READ_HANDLER( firetrk_dip_r )
 {
-	UINT8 val0 = readinputport(2);
-	UINT8 val1 = readinputport(3);
+	uint8_t val0 = readinputport(2);
+	uint8_t val1 = readinputport(3);
 
 	if (GAME_IS_FIRETRUCK || GAME_IS_SUPERBUG)
 	{
@@ -350,11 +350,11 @@ static READ_HANDLER( firetrk_dip_r )
 
 static READ_HANDLER( firetrk_input_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
-	UINT8 bit0 = readinputport(4);
-	UINT8 bit6 = readinputport(5);
-	UINT8 bit7 = readinputport(6);
+	uint8_t bit0 = readinputport(4);
+	uint8_t bit6 = readinputport(5);
+	uint8_t bit7 = readinputport(6);
 
 	if (GAME_IS_FIRETRUCK)
 	{

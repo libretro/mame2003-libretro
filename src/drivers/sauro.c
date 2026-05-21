@@ -77,10 +77,10 @@ Addition by Reip
 #include "vidhrdw/generic.h"
 #include "cpu/z80/z80.h"
 
-extern UINT8 *tecfri_videoram;
-extern UINT8 *tecfri_colorram;
-extern UINT8 *tecfri_videoram2;
-extern UINT8 *tecfri_colorram2;
+extern uint8_t *tecfri_videoram;
+extern uint8_t *tecfri_colorram;
+extern uint8_t *tecfri_videoram2;
+extern uint8_t *tecfri_colorram2;
 
 extern WRITE_HANDLER( tecfri_videoram_w );
 extern WRITE_HANDLER( tecfri_colorram_w );
@@ -450,7 +450,7 @@ static DRIVER_INIT( tecfri )
 	/* This game doesn't like all memory to be initialized to zero, it won't
 	   initialize the high scores */
 
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	memset(&RAM[0xe000], 0, 0x100);
 	RAM[0xe000] = 1;

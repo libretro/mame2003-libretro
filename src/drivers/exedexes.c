@@ -13,9 +13,9 @@ Notes:
 #include "vidhrdw/generic.h"
 
 
-extern UINT8 *exedexes_bg_scroll;
-extern UINT8 *exedexes_nbg_yscroll;
-extern UINT8 *exedexes_nbg_xscroll;
+extern uint8_t *exedexes_bg_scroll;
+extern uint8_t *exedexes_nbg_yscroll;
+extern uint8_t *exedexes_nbg_xscroll;
 
 extern WRITE_HANDLER( exedexes_videoram_w );
 extern WRITE_HANDLER( exedexes_colorram_w );

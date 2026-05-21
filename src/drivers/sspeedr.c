@@ -26,8 +26,8 @@ extern VIDEO_START( sspeedr );
 extern VIDEO_UPDATE( sspeedr );
 extern VIDEO_EOF( sspeedr );
 
-static UINT8 led_TIME[2];
-static UINT8 led_SCORE[24];
+static uint8_t led_TIME[2];
+static uint8_t led_SCORE[24];
 
 
 static PALETTE_INIT( sspeedr )
@@ -54,7 +54,7 @@ static PALETTE_INIT( sspeedr )
 
 static READ_HANDLER( sspeedr_steering_r )
 {
-	UINT8 val = readinputport(0);
+	uint8_t val = readinputport(0);
 
 	return 0x3f ^ (val >> 2) ^ (val >> 3);
 }
@@ -79,7 +79,7 @@ static WRITE_HANDLER( sspeedr_lamp_w )
 
 static WRITE_HANDLER( sspeedr_time_w )
 {
-	UINT8 prev = led_TIME[offset];
+	uint8_t prev = led_TIME[offset];
 
 	char buf_old[8];
 	char buf_new[8];
@@ -98,7 +98,7 @@ static WRITE_HANDLER( sspeedr_time_w )
 
 static WRITE_HANDLER( sspeedr_score_w )
 {
-	UINT8 prev = led_SCORE[offset];
+	uint8_t prev = led_SCORE[offset];
 
 	char buf_old[8];
 	char buf_new[8];

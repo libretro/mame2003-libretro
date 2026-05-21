@@ -223,7 +223,7 @@ static READ_HANDLER( dkong_sh_t0_r )   { return t[0]; }
 static READ_HANDLER( dkong_sh_t1_r )   { return t[1]; }
 static READ_HANDLER( dkong_sh_tune_r )
 {
-	UINT8 *SND = memory_region(REGION_CPU2);
+	uint8_t *SND = memory_region(REGION_CPU2);
 	if (page & 0x40)
 	{
 		switch (offset)
@@ -2582,7 +2582,7 @@ ROM_END
 static DRIVER_INIT( herodk )
 {
 	int A;
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 
 	/* swap data lines D3 and D4 */
@@ -2601,7 +2601,7 @@ static DRIVER_INIT( herodk )
 
 static DRIVER_INIT( radarscp )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 
 	/* TODO: Radarscope does a check on bit 6 of 7d00 which prevent it from working. */

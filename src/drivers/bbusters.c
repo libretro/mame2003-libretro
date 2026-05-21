@@ -861,7 +861,7 @@ ROM_START( mechatt )
 ROM_END
 
 #if 0
-static void bbusters_patch_code(UINT16 offset)
+static void bbusters_patch_code(uint16_t offset)
 {
 	/* To avoid checksum error */
 	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);

@@ -153,7 +153,7 @@ static WRITE16_HANDLER( mugsmash_reg2_w )
 #if USE_FAKE_INPUT_PORTS
 static READ16_HANDLER ( mugsmash_input_ports_r )
 {
-	UINT16 data = 0xffff;
+	uint16_t data = 0xffff;
 
 	switch (offset)
 	{

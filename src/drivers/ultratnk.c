@@ -20,7 +20,7 @@
 #include "vidhrdw/generic.h"
 
 static int ultratnk_controls;
-static UINT8 *mirror_ram;
+static uint8_t *mirror_ram;
 
 static struct tilemap *bg_tilemap;
 
@@ -57,7 +57,7 @@ static PALETTE_INIT( ultratnk )
 
 static void ultratnk_draw_sprites( struct mame_bitmap *bitmap )
 {
-	const UINT8 *pMem = memory_region( REGION_CPU1 );
+	const uint8_t *pMem = memory_region( REGION_CPU1 );
 
 	if( (pMem[0x93]&0x80)==0 )
 	/*	Probably wrong; game description indicates that one or both tanks can

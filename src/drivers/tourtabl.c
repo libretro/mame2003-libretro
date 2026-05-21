@@ -24,8 +24,8 @@ extern WRITE_HANDLER( tia_w );
 extern void tia_init(void);
 
 
-static UINT8* r6532_0_ram;
-static UINT8* r6532_1_ram;
+static uint8_t* r6532_0_ram;
+static uint8_t* r6532_1_ram;
 
 
 

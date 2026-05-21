@@ -32,14 +32,14 @@
 
 static data32_t *ram_base;
 static data32_t *fastram_base;
-static UINT8 cmos_protected;
-static UINT16 control_data;
+static uint8_t cmos_protected;
+static uint16_t control_data;
 
-static UINT8 adc_data;
-static UINT8 adc_shift;
+static uint8_t adc_data;
+static uint8_t adc_shift;
 
 static data16_t last_port0;
-static UINT8 shifter_state;
+static uint8_t shifter_state;
 
 static void *timer[2];
 static double timer_rate;
@@ -202,7 +202,7 @@ static READ32_HANDLER( midvunit_cmos_r )
 
 WRITE32_HANDLER( midvunit_control_w )
 {
-	UINT16 olddata = control_data;
+	uint16_t olddata = control_data;
 	COMBINE_DATA(&control_data);
 
 	/* bit 7 is the LED */
@@ -222,7 +222,7 @@ WRITE32_HANDLER( midvunit_control_w )
 
 WRITE32_HANDLER( crusnwld_control_w )
 {
-	UINT16 olddata = control_data;
+	uint16_t olddata = control_data;
 	COMBINE_DATA(&control_data);
 
 	/* bit 11 is the DCS sound reset */
@@ -261,7 +261,7 @@ READ32_HANDLER( tms32031_control_r )
 	{
 		/* timer is clocked at 100ns */
 		int which = (offset >> 4) & 1;
-		INT32 result = timer_timeelapsed(timer[which]) * timer_rate;
+		int32_t result = timer_timeelapsed(timer[which]) * timer_rate;
 /*		log_cb(RETRO_LOG_DEBUG, LOGPRE "%06X:tms32031_control_r(%02X) = %08X\n", activecpu_get_pc(), offset, result);*/
 		return result;
 	}
@@ -341,8 +341,8 @@ static WRITE32_HANDLER( crusnwld_serial_data_w )
  *************************************/
 
 /* values from offset 3, 6, and 10 must add up to 0x904752a2 */
-static UINT16 bit_index;
-static UINT32 bit_data[0x10] =
+static uint16_t bit_index;
+static uint32_t bit_data[0x10] =
 {
 	0x3017c636,0x3017c636,0x3017c636,0x3017c636,
 	0x3017c636,0x3017c636,0x3017c636,0x3017c636,
@@ -459,7 +459,7 @@ static WRITE32_HANDLER( midvplus_misc_w )
  *
  *************************************/
 
-static void midvplus_xf1_w(UINT8 val)
+static void midvplus_xf1_w(uint8_t val)
 {
 	static int lastval;
 /*	log_cb(RETRO_LOG_DEBUG, LOGPRE "xf1_w = %d\n", val);*/
@@ -1422,7 +1422,7 @@ static struct ide_interface ide_intf =
 
 static DRIVER_INIT( wargods )
 {
-	UINT8 default_nvram[256];
+	uint8_t default_nvram[256];
 
 	/* initialize the subsystems */
 	dcs2_init(0x3839);

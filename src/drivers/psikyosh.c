@@ -197,7 +197,7 @@ static NVRAM_HANDLER(93C56)
 		else	// these games want the eeprom all zeros by default
 		{
 			int length;
-			UINT8 *dat;
+			uint8_t *dat;
 
 			dat = EEPROM_get_data_pointer(&length);
 			memset(dat, 0, length);
@@ -291,7 +291,7 @@ static WRITE32_HANDLER( psikyosh_vidregs_w )
 }
 
 #if ROMTEST
-static UINT32 sample_offs = 0;
+static uint32_t sample_offs = 0;
 
 static READ32_HANDLER( psh_sample_r ) /* Send sample data for test */
 {

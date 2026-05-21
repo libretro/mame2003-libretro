@@ -30,7 +30,7 @@ extern VIDEO_UPDATE( sprint2 );
 extern VIDEO_START( sprint2 );
 extern VIDEO_EOF( sprint2 );
 
-extern UINT8* sprint2_video_ram;
+extern uint8_t* sprint2_video_ram;
 
 
 static int attract;
@@ -55,7 +55,7 @@ static DRIVER_INIT( dominos )
 
 static INTERRUPT_GEN( sprint2 )
 {
-	static UINT8 dial[2];
+	static uint8_t dial[2];
 
 	/* handle steering wheels */
 
@@ -133,7 +133,7 @@ static READ_HANDLER( sprint2_dip_r )
 
 static READ_HANDLER( sprint2_input_A_r )
 {
-	UINT8 val = readinputport(1);
+	uint8_t val = readinputport(1);
 
 	if (game == 2)
 	{
@@ -151,7 +151,7 @@ static READ_HANDLER( sprint2_input_A_r )
 
 static READ_HANDLER( sprint2_input_B_r )
 {
-	UINT8 val = readinputport(2);
+	uint8_t val = readinputport(2);
 
 	if (game == 1)
 	{
@@ -166,7 +166,7 @@ static READ_HANDLER( sprint2_input_B_r )
 
 static READ_HANDLER( sprint2_sync_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if (attract != 0)
 	{

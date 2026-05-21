@@ -18,7 +18,7 @@ TODO:
 VIDEO_START( flstory );
 VIDEO_UPDATE( flstory );
 
-extern UINT8 *flstory_scrlram;
+extern uint8_t *flstory_scrlram;
 
 WRITE_HANDLER( flstory_videoram_w );
 READ_HANDLER( flstory_palette_r );
@@ -44,8 +44,8 @@ READ_HANDLER( onna34ro_mcu_r );
 READ_HANDLER( onna34ro_mcu_status_r );
 
 
-static UINT8 snd_data;
-static UINT8 snd_flag;
+static uint8_t snd_data;
+static uint8_t snd_flag;
 
 static READ_HANDLER( from_snd_r )
 {
@@ -207,10 +207,10 @@ static MACHINE_INIT( ta7630 )
 */
 }
 
-static UINT8 snd_ctrl0=0;
-static UINT8 snd_ctrl1=0;
-static UINT8 snd_ctrl2=0;
-static UINT8 snd_ctrl3=0;
+static uint8_t snd_ctrl0=0;
+static uint8_t snd_ctrl1=0;
+static uint8_t snd_ctrl2=0;
+static uint8_t snd_ctrl3=0;
 
 static WRITE_HANDLER( sound_control_0_w )
 {

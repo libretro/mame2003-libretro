@@ -210,7 +210,7 @@ static int pri_comp(const void *s1, const void *s2)
 	return ((struct sprite_entry *)s1)->pri - ((struct sprite_entry *)s2)->pri;
 }
 
-static void generate_sprites(UINT32 src, UINT32 spr, int count)
+static void generate_sprites(uint32_t src, uint32_t spr, int count)
 {
 	int i;
 	int scount;
@@ -348,39 +348,39 @@ static void generate_sprites(UINT32 src, UINT32 spr, int count)
 	}
 }
 
-static void tkmmpzdm_esc(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void tkmmpzdm_esc(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	konamigx_esc_alert(gx_workram, 0x0142, 0x100, 0);
 }
 
-static void dragoonj_esc(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void dragoonj_esc(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	konamigx_esc_alert(gx_workram, 0x5c00, 0x100, 0);
 }
 
-static void sal2_esc(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void sal2_esc(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	konamigx_esc_alert(gx_workram, 0x1c8c, 0x172, 1);
 }
 
-static void sexyparo_esc(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void sexyparo_esc(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	// The d20000 should probably be p3
 	generate_sprites(0xc00604, 0xd20000, 0xfc);
 }
 
-static void tbyahhoo_esc(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void tbyahhoo_esc(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	generate_sprites(0xc00000, 0xd20000, 0x100);
 }
 
-static void daiskiss_esc(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void daiskiss_esc(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	generate_sprites(0xc00000, 0xd20000, 0x100);
 }
 
 static unsigned char esc_program[4096];
-static void (*esc_cb)(UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4);
+static void (*esc_cb)(uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4);
 
 static WRITE32_HANDLER( esc_w )
 {
@@ -431,10 +431,10 @@ static WRITE32_HANDLER( esc_w )
 			break;
 		case 1: // Run program
 			if(esc_cb) {
-				UINT32 p1 = (cpu_readmem24bedw_word(params+0)<<16) | cpu_readmem24bedw_word(params+2);
-				UINT32 p2 = (cpu_readmem24bedw_word(params+4)<<16) | cpu_readmem24bedw_word(params+6);
-				UINT32 p3 = (cpu_readmem24bedw_word(params+8)<<16) | cpu_readmem24bedw_word(params+10);
-				UINT32 p4 = (cpu_readmem24bedw_word(params+12)<<16) | cpu_readmem24bedw_word(params+14);
+				uint32_t p1 = (cpu_readmem24bedw_word(params+0)<<16) | cpu_readmem24bedw_word(params+2);
+				uint32_t p2 = (cpu_readmem24bedw_word(params+4)<<16) | cpu_readmem24bedw_word(params+6);
+				uint32_t p3 = (cpu_readmem24bedw_word(params+8)<<16) | cpu_readmem24bedw_word(params+10);
+				uint32_t p4 = (cpu_readmem24bedw_word(params+12)<<16) | cpu_readmem24bedw_word(params+14);
 				esc_cb(p1, p2, p3, p4);
 			}
 			break;
@@ -595,7 +595,7 @@ static WRITE32_HANDLER( control_w )
   install_mem_read32_handler \
   (0, (BASE+START)&~3, (BASE+END)|3, waitskip_r);}
 
-static struct { UINT32 offs, pc, mask, data; } waitskip;
+static struct { uint32_t offs, pc, mask, data; } waitskip;
 static int suspension_active, resume_trigger;
 
 static READ32_HANDLER(waitskip_r)

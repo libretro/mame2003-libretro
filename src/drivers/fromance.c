@@ -46,13 +46,13 @@ Memo:
 
 
 /* Local variables */
-static UINT8 fromance_directionflag;
-static UINT8 fromance_commanddata;
-static UINT8 fromance_portselect;
+static uint8_t fromance_directionflag;
+static uint8_t fromance_commanddata;
+static uint8_t fromance_portselect;
 
-static UINT8 fromance_adpcm_reset;
-static UINT8 fromance_adpcm_data;
-static UINT8 fromance_vclk_left;
+static uint8_t fromance_adpcm_reset;
+static uint8_t fromance_adpcm_data;
+static uint8_t fromance_vclk_left;
 
 
 

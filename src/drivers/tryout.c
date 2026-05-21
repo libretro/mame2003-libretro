@@ -145,7 +145,7 @@ static struct GfxDecodeInfo gfxdecodeinfo[] =
 	{ -1 }
 };
 
-UINT32 get_fg_memory_offset_tryout( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t get_fg_memory_offset_tryout( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (row ^ 0x1f) + (col << 5);
 }

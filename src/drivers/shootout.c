@@ -41,7 +41,7 @@
 #include "vidhrdw/generic.h"
 #include "cpu/m6502/m6502.h"
 
-UINT8 *shootout_textram;
+uint8_t *shootout_textram;
 
 extern WRITE_HANDLER( shootout_videoram_w );
 extern WRITE_HANDLER( shootout_textram_w );
@@ -56,7 +56,7 @@ extern VIDEO_UPDATE( shootouj );
 static WRITE_HANDLER( shootout_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	RAM = memory_region(REGION_CPU1);
 	bankaddress = 0x10000 + ( 0x4000 * (data & 0x0f) );
@@ -443,7 +443,7 @@ ROM_END
 
 static DRIVER_INIT( shootout )
 {
-	UINT8 *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int diff = memory_region_length(REGION_CPU1) / 2;
 	int A;
 

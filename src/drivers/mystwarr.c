@@ -207,7 +207,7 @@ static WRITE16_HANDLER( mmeeprom_w )
   install_mem_read16_handler \
   (0, (BASE+START)&~1, (BASE+END)|1, waitskip_r);}
 
-static struct { UINT32 offs, pc, mask, data; } waitskip;
+static struct { uint32_t offs, pc, mask, data; } waitskip;
 static int suspension_active, resume_trigger;
 
 static READ16_HANDLER(waitskip_r)

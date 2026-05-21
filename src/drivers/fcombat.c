@@ -328,8 +328,8 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( fcombat )
 {
-	UINT32 oldaddr, newaddr, length;
-	UINT8 *src, *dst, *temp;
+	uint32_t oldaddr, newaddr, length;
+	uint8_t *src, *dst, *temp;
 
 	/* allocate some temporary space */
 	temp = malloc(0x10000);

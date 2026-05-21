@@ -460,7 +460,7 @@ static WRITE16_HANDLER( eeprom_w )
 
 *************************************************************************/
 
-static UINT16 coin_word=0;
+static uint16_t coin_word=0;
 
 static READ16_HANDLER( player_34_coin_ctrl_r )
 {

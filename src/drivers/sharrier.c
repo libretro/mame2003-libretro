@@ -237,11 +237,11 @@ static void generate_gr_screen(
 	int source_size )
 {
 	/* preprocess road data, expanding it into a form more easily rendered */
-	UINT8 *buf = malloc( source_size );
+	uint8_t *buf = malloc( source_size );
 	if( buf ){
-		UINT8 *buf0 = buf; /* remember so we can free and not leak memory */
-		UINT8 *gr = memory_region(REGION_GFX3); /* road gfx data */
-		UINT8 *grr = NULL;
+		uint8_t *buf0 = buf; /* remember so we can free and not leak memory */
+		uint8_t *gr = memory_region(REGION_GFX3); /* road gfx data */
+		uint8_t *grr = NULL;
 	    int row_offset,byte_offset,bit_offset;
 	    int center_offset=0;
 		sys16_gr_bitmap_width = bitmap_width;
@@ -261,8 +261,8 @@ static void generate_gr_screen(
 		}
 
 		for( row_offset=0; row_offset<256; row_offset++ ){ // build gr_bitmap
-			UINT8 last_bit;
-			UINT8 color_data[4];
+			uint8_t last_bit;
+			uint8_t color_data[4];
 
 			color_data[0]=start_color;
 			color_data[1]=start_color+1;
@@ -272,7 +272,7 @@ static void generate_gr_screen(
 			last_bit = ((buf[0]&0x80)==0)|(((buf[0x4000]&0x80)==0)<<1);
 			for( byte_offset=0; byte_offset<w/8; byte_offset++ ){
 				for( bit_offset=0; bit_offset<8; bit_offset++ ){
-					UINT8 bit=((buf[0]&0x80)==0)|(((buf[0x4000]&0x80)==0)<<1);
+					uint8_t bit=((buf[0]&0x80)==0)|(((buf[0x4000]&0x80)==0)<<1);
 					if( bit!=last_bit && bit==0 && row_offset>1 ){
 						// color flipped to 0? advance color[0]
 						if (color_data[0]+end_color <= end_color){
@@ -292,7 +292,7 @@ static void generate_gr_screen(
 //			logerror( "\n" );
 
 			if( grr!=NULL ){ // need mirrored RHS
-				const UINT8 *temp = gr-1-skip;
+				const uint8_t *temp = gr-1-skip;
 				for( byte_offset=0; byte_offset<w-skip; byte_offset++){
 					*gr++ = *temp--;
 				}

@@ -196,7 +196,7 @@ int offs;
 
 
 static data8_t *cpu_sharedram;
-static UINT8 cpu_sharedram_control_val = 0;
+static uint8_t cpu_sharedram_control_val = 0;
 
 //to do:
 // add separate sharedram/r/w() for both CPUs and use control value to verify access

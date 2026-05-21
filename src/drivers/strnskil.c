@@ -11,7 +11,7 @@ Strength & Skill (c) 1984 Sun Electronics
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-static UINT8 *strnskil_sharedram;
+static uint8_t *strnskil_sharedram;
 
 /****************************************************************************/
 

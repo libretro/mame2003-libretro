@@ -17,7 +17,7 @@ Notes:
 #include "vidhrdw/generic.h"
 
 
-extern UINT8 *mystston_videoram2;
+extern uint8_t *mystston_videoram2;
 
 extern WRITE_HANDLER( mystston_videoram_w );
 extern WRITE_HANDLER( mystston_videoram2_w );

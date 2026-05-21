@@ -22,8 +22,8 @@ ernesto@imagina.com
 
 void konami1_decode(void);
 
-extern UINT8 *jailbrek_scroll_x;
-extern UINT8 *jailbrek_scroll_dir;
+extern uint8_t *jailbrek_scroll_x;
+extern uint8_t *jailbrek_scroll_dir;
 
 extern WRITE_HANDLER( jailbrek_videoram_w );
 extern WRITE_HANDLER( jailbrek_colorram_w );

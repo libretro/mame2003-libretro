@@ -460,7 +460,7 @@ ROM_START( drgnmst )
 ROM_END
 
 
-static UINT8 drgnmst_asciitohex(UINT8 data)
+static uint8_t drgnmst_asciitohex(uint8_t data)
 {
 	/* Convert ASCII data to HEX */
 
@@ -477,10 +477,10 @@ static DRIVER_INIT( drgnmst )
 	data8_t *drgnmst_PICROM_HEX = memory_region(REGION_USER1);
 	data8_t *drgnmst_PICROM = memory_region(REGION_CPU2);
 	data8_t *drgnmst_PCM = memory_region(REGION_SOUND1);
-	INT32   offs, data;
-	UINT16  src_pos = 0;
-	UINT16  dst_pos = 0;
-	UINT8   data_hi, data_lo;
+	int32_t   offs, data;
+	uint16_t  src_pos = 0;
+	uint16_t  dst_pos = 0;
+	uint8_t   data_hi, data_lo;
 
 
 	drgnmst_snd_flag = 0;

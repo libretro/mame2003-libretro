@@ -727,7 +727,7 @@ ROM_START( crshrac2 )
 ROM_END
 
 
-void crshrace_patch_code(UINT16 offset)
+void crshrace_patch_code(uint16_t offset)
 {
 	/* A hack which shows 3 player mode in code which is disabled */
 	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);

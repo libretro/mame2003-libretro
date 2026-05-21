@@ -63,10 +63,10 @@ static WRITE_HANDLER( cpu_sound_command_w )
 	soundlatch_w(offset,data);
 }
 
-UINT32 math_regs[6];
-UINT16 multiply_result;
-UINT16 divide_quotient;
-UINT16 divide_remainder;
+uint32_t math_regs[6];
+uint16_t multiply_result;
+uint16_t divide_quotient;
+uint16_t divide_remainder;
 
 
 READ_HANDLER(contra_k007452_r)
@@ -96,8 +96,8 @@ WRITE_HANDLER(contra_k007452_w)
 	else if (offset == 5)
 	{
 		// Starts division process
-		UINT16 dividend = (math_regs[4]<<8) + math_regs[5];
-		UINT16 divisor = (math_regs[2]<<8) + math_regs[3];
+		uint16_t dividend = (math_regs[4]<<8) + math_regs[5];
+		uint16_t divisor = (math_regs[2]<<8) + math_regs[3];
 		if (!divisor) {
 			divide_quotient = 0xffff;
 			divide_remainder = 0x0000;

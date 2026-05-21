@@ -19,7 +19,7 @@ extern PALETTE_INIT( markham );
 extern VIDEO_START( markham );
 extern VIDEO_UPDATE( markham );
 
-static UINT8 *markham_sharedram;
+static uint8_t *markham_sharedram;
 
 /****************************************************************************/
 

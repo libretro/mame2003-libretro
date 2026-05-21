@@ -116,7 +116,7 @@ To Do:
 
 ***************************************************************************/
 
-static UINT8 requested_int;
+static uint8_t requested_int;
 static data16_t *ssv_irq_vectors;
 static data16_t irq_enable;
 

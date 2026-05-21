@@ -520,10 +520,10 @@ static READ16_HANDLER( aburner_motor_status_r ){
 	*/
 	return 0x2d;
 }
-static UINT8 aburner_motor_xpos( void ){ /* poll cockpit horizontal position */
+static uint8_t aburner_motor_xpos( void ){ /* poll cockpit horizontal position */
 	return (0xb0+0x50)/2; /* expected values are in the range 0x50..0xb0 */
 }
-static UINT8 aburner_motor_ypos( void ){ /* poll cockpit vertical position */
+static uint8_t aburner_motor_ypos( void ){ /* poll cockpit vertical position */
 	return (0xb0+0x50)/2; /* expected values are in the range 0x50..0xb0 */
 }
 
@@ -547,8 +547,8 @@ static READ16_HANDLER( aburner_analog_r ){
 
 /*****************************************************************************/
 
-UINT16 aburner_unknown;
-UINT16 aburner_lamp;
+uint16_t aburner_unknown;
+uint16_t aburner_lamp;
 
 static WRITE16_HANDLER( aburner_unknown_w ){
 	COMBINE_DATA( &aburner_unknown );
@@ -562,9 +562,9 @@ static WRITE16_HANDLER( aburner_lamp_w ){
 /* math coprocessor for afterburner hardware */
 
 static struct math_context {
-	UINT16 product[4];
-	UINT16 quotient[4];	/* operand0_hi, operand0_lo, operand1 */
-	UINT16 compare[4];	/* F,G,H */
+	uint16_t product[4];
+	uint16_t quotient[4];	/* operand0_hi, operand0_lo, operand1 */
+	uint16_t compare[4];	/* F,G,H */
 } math0_context, math1_context;
 
 static WRITE16_HANDLER( math0_product_w ){
@@ -582,7 +582,7 @@ static WRITE16_HANDLER( math0_compare_w ){
 	}
 }
 static READ16_HANDLER( math0_product_r ){
-	UINT32 result = ((INT16)math0_context.product[0])*((INT16)math0_context.product[1]);
+	uint32_t result = ((int16_t)math0_context.product[0])*((int16_t)math0_context.product[1]);
 	switch( offset&3 ){
 	case 0: return math0_context.product[0];
 	case 1: return math0_context.product[1];
@@ -592,12 +592,12 @@ static READ16_HANDLER( math0_product_r ){
 	return 0;
 }
 static READ16_HANDLER( math0_quotient_r ){
-	INT32 operand0 = (math0_context.quotient[0]<<16)|math0_context.quotient[1];
+	int32_t operand0 = (math0_context.quotient[0]<<16)|math0_context.quotient[1];
 	switch( offset&7 ){
 	case 0: case 1: case 2: case 3:
 		return math0_context.quotient[offset];
-	case 4: return math0_context.quotient[2] ? (UINT16)(operand0/(INT16)math0_context.quotient[2]) : 0x7fff;
-	case 5: return math0_context.quotient[2] ? (UINT16)(operand0%(INT16)math0_context.quotient[2]) : 0x0000;
+	case 4: return math0_context.quotient[2] ? (uint16_t)(operand0/(int16_t)math0_context.quotient[2]) : 0x7fff;
+	case 5: return math0_context.quotient[2] ? (uint16_t)(operand0%(int16_t)math0_context.quotient[2]) : 0x0000;
 	}
 	logerror( "unknown quotient_r\n" );
 	return 0;
@@ -609,15 +609,15 @@ static READ16_HANDLER( math0_compare_r ){ /* 0xe8006 */
 	case 2: return math0_context.compare[2];
 	case 3:
 		{
-			INT16 F = math0_context.compare[0]; /* range min */
-			INT16 G = math0_context.compare[1]; /* range max */
-			INT16 H = math0_context.compare[2]; /* test value */
+			int16_t F = math0_context.compare[0]; /* range min */
+			int16_t G = math0_context.compare[1]; /* range max */
+			int16_t H = math0_context.compare[2]; /* test value */
 			if( F<=G ){
-				if( H<F ) return (UINT16)-1;
+				if( H<F ) return (uint16_t)-1;
 				if( H>G ) return 1;
 			}
 			else {
-				if( H<0 ) return (UINT16)-1;
+				if( H<0 ) return (uint16_t)-1;
 				if( H>0 ) return 1;
 			}
 		}
@@ -644,7 +644,7 @@ static WRITE16_HANDLER( math1_compare_w ){
 	}
 }
 static READ16_HANDLER( math1_product_r ){
-	UINT32 result = ((INT16)math1_context.product[0])*((INT16)math1_context.product[1]);
+	uint32_t result = ((int16_t)math1_context.product[0])*((int16_t)math1_context.product[1]);
 	switch( offset&3 ){
 	case 0: return math1_context.product[0];
 	case 1: return math1_context.product[1];
@@ -654,12 +654,12 @@ static READ16_HANDLER( math1_product_r ){
 	return 0;
 }
 static READ16_HANDLER( math1_quotient_r ){
-	INT32 operand0 = (math1_context.quotient[0]<<16)|math1_context.quotient[1];
+	int32_t operand0 = (math1_context.quotient[0]<<16)|math1_context.quotient[1];
 	switch( offset&7 ){
 	case 0: case 1: case 2: case 3:
 		return math1_context.quotient[offset];
-	case 4: return math1_context.quotient[2] ? (UINT16)(operand0/(INT16)math1_context.quotient[2]) : 0x7fff;
-	case 5: return math1_context.quotient[2] ? (UINT16)(operand0%(INT16)math1_context.quotient[2]) : 0x0000;
+	case 4: return math1_context.quotient[2] ? (uint16_t)(operand0/(int16_t)math1_context.quotient[2]) : 0x7fff;
+	case 5: return math1_context.quotient[2] ? (uint16_t)(operand0%(int16_t)math1_context.quotient[2]) : 0x0000;
 	}
 	logerror( "unknown quotient_r\n" );
 	return 0;
@@ -671,15 +671,15 @@ static READ16_HANDLER( math1_compare_r ){ /* 0xe8006 */
 	case 2: return math1_context.compare[2];
 	case 3:
 		{
-			INT16 F = math1_context.compare[0]; /* range min */
-			INT16 G = math1_context.compare[1]; /* range max */
-			INT16 H = math1_context.compare[2]; /* test value */
+			int16_t F = math1_context.compare[0]; /* range min */
+			int16_t G = math1_context.compare[1]; /* range max */
+			int16_t H = math1_context.compare[2]; /* test value */
 			if( F<=G ){
-				if( H<F ) return (UINT16)-1;
+				if( H<F ) return (uint16_t)-1;
 				if( H>G ) return 1;
 			}
 			else {
-				if( H<0 ) return (UINT16)-1;
+				if( H<0 ) return (uint16_t)-1;
 				if( H>0 ) return 1;
 			}
 		}

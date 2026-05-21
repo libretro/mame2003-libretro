@@ -28,10 +28,10 @@ Notes:
 
 VIDEO_UPDATE( raiders5 );
 
-extern UINT8 *raiders5_fgram;
+extern uint8_t *raiders5_fgram;
 extern size_t raiders5_fgram_size;
 
-static UINT8 *raiders5_shared_workram;
+static uint8_t *raiders5_shared_workram;
 
 
 WRITE_HANDLER( raiders5_scroll_x_w );

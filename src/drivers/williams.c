@@ -2167,7 +2167,7 @@ ROM_END
 
 static DRIVER_INIT( defender )
 {
-	static const UINT32 bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x13000 };
+	static const uint32_t bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x13000 };
 	defender_bank_list = bank;
 
 	/* CMOS configuration */
@@ -2212,8 +2212,8 @@ static DRIVER_INIT( defndjeu )
 	ROME.BIN    IC05-5.BIN            DFNDR-E.ROM           20
 	ROMD.BIN    IC04-4.BIN            DFNDR-D.ROM           21
 */
-	static const UINT32 bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x14000 };
-	UINT8 *rom = memory_region(REGION_CPU1);
+	static const uint32_t bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x14000 };
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int i;
 
 	defender_bank_list = bank;
@@ -2232,7 +2232,7 @@ static DRIVER_INIT( defndjeu )
 #if 0
 static DRIVER_INIT( defcmnd )
 {
-	static const UINT32 bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x13000, 0x0c000, 0x0c000, 0x14000 };
+	static const uint32_t bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x13000, 0x0c000, 0x0c000, 0x14000 };
 	defender_bank_list = bank;
 
 	/* CMOS configuration */
@@ -2245,7 +2245,7 @@ static DRIVER_INIT( defcmnd )
 
 static DRIVER_INIT( mayday )
 {
-	static const UINT32 bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x13000 };
+	static const uint32_t bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x13000 };
 	defender_bank_list = bank;
 
 	/* CMOS configuration */
@@ -2261,7 +2261,7 @@ static DRIVER_INIT( mayday )
 
 static DRIVER_INIT( colony7 )
 {
-	static const UINT32 bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x0c000 };
+	static const uint32_t bank[8] = { 0x0c000, 0x10000, 0x11000, 0x12000, 0x0c000, 0x0c000, 0x0c000, 0x0c000 };
 	defender_bank_list = bank;
 
 	/* CMOS configuration */
@@ -2431,7 +2431,7 @@ static DRIVER_INIT( blastkit )
 
 static DRIVER_INIT( mysticm )
 {
-	static const UINT8 tilemap_colors[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static const uint8_t tilemap_colors[] = { 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	/* CMOS configuration */
 	CONFIGURE_CMOS(0xcc00, 0x400);
@@ -2451,7 +2451,7 @@ static DRIVER_INIT( mysticm )
 
 static DRIVER_INIT( tshoot )
 {
-	static const UINT8 tilemap_colors[] = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
+	static const uint8_t tilemap_colors[] = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
 
 	/* CMOS configuration */
 	CONFIGURE_CMOS(0xcc00, 0x400);
@@ -2467,7 +2467,7 @@ static DRIVER_INIT( tshoot )
 
 static DRIVER_INIT( inferno )
 {
-	static const UINT8 tilemap_colors[] = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
+	static const uint8_t tilemap_colors[] = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
 
 	/* CMOS configuration */
 	CONFIGURE_CMOS(0xcc00, 0x400);
@@ -2487,7 +2487,7 @@ static DRIVER_INIT( inferno )
 
 static DRIVER_INIT( joust2 )
 {
-	static const UINT8 tilemap_colors[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static const uint8_t tilemap_colors[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	/* CMOS configuration */
 	CONFIGURE_CMOS(0xcc00, 0x400);
