@@ -1168,6 +1168,9 @@ READ32_HANDLER( midvunit_textureram_r )
 
 VIDEO_UPDATE( midvunit )
 {
+	const unsigned short *pal;
+	unsigned palents, fb_pitch;
+	UINT16 *fb;
 	int x, y, width, xoffs;
 	UINT32 offset;
 
@@ -1194,6 +1197,26 @@ VIDEO_UPDATE( midvunit )
 	/* adjust the offset */
 	offset += xoffs;
 	offset += 512 * cliprect->min_y;
+
+	/* Fast path: convert the indexed framebuffer straight into the frontend
+	   buffer with the core's RGB565 palette LUT, masking to the pen exactly as
+	   the bitmap path does, and skipping the game bitmap and the conversion
+	   pass. The visible area is 0-origin, so screen (x,y) maps directly into
+	   the buffer. Falls back to the bitmap path (palette unstable, flip/rotate,
+	   UI overlay, etc.). */
+	pal = mame2003_direct_rgb565_palette(&palents);
+	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	if (fb)
+	{
+		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
+		{
+			UINT16 *dest = (UINT16 *)((UINT8 *)fb + y * fb_pitch) + cliprect->min_x;
+			for (x = 0; x < width; x++)
+				*dest++ = pal[midvunit_videoram[offset + x] & 0x7fff];
+			offset += 512;
+		}
+		return;
+	}
 
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
