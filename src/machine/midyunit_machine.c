@@ -575,7 +575,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_16bit )
 	/* suspend cpu if it's waiting for an interrupt */
 	if (activecpu_get_pc() == midyunit_speedup_pc && !value)
 	{
-		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], int16_t, int16_t);
+		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], INT16, INT16);
 	}
 	return value;
 }
@@ -600,7 +600,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_mixedbits )
 	/* suspend cpu if it's waiting for an interrupt */
 	if (activecpu_get_pc() == midyunit_speedup_pc && !value)
 	{
-		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], int16_t, int32_t);
+		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], INT16, INT32);
 	}
 	return value;
 }
@@ -625,7 +625,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_32bit )
 	/* suspend cpu if it's waiting for an interrupt */
 	if (activecpu_get_pc() == midyunit_speedup_pc && !value)
 	{
-		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], int32_t, int32_t);
+		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], INT32, INT32);
 	}
 	return value;
 }
@@ -652,9 +652,9 @@ READ16_HANDLER( midyunit_generic_speedup_1_32bit )
 			cpu_spinuntil_int();							\
 			break;											\
 		}													\
-		DO_SPEEDUP_LOOP(A, LOC1, 0xc0, 0xa0, int32_t, int32_t);	\
-		DO_SPEEDUP_LOOP(B, LOC2, 0xc0, 0xa0, int32_t, int32_t);	\
-		DO_SPEEDUP_LOOP(C, LOC3, 0xc0, 0xa0, int32_t, int32_t);	\
+		DO_SPEEDUP_LOOP(A, LOC1, 0xc0, 0xa0, INT32, INT32);	\
+		DO_SPEEDUP_LOOP(B, LOC2, 0xc0, 0xa0, INT32, INT32);	\
+		DO_SPEEDUP_LOOP(C, LOC3, 0xc0, 0xa0, INT32, INT32);	\
 	}
 
 READ16_HANDLER( midyunit_generic_speedup_3 )
