@@ -62,6 +62,12 @@ static UINT8 vblank_irq;
 static data32_t *vblank_config;
 static data32_t *vblank_enable;
 
+/* carnevil: only draw player 2's gun crosshair once a second player is
+   actually present. An unbound player-2 gun stays pinned at analog neutral
+   (0x80); the latch trips the first frame it moves off neutral and stays set
+   until the machine is reset. */
+static UINT8 carnevil_p2_active;
+
 static data32_t *asic_reset;
 
 static data8_t pending_analog_read;
@@ -105,6 +111,8 @@ static MACHINE_INIT( seattle )
 	timer[3] = timer_alloc(timer_callback);
 
 	vblank_irq = 0;
+
+	carnevil_p2_active = 0;
 
 	voodoo_reset();
 }
@@ -867,8 +875,17 @@ static VIDEO_UPDATE( carnevil )
 	/* now draw the crosshairs */
 	get_crosshair_xy(0, &beamx, &beamy);
 	draw_crosshair(bitmap, beamx, beamy, cliprect);
-	get_crosshair_xy(1, &beamx, &beamy);
-	draw_crosshair(bitmap, beamx, beamy, cliprect);
+
+	/* player 2's gun rests at analog neutral (0x80) until a second player
+	   actually uses it; only draw its crosshair once it has moved */
+	if (!carnevil_p2_active &&
+		((readinputport(6) & 0xff) != 0x80 || (readinputport(7) & 0xff) != 0x80))
+		carnevil_p2_active = 1;
+	if (carnevil_p2_active)
+	{
+		get_crosshair_xy(1, &beamx, &beamy);
+		draw_crosshair(bitmap, beamx, beamy, cliprect);
+	}
 }
 
 
