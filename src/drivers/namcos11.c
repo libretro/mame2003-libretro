@@ -7,7 +7,7 @@
   Thanks to R Belmont & The Zinc Team.
 
   Issues:
-   There is no sound as the Namco C76 (Mitsubishi M37702) & Namco C352 are not emulated.
+   The Namco C76 (Mitsubishi M37702) sound CPU is emulated; C352 PCM is not yet.
    Random draw list corruption in soul edge v2 & dunkmania.
    missing memcard support in soul edge, dunk mania & prime goal ex 
    Most games try to run too fast, lack of root counters and sound timers are likely to blame.
@@ -666,6 +666,105 @@ MACHINE_INIT( namcos11 )
 	psx_machine_init();
 }
 
+
+/* ---- Namco C76 (M37702 / M37710) sound CPU ------------------------------ */
+/* The C76 runs its own program out of the SPROG ROM + a 16k internal BIOS,
+   handshakes with the main CPU through the shared RAM, and drives sound timing
+   from its on-chip timers. C352 PCM output is not emulated yet (the register
+   window is accepted and ignored), so this provides the CPU + handshake, not
+   audio. */
+#include "cpu/m37710/m37710.h"
+
+static data16_t *namcos11_c76_ram;
+
+/* Shared RAM as the C76 sees it (16-bit); the main CPU sees the same bytes as
+   32-bit at 0x1fa04000. */
+static READ16_HANDLER( c76_shared_r )
+{
+	data16_t *share16 = (data16_t *)namcos11_sharedram;
+	return share16[ offset ];
+}
+
+static WRITE16_HANDLER( c76_shared_w )
+{
+	data16_t *share16 = (data16_t *)namcos11_sharedram;
+	COMBINE_DATA( &share16[ offset ] );
+}
+
+/* On-chip special-function registers (0x00-0x7f): byte registers behind the
+   16-bit bus. mem_mask is active-low (set bit = byte preserved). */
+static READ16_HANDLER( c76_sfr_r )
+{
+	data16_t data = 0;
+	if( ( mem_mask & 0x00ff ) == 0 )
+		data |= m37710_internal_read( offset * 2 );
+	if( ( mem_mask & 0xff00 ) == 0 )
+		data |= m37710_internal_read( ( offset * 2 ) + 1 ) << 8;
+	return data;
+}
+
+static WRITE16_HANDLER( c76_sfr_w )
+{
+	if( ( mem_mask & 0x00ff ) == 0 )
+		m37710_internal_write( offset * 2, data & 0xff );
+	if( ( mem_mask & 0xff00 ) == 0 )
+		m37710_internal_write( ( offset * 2 ) + 1, ( data >> 8 ) & 0xff );
+}
+
+/* C76 input port window; not required for boot, returns idle. */
+static READ16_HANDLER( c76_inputs_r )
+{
+	return 0xffff;
+}
+
+static MEMORY_READ16_START( c76_readmem )
+	{ 0x000000, 0x00007f, c76_sfr_r },       /* on-chip SFRs (timers etc.) */
+	{ 0x000080, 0x00027f, MRA16_RAM },       /* on-chip RAM */
+	{ 0x001000, 0x001007, c76_inputs_r },    /* inputs */
+	{ 0x002000, 0x002fff, MRA16_NOP },       /* C352 (PCM not emulated yet) */
+	{ 0x004000, 0x00bfff, c76_shared_r },    /* shared RAM with main CPU */
+	{ 0x00c000, 0x00ffff, MRA16_BANK1 },     /* 16k internal BIOS */
+	{ 0x080000, 0x0fffff, MRA16_BANK2 },     /* SPROG */
+	{ 0x200000, 0x2fffff, MRA16_BANK3 },     /* SPROG mirror */
+MEMORY_END
+
+static MEMORY_WRITE16_START( c76_writemem )
+	{ 0x000000, 0x00007f, c76_sfr_w },
+	{ 0x000080, 0x00027f, MWA16_RAM, &namcos11_c76_ram },
+	{ 0x002000, 0x002fff, MWA16_NOP },       /* C352 */
+	{ 0x004000, 0x00bfff, c76_shared_w },
+MEMORY_END
+
+/* C76 services three interrupt sources per frame (matches the real timing). */
+static INTERRUPT_GEN( c76_interrupt )
+{
+	switch( cpu_getiloops() )
+	{
+	case 0:
+		cpu_set_irq_line( 1, M37710_LINE_IRQ0, HOLD_LINE );
+		break;
+	case 1:
+		cpu_set_irq_line( 1, M37710_LINE_IRQ2, HOLD_LINE );
+		break;
+	case 2:
+		cpu_set_irq_line( 1, M37710_LINE_ADC, HOLD_LINE );
+		break;
+	}
+}
+
+/* coh100_tekken machine init: point the C76 ROM banks into REGION_CPU2 (SPROG
+   at 0, the 16k C76 BIOS at 0x40000), then the standard namcos11 init. */
+MACHINE_INIT( namcos11_c76 )
+{
+	UINT8 *rom = memory_region( REGION_CPU2 );
+
+	cpu_setbank( 1, rom + 0x040000 );  /* BIOS  -> 0x00c000 */
+	cpu_setbank( 2, rom + 0x000000 );  /* SPROG -> 0x080000 */
+	cpu_setbank( 3, rom + 0x000000 );  /* SPROG -> 0x200000 */
+
+	machine_init_namcos11();
+}
+
 static MACHINE_DRIVER_START( coh100 )
 	/* basic machine hardware */
 	MDRV_CPU_ADD( PSXCPU, 33868800 ) /* 33.8688MHz (PSX R3000A) */
@@ -704,10 +803,16 @@ static MACHINE_DRIVER_START( coh100_tekken )
 	MDRV_CPU_MEMORY( namcos11_readmem, namcos11_writemem )
 	MDRV_CPU_VBLANK_INT( namcos11_vblank, 1 )
 
+	MDRV_CPU_ADD( M37710, 16934400 ) /* Namco C76 sound CPU */
+	MDRV_CPU_MEMORY( c76_readmem, c76_writemem )
+	MDRV_CPU_VBLANK_INT( c76_interrupt, 3 )
+
+	MDRV_INTERLEAVE( 100 )
+
 	MDRV_FRAMES_PER_SECOND( 60 )
 	MDRV_VBLANK_DURATION( 0 )
 
-	MDRV_MACHINE_INIT( namcos11 )
+	MDRV_MACHINE_INIT( namcos11_c76 )
 	MDRV_NVRAM_HANDLER( generic_0fill )
 
 	/* video hardware */
@@ -1290,8 +1395,10 @@ ROM_START( tekken )
 	ROM_LOAD16_BYTE( "te1rm2l.4",    0x0800000, 0x200000, CRC(41d77846) SHA1(eeab049135c02a255899fe37e225c1111b2fbb7d) )
 	ROM_LOAD16_BYTE( "te1rm2u.7",    0x0800001, 0x200000, CRC(a678987e) SHA1(c62c00ce5cf4d001723c999b2bc3dbb90283def1) )
 
-	ROM_REGION( 0x0040000, REGION_CPU2, 0 ) /* sound prg */
+	ROM_REGION( 0x0100000, REGION_CPU2, 0 ) /* sound prg + C76 BIOS */
 	ROM_LOAD( "te1sprg.6d",   0x0000000, 0x040000, CRC(849587e9) SHA1(94c6a757b24758a866a41bd8acd46aa46844f74b) )
+
+	ROM_LOAD( "c76.bin",      0x040000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
 
 	ROM_REGION( 0x0400000, REGION_SOUND1, 0 ) /* samples */
 	ROM_LOAD( "te1wave.8k",   0x0000000, 0x200000, CRC(fce6c57a) SHA1(7fb8c69452c92c59a940a2b69d0d73ef7aefcb82) )
@@ -1315,8 +1422,10 @@ ROM_START( tekkena )
 	ROM_LOAD16_BYTE( "te1rm2l.4",    0x0800000, 0x200000, CRC(41d77846) SHA1(eeab049135c02a255899fe37e225c1111b2fbb7d) )
 	ROM_LOAD16_BYTE( "te1rm2u.7",    0x0800001, 0x200000, CRC(a678987e) SHA1(c62c00ce5cf4d001723c999b2bc3dbb90283def1) )
 
-	ROM_REGION( 0x0040000, REGION_CPU2, 0 ) /* sound prg */
+	ROM_REGION( 0x0100000, REGION_CPU2, 0 ) /* sound prg + C76 BIOS */
 	ROM_LOAD( "te1sprg.6d",   0x0000000, 0x040000, CRC(849587e9) SHA1(94c6a757b24758a866a41bd8acd46aa46844f74b) )
+
+	ROM_LOAD( "c76.bin",      0x040000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
 
 	ROM_REGION( 0x0400000, REGION_SOUND1, 0 ) /* samples */
 	ROM_LOAD( "te1wave.8k",   0x0000000, 0x200000, CRC(fce6c57a) SHA1(7fb8c69452c92c59a940a2b69d0d73ef7aefcb82) )
@@ -1340,8 +1449,10 @@ ROM_START( tekkenb )
 	ROM_LOAD16_BYTE( "te1rm2l.4",    0x0800000, 0x200000, CRC(41d77846) SHA1(eeab049135c02a255899fe37e225c1111b2fbb7d) )
 	ROM_LOAD16_BYTE( "te1rm2u.7",    0x0800001, 0x200000, CRC(a678987e) SHA1(c62c00ce5cf4d001723c999b2bc3dbb90283def1) )
 
-	ROM_REGION( 0x0040000, REGION_CPU2, 0 ) /* sound prg */
+	ROM_REGION( 0x0100000, REGION_CPU2, 0 ) /* sound prg + C76 BIOS */
 	ROM_LOAD( "te1sprg.6d",   0x0000000, 0x040000, CRC(849587e9) SHA1(94c6a757b24758a866a41bd8acd46aa46844f74b) )
+
+	ROM_LOAD( "c76.bin",      0x040000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
 
 	ROM_REGION( 0x0400000, REGION_SOUND1, 0 ) /* samples */
 	ROM_LOAD( "te1wave.8k",   0x0000000, 0x200000, CRC(fce6c57a) SHA1(7fb8c69452c92c59a940a2b69d0d73ef7aefcb82) )
@@ -1370,6 +1481,8 @@ ROM_START( tekken2 )
 	ROM_REGION( 0x0200000, REGION_CPU2, 0 ) /* sound prg */
 	ROM_LOAD( "tes1sprb.6d",  0x0000000, 0x200000, BAD_DUMP CRC(8d89877e) SHA1(7d76d48d64d7ac5411d714a4bb83f37e3e5b8df6) )
 
+	ROM_LOAD( "c76.bin",      0x040000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
+
 	ROM_REGION( 0x0400000, REGION_SOUND1, 0 ) /* samples */
 	ROM_LOAD( "tes1wavb.8k",  0x0000000, 0x400000, BAD_DUMP CRC(bee9a7e6) SHA1(c017e4e2ef7bc8193444e2e685a4d8a89ff15ca9) )
 ROM_END
@@ -1397,6 +1510,8 @@ ROM_START( tekken2a )
 	ROM_REGION( 0x0200000, REGION_CPU2, 0 ) /* sound prg */
 	ROM_LOAD( "tes1sprb.6d",  0x0000000, 0x200000, BAD_DUMP CRC(8d89877e) SHA1(7d76d48d64d7ac5411d714a4bb83f37e3e5b8df6) )
 
+	ROM_LOAD( "c76.bin",      0x040000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
+
 	ROM_REGION( 0x0400000, REGION_SOUND1, 0 ) /* samples */
 	ROM_LOAD( "tes1wavb.8k",  0x0000000, 0x400000, BAD_DUMP CRC(bee9a7e6) SHA1(c017e4e2ef7bc8193444e2e685a4d8a89ff15ca9) )
 ROM_END
@@ -1421,8 +1536,10 @@ ROM_START( tekken2b )
 	ROM_LOAD16_BYTE( "tes1rm3l.9",   0x0c00000, 0x200000, CRC(d5ac0f18) SHA1(342d063f7974bd1f90b5ca4832dfa4fbc9605453) )
 	ROM_LOAD16_BYTE( "tes1rm3u.1",   0x0c00001, 0x200000, CRC(44ed509d) SHA1(27e26aaf5ce72ab686f3f05743b1d91b5334b4e0) )
 
-	ROM_REGION( 0x0040000, REGION_CPU2, 0 ) /* sound prg */
+	ROM_REGION( 0x0100000, REGION_CPU2, 0 ) /* sound prg + C76 BIOS */
 	ROM_LOAD( "tes1sprg.6d",  0x0000000, 0x040000, CRC(af18759f) SHA1(aabd7d1384925781d37f860605a5d4622e0fc2e4) )
+
+	ROM_LOAD( "c76.bin",      0x040000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
 
 	ROM_REGION( 0x0400000, REGION_SOUND1, 0 ) /* samples */
 	ROM_LOAD( "tes1wave.8k",  0x0000000, 0x400000, CRC(34a34eab) SHA1(8e83a579abdcd419dc5cff8aa4c1d7e6c3add773) )

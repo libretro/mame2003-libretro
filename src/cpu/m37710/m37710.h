@@ -101,6 +101,10 @@ void m37710_set_irq_callback(int (*callback)(int irqline));
 const char *m37710_info(void *context, int regnum);
 unsigned m37710_dasm(char *buffer, unsigned pc);
 
+/* On-chip SFR access for the driver's C76 program map. */
+unsigned m37710_internal_read(int offset);
+void m37710_internal_write(int offset, unsigned data);
+
 /* ======================================================================== */
 /* ============================== END OF FILE ============================= */
 /* ======================================================================== */

@@ -1176,6 +1176,19 @@ void *m37710_get_token(void)
 	return &m37710_global;
 }
 
+/* On-chip special-function registers (0x00-0x7f: timers, serial, ports). The
+   namco driver maps the C76 program window here so the internal timers, which
+   raise the sound IRQs, actually run. Byte-wide, on the single C76 instance. */
+unsigned m37710_internal_read(int offset)
+{
+	return m37710_internal_r(&m37710_global, offset);
+}
+
+void m37710_internal_write(int offset, unsigned data)
+{
+	m37710_internal_w(&m37710_global, offset, (UINT8)data);
+}
+
 void m37710_init(void)
 {
 	cpu_init_m37710((legacy_cpu_device *)0, (device_irq_callback)0);
