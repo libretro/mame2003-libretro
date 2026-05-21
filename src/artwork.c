@@ -1416,7 +1416,7 @@ static void update_palette_lookup(struct mame_display *display)
 	raw
 -------------------------------------------------*/
 
-#define PIXEL(x,y,srcdstbase,srcdstrpix,bits)	(*((UINT##bits *)srcdstbase##base + (y) * srcdstrpix##rowpixels + (x)))
+#define PIXEL(x,y,srcdstbase,srcdstrpix,bits)	(*((uint##bits##_t *)srcdstbase##base + (y) * srcdstrpix##rowpixels + (x)))
 
 static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display)
 {
