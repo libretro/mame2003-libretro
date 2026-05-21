@@ -244,7 +244,7 @@ static void update_stereo(int ch, INT16 **buffer, int length)
 			sz=ed-st;
 
 			/* Retrieve base pointer to the sample data */
-			pSampleData=(signed char*)((unsigned long)pRom + find_sample(st,v->bank));
+			pSampleData=(signed char*)pRom + find_sample(st,v->bank);
 
 			/* Fetch back previous data pointers */
 			offset=v->ptoffset;

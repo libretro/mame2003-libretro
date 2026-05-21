@@ -79,7 +79,7 @@ static int *sr_xlat;
 void IremGA20_update( int param, INT16 **buffer, int length )
 {
 	unsigned long rate[4], pos[4], end[4], vol[4], play[4];
-	unsigned long edi, ebp, esi;
+	uintptr_t edi, ebp, esi;
 	int eax, ebx, ecx, edx;
 
 	if (!Machine->sample_rate) return;
@@ -95,9 +95,9 @@ void IremGA20_update( int param, INT16 **buffer, int length )
 	}
 
 	ecx = length << 1;
-	esi = (unsigned long)IremGA20_chip.rom;
-	edi = (unsigned long)buffer[0];
-	ebp = (unsigned long)buffer[1];
+	esi = (uintptr_t)IremGA20_chip.rom;
+	edi = (uintptr_t)buffer[0];
+	ebp = (uintptr_t)buffer[1];
 	edi += ecx;
 	ebp += ecx;
 	ecx = -ecx;
