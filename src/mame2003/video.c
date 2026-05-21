@@ -33,15 +33,20 @@ unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
 bool video_hw_transpose;
 const rgb_t *video_palette;
+/* Palette pre-resolved to the RGB565 output format, rebuilt only when the
+   game palette changes, so the per-pixel path is a plain table lookup with no
+   arithmetic. */
+uint16_t *video_palette_565;
+unsigned video_palette_565_entries;
 uint16_t *video_buffer;
 
 /* Possible pixel conversions (see corresponding function far below) */
 enum
 {
-   VCT_PASS8888,
-   VCT_PASS1555,
-   VCT_PASSPAL,
-   VCT_PALTO565
+   VCT_PASS8888,   /* 32bpp XRGB8888 -> XRGB8888, straight copy           */
+   VCT_1555TO565,  /* 16bpp 0RGB1555 -> RGB565, fast bit shift            */
+   VCT_PASSPAL,    /* 16bpp palette index -> XRGB8888, palette lookup     */
+   VCT_PALTO565    /* 16bpp palette index -> RGB565, pre-resolved lookup  */
 };
 
 /* Retrieve output geometry (i.e. window dimensions) */
@@ -195,17 +200,14 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
       rgb_components[2] = 0x000000FF;
    }
 
-   /* Case III: 16-bit 0RGB1555, pass it through */
+   /* Case III: 16-bit 0RGB1555. RetroArch's 0RGB1555 path is not a fast path,
+      so convert up to RGB565 (a single shift per pixel) and let the frontend
+      use its optimized RGB565 pipeline. */
    else if (video_config.depth == 15)
    {
       video_stride_in = 2; video_stride_out = 2;
-      video_conversion_type = VCT_PASS1555;
-      color_mode = RETRO_PIXEL_FORMAT_0RGB1555;
-
-      /* TODO: figure those out */
-      rgb_components[0] = 0x00007C00;
-      rgb_components[1] = 0x000003E0;
-      rgb_components[2] = 0x0000001F;
+      video_conversion_type = VCT_1555TO565;
+      color_mode = RETRO_PIXEL_FORMAT_RGB565;
    }
 
    /* Otherwise bail out on unknown video mode */
@@ -237,9 +239,14 @@ int osd_create_display(
    mame2003_video_init_conversion(rgb_components);
 
    /* Check if a framebuffer conversion can be bypassed */
+   /* A pointer straight into the game bitmap can be handed to the frontend
+      only when no transform is needed at all: that means 32bpp XRGB8888
+      (already the output format) with no flip/swap. Everything else needs a
+      one-pass conversion (and that pass writes directly into the frontend's
+      framebuffer when available, see below). */
    video_do_bypass =
       !video_flip_x && !video_flip_y && !video_swap_xy &&
-      ((video_config.depth == 15) || (video_config.depth == 32));
+      (video_config.depth == 32);
    /* Allocate an output video buffer, if necessary */
    if (!video_do_bypass)
    {
@@ -255,6 +262,9 @@ void osd_close_display(void)
 {
    free(video_buffer);
    video_buffer = NULL;
+   free(video_palette_565);
+   video_palette_565 = NULL;
+   video_palette_565_entries = 0;
 }
 
 static INLINE void pix_convert_pass8888(uint32_t *from, uint32_t *to)
@@ -262,9 +272,12 @@ static INLINE void pix_convert_pass8888(uint32_t *from, uint32_t *to)
    *to = *from;
 }
 
-static INLINE void pix_convert_pass1555(uint16_t *from, uint16_t *to)
+static INLINE void pix_convert_1555to565(uint16_t *from, uint16_t *to)
 {
-   *to = *from;
+   /* 0RGB1555 -> RGB565: shift red+green up one bit, keep blue. The green
+      LSB is left zero (imperceptible) in exchange for a single shift. */
+   const uint16_t p = *from;
+   *to = (uint16_t)(((p & 0x7FE0) << 1) | (p & 0x001F));
 }
 
 static INLINE void pix_convert_passpal(uint16_t *from, uint32_t *to)
@@ -274,13 +287,36 @@ static INLINE void pix_convert_passpal(uint16_t *from, uint32_t *to)
 
 static INLINE void pix_convert_palto565(uint16_t *from, uint16_t *to)
 {
-   const uint32_t color = video_palette[*from];
-   *to = (color & 0x00F80000) >> 8 | /* red */
-         (color & 0x0000FC00) >> 5 | /* green */
-         (color & 0x000000F8) >> 3;  /* blue */
+   *to = video_palette_565[*from];
 }
 
-static void frame_convert(struct mame_display *display)
+/* Rebuild the RGB565 palette lookup from the game's adjusted palette. Called
+   only when the palette actually changes, moving the XRGB8888->RGB565
+   conversion off the per-pixel path and onto the (much rarer) palette update. */
+static void rebuild_palette_565(const rgb_t *pal, unsigned entries)
+{
+   unsigned i;
+
+   if (video_palette_565_entries != entries)
+   {
+      free(video_palette_565);
+      video_palette_565 = (uint16_t*)malloc(entries * sizeof(uint16_t));
+      video_palette_565_entries = video_palette_565 ? entries : 0;
+   }
+   if (!video_palette_565)
+      return;
+
+   for (i = 0; i < entries; i++)
+   {
+      const uint32_t c = pal[i];
+      video_palette_565[i] = (uint16_t)(
+         (c & 0x00F80000) >> 8 | /* red   */
+         (c & 0x0000FC00) >> 5 | /* green */
+         (c & 0x000000F8) >> 3); /* blue  */
+   }
+}
+
+static void frame_convert(struct mame_display *display, void *out_base, unsigned out_pitch)
 {
    int x, y;
 
@@ -294,12 +330,13 @@ static void frame_convert(struct mame_display *display)
 
    signed pitch = display->game_bitmap->rowpixels;
    char *input = (char*)display->game_bitmap->base;
-   char *output = (char*)video_buffer;
+   char *output = (char*)out_base;
 
    /* Pixel conversion loop macro for best possible inlining, w/o XY swap */
    #define CONVERT_NOSWAP(CONVERT_FUNC, TYPE_IN, TYPE_OUT, FLIP_X, FLIP_Y)\
       {\
          signed skip;\
+         signed out_skip;\
          TYPE_IN *in = (TYPE_IN*)input;\
          TYPE_OUT *out = (TYPE_OUT*)output;\
          \
@@ -307,6 +344,9 @@ static void frame_convert(struct mame_display *display)
          in += (!FLIP_X ? x0 : x1) + (!FLIP_Y ? y0 * pitch : y1 * pitch);\
          /* After each line, reset the pointer to start, then to next line */\
          skip = (!FLIP_X ? -w : w) + (!FLIP_Y ? pitch : -pitch);\
+         /* Advance the output to the next scanline (out_pitch may differ from\
+            the row width, e.g. a frontend framebuffer with padding) */\
+         out_skip = (signed)(out_pitch / sizeof(TYPE_OUT)) - w;\
          \
          for (y = 0; y < h; y++)\
          {\
@@ -317,6 +357,7 @@ static void frame_convert(struct mame_display *display)
                for (x = 0; x < w; x++)\
                   CONVERT_FUNC(in--, out++);\
             in += skip;\
+            out += out_skip;\
          }\
       }
 
@@ -356,8 +397,8 @@ static void frame_convert(struct mame_display *display)
       case VCT_PASS8888:
          CONVERT(pix_convert_pass8888, uint32_t, uint32_t);
          break;
-      case VCT_PASS1555:
-         CONVERT(pix_convert_pass1555, uint16_t, uint16_t);
+      case VCT_1555TO565:
+         CONVERT(pix_convert_1555to565, uint16_t, uint16_t);
          break;
       case VCT_PASSPAL:
          CONVERT(pix_convert_passpal, uint16_t, uint32_t);
@@ -366,6 +407,34 @@ static void frame_convert(struct mame_display *display)
          CONVERT(pix_convert_palto565, uint16_t, uint16_t);
          break;
    }
+}
+
+/* Try to obtain the frontend's framebuffer for this frame so the conversion
+   can write straight into video memory (zero copy on the frontend side). We
+   only ask for WRITE access. Returns true and fills *fb when a usable buffer
+   in our exact output format is granted; false otherwise, in which case the
+   caller falls back to the internal buffer. */
+static bool get_current_sw_framebuffer(unsigned w, unsigned h, struct retro_framebuffer *fb)
+{
+   enum retro_pixel_format want =
+      (video_stride_out == 4) ? RETRO_PIXEL_FORMAT_XRGB8888
+                              : RETRO_PIXEL_FORMAT_RGB565;
+
+   memset(fb, 0, sizeof(*fb));
+   fb->width        = w;
+   fb->height       = h;
+   fb->access_flags = RETRO_MEMORY_ACCESS_WRITE;
+
+   if (!environ_cb(RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER, fb))
+      return false;
+   if (!fb->data)
+      return false;
+   /* The frontend may hand back a format different from the one we set; only
+      use the buffer when it matches what we convert to. */
+   if (fb->format != want)
+      return false;
+
+   return true;
 }
 
 extern bool retro_audio_buff_underrun;
@@ -445,7 +514,11 @@ void osd_update_video_and_audio(struct mame_display *display)
 
       /* Update the palette */
       if (display->changed_flags & GAME_PALETTE_CHANGED)
+      {
          video_palette = display->game_palette;
+         if (video_conversion_type == VCT_PALTO565)
+            rebuild_palette_565(display->game_palette, display->game_palette_entries);
+      }
 
       /* Update the game bitmap */
       if (video_cb)
@@ -462,8 +535,23 @@ void osd_update_video_and_audio(struct mame_display *display)
             }
             else
             {
-               frame_convert(display);
-               video_cb(video_buffer, vis_width, vis_height, vis_width * video_stride_out);
+               struct retro_framebuffer fb;
+               void     *out       = video_buffer;
+               unsigned  out_pitch = vis_width * video_stride_out;
+
+               /* Write the converted frame straight into the frontend's
+                  framebuffer when it grants one (no internal->frontend copy).
+                  The XY-swap path always uses the internal buffer, since it
+                  writes contiguously. Otherwise fall back to video_buffer. */
+               if (!video_swap_xy &&
+                   get_current_sw_framebuffer(vis_width, vis_height, &fb))
+               {
+                  out       = fb.data;
+                  out_pitch = (unsigned)fb.pitch;
+               }
+
+               frame_convert(display, out, out_pitch);
+               video_cb(out, vis_width, vis_height, out_pitch);
             }
          }
          else
