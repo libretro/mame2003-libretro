@@ -852,6 +852,9 @@ VIDEO_UPDATE( midtunit )
 {
 	int v, width, xoffs, dpytap;
 	UINT32 offset;
+	const unsigned short *pal;
+	unsigned palents, fb_pitch;
+	UINT16 *fb;
 
 #if LOG_DMA
 	if (keyboard_pressed(KEYCODE_L))
@@ -878,6 +881,29 @@ VIDEO_UPDATE( midtunit )
 	offset += xoffs;
 	offset += 512 * cliprect->min_y;
 	offset &= 0x3ffff;
+
+	/* Fast path: convert the indexed framebuffer straight into the frontend
+	   buffer with the core's RGB565 palette LUT, skipping the game bitmap and
+	   the core's conversion pass. Needs a stable palette (see the palette
+	   accessor); the visible area is 0-origin, so screen row v maps to buffer
+	   row v. */
+	pal = mame2003_direct_rgb565_palette(&palents);
+	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	if (fb)
+	{
+		for (v = cliprect->min_y; v <= cliprect->max_y; v++)
+		{
+			const UINT16 *src = &local_videoram[offset];
+			UINT16 *dst = (UINT16 *)((UINT8 *)fb + v * fb_pitch) + xoffs;
+			int length = width;
+
+			while (length--)
+				*dst++ = pal[*src++];
+
+			offset = (offset + 512) & 0x3ffff;
+		}
+		return;
+	}
 
 	/* loop over rows */
 	for (v = cliprect->min_y; v <= cliprect->max_y; v++)

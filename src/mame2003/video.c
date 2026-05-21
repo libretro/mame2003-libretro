@@ -57,6 +57,16 @@ static void    *direct_out;
 static unsigned direct_out_pitch;
 static int      direct_fb_pending;
 
+/* The RGB565 palette LUT is rebuilt at delivery (after VIDEO_UPDATE), so during
+   VIDEO_UPDATE it reflects the previous frame's palette. A driver doing its own
+   index->RGB565 conversion on the fast path would therefore use a one-frame-old
+   palette on any frame the palette changes. palette_unstable tracks whether the
+   palette changed on the last delivered frame; mame2003_direct_rgb565_palette()
+   withholds the LUT while it's set, so palette-changing frames fall back to the
+   normal path (which rebuilds and converts with the current palette). Set
+   conservatively at (re)create so startup stays on the slow path. */
+static int      palette_unstable = 1;
+
 /* Possible pixel conversions (see corresponding function far below) */
 enum
 {
@@ -261,6 +271,7 @@ int osd_create_display(
    /* Re-probe software-framebuffer support (the video driver may have changed). */
    sw_framebuffer_supported = -1;
    direct_fb_pending = 0;
+   palette_unstable = 1;
 
    mame2003_video_init_orientation();
    mame2003_video_init_conversion(rgb_components);
@@ -520,6 +531,21 @@ void *mame2003_direct_rgb565_begin(unsigned *pitch_out)
    return direct_out;
 }
 
+/* See mame2003.h. Hands a fast-path driver the RGB565 palette LUT so it can
+   convert palette indices straight into the framebuffer. Returns NULL (driver
+   uses the normal bitmap path) when the output is not paletted RGB565, the LUT
+   is not built yet, or the palette changed on the last frame -- the LUT is one
+   frame stale during VIDEO_UPDATE, so a changing palette must go the normal
+   route to convert with the current colors. */
+const unsigned short *mame2003_direct_rgb565_palette(unsigned *entries_out)
+{
+   if (video_conversion_type != VCT_PALTO565) return NULL;
+   if (!video_palette_565)                    return NULL;
+   if (palette_unstable)                      return NULL;
+   *entries_out = video_palette_565_entries;
+   return (const unsigned short *)video_palette_565;
+}
+
 extern bool retro_audio_buff_underrun;
 extern bool retro_audio_buff_active;
 extern unsigned retro_audio_buff_occupancy;
@@ -578,6 +604,10 @@ void osd_update_video_and_audio(struct mame_display *display)
 {
    RETRO_PERFORMANCE_INIT(perf_cb, update_video_and_audio);
    RETRO_PERFORMANCE_START(perf_cb, update_video_and_audio);
+
+   /* Record whether the palette changed this frame; the LUT fast path consults
+      this on the next frame (the LUT is rebuilt below, after VIDEO_UPDATE). */
+   palette_unstable = (display->changed_flags & GAME_PALETTE_CHANGED) ? 1 : 0;
 
    if(display->changed_flags &
       ( GAME_BITMAP_CHANGED | GAME_PALETTE_CHANGED

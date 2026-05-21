@@ -64,6 +64,17 @@ extern void mame2003_video_get_geometry(struct retro_game_geometry *geom);
    orientation; the driver fills rows [0, height). */
 extern void *mame2003_direct_rgb565_begin(unsigned *pitch_out);
 
+/* Companion to mame2003_direct_rgb565_begin() for paletted framebuffer games:
+   returns the core's index->RGB565 palette LUT (and sets *entries_out to its
+   length) so the driver can convert palette indices straight into the buffer,
+   or NULL if the fast path is unavailable this frame (output is not paletted
+   RGB565, the LUT is not built, or the palette changed last frame -- in which
+   case the driver must use the bitmap path). A driver that needs the LUT must
+   query this before calling _begin() and fall back to the bitmap if it is
+   NULL. Drivers with an identity palette (e.g. a 1:1 5-5-5 map) compute RGB565
+   directly and do not need this. */
+extern const unsigned short *mame2003_direct_rgb565_palette(unsigned *entries_out);
+
 
 /******************************************************************************
 
