@@ -22,9 +22,9 @@
 extern int rb_input_select;
 
 /* Statics */
-static INT16 *vol_lookup = NULL;
+static int16_t *vol_lookup = NULL;
 
-static INT16 vol_crash[16];
+static int16_t vol_crash[16];
 
 static int channel;
 static int latch;
@@ -60,7 +60,7 @@ WRITE_HANDLER( redbaron_pokey_w )
         pokey1_w (offset, data);
 }
 
-static void redbaron_sound_update(int param, INT16 *buffer, int length)
+static void redbaron_sound_update(int param, int16_t *buffer, int length)
 {
 	while( length-- )
 	{
@@ -170,12 +170,12 @@ int redbaron_sh_start(const struct MachineSound *msound)
 {
     int i;
 
-	vol_lookup = (INT16 *)auto_malloc(32768 * sizeof(INT16));
+	vol_lookup = (int16_t *)auto_malloc(32768 * sizeof(int16_t));
 	if( !vol_lookup )
         return 1;
 
     for( i = 0; i < 0x8000; i++ )
-		vol_lookup[0x7fff-i] = (INT16) (0x7fff/exp(1.0*i/4096));
+		vol_lookup[0x7fff-i] = (int16_t) (0x7fff/exp(1.0*i/4096));
 
 	for( i = 0; i < 16; i++ )
 	{

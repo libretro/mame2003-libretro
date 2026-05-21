@@ -23,7 +23,7 @@ D0	explosion enable		gates a noise generator
 
 
 /* Statics */
-static INT16 *discharge = NULL;
+static int16_t *discharge = NULL;
 #define EXP(charge,n) (charge ? 0x7fff - discharge[0x7fff-n] : discharge[n])
 
 static int channel;
@@ -63,7 +63,7 @@ WRITE_HANDLER( bzone_sounds_w )
     mixer_sound_enable_global_w(latch & 0x20);
 }
 
-static void bzone_sound_update(int param, INT16 *buffer, int length)
+static void bzone_sound_update(int param, int16_t *buffer, int length)
 {
 	while( length-- )
 	{
@@ -270,12 +270,12 @@ int bzone_sh_start(const struct MachineSound *msound)
 {
     int i;
 
-	discharge = (INT16 *)auto_malloc(32768 * sizeof(INT16));
+	discharge = (int16_t *)auto_malloc(32768 * sizeof(int16_t));
 	if( !discharge )
         return 1;
 
     for( i = 0; i < 0x8000; i++ )
-		discharge[0x7fff-i] = (INT16) (0x7fff/exp(1.0*i/4096));
+		discharge[0x7fff-i] = (int16_t) (0x7fff/exp(1.0*i/4096));
 
 	channel = stream_init("Custom", 50, Machine->sample_rate, 0, bzone_sound_update);
     if( channel == -1 )

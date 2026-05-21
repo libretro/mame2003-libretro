@@ -66,44 +66,44 @@ enum
 struct dcs_state
 {
 	int		stream;
-	UINT8	auto_ack;
+	uint8_t	auto_ack;
 
-	UINT8 * mem;
-	UINT16	size;
-	UINT16	incs;
+	uint8_t * mem;
+	uint16_t	size;
+	uint16_t	incs;
 	void  * reg_timer;
 	void  * sport_timer;
 	int		ireg;
-	UINT16	ireg_base;
-	UINT16	control_regs[32];
+	uint16_t	ireg_base;
+	uint16_t	control_regs[32];
 
-	UINT16	rombank;
-	UINT16	rombank_count;
-	UINT16	srambank;
-	UINT16	drambank;
-	UINT16	drambank_count;
-	UINT8	enabled;
+	uint16_t	rombank;
+	uint16_t	rombank_count;
+	uint16_t	srambank;
+	uint16_t	drambank;
+	uint16_t	drambank_count;
+	uint8_t	enabled;
 
-	INT16 *	buffer;
-	INT16 *	buffer2;
-	UINT32	buffer_in;
-	UINT32	sample_step;
-	UINT32	sample_position;
-	INT16	current_sample;
+	int16_t *	buffer;
+	int16_t *	buffer2;
+	uint32_t	buffer_in;
+	uint32_t	sample_step;
+	uint32_t	sample_position;
+	int16_t	current_sample;
 
-	UINT16	latch_control;
-	UINT16	input_data;
-	UINT16	output_data;
-	UINT16	output_control;
-	UINT32	output_control_cycles;
+	uint16_t	latch_control;
+	uint16_t	input_data;
+	uint16_t	output_data;
+	uint16_t	output_control;
+	uint32_t	output_control_cycles;
 	
-	UINT8	last_output_full;
-	UINT8	last_input_empty;
+	uint8_t	last_output_full;
+	uint8_t	last_input_empty;
 
 	void	(*output_full_cb)(int);
 	void	(*input_empty_cb)(int);
-	UINT16	(*fifo_data_r)(void);
-	UINT16	(*fifo_status_r)(void);
+	uint16_t	(*fifo_data_r)(void);
+	uint16_t	(*fifo_status_r)(void);
 };
 
 
@@ -112,7 +112,7 @@ struct dcs_state
 	STATIC GLOBALS
 ****************************************************************************/
 
-static INT8 dcs_cpunum;
+static int8_t dcs_cpunum;
 
 static struct dcs_state dcs;
 
@@ -133,7 +133,7 @@ static int transfer_state;
 static int transfer_start;
 static int transfer_stop;
 static int transfer_writes_left;
-static UINT16 transfer_sum;
+static uint16_t transfer_sum;
 #endif
 
 
@@ -144,8 +144,8 @@ static UINT16 transfer_sum;
 
 static int dcs_custom_start(const struct MachineSound *msound);
 static int dcs2_custom_start(const struct MachineSound *msound);
-static void dcs_dac_update(int num, INT16 *buffer, int length);
-static void dcs2_dac_update(int num, INT16 **buffer, int length);
+static void dcs_dac_update(int num, int16_t *buffer, int length);
+static void dcs2_dac_update(int num, int16_t **buffer, int length);
 
 static READ16_HANDLER( dcs_sdrc_asic_ver_r );
 
@@ -168,7 +168,7 @@ static WRITE16_HANDLER( output_control_w );
 
 static void dcs_irq(int state);
 static void sport0_irq(int state);
-static void sound_tx_callback(int port, INT32 data);
+static void sound_tx_callback(int port, int32_t data);
 
 static READ16_HANDLER( dcs_polling_r );
 
@@ -439,18 +439,18 @@ void dcs_init(void)
 
 void dcs2_init(offs_t polling_offset)
 {
-	UINT8 *romsrc;
+	uint8_t *romsrc;
 	int page, i;
 
 	/* find the DCS CPU */
 	dcs_cpunum = mame_find_cpu_index("dcs2");
 
 	/* borrow memory for the extra 8k */
-	dcs_sram_bank1 = (UINT16 *)(memory_region(REGION_CPU1 + dcs_cpunum) + 0x8000);
+	dcs_sram_bank1 = (uint16_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + 0x8000);
 	
 	/* borrow memory also for the expanded ROM data and expand it */
 	romsrc = memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE;
-	dcs_expanded_rom = (UINT16 *)(memory_region(REGION_CPU1 + dcs_cpunum) + 0xc000);
+	dcs_expanded_rom = (uint16_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + 0xc000);
 	for (page = 0; page < 8; page++)
 		for (i = 0; i < 0x400; i++)
 			dcs_expanded_rom[0x400 * page + i] = romsrc[BYTE_XOR_LE(0x1000 * page + i)];
@@ -492,7 +492,7 @@ static int dcs_custom_start(const struct MachineSound *msound)
 	dcs.stream = stream_init("DCS DAC", 100, Machine->sample_rate, 0, dcs_dac_update);
 
 	/* allocate memory for our buffer */
-	dcs.buffer = auto_malloc(DCS_BUFFER_SIZE * sizeof(INT16));
+	dcs.buffer = auto_malloc(DCS_BUFFER_SIZE * sizeof(int16_t));
 	dcs.buffer2 = NULL;
 	if (!dcs.buffer)
 		return 1;
@@ -510,8 +510,8 @@ static int dcs2_custom_start(const struct MachineSound *msound)
 	dcs.stream = stream_init_multi(2, names, vols, Machine->sample_rate, 0, dcs2_dac_update);
 
 	/* allocate memory for our buffer */
-	dcs.buffer = auto_malloc(DCS_BUFFER_SIZE * sizeof(INT16));
-	dcs.buffer2 = auto_malloc(DCS_BUFFER_SIZE * sizeof(INT16));
+	dcs.buffer = auto_malloc(DCS_BUFFER_SIZE * sizeof(int16_t));
+	dcs.buffer2 = auto_malloc(DCS_BUFFER_SIZE * sizeof(int16_t));
 	if (!dcs.buffer || !dcs.buffer2)
 		return 1;
 
@@ -570,7 +570,7 @@ static WRITE16_HANDLER( dcs_rombank_select_w )
 
 static READ16_HANDLER( dcs_rombank_data_r )
 {
-	UINT8	*banks = memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE;
+	uint8_t	*banks = memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE;
 
 	offset += (dcs.rombank & 0x7ff) << 12;
 	return banks[BYTE_XOR_LE(offset)];
@@ -629,7 +629,7 @@ void dcs_set_io_callbacks(void (*output_full_cb)(int), void (*input_empty_cb)(in
 }
 
 
-void dcs_set_fifo_callbacks(UINT16 (*fifo_data_r)(void), UINT16 (*fifo_status_r)(void))
+void dcs_set_fifo_callbacks(uint16_t (*fifo_data_r)(void), uint16_t (*fifo_status_r)(void))
 {
 	dcs.fifo_data_r = fifo_data_r;
 	dcs.fifo_status_r = fifo_status_r;
@@ -870,10 +870,10 @@ int dcs_data2_r(void)
 	SOUND GENERATION
 ****************************************************************************/
 
-static void dcs_dac_update(int num, INT16 *buffer, int length)
+static void dcs_dac_update(int num, int16_t *buffer, int length)
 {
-	UINT32 current, step, indx;
-	INT16 *source;
+	uint32_t current, step, indx;
+	int16_t *source;
 	int i;
 
 	/* DAC generation */
@@ -917,15 +917,15 @@ static void dcs_dac_update(int num, INT16 *buffer, int length)
 		dcs.sample_position = current;
 	}
 	else
-		memset(buffer, 0, length * sizeof(INT16));
+		memset(buffer, 0, length * sizeof(int16_t));
 }
 
 
-static void dcs2_dac_update(int num, INT16 **buffer, int length)
+static void dcs2_dac_update(int num, int16_t **buffer, int length)
 {
-	INT16 *destl = buffer[0], *destr = buffer[1];
-	UINT32 current, step, indx;
-	INT16 *sourcel, *sourcer;
+	int16_t *destl = buffer[0], *destr = buffer[1];
+	uint32_t current, step, indx;
+	int16_t *sourcel, *sourcer;
 	int i;
 
 	/* DAC generation */
@@ -975,8 +975,8 @@ static void dcs2_dac_update(int num, INT16 **buffer, int length)
 	}
 	else
 	{
-		memset(destl, 0, length * sizeof(INT16));
-		memset(destr, 0, length * sizeof(INT16));
+		memset(destl, 0, length * sizeof(int16_t));
+		memset(destr, 0, length * sizeof(int16_t));
 	}
 }
 
@@ -1068,14 +1068,14 @@ static void dcs_irq(int state)
 	if (!dcs.buffer2)
 	{
 		for (i = 0; i < dcs.size / 2; i += dcs.incs)
-			dcs.buffer[dcs.buffer_in++ & DCS_BUFFER_MASK] = ((UINT16 *)&dcs.mem[source])[i];
+			dcs.buffer[dcs.buffer_in++ & DCS_BUFFER_MASK] = ((uint16_t *)&dcs.mem[source])[i];
 	}
 	else
 	{
 		for (i = 0; i < dcs.size / 2; i += dcs.incs * 2)
 		{
-			dcs.buffer[dcs.buffer_in & DCS_BUFFER_MASK] = ((UINT16 *)&dcs.mem[source])[i];
-			dcs.buffer2[dcs.buffer_in & DCS_BUFFER_MASK] = ((UINT16 *)&dcs.mem[source])[i + dcs.incs];
+			dcs.buffer[dcs.buffer_in & DCS_BUFFER_MASK] = ((uint16_t *)&dcs.mem[source])[i];
+			dcs.buffer2[dcs.buffer_in & DCS_BUFFER_MASK] = ((uint16_t *)&dcs.mem[source])[i + dcs.incs];
 			dcs.buffer_in++;
 		}
 	}
@@ -1113,7 +1113,7 @@ static void sport0_irq(int state)
 }
 
 
-static void sound_tx_callback(int port, INT32 data)
+static void sound_tx_callback(int port, int32_t data)
 {
 	/* check if it's for SPORT1 */
 	if (port != 1)
@@ -1127,7 +1127,7 @@ static void sound_tx_callback(int port, INT32 data)
 		{
 			/* get the autobuffer registers */
 			int		mreg, lreg;
-			UINT16	source;
+			uint16_t	source;
 			int		sample_rate;
 
 			stream_update(dcs.stream, 0);
@@ -1302,7 +1302,7 @@ static void dcs_speedup_common(void)
 		0120: DM($063F) = SR0
 */
 
-	INT16 *source = (INT16 *)memory_region(REGION_CPU1 + dcs_cpunum);
+	int16_t *source = (int16_t *)memory_region(REGION_CPU1 + dcs_cpunum);
 	int mem63d = 2;
 	int mem63e = 0x40;
 	int mem63f = mem63e >> 1;
@@ -1310,15 +1310,15 @@ static void dcs_speedup_common(void)
 
 	for (i = 0; i < 6; i++)
 	{
-		INT16 *i4 = &source[0x780];
-		INT16 *i5 = &source[0x700];
-		INT16 *i0 = &source[0x3800];
-		INT16 *i1 = &source[0x3800 + mem63e];
-		INT16 *i2 = i1;
+		int16_t *i4 = &source[0x780];
+		int16_t *i5 = &source[0x700];
+		int16_t *i0 = &source[0x3800];
+		int16_t *i1 = &source[0x3800 + mem63e];
+		int16_t *i2 = i1;
 
 		for (j = 0; j < mem63d; j++)
 		{
-			INT32 mx0, mx1, my0, my1, ax0, ay0, ay1, mr1, temp;
+			int32_t mx0, mx1, my0, my1, ax0, ay0, ay1, mr1, temp;
 
 			my0 = *i4++;
 			my1 = *i5++;

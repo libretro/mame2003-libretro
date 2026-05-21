@@ -11,7 +11,7 @@
 #include "driver.h"
 
 static void *volume_timer = NULL;
-static UINT16 *decay = NULL;
+static uint16_t *decay = NULL;
 static int channel;
 static int sound_latch = 0;
 static int sound_signal = 0;
@@ -56,7 +56,7 @@ WRITE_HANDLER( geebee_sound_w )
     }
 }
 
-static void geebee_sound_update(int param, INT16 *buffer, int length)
+static void geebee_sound_update(int param, int16_t *buffer, int length)
 {
     static int vcarry = 0;
     static int vcount = 0;
@@ -114,12 +114,12 @@ int geebee_sh_start(const struct MachineSound *msound)
 {
 	int i;
 
-	decay = (UINT16 *)auto_malloc(32768 * sizeof(INT16));
+	decay = (uint16_t *)auto_malloc(32768 * sizeof(int16_t));
 	if( !decay )
 		return 1;
 
     for( i = 0; i < 0x8000; i++ )
-		decay[0x7fff-i] = (INT16) (0x7fff/exp(1.0*i/4096));
+		decay[0x7fff-i] = (int16_t) (0x7fff/exp(1.0*i/4096));
 
 	channel = stream_init("GeeBee", 100, Machine->sample_rate, 0, geebee_sound_update);
 	

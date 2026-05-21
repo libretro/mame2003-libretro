@@ -45,8 +45,8 @@ static int freq = MAXFREQ;
 
 static void *noisetimer = 0;
 static int noisevolume;
-static INT16 *noisewave;
-static INT16 *shootwave;
+static int16_t *noisewave;
+static int16_t *shootwave;
 #if NEW_SHOOT
 static int shoot_length;
 static int shoot_rate;
@@ -59,10 +59,10 @@ static int last_port1=0;
 #endif
 static int last_port2=0;
 
-static INT8 tonewave[4][TOOTHSAW_LENGTH];
+static int8_t tonewave[4][TOOTHSAW_LENGTH];
 static int pitch,vol;
 
-static INT16 backgroundwave[32] =
+static int16_t backgroundwave[32] =
 {
    0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000,
    0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000,
@@ -75,10 +75,10 @@ static int tone_stream;
 
 static void lfo_timer_cb(int param);
 
-static void tone_update(int ch, INT16 *buffer, int length)
+static void tone_update(int ch, int16_t *buffer, int length)
 {
 	int i,j;
-	INT8 *w = tonewave[vol];
+	int8_t *w = tonewave[vol];
 	static int counter, countdown;
 
 	/* only update if we have non-zero volume and frequency */
@@ -231,7 +231,7 @@ static int galaxian_sh_start(const struct MachineSound *msound)
 		deathsampleloaded = 0;
 #endif
 
-	if( (noisewave = auto_malloc(NOISE_LENGTH * sizeof(INT16))) == 0 )
+	if( (noisewave = auto_malloc(NOISE_LENGTH * sizeof(int16_t))) == 0 )
 	{
 		return 1;
 	}
@@ -240,9 +240,9 @@ static int galaxian_sh_start(const struct MachineSound *msound)
 #define SHOOT_SEC 2
 	shoot_rate = Machine->sample_rate;
 	shoot_length = SHOOT_SEC * shoot_rate;
-	if ((shootwave = auto_malloc(shoot_length * sizeof(INT16))) == 0)
+	if ((shootwave = auto_malloc(shoot_length * sizeof(int16_t))) == 0)
 #else
-	if( (shootwave = auto_malloc(SHOOT_LENGTH * sizeof(INT16))) == 0 )
+	if( (shootwave = auto_malloc(SHOOT_LENGTH * sizeof(int16_t))) == 0 )
 #endif
 		return 1;
 

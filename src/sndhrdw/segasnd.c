@@ -10,7 +10,7 @@
 
 /* SP0250-based speechboard */
 
-static UINT8 sega_speechboard_latch, sega_speechboard_t0, sega_speechboard_p2, sega_speechboard_drq;
+static uint8_t sega_speechboard_latch, sega_speechboard_t0, sega_speechboard_p2, sega_speechboard_drq;
 
 
 static READ_HANDLER( speechboard_t0_r )

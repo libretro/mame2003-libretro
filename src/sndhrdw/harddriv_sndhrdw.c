@@ -22,22 +22,22 @@ data16_t *hdsnddsp_ram;
  *
  *************************************/
 
-static UINT8 soundflag;
-static UINT8 mainflag;
-static UINT16 sounddata;
-static UINT16 maindata;
+static uint8_t soundflag;
+static uint8_t mainflag;
+static uint16_t sounddata;
+static uint16_t maindata;
 
-static UINT8 dacmute;
-static UINT8 cramen;
-static UINT8 irq68k;
+static uint8_t dacmute;
+static uint8_t cramen;
+static uint8_t irq68k;
 
 static offs_t sound_rom_offs;
 
-static UINT8 *rombase;
-static UINT32 romsize;
-static UINT16 *comram;
+static uint8_t *rombase;
+static uint32_t romsize;
+static uint16_t *comram;
 
-static UINT32 last_bio_cycles;
+static uint32_t last_bio_cycles;
 
 
 
@@ -49,9 +49,9 @@ static UINT32 last_bio_cycles;
 
 void hdsnd_init(void)
 {
-	rombase = (UINT8 *)memory_region(REGION_SOUND1);
+	rombase = (uint8_t *)memory_region(REGION_SOUND1);
 	romsize = memory_region_length(REGION_SOUND1);
-	comram = (UINT16 *)(memory_region(REGION_CPU1 + hdcpu_sounddsp) + 0x1000);
+	comram = (uint16_t *)(memory_region(REGION_CPU1 + hdcpu_sounddsp) + 0x1000);
 	last_bio_cycles = 0;
 }
 
@@ -306,8 +306,8 @@ WRITE16_HANDLER( hdsnd68k_320com_w )
 
 READ16_HANDLER( hdsnddsp_get_bio )
 {
-	UINT32 cycles_since_last_bio = activecpu_gettotalcycles() - last_bio_cycles;
-	INT32 cycles_until_bio = CYCLES_PER_BIO - cycles_since_last_bio;
+	uint32_t cycles_since_last_bio = activecpu_gettotalcycles() - last_bio_cycles;
+	int32_t cycles_until_bio = CYCLES_PER_BIO - cycles_since_last_bio;
 
 	/* if we're not at the next BIO yet, advance us there */
 	if (cycles_until_bio > 0)

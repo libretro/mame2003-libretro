@@ -10,10 +10,10 @@
 #include <math.h>
 
 
-static UINT8 *bank_base;
-static UINT8 fast_68k_int, io_68k_int;
-static UINT8 sound_data_from_68k, sound_data_from_6502;
-static UINT8 sound_data_from_68k_ready, sound_data_from_6502_ready;
+static uint8_t *bank_base;
+static uint8_t fast_68k_int, io_68k_int;
+static uint8_t sound_data_from_68k, sound_data_from_6502;
+static uint8_t sound_data_from_68k_ready, sound_data_from_6502_ready;
 
 
 static void update_sound_68k_interrupts(void);

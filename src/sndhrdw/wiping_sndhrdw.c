@@ -43,8 +43,8 @@ static int sound_enable;
 static int stream;
 
 /* mixer tables and internal buffers */
-static INT16 *mixer_table;
-static INT16 *mixer_lookup;
+static int16_t *mixer_table;
+static int16_t *mixer_lookup;
 static short *mixer_buffer;
 static short *mixer_buffer_2;
 
@@ -57,7 +57,7 @@ static int make_mixer_table(int voices, int gain)
 	int i;
 
 	/* allocate memory */
-	mixer_table = auto_malloc(256 * voices * sizeof(INT16));
+	mixer_table = auto_malloc(256 * voices * sizeof(int16_t));
 	if (!mixer_table)
 		return 1;
 
@@ -78,7 +78,7 @@ static int make_mixer_table(int voices, int gain)
 
 
 /* generate sound to the mix buffer in mono */
-static void wiping_update_mono(int ch, INT16 *buffer, int length)
+static void wiping_update_mono(int ch, int16_t *buffer, int length)
 {
 	sound_channel *voice;
 	short *mix;

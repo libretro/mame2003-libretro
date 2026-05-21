@@ -24,9 +24,9 @@
  *************************************/
 
 /* tone variables */
-static UINT32 tone_step;
-static UINT32 tone_fraction;
-static UINT8 tone_volume;
+static uint32_t tone_step;
+static uint32_t tone_fraction;
+static uint8_t tone_volume;
 
 /* sound streaming variables */
 static int gridlee_stream;
@@ -40,7 +40,7 @@ static double freq_to_step;
  *
  *************************************/
 
-static void gridlee_stream_update(int param, INT16 *buffer, int length)
+static void gridlee_stream_update(int param, int16_t *buffer, int length)
 {
 	/* loop over samples */
 	while (length--)
@@ -74,7 +74,7 @@ int gridlee_sh_start(const struct MachineSound *msound)
 
 WRITE_HANDLER( gridlee_sound_w )
 {
-static UINT8 sound_data[24];
+static uint8_t sound_data[24];
 
 	stream_update(gridlee_stream, 0);
 

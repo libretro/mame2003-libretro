@@ -13,7 +13,7 @@ static int sound_stream;
 
 /* speech section */
 static int channel;
-static INT8 *speech;
+static int8_t *speech;
 /* macro to convert 4-bit unsigned samples to 8-bit signed samples */
 #define SAMPLE_CONV4(a) (0x11*((a&0x0f))-0x80)
 #define SAMPLE_SIZE 0x8000
@@ -29,16 +29,16 @@ static int sample_offsets[5];
 /************************************/
 /* Stream updater                   */
 /************************************/
-static void engine_sound_update(int num, INT16 *buffer, int length)
+static void engine_sound_update(int num, int16_t *buffer, int length)
 {
-	UINT32 current = current_position, step, clock, slot, volume;
-	UINT8 *base;
+	uint32_t current = current_position, step, clock, slot, volume;
+	uint8_t *base;
 
 
 	/* if we're not enabled, just fill with 0 */
 	if (!sample_enable || Machine->sample_rate == 0)
 	{
-		memset(buffer, 0, length * sizeof(INT16));
+		memset(buffer, 0, length * sizeof(int16_t));
 		return;
 	}
 

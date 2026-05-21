@@ -33,13 +33,13 @@
 	STATIC GLOBALS
 ****************************************************************************/
 
-UINT8 williams_sound_int_state;
+uint8_t williams_sound_int_state;
 
-static INT8 sound_cpunum;
-static INT8 soundalt_cpunum;
-static UINT8 williams_pianum;
+static int8_t sound_cpunum;
+static int8_t soundalt_cpunum;
+static uint8_t williams_pianum;
 
-static UINT8 adpcm_bank_count;
+static uint8_t adpcm_bank_count;
 
 
 
@@ -286,9 +286,9 @@ MACHINE_DRIVER_END
 static INLINES
 ****************************************************************************/
 
-static INLINE UINT8 *get_cvsd_bank_base(int data)
+static INLINE uint8_t *get_cvsd_bank_base(int data)
 {
-	UINT8 *RAM = memory_region(REGION_CPU1 + sound_cpunum);
+	uint8_t *RAM = memory_region(REGION_CPU1 + sound_cpunum);
 	int bank = data & 3;
 	int quarter = (data >> 2) & 3;
 	if (bank == 3) bank = 0;
@@ -296,26 +296,26 @@ static INLINE UINT8 *get_cvsd_bank_base(int data)
 }
 
 
-static INLINE UINT8 *get_adpcm_bank_base(int data)
+static INLINE uint8_t *get_adpcm_bank_base(int data)
 {
-	UINT8 *RAM = memory_region(REGION_CPU1 + sound_cpunum);
+	uint8_t *RAM = memory_region(REGION_CPU1 + sound_cpunum);
 	int bank = data & 7;
 	return &RAM[0x10000 + (bank * 0x8000)];
 }
 
 
-static INLINE UINT8 *get_narc_master_bank_base(int data)
+static INLINE uint8_t *get_narc_master_bank_base(int data)
 {
-	UINT8 *RAM = memory_region(REGION_CPU1 + sound_cpunum);
+	uint8_t *RAM = memory_region(REGION_CPU1 + sound_cpunum);
 	int bank = data & 3;
 	if (!(data & 4)) bank = 0;
 	return &RAM[0x10000 + (bank * 0x8000)];
 }
 
 
-static INLINE UINT8 *get_narc_slave_bank_base(int data)
+static INLINE uint8_t *get_narc_slave_bank_base(int data)
 {
-	UINT8 *RAM = memory_region(REGION_CPU1 + soundalt_cpunum);
+	uint8_t *RAM = memory_region(REGION_CPU1 + soundalt_cpunum);
 	int bank = data & 7;
 	return &RAM[0x10000 + (bank * 0x8000)];
 }
@@ -350,7 +350,7 @@ void williams_cvsd_init(int cpunum, int pianum)
 
 void williams_adpcm_init(int cpunum)
 {
-	UINT8 *RAM;
+	uint8_t *RAM;
 	int i;
 
 	/* configure the CPU */
@@ -380,7 +380,7 @@ void williams_adpcm_init(int cpunum)
 
 void williams_narc_init(int cpunum)
 {
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	/* configure the CPU */
 	sound_cpunum = mame_find_cpu_index("narc1");
@@ -424,7 +424,7 @@ static void init_audio_state(void)
 
 
 #if 0
-static void locate_audio_hotspot(UINT8 *base, UINT16 start)
+static void locate_audio_hotspot(uint8_t *base, uint16_t start)
 {
 	int i;
 

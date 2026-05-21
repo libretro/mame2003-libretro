@@ -32,7 +32,7 @@ static int cclimber_sh_start(const struct MachineSound *msound)
 static void cclimber_play_sample(int start,int freq,int volume)
 {
 	int len;
-	const UINT8 *rom = memory_region(REGION_SOUND1);
+	const uint8_t *rom = memory_region(REGION_SOUND1);
 
 
 	if (!rom) return;

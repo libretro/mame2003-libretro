@@ -35,26 +35,26 @@ static int cage_cpu;
 static double cage_cpu_clock_period;
 static double cage_cpu_h1_clock;
 
-static UINT8 cpu_to_cage_ready;
-static UINT8 cage_to_cpu_ready;
+static uint8_t cpu_to_cage_ready;
+static uint8_t cage_to_cpu_ready;
 
 static void (*cage_irqhandler)(int);
 
-static INT16 *sound_buffer;
-static UINT32 buffer_in, buffer_out, buffer_out_step;
+static int16_t *sound_buffer;
+static uint32_t buffer_in, buffer_out, buffer_out_step;
 
 static double serial_time_per_word;
 
-static UINT8 dma_enabled;
+static uint8_t dma_enabled;
 static void *dma_timer;
 
-static UINT8 timer_enabled[2];
+static uint8_t timer_enabled[2];
 static void *timer[2];
 
 static data32_t *tms32031_io_regs;
 
-static UINT16 cage_from_main;
-static UINT16 cage_control;
+static uint16_t cage_from_main;
+static uint16_t cage_control;
 
 static data32_t *speedup_ram;
 
@@ -193,11 +193,11 @@ void cage_reset_w(int state)
  *
  *************************************/
 
-static void dac_update(int num, INT16 **buffer, int length)
+static void dac_update(int num, int16_t **buffer, int length)
 {
-	INT16 *dest[DAC_BUFFER_CHANNELS];
-	UINT32 current = buffer_out;
-	UINT32 step = buffer_out_step;
+	int16_t *dest[DAC_BUFFER_CHANNELS];
+	uint32_t current = buffer_out;
+	uint32_t step = buffer_out_step;
 	int i, j;
 	
 	for (j = 0; j < DAC_BUFFER_CHANNELS; j++)
@@ -206,7 +206,7 @@ static void dac_update(int num, INT16 **buffer, int length)
 	/* fill in with samples until we hit the end or run out */
 	for (i = 0; i < length; i++)
 	{
-		UINT32 indx = (current >> 16) * DAC_BUFFER_CHANNELS;
+		uint32_t indx = (current >> 16) * DAC_BUFFER_CHANNELS;
 		if (indx + DAC_BUFFER_CHANNELS - 1 >= buffer_in)
 			break;
 		current += step;
@@ -217,7 +217,7 @@ static void dac_update(int num, INT16 **buffer, int length)
 	/* fill the rest with the last sample */
 	for ( ; i < length; i++)
 	{
-		UINT32 indx = ((buffer_in - 1) / DAC_BUFFER_CHANNELS) * DAC_BUFFER_CHANNELS;
+		uint32_t indx = ((buffer_in - 1) / DAC_BUFFER_CHANNELS) * DAC_BUFFER_CHANNELS;
 		for (j = 0; j < DAC_BUFFER_CHANNELS; j++)
 			*dest[j]++ = sound_buffer[(indx + j) & DAC_BUFFER_SAMPLES_MASK];
 	}
@@ -255,7 +255,7 @@ static int custom_start(const struct MachineSound *msound)
 	sound_stream = stream_init_multi(DAC_BUFFER_CHANNELS, names, mixing_levels, Machine->sample_rate, 0, dac_update);
 
 	/* allocate memory for our buffers */
-	sound_buffer = auto_malloc(DAC_BUFFER_SAMPLES * sizeof(INT16));
+	sound_buffer = auto_malloc(DAC_BUFFER_SAMPLES * sizeof(int16_t));
 	if (!sound_buffer)
 		return 1;
 	return 0;
@@ -294,7 +294,7 @@ static void update_dma_state(void)
 	/* see if we turned on */
 	if (enabled && !dma_enabled)
 	{
-		UINT32 addr, inc;
+		uint32_t addr, inc;
 		int i;
 		
 		/* make sure our assumptions are correct */
@@ -398,7 +398,7 @@ static void update_serial(void)
 	serial_time_per_word = bit_clock * 8.0 * (double)(((tms32031_io_regs[SPORT_GLOBAL_CTL] >> 18) & 3) + 1);
 
 	/* compute the step value to stretch this to the Machine->sample_rate */
-	buffer_out_step = (UINT32)(65536.0 / (serial_time_per_word * DAC_BUFFER_CHANNELS * (double)Machine->sample_rate));
+	buffer_out_step = (uint32_t)(65536.0 / (serial_time_per_word * DAC_BUFFER_CHANNELS * (double)Machine->sample_rate));
 }
 
 
@@ -411,7 +411,7 @@ static void update_serial(void)
 
 static READ32_HANDLER( tms32031_io_r )
 {
-	UINT16 result = tms32031_io_regs[offset];
+	uint16_t result = tms32031_io_regs[offset];
 	
 	if (offset == DMA_GLOBAL_CTL)
 		return (result & ~0xc) | (dma_enabled ? 0xc : 0x0);
@@ -534,7 +534,7 @@ static READ32_HANDLER( cage_io_status_r )
 }
 
 
-UINT16 main_from_cage_r(void)
+uint16_t main_from_cage_r(void)
 {
 	cage_to_cpu_ready = 0;
 	update_control_lines();
@@ -551,15 +551,15 @@ static void deferred_cage_w(int param)
 }
 
 
-void main_to_cage_w(UINT16 data)
+void main_to_cage_w(uint16_t data)
 {
 	timer_set(TIME_NOW, data, deferred_cage_w);
 }
 
 
-UINT16 cage_control_r(void)
+uint16_t cage_control_r(void)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 	
 	if (cpu_to_cage_ready)
 		result |= 2;
@@ -570,7 +570,7 @@ UINT16 cage_control_r(void)
 }
 
 
-void cage_control_w(UINT16 data)
+void cage_control_w(uint16_t data)
 {
 	cage_control = data;
 

@@ -43,62 +43,62 @@ enum
  *************************************/
 
 /* IRQ variables */
-static UINT8 pia_irq_state;
-static UINT8 riot_irq_state;
+static uint8_t pia_irq_state;
+static uint8_t riot_irq_state;
 
 /* 6532 variables */
 static void *riot_timer;
-static UINT8 riot_irq_flag;
-static UINT8 riot_timer_irq_enable;
-static UINT8 riot_PA7_irq_enable;
-static UINT8 riot_porta_data;
-static UINT8 riot_porta_ddr;
-static UINT8 riot_portb_data;
-static UINT8 riot_portb_ddr;
+static uint8_t riot_irq_flag;
+static uint8_t riot_timer_irq_enable;
+static uint8_t riot_PA7_irq_enable;
+static uint8_t riot_porta_data;
+static uint8_t riot_porta_ddr;
+static uint8_t riot_portb_data;
+static uint8_t riot_portb_ddr;
 static double riot_interval;
-static UINT8 riot_state;
+static uint8_t riot_state;
 
 /* 6840 variables */
 struct sh6840_timer_channel
 {
-	UINT8	cr;
-	UINT8	state;
-	UINT8	leftovers;
-	UINT16	timer;
-	UINT32	clocks;
+	uint8_t	cr;
+	uint8_t	state;
+	uint8_t	leftovers;
+	uint16_t	timer;
+	uint32_t	clocks;
 	union
 	{
 #ifdef MSB_FIRST
-		struct { UINT8 h, l; } b;
+		struct { uint8_t h, l; } b;
 #else
-		struct { UINT8 l, h; } b;
+		struct { uint8_t l, h; } b;
 #endif
-		UINT16 w;
+		uint16_t w;
 	} counter;
 };
 static struct sh6840_timer_channel sh6840_timer[3];
-static INT16 sh6840_volume[3];
-static UINT8 sh6840_MSB;
-static UINT8 sh6840_noise_state;
-static UINT8 sh6840_noise_history;
-static UINT32 sh6840_clocks_per_sample;
-static UINT32 sh6840_clock_count;
-static UINT8 exidy_sfxctrl;
+static int16_t sh6840_volume[3];
+static uint8_t sh6840_MSB;
+static uint8_t sh6840_noise_state;
+static uint8_t sh6840_noise_history;
+static uint32_t sh6840_clocks_per_sample;
+static uint32_t sh6840_clock_count;
+static uint8_t exidy_sfxctrl;
 
 /* 8253 variables */
 struct sh8253_timer_channel
 {
-	UINT8	clstate;
-	UINT8	enable;
-	UINT16	count;
-	UINT32	step;
-	UINT32	fraction;
+	uint8_t	clstate;
+	uint8_t	enable;
+	uint16_t	count;
+	uint32_t	step;
+	uint32_t	fraction;
 };
 static struct sh8253_timer_channel sh8253_timer[3];
 
 /* 5220/CVSD variables */
-static UINT8 has_hc55516;
-static UINT8 has_tms5220;
+static uint8_t has_hc55516;
+static uint8_t has_tms5220;
 
 /* sound streaming variables */
 static int exidy_stream;
@@ -227,7 +227,7 @@ static INLINE void sh6840_apply_clock(struct sh6840_timer_channel *t, int clocks
 
 static INLINE int sh6840_update_noise(int clocks)
 {
-	UINT8 history = sh6840_noise_history;
+	uint8_t history = sh6840_noise_history;
 	int noise_clocks = 0;
 	int i;
 
@@ -258,7 +258,7 @@ static INLINE int sh6840_update_noise(int clocks)
  *
  *************************************/
 
-static void exidy_stream_update(int param, INT16 *buffer, int length)
+static void exidy_stream_update(int param, int16_t *buffer, int length)
 {
 	int noisy = ((sh6840_timer[0].cr & sh6840_timer[1].cr & sh6840_timer[2].cr & 0x02) == 0);
 
@@ -268,7 +268,7 @@ static void exidy_stream_update(int param, INT16 *buffer, int length)
 		struct sh6840_timer_channel *t;
 		struct sh8253_timer_channel *c;
 		int clocks_this_sample;
-		INT16 sample = 0;
+		int16_t sample = 0;
 
 		/* determine how many 6840 clocks this sample */
 		sh6840_clock_count += sh6840_clocks_per_sample;
@@ -279,7 +279,7 @@ static void exidy_stream_update(int param, INT16 *buffer, int length)
 		if ((sh6840_timer[0].cr & 0x01) == 0)
 		{
 			int noise_clocks_this_sample = 0;
-			UINT32 chan0_clocks;
+			uint32_t chan0_clocks;
 
 			/* generate E-clocked noise if necessary */
 			if (noisy && !(exidy_sfxctrl & 0x01))

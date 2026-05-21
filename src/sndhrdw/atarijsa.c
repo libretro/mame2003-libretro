@@ -34,29 +34,29 @@ Static Program ROM (48K bytes)            4000-FFFF   R    D0-D7
 #include "sndhrdw/atarijsa.h"
 #include "cpu/m6502/m6502.h"
 
-static UINT8 *bank_base;
-static UINT8 *bank_source_data;
+static uint8_t *bank_base;
+static uint8_t *bank_source_data;
 
-static UINT8 speech_data;
-static UINT8 last_ctl;
+static uint8_t speech_data;
+static uint8_t last_ctl;
 
-static UINT8 cpu_num;
-static UINT8 input_port;
-static UINT8 test_port;
-static UINT16 test_mask;
+static uint8_t cpu_num;
+static uint8_t input_port;
+static uint8_t test_port;
+static uint16_t test_mask;
 
-static UINT8 has_pokey;
-static UINT8 has_ym2151;
-static UINT8 has_tms5220;
-static UINT8 has_oki6295;
+static uint8_t has_pokey;
+static uint8_t has_ym2151;
+static uint8_t has_tms5220;
+static uint8_t has_oki6295;
 
-static UINT32 oki6295_bank_base;
+static uint32_t oki6295_bank_base;
 
-static UINT8 overall_volume;
-static UINT8 pokey_volume;
-static UINT8 ym2151_volume;
-static UINT8 tms5220_volume;
-static UINT8 oki6295_volume;
+static uint8_t overall_volume;
+static uint8_t pokey_volume;
+static uint8_t ym2151_volume;
+static uint8_t tms5220_volume;
+static uint8_t oki6295_volume;
 
 static void update_all_volumes(void);
 
@@ -122,7 +122,7 @@ void atarijsa_init(int cpunum, int inputport, int testport, int testmask)
 
 void atarijsa3_init_adpcm(int region)
 {
-	UINT8 *base = memory_region(region);
+	uint8_t *base = memory_region(region);
 
 	/* expand the ADPCM data to avoid lots of memcpy's during gameplay */
 	/* the upper 128k is fixed, the lower 128k is bankswitched */
@@ -840,7 +840,7 @@ MACHINE_DRIVER_START( jsa_i_stereo )
 	/* basic machine hardware */
 	MDRV_CPU_ADD_TAG("jsa", M6502, ATARI_CLOCK_3MHz/2)
 	MDRV_CPU_MEMORY(atarijsa1_readmem,atarijsa1_writemem)
-	MDRV_CPU_PERIODIC_INT(atarigen_6502_irq_gen,(UINT32)(1000000000.0/((double)ATARI_CLOCK_3MHz/4/16/16/14)))
+	MDRV_CPU_PERIODIC_INT(atarigen_6502_irq_gen,(uint32_t)(1000000000.0/((double)ATARI_CLOCK_3MHz/4/16/16/14)))
 	
 	/* sound hardware */
 	MDRV_SOUND_ATTRIBUTES(SOUND_SUPPORTS_STEREO)

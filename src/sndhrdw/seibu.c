@@ -65,7 +65,7 @@
 */
 
 
-static UINT8 decrypt_data(int a,int src)
+static uint8_t decrypt_data(int a,int src)
 {
 	if ( BIT(a,9)  &  BIT(a,8))             src ^= 0x80;
 	if ( BIT(a,11) &  BIT(a,4) &  BIT(a,1)) src ^= 0x40;
@@ -79,7 +79,7 @@ static UINT8 decrypt_data(int a,int src)
 	return src;
 }
 
-static UINT8 decrypt_opcode(int a,int src)
+static uint8_t decrypt_opcode(int a,int src)
 {
 	if ( BIT(a,9)  &  BIT(a,8))             src ^= 0x80;
 	if ( BIT(a,11) &  BIT(a,4) &  BIT(a,1)) src ^= 0x40;
@@ -100,7 +100,7 @@ static UINT8 decrypt_opcode(int a,int src)
 
 void seibu_sound_decrypt(int cpu_region,int length)
 {
-	UINT8 *rom = memory_region(cpu_region);
+	uint8_t *rom = memory_region(cpu_region);
 	int diff =  memory_region_length(cpu_region)/2;
 	int i;
 
@@ -108,7 +108,7 @@ void seibu_sound_decrypt(int cpu_region,int length)
 
 	for (i = 0;i < length;i++)
 	{
-		UINT8 src = rom[i];
+		uint8_t src = rom[i];
 
 		rom[i]      = decrypt_data(i,src);
 		rom[i+diff] = decrypt_opcode(i,src);
@@ -293,12 +293,12 @@ MACHINE_INIT( seibu_sound_2 )
 
 /***************************************************************************/
 
-static UINT8 main2sub[2],sub2main[2];
+static uint8_t main2sub[2],sub2main[2];
 static int main2sub_pending,sub2main_pending;
 
 WRITE_HANDLER( seibu_bank_w )
 {
-	UINT8 *rom = memory_region(REGION_CPU1+sound_cpu);
+	uint8_t *rom = memory_region(REGION_CPU1+sound_cpu);
 
 	cpu_setbank(1,rom + 0x10000 + 0x8000 * (data & 1));
 }

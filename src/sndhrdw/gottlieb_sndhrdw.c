@@ -324,8 +324,8 @@ WRITE_HANDLER( exterm_ym2151_w )
 	}
 }
 
-static UINT8 exterm_dac_volume;
-static UINT8 exterm_dac_data;
+static uint8_t exterm_dac_volume;
+static uint8_t exterm_dac_data;
 
 WRITE_HANDLER( exterm_dac_vol_w )
 {

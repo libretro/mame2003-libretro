@@ -166,9 +166,9 @@ static z80ctc_interface ctc_intf =
 	{ ctc_timer_2_w }      /* ZC/TO2 callback */
 };
 
-static void tone_update(int num,INT16 *buffer,int length)
+static void tone_update(int num,int16_t *buffer,int length)
 {
-	INT16 out = 0;
+	int16_t out = 0;
 
 	if (channel_active[num])
 		out = output[num] << 8;

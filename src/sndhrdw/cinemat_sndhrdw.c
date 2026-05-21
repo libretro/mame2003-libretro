@@ -19,11 +19,11 @@
 #include "cinemat.h"
 
 
-static UINT32 current_shift = 0;
-static UINT32 last_shift = 0;
-static UINT32 last_shift16= 0;
-static UINT32 current_pitch = 0x20000;
-static UINT32 last_frame = 0;
+static uint32_t current_shift = 0;
+static uint32_t last_shift = 0;
+static uint32_t last_shift16= 0;
+static uint32_t current_pitch = 0x20000;
+static uint32_t last_frame = 0;
 
 static int cinemat_outputs = 0xff;
 
@@ -74,7 +74,7 @@ MACHINE_INIT( cinemat_sound )
 
 }
 
-static void cinemat_shift(UINT8 sound_val, UINT8 bits_changed, UINT8 A1, UINT8 CLK)
+static void cinemat_shift(uint8_t sound_val, uint8_t bits_changed, uint8_t A1, uint8_t CLK)
 {
 	// See if we're latching a shift
 
@@ -113,7 +113,7 @@ struct Samplesinterface sundance_samples_interface =
 	sundance_sample_names
 };
 
-void sundance_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void sundance_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
 	
 if (bits_changed & 0x01) //Bong
@@ -179,10 +179,10 @@ struct Samplesinterface starcas_samples_interface =
 	starcas_sample_names
 };
 
-void starcas_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void starcas_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
-    UINT32 target_pitch;
-	UINT8 shift_diff;
+    uint32_t target_pitch;
+	uint8_t shift_diff;
 
     cinemat_shift (sound_val, bits_changed, 0x80, 0x10);
 
@@ -287,7 +287,7 @@ struct Samplesinterface warrior_samples_interface =
 	warrior_sample_names
 };
 
-void warrior_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void warrior_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
 
 	if ((bits_changed & 0x10) && (0 == (sound_val & 0x10)))
@@ -346,9 +346,9 @@ struct Samplesinterface armora_samples_interface =
 };
 
 
-void armora_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void armora_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
-	UINT8 shift_diff;
+	uint8_t shift_diff;
 
     cinemat_shift (sound_val, bits_changed, 0x80, 0x10);
 
@@ -433,10 +433,10 @@ struct Samplesinterface ripoff_samples_interface =
 	ripoff_sample_names
 };
 
-void ripoff_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void ripoff_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
-	UINT8 shift_diff, current_bg_sound;
-    static UINT8 last_bg_sound;
+	uint8_t shift_diff, current_bg_sound;
+    static uint8_t last_bg_sound;
 
     cinemat_shift (sound_val, bits_changed, 0x01, 0x02);
 
@@ -521,9 +521,9 @@ struct Samplesinterface solarq_samples_interface =
 };
 
 
-void solarq_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void solarq_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
-	UINT32 shift_diff, shift_diff16;
+	uint32_t shift_diff, shift_diff16;
     static int target_volume, current_volume;
 
     cinemat_shift (sound_val, bits_changed, 0x80, 0x10);
@@ -645,7 +645,7 @@ struct Samplesinterface spacewar_samples_interface =
 	spacewar_sample_names
 };
 
-void spacewar_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void spacewar_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
 
 	// Explosion
@@ -726,7 +726,7 @@ static int sound_latch_rp = 0;
 static int sound_latch_wp = 0;
 static int sound_latch[QUEUE_ENTRY_COUNT];
 
-void demon_sound_w(UINT8 sound_val, UINT8 bits_changed)
+void demon_sound_w(uint8_t sound_val, uint8_t bits_changed)
 {
 	int pc = activecpu_get_pc();
 

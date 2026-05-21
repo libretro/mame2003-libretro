@@ -92,18 +92,18 @@
 #define DAC_BUFFER_SIZE		1024
 #define DAC_BUFFER_MASK		(DAC_BUFFER_SIZE - 1)
 
-static UINT8 *dac_buffer[2];
-static UINT32 dac_bufin[2];
-static UINT32 dac_bufout[2];
+static uint8_t *dac_buffer[2];
+static uint32_t dac_bufin[2];
+static uint32_t dac_bufout[2];
 
 static int dac_stream;
 
-static void leland_update(int param, INT16 *buffer, int length)
+static void leland_update(int param, int16_t *buffer, int length)
 {
 	int dacnum;
 
 	/* reset the buffer */
-	memset(buffer, 0, length * sizeof(INT16));
+	memset(buffer, 0, length * sizeof(int16_t));
 	for (dacnum = 0; dacnum < 2; dacnum++)
 	{
 		int bufout = dac_bufout[dacnum];
@@ -111,12 +111,12 @@ static void leland_update(int param, INT16 *buffer, int length)
 
 		if (count > 300)
 		{
-			UINT8 *base = dac_buffer[dacnum];
+			uint8_t *base = dac_buffer[dacnum];
 			int i;
 
 			for (i = 0; i < length && count > 0; i++, count--)
 			{
-				buffer[i] += ((INT16)base[bufout] - 0x80) * 0x40;
+				buffer[i] += ((int16_t)base[bufout] - 0x80) * 0x40;
 				bufout = (bufout + 1) & DAC_BUFFER_MASK;
 			}
 			dac_bufout[dacnum] = bufout;
@@ -154,9 +154,9 @@ void leland_sh_stop(void)
 }
 
 
-void leland_dac_update(int dacnum, UINT8 sample)
+void leland_dac_update(int dacnum, uint8_t sample)
 {
-	UINT8 *buffer = dac_buffer[dacnum];
+	uint8_t *buffer = dac_buffer[dacnum];
 	int bufin = dac_bufin[dacnum];
 
 	/* skip if nothing */
@@ -203,68 +203,68 @@ static int dma_stream;
 static int nondma_stream;
 static int extern_stream;
 
-static UINT8 *ram_base;
-static UINT8 has_ym2151;
-static UINT8 is_redline;
+static uint8_t *ram_base;
+static uint8_t has_ym2151;
+static uint8_t is_redline;
 
-static UINT8 last_control;
-static UINT8 clock_active;
-static UINT8 clock_tick;
+static uint8_t last_control;
+static uint8_t clock_active;
+static uint8_t clock_tick;
 
-static UINT8 sound_command[2];
-static UINT8 sound_response;
+static uint8_t sound_command[2];
+static uint8_t sound_response;
 
-static UINT32 ext_start;
-static UINT32 ext_stop;
-static UINT8 ext_active;
-static UINT8 *ext_base;
+static uint32_t ext_start;
+static uint32_t ext_stop;
+static uint8_t ext_active;
+static uint8_t *ext_base;
 
-static UINT8 *active_mask;
+static uint8_t *active_mask;
 static int total_reads;
 
 struct mem_state
 {
-	UINT16	lower;
-	UINT16	upper;
-	UINT16	middle;
-	UINT16	middle_size;
-	UINT16	peripheral;
+	uint16_t	lower;
+	uint16_t	upper;
+	uint16_t	middle;
+	uint16_t	middle_size;
+	uint16_t	peripheral;
 };
 
 struct timer_state
 {
-	UINT16	control;
-	UINT16	maxA;
-	UINT16	maxB;
-	UINT16	count;
+	uint16_t	control;
+	uint16_t	maxA;
+	uint16_t	maxB;
+	uint16_t	count;
 	void *	int_timer;
 	void *	time_timer;
-	UINT8	time_timer_active;
+	uint8_t	time_timer_active;
 	double	last_time;
 };
 
 struct dma_state
 {
-	UINT32	source;
-	UINT32	dest;
-	UINT16	count;
-	UINT16	control;
-	UINT8	finished;
+	uint32_t	source;
+	uint32_t	dest;
+	uint16_t	count;
+	uint16_t	control;
+	uint8_t	finished;
 	void *	finish_timer;
 };
 
 struct intr_state
 {
-	UINT8	pending;
-	UINT16	ack_mask;
-	UINT16	priority_mask;
-	UINT16	in_service;
-	UINT16	request;
-	UINT16	status;
-	UINT16	poll_status;
-	UINT16	timer;
-	UINT16	dma[2];
-	UINT16	ext[4];
+	uint8_t	pending;
+	uint16_t	ack_mask;
+	uint16_t	priority_mask;
+	uint16_t	in_service;
+	uint16_t	request;
+	uint16_t	status;
+	uint16_t	poll_status;
+	uint16_t	timer;
+	uint16_t	dma[2];
+	uint16_t	ext[4];
 };
 
 static struct i186_state
@@ -280,25 +280,25 @@ static struct i186_state
 #define DAC_BUFFER_SIZE_MASK	(DAC_BUFFER_SIZE - 1)
 static struct dac_state
 {
-	INT16	value;
-	INT16	volume;
-	UINT32	frequency;
-	UINT32	step;
-	UINT32	fraction;
+	int16_t	value;
+	int16_t	volume;
+	uint32_t	frequency;
+	uint32_t	step;
+	uint32_t	fraction;
 
-	INT16	buffer[DAC_BUFFER_SIZE];
-	UINT32	bufin;
-	UINT32	bufout;
-	UINT32	buftarget;
+	int16_t	buffer[DAC_BUFFER_SIZE];
+	uint32_t	bufin;
+	uint32_t	bufout;
+	uint32_t	buftarget;
 } dac[8];
 
 static struct counter_state
 {
 	void *timer;
-	INT32 count;
-	UINT8 mode;
-	UINT8 readbyte;
-	UINT8 writebyte;
+	int32_t count;
+	uint8_t mode;
+	uint8_t readbyte;
+	uint8_t writebyte;
 } counter[9];
 
 static void set_dac_frequency(int which, int frequency);
@@ -314,14 +314,14 @@ static WRITE_HANDLER( peripheral_w );
  *
  *************************************/
 
-static void leland_i186_dac_update(int param, INT16 *buffer, int length)
+static void leland_i186_dac_update(int param, int16_t *buffer, int length)
 {
 	int i, j, start, stop;
 
 	if (LOG_SHORTAGES) logerror("----\n");
 
 	/* reset the buffer */
-	memset(buffer, 0, length * sizeof(INT16));
+	memset(buffer, 0, length * sizeof(int16_t));
 
 	/* if we're redline racer, we have more DACs */
 	if (!is_redline)
@@ -338,7 +338,7 @@ static void leland_i186_dac_update(int param, INT16 *buffer, int length)
 		/* if we have data, process it */
 		if (count > 0)
 		{
-			INT16 *base = d->buffer;
+			int16_t *base = d->buffer;
 			int source = d->bufout;
 			int frac = d->fraction;
 			int step = d->step;
@@ -380,12 +380,12 @@ static void leland_i186_dac_update(int param, INT16 *buffer, int length)
  *
  *************************************/
 
-static void leland_i186_dma_update(int param, INT16 *buffer, int length)
+static void leland_i186_dma_update(int param, int16_t *buffer, int length)
 {
 	int i, j;
 
 	/* reset the buffer */
-	memset(buffer, 0, length * sizeof(INT16));
+	memset(buffer, 0, length * sizeof(int16_t));
 
 	/* loop over DMA buffers */
 	for (i = 0; i < 2; i++)
@@ -412,7 +412,7 @@ static void leland_i186_dma_update(int param, INT16 *buffer, int length)
 			/* otherwise, we're ready for liftoff */
 			else
 			{
-				UINT8 *base = memory_region(REGION_CPU3);
+				uint8_t *base = memory_region(REGION_CPU3);
 				int source = d->source;
 				int count = d->count;
 				int which, frac, step, volume;
@@ -468,14 +468,14 @@ static void leland_i186_dma_update(int param, INT16 *buffer, int length)
  *
  *************************************/
 
-static void leland_i186_extern_update(int param, INT16 *buffer, int length)
+static void leland_i186_extern_update(int param, int16_t *buffer, int length)
 {
 	struct dac_state *d = &dac[7];
 	int count = ext_stop - ext_start;
 	int j;
 
 	/* reset the buffer */
-	memset(buffer, 0, length * sizeof(INT16));
+	memset(buffer, 0, length * sizeof(int16_t));
 
 	/* if we have data, process it */
 	if (count > 0 && ext_active)
@@ -487,7 +487,7 @@ static void leland_i186_extern_update(int param, INT16 *buffer, int length)
 		/* sample-rate convert to the output frequency */
 		for (j = 0; j < length && count > 0; j++)
 		{
-			buffer[j] += ((INT16)ext_base[source] - 0x80) * d->volume;
+			buffer[j] += ((int16_t)ext_base[source] - 0x80) * d->volume;
 			frac += step;
 			source += frac >> 24;
 			count -= frac >> 24;
@@ -1289,7 +1289,7 @@ static READ_HANDLER( i186_internal_port_r )
 
 static WRITE_HANDLER( i186_internal_port_w )
 {
-	static UINT8 even_byte;
+	static uint8_t even_byte;
 	int temp, which, data16;
 
 	/* warning: this assumes all port writes here are word-sized */
@@ -1875,7 +1875,7 @@ static WRITE_HANDLER( dac_w )
 		int count = (d->bufin - d->bufout) & DAC_BUFFER_SIZE_MASK;
 
 		/* set the new value */
-		d->value = (INT16)data - 0x80;
+		d->value = (int16_t)data - 0x80;
 		if (LOG_DAC) logerror("%05X:DAC %d value = %02X\n", activecpu_get_pc(), offset / 2, data);
 
 		/* if we haven't overflowed the buffer, add the value value to it */
@@ -1911,7 +1911,7 @@ static WRITE_HANDLER( redline_dac_w )
 	int count = (d->bufin - d->bufout) & DAC_BUFFER_SIZE_MASK;
 
 	/* set the new value */
-	d->value = (INT16)data - 0x80;
+	d->value = (int16_t)data - 0x80;
 
 	/* if we haven't overflowed the buffer, add the value value to it */
 	if (count < DAC_BUFFER_SIZE - 1)
@@ -1937,7 +1937,7 @@ static WRITE_HANDLER( redline_dac_w )
 
 static WRITE_HANDLER( dac_10bit_w )
 {
-	static UINT8 even_byte;
+	static uint8_t even_byte;
 	struct dac_state *d = &dac[6];
 	int count = (d->bufin - d->bufout) & DAC_BUFFER_SIZE_MASK;
 	int data16;
@@ -1952,7 +1952,7 @@ static WRITE_HANDLER( dac_10bit_w )
 	data16 = (data << 8) | even_byte;
 
 	/* set the new value */
-	d->value = (INT16)data16 - 0x200;
+	d->value = (int16_t)data16 - 0x200;
 	if (LOG_DAC) logerror("%05X:DAC 10-bit value = %02X\n", activecpu_get_pc(), data16);
 
 	/* if we haven't overflowed the buffer, add the value value to it */
@@ -2064,7 +2064,7 @@ static READ_HANDLER( peripheral_r )
 			/* if we've filled up all the active channels, we can give this CPU a reset */
 			/* until the next interrupt */
 			{
-				UINT8 result;
+				uint8_t result;
 
 				if (!is_redline)
 					result = ((clock_active >> 1) & 0x3e);

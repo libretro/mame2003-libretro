@@ -17,53 +17,53 @@
 
 static struct
 {
-	INT8  vol_left;
-	INT8  vol_right;
-	INT8  evol_left;
-	INT8  evol_right;
-	UINT8 key_on;
-	UINT8 key_off;
-	UINT8 flags;
-	UINT8 end_block;
-	UINT8 pitch_mod;
-	UINT8 noise_on;
-	UINT16 dir_offset;
-	UINT8 echo_on;
-	UINT8 echo_fback;
-	UINT8 echo_offset;
-	UINT8 echo_delay;
-	UINT8 echo_coeff[8];
+	int8_t  vol_left;
+	int8_t  vol_right;
+	int8_t  evol_left;
+	int8_t  evol_right;
+	uint8_t key_on;
+	uint8_t key_off;
+	uint8_t flags;
+	uint8_t end_block;
+	uint8_t pitch_mod;
+	uint8_t noise_on;
+	uint16_t dir_offset;
+	uint8_t echo_on;
+	uint8_t echo_fback;
+	uint8_t echo_offset;
+	uint8_t echo_delay;
+	uint8_t echo_coeff[8];
 	struct
 	{
-		INT8   vol_left;
-		INT8   vol_right;
-		UINT16 pitch;
-		UINT16 source_no;
-		UINT8  adsr1;
-		UINT8  adsr2;
-		UINT8  gain;
-		UINT8  envx;
-		UINT8  outx;
-		UINT8  key;
-		INT16  sample[65536];
-		INT16  prevnyb[2];
-		UINT8  loop;
-		UINT16 length;
-		UINT16 pos;
+		int8_t   vol_left;
+		int8_t   vol_right;
+		uint16_t pitch;
+		uint16_t source_no;
+		uint8_t  adsr1;
+		uint8_t  adsr2;
+		uint8_t  gain;
+		uint8_t  envx;
+		uint8_t  outx;
+		uint8_t  key;
+		int16_t  sample[65536];
+		int16_t  prevnyb[2];
+		uint8_t  loop;
+		uint16_t length;
+		uint16_t pos;
 	} voice[8];
 } snes_dsp;
 
 static struct
 {
-	UINT8 enabled;
-	UINT16 counter;
+	uint8_t enabled;
+	uint16_t counter;
 	void *timer;
 } timers[3];
 static int channel;
-UINT8 spc_usefakeapu = 0;				/* Fake the APU behaviour. */
-static UINT8 spc_showrom = 1;			/* Is the IPL ROM visible or not */
-static UINT8 spc_iplrom[IPLROM_SIZE];	/* Storage for the IPL rom */
-UINT8 fakeapu_port[4] = { 0xaa, 0xbb, 0x00, 0x00 };
+uint8_t spc_usefakeapu = 0;				/* Fake the APU behaviour. */
+static uint8_t spc_showrom = 1;			/* Is the IPL ROM visible or not */
+static uint8_t spc_iplrom[IPLROM_SIZE];	/* Storage for the IPL rom */
+uint8_t fakeapu_port[4] = { 0xaa, 0xbb, 0x00, 0x00 };
 
 static void snes_spc_timer( int t )
 {
@@ -81,7 +81,7 @@ static void snes_spc_timer( int t )
 
 int snes_sh_start( const struct MachineSound *driver )
 {
-	UINT8 ii;
+	uint8_t ii;
 	const char *names[2] = { "SNES", "SNES" };
 	const int volume[2] = { MIXER( 50, MIXER_PAN_LEFT ), MIXER( 50, MIXER_PAN_RIGHT ) };
 
@@ -93,7 +93,7 @@ int snes_sh_start( const struct MachineSound *driver )
 	}
 
 	/* Copy the IPL ROM into storage */
-	spc_ram = (UINT8 *)memory_region( REGION_CPU2 );
+	spc_ram = (uint8_t *)memory_region( REGION_CPU2 );
 	memcpy( spc_iplrom, &spc_ram[0xffc0], sizeof(spc_iplrom) );
 
 	/* Sort out the ports */
@@ -133,9 +133,9 @@ int snes_sh_start( const struct MachineSound *driver )
 	return 0;
 }
 
-void snes_sh_update( int param, INT16 **buffer, int length )
+void snes_sh_update( int param, int16_t **buffer, int length )
 {
-	INT16 left, right;
+	int16_t left, right;
 
 	while( length-- > 0 )
 	{
@@ -153,7 +153,7 @@ void snes_sh_update( int param, INT16 **buffer, int length )
  *       I/O for DSP       *
  ***************************/
 
-static void snes_dsp_decode_sample( UINT8 chnl )
+static void snes_dsp_decode_sample( uint8_t chnl )
 	{
 	/* FIXME: Need to fill this in! */
 	}
@@ -389,7 +389,7 @@ READ_HANDLER( spc_io_r )
 		case 0xE:		/* Counter 1 */
 		case 0xF:		/* Counter 2 */
 		{
-			UINT8 value = spc_ram[0xf0 + offset] & 0xf;
+			uint8_t value = spc_ram[0xf0 + offset] & 0xf;
 			spc_ram[0xf0 + offset] = 0;
 			return value;
 	}
@@ -498,8 +498,8 @@ READ_HANDLER( fakespc_port_r )
  *  G65816_NMI_STATE, G65816_IRQ_STATE
  */
 
-	static UINT8 portcount[2] = {0,0};
-	UINT8 retVal = 0;
+	static uint8_t portcount[2] = {0,0};
+	uint8_t retVal = 0;
 
 	switch( offset )
 	{

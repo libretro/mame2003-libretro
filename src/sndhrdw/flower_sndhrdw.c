@@ -21,7 +21,7 @@ typedef struct
 	int frequency;
 	int counter;
 	int volume;
-	const UINT8 *wave;
+	const uint8_t *wave;
 	int oneshot;
 	int oneshotplaying;
 } sound_channel;
@@ -35,14 +35,14 @@ static sound_channel channel_list[MAX_VOICES];
 static sound_channel *last_channel;
 
 /* global sound parameters */
-static const UINT8 *sound_rom1,*sound_rom2;
+static const uint8_t *sound_rom1,*sound_rom2;
 static int num_voices;
 static int sound_enable;
 static int stream;
 
 /* mixer tables and internal buffers */
-static INT16 *mixer_table;
-static INT16 *mixer_lookup;
+static int16_t *mixer_table;
+static int16_t *mixer_lookup;
 static short *mixer_buffer;
 static short *mixer_buffer_2;
 
@@ -55,7 +55,7 @@ static int make_mixer_table(int voices, int gain)
 	int i;
 
 	/* allocate memory */
-	mixer_table = auto_malloc(256 * voices * sizeof(INT16));
+	mixer_table = auto_malloc(256 * voices * sizeof(int16_t));
 	if (!mixer_table)
 		return 1;
 
@@ -76,7 +76,7 @@ static int make_mixer_table(int voices, int gain)
 
 
 /* generate sound to the mix buffer in mono */
-static void flower_update_mono(int ch, INT16 *buffer, int length)
+static void flower_update_mono(int ch, int16_t *buffer, int length)
 {
 	sound_channel *voice;
 	short *mix;
@@ -101,7 +101,7 @@ static void flower_update_mono(int ch, INT16 *buffer, int length)
 		/* only update if we have non-zero volume and frequency */
 		if (v && f)
 		{
-			const UINT8 *w = voice->wave;
+			const uint8_t *w = voice->wave;
 			int c = voice->counter;
 
 			mix = mixer_buffer;

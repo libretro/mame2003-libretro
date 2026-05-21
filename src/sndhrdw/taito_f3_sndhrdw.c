@@ -192,7 +192,7 @@ READ16_HANDLER(es5510_dsp_r)
 
 WRITE16_HANDLER(es5510_dsp_w)
 {
-	UINT8 *snd_mem = (UINT8 *)memory_region(REGION_SOUND1);
+	uint8_t *snd_mem = (uint8_t *)memory_region(REGION_SOUND1);
 
 //	if (offset>4 && offset!=0x80  && offset!=0xa0  && offset!=0xc0  && offset!=0xe0)
 //		logerror("%06x: DSP write offset %04x %04x\n",activecpu_get_pc(),offset,data);
