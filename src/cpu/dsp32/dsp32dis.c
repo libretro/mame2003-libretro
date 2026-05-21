@@ -89,7 +89,7 @@ static const char *regnamee[] =
 
 static char tempbuf[10][40];
 
-static INLINE char *signed_16bit_unary(INT16 val)
+static INLINE char *signed_16bit_unary(int16_t val)
 {
 	static char temp[10];
 	if (val < 0)
@@ -99,7 +99,7 @@ static INLINE char *signed_16bit_unary(INT16 val)
 	return temp;
 }
 
-static INLINE char *signed_16bit_sep(INT16 val)
+static INLINE char *signed_16bit_sep(int16_t val)
 {
 	static char temp[10];
 	if (val < 0)
@@ -109,7 +109,7 @@ static INLINE char *signed_16bit_sep(INT16 val)
 	return temp;
 }
 
-static INLINE char *signed_16bit_sep_nospace(INT16 val)
+static INLINE char *signed_16bit_sep_nospace(int16_t val)
 {
 	static char temp[10];
 	if (val < 0)
@@ -119,21 +119,21 @@ static INLINE char *signed_16bit_sep_nospace(INT16 val)
 	return temp;
 }
 
-static INLINE char *unsigned_16bit_size(INT16 val, UINT8 size)
+static INLINE char *unsigned_16bit_size(int16_t val, uint8_t size)
 {
 	static char temp[10];
 	if (size)
-		sprintf(temp, "$%06x", (INT32)val & 0xffffff);
+		sprintf(temp, "$%06x", (int32_t)val & 0xffffff);
 	else
 		sprintf(temp, "$%04x", val & 0xffff);
 	return temp;
 }
 
-static UINT8 lastp;
-static const char *dasm_XYZ(UINT8 bits, char *buffer)
+static uint8_t lastp;
+static const char *dasm_XYZ(uint8_t bits, char *buffer)
 {
-	UINT8 p = bits >> 3;
-	UINT8 i = bits & 7;
+	uint8_t p = bits >> 3;
+	uint8_t i = bits & 7;
 	
 	if (p)
 	{
@@ -169,10 +169,10 @@ static const char *dasm_XYZ(UINT8 bits, char *buffer)
 }
 
 
-static const char *dasm_PI(UINT16 bits, char *buffer)
+static const char *dasm_PI(uint16_t bits, char *buffer)
 {
-	UINT8 p = bits >> 5;
-	UINT8 i = bits & 0x1f;
+	uint8_t p = bits >> 5;
+	uint8_t i = bits & 0x1f;
 	
 	if (p)
 	{
@@ -205,7 +205,7 @@ static const char *dasm_PI(UINT16 bits, char *buffer)
 
 unsigned dasm_dsp32(char *buffer, unsigned pc)
 {
-	UINT32 op = ROPCODE(pc);
+	uint32_t op = ROPCODE(pc);
 	
 	switch (op >> 25)
 	{
@@ -218,7 +218,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			const char *Y = dasm_XYZ((op >> 7) & 0x7f, tempbuf[1]);
 			const char *Z = dasm_XYZ((op >> 0) & 0x7f, tempbuf[2]);
 			const char *aM = aMvals[(op >> 26) & 7];
-			UINT8 aN = (op >> 21) & 3;
+			uint8_t aN = (op >> 21) & 3;
 			if ((op & 0x7f) == 7)
 			{
 				if (aM[0] == '0')
@@ -249,7 +249,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			const char *Y = dasm_XYZ((op >> 7) & 0x7f, tempbuf[1]);
 			const char *Z = dasm_XYZ((op >> 0) & 0x7f, tempbuf[2]);
 			const char *aM = aMvals[(op >> 26) & 7];
-			UINT8 aN = (op >> 21) & 3;
+			uint8_t aN = (op >> 21) & 3;
 			
 			if ((op & 0x7f) == 7)
 			{
@@ -277,7 +277,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			const char *Y = dasm_XYZ((op >> 7) & 0x7f, tempbuf[1]);
 			const char *Z = dasm_XYZ((op >> 0) & 0x7f, tempbuf[2]);
 			const char *aM = aMvals[(op >> 26) & 7];
-			UINT8 aN = (op >> 21) & 3;
+			uint8_t aN = (op >> 21) & 3;
 			
 			if ((op & 0x7f) == 7)
 			{
@@ -302,7 +302,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			const char *X = dasm_XYZ((op >> 14) & 0x7f, tempbuf[0]);
 			const char *Y = dasm_XYZ((op >> 7) & 0x7f, tempbuf[1]);
 			const char *Z = dasm_XYZ((op >> 0) & 0x7f, tempbuf[2]);
-			UINT8 aN = (op >> 21) & 3;
+			uint8_t aN = (op >> 21) & 3;
 			
 			if ((op & 0x7f) == 7)
 				sprintf(buffer, "a%d = %s%s %s %s", aN, unarysign[(op >> 24) & 1], Y, sign[(op >> 23) & 1], X);
@@ -330,8 +330,8 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		case 0x00:	case 0x01:	case 0x02:	case 0x03:
 		{
 			const char *rH = regname[(op >> 16) & 0x1f];
-			UINT8 C = (op >> 21) & 0x3f;
-			INT16 N = (INT16)op;
+			uint8_t C = (op >> 21) & 0x3f;
+			int16_t N = (int16_t)op;
 		
 			if (op == 0)
 				sprintf(buffer, "nop");
@@ -344,7 +344,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 				else if (N && rH[0] != '0')
 					sprintf(buffer, "goto %s%s", rH, signed_16bit_sep_nospace(N));
 				else if (N)
-					sprintf(buffer, "goto $%x", ((INT32)N & 0xffffff));
+					sprintf(buffer, "goto $%x", ((int32_t)N & 0xffffff));
 				else
 					sprintf(buffer, "goto %s", rH);
 			}
@@ -355,7 +355,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 				else if (N && rH[0] != '0')
 					sprintf(buffer, "if (%s) goto %s%s", condtable[C], rH, signed_16bit_sep_nospace(N));
 				else if (N)
-					sprintf(buffer, "if (%s) goto $%x", condtable[C], ((INT32)N & 0xffffff));
+					sprintf(buffer, "if (%s) goto $%x", condtable[C], ((int32_t)N & 0xffffff));
 				else
 					sprintf(buffer, "if (%s) goto %s", condtable[C], rH);
 			}
@@ -367,14 +367,14 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		{
 			const char *rH = regname[(op >> 16) & 0x1f];
 			const char *rM = regname[(op >> 21) & 0x1f];
-			INT16 N = (INT16)op;
+			int16_t N = (int16_t)op;
 
 			if (((op >> 16) & 0x1f) == 15)
 				sprintf(buffer, "if (%s-- >= 0) goto %s%s [%x]", rM, rH, signed_16bit_sep_nospace(N), (pc + 8 + N) & 0xffffff);
 			else if (N && rH[0] != '0')
 				sprintf(buffer, "if (%s-- >= 0) goto %s%s", rM, rH, signed_16bit_sep_nospace(N));
 			else if (N)
-				sprintf(buffer, "if (%s-- >= 0) goto $%x", rM, ((INT32)N & 0xffffff));
+				sprintf(buffer, "if (%s-- >= 0) goto $%x", rM, ((int32_t)N & 0xffffff));
 			else
 				sprintf(buffer, "if (%s-- >= 0) goto %s", rM, rH);
 			break;
@@ -393,14 +393,14 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		{
 			const char *rH = regname[(op >> 16) & 0x1f];
 			const char *rM = regname[(op >> 21) & 0x1f];
-			INT16 N = (INT16)op;
+			int16_t N = (int16_t)op;
 
 			if (((op >> 16) & 0x1f) == 15)
 				sprintf(buffer, "call %s%s (%s) [%x]", rH, signed_16bit_sep_nospace(N), rM, (pc + 8 + N) & 0xffffff);
 			else if (N && rH[0] != '0')
 				sprintf(buffer, "call %s%s (%s)", rH, signed_16bit_sep_nospace(N), rM);
 			else if (N)
-				sprintf(buffer, "call $%x (%s)", ((INT32)N & 0xffffff), rM);
+				sprintf(buffer, "call $%x (%s)", ((int32_t)N & 0xffffff), rM);
 			else
 				sprintf(buffer, "call %s (%s)", rH, rM);
 			break;
@@ -413,13 +413,13 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			const char *rD = regname[(op >> 21) & 0x1f];
 			const char *rH = regname[(op >> 16) & 0x1f];
 			const char *s = sizesuffix[(op >> 31) & 1];
-			INT16 N = (INT16)op;
+			int16_t N = (int16_t)op;
 			if (N == 0)
 				sprintf(buffer, "%s%s = %s%s", rD, s, rH, s);
 			else if (rH[0] == '0')
 				sprintf(buffer, "%s%s = %s", rD, s, signed_16bit_unary(N));
 			else
-				sprintf(buffer, "%s%s = %s%s%s", rD, s, rH, s, signed_16bit_sep((INT16)op));
+				sprintf(buffer, "%s%s = %s%s%s", rD, s, rH, s, signed_16bit_sep((int16_t)op));
 			break;
 		}
 
@@ -430,7 +430,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			const char *rS1 = regname[(op >> 5) & 0x1f];
 			const char *rS2 = regname[(op >> 0) & 0x1f];
 			const char *s = sizesuffix[(op >> 31) & 1];
-			UINT8 threeop = (op >> 11) & 1;
+			uint8_t threeop = (op >> 11) & 1;
 			char condbuf[40] = { 0 };
 
 			if ((op >> 10) & 1)
@@ -555,7 +555,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		{
 			const char *rD = regname[(op >> 16) & 0x1f];
 			const char *s = sizesuffix[(op >> 31) & 1];
-			INT16 N = (INT16)op;
+			int16_t N = (int16_t)op;
 		
 			switch ((op >> 21) & 15)
 			{
@@ -611,9 +611,9 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		/* CA format 7a */
 		case 0x0e:
 			if ((op >> 24) & 1)
-				sprintf(buffer, "*%08X = %s%s", (INT16)op, regname[(op >> 16) & 0x1f], memsuffix[(op >> 22) & 3]);
+				sprintf(buffer, "*%08X = %s%s", (int16_t)op, regname[(op >> 16) & 0x1f], memsuffix[(op >> 22) & 3]);
 			else
-				sprintf(buffer, "%s%s = *%08X", regname[(op >> 16) & 0x1f], memsuffix[(op >> 22) & 3], (INT16)op);
+				sprintf(buffer, "%s%s = *%08X", regname[(op >> 16) & 0x1f], memsuffix[(op >> 22) & 3], (int16_t)op);
 			break;
 
 		/* CA format 7b */
@@ -630,7 +630,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		case 0x58:	case 0x59:	case 0x5a:	case 0x5b:
 		case 0x5c:	case 0x5d:	case 0x5e:	case 0x5f:
 		{
-			INT32 N = (op & 0xffff) | ((INT32)((op & 0x1fe00000) << 3) >> 8);
+			int32_t N = (op & 0xffff) | ((int32_t)((op & 0x1fe00000) << 3) >> 8);
 			const char *rH = regname[(op >> 16) & 0x1f];
 
 			if (((op >> 16) & 0x1f) == 15)
@@ -638,7 +638,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 			else if (N && rH[0] != '0')
 				sprintf(buffer, "goto %s%s", rH, signed_16bit_sep_nospace(N));
 			else if (N)
-				sprintf(buffer, "goto $%x", ((INT32)N & 0xffffff));
+				sprintf(buffer, "goto $%x", ((int32_t)N & 0xffffff));
 			else
 				sprintf(buffer, "goto %s", rH);
 			break;
@@ -650,7 +650,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		case 0x68:	case 0x69:	case 0x6a:	case 0x6b:
 		case 0x6c:	case 0x6d:	case 0x6e:	case 0x6f:
 		{
-			INT32 immed = (op & 0xffff) | ((INT32)((op & 0x1fe00000) << 3) >> 8);
+			int32_t immed = (op & 0xffff) | ((int32_t)((op & 0x1fe00000) << 3) >> 8);
 			sprintf(buffer, "%s = $%x", regnamee[(op >> 16) & 0x1f], immed & 0xffffff);
 			break;
 		}
@@ -661,7 +661,7 @@ unsigned dasm_dsp32(char *buffer, unsigned pc)
 		case 0x78:	case 0x79:	case 0x7a:	case 0x7b:
 		case 0x7c:	case 0x7d:	case 0x7e:	case 0x7f:
 		{
-			INT32 N = (op & 0xffff) | ((INT32)((op & 0x1fe00000) << 3) >> 8);
+			int32_t N = (op & 0xffff) | ((int32_t)((op & 0x1fe00000) << 3) >> 8);
 			const char *rM = regname[(op >> 16) & 0x1f];
 			sprintf(buffer, "call $%x (%s)", N & 0xffffff, rM);
 			break;

@@ -78,14 +78,14 @@ extern void m6509_runtime_loader_init(void)
 
 
 /* Layout of the registers in the debugger */
-static UINT8 m6509_reg_layout[] = {
+static uint8_t m6509_reg_layout[] = {
 	M6509_A,M6509_X,M6509_Y,M6509_S,M6509_PC, M6509_P,-1,
 	M6509_PC_BANK, M6509_IND_BANK, M6509_EA, M6509_ZP, -1,
 	M6509_NMI_STATE, M6509_IRQ_STATE, M6509_SO_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m6509_win_layout[] = {
+static uint8_t m6509_win_layout[] = {
 	25, 0,55, 3,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 4,55, 8,	/* memory #1 window (right, upper middle) */
@@ -94,7 +94,7 @@ static UINT8 m6509_win_layout[] = {
 };
 
 typedef struct {
-	UINT8	subtype;		/* currently selected cpu sub type */
+	uint8_t	subtype;		/* currently selected cpu sub type */
 	void	(**insn)(void); /* pointer to the function pointer table */
 	PAIR	ppc;			/* previous program counter */
 	/* pc.w.h contains the current page pc_bank.w.h for better speed */
@@ -102,17 +102,17 @@ typedef struct {
 	PAIR	sp; 			/* stack pointer (always 100 - 1FF) */
 	PAIR	zp; 			/* zero page address */
 	PAIR	ea; 			/* effective address */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* X index register */
-	UINT8	y;				/* Y index register */
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* X index register */
+	uint8_t	y;				/* Y index register */
 	PAIR   pc_bank; 	   /* 4 bits, addressed over address 0 */
 	PAIR   ind_bank;	   /* 4 bits, addressed over address 1 */
-	UINT8	p;				/* Processor status */
-	UINT8	pending_irq;	/* nonzero if an IRQ is pending */
-	UINT8	after_cli;		/* pending IRQ and last insn cleared I */
-	UINT8	nmi_state;
-	UINT8	irq_state;
-	UINT8	so_state;
+	uint8_t	p;				/* Processor status */
+	uint8_t	pending_irq;	/* nonzero if an IRQ is pending */
+	uint8_t	after_cli;		/* pending IRQ and last insn cleared I */
+	uint8_t	nmi_state;
+	uint8_t	irq_state;
+	uint8_t	so_state;
 	int 	(*irq_callback)(int irqline);	/* IRQ callback */
 }	m6509_Regs;
 
@@ -282,7 +282,7 @@ int m6509_execute(int cycles)
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		CALL_MAME_DEBUG;

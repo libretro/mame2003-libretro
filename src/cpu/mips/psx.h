@@ -87,8 +87,8 @@ extern int mips_ICount;
 #define MIPS_IRQ4	( 4 )
 #define MIPS_IRQ5	( 5 )
 
-#define MIPS_BYTE_EXTEND( a ) ( (INT32)(INT8)a )
-#define MIPS_WORD_EXTEND( a ) ( (INT32)(INT16)a )
+#define MIPS_BYTE_EXTEND( a ) ( (int32_t)(int8_t)a )
+#define MIPS_WORD_EXTEND( a ) ( (int32_t)(int16_t)a )
 
 #define INS_OP( op ) ( ( op >> 26 ) & 63 )
 #define INS_RS( op ) ( ( op >> 21 ) & 31 )
@@ -211,7 +211,7 @@ extern void mips_set_nmi_line(int linestate);
 extern void mips_set_irq_line(int irqline, int linestate);
 extern void mips_set_irq_callback(int (*callback)(int irqline));
 extern const char *mips_info(void *context, int regnum);
-extern unsigned mips_dasm(char *buffer, UINT32 pc);
+extern unsigned mips_dasm(char *buffer, uint32_t pc);
 
 #ifdef MAME_DEBUG
 extern unsigned DasmMIPS(char *buff, unsigned _pc);

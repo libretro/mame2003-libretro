@@ -52,7 +52,7 @@ enum
 
 struct r3000_config
 {
-	UINT8		hasfpu;			/* 1 if we have an FPU, 0 otherwise */
+	uint8_t		hasfpu;			/* 1 if we have an FPU, 0 otherwise */
 	size_t		icache;			/* code cache size */
 	size_t		dcache;			/* data cache size */
 };

@@ -147,7 +147,7 @@ Table 3-2.  TMS32025/26 Memory Blocks
 
 
 
-static UINT8 tms32025_reg_layout[] = {
+static uint8_t tms32025_reg_layout[] = {
 	TMS32025_PC,  TMS32025_STR0,TMS32025_STR1,TMS32025_IFR, TMS32025_STK7,TMS32025_STK6,-1,
 	TMS32025_STK5,TMS32025_STK4,TMS32025_STK3,TMS32025_STK2,TMS32025_STK1,TMS32025_STK0,-1,
 	TMS32025_ACC, TMS32025_PREG,TMS32025_TREG,TMS32025_RPTC,TMS32025_AR0, TMS32025_AR1, -1,
@@ -155,7 +155,7 @@ static UINT8 tms32025_reg_layout[] = {
 	TMS32025_DRR, TMS32025_DXR, TMS32025_TIM, TMS32025_PRD, TMS32025_IMR, TMS32025_GREG, 0
 };
 
-static UINT8 tms32025_win_layout[] = {
+static uint8_t tms32025_win_layout[] = {
 	 0, 0,80, 5,	/* register window (top rows) */
 	 0, 6,29,16,	/* disassembler window (left colums) */
 	30, 6,50, 7,	/* memory #1 window (right, upper middle) */
@@ -169,19 +169,19 @@ static UINT8 tms32025_win_layout[] = {
 typedef struct			/* Page 3-6 (45) shows all registers */
 {
 	/******************** CPU Internal Registers *******************/
-	UINT16	PREVPC;		/* previous program counter */
-	UINT16	PC;
-	UINT16	PFC;
-	UINT16	STR0, STR1;
-	UINT8	IFR;
-	UINT8	RPTC;
+	uint16_t	PREVPC;		/* previous program counter */
+	uint16_t	PC;
+	uint16_t	PFC;
+	uint16_t	STR0, STR1;
+	uint8_t	IFR;
+	uint8_t	RPTC;
 	PAIR	ACC;		/* PAIR defined in os/osd_cpu.h */
 	PAIR	Preg;
-	UINT16	Treg;
-	UINT16	AR[8];
-	UINT16	STACK[8];
+	uint16_t	Treg;
+	uint16_t	AR[8];
+	uint16_t	STACK[8];
 	PAIR	ALU;
-	UINT16	*intRAM;
+	uint16_t	*intRAM;
 
 	/********************** Status data ****************************/
 	PAIR	opcode;
@@ -196,7 +196,7 @@ typedef struct			/* Page 3-6 (45) shows all registers */
 
 static tms32025_Regs R;
 static PAIR  oldacc;
-static UINT32 memaccess;
+static uint32_t memaccess;
 int    tms32025_icount;
 offs_t TMS32025_DATA_BANK[0x10];
 offs_t TMS32025_PRGM_BANK[0x10];
@@ -271,10 +271,10 @@ typedef void (*opcode_fn) (void);
 
 
 
-static INLINE void CLR0(UINT16 flag) { R.STR0 &= ~flag; R.STR0 |= 0x0400; }
-static INLINE void SET0(UINT16 flag) { R.STR0 |=  flag; R.STR0 |= 0x0400; }
-static INLINE void CLR1(UINT16 flag) { R.STR1 &= ~flag; R.STR1 |= 0x0180; }
-static INLINE void SET1(UINT16 flag) { R.STR1 |=  flag; R.STR1 |= 0x0180; }
+static INLINE void CLR0(uint16_t flag) { R.STR0 &= ~flag; R.STR0 |= 0x0400; }
+static INLINE void SET0(uint16_t flag) { R.STR0 |=  flag; R.STR0 |= 0x0400; }
+static INLINE void CLR1(uint16_t flag) { R.STR1 &= ~flag; R.STR1 |= 0x0180; }
+static INLINE void SET1(uint16_t flag) { R.STR1 |=  flag; R.STR1 |= 0x0180; }
 static INLINE void MODIFY_DP (int data) { R.STR0 &= ~DP_REG;  R.STR0 |= (data & DP_REG); R.STR0 |= 0x0400; }
 static INLINE void MODIFY_PM (int data) { R.STR1 &= ~PM_REG;  R.STR1 |= (data & PM_REG); R.STR1 |= 0x0180; }
 static INLINE void MODIFY_ARP(int data) { R.STR1 &= ~ARB_REG; R.STR1 |= (R.STR0 & ARP_REG); R.STR1 |= 0x0180; \
@@ -304,7 +304,7 @@ static INLINE void MODIFY_AR_ARP(void)
 
 static INLINE void CALCULATE_ADD_CARRY(void)
 {
-	if ( ((INT32)(oldacc.d) < 0) && ((INT32)(R.ACC.d) >= 0) ) {
+	if ( ((int32_t)(oldacc.d) < 0) && ((int32_t)(R.ACC.d) >= 0) ) {
 		SET1(C_FLAG);
 	}
 	else {
@@ -314,7 +314,7 @@ static INLINE void CALCULATE_ADD_CARRY(void)
 
 static INLINE void CALCULATE_SUB_CARRY(void)
 {
-	if ( ((INT32)(oldacc.d) >= 0) && ((INT32)(R.ACC.d) < 0) ) {
+	if ( ((int32_t)(oldacc.d) >= 0) && ((int32_t)(R.ACC.d) < 0) ) {
 		CLR1(C_FLAG);
 	}
 	else {
@@ -322,26 +322,26 @@ static INLINE void CALCULATE_SUB_CARRY(void)
 	}
 }
 
-static INLINE void CALCULATE_ADD_OVERFLOW(INT32 addval)
+static INLINE void CALCULATE_ADD_OVERFLOW(int32_t addval)
 {
-	if ((INT32)(~(oldacc.d ^ addval) & (oldacc.d ^ R.ACC.d)) < 0) {
+	if ((int32_t)(~(oldacc.d ^ addval) & (oldacc.d ^ R.ACC.d)) < 0) {
 		SET0(OV_FLAG);
 		if (OVM)
-			R.ACC.d = ((INT32)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			R.ACC.d = ((int32_t)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 	}
 }
-static INLINE void CALCULATE_SUB_OVERFLOW(INT32 subval)
+static INLINE void CALCULATE_SUB_OVERFLOW(int32_t subval)
 {
-	if ((INT32)((oldacc.d ^ subval) & (oldacc.d ^ R.ACC.d)) < 0) {
+	if ((int32_t)((oldacc.d ^ subval) & (oldacc.d ^ R.ACC.d)) < 0) {
 		SET0(OV_FLAG);
 		if (OVM)
-			R.ACC.d = ((INT32)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			R.ACC.d = ((int32_t)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 	}
 }
 
-static INLINE UINT16 POP_STACK(void)
+static INLINE uint16_t POP_STACK(void)
 {
-	UINT16 data = R.STACK[7];
+	uint16_t data = R.STACK[7];
 	R.STACK[7] = R.STACK[6];
 	R.STACK[6] = R.STACK[5];
 	R.STACK[5] = R.STACK[4];
@@ -351,7 +351,7 @@ static INLINE UINT16 POP_STACK(void)
 	R.STACK[1] = R.STACK[0];
 	return data;
 }
-static INLINE void PUSH_STACK(UINT16 data)
+static INLINE void PUSH_STACK(uint16_t data)
 {
 	R.STACK[0] = R.STACK[1];
 	R.STACK[1] = R.STACK[2];
@@ -386,13 +386,13 @@ static INLINE void GETDATA(int shift,int signext)
 	if (memaccess >= 0x800) R.external_mem_access = 1;	/* Pause if hold pin is active */
 	else R.external_mem_access = 0;
 
-	R.ALU.d = (UINT16)M_RDRAM(memaccess);
-	if (signext) R.ALU.d = (INT16)R.ALU.d;
+	R.ALU.d = (uint16_t)M_RDRAM(memaccess);
+	if (signext) R.ALU.d = (int16_t)R.ALU.d;
 	R.ALU.d <<= shift;
 
 	if (R.opcode.b.l & 0x80) MODIFY_AR_ARP();
 }
-static INLINE void PUTDATA(UINT16 data)
+static INLINE void PUTDATA(uint16_t data)
 {
 	if (R.opcode.b.l & 0x80) {
 		if (memaccess >= 0x800) R.external_mem_access = 1;	/* Pause if hold pin is active */
@@ -408,7 +408,7 @@ static INLINE void PUTDATA(UINT16 data)
 		M_WRTRAM(DMA,data);
 	}
 }
-static INLINE void PUTDATA_SST(UINT16 data)
+static INLINE void PUTDATA_SST(uint16_t data)
 {
 	if (R.opcode.b.l & 0x80) memaccess = IND;
 	else memaccess = DMApg0;
@@ -438,7 +438,7 @@ static void illegal(void)
 
 static void abst(void)
 {
-		if ( (INT32)(R.ACC.d) < 0 ) {
+		if ( (int32_t)(R.ACC.d) < 0 ) {
 			R.ACC.d = -R.ACC.d;
 			if (OVM) {
 				SET0(OV_FLAG);
@@ -469,12 +469,12 @@ static void addh(void)
 		oldacc.d = R.ACC.d;
 		GETDATA(0,0);
 		R.ACC.w.h += R.ALU.w.l;
-		if ((INT16)(~(oldacc.w.h ^ R.ALU.w.l) & (oldacc.w.h ^ R.ACC.w.h)) < 0) {
+		if ((int16_t)(~(oldacc.w.h ^ R.ALU.w.l) & (oldacc.w.h ^ R.ACC.w.h)) < 0) {
 			SET0(OV_FLAG);
 			if (OVM)
-				R.ACC.w.h = ((INT16)oldacc.w.h < 0) ? 0x8000 : 0x7fff;
+				R.ACC.w.h = ((int16_t)oldacc.w.h < 0) ? 0x8000 : 0x7fff;
 		}
-		if ( ((INT16)(oldacc.w.h) < 0) && ((INT16)(R.ACC.w.h) >= 0) ) {
+		if ( ((int16_t)(oldacc.w.h) < 0) && ((int16_t)(R.ACC.w.h) >= 0) ) {
 			SET1(C_FLAG);
 		}
 		/* Carry flag is not cleared, if no carry occured */
@@ -482,7 +482,7 @@ static void addh(void)
 static void addk(void)
 {
 		oldacc.d = R.ACC.d;
-		R.ALU.d = (UINT8)R.opcode.b.l;
+		R.ALU.d = (uint8_t)R.opcode.b.l;
 		R.ACC.d += R.ALU.d;
 		CALCULATE_ADD_OVERFLOW(R.ALU.d);
 		CALCULATE_ADD_CARRY();
@@ -506,8 +506,8 @@ static void addt(void)
 static void adlk(void)
 {
 		oldacc.d = R.ACC.d;
-		if (SXM) R.ALU.d =  (INT16)M_RDOP_ARG(R.PC);
-		else     R.ALU.d = (UINT16)M_RDOP_ARG(R.PC);
+		if (SXM) R.ALU.d =  (int16_t)M_RDOP_ARG(R.PC);
+		else     R.ALU.d = (uint16_t)M_RDOP_ARG(R.PC);
 		R.PC++;
 		R.ALU.d <<= (R.opcode.b.h & 0xf);
 		R.ACC.d += R.ALU.d;
@@ -526,7 +526,7 @@ static void and(void)
 static void andk(void)
 {
 		oldacc.d = R.ACC.d;
-		R.ALU.d = (UINT16)M_RDOP_ARG(R.PC);
+		R.ALU.d = (uint16_t)M_RDOP_ARG(R.PC);
 		R.PC++;
 		R.ALU.d <<= (R.opcode.b.h & 0xf);
 		R.ACC.d &= R.ALU.d;
@@ -575,13 +575,13 @@ static void bc(void)
 }
 static void bgez(void)
 {
-		if ( (INT32)(R.ACC.d) >= 0 ) R.PC = M_RDOP_ARG(R.PC);
+		if ( (int32_t)(R.ACC.d) >= 0 ) R.PC = M_RDOP_ARG(R.PC);
 		else R.PC++ ;
 		MODIFY_AR_ARP();
 }
 static void bgz(void)
 {
-		if ( (INT32)(R.ACC.d) > 0 ) R.PC = M_RDOP_ARG(R.PC);
+		if ( (int32_t)(R.ACC.d) > 0 ) R.PC = M_RDOP_ARG(R.PC);
 		else R.PC++ ;
 		MODIFY_AR_ARP();
 }
@@ -605,7 +605,7 @@ static void bitt(void)
 }
 static void blez(void)
 {
-		if ( (INT32)(R.ACC.d) <= 0 ) R.PC = M_RDOP_ARG(R.PC);
+		if ( (int32_t)(R.ACC.d) <= 0 ) R.PC = M_RDOP_ARG(R.PC);
 		else R.PC++ ;
 		MODIFY_AR_ARP();
 }
@@ -633,7 +633,7 @@ static void blkp(void)
 }
 static void blz(void)
 {
-		if ( (INT32)(R.ACC.d) <  0 ) R.PC = M_RDOP_ARG(R.PC);
+		if ( (int32_t)(R.ACC.d) <  0 ) R.PC = M_RDOP_ARG(R.PC);
 		else R.PC++ ;
 		MODIFY_AR_ARP();
 }
@@ -693,10 +693,10 @@ static void cmpr(void)
 {
 		switch (R.opcode.b.l & 3)
 		{
-			case 00:	if ( (UINT16)(R.AR[ARP]) == (UINT16)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
-			case 01:	if ( (UINT16)(R.AR[ARP]) <  (UINT16)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
-			case 02:	if ( (UINT16)(R.AR[ARP])  > (UINT16)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
-			case 03:	if ( (UINT16)(R.AR[ARP]) != (UINT16)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
+			case 00:	if ( (uint16_t)(R.AR[ARP]) == (uint16_t)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
+			case 01:	if ( (uint16_t)(R.AR[ARP]) <  (uint16_t)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
+			case 02:	if ( (uint16_t)(R.AR[ARP])  > (uint16_t)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
+			case 03:	if ( (uint16_t)(R.AR[ARP]) != (uint16_t)(R.AR[0]) ) SET1(TC_FLAG); else CLR1(TC_FLAG); break;
 			default:	break;
 		}
 }
@@ -810,7 +810,7 @@ static void lac(void)
 }
 static void lack(void)		/* ZAC is a subset of this instruction */
 {
-		R.ACC.d = (UINT8)R.opcode.b.l;
+		R.ACC.d = (uint8_t)R.opcode.b.l;
 }
 static void lact(void)
 {
@@ -820,11 +820,11 @@ static void lact(void)
 static void lalk(void)
 {
 		if (SXM) {
-			R.ALU.d = (INT16)M_RDOP_ARG(R.PC);
+			R.ALU.d = (int16_t)M_RDOP_ARG(R.PC);
 			R.ACC.d = R.ALU.d << (R.opcode.b.h & 0xf);
 		}
 		else {
-			R.ALU.d = (UINT16)M_RDOP_ARG(R.PC);
+			R.ALU.d = (uint16_t)M_RDOP_ARG(R.PC);
 			R.ACC.d = R.ALU.d << (R.opcode.b.h & 0xf);
 			R.ACC.d &= 0x7fffffff;
 		}
@@ -862,7 +862,7 @@ static void lph(void)
 }
 static void lrlk(void)
 {
-		R.ALU.d = (UINT16)M_RDOP_ARG(R.PC);
+		R.ALU.d = (uint16_t)M_RDOP_ARG(R.PC);
 		R.PC++;
 		R.AR[R.opcode.b.h & 7] = R.ALU.w.l;
 }
@@ -972,7 +972,7 @@ static void mar(void)		/* LARP and NOP are a subset of this instruction */
 static void mpy(void)
 {
 		GETDATA(0,0);
-		R.Preg.d = (INT16)(R.ALU.w.l) * (INT16)(R.Treg);
+		R.Preg.d = (int16_t)(R.ALU.w.l) * (int16_t)(R.Treg);
 }
 static void mpya(void)
 {
@@ -982,11 +982,11 @@ static void mpya(void)
 		CALCULATE_ADD_OVERFLOW(R.ALU.d);
 		CALCULATE_ADD_CARRY();
 		GETDATA(0,0);
-		R.Preg.d = (INT16)(R.ALU.w.l) * (INT16)(R.Treg);
+		R.Preg.d = (int16_t)(R.ALU.w.l) * (int16_t)(R.Treg);
 }
 static void mpyk(void)
 {
-		R.Preg.d = (INT16)R.Treg * ((INT16)(R.opcode.w.l << 3) >> 3);
+		R.Preg.d = (int16_t)R.Treg * ((int16_t)(R.opcode.w.l << 3) >> 3);
 
 }
 static void mpys(void)
@@ -997,11 +997,11 @@ static void mpys(void)
 		CALCULATE_SUB_OVERFLOW(R.ALU.d);
 		CALCULATE_SUB_CARRY();
 		GETDATA(0,0);
-		R.Preg.d = (INT16)(R.ALU.w.l) * (INT16)(R.Treg);
+		R.Preg.d = (int16_t)(R.ALU.w.l) * (int16_t)(R.Treg);
 }
 static void mpyu(void)
 {
-		GETDATA(0,0); R.Preg.d = (UINT16)(R.ALU.w.l) * (UINT16)(R.Treg);
+		GETDATA(0,0); R.Preg.d = (uint16_t)(R.ALU.w.l) * (uint16_t)(R.Treg);
 }
 static void neg(void)
 {
@@ -1039,7 +1039,7 @@ static void or(void)
 }
 static void ork(void)
 {
-		R.ALU.d = (UINT16)M_RDOP_ARG(R.PC);
+		R.ALU.d = (uint16_t)M_RDOP_ARG(R.PC);
 		R.PC++;
 		R.ALU.d <<= (R.opcode.b.h & 0xf);
 		R.ACC.d |=  (R.ALU.d & 0x7fffffff);
@@ -1056,11 +1056,11 @@ static void pac(void)
 }
 static void pop(void)
 {
-		R.ACC.d = (UINT16)POP_STACK();
+		R.ACC.d = (uint16_t)POP_STACK();
 }
 static void popd(void)
 {
-		R.ALU.d = (UINT16)POP_STACK();
+		R.ALU.d = (uint16_t)POP_STACK();
 		PUTDATA(R.ALU.w.l);
 }
 static void pshd(void)
@@ -1287,11 +1287,11 @@ static void subc(void)
 		oldacc.d = R.ACC.d;
 		GETDATA(15,0);
 		R.ALU.d = R.ACC.d - R.ALU.d;
-		if ((INT32)((oldacc.d ^ R.ALU.d) & (oldacc.d ^ R.ACC.d)) < 0) {
+		if ((int32_t)((oldacc.d ^ R.ALU.d) & (oldacc.d ^ R.ACC.d)) < 0) {
 			SET0(OV_FLAG);			/* Not affected by OVM */
 		}
 		CALCULATE_SUB_CARRY();
-		if ( (INT32)(R.ALU.d) >= 0 ) {
+		if ( (int32_t)(R.ALU.d) >= 0 ) {
 			R.ACC.d = ((R.ALU.d << 1) + 1);
 		}
 		else {
@@ -1303,12 +1303,12 @@ static void subh(void)
 		oldacc.d = R.ACC.d;
 		GETDATA(0,0);
 		R.ACC.w.h -= R.ALU.w.l;
-		if ((INT16)((oldacc.w.h ^ R.ALU.w.l) & (oldacc.w.h ^ R.ACC.w.h)) < 0) {
+		if ((int16_t)((oldacc.w.h ^ R.ALU.w.l) & (oldacc.w.h ^ R.ACC.w.h)) < 0) {
 			SET0(OV_FLAG);
 			if (OVM)
-				R.ACC.w.h = ((INT16)oldacc.w.h < 0) ? 0x8000 : 0x7fff;
+				R.ACC.w.h = ((int16_t)oldacc.w.h < 0) ? 0x8000 : 0x7fff;
 		}
-		if ( ((INT16)(oldacc.w.h) >= 0) && ((INT16)(R.ACC.w.h) < 0) ) {
+		if ( ((int16_t)(oldacc.w.h) >= 0) && ((int16_t)(R.ACC.w.h) < 0) ) {
 			CLR1(C_FLAG);
 		}
 		/* Carry flag is not affected, if no borrow occured */
@@ -1316,7 +1316,7 @@ static void subh(void)
 static void subk(void)
 {
 		oldacc.d = R.ACC.d;
-		R.ALU.d = (UINT8)R.opcode.b.l;
+		R.ALU.d = (uint8_t)R.opcode.b.l;
 		R.ACC.d -= R.ALU.b.l;
 		CALCULATE_SUB_OVERFLOW(R.ALU.d);
 		CALCULATE_SUB_CARRY();
@@ -1346,7 +1346,7 @@ static void tblr(void)
 {
 		if (R.init_load_addr) R.PFC = R.ACC.w.l;
 		R.ALU.w.l = M_RDROM(R.PFC);
-		if ( (CNF0) && ( (UINT16)(R.PFC) >= 0xff00 ) ) {}	/** TMS32025 only */
+		if ( (CNF0) && ( (uint16_t)(R.PFC) >= 0xff00 ) ) {}	/** TMS32025 only */
 		else tms32025_icount -= (1*CLK);
 		PUTDATA(R.ALU.w.l);
 		R.PFC++;
@@ -1654,7 +1654,7 @@ void tms32025_reset (void *param)
 	S_OUT(TMS32025_XF,ASSERT_LINE);	/* XF flag is high. Must set the pin */
 
 	/* ugly hack.. */
-	R.intRAM = (UINT16 *)memory_region(REGION_CPU1 + cpu_getactivecpu());
+	R.intRAM = (uint16_t *)memory_region(REGION_CPU1 + cpu_getactivecpu());
 	/* Set the internal memory mapped registers */
 	GREG = 0;
 	TIM  = 0xffff;
@@ -1926,7 +1926,7 @@ int tms32025_execute(int cycles)
 				}
 				R.init_load_addr = 0;
 				R.RPTC-- ;
-			} while ((INT8)(R.RPTC) != -1);
+			} while ((int8_t)(R.RPTC) != -1);
 			R.RPTC = 0;
 			R.PFC = R.PC;
 			R.init_load_addr = 1;

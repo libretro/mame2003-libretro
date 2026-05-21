@@ -44,7 +44,7 @@ static const char *condition[16] =
 **	CODE CODE
 **#################################################################################################*/
 
-static INLINE char *src2(UINT32 op, int scale)
+static INLINE char *src2(uint32_t op, int scale)
 {
 	static char temp[20];
 	if ((op & 0xffe0) == 0xffe0)
@@ -56,7 +56,7 @@ static INLINE char *src2(UINT32 op, int scale)
 
 unsigned dasmasap(char *buffer, unsigned pc)
 {
-	UINT32 op = ROPCODE(pc);
+	uint32_t op = ROPCODE(pc);
 	int opcode = op >> 27;
 	int cond = (op >> 21) & 1;
 	int rdst = (op >> 22) & 31;
@@ -67,10 +67,10 @@ unsigned dasmasap(char *buffer, unsigned pc)
 	switch (opcode)
 	{
 		case 0x00:	sprintf(buffer, "trap   $00");															break;
-		case 0x01:	sprintf(buffer, "b%s    $%08x", condition[rdst & 15], pc + ((INT32)(op << 10) >> 8));	break;
+		case 0x01:	sprintf(buffer, "b%s    $%08x", condition[rdst & 15], pc + ((int32_t)(op << 10) >> 8));	break;
 		case 0x02:	if ((op & 0x003fffff) == 3)
 					{
-						UINT32 nextop = ROPCODE(pc+4);
+						uint32_t nextop = ROPCODE(pc+4);
 						if ((nextop >> 27) == 0x10 && ((nextop >> 22) & 31) == rdst && (nextop & 0xffff) == 0)
 						{
 							sprintf(buffer, "llit%s $%08x,%s", setcond[cond], ROPCODE(pc+8), reg[rdst]);
@@ -78,9 +78,9 @@ unsigned dasmasap(char *buffer, unsigned pc)
 						}
 					}
 					if (rdst)
-					sprintf(buffer, "bsr    %s,$%08x", reg[rdst], pc + ((INT32)(op << 10) >> 8));
+					sprintf(buffer, "bsr    %s,$%08x", reg[rdst], pc + ((int32_t)(op << 10) >> 8));
 					else
-					sprintf(buffer, "bra    $%08x", pc + ((INT32)(op << 10) >> 8));							break;
+					sprintf(buffer, "bra    $%08x", pc + ((int32_t)(op << 10) >> 8));							break;
 		case 0x03:	sprintf(buffer, "lea%s  %s[%s],%s", setcond[cond], reg[rsrc1], src2(op,2), reg[rdst]);	break;
 		case 0x04:	sprintf(buffer, "leah%s %s[%s],%s", setcond[cond], reg[rsrc1], src2(op,1), reg[rdst]);	break;
 		case 0x05:	sprintf(buffer, "subr%s %s,%s,%s", setcond[cond], reg[rsrc1], src2(op,0), reg[rdst]);	break;

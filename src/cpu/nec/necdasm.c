@@ -67,25 +67,25 @@ Any comments/updates/bug reports to:
 //#include "nechost.h"
 
 /* Little endian uint read */
-#define	le_uint8(ptr) (*(UINT8*)ptr)
-static INLINE UINT16 le_uint16(const void* ptr) {
-	const UINT8* ptr8 = (const UINT8*)ptr;
-	return (UINT16)ptr8[0] | (UINT16)ptr8[1] << 8;
+#define	le_uint8(ptr) (*(uint8_t*)ptr)
+static INLINE uint16_t le_uint16(const void* ptr) {
+	const uint8_t* ptr8 = (const uint8_t*)ptr;
+	return (uint16_t)ptr8[0] | (uint16_t)ptr8[1] << 8;
 }
-static INLINE UINT32 le_uint32(const void* ptr) {
-	const UINT8* ptr8 = (const UINT8*)ptr;
-	return (UINT32)ptr8[0] | (UINT32)ptr8[1] << 8 |	(UINT32)ptr8[2] << 16 | (UINT32)ptr8[3] << 24;
+static INLINE uint32_t le_uint32(const void* ptr) {
+	const uint8_t* ptr8 = (const uint8_t*)ptr;
+	return (uint32_t)ptr8[0] | (uint32_t)ptr8[1] << 8 |	(uint32_t)ptr8[2] << 16 | (uint32_t)ptr8[3] << 24;
 }
 
 /* Little endian int read */
-#define le_int8(ptr) ((INT8)le_uint8(ptr))
-#define le_int16(ptr) ((INT16)le_uint16(ptr))
-#define le_int32(ptr) ((INT32)le_uint32(ptr))
+#define le_int8(ptr) ((int8_t)le_uint8(ptr))
+#define le_int16(ptr) ((int16_t)le_uint16(ptr))
+#define le_int32(ptr) ((int32_t)le_uint32(ptr))
 
 #define fp_segment(dw) ((dw >> 16) & 0xFFFFU)
 #define fp_offset(dw) (dw & 0xFFFFU)
 
-static UINT8 must_do_size;   /* used with size of operand */
+static uint8_t must_do_size;   /* used with size of operand */
 static int wordop;           /* dealing with word or byte operand */
 static int instruction_offset;
 
@@ -343,7 +343,7 @@ static const char *groups[][8] = {   /* group 0 is group 3 for %Ev set */
 };
 
 
-static char *addr_to_hex(UINT32 addr, int splitup) {
+static char *addr_to_hex(uint32_t addr, int splitup) {
   static char buffer[11];
 
   if (splitup) {
@@ -366,9 +366,9 @@ static char *addr_to_hex(UINT32 addr, int splitup) {
 /* in nec.c */
 unsigned nec_get_reg(int regnum);
 
-static UINT8 getopcode(void)
+static uint8_t getopcode(void)
 {
-	UINT8 res;
+	uint8_t res;
 
 	int pc_masked = (instruction_offset++)&0xfffff;
 	change_pc20(pc_masked);
@@ -377,8 +377,8 @@ static UINT8 getopcode(void)
 	return res;
 }
 
-static UINT8 getbyte(void) {
-	UINT8 res;
+static uint8_t getbyte(void) {
+	uint8_t res;
 
 	int pc_masked = (instruction_offset++)&0xfffff;
 	change_pc20(pc_masked);
@@ -435,7 +435,7 @@ static int bytes(char c)
 static void outhex(char subtype, int extend, int optional, int defsize, int sign)
 {
   int n=0, s=0, i;
-  INT32 delta = 0;
+  int32_t delta = 0;
   unsigned char buff[6];
   char *name;
   char  signchar;
@@ -516,7 +516,7 @@ static void outhex(char subtype, int extend, int optional, int defsize, int sign
 		uprintf("%c$%0*lX", (char)signchar, (int)(extend), (long)delta);
     } else {
       if (extend==2)
-        delta = (UINT16)delta;
+        delta = (uint16_t)delta;
 	  uprintf("$%0.*lX", (int)(2*extend), (long)delta );
     }
     return;
@@ -640,12 +640,12 @@ static void do_modrm(char subtype)
 
 static void percent(char type, char subtype)
 {
-  INT32 vofs = 0;
+  int32_t vofs = 0;
   char *name;
   //int extend = (addrsize == 32) ? 4 : 2;
   int extend = 2;	// NEC only has 16 Bit
 
-  UINT8 c;
+  uint8_t c;
   unsigned d;
 
   switch (type) {
@@ -682,17 +682,17 @@ static void percent(char type, char subtype)
   case 'J':                            /* relative IP offset */
        switch (bytes(subtype)) {              /* sizeof offset value */
        case 1:
-            vofs = (INT8)getbyte();
+            vofs = (int8_t)getbyte();
             break;
        case 2:
             vofs = getbyte();
             vofs |= getbyte()<<8;
             break;
        case 4:
-            vofs = (UINT32)getbyte();           /* yuk! */
-            vofs |= (UINT32)getbyte() << 8;
-            vofs |= (UINT32)getbyte() << 16;
-            vofs |= (UINT32)getbyte() << 24;
+            vofs = (uint32_t)getbyte();           /* yuk! */
+            vofs |= (uint32_t)getbyte() << 8;
+            vofs |= (uint32_t)getbyte() << 16;
+            vofs |= (uint32_t)getbyte() << 24;
             break;
        }
        name = addr_to_hex(vofs+instruction_offset,1);

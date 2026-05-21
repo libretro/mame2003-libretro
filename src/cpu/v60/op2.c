@@ -21,7 +21,7 @@
 	else	\
 		MemWrite32(f2Op##num, f2u(appf));
 
-void F2DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
+void F2DecodeFirstOperand(uint32_t (*DecodeOp1)(void), uint8_t dim1)
 {
 	modDim = dim1;
 	modM = if2 & 0x40;
@@ -31,7 +31,7 @@ void F2DecodeFirstOperand(UINT32 (*DecodeOp1)(void), UINT8 dim1)
 	f2Flag1 = amFlag;
 }
 
-void F2DecodeSecondOperand(UINT32 (*DecodeOp2)(void), UINT8 dim2)
+void F2DecodeSecondOperand(uint32_t (*DecodeOp2)(void), uint8_t dim2)
 {
 	modDim = dim2;
 	modM = if2 & 0x20;
@@ -41,7 +41,7 @@ void F2DecodeSecondOperand(UINT32 (*DecodeOp2)(void), UINT8 dim2)
 	f2Flag2 = amFlag;
 }
 
-void F2WriteSecondOperand(UINT8 dim2)
+void F2WriteSecondOperand(uint8_t dim2)
 {
 	modDim = dim2;
 	modM = if2 & 0x20;
@@ -56,7 +56,7 @@ int opCVTWS(void)
 	F2DecodeFirstOperand(ReadAM,2);
 
 	// Convert to float
-	val = (float)(INT32)f2Op1;
+	val = (float)(int32_t)f2Op1;
 	modWriteValW = f2u(val);
 
 	_OV=0;
@@ -74,9 +74,9 @@ int opCVTSW(void)
 
 	F2DecodeFirstOperand(ReadAM,2);
 
-	// Convert to UINT32
+	// Convert to uint32_t
 	val = u2f(f2Op1);
-	modWriteValW = (UINT32)val;
+	modWriteValW = (uint32_t)val;
 
 	_OV=0;
 	_CY=(val < 0.0f);
@@ -136,7 +136,7 @@ int opABSFS(void)
 
 int opADDFS(void)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(ReadAM, 2);
@@ -157,7 +157,7 @@ int opADDFS(void)
 
 int opSUBFS(void)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(ReadAM, 2);
@@ -178,7 +178,7 @@ int opSUBFS(void)
 
 int opMULFS(void)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(ReadAM, 2);
@@ -199,7 +199,7 @@ int opMULFS(void)
 
 int opDIVFS(void)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(ReadAM, 2);
@@ -220,7 +220,7 @@ int opDIVFS(void)
 
 int opSCLFS(void)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(ReadAM, 1);
@@ -228,8 +228,8 @@ int opSCLFS(void)
 
 	F2LOADOPFLOAT(2);
 
-	if ((INT16)f2Op1 < 0)
-		appf /= 1 << -(INT16)f2Op1;
+	if ((int16_t)f2Op1 < 0)
+		appf /= 1 << -(int16_t)f2Op1;
 	else
 		appf *= 1 << f2Op1;
 
@@ -345,14 +345,14 @@ int (*Op5CTable[32])(void) =
 };
 
 
-UINT32 op5F(void)
+uint32_t op5F(void)
 {
 	if2 = OpRead8(PC + 1);
 	return Op5FTable[if2&0x1F]();
 }
 
 
-UINT32 op5C(void)
+uint32_t op5C(void)
 {
 	if2 = OpRead8(PC + 1);
 	return Op5CTable[if2&0x1F]();

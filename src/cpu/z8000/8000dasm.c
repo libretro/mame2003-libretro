@@ -32,7 +32,7 @@ static int w[3];	/* opcode words */
 
 void GET_OP(int i, unsigned pc)
 {
-	UINT16 opcode = cpu_readop16(pc);
+	uint16_t opcode = cpu_readop16(pc);
 	w[i] = opcode;
 	b[i*2+0] = opcode >> 8;
 	b[i*2+1] = opcode & 0xff;
@@ -116,7 +116,7 @@ int DasmZ8000(char *buff, int pc)
 						/* absolute immediate 8bit (rl/rr) */
 						src++;
 						i = *src++ - '0';
-						dst += sprintf(dst, "#%d", ((INT8)b[i]<0) ? -(INT8)b[i] : b[i]);
+						dst += sprintf(dst, "#%d", ((int8_t)b[i]<0) ? -(int8_t)b[i] : b[i]);
 						break;
 					case '+':
 						/* imm4m1 (inc/dec value) */
@@ -219,7 +219,7 @@ int DasmZ8000(char *buff, int pc)
 								dst += sprintf(dst, "#$%04x", tmp);
 								break;
 							case 1: /* disp8 */
-								tmp = new_pc + 2 * (INT8)(w[0] & 0xff);
+								tmp = new_pc + 2 * (int8_t)(w[0] & 0xff);
 								dst += sprintf(dst, "#$%04x", tmp);
 								break;
 							case 2: /* disp12 */

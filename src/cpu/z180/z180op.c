@@ -2,12 +2,12 @@
 
 #define CHECK_BC_LOOP												\
 if( _BC > 1 && _PCD < 0xfffc ) {									\
-	UINT8 op1 = cpu_readop(_PCD);									\
-	UINT8 op2 = cpu_readop(_PCD+1); 								\
+	uint8_t op1 = cpu_readop(_PCD);									\
+	uint8_t op2 = cpu_readop(_PCD+1); 								\
 	if( (op1==0x78 && op2==0xb1) || (op1==0x79 && op2==0xb0) )		\
 	{																\
-		UINT8 op3 = cpu_readop(_PCD+2); 							\
-		UINT8 op4 = cpu_readop(_PCD+3); 							\
+		uint8_t op3 = cpu_readop(_PCD+2); 							\
+		uint8_t op4 = cpu_readop(_PCD+3); 							\
 		if( op3==0x20 && op4==0xfb )								\
 		{															\
 			int cnt =												\
@@ -24,8 +24,8 @@ if( _BC > 1 && _PCD < 0xfffc ) {									\
 		else														\
 		if( op3 == 0xc2 )											\
 		{															\
-			UINT8 ad1 = cpu_readop_arg(_PCD+3); 					\
-			UINT8 ad2 = cpu_readop_arg(_PCD+4); 					\
+			uint8_t ad1 = cpu_readop_arg(_PCD+3); 					\
+			uint8_t ad2 = cpu_readop_arg(_PCD+4); 					\
 			if( (ad1 + 256 * ad2) == (_PCD - 1) )					\
 			{														\
 				int cnt =											\
@@ -45,12 +45,12 @@ if( _BC > 1 && _PCD < 0xfffc ) {									\
 
 #define CHECK_DE_LOOP												\
 if( _DE > 1 && _PCD < 0xfffc ) {									\
-	UINT8 op1 = cpu_readop(_PCD);									\
-	UINT8 op2 = cpu_readop(_PCD+1); 								\
+	uint8_t op1 = cpu_readop(_PCD);									\
+	uint8_t op2 = cpu_readop(_PCD+1); 								\
 	if( (op1==0x7a && op2==0xb3) || (op1==0x7b && op2==0xb2) )		\
 	{																\
-		UINT8 op3 = cpu_readop(_PCD+2); 							\
-		UINT8 op4 = cpu_readop(_PCD+3); 							\
+		uint8_t op3 = cpu_readop(_PCD+2); 							\
+		uint8_t op4 = cpu_readop(_PCD+3); 							\
 		if( op3==0x20 && op4==0xfb )								\
 		{															\
 			int cnt =												\
@@ -67,8 +67,8 @@ if( _DE > 1 && _PCD < 0xfffc ) {									\
 		else														\
 		if( op3==0xc2 ) 											\
 		{															\
-			UINT8 ad1 = cpu_readop_arg(_PCD+3); 					\
-			UINT8 ad2 = cpu_readop_arg(_PCD+4); 					\
+			uint8_t ad1 = cpu_readop_arg(_PCD+3); 					\
+			uint8_t ad2 = cpu_readop_arg(_PCD+4); 					\
 			if( (ad1 + 256 * ad2) == (_PCD - 1) )					\
 			{														\
 				int cnt =											\
@@ -88,12 +88,12 @@ if( _DE > 1 && _PCD < 0xfffc ) {									\
 
 #define CHECK_HL_LOOP												\
 if( _HL > 1 && _PCD < 0xfffc ) {									\
-	UINT8 op1 = cpu_readop(_PCD);									\
-	UINT8 op2 = cpu_readop(_PCD+1); 								\
+	uint8_t op1 = cpu_readop(_PCD);									\
+	uint8_t op2 = cpu_readop(_PCD+1); 								\
 	if( (op1==0x7c && op2==0xb5) || (op1==0x7d && op2==0xb4) )		\
 	{																\
-		UINT8 op3 = cpu_readop(_PCD+2); 							\
-		UINT8 op4 = cpu_readop(_PCD+3); 							\
+		uint8_t op3 = cpu_readop(_PCD+2); 							\
+		uint8_t op4 = cpu_readop(_PCD+3); 							\
 		if( op3==0x20 && op4==0xfb )								\
 		{															\
 			int cnt =												\
@@ -110,8 +110,8 @@ if( _HL > 1 && _PCD < 0xfffc ) {									\
 		else														\
 		if( op3==0xc2 ) 											\
 		{															\
-			UINT8 ad1 = cpu_readop_arg(_PCD+3); 					\
-			UINT8 ad2 = cpu_readop_arg(_PCD+4); 					\
+			uint8_t ad1 = cpu_readop_arg(_PCD+3); 					\
+			uint8_t ad2 = cpu_readop_arg(_PCD+4); 					\
 			if( (ad1 + 256 * ad2) == (_PCD - 1) )					\
 			{														\
 				int cnt =											\

@@ -191,7 +191,7 @@ unsigned Dasm6805 (char *buf, unsigned pc)
 		bit = (code >> 1) & 7;
 		ea = cpu_readop_arg(pc+1);
 		sym1 = set_ea_info(1, ea, EA_UINT8, EA_ZPG_RD);
-		sym2 = set_ea_info(0, pc + 3, (INT8)cpu_readop_arg(pc+2), EA_REL_PC);
+		sym2 = set_ea_info(0, pc + 3, (int8_t)cpu_readop_arg(pc+2), EA_REL_PC);
 		sprintf (buf, "%d,%s,%s", bit, sym1, sym2);
 		return 3;
 	case _bit:	/* bit test */
@@ -201,7 +201,7 @@ unsigned Dasm6805 (char *buf, unsigned pc)
 		sprintf (buf, "%d,%s", bit, sym1);
 		return 2;
 	case _rel:	/* relative */
-		sym1 = set_ea_info(0, pc + 2, (INT8)cpu_readop_arg(pc+1), access);
+		sym1 = set_ea_info(0, pc + 2, (int8_t)cpu_readop_arg(pc+1), access);
 		sprintf (buf, "%s", sym1);
 		return 2;
 	case _imm:	/* immediate */

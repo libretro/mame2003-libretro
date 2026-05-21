@@ -70,7 +70,7 @@
 
 extern FILE * errorlog;
 
-static UINT8 reg_layout[] = {
+static uint8_t reg_layout[] = {
 	H6280_PC, H6280_S, H6280_P, H6280_A, H6280_X, H6280_Y, -1,
 	H6280_IRQ_MASK, H6280_TIMER_STATE, H6280_NMI_STATE, H6280_IRQ1_STATE, H6280_IRQ2_STATE, H6280_IRQT_STATE,
 #ifdef MAME_DEBUG
@@ -82,7 +82,7 @@ static UINT8 reg_layout[] = {
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 win_layout[] = {
+static uint8_t win_layout[] = {
 	25, 0,55, 4,	/* register window (top rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 5,55, 8,	/* memory #1 window (right, upper middle) */
@@ -102,14 +102,14 @@ typedef struct
     PAIR  sp;           /* stack pointer (always 100 - 1FF) */
     PAIR  zp;           /* zero page address */
     PAIR  ea;           /* effective address */
-    UINT8 a;            /* Accumulator */
-    UINT8 x;            /* X index register */
-    UINT8 y;            /* Y index register */
-    UINT8 p;            /* Processor status */
-    UINT8 mmr[8];       /* Hu6280 memory mapper registers */
-    UINT8 irq_mask;     /* interrupt enable/disable */
-    UINT8 timer_status; /* timer status */
-	UINT8 timer_ack;	/* timer acknowledge */
+    uint8_t a;            /* Accumulator */
+    uint8_t x;            /* X index register */
+    uint8_t y;            /* Y index register */
+    uint8_t p;            /* Processor status */
+    uint8_t mmr[8];       /* Hu6280 memory mapper registers */
+    uint8_t irq_mask;     /* interrupt enable/disable */
+    uint8_t timer_status; /* timer status */
+	uint8_t timer_ack;	/* timer acknowledge */
     int timer_value;    /* timer interrupt */
     int timer_load;		/* reload value */
 	int extra_cycles;	/* cycles used taking an interrupt */
@@ -126,7 +126,7 @@ typedef struct
 static  h6280_Regs  h6280;
 
 #ifdef  MAME_DEBUG /* Need some public segmentation registers for debugger */
-UINT8	H6280_debug_mmr[8];
+uint8_t	H6280_debug_mmr[8];
 #endif
 
 /* include the macros */

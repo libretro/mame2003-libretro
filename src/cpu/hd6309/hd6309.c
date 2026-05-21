@@ -15,9 +15,9 @@
 		6809 Microcomputer Programming & Interfacing with Experiments"
 			by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-	System dependencies:	UINT16 must be 16 bit unsigned int
-							UINT8 must be 8 bit unsigned int
-							UINT32 must be more than 16 bits
+	System dependencies:	uint16_t must be 16 bit unsigned int
+							uint8_t must be 8 bit unsigned int
+							uint32_t must be more than 16 bits
 							arrays up to 65536 bytes must be supported
 							machine must be twos complement
 
@@ -116,14 +116,14 @@ void CHECK_IRQ_LINES( void );
 static void IIError(void);
 static void DZError(void);
 
-static UINT8 hd6309_reg_layout[] = {
+static uint8_t hd6309_reg_layout[] = {
 	HD6309_A, HD6309_B, HD6309_E, HD6309_F, HD6309_MD, HD6309_CC, HD6309_DP,  -1,
 	HD6309_X, HD6309_Y, HD6309_S, HD6309_U, HD6309_V, -1,
 	HD6309_PC, HD6309_NMI_STATE, HD6309_IRQ_STATE, HD6309_FIRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 hd6309_win_layout[] = {
+static uint8_t hd6309_win_layout[] = {
 	27, 0,53, 4,	/* register window (top, right rows) */
 	 0, 0,26,22,	/* disassembler window (left colums) */
 	27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -143,14 +143,14 @@ typedef struct
 	PAIR	u, s;		/* Stack pointers */
 	PAIR	x, y;		/* Index registers */
 	PAIR	v;			/* New 6309 register */
-	UINT8	cc;
-	UINT8	md; 		/* Special mode register */
-	UINT8	ireg;		/* First opcode */
-	UINT8	irq_state[2];
+	uint8_t	cc;
+	uint8_t	md; 		/* Special mode register */
+	uint8_t	ireg;		/* First opcode */
+	uint8_t	irq_state[2];
 	int 	extra_cycles; /* cycles used up by interrupts */
 	int 	(*irq_callback)(int irqline);
-	UINT8	int_state;	/* SYNC and CWAI flags */
-	UINT8	nmi_state;
+	uint8_t	int_state;	/* SYNC and CWAI flags */
+	uint8_t	nmi_state;
 } hd6309_Regs;
 
 /* flag bits in the cc register */
@@ -263,8 +263,8 @@ int hd6309_ICount=50000;
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)		if(!a)SEZ
-#define SET_Z8(a)		SET_Z((UINT8)a)
-#define SET_Z16(a)		SET_Z((UINT16)a)
+#define SET_Z8(a)		SET_Z((uint8_t)a)
+#define SET_Z16(a)		SET_Z((uint16_t)a)
 #define SET_N8(a)		CC|=((a&0x80)>>4)
 #define SET_N16(a)		CC|=((a&0x8000)>>12)
 #define SET_N32(a)		CC|=((a&0x8000)>>20)
@@ -277,10 +277,10 @@ int hd6309_ICount=50000;
 #define SET_FLAGS8I(a)		{CC|=flags8i[(a)&0xff];}
 #define SET_FLAGS8D(a)		{CC|=flags8d[(a)&0xff];}
 
-static UINT8 *cycle_counts_page0;
-static UINT8 *cycle_counts_page01;
-static UINT8 *cycle_counts_page11;
-static UINT8 *index_cycle;
+static uint8_t *cycle_counts_page0;
+static uint8_t *cycle_counts_page01;
+static uint8_t *cycle_counts_page11;
+static uint8_t *index_cycle;
 
 /* combos */
 #define SET_NZ8(a)			{SET_N8(a);SET_Z(a);}
@@ -291,9 +291,9 @@ static UINT8 *index_cycle;
 #define NXORV				((CC&CC_N)^((CC&CC_V)<<2))
 
 /* for treating an unsigned byte as a signed word */
-#define SIGNED(b) ((UINT16)(b&0x80?b|0xff00:b))
+#define SIGNED(b) ((uint16_t)(b&0x80?b|0xff00:b))
 /* for treating an unsigned short as a signed long */
-#define SIGNED_16(b) ((UINT32)(b&0x8000?b|0xffff0000:b))
+#define SIGNED_16(b) ((uint32_t)(b&0x8000?b|0xffff0000:b))
 
 /* macros for addressing modes (postbytes have their own code) */
 #define DIRECT	EAD = DPD; IMMBYTE(ea.b.l)
@@ -336,7 +336,7 @@ static UINT8 *index_cycle;
 
 /* macros for branch instructions */
 #define BRANCH(f) { 					\
-	UINT8 t;							\
+	uint8_t t;							\
 	IMMBYTE(t); 						\
 	if( f ) 							\
 	{									\
@@ -357,32 +357,32 @@ static UINT8 *index_cycle;
 	}									\
 }
 
-static INLINE UINT32 RM16( UINT32 mAddr );
-static INLINE UINT32 RM16( UINT32 mAddr )
+static INLINE uint32_t RM16( uint32_t mAddr );
+static INLINE uint32_t RM16( uint32_t mAddr )
 {
-	UINT32 result = RM(mAddr) << 8;
+	uint32_t result = RM(mAddr) << 8;
 	return result | RM((mAddr+1)&0xffff);
 }
 
-static INLINE UINT32 RM32( UINT32 mAddr );
-static INLINE UINT32 RM32( UINT32 mAddr )
+static INLINE uint32_t RM32( uint32_t mAddr );
+static INLINE uint32_t RM32( uint32_t mAddr )
 {
-	UINT32 result = RM(mAddr) << 24;
+	uint32_t result = RM(mAddr) << 24;
 	result += RM(mAddr+1) << 16;
 	result += RM(mAddr+2) << 8;
 	result += RM(mAddr+3);
 	return result;
 }
 
-static INLINE void WM16( UINT32 mAddr, PAIR *p );
-static INLINE void WM16( UINT32 mAddr, PAIR *p )
+static INLINE void WM16( uint32_t mAddr, PAIR *p );
+static INLINE void WM16( uint32_t mAddr, PAIR *p )
 {
 	WM( mAddr, p->b.h );
 	WM( (mAddr+1)&0xffff, p->b.l );
 }
 
-static INLINE void WM32( UINT32 mAddr, PAIR *p );
-static INLINE void WM32( UINT32 mAddr, PAIR *p )
+static INLINE void WM32( uint32_t mAddr, PAIR *p );
+static INLINE void WM32( uint32_t mAddr, PAIR *p )
 {
 	WM( mAddr, p->b.h3 );
 	WM( (mAddr+1)&0xffff, p->b.h2 );
@@ -1073,7 +1073,7 @@ int hd6309_execute(int cycles)	/* NS 970908 */
 
 static INLINE void fetch_effective_address( void )
 {
-	UINT8 postbyte = ROP_ARG(PCD);
+	uint8_t postbyte = ROP_ARG(PCD);
 	PC++;
 
 	switch(postbyte)

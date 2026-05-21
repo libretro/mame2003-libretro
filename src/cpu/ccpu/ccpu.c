@@ -9,13 +9,13 @@ architecture.  Really, it's not so bad!
 #include "mamedbg.h"
 #include "ccpu.h"
 
-static UINT8 ccpu_reg_layout[] = {
+static uint8_t ccpu_reg_layout[] = {
 	CCPU_PC, CCPU_CFLAG, CCPU_CSTATE, CCPU_A, CCPU_B, CCPU_I, -1,
 	CCPU_P, CCPU_J, CCPU_ACC, CCPU_CMP, CCPU_PA0, 0,
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 ccpu_win_layout[] = {
+static uint8_t ccpu_win_layout[] = {
 	25, 0,55, 2,	/* register window (top rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
     25, 3,55, 9,    /* memory #1 window (right, upper middle) */
@@ -27,17 +27,17 @@ static UINT8 ccpu_win_layout[] = {
 /* the MAME version of the CCPU registers */
 typedef struct ccpuRegs
 {
-    UINT16  accVal;
-    UINT16  cmpVal;
-    UINT8   pa0;
-    UINT8   cFlag;
-    UINT16  eRegPC;
-    UINT16  eRegA;
-    UINT16  eRegB;
-    UINT16  eRegI;
-    UINT16  eRegJ;
-    UINT8   eRegP;
-    UINT8   eCState;
+    uint16_t  accVal;
+    uint16_t  cmpVal;
+    uint8_t   pa0;
+    uint8_t   cFlag;
+    uint16_t  eRegPC;
+    uint16_t  eRegA;
+    uint16_t  eRegB;
+    uint16_t  eRegI;
+    uint16_t  eRegJ;
+    uint8_t   eRegP;
+    uint8_t   eCState;
 } ccpuRegs;
 
 #define CCPU_FETCH(a) 		(cpu_readop(BYTE_XOR_BE(a)+CCPU_PGM_OFFSET))
@@ -67,8 +67,8 @@ extern void CinemaVectorData (int fromx, int fromy, int tox, int toy, int color)
 int ccpu_icount = 1000;
 
 
-extern UINT16 ioSwitches;
-extern UINT16 ioInputs;
+extern uint16_t ioSwitches;
+extern uint16_t ioInputs;
 
 
 void ccpu_init(void)

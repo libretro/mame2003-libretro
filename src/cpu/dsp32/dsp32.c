@@ -151,49 +151,49 @@
 typedef struct
 {
 	/* core registers */
-	UINT32			r[32];
-	UINT32			pin, pout;
-	UINT32			ivtp;
-	UINT32			nzcflags;
-	UINT32			vflags;
+	uint32_t			r[32];
+	uint32_t			pin, pout;
+	uint32_t			ivtp;
+	uint32_t			nzcflags;
+	uint32_t			vflags;
 
 	double			a[6];
 	double			NZflags;
-	UINT8			VUflags;
+	uint8_t			VUflags;
 
 	double			abuf[4];
-	UINT8			abufreg[4];
-	UINT8			abufVUflags[4];
-	UINT8			abufNZflags[4];
+	uint8_t			abufreg[4];
+	uint8_t			abufVUflags[4];
+	uint8_t			abufNZflags[4];
 	int				abufcycle[4];
 	int				abuf_index;
 
-	INT32			mbufaddr[4];
-	UINT32			mbufdata[4];
+	int32_t			mbufaddr[4];
+	uint32_t			mbufdata[4];
 	int				mbuf_index;
 
-	UINT16			par;
-	UINT8			pare;
-	UINT16			pdr;
-	UINT16			pdr2;
-	UINT16			pir;
-	UINT16			pcr;
-	UINT16			emr;
-	UINT8			esr;
-	UINT16			pcw;
-	UINT8			piop;
+	uint16_t			par;
+	uint8_t			pare;
+	uint16_t			pdr;
+	uint16_t			pdr2;
+	uint16_t			pir;
+	uint16_t			pcr;
+	uint16_t			emr;
+	uint8_t			esr;
+	uint16_t			pcw;
+	uint8_t			piop;
 
-	UINT32			ibuf;
-	UINT32			isr;
-	UINT32			obuf;
-	UINT32			osr;
+	uint32_t			ibuf;
+	uint32_t			isr;
+	uint32_t			obuf;
+	uint32_t			osr;
 
 	/* internal stuff */
-	UINT8			lastpins;
-	UINT32			ppc;
-	UINT32			op;
+	uint8_t			lastpins;
+	uint32_t			ppc;
+	uint32_t			op;
 	int				interrupt_cycles;
-	void			(*output_pins_changed)(UINT32 pins);
+	void			(*output_pins_changed)(uint32_t pins);
 } dsp32_regs;
 
 
@@ -278,7 +278,7 @@ static INLINE void generate_exception(int exception)
 }
 
 
-static INLINE void invalid_instruction(UINT32 op)
+static INLINE void invalid_instruction(uint32_t op)
 {
 }
 
@@ -611,7 +611,7 @@ void dsp32c_set_reg(int regnum, unsigned val)
 **	DEBUGGER DEFINITIONS
 **#################################################################################################*/
 
-static UINT8 dsp32c_reg_layout[] =
+static uint8_t dsp32c_reg_layout[] =
 {
 	DSP32_PC,		DSP32_R11,		-1,
 	DSP32_R0,	 	DSP32_R12,		-1,
@@ -632,7 +632,7 @@ static UINT8 dsp32c_reg_layout[] =
 	DSP32_ESR,		DSP32_DAUC,		0
 };
 
-static UINT8 dsp32c_win_layout[] =
+static uint8_t dsp32c_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -772,7 +772,7 @@ static INLINE dsp32_regs *FINDCONTEXT(int cpu)
 	return context;
 }
 
-static UINT32 regmap[4][16] =
+static uint32_t regmap[4][16] =
 {
 	{	/* DSP32 compatible mode */
 		PIO_PAR|LOWER, PIO_PAR|UPPER, PIO_PDR|LOWER, PIO_PDR|UPPER,
@@ -823,7 +823,7 @@ static INLINE void dma_load(void)
 	/* only process if DMA is enabled */
 	if (dsp32.pcr & PCR_DMA)
 	{
-		UINT32 addr = dsp32.par | (dsp32.pare << 16);
+		uint32_t addr = dsp32.par | (dsp32.pare << 16);
 
 		/* 16-bit case */
 		if (!(dsp32.pcr & PCR_DMA32))
@@ -832,7 +832,7 @@ static INLINE void dma_load(void)
 		/* 32-bit case */
 		else
 		{
-			UINT32 temp = RLONG(addr & 0xfffffc);
+			uint32_t temp = RLONG(addr & 0xfffffc);
 			dsp32.pdr = temp >> 16;
 			dsp32.pdr2 = temp & 0xffff;
 		}
@@ -848,7 +848,7 @@ static INLINE void dma_store(void)
 	/* only process if DMA is enabled */
 	if (dsp32.pcr & PCR_DMA)
 	{
-		UINT32 addr = dsp32.par | (dsp32.pare << 16);
+		uint32_t addr = dsp32.par | (dsp32.pare << 16);
 
 		/* 16-bit case */
 		if (!(dsp32.pcr & PCR_DMA32))
@@ -867,7 +867,7 @@ static INLINE void dma_store(void)
 void dsp32c_pio_w(int cpunum, int reg, int data)
 {
 	data16_t mask;
-	UINT8 mode;
+	uint8_t mode;
 
 	cpuintrf_push_context(cpunum);
 
@@ -949,7 +949,7 @@ void dsp32c_pio_w(int cpunum, int reg, int data)
 int dsp32c_pio_r(int cpunum, int reg)
 {
 	data16_t mask, result = 0xffff;
-	UINT8 mode, shift = 0;
+	uint8_t mode, shift = 0;
 
 	cpuintrf_push_context(cpunum);
 

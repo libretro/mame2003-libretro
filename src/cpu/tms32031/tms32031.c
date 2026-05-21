@@ -89,29 +89,29 @@ enum
 
 union genreg
 {
-	UINT32		i32[2];
-	UINT16		i16[4];
-	UINT8		i8[8];
+	uint32_t		i32[2];
+	uint16_t		i16[4];
+	uint8_t		i8[8];
 };
 
 /* TMS34031 Registers */
 typedef struct
 {
 	/* core registers */
-	UINT32			pc;
+	uint32_t			pc;
 	union genreg	r[36];
-	UINT32			bkmask;
+	uint32_t			bkmask;
 
 	/* internal stuff */
-	UINT32			ppc;
-	UINT32			op;
-	UINT8			delayed;
-	UINT8			irq_pending;
-	UINT8			mcu_mode;
+	uint32_t			ppc;
+	uint32_t			op;
+	uint8_t			delayed;
+	uint8_t			irq_pending;
+	uint8_t			mcu_mode;
 	int				interrupt_cycles;
 
-	void			(*xf0_w)(UINT8 val);
-	void			(*xf1_w)(UINT8 val);
+	void			(*xf0_w)(uint8_t val);
+	void			(*xf1_w)(uint8_t val);
 } tms32031_regs;
 
 
@@ -121,7 +121,7 @@ typedef struct
 **#################################################################################################*/
 
 static void trap(int trapnum);
-static UINT32 boot_loader(UINT32 boot_rom_addr);
+static uint32_t boot_loader(uint32_t boot_rom_addr);
 
 
 
@@ -158,8 +158,8 @@ static tms32031_regs tms32031;
 **	HELPER MACROS
 **#################################################################################################*/
 
-#define MANTISSA(r)			((INT32)(r)->i32[0])
-#define EXPONENT(r)			((INT8)(r)->i32[1])
+#define MANTISSA(r)			((int32_t)(r)->i32[0])
+#define EXPONENT(r)			((int8_t)(r)->i32[1])
 #define SET_MANTISSA(r,v)	((r)->i32[0] = (v))
 #define SET_EXPONENT(r,v)	((r)->i32[1] = (v))
 
@@ -167,7 +167,7 @@ typedef union int_double
 {
 	double d;
 	float f[2];
-	UINT32 i[2];
+	uint32_t i[2];
 } int_double;
 
 
@@ -186,7 +186,7 @@ static float dsp_to_float(union genreg *fp)
 	else
 	{
 		int exponent = (EXPONENT(fp) + 127) << 23;
-		INT32 man = -MANTISSA(fp);
+		int32_t man = -MANTISSA(fp);
 		id.i[0] = 0x80000000 + exponent + ((man >> 8) & 0x00ffffff);
 	}
 	return id.f[0];
@@ -209,7 +209,7 @@ static double dsp_to_double(union genreg *fp)
 	else
 	{
 		int exponent = (EXPONENT(fp) + 1023) << 20;
-		INT32 man = -MANTISSA(fp);
+		int32_t man = -MANTISSA(fp);
 		id.i[BYTE_XOR_BE(0)] = 0x80000000 + exponent + ((man >> 11) & 0x001fffff);
 		id.i[BYTE_XOR_BE(1)] = (man << 21) & 0xffe00000;
 	}
@@ -232,13 +232,13 @@ static void double_to_dsp(double val, union genreg *result)
 	}
 	else if (exponent > 127)
 	{
-		if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+		if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 			SET_MANTISSA(result, 0x7fffffff);
 		else
 			SET_MANTISSA(result, 0x80000001);
 		SET_EXPONENT(result, 127);
 	}
-	else if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+	else if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 	{
 		SET_MANTISSA(result, mantissa);
 		SET_EXPONENT(result, exponent);
@@ -266,7 +266,7 @@ static INLINE void generate_exception(int exception)
 }
 
 
-static INLINE void invalid_instruction(UINT32 op)
+static INLINE void invalid_instruction(uint32_t op)
 {
 }
 
@@ -403,7 +403,7 @@ void tms32031_reset(void *param)
 
 
 #if (LOG_OPCODE_USAGE)
-static UINT32 hits[0x200*4];
+static uint32_t hits[0x200*4];
 #endif
 
 void tms32031_exit(void)
@@ -446,7 +446,7 @@ int tms32031_execute(int cycles)
 		{
 			execute_one();
 
-			if ((INT32)--IREG(TMR_RC) >= 0)
+			if ((int32_t)--IREG(TMR_RC) >= 0)
 				tms32031.pc = IREG(TMR_RS);
 			else
 			{
@@ -495,14 +495,14 @@ unsigned tms32031_get_reg(int regnum)
 		case TMS32031_R5:	return IREG(TMR_R5);
 		case TMS32031_R6:	return IREG(TMR_R6);
 		case TMS32031_R7:	return IREG(TMR_R7);
-		case TMS32031_R0F:	temp = dsp_to_double(&tms32031.r[TMR_R0]); return *(UINT32 *)&temp;
-		case TMS32031_R1F:	temp = dsp_to_double(&tms32031.r[TMR_R1]); return *(UINT32 *)&temp;
-		case TMS32031_R2F:	temp = dsp_to_double(&tms32031.r[TMR_R2]); return *(UINT32 *)&temp;
-		case TMS32031_R3F:	temp = dsp_to_double(&tms32031.r[TMR_R3]); return *(UINT32 *)&temp;
-		case TMS32031_R4F:	temp = dsp_to_double(&tms32031.r[TMR_R4]); return *(UINT32 *)&temp;
-		case TMS32031_R5F:	temp = dsp_to_double(&tms32031.r[TMR_R5]); return *(UINT32 *)&temp;
-		case TMS32031_R6F:	temp = dsp_to_double(&tms32031.r[TMR_R6]); return *(UINT32 *)&temp;
-		case TMS32031_R7F:	temp = dsp_to_double(&tms32031.r[TMR_R7]); return *(UINT32 *)&temp;
+		case TMS32031_R0F:	temp = dsp_to_double(&tms32031.r[TMR_R0]); return *(uint32_t *)&temp;
+		case TMS32031_R1F:	temp = dsp_to_double(&tms32031.r[TMR_R1]); return *(uint32_t *)&temp;
+		case TMS32031_R2F:	temp = dsp_to_double(&tms32031.r[TMR_R2]); return *(uint32_t *)&temp;
+		case TMS32031_R3F:	temp = dsp_to_double(&tms32031.r[TMR_R3]); return *(uint32_t *)&temp;
+		case TMS32031_R4F:	temp = dsp_to_double(&tms32031.r[TMR_R4]); return *(uint32_t *)&temp;
+		case TMS32031_R5F:	temp = dsp_to_double(&tms32031.r[TMR_R5]); return *(uint32_t *)&temp;
+		case TMS32031_R6F:	temp = dsp_to_double(&tms32031.r[TMR_R6]); return *(uint32_t *)&temp;
+		case TMS32031_R7F:	temp = dsp_to_double(&tms32031.r[TMR_R7]); return *(uint32_t *)&temp;
 		case TMS32031_AR0:	return IREG(TMR_AR0);
 		case TMS32031_AR1:	return IREG(TMR_AR1);
 		case TMS32031_AR2:	return IREG(TMR_AR2);
@@ -602,7 +602,7 @@ void tms32031_set_reg(int regnum, unsigned val)
 **	DEBUGGER DEFINITIONS
 **#################################################################################################*/
 
-static UINT8 tms32031_reg_layout[] =
+static uint8_t tms32031_reg_layout[] =
 {
 	TMS32031_PC,		TMS32031_SP,		-1,
 	TMS32031_R0,		TMS32031_R0F,		-1,
@@ -625,7 +625,7 @@ static UINT8 tms32031_reg_layout[] =
 	TMS32031_ST,		TMS32031_IOF, 		0
 };
 
-static UINT8 tms32031_win_layout[] =
+static uint8_t tms32031_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -695,7 +695,7 @@ const char *tms32031_info(void *context, int regnum)
 
 		case CPU_INFO_FLAGS:
 		{
-			UINT32 temp = r->r[TMR_ST].i32[0];
+			uint32_t temp = r->r[TMR_ST].i32[0];
 			sprintf(buffer[which], "%c%c%c%c%c%c%c%c",
 				(temp & 0x80) ? 'O':'.',
 				(temp & 0x40) ? 'U':'.',
@@ -743,10 +743,10 @@ unsigned tms32031_dasm(char *buffer, unsigned pc)
 **	BOOT LOADER
 **#################################################################################################*/
 
-static UINT32 boot_loader(UINT32 boot_rom_addr)
+static uint32_t boot_loader(uint32_t boot_rom_addr)
 {
-	UINT32 bits, control, advance;
-	UINT32 start_offset = 0;
+	uint32_t bits, control, advance;
+	uint32_t start_offset = 0;
 	int first = 1, i;
 
 	/* read the size of the data */
@@ -764,7 +764,7 @@ static UINT32 boot_loader(UINT32 boot_rom_addr)
 	/* now parse the data */
 	while (1)
 	{
-		UINT32 offs, len;
+		uint32_t offs, len;
 
 		/* read the length of this section */
 		len = RMEM(boot_rom_addr++);
@@ -790,7 +790,7 @@ static UINT32 boot_loader(UINT32 boot_rom_addr)
 		/* now copy the data */
 		while (len--)
 		{
-			UINT32 data;
+			uint32_t data;
 
 			/* extract the 32-bit word */
 			data = RMEM(boot_rom_addr++);

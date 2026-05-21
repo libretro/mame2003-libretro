@@ -103,7 +103,7 @@ static const char *op_name_str[] = {
  * 4	invalid opcode for 1:6800/6802/6808, 2:6801/6803, 4:HD63701
  */
 
-static UINT8 table[0x102][5] = {
+static uint8_t table[0x102][5] = {
 	{ill, inh,0  ,0,7},{nop, inh,0	,0,0},{ill, inh,0  ,0,7},{ill, inh,0  ,0,7},/* 00 */
 	{lsrd,inh,0  ,0,1},{asld,inh,0	,0,1},{tap, inh,0  ,0,0},{tpa, inh,0  ,0,0},
 	{inx, inh,0  ,0,0},{dex, inh,0	,0,0},{clv, inh,0  ,0,0},{sev, inh,0  ,0,0},
@@ -186,7 +186,7 @@ unsigned Dasm680x (int subtype, char *buf, unsigned pc)
 	int invalid_mask;
 	int code = cpu_readop(pc);
 	const char *symbol, *symbol2;
-	UINT8 opcode, args, access, size, invalid;
+	uint8_t opcode, args, access, size, invalid;
 
 	switch( subtype )
 	{
@@ -228,7 +228,7 @@ unsigned Dasm680x (int subtype, char *buf, unsigned pc)
 	switch( args )
 	{
 		case rel:  /* relative */
-			symbol = set_ea_info( 0, pc, (INT8)ARG1 + 2, access );
+			symbol = set_ea_info( 0, pc, (int8_t)ARG1 + 2, access );
 			sprintf (buf, "%s", symbol);
 			return 2;
 		case imm:  /* immediate (byte or word) */

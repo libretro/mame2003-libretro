@@ -1,5 +1,5 @@
 /* descriptor table format in memory
-   UINT16 limit
+   uint16_t limit
    UINT24 addr
    0..3 type
     system segment
@@ -15,7 +15,7 @@
    4 dt 0 system segment, 1 application segment (code, data)
    5,6 dpl descriptor privileg level
    7 p present 0 gives trap when accessed
-   UINT16 reserved (should be zero)
+   uint16_t reserved (should be zero)
 */
 #define WRITEABLE(a) ((a&0xa)==2)
 #define READABLE(a) ( ((a&0xa)==0xa)|| ((a&8)==0) )
@@ -25,7 +25,7 @@ static void i286_trap2(int number)
 	i286_interrupt(number);
 }
 
-static int i286_selector_okay(UINT16 selector)
+static int i286_selector_okay(uint16_t selector)
 {
 	if (selector&4) {
 		return (selector&~7)<I.ldtr.limit;
@@ -34,7 +34,7 @@ static int i286_selector_okay(UINT16 selector)
 	}
 }
 
-static offs_t i286_selector_to_address(UINT16 selector)
+static offs_t i286_selector_to_address(uint16_t selector)
 {
 	if (selector&4) {
 		return I.ldtr.base+(selector&~7);
@@ -43,10 +43,10 @@ static offs_t i286_selector_to_address(UINT16 selector)
 	}
 }
 
-static void i286_data_descriptor(int reg, UINT16 selector)
+static void i286_data_descriptor(int reg, uint16_t selector)
 {
 	if (PM) {
-		UINT16 help;
+		uint16_t help;
 		/* selector format
 		   15..3 number/address in descriptor table
 		   2: 0 global, 1 local descriptor table
@@ -75,9 +75,9 @@ static void i286_data_descriptor(int reg, UINT16 selector)
 	}
 }
 
-static void i286_code_descriptor(UINT16 selector, UINT16 offset)
+static void i286_code_descriptor(uint16_t selector, uint16_t offset)
 {
-	UINT16 word1, word2, word3;
+	uint16_t word1, word2, word3;
 	if (PM) {
 		/* selector format
 		   15..3 number/address in descriptor table
@@ -130,9 +130,9 @@ static void i286_code_descriptor(UINT16 selector, UINT16 offset)
 	}
 }
 
-static void i286_interrupt_descriptor(UINT16 number)
+static void i286_interrupt_descriptor(uint16_t number)
 {
-	UINT16 word1,word2,word3;
+	uint16_t word1,word2,word3;
 	if ((number<<3)>=I.idtr.limit) {
 		;// go into shutdown mode
 		return;
@@ -163,8 +163,8 @@ static void i286_interrupt_descriptor(UINT16 number)
 static void PREFIX286(_0fpre)(void)
 {
 	unsigned next = FETCHOP;
-	UINT16 ModRM;
-	UINT16 tmp;
+	uint16_t ModRM;
+	uint16_t tmp;
 	offs_t addr;
 
 	switch (next) {
@@ -296,7 +296,7 @@ static void PREFIX286(_0fpre)(void)
 static void PREFIX286(_arpl)(void) /* 0x63 */
 {
 	if (PM) {
-		UINT16 ModRM=FETCHOP, tmp=GetRMWord(ModRM);
+		uint16_t ModRM=FETCHOP, tmp=GetRMWord(ModRM);
 
 		I.ZeroVal=i286_selector_okay(RegWord(ModRM))
 			  &&i286_selector_okay(RegWord(ModRM))

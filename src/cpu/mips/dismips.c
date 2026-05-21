@@ -10,33 +10,33 @@
 
 struct 
 {
-	UINT8 id[ 8 ];
-	UINT32 text;	/* SCE only */
-	UINT32 data;	/* SCE only */
-	UINT32 pc0;
-	UINT32 gp0;		/* SCE only */
-	UINT32 t_addr;
-	UINT32 t_size;
-	UINT32 d_addr;	/* SCE only */
-	UINT32 d_size;	/* SCE only */
-	UINT32 b_addr;	/* SCE only */
-	UINT32 b_size;	/* SCE only */
-	UINT32 s_addr;
-	UINT32 s_size;
-	UINT32 SavedSP;
-	UINT32 SavedFP;
-	UINT32 SavedGP;
-	UINT32 SavedRA;
-	UINT32 SavedS0;
-	UINT8 dummy[ 0x800 - 76 ];
+	uint8_t id[ 8 ];
+	uint32_t text;	/* SCE only */
+	uint32_t data;	/* SCE only */
+	uint32_t pc0;
+	uint32_t gp0;		/* SCE only */
+	uint32_t t_addr;
+	uint32_t t_size;
+	uint32_t d_addr;	/* SCE only */
+	uint32_t d_size;	/* SCE only */
+	uint32_t b_addr;	/* SCE only */
+	uint32_t b_size;	/* SCE only */
+	uint32_t s_addr;
+	uint32_t s_size;
+	uint32_t SavedSP;
+	uint32_t SavedFP;
+	uint32_t SavedGP;
+	uint32_t SavedRA;
+	uint32_t SavedS0;
+	uint8_t dummy[ 0x800 - 76 ];
 } m_psxexe_header;
 
 #define FORMAT_BIN ( 0 )
 #define FORMAT_PSX ( 1 )
 
-static UINT8 *filebuf;
-static UINT32 offset;
-static UINT8 order[] = { 3, 2, 1, 0 };
+static uint8_t *filebuf;
+static uint32_t offset;
+static uint8_t order[] = { 3, 2, 1, 0 };
 
 #define STANDALONE
 #include "mipsdasm.c"
@@ -63,18 +63,18 @@ static void usage (void)
 int main( int argc, char *argv[] )
 {
 	FILE *f;
-	UINT8 i;
-	UINT8 j;
-	UINT8 n;
-	UINT8 p;
-	UINT32 begin;
-	UINT32 end;
-	UINT32 filelen;
-	UINT32 len;
-	UINT32 pc;
+	uint8_t i;
+	uint8_t j;
+	uint8_t n;
+	uint8_t p;
+	uint32_t begin;
+	uint32_t end;
+	uint32_t filelen;
+	uint32_t len;
+	uint32_t pc;
 	char buf[ 80 ];
 	char *filename;
-	UINT32 format;
+	uint32_t format;
 
 	filename = NULL;
 	begin = 0;

@@ -60,8 +60,8 @@ extern const address_space m37710_space_io;
    Call-site args are side-effect free, so the multiple references are safe. */
 #define memory_read_byte_8le(space, address) \
 	(((space) != NULL && *(space) == M37710_AS_IO) \
-		? (UINT8)cpu_readport24lew(address) \
-		: (UINT8)cpu_readmem24lew(address))
+		? (uint8_t)cpu_readport24lew(address) \
+		: (uint8_t)cpu_readmem24lew(address))
 
 #define memory_write_byte_8le(space, address, data) \
 	(((space) != NULL && *(space) == M37710_AS_IO) \
@@ -75,13 +75,13 @@ extern const address_space m37710_space_io;
    odd -> two byte cycles, matching the M37710's unaligned word access. */
 #define memory_read_word_16le(space, address) \
 	(((address) & 1) \
-		? (UINT16)(cpu_readmem24lew(address) | (cpu_readmem24lew((address) + 1) << 8)) \
-		: (UINT16)cpu_readmem24lew_word(address))
+		? (uint16_t)(cpu_readmem24lew(address) | (cpu_readmem24lew((address) + 1) << 8)) \
+		: (uint16_t)cpu_readmem24lew_word(address))
 
 #define memory_write_word_16le(space, address, data) \
 	(((address) & 1) \
-		? (void)(cpu_writemem24lew((address), (UINT8)((data) & 0xff)), \
-		         cpu_writemem24lew((address) + 1, (UINT8)(((data) >> 8) & 0xff))) \
+		? (void)(cpu_writemem24lew((address), (uint8_t)((data) & 0xff)), \
+		         cpu_writemem24lew((address) + 1, (uint8_t)(((data) >> 8) & 0xff))) \
 		: (void)cpu_writemem24lew_word((address), (data)))
 
 /* Per-instruction debug hook: no integrated debugger in this build. */
@@ -119,7 +119,7 @@ extern void *m37710_get_token(void);
 #define CPU_RESET(name)       void cpu_reset_##name(legacy_cpu_device *device)
 #define CPU_EXIT(name)        void cpu_exit_##name(legacy_cpu_device *device)
 #define CPU_EXECUTE(name)     void cpu_execute_##name(legacy_cpu_device *device)
-#define CPU_DISASSEMBLE(name) int  cpu_disassemble_##name(legacy_cpu_device *device, char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram, int options)
+#define CPU_DISASSEMBLE(name) int  cpu_disassemble_##name(legacy_cpu_device *device, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram, int options)
 
 /* ---- attotime -> double seconds ----------------------------------------- */
 /* The core only uses attotime to schedule its internal timers. mame2003 timers

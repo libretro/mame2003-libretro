@@ -69,7 +69,7 @@
   m4510.mem[7]=0; \
   CHANGE_PC; \
 } else { \
-  /*UINT16 low, high;*/ \
+  /*uint16_t low, high;*/ \
   /*low=m4510.low;*/ \
   /*high=m4510.high;*/ \
   m4510.low=m4510.a|(m4510.x<<8); \
@@ -89,7 +89,7 @@
   CHANGE_PC; \
  } \
  { \
-				UINT8 op = RDOP();								\
+				uint8_t op = RDOP();								\
 				(*m65ce02.insn[op])();							\
  } \
 

@@ -43,8 +43,8 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,SIL,SIH,DIL,DIH } BREGS;
 #define SetZF(x)			(I.ZeroVal = (x))
 #define SetPF(x)			(I.ParityVal = (x))
 
-#define SetSZPF_Byte(x) 	(I.ParityVal = I.SignVal = I.ZeroVal = (INT8)(x))
-#define SetSZPF_Word(x) 	(I.ParityVal = I.SignVal = I.ZeroVal = (INT16)(x))
+#define SetSZPF_Byte(x) 	(I.ParityVal = I.SignVal = I.ZeroVal = (int8_t)(x))
+#define SetSZPF_Word(x) 	(I.ParityVal = I.SignVal = I.ZeroVal = (int16_t)(x))
 
 #define ADDB(dst,src) { unsigned res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
 #define ADDW(dst,src) { unsigned res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }

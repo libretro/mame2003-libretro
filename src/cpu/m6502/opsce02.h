@@ -227,13 +227,13 @@
 	P &= ~F_C;													\
 	if (Z >= tmp)												\
 		P |= F_C;												\
-	SET_NZ((UINT8)(Z - tmp))
+	SET_NZ((uint8_t)(Z - tmp))
 
 /* 65ce02 ******************************************************
  *	DEZ Decrement index Z
  ***************************************************************/
 #define DEZ 													\
-	Z = (UINT8)--Z; 											\
+	Z = (uint8_t)--Z; 											\
 	SET_NZ(Z)
 
 /* 65ce02 ******************************************************
@@ -248,7 +248,7 @@
  *	DEZ Decrement index Z
  ***************************************************************/
 #define INZ 													\
-	Z = (UINT8)++Z; 											\
+	Z = (uint8_t)++Z; 											\
 	SET_NZ(Z)
 
 /* 65ce02 ******************************************************
@@ -262,7 +262,7 @@
  *	LDZ Load index Z
  ***************************************************************/
 #define LDZ 													\
-	Z = (UINT8)tmp; 											\
+	Z = (uint8_t)tmp; 											\
 	SET_NZ(Z)
 
 /* 65ce02 ******************************************************
@@ -402,7 +402,7 @@
 #define PLP 													\
 	if ( P & F_I )												\
 	{															\
-		UINT8 temp; \
+		uint8_t temp; \
 		PULL(temp);												\
 		P=(P&F_E)|F_B|(temp&~F_E); \
 		if( m6502.irq_state != CLEAR_LINE && !(P & F_I) )		\
@@ -414,7 +414,7 @@
 	}															\
 	else														\
 	{															\
-		UINT8 temp; \
+		uint8_t temp; \
 		PULL(temp);												\
 		P=(P&F_E)|F_B|(temp&~F_E); \
 	}															
@@ -426,7 +426,7 @@
  ***************************************************************/
 #undef RTI
 #define RTI 													\
-{ UINT8 temp;PULL(temp);P=(P&F_E)|F_B|(temp&~F_E); } \
+{ uint8_t temp;PULL(temp);P=(P&F_E)|F_B|(temp&~F_E); } \
 	PULL(PCL);													\
 	PULL(PCH);													\
 	if( m65ce02.irq_state != CLEAR_LINE && !(P & F_I) ) 		\
@@ -447,6 +447,6 @@
 		S = X;													\
 		if (PEEK_OP() == 0x2b /*TYS*/ ) 						\
 		{														\
-				UINT8 op = RDOP();								\
+				uint8_t op = RDOP();								\
 				(*m65ce02.insn[op])();							\
 		}

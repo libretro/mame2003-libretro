@@ -239,7 +239,7 @@ static CINESTATE tOUT_B_BB (int opcode);
 
 
 /* Opcode cycle counts according to Zonn's cineinst.txt */
-static UINT8 ccpu_cycles[] =
+static uint8_t ccpu_cycles[] =
 {
 	/*    0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F */
   /*0*/	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, /* LDA */

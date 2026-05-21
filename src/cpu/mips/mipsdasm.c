@@ -12,7 +12,7 @@
 #include "memory.h"
 #endif
 
-static char *make_signed_hex_str_16( UINT32 value )
+static char *make_signed_hex_str_16( uint32_t value )
 {
 	static char s_hex[ 20 ];
 
@@ -101,9 +101,9 @@ static const char *s_gtelm[] =
 	"0", "1"
 };
 
-unsigned DasmMIPS( char *buffer, UINT32 oldpc )
+unsigned DasmMIPS( char *buffer, uint32_t oldpc )
 {
-	UINT32 pc, op;
+	uint32_t pc, op;
 
 	pc = oldpc;
 #ifndef STANDALONE

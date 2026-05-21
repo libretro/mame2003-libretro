@@ -191,8 +191,8 @@ static const char *s_mnemonic[] = {
 };
 
 typedef struct {
-	UINT8	access;
-	UINT8	mnemonic;
+	uint8_t	access;
+	uint8_t	mnemonic;
 	const char *arguments;
 }	z80dasm;
 
@@ -540,12 +540,12 @@ static z80dasm mnemonic_main[256]= {
 	{_JP,zCALL,"m,A"},  {_0, zDB,"fd"},     {_0, zCP,"B"},      {_JP,zRST,"V"}
 };
 
-static char sign(INT8 offset)
+static char sign(int8_t offset)
 {
  return (offset < 0)? '-':'+';
 }
 
-static int offs(INT8 offset)
+static int offs(int8_t offset)
 {
 	if (offset < 0) return -offset;
 	return offset;
@@ -561,9 +561,9 @@ unsigned DasmZ180( char *buffer, unsigned pc )
 	const char *ixy;
 	char *dst;
 	unsigned PC = pc;
-	INT8 offset = 0;
-	UINT8 op, op1;
-	UINT16 ea = 0, xy = 0;
+	int8_t offset = 0;
+	uint8_t op, op1;
+	uint16_t ea = 0, xy = 0;
 
 	ixy = "oops!!";
 	dst = buffer;
@@ -587,7 +587,7 @@ unsigned DasmZ180( char *buffer, unsigned pc )
 		op1 = cpu_readmemz180(pc++);
 		if( op1 == 0xcb )
 		{
-			offset = (INT8) cpu_readmemz180(pc++);
+			offset = (int8_t) cpu_readmemz180(pc++);
 			op1 = cpu_readmemz180(pc++); /* fourth byte from OP_RAM! */
 			xy = z180_get_reg( Z180_IX );
 			ea = (xy + offset) & 0xffff;
@@ -600,7 +600,7 @@ unsigned DasmZ180( char *buffer, unsigned pc )
 		op1 = cpu_readop(pc++);
 		if( op1 == 0xcb )
 		{
-			offset = (INT8) cpu_readmemz180(pc++);
+			offset = (int8_t) cpu_readmemz180(pc++);
 			op1 = cpu_readmemz180(pc++); /* fourth byte from OP_RAM! */
 			xy = z180_get_reg( Z180_IY );
 			ea = (ea + offset) & 0xffff;
@@ -689,7 +689,7 @@ unsigned DasmZ180( char *buffer, unsigned pc )
 				dst += sprintf( dst, "%s", symbol );
 				break;
 			case 'O':   /* Offset relative to PC */
-				offset = (INT8) cpu_readmemz180(pc++);
+				offset = (int8_t) cpu_readmemz180(pc++);
 				symbol = set_ea_info(0, PC, offset + 2, d->access);
 				dst += sprintf( dst, "%s", symbol );
 				break;
@@ -709,7 +709,7 @@ unsigned DasmZ180( char *buffer, unsigned pc )
 				dst += sprintf( dst, "%s", symbol );
 				break;
 			case 'X':
-				offset = (INT8) cpu_readmemz180(pc++);
+				offset = (int8_t) cpu_readmemz180(pc++);
 				ea = (xy + offset) & 0xffff;
 			case 'Y':
 				symbol = set_ea_info(0, ea, EA_UINT8, d->access);

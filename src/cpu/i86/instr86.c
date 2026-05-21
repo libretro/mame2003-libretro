@@ -116,7 +116,7 @@ static void PREFIX86(_rotate_shift_Byte)(unsigned ModRM, unsigned count)
 			SetSZPF_Byte(dst);
 			break;
 		case 0x38:	/* SAR eb,1 */
-			dst = ((INT8)src) >> 1;
+			dst = ((int8_t)src) >> 1;
 			PutbackRMByte(ModRM,dst);
 			I.CarryVal = src & 0x01;
 			I.OverVal = 0;
@@ -181,9 +181,9 @@ static void PREFIX86(_rotate_shift_Byte)(unsigned ModRM, unsigned count)
 			PutbackRMByte(ModRM,(BYTE)dst);
 			break;
 		case 0x38:	/* SAR eb,count */
-			dst = ((INT8)dst) >> (count-1);
+			dst = ((int8_t)dst) >> (count-1);
 			I.CarryVal = dst & 0x1;
-			dst = ((INT8)((BYTE)dst)) >> 1;
+			dst = ((int8_t)((BYTE)dst)) >> 1;
 			SetSZPF_Byte(dst);
 			I.AuxVal = 1;
 			PutbackRMByte(ModRM,(BYTE)dst);
@@ -306,7 +306,7 @@ static void PREFIX86(_rotate_shift_Word)(unsigned ModRM, unsigned count)
 			SetSZPF_Word(dst);
 			break;
 		case 0x38:	/* SAR ew,1 */
-			dst = ((INT16)src) >> 1;
+			dst = ((int16_t)src) >> 1;
 			PutbackRMWord(ModRM,dst);
 			I.CarryVal = src & 0x01;
 			I.OverVal = 0;
@@ -372,9 +372,9 @@ static void PREFIX86(_rotate_shift_Word)(unsigned ModRM, unsigned count)
 			PutbackRMWord(ModRM,dst);
 			break;
 		case 0x38:	/* SAR ew,count */
-			dst = ((INT16)dst) >> (count-1);
+			dst = ((int16_t)dst) >> (count-1);
 			I.CarryVal = dst & 0x01;
-			dst = ((INT16)((WORD)dst)) >> 1;
+			dst = ((int16_t)((WORD)dst)) >> 1;
 			SetSZPF_Word(dst);
 			I.AuxVal = 1;
 			PutbackRMWord(ModRM,dst);
@@ -793,7 +793,7 @@ static void PREFIX86(_push_ss)(void)    /* Opcode 0x16 */
 static void PREFIX86(_pop_ss)(void)    /* Opcode 0x17 */
 {
 #ifdef I286
-	UINT16 tmp;
+	uint16_t tmp;
 	POP(tmp);
 	i286_data_descriptor(SS, tmp);
 #else
@@ -867,7 +867,7 @@ static void PREFIX86(_push_ds)(void)    /* Opcode 0x1e */
 static void PREFIX86(_pop_ds)(void)    /* Opcode 0x1f */
 {
 #ifdef I286
-	UINT16 tmp;
+	uint16_t tmp;
 	POP(tmp);
 	i286_data_descriptor(DS,tmp);
 #else
@@ -1011,7 +1011,7 @@ static void PREFIX86(_cs)(void)    /* Opcode 0x2e */
 
 static void PREFIX86(_das)(void)    /* Opcode 0x2f */
 {
-	UINT8 tmpAL=I.regs.b[AL];
+	uint8_t tmpAL=I.regs.b[AL];
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))
 	{
 		int tmp;
@@ -1088,7 +1088,7 @@ static void PREFIX86(_ss)(void)    /* Opcode 0x36 */
 
 static void PREFIX86(_aaa)(void)    /* Opcode 0x37 */
 {
-	UINT8 ALcarry=1;
+	uint8_t ALcarry=1;
 	if (I.regs.b[AL]>0xf9) ALcarry=2;
 
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))
@@ -1159,7 +1159,7 @@ static void PREFIX86(_ds)(void)    /* Opcode 0x3e */
 
 static void PREFIX86(_aas)(void)    /* Opcode 0x3f */
 {
-	UINT8 ALcarry=1;
+	uint8_t ALcarry=1;
 	if (I.regs.b[AL]>0xf9) ALcarry=2;
 
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))
@@ -1379,7 +1379,7 @@ static void PREFIX86(_pop_di)(void)    /* Opcode 0x5f */
 
 static void PREFIX86(_jo)(void)    /* Opcode 0x70 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	if (OF)
 	{
 		I.pc += tmp;
@@ -1391,7 +1391,7 @@ static void PREFIX86(_jo)(void)    /* Opcode 0x70 */
 
 static void PREFIX86(_jno)(void)    /* Opcode 0x71 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	if (!OF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1402,7 +1402,7 @@ static void PREFIX86(_jno)(void)    /* Opcode 0x71 */
 
 static void PREFIX86(_jb)(void)    /* Opcode 0x72 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	if (CF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1413,7 +1413,7 @@ static void PREFIX86(_jb)(void)    /* Opcode 0x72 */
 
 static void PREFIX86(_jnb)(void)    /* Opcode 0x73 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	if (!CF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1424,7 +1424,7 @@ static void PREFIX86(_jnb)(void)    /* Opcode 0x73 */
 
 static void PREFIX86(_jz)(void)    /* Opcode 0x74 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	if (ZF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1435,7 +1435,7 @@ static void PREFIX86(_jz)(void)    /* Opcode 0x74 */
 
 static void PREFIX86(_jnz)(void)    /* Opcode 0x75 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	if (!ZF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1446,7 +1446,7 @@ static void PREFIX86(_jnz)(void)    /* Opcode 0x75 */
 
 static void PREFIX86(_jbe)(void)    /* Opcode 0x76 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (CF || ZF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1457,7 +1457,7 @@ static void PREFIX86(_jbe)(void)    /* Opcode 0x76 */
 
 static void PREFIX86(_jnbe)(void)    /* Opcode 0x77 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	 if (!(CF || ZF)) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1468,7 +1468,7 @@ static void PREFIX86(_jnbe)(void)    /* Opcode 0x77 */
 
 static void PREFIX86(_js)(void)    /* Opcode 0x78 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (SF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1479,7 +1479,7 @@ static void PREFIX86(_js)(void)    /* Opcode 0x78 */
 
 static void PREFIX86(_jns)(void)    /* Opcode 0x79 */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (!SF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1490,7 +1490,7 @@ static void PREFIX86(_jns)(void)    /* Opcode 0x79 */
 
 static void PREFIX86(_jp)(void)    /* Opcode 0x7a */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (PF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1501,7 +1501,7 @@ static void PREFIX86(_jp)(void)    /* Opcode 0x7a */
 
 static void PREFIX86(_jnp)(void)    /* Opcode 0x7b */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (!PF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1512,7 +1512,7 @@ static void PREFIX86(_jnp)(void)    /* Opcode 0x7b */
 
 static void PREFIX86(_jl)(void)    /* Opcode 0x7c */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if ((SF!=OF)&&!ZF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1523,7 +1523,7 @@ static void PREFIX86(_jl)(void)    /* Opcode 0x7c */
 
 static void PREFIX86(_jnl)(void)    /* Opcode 0x7d */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (ZF||(SF==OF)) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1534,7 +1534,7 @@ static void PREFIX86(_jnl)(void)    /* Opcode 0x7d */
 
 static void PREFIX86(_jle)(void)    /* Opcode 0x7e */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if (ZF||(SF!=OF)) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1545,7 +1545,7 @@ static void PREFIX86(_jle)(void)    /* Opcode 0x7e */
 
 static void PREFIX86(_jnle)(void)    /* Opcode 0x7f */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
     if ((SF==OF)&&!ZF) {
 		I.pc += tmp;
 		ICOUNT -= cycles.jcc_t;
@@ -1716,7 +1716,7 @@ static void PREFIX86(_83pre)(void)    /* Opcode 0x83 */
 {
 	unsigned ModRM = FETCH;
     unsigned dst = GetRMWord(ModRM);
-    unsigned src = (WORD)((INT16)((INT8)FETCH));
+    unsigned src = (WORD)((int16_t)((int8_t)FETCH));
 
 	switch (ModRM & 0x38)
     {
@@ -2554,7 +2554,7 @@ static void PREFIX86(_escape)(void)    /* Opcodes 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 
 
 static void PREFIX86(_loopne)(void)    /* Opcode 0xe0 */
 {
-	int disp = (int)((INT8)FETCH);
+	int disp = (int)((int8_t)FETCH);
 	unsigned tmp = I.regs.w[CX]-1;
 
 	I.regs.w[CX]=tmp;
@@ -2569,7 +2569,7 @@ static void PREFIX86(_loopne)(void)    /* Opcode 0xe0 */
 
 static void PREFIX86(_loope)(void)    /* Opcode 0xe1 */
 {
-	int disp = (int)((INT8)FETCH);
+	int disp = (int)((int8_t)FETCH);
 	unsigned tmp = I.regs.w[CX]-1;
 
 	I.regs.w[CX]=tmp;
@@ -2584,7 +2584,7 @@ static void PREFIX86(_loope)(void)    /* Opcode 0xe1 */
 
 static void PREFIX86(_loop)(void)    /* Opcode 0xe2 */
 {
-	int disp = (int)((INT8)FETCH);
+	int disp = (int)((int8_t)FETCH);
 	unsigned tmp = I.regs.w[CX]-1;
 
 	I.regs.w[CX]=tmp;
@@ -2599,7 +2599,7 @@ static void PREFIX86(_loop)(void)    /* Opcode 0xe2 */
 
 static void PREFIX86(_jcxz)(void)    /* Opcode 0xe3 */
 {
-	int disp = (int)((INT8)FETCH);
+	int disp = (int)((int8_t)FETCH);
 
 	if (I.regs.w[CX] == 0) {
 		ICOUNT -= cycles.jcxz_t;
@@ -2691,7 +2691,7 @@ static void PREFIX86(_jmp_far)(void)    /* Opcode 0xea */
 
 static void PREFIX86(_jmp_d8)(void)    /* Opcode 0xeb */
 {
-	int tmp = (int)((INT8)FETCH);
+	int tmp = (int)((int8_t)FETCH);
 	I.pc += tmp;
 /* ASG - can probably assume this is safe
 	CHANGE_PC(I.pc);*/
@@ -2792,13 +2792,13 @@ static void PREFIX86(_f6pre)(void)
     case 0x20:  /* MUL AL, Eb */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.mul_r8 : cycles.mul_m8;
 		{
-			UINT16 result;
+			uint16_t result;
 			tmp2 = I.regs.b[AL];
 
-			SetSF((INT8)tmp2);
+			SetSF((int8_t)tmp2);
 			SetPF(tmp2);
 
-			result = (UINT16)tmp2*tmp;
+			result = (uint16_t)tmp2*tmp;
 			I.regs.w[AX]=(WORD)result;
 
 			SetZF(I.regs.w[AX]);
@@ -2808,14 +2808,14 @@ static void PREFIX86(_f6pre)(void)
 	 case 0x28:  /* IMUL AL, Eb */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.imul_r8 : cycles.imul_m8;
 		{
-			INT16 result;
+			int16_t result;
 
 			tmp2 = (unsigned)I.regs.b[AL];
 
-			SetSF((INT8)tmp2);
+			SetSF((int8_t)tmp2);
 			SetPF(tmp2);
 
-			result = (INT16)((INT8)tmp2)*(INT16)((INT8)tmp);
+			result = (int16_t)((int8_t)tmp2)*(int16_t)((int8_t)tmp);
 			I.regs.w[AX]=(WORD)result;
 
 			SetZF(I.regs.w[AX]);
@@ -2826,7 +2826,7 @@ static void PREFIX86(_f6pre)(void)
     case 0x30:  /* DIV AL, Ew */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.div_r8 : cycles.div_m8;
 		{
-			UINT16 result;
+			uint16_t result;
 
 			result = I.regs.w[AX];
 
@@ -2862,15 +2862,15 @@ static void PREFIX86(_f6pre)(void)
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.idiv_r8 : cycles.idiv_m8;
 		{
 
-			INT16 result;
+			int16_t result;
 
 			result = I.regs.w[AX];
 
 			if (tmp)
 			{
-				tmp2 = result % (INT16)((INT8)tmp);
+				tmp2 = result % (int16_t)((int8_t)tmp);
 
-				if ((result /= (INT16)((INT8)tmp)) > 0xff)
+				if ((result /= (int16_t)((int8_t)tmp)) > 0xff)
 				{
 #ifdef V20
 					PREFIX(_interrupt)(0,0);
@@ -2937,13 +2937,13 @@ static void PREFIX86(_f7pre)(void)
     case 0x20:  /* MUL AX, Ew */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.mul_r16 : cycles.mul_m16;
 		{
-			UINT32 result;
+			uint32_t result;
 			tmp2 = I.regs.w[AX];
 
-			SetSF((INT16)tmp2);
+			SetSF((int16_t)tmp2);
 			SetPF(tmp2);
 
-			result = (UINT32)tmp2*tmp;
+			result = (uint32_t)tmp2*tmp;
 			I.regs.w[AX]=(WORD)result;
             result >>= 16;
 			I.regs.w[DX]=result;
@@ -2956,14 +2956,14 @@ static void PREFIX86(_f7pre)(void)
     case 0x28:  /* IMUL AX, Ew */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.imul_r16 : cycles.imul_m16;
 		{
-			INT32 result;
+			int32_t result;
 
 			tmp2 = I.regs.w[AX];
 
-			SetSF((INT16)tmp2);
+			SetSF((int16_t)tmp2);
 			SetPF(tmp2);
 
-			result = (INT32)((INT16)tmp2)*(INT32)((INT16)tmp);
+			result = (int32_t)((int16_t)tmp2)*(int32_t)((int16_t)tmp);
 			I.CarryVal = I.OverVal = (result >> 15 != 0) && (result >> 15 != -1);
 
 			I.regs.w[AX]=(WORD)result;
@@ -2976,7 +2976,7 @@ static void PREFIX86(_f7pre)(void)
 	 case 0x30:  /* DIV AX, Ew */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.div_r16 : cycles.div_m16;
 		{
-			UINT32 result;
+			uint32_t result;
 
 			result = (I.regs.w[DX] << 16) + I.regs.w[AX];
 
@@ -3013,14 +3013,14 @@ static void PREFIX86(_f7pre)(void)
     case 0x38:  /* IDIV AX, Ew */
 		ICOUNT -= (ModRM >= 0xc0) ? cycles.idiv_r16 : cycles.idiv_m16;
 		{
-			INT32 result;
+			int32_t result;
 
 			result = (I.regs.w[DX] << 16) + I.regs.w[AX];
 
 			if (tmp)
 			{
-				tmp2 = result % (INT32)((INT16)tmp);
-				if ((result /= (INT32)((INT16)tmp)) > 0xffff)
+				tmp2 = result % (int32_t)((int16_t)tmp);
+				if ((result /= (int32_t)((int16_t)tmp)) > 0xffff)
 				{
 #ifdef V20
 					PREFIX(_interrupt)(0,0);

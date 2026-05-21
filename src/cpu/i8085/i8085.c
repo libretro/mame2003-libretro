@@ -108,14 +108,14 @@
 #define I8085_INTR      0xff
 
 /* Layout of the registers in the debugger */
-static UINT8 i8085_reg_layout[] = {
+static uint8_t i8085_reg_layout[] = {
 	I8085_PC,I8085_SP,I8085_AF,I8085_BC,I8085_DE,I8085_HL, -1,
 	I8085_HALT,I8085_IM,I8085_IREQ,I8085_ISRV,I8085_VECTOR, -1,
 	I8085_TRAP_STATE,I8085_INTR_STATE,I8085_RST55_STATE,I8085_RST65_STATE,I8085_RST75_STATE,
 	0 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 i8085_win_layout[] = {
+static uint8_t i8085_win_layout[] = {
 	25, 0,55, 3,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 4,55, 9,	/* memory #1 window (right, upper middle) */
@@ -127,16 +127,16 @@ static UINT8 i8085_win_layout[] = {
 typedef struct {
 	int 	cputype;	/* 0 8080, 1 8085A */
 	PAIR	PC,SP,AF,BC,DE,HL,XX;
-	UINT8	HALT;
-	UINT8	IM; 		/* interrupt mask */
-	UINT8	IREQ;		/* requested interrupts */
-	UINT8	ISRV;		/* serviced interrupt */
-	UINT32	INTR;		/* vector for INTR */
-	UINT32	IRQ2;		/* scheduled interrupt address */
-	UINT32	IRQ1;		/* executed interrupt address */
-	INT8	nmi_state;
-	INT8	irq_state[4];
-	INT8	filler; /* align on dword boundary */
+	uint8_t	HALT;
+	uint8_t	IM; 		/* interrupt mask */
+	uint8_t	IREQ;		/* requested interrupts */
+	uint8_t	ISRV;		/* serviced interrupt */
+	uint32_t	INTR;		/* vector for INTR */
+	uint32_t	IRQ2;		/* scheduled interrupt address */
+	uint32_t	IRQ1;		/* executed interrupt address */
+	int8_t	nmi_state;
+	int8_t	irq_state[4];
+	int8_t	filler; /* align on dword boundary */
 	int 	(*irq_callback)(int);
 	void	(*sod_callback)(int state);
 }	i8085_Regs;
@@ -144,22 +144,22 @@ typedef struct {
 int i8085_ICount = 0;
 
 static i8085_Regs I;
-static UINT8 ZS[256];
-static UINT8 ZSP[256];
-static UINT8 RIM_IEN = 0; //AT: IEN status latch used by the RIM instruction
-static UINT8 ROP(void)
+static uint8_t ZS[256];
+static uint8_t ZSP[256];
+static uint8_t RIM_IEN = 0; //AT: IEN status latch used by the RIM instruction
+static uint8_t ROP(void)
 {
 	return cpu_readop(I.PC.w.l++);
 }
 
-static UINT8 ARG(void)
+static uint8_t ARG(void)
 {
 	return cpu_readop_arg(I.PC.w.l++);
 }
 
-static UINT16 ARG16(void)
+static uint16_t ARG16(void)
 {
-	UINT16 w;
+	uint16_t w;
 	w  = cpu_readop_arg(I.PC.d);
 	I.PC.w.l++;
 	w += cpu_readop_arg(I.PC.d) << 8;
@@ -167,12 +167,12 @@ static UINT16 ARG16(void)
 	return w;
 }
 
-static UINT8 RM(UINT32 a)
+static uint8_t RM(uint32_t a)
 {
 	return cpu_readmem16(a);
 }
 
-static void WM(UINT32 a, UINT8 v)
+static void WM(uint32_t a, uint8_t v)
 {
 	cpu_writemem16(a, v);
 }
@@ -180,7 +180,7 @@ static void WM(UINT32 a, UINT8 v)
 static	void illegal(void)
 {
 #if VERBOSE
-	UINT16 pc = I.PC.w.l - 1;
+	uint16_t pc = I.PC.w.l - 1;
 	LOG(("i8085 illegal instruction %04X $%02X\n", pc, cpu_readop(pc)));
 #endif
 }
@@ -1279,7 +1279,7 @@ int i8085_execute(int cycles)
  ****************************************************************************/
 static void init_tables (void)
 {
-	UINT8 zs;
+	uint8_t zs;
 	int i, p;
 	for (i = 0; i < 256; i++)
 	{
@@ -1687,13 +1687,13 @@ unsigned i8085_dasm(char *buffer, unsigned pc)
  **************************************************************************/
 #if (HAS_8080)
 /* Layout of the registers in the debugger */
-static UINT8 i8080_reg_layout[] = {
+static uint8_t i8080_reg_layout[] = {
 	I8080_AF, I8080_BC, I8080_DE, I8080_HL, I8080_SP, I8080_PC, -1,
 	I8080_HALT, I8080_IREQ, I8080_ISRV, I8080_VECTOR, I8080_TRAP_STATE, I8080_INTR_STATE,
 	0 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 i8080_win_layout[] = {
+static uint8_t i8080_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55,10,	/* memory #1 window (right, upper middle) */

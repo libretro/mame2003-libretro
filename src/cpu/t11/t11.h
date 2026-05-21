@@ -29,7 +29,7 @@ enum {
 
 struct t11_setup
 {
-	UINT16	mode;			/* initial processor mode */
+	uint16_t	mode;			/* initial processor mode */
 };
 
 

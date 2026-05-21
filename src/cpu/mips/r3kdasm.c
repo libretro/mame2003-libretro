@@ -101,7 +101,7 @@ static const char *ccreg[4][32] =
 **	CODE CODE
 **#################################################################################################*/
 
-static INLINE char *signed_16bit(INT16 val)
+static INLINE char *signed_16bit(int16_t val)
 {
 	static char temp[10];
 	if (val < 0)
@@ -111,7 +111,7 @@ static INLINE char *signed_16bit(INT16 val)
 	return temp;
 }
 
-static void dasm_cop(UINT32 pc, int cop, UINT32 op, char *buffer)
+static void dasm_cop(uint32_t pc, int cop, uint32_t op, char *buffer)
 {
 	int rt = (op >> 16) & 31;
 	int rd = (op >> 11) & 31;
@@ -125,8 +125,8 @@ static void dasm_cop(UINT32 pc, int cop, UINT32 op, char *buffer)
 		case 0x08:	/* BC */
 			switch (rt)
 			{
-				case 0x00:	sprintf(buffer, "bc%df   $%08x", cop, pc + 4 + ((INT16)op << 2));		break;
-				case 0x01:	sprintf(buffer, "bc%dt   $%08x", cop, pc + 4 + ((INT16)op << 2));		break;
+				case 0x00:	sprintf(buffer, "bc%df   $%08x", cop, pc + 4 + ((int16_t)op << 2));		break;
+				case 0x01:	sprintf(buffer, "bc%dt   $%08x", cop, pc + 4 + ((int16_t)op << 2));		break;
 				case 0x02:	sprintf(buffer, "bc%dfl [invalid]", cop);								break;
 				case 0x03:	sprintf(buffer, "bc%dtl [invalid]", cop);								break;
 				default:	sprintf(buffer, "dc.l    $%08x [invalid]", op);							break;
@@ -169,7 +169,7 @@ static void dasm_cop(UINT32 pc, int cop, UINT32 op, char *buffer)
 
 unsigned dasmr3k(char *buffer, unsigned pc)
 {
-	UINT32 op = ROPCODE(pc);
+	uint32_t op = ROPCODE(pc);
 	int rs = (op >> 21) & 31;
 	int rt = (op >> 16) & 31;
 	int rd = (op >> 11) & 31;
@@ -228,8 +228,8 @@ unsigned dasmr3k(char *buffer, unsigned pc)
 		case 0x01:	/* REGIMM */
 			switch ((op >> 16) & 31)
 			{
-				case 0x00:	sprintf(buffer, "bltz   %s,$%08x", reg[rs], pc + 4 + ((INT16)op << 2));	break;
-				case 0x01:	sprintf(buffer, "bgez   %s,$%08x", reg[rs], pc + 4 + ((INT16)op << 2));	break;
+				case 0x00:	sprintf(buffer, "bltz   %s,$%08x", reg[rs], pc + 4 + ((int16_t)op << 2));	break;
+				case 0x01:	sprintf(buffer, "bgez   %s,$%08x", reg[rs], pc + 4 + ((int16_t)op << 2));	break;
 				case 0x02:	sprintf(buffer, "bltzl [invalid]");										break;
 				case 0x03:	sprintf(buffer, "bgezl [invalid]");										break;
 				case 0x08:	sprintf(buffer, "tgei [invalid]");										break;
@@ -238,8 +238,8 @@ unsigned dasmr3k(char *buffer, unsigned pc)
 				case 0x0b:	sprintf(buffer, "tltiu [invalid]");										break;
 				case 0x0c:	sprintf(buffer, "teqi [invalid]");										break;
 				case 0x0e:	sprintf(buffer, "tnei [invalid]");										break;
-				case 0x10:	sprintf(buffer, "bltzal %s,$%08x", reg[rs], pc + 4 + ((INT16)op << 2));	break;
-				case 0x11:	sprintf(buffer, "bgezal %s,$%08x", reg[rs], pc + 4 + ((INT16)op << 2));	break;
+				case 0x10:	sprintf(buffer, "bltzal %s,$%08x", reg[rs], pc + 4 + ((int16_t)op << 2));	break;
+				case 0x11:	sprintf(buffer, "bgezal %s,$%08x", reg[rs], pc + 4 + ((int16_t)op << 2));	break;
 				case 0x12:	sprintf(buffer, "bltzall [invalid]");									break;
 				case 0x13:	sprintf(buffer, "bgezall [invalid]");									break;
 				default:	sprintf(buffer, "dc.l   $%08x [invalid]", op);							break;
@@ -249,20 +249,20 @@ unsigned dasmr3k(char *buffer, unsigned pc)
 		case 0x02:	sprintf(buffer, "j      $%08x", (pc & 0xf0000000) | ((op & 0x0fffffff) << 2));	break;
 		case 0x03:	sprintf(buffer, "jal    $%08x", (pc & 0xf0000000) | ((op & 0x0fffffff) << 2));	break;
 		case 0x04:	if (rs == 0 && rt == 0)
-					sprintf(buffer, "b      $%08x", pc + 4 + ((INT16)op << 2));
+					sprintf(buffer, "b      $%08x", pc + 4 + ((int16_t)op << 2));
 					else
-					sprintf(buffer, "beq    %s,%s,$%08x", reg[rs], reg[rt], pc + 4 + ((INT16)op << 2));break;
-		case 0x05:	sprintf(buffer, "bne    %s,%s,$%08x", reg[rs], reg[rt], pc + 4 + ((INT16)op << 2));break;
-		case 0x06:	sprintf(buffer, "blez   %s,$%08x", reg[rs], pc + 4 + ((INT16)op << 2));			break;
-		case 0x07:	sprintf(buffer, "bgtz   %s,$%08x", reg[rs], pc + 4 + ((INT16)op << 2));			break;
+					sprintf(buffer, "beq    %s,%s,$%08x", reg[rs], reg[rt], pc + 4 + ((int16_t)op << 2));break;
+		case 0x05:	sprintf(buffer, "bne    %s,%s,$%08x", reg[rs], reg[rt], pc + 4 + ((int16_t)op << 2));break;
+		case 0x06:	sprintf(buffer, "blez   %s,$%08x", reg[rs], pc + 4 + ((int16_t)op << 2));			break;
+		case 0x07:	sprintf(buffer, "bgtz   %s,$%08x", reg[rs], pc + 4 + ((int16_t)op << 2));			break;
 		case 0x08:	sprintf(buffer, "addi   %s,%s,%s", reg[rt], reg[rs], signed_16bit(op));			break;
 		case 0x09:	sprintf(buffer, "addiu  %s,%s,%s", reg[rt], reg[rs], signed_16bit(op));			break;
 		case 0x0a:	sprintf(buffer, "slti   %s,%s,%s", reg[rt], reg[rs], signed_16bit(op));			break;
 		case 0x0b:	sprintf(buffer, "sltiu  %s,%s,%s", reg[rt], reg[rs], signed_16bit(op));			break;
-		case 0x0c:	sprintf(buffer, "andi   %s,%s,$%04x", reg[rt], reg[rs], (UINT16)op);			break;
-		case 0x0d:	sprintf(buffer, "ori    %s,%s,$%04x", reg[rt], reg[rs], (UINT16)op);			break;
-		case 0x0e:	sprintf(buffer, "xori   %s,%s,$%04x", reg[rt], reg[rs], (UINT16)op);			break;
-		case 0x0f:	sprintf(buffer, "lui    %s,$%04x", reg[rt], (UINT16)op);						break;
+		case 0x0c:	sprintf(buffer, "andi   %s,%s,$%04x", reg[rt], reg[rs], (uint16_t)op);			break;
+		case 0x0d:	sprintf(buffer, "ori    %s,%s,$%04x", reg[rt], reg[rs], (uint16_t)op);			break;
+		case 0x0e:	sprintf(buffer, "xori   %s,%s,$%04x", reg[rt], reg[rs], (uint16_t)op);			break;
+		case 0x0f:	sprintf(buffer, "lui    %s,$%04x", reg[rt], (uint16_t)op);						break;
 		case 0x10:	dasm_cop(pc, 0, op, buffer);													break;
 		case 0x11:	dasm_cop(pc, 1, op, buffer);													break;
 		case 0x12:	dasm_cop(pc, 2, op, buffer);													break;

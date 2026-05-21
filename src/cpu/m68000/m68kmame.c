@@ -222,7 +222,7 @@ struct m68k_memory_interface m68k_memory_intf;
 
 #ifndef A68K0
 
-static UINT8 m68000_reg_layout[] = {
+static uint8_t m68000_reg_layout[] = {
 	M68K_PC, M68K_ISP, -1,
 	M68K_SR, M68K_USP, -1,
 	M68K_D0, M68K_A0, -1,
@@ -235,7 +235,7 @@ static UINT8 m68000_reg_layout[] = {
 	M68K_D7, M68K_A7, 0
 };
 
-static UINT8 m68000_win_layout[] = {
+static uint8_t m68000_win_layout[] = {
 	48, 0,32,13,	/* register window (top right) */
 	 0, 0,47,13,	/* disassembler window (top left) */
 	 0,14,47, 8,	/* memory #1 window (left, middle) */
@@ -464,7 +464,7 @@ unsigned m68000_dasm(char *buffer, unsigned pc)
  ****************************************************************************/
 #if HAS_M68010
 
-static UINT8 m68010_reg_layout[] = {
+static uint8_t m68010_reg_layout[] = {
 	M68K_PC,  M68K_ISP, -1,
 	M68K_SR,  M68K_USP, -1,
 	M68K_SFC, M68K_VBR, -1,
@@ -479,7 +479,7 @@ static UINT8 m68010_reg_layout[] = {
 	M68K_D7,  M68K_A7, 0
 };
 
-static UINT8 m68010_win_layout[] = {
+static uint8_t m68010_win_layout[] = {
 	48, 0,32,13,	/* register window (top right) */
 	 0, 0,47,13,	/* disassembler window (top left) */
 	 0,14,47, 8,	/* memory #1 window (left, middle) */
@@ -724,7 +724,7 @@ unsigned m68010_dasm(char *buffer, unsigned pc)
 
 #if HAS_M68EC020
 
-static UINT8 m68ec020_reg_layout[] = {
+static uint8_t m68ec020_reg_layout[] = {
 	M68K_PC,  M68K_MSP, -1,
 	M68K_SR,  M68K_ISP, -1,
 	M68K_SFC, M68K_USP, -1,
@@ -739,7 +739,7 @@ static UINT8 m68ec020_reg_layout[] = {
 	M68K_D7,  M68K_A7, 0
 };
 
-static UINT8 m68ec020_win_layout[] = {
+static uint8_t m68ec020_win_layout[] = {
 	48, 0,32,13,	/* register window (top right) */
 	 0, 0,47,13,	/* disassembler window (top left) */
 	 0,14,47, 8,	/* memory #1 window (left, middle) */
@@ -986,7 +986,7 @@ unsigned m68ec020_dasm(char *buffer, unsigned pc)
  ****************************************************************************/
 #if HAS_M68020
 
-static UINT8 m68020_reg_layout[] = {
+static uint8_t m68020_reg_layout[] = {
 	M68K_PC,  M68K_MSP, -1,
 	M68K_SR,  M68K_ISP, -1,
 	M68K_SFC, M68K_USP, -1,
@@ -1001,7 +1001,7 @@ static UINT8 m68020_reg_layout[] = {
 	M68K_D7,  M68K_A7, 0
 };
 
-static UINT8 m68020_win_layout[] = {
+static uint8_t m68020_win_layout[] = {
 	48, 0,32,13,	/* register window (top right) */
 	 0, 0,47,13,	/* disassembler window (top left) */
 	 0,14,47, 8,	/* memory #1 window (left, middle) */

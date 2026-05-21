@@ -388,7 +388,7 @@ UPD7810 upd7810;
 int upd7810_icount;
 
 /* Layout of the registers in the debugger */
-static UINT8 upd7810_reg_layout[] = {
+static uint8_t upd7810_reg_layout[] = {
 	UPD7810_PC, UPD7810_PSW, UPD7810_A, UPD7810_V, UPD7810_EA, UPD7810_BC, UPD7810_DE, UPD7810_HL, -1,
 	UPD7810_SP, UPD7810_MM, UPD7810_A2, UPD7810_V2, UPD7810_EA2, UPD7810_BC2, UPD7810_DE2, UPD7810_HL2, -1,
 	UPD7810_TMM, UPD7810_CNT0, UPD7810_TM0, UPD7810_CNT1, UPD7810_TM1, -1,
@@ -398,7 +398,7 @@ static UINT8 upd7810_reg_layout[] = {
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 upd7810_win_layout[] = {
+static uint8_t upd7810_win_layout[] = {
 	 0, 0,80, 6,	/* register window (top rows) */
 	 0, 7,24,15,	/* disassembler window (left colums) */
 	25, 7,55, 7,	/* memory #1 window (right, upper middle) */
@@ -525,10 +525,10 @@ static UINT8 upd7810_win_layout[] = {
 
 struct opcode_s {
 	void (*opfunc)(void);
-	UINT8 oplen;
-	UINT8 cycles;
-	UINT8 cycles_skip;
-	UINT8 mask_l0_l1;
+	uint8_t oplen;
+	uint8_t cycles;
+	uint8_t cycles_skip;
+	uint8_t mask_l0_l1;
 };
 
 #define RDOP(O) 	O = cpu_readop(PCD); PC++
@@ -727,7 +727,7 @@ static void WP(offs_t port, data8_t data)
 
 static void upd7810_take_irq(void)
 {
-	UINT16 vector = 0;
+	uint16_t vector = 0;
 	int irqline = 0;
 
 	/* global interrupt disable? */
@@ -990,7 +990,7 @@ static void upd7810_sio_input(void)
 	{
 		if (upd7810.config.io_callback)
 			RXD = (*upd7810.config.io_callback)(UPD7810_RXD,RXD);
-		upd7810.rxs = (upd7810.rxs >> 1) | ((UINT16)RXD << 15);
+		upd7810.rxs = (upd7810.rxs >> 1) | ((uint16_t)RXD << 15);
 		upd7810.rxcnt--;
 		if (0 == upd7810.rxcnt)
 		{
@@ -1978,7 +1978,7 @@ unsigned upd7810_dasm(char *buffer, unsigned pc)
 #ifdef MAME_DEBUG
 	return Dasm7810( buffer, pc );
 #else
-	UINT8 op = cpu_readop(pc);
+	uint8_t op = cpu_readop(pc);
 	sprintf( buffer, "$%02X", op );
 	return 1;
 #endif
@@ -1990,7 +1990,7 @@ unsigned upd7807_dasm(char *buffer, unsigned pc)
 #ifdef MAME_DEBUG
 	return Dasm7807( buffer, pc );
 #else
-	UINT8 op = cpu_readop(pc);
+	uint8_t op = cpu_readop(pc);
 	sprintf( buffer, "$%02X", op );
 	return 1;
 #endif

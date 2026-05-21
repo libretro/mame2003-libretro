@@ -35,7 +35,7 @@
 
 unsigned Dasm8085(char *buff, unsigned pc)
 {
-	UINT8 op;
+	uint8_t op;
 	unsigned PC = pc;
 	switch (op = OP(pc++))
 	{

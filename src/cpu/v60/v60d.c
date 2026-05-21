@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "v60.h"
 
-static UINT8 (*readop)(offs_t adr);
+static uint8_t (*readop)(offs_t adr);
 
 static signed char read8(unsigned pc)
 {

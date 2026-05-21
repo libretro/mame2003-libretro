@@ -111,7 +111,7 @@ struct _m37710i_cpu_struct
 	uint destination;	/* temp register */
 	device_irq_callback int_ack;
 	legacy_cpu_device *device;
-	UINT32 clock;	/* input clock in Hz, used by the internal timers */
+	uint32_t clock;	/* input clock in Hz, used by the internal timers */
 	int cpunum;	/* mame2003 cpu index, used by cpu_triggerint */
 	const address_space *program;
 	const address_space *io;
@@ -125,7 +125,7 @@ struct _m37710i_cpu_struct
 	int  (*execute)(m37710i_cpu_struct *cpustate, int cycles);
 
 	/* on-board peripheral stuff */
-	UINT8 m37710_regs[128];
+	uint8_t m37710_regs[128];
 	attotime reload[8];
 	emu_timer *timers[8];
 };

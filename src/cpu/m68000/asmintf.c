@@ -53,45 +53,45 @@ unsigned int m68k_disassemble(char* str_buff, unsigned int pc, unsigned int cpu_
 /* Use the x86 assembly core */
 typedef struct
 {
-    UINT32 d[8];             /* 0x0004 8 Data registers */
-    UINT32 a[8];             /* 0x0024 8 Address registers */
+    uint32_t d[8];             /* 0x0004 8 Data registers */
+    uint32_t a[8];             /* 0x0024 8 Address registers */
 
-    UINT32 isp;              /* 0x0048 */
+    uint32_t isp;              /* 0x0048 */
 
-    UINT32 sr_high;          /* 0x004C System registers */
-    UINT32 ccr;              /* 0x0050 CCR in Intel Format */
-    UINT32 x_carry;          /* 0x0054 Extended Carry */
+    uint32_t sr_high;          /* 0x004C System registers */
+    uint32_t ccr;              /* 0x0050 CCR in Intel Format */
+    uint32_t x_carry;          /* 0x0054 Extended Carry */
 
-    UINT32 pc;               /* 0x0058 Program Counter */
+    uint32_t pc;               /* 0x0058 Program Counter */
 
-    UINT32 IRQ_level;        /* 0x005C IRQ level you want the MC68K process (0=None)  */
+    uint32_t IRQ_level;        /* 0x005C IRQ level you want the MC68K process (0=None)  */
 
     /* Backward compatible with C emulator - Only set in Debug compile */
 
-    UINT16 sr;
-    UINT16 filler;
+    uint16_t sr;
+    uint16_t filler;
 
     int (*irq_callback)(int irqline);
 
-    UINT32 previous_pc;      /* last PC used */
+    uint32_t previous_pc;      /* last PC used */
 
     int (*reset_callback)(void);
 
-    UINT32 sfc;              /* Source Function Code. (68010) */
-    UINT32 dfc;              /* Destination Function Code. (68010) */
-    UINT32 usp;              /* User Stack (All) */
-    UINT32 vbr;              /* Vector Base Register. (68010) */
+    uint32_t sfc;              /* Source Function Code. (68010) */
+    uint32_t dfc;              /* Destination Function Code. (68010) */
+    uint32_t usp;              /* User Stack (All) */
+    uint32_t vbr;              /* Vector Base Register. (68010) */
 
-    UINT32 BankID;			 /* Memory bank in use */
-    UINT32 CPUtype;		  	 /* CPU Type 0=68000,1=68010,2=68020 */
-	UINT32 FullPC;
+    uint32_t BankID;			 /* Memory bank in use */
+    uint32_t CPUtype;		  	 /* CPU Type 0=68000,1=68010,2=68020 */
+	uint32_t FullPC;
 
 	struct m68k_memory_interface Memory_Interface;
 
 } a68k_cpu_context;
 
 
-static UINT8 M68K_layout[] = {
+static uint8_t M68K_layout[] = {
 	M68K_PC, M68K_ISP, -1,
 	M68K_SR, M68K_USP, -1,
 	M68K_D0, M68K_A0, -1,
@@ -104,7 +104,7 @@ static UINT8 M68K_layout[] = {
 	M68K_D7, M68K_A7, 0
 };
 
-static UINT8 m68k_win_layout[] = {
+static uint8_t m68k_win_layout[] = {
 	48, 0,32,13,	/* register window (top right) */
 	 0, 0,47,13,	/* disassembler window (top left) */
 	 0,14,47, 8,	/* memory #1 window (left, middle) */
@@ -141,7 +141,7 @@ static int IntelFlag[32] = {
 
 /* The assembler engine only keeps flags in intel format, so ... */
 
-static UINT32 zero = 0;
+static uint32_t zero = 0;
 static int stopped = 0;
 
 static void a68k_prepare_substate(void)
@@ -181,7 +181,7 @@ void a68k_state_register(const char *type)
 	state_save_register_UINT32(type, cpu, "CAAR"      , &zero, 1);
 	state_save_register_UINT16(type, cpu, "SR"        , &M68000_regs.sr, 1);
 	state_save_register_UINT32(type, cpu, "INT_LEVEL" , &M68000_regs.IRQ_level, 1);
-	state_save_register_UINT32(type, cpu, "INT_CYCLES", (UINT32 *)&m68k_ICount, 1);
+	state_save_register_UINT32(type, cpu, "INT_CYCLES", (uint32_t *)&m68k_ICount, 1);
 	state_save_register_int   (type, cpu, "STOPPED"   , &stopped);
 	state_save_register_int   (type, cpu, "HALTED"    , (int *)&zero);
 	state_save_register_UINT32(type, cpu, "PREF_ADDR" , &zero, 1);

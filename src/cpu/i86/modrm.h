@@ -24,10 +24,10 @@ static struct {
 #define GetnextRMWord ReadWord(EA+2)
 
 #define GetRMWordOffset(offs) \
-		ReadWord(EA-EO+(UINT16)(EO+offs))
+		ReadWord(EA-EO+(uint16_t)(EO+offs))
 
 #define GetRMByteOffset(offs) \
-		ReadByte(EA-EO+(UINT16)(EO+offs))
+		ReadByte(EA-EO+(uint16_t)(EO+offs))
 
 #define PutRMWord(ModRM,val)				\
 {											\
@@ -40,10 +40,10 @@ static struct {
 }
 
 #define PutRMWordOffset(offs, val) \
-		WriteWord( EA-EO+(UINT16)(EO+offs), val)
+		WriteWord( EA-EO+(uint16_t)(EO+offs), val)
 
 #define PutRMByteOffset(offs, val) \
-		WriteByte( EA-EO+(UINT16)(EO+offs), val)
+		WriteByte( EA-EO+(uint16_t)(EO+offs), val)
 
 #define PutImmRMWord(ModRM) 				\
 {											\

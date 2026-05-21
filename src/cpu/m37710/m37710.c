@@ -394,7 +394,7 @@ static void m37710_recalc_timer(m37710i_cpu_struct *cpustate, int timer)
 	}
 }
 
-static UINT8 m37710_internal_r(m37710i_cpu_struct *cpustate, int offset)
+static uint8_t m37710_internal_r(m37710i_cpu_struct *cpustate, int offset)
 {
 	#if M37710_DEBUG
 	if (offset > 1)
@@ -464,7 +464,7 @@ static UINT8 m37710_internal_r(m37710i_cpu_struct *cpustate, int offset)
 	return cpustate->m37710_regs[offset];
 }
 
-static void m37710_internal_w(m37710i_cpu_struct *cpustate, int offset, UINT8 data)
+static void m37710_internal_w(m37710i_cpu_struct *cpustate, int offset, uint8_t data)
 {
 	int i;
 
@@ -1163,12 +1163,12 @@ const address_space m37710_space_io      = M37710_AS_IO;
 int m37710_ICount = 0;
 
 /* Debugger register / window layout. */
-static UINT8 m37710_reg_layout[] =
+static uint8_t m37710_reg_layout[] =
 {
 	M37710_PC, M37710_S, M37710_P, M37710_A, M37710_B,
 	M37710_X, M37710_Y, M37710_PB, M37710_DB, M37710_D, 0
 };
-static UINT8 m37710_win_layout[] =
+static uint8_t m37710_win_layout[] =
 {
 	25, 0, 55, 2,
 	 0, 3, 24,19,
@@ -1191,7 +1191,7 @@ unsigned m37710_internal_read(int offset)
 
 void m37710_internal_write(int offset, unsigned data)
 {
-	m37710_internal_w(&m37710_global, offset, (UINT8)data);
+	m37710_internal_w(&m37710_global, offset, (uint8_t)data);
 }
 
 void m37710_init(void)
@@ -1269,7 +1269,7 @@ const char *m37710_info(void *context, int regnum)
 
 unsigned m37710_dasm(char *buffer, unsigned pc)
 {
-	UINT8 oprom[8];
+	uint8_t oprom[8];
 	int i;
 	for (i = 0; i < 8; i++)
 		oprom[i] = cpu_readmem24lew(pc + i);

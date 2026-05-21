@@ -70,7 +70,7 @@ enum
 
 struct dsp32_config
 {
-	void	(*output_pins_changed)(UINT32 pins);	/* a change has occurred on an output pin */
+	void	(*output_pins_changed)(uint32_t pins);	/* a change has occurred on an output pin */
 };
 
 

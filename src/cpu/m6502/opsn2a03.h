@@ -17,7 +17,7 @@
 			P |= F_V;											\
 		if( sum & 0xff00 )										\
 			P |= F_C;											\
-		A = (UINT8) sum;										\
+		A = (uint8_t) sum;										\
 	}															\
 	SET_NZ(A)
 
@@ -33,7 +33,7 @@
 			P |= F_V;											\
 		if( (sum & 0xff00) == 0 )								\
 			P |= F_C;											\
-		A = (UINT8) sum;										\
+		A = (uint8_t) sum;										\
 	}															\
 	SET_NZ(A)
 

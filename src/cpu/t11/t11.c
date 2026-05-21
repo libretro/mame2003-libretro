@@ -26,7 +26,7 @@
  *
  *************************************/
 
-static UINT8 t11_reg_layout[] =
+static uint8_t t11_reg_layout[] =
 {
 	T11_PC, T11_SP, T11_PSW, T11_IRQ0_STATE, T11_IRQ1_STATE, T11_IRQ2_STATE, T11_IRQ3_STATE, -1,
 	T11_R0,T11_R1,T11_R2,T11_R3,T11_R4,T11_R5, -1,
@@ -34,7 +34,7 @@ static UINT8 t11_reg_layout[] =
 };
 
 
-static UINT8 t11_win_layout[] =
+static uint8_t t11_win_layout[] =
 {
 	 0, 0,80, 4,	/* register window (top rows) */
 	 0, 5,31,17,	/* disassembler window (left colums) */
@@ -56,10 +56,10 @@ typedef struct
 	PAIR	ppc;	/* previous program counter */
     PAIR	reg[8];
     PAIR	psw;
-    UINT16	op;
-    UINT8	wait_state;
-    UINT8 *	bank[8];
-    UINT8	irq_state;
+    uint16_t	op;
+    uint8_t	wait_state;
+    uint8_t *	bank[8];
+    uint8_t	irq_state;
     int		interrupt_cycles;
     int		(*irq_callback)(int irqline);
 } t11_Regs;
@@ -108,7 +108,7 @@ static INLINE int ROPCODE(void)
 {
 	int pc = PCD;
 	PC += 2;
-	return *(UINT16 *)(&t11.bank[pc >> 13][pc & 0x1fff]);
+	return *(uint16_t *)(&t11.bank[pc >> 13][pc & 0x1fff]);
 }
 
 
@@ -199,8 +199,8 @@ static INLINE int POP(void)
 
 struct irq_table_entry
 {
-	UINT8	priority;
-	UINT8	vector;
+	uint8_t	priority;
+	uint8_t	vector;
 };
 
 static const struct irq_table_entry irq_table[] =
@@ -427,7 +427,7 @@ void t11_exit(void)
 
 void t11_reset(void *param)
 {
-	static const UINT16 initial_pc[] =
+	static const uint16_t initial_pc[] =
 	{
 		0xc000, 0x8000, 0x4000, 0x2000,
 		0x1000, 0x0000, 0xf600, 0xf400

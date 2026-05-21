@@ -157,7 +157,7 @@ static const char *token[]=
 #define ZRD2 EA_ZPG_RD
 #define ZRW2 EA_ZPG_RDWR
 
-static const UINT8 op6502[256][3] = {
+static const uint8_t op6502[256][3] = {
 	{brk,imm,VAL},{ora,idx,MRD},{ill,non,0	},{ill,non,0 },/* 00 */
 	{ill,non,0	},{ora,zpg,ZRD},{asl,zpg,ZRW},{ill,non,0 },
 	{php,imp,0	},{ora,imm,VAL},{asl,acc,0	},{ill,non,0 },
@@ -224,7 +224,7 @@ static const UINT8 op6502[256][3] = {
 	{ill,non,0	},{sbc,abx,MRD},{inc,abx,MRW},{ill,non,0 }
 };
 
-static const UINT8 op65c02[256][3] = {
+static const uint8_t op65c02[256][3] = {
 	{brk,imm,VAL},{ora,idx,MRD},{ill,non,0	},{ill,non,0 },/* 00 */
 	{tsb,zpg,0	},{ora,zpg,ZRD},{asl,zpg,ZRW},{rmb,zpg,ZRW},
 	{php,imp,0	},{ora,imm,VAL},{asl,acc,MRW},{ill,non,0 },
@@ -292,7 +292,7 @@ static const UINT8 op65c02[256][3] = {
 };
 
 /* only bsr additional to 65c02 yet */
-static const UINT8 op65sc02[256][3] = {
+static const uint8_t op65sc02[256][3] = {
 	{brk,imm,VAL},{ora,idx,MRD},{ill,non,0	},{ill,non,0 },/* 00 */
 	{tsb,zpg,0	},{ora,zpg,ZRD},{asl,zpg,ZRW},{rmb,zpg,ZRW},
 	{php,imp,0	},{ora,imm,VAL},{asl,acc,MRW},{ill,non,0 },
@@ -359,7 +359,7 @@ static const UINT8 op65sc02[256][3] = {
 	{ill,non,0	},{sbc,abx,MRD},{inc,abx,MRW},{bbs,zpb,ZRD}
 };
 
-static const UINT8 op6510[256][3] = {
+static const uint8_t op6510[256][3] = {
 	{brk,imm,VAL},{ora,idx,MRD},{kil,non,0	},{slo,idx,MRW},/* 00 */
 	{dop,imm,VAL},{ora,zpg,ZRD},{asl,zpg,ZRW},{slo,zpg,ZRW},
 	{php,imp,0	},{ora,imm,VAL},{asl,acc,0	},{anc,imm,VAL},
@@ -427,7 +427,7 @@ static const UINT8 op6510[256][3] = {
 };
 
 #if (HAS_M65CE02)
-static const UINT8 op65ce02[256][3] = {
+static const uint8_t op65ce02[256][3] = {
 	{brk,imm,VAL},{ora,idx,MRD},{cle,imp,0	},{see,imp,0  },/* 00 */
 	{tsb,zpg,0	},{ora,zpg,ZRD},{asl,zpg,ZRW},{rmb,zpg,ZRW},
 	{php,imp,0	},{ora,imm,VAL},{asl,acc,MRW},{tsy,imp,0  },
@@ -497,7 +497,7 @@ static const UINT8 op65ce02[256][3] = {
 
 #if (HAS_M4510)
 // only map instead of aug and 20 bit memory management
-static const UINT8 op4510[256][3] = {
+static const uint8_t op4510[256][3] = {
 	{brk,imm,VAL},{ora,idx,MRD},{cle,imp,0	},{see,imp,0  },/* 00 */
 	{tsb,zpg,0	},{ora,zpg,ZRD},{asl,zpg,ZRW},{rmb,zpg,ZRW},
 	{php,imp,0	},{ora,imm,VAL},{asl,acc,MRW},{tsy,imp,0  },
@@ -566,7 +566,7 @@ static const UINT8 op4510[256][3] = {
 #endif
 
 #if (HAS_DECO16)
-static const UINT8 opdeco16[256][3] =
+static const uint8_t opdeco16[256][3] =
 {
 	{brk,imp,0  },{ora,idx,MRD},{ill,non,0  },{ill,non,0	},/* 00 */
 	{ill,non,0  },{ora,zpg,ZRD},{asl,zpg,ZRW},{ill,non,0	},
@@ -642,11 +642,11 @@ unsigned Dasm6502(char *buffer, unsigned pc)
 {
 	char *dst = buffer;
 	const char *symbol;
-	INT8 offset;
-	INT16 offset16;
+	int8_t offset;
+	int16_t offset16;
 	unsigned PC = pc;
-	UINT16 addr, ea;
-	UINT8 op, opc, arg, access, value;
+	uint16_t addr, ea;
+	uint8_t op, opc, arg, access, value;
 
 	op = OPCODE(pc++);
 
@@ -700,7 +700,7 @@ unsigned Dasm6502(char *buffer, unsigned pc)
 		break;
 
 	case rel:
-		offset = (INT8)ARGBYTE(pc++);
+		offset = (int8_t)ARGBYTE(pc++);
 		symbol = set_ea_info( 0, pc, offset, access );
 		dst += sprintf(dst,"%s", symbol);
 		break;
@@ -764,7 +764,7 @@ unsigned Dasm6502(char *buffer, unsigned pc)
 		addr = ARGBYTE(pc++);
 		symbol = set_ea_info( 0, addr, EA_UINT8, access );
 		dst += sprintf(dst,"$%02X", addr);
-		offset = (INT8)ARGBYTE(pc++);
+		offset = (int8_t)ARGBYTE(pc++);
 		symbol = set_ea_info( 1, pc, offset, BRA );
 		dst += sprintf(dst,",%s", symbol);
 		break;
@@ -842,7 +842,7 @@ static int m6509_get_argword(int addr)
 #endif
 
 typedef struct {
-	const UINT8 *opcode;
+	const uint8_t *opcode;
 	unsigned(*get_reg)(int regnum);
 	mem_read_handler readmem;
 	int(*argword)(int addr);
@@ -850,30 +850,30 @@ typedef struct {
 
 #if 0
 static CPU_TYPE type_m6502 = {
-	(const UINT8*)op6502, m6502_get_reg, cpu_readmem16, m6502_get_argword
+	(const uint8_t*)op6502, m6502_get_reg, cpu_readmem16, m6502_get_argword
 };
 #endif
 #ifdef HAS_M6510
 static CPU_TYPE type_m6510 = {
-	(const UINT8*)op6510, m6502_get_reg, cpu_readmem16, m6502_get_argword
+	(const uint8_t*)op6510, m6502_get_reg, cpu_readmem16, m6502_get_argword
 };
 #endif
 #if (HAS_M6509)
 static CPU_TYPE type_m6509 = {
-	(const UINT8*)op6510, m6509_get_reg, cpu_readmem20, m6509_get_argword
+	(const uint8_t*)op6510, m6509_get_reg, cpu_readmem20, m6509_get_argword
 };
 #endif
 #if 0
 static CPU_TYPE type_m65c02 = {
-	(const UINT8*)op65c02, m6502_get_reg, cpu_readmem16, m6502_get_argword
+	(const uint8_t*)op65c02, m6502_get_reg, cpu_readmem16, m6502_get_argword
 };
 static CPU_TYPE type_m65sc02 = {
-	(const UINT8*)op65sc02, m6502_get_reg, cpu_readmem16, m6502_get_argword
+	(const uint8_t*)op65sc02, m6502_get_reg, cpu_readmem16, m6502_get_argword
 };
 #endif
 #if (HAS_M65CE02)
 static CPU_TYPE type_m65ce02 = {
-	(const UINT8*)op65ce02, m65ce02_get_reg, cpu_readmem16, m6502_get_argword
+	(const uint8_t*)op65ce02, m65ce02_get_reg, cpu_readmem16, m6502_get_argword
 };
 #endif
 #if (HAS_M4510)
@@ -883,7 +883,7 @@ static READ_HANDLER(m4510_readmem)
 }
 
 static CPU_TYPE type_m4510 = {
-	(const UINT8*)op4510, m4510_get_reg, m4510_readmem, m6509_get_argword
+	(const uint8_t*)op4510, m4510_get_reg, m4510_readmem, m6509_get_argword
 };
 #endif
 
@@ -894,11 +894,11 @@ unsigned int Dasm6502Helper(CPU_TYPE *this, char *buffer, unsigned pc)
 {
 	char *dst = buffer;
 	const char *symbol;
-	INT8 offset;
-	INT16 offset16;
+	int8_t offset;
+	int16_t offset16;
 	unsigned PC = pc;
-	UINT16 addr, ea;
-	UINT8 op, opc, arg, access, value;
+	uint16_t addr, ea;
+	uint8_t op, opc, arg, access, value;
 
 	op = OPCODE(pc++);
 
@@ -920,7 +920,7 @@ unsigned int Dasm6502Helper(CPU_TYPE *this, char *buffer, unsigned pc)
 		break;
 
 	case rel:
-		offset = (INT8)ARGBYTE(pc++);
+		offset = (int8_t)ARGBYTE(pc++);
 		symbol = set_ea_info( 0, pc, offset, access );
 #if 0
 		dst += sprintf(dst,"%s", symbol);
@@ -1024,7 +1024,7 @@ unsigned int Dasm6502Helper(CPU_TYPE *this, char *buffer, unsigned pc)
 		addr = ARGBYTE(pc++);
 		symbol = set_ea_info( 0, addr, EA_UINT8, access );
 		dst += sprintf(dst,"$%02X", addr);
-		offset = (INT8)ARGBYTE(pc++);
+		offset = (int8_t)ARGBYTE(pc++);
 		symbol = set_ea_info( 1, pc, offset, BRA );
 		dst += sprintf(dst,",%s", symbol);
 		break;

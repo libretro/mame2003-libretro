@@ -601,7 +601,7 @@ static const data8_t arm_reg_layout[] =
 	ARM32_R15,0
 };
 
-static const UINT8 arm_win_layout[] = {
+static const uint8_t arm_win_layout[] = {
 	 0, 0,29,17,	/* register window (top rows) */
 	30, 0,50,17,	/* disassembler window (left colums) */
 	 0,18,48, 4,	/* memory #1 window (right, upper middle) */

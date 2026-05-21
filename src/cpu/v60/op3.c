@@ -1,13 +1,13 @@
-UINT32 opINCB(void) /* TRUSTED */
+uint32_t opINCB(void) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	modAdd=PC+1;
 	modDim=0;
 
 	amLength1=ReadAMAddress();
 
 	if (amFlag)
-		appb=(UINT8)v60.reg[amOut];
+		appb=(uint8_t)v60.reg[amOut];
 	else
 		appb=MemRead8(amOut);
 
@@ -21,16 +21,16 @@ UINT32 opINCB(void) /* TRUSTED */
 	return amLength1+1;
 }
 
-UINT32 opINCH(void) /* TRUSTED */
+uint32_t opINCH(void) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	modAdd=PC+1;
 	modDim=1;
 
 	amLength1=ReadAMAddress();
 
 	if (amFlag)
-		apph=(UINT16)v60.reg[amOut];
+		apph=(uint16_t)v60.reg[amOut];
 	else
 		apph=MemRead16(amOut);
 
@@ -44,9 +44,9 @@ UINT32 opINCH(void) /* TRUSTED */
 	return amLength1+1;
 }
 
-UINT32 opINCW(void) /* TRUSTED */
+uint32_t opINCW(void) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	modAdd=PC+1;
 	modDim=2;
 
@@ -67,16 +67,16 @@ UINT32 opINCW(void) /* TRUSTED */
 	return amLength1+1;
 }
 
-UINT32 opDECB(void) /* TRUSTED */
+uint32_t opDECB(void) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	modAdd=PC+1;
 	modDim=0;
 
 	amLength1=ReadAMAddress();
 
 	if (amFlag)
-		appb=(UINT8)v60.reg[amOut];
+		appb=(uint8_t)v60.reg[amOut];
 	else
 		appb=MemRead8(amOut);
 
@@ -90,16 +90,16 @@ UINT32 opDECB(void) /* TRUSTED */
 	return amLength1+1;
 }
 
-UINT32 opDECH(void) /* TRUSTED */
+uint32_t opDECH(void) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	modAdd=PC+1;
 	modDim=1;
 
 	amLength1=ReadAMAddress();
 
 	if (amFlag)
-		apph=(UINT16)v60.reg[amOut];
+		apph=(uint16_t)v60.reg[amOut];
 	else
 		apph=MemRead16(amOut);
 
@@ -113,9 +113,9 @@ UINT32 opDECH(void) /* TRUSTED */
 	return amLength1+1;
 }
 
-UINT32 opDECW(void) /* TRUSTED */
+uint32_t opDECW(void) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	modAdd=PC+1;
 	modDim=2;
 
@@ -136,7 +136,7 @@ UINT32 opDECW(void) /* TRUSTED */
 	return amLength1+1;
 }
 
-UINT32 opJMP(void) /* TRUSTED */
+uint32_t opJMP(void) /* TRUSTED */
 {
 	modAdd=PC+1;
 	modDim=0;
@@ -154,7 +154,7 @@ UINT32 opJMP(void) /* TRUSTED */
 	return 0;
 }
 
-UINT32 opJSR(void) /* TRUSTED */
+uint32_t opJSR(void) /* TRUSTED */
 {
 	modAdd=PC + 1;
 	modDim=0;
@@ -176,7 +176,7 @@ UINT32 opJSR(void) /* TRUSTED */
 	return 0;
 }
 
-UINT32 opPREPARE(void)	/* somewhat TRUSTED */
+uint32_t opPREPARE(void)	/* somewhat TRUSTED */
 {
 	modAdd=PC+1;
 	modDim=2;
@@ -197,7 +197,7 @@ UINT32 opPREPARE(void)	/* somewhat TRUSTED */
 	return amLength1 + 1;
 }
 
-UINT32 opRET(void) /* TRUSTED */
+uint32_t opRET(void) /* TRUSTED */
 {
 	modAdd=PC + 1;
 	modDim=2;
@@ -220,7 +220,7 @@ UINT32 opRET(void) /* TRUSTED */
 	return 0;
 }
 
-UINT32 opTRAP(void)
+uint32_t opTRAP(void)
 {
 	modAdd=PC + 1;
 	modDim=0;
@@ -299,9 +299,9 @@ UINT32 opTRAP(void)
 	return 0;
 }
 
-UINT32 opRETIU(void) /* TRUSTED */
+uint32_t opRETIU(void) /* TRUSTED */
 {
-	UINT32 tempPSW;
+	uint32_t tempPSW;
 	modAdd=PC + 1;
 	modDim=1;
 
@@ -328,9 +328,9 @@ UINT32 opRETIU(void) /* TRUSTED */
 	return 0;
 }
 
-UINT32 opRETIS(void)
+uint32_t opRETIS(void)
 {
-	UINT32 appw;
+	uint32_t appw;
 
 	modAdd=PC + 1;
 	modDim=1;
@@ -357,10 +357,10 @@ UINT32 opRETIS(void)
 	return 0;
 }
 
-UINT32 opSTTASK(void)
+uint32_t opSTTASK(void)
 {
 	int i;
-	UINT32 adr;
+	uint32_t adr;
 
 	modAdd=PC + 1;
 	modDim=2;
@@ -403,7 +403,7 @@ UINT32 opSTTASK(void)
 	return amLength1 + 1;
 }
 
-UINT32 opGETPSW(void)
+uint32_t opGETPSW(void)
 {
 	UPDATEPSW();
 
@@ -417,18 +417,18 @@ UINT32 opGETPSW(void)
 	return amLength1 + 1;
 }
 
-UINT32 opTASI(void)
+uint32_t opTASI(void)
 {
-	UINT8 appb;
+	uint8_t appb;
 	modAdd=PC + 1;
 	modDim=0;
 
 	// Load the address of the operand
 	amLength1=ReadAMAddress();
 
-	// Load UINT8 from the address
+	// Load uint8_t from the address
 	if (amFlag)
-		appb=(UINT8)v60.reg[amOut&0x1F];
+		appb=(uint8_t)v60.reg[amOut&0x1F];
 	else
 		appb=MemRead8(amOut);
 
@@ -444,7 +444,7 @@ UINT32 opTASI(void)
 	return amLength1 + 1;
 }
 
-UINT32 opCLRTLB(void)
+uint32_t opCLRTLB(void)
 {
 	modAdd=PC+1;
 	modDim=2;
@@ -457,7 +457,7 @@ UINT32 opCLRTLB(void)
 	return amLength1 + 1;
 }
 
-UINT32 opPOPM(void)
+uint32_t opPOPM(void)
 {
 	int i;
 
@@ -484,7 +484,7 @@ UINT32 opPOPM(void)
 	return amLength1 + 1;
 }
 
-UINT32 opPUSHM(void)
+uint32_t opPUSHM(void)
 {
 	int i;
 
@@ -512,7 +512,7 @@ UINT32 opPUSHM(void)
 	return amLength1 + 1;
 }
 
-UINT32 opTESTB(void) /* TRUSTED */
+uint32_t opTESTB(void) /* TRUSTED */
 {
 	modAdd=PC+1;
 	modDim=0;
@@ -528,7 +528,7 @@ UINT32 opTESTB(void) /* TRUSTED */
 	return amLength1 + 1;
 }
 
-UINT32 opTESTH(void) /* TRUSTED */
+uint32_t opTESTH(void) /* TRUSTED */
 {
 	modAdd=PC+1;
 	modDim=1;
@@ -544,7 +544,7 @@ UINT32 opTESTH(void) /* TRUSTED */
 	return amLength1 + 1;
 }
 
-UINT32 opTESTW(void) /* TRUSTED */
+uint32_t opTESTW(void) /* TRUSTED */
 {
 	modAdd=PC+1;
 	modDim=2;
@@ -560,7 +560,7 @@ UINT32 opTESTW(void) /* TRUSTED */
 	return amLength1 + 1;
 }
 
-UINT32 opPUSH(void)
+uint32_t opPUSH(void)
 {
 	modAdd=PC+1;
 	modDim=2;
@@ -573,7 +573,7 @@ UINT32 opPUSH(void)
 	return amLength1 + 1;
 }
 
-UINT32 opPOP(void)
+uint32_t opPOP(void)
 {
 	modAdd=PC+1;
 	modDim=2;
@@ -585,70 +585,70 @@ UINT32 opPOP(void)
 }
 
 
-UINT32 opINCB_0(void) { modM=0; return opINCB(); }
-UINT32 opINCB_1(void) { modM=1; return opINCB(); }
-UINT32 opINCH_0(void) { modM=0; return opINCH(); }
-UINT32 opINCH_1(void) { modM=1; return opINCH(); }
-UINT32 opINCW_0(void) { modM=0; return opINCW(); }
-UINT32 opINCW_1(void) { modM=1; return opINCW(); }
+uint32_t opINCB_0(void) { modM=0; return opINCB(); }
+uint32_t opINCB_1(void) { modM=1; return opINCB(); }
+uint32_t opINCH_0(void) { modM=0; return opINCH(); }
+uint32_t opINCH_1(void) { modM=1; return opINCH(); }
+uint32_t opINCW_0(void) { modM=0; return opINCW(); }
+uint32_t opINCW_1(void) { modM=1; return opINCW(); }
 
-UINT32 opDECB_0(void) { modM=0; return opDECB(); }
-UINT32 opDECB_1(void) { modM=1; return opDECB(); }
-UINT32 opDECH_0(void) { modM=0; return opDECH(); }
-UINT32 opDECH_1(void) { modM=1; return opDECH(); }
-UINT32 opDECW_0(void) { modM=0; return opDECW(); }
-UINT32 opDECW_1(void) { modM=1; return opDECW(); }
+uint32_t opDECB_0(void) { modM=0; return opDECB(); }
+uint32_t opDECB_1(void) { modM=1; return opDECB(); }
+uint32_t opDECH_0(void) { modM=0; return opDECH(); }
+uint32_t opDECH_1(void) { modM=1; return opDECH(); }
+uint32_t opDECW_0(void) { modM=0; return opDECW(); }
+uint32_t opDECW_1(void) { modM=1; return opDECW(); }
 
-UINT32 opJMP_0(void) { modM=0; return opJMP(); }
-UINT32 opJMP_1(void) { modM=1; return opJMP(); }
+uint32_t opJMP_0(void) { modM=0; return opJMP(); }
+uint32_t opJMP_1(void) { modM=1; return opJMP(); }
 
-UINT32 opJSR_0(void) { modM=0; return opJSR(); }
-UINT32 opJSR_1(void) { modM=1; return opJSR(); }
+uint32_t opJSR_0(void) { modM=0; return opJSR(); }
+uint32_t opJSR_1(void) { modM=1; return opJSR(); }
 
-UINT32 opPREPARE_0(void) { modM=0; return opPREPARE(); }
-UINT32 opPREPARE_1(void) { modM=1; return opPREPARE(); }
+uint32_t opPREPARE_0(void) { modM=0; return opPREPARE(); }
+uint32_t opPREPARE_1(void) { modM=1; return opPREPARE(); }
 
-UINT32 opRET_0(void) { modM=0; return opRET(); }
-UINT32 opRET_1(void) { modM=1; return opRET(); }
+uint32_t opRET_0(void) { modM=0; return opRET(); }
+uint32_t opRET_1(void) { modM=1; return opRET(); }
 
-UINT32 opTRAP_0(void) { modM=0; return opTRAP(); }
-UINT32 opTRAP_1(void) { modM=1; return opTRAP(); }
+uint32_t opTRAP_0(void) { modM=0; return opTRAP(); }
+uint32_t opTRAP_1(void) { modM=1; return opTRAP(); }
 
-UINT32 opRETIU_0(void) { modM=0; return opRETIU(); }
-UINT32 opRETIU_1(void) { modM=1; return opRETIU(); }
+uint32_t opRETIU_0(void) { modM=0; return opRETIU(); }
+uint32_t opRETIU_1(void) { modM=1; return opRETIU(); }
 
-UINT32 opRETIS_0(void) { modM=0; return opRETIS(); }
-UINT32 opRETIS_1(void) { modM=1; return opRETIS(); }
+uint32_t opRETIS_0(void) { modM=0; return opRETIS(); }
+uint32_t opRETIS_1(void) { modM=1; return opRETIS(); }
 
-UINT32 opGETPSW_0(void) { modM=0; return opGETPSW(); }
-UINT32 opGETPSW_1(void) { modM=1; return opGETPSW(); }
+uint32_t opGETPSW_0(void) { modM=0; return opGETPSW(); }
+uint32_t opGETPSW_1(void) { modM=1; return opGETPSW(); }
 
-UINT32 opTASI_0(void) { modM=0; return opTASI(); }
-UINT32 opTASI_1(void) { modM=1; return opTASI(); }
+uint32_t opTASI_0(void) { modM=0; return opTASI(); }
+uint32_t opTASI_1(void) { modM=1; return opTASI(); }
 
-UINT32 opCLRTLB_0(void) { modM=0; return opCLRTLB(); }
-UINT32 opCLRTLB_1(void) { modM=1; return opCLRTLB(); }
+uint32_t opCLRTLB_0(void) { modM=0; return opCLRTLB(); }
+uint32_t opCLRTLB_1(void) { modM=1; return opCLRTLB(); }
 
-UINT32 opPOPM_0(void) { modM=0; return opPOPM(); }
-UINT32 opPOPM_1(void) { modM=1; return opPOPM(); }
+uint32_t opPOPM_0(void) { modM=0; return opPOPM(); }
+uint32_t opPOPM_1(void) { modM=1; return opPOPM(); }
 
-UINT32 opPUSHM_0(void) { modM=0; return opPUSHM(); }
-UINT32 opPUSHM_1(void) { modM=1; return opPUSHM(); }
+uint32_t opPUSHM_0(void) { modM=0; return opPUSHM(); }
+uint32_t opPUSHM_1(void) { modM=1; return opPUSHM(); }
 
-UINT32 opTESTB_0(void) { modM=0; return opTESTB(); }
-UINT32 opTESTB_1(void) { modM=1; return opTESTB(); }
+uint32_t opTESTB_0(void) { modM=0; return opTESTB(); }
+uint32_t opTESTB_1(void) { modM=1; return opTESTB(); }
 
-UINT32 opTESTH_0(void) { modM=0; return opTESTH(); }
-UINT32 opTESTH_1(void) { modM=1; return opTESTH(); }
+uint32_t opTESTH_0(void) { modM=0; return opTESTH(); }
+uint32_t opTESTH_1(void) { modM=1; return opTESTH(); }
 
-UINT32 opTESTW_0(void) { modM=0; return opTESTW(); }
-UINT32 opTESTW_1(void) { modM=1; return opTESTW(); }
+uint32_t opTESTW_0(void) { modM=0; return opTESTW(); }
+uint32_t opTESTW_1(void) { modM=1; return opTESTW(); }
 
-UINT32 opPUSH_0(void) { modM=0; return opPUSH(); }
-UINT32 opPUSH_1(void) { modM=1; return opPUSH(); }
+uint32_t opPUSH_0(void) { modM=0; return opPUSH(); }
+uint32_t opPUSH_1(void) { modM=1; return opPUSH(); }
 
-UINT32 opPOP_0(void) { modM=0; return opPOP(); }
-UINT32 opPOP_1(void) { modM=1; return opPOP(); }
+uint32_t opPOP_0(void) { modM=0; return opPOP(); }
+uint32_t opPOP_1(void) { modM=1; return opPOP(); }
 
-UINT32 opSTTASK_0(void) { modM=0; return opSTTASK(); }
-UINT32 opSTTASK_1(void) { modM=1; return opSTTASK(); }
+uint32_t opSTTASK_0(void) { modM=0; return opSTTASK(); }
+uint32_t opSTTASK_1(void) { modM=1; return opSTTASK(); }

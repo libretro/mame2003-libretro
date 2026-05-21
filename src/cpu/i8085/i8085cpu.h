@@ -294,7 +294,7 @@ int q = I.AF.b.h+R; 											\
 {																\
 	if (cc) 													\
 	{															\
-		UINT16 a = ARG16(); 									\
+		uint16_t a = ARG16(); 									\
 		i8085_ICount -= 6;										\
 		M_PUSH(PC); 											\
 		I.PC.d = a; 											\

@@ -24,8 +24,8 @@
 #define ADSP2100_SIZE			0x20000
 
 /* transmit and receive data callbacks types */
-typedef INT32 (*RX_CALLBACK)( int port );
-typedef void  (*TX_CALLBACK)( int port, INT32 data );
+typedef int32_t (*RX_CALLBACK)( int port );
+typedef void  (*TX_CALLBACK)( int port, int32_t data );
 
 
 /*###################################################################################################
@@ -111,7 +111,7 @@ extern unsigned adsp2100_dasm(char *buffer, unsigned pc);
 /****************************************************************************/
 /* Write a 24-bit value to program memory                                   */
 /****************************************************************************/
-#define ADSP2100_WRPGM(A,V)	(*(UINT32 *)(A) = (V) & 0xffffff)
+#define ADSP2100_WRPGM(A,V)	(*(uint32_t *)(A) = (V) & 0xffffff)
 
 
 #ifdef MAME_DEBUG

@@ -15,7 +15,7 @@
 #include "t11.h"
 
 static const char *regs[8] = { "R0", "R1", "R2", "R3", "R4", "R5", "SP", "PC" };
-static UINT8 ridx[8] = { T11_R0,T11_R1,T11_R2,T11_R3,T11_R4,T11_R5,T11_SP,T11_PC };
+static uint8_t ridx[8] = { T11_R0,T11_R1,T11_R2,T11_R3,T11_R4,T11_R5,T11_SP,T11_PC };
 
 #define PARAM_WORD(v) ((v) = cpu_readmem16lew_word (pc), pc += 2)
 #define RWORD(a)	cpu_readmem16lew_word(a)
@@ -110,8 +110,8 @@ unsigned DasmT11 (char *buffer, unsigned pc)
     const char *symbol;
 	char *dst = buffer, *ea1, *ea2;
 	unsigned PC = pc;
-	UINT16 op, lo, hi, addr;
-    INT16 offset;
+	uint16_t op, lo, hi, addr;
+    int16_t offset;
 
 	PARAM_WORD(op);
     lo = op & 077;
@@ -178,37 +178,37 @@ unsigned DasmT11 (char *buffer, unsigned pc)
 			sprintf (dst, "SWAB  %s", ea1);
 			break;
 		case 0x0100: case 0x0140: case 0x0180: case 0x01c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BR    %s", symbol);
 			break;
 		case 0x0200: case 0x0240: case 0x0280: case 0x02c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BNE   %s", symbol);
 			break;
 		case 0x0300: case 0x0340: case 0x0380: case 0x03c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BEQ   %s", symbol);
 			break;
 		case 0x0400: case 0x0440: case 0x0480: case 0x04c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BGE   %s", symbol);
 			break;
 		case 0x0500: case 0x0540: case 0x0580: case 0x05c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BLT   %s", symbol);
 			break;
 		case 0x0600: case 0x0640: case 0x0680: case 0x06c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BGT   %s", symbol);
 			break;
 		case 0x0700: case 0x0740: case 0x0780: case 0x07c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BLE   %s", symbol);
 			break;
@@ -366,42 +366,42 @@ unsigned DasmT11 (char *buffer, unsigned pc)
 			break;
 
 		case 0x8000: case 0x8040: case 0x8080: case 0x80c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BPL   %s", symbol);
 			break;
 		case 0x8100: case 0x8140: case 0x8180: case 0x81c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BMI   %s", symbol);
 			break;
 		case 0x8200: case 0x8240: case 0x8280: case 0x82c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BHI   %s", symbol);
 			break;
 		case 0x8300: case 0x8340: case 0x8380: case 0x83c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BLOS  %s", symbol);
 			break;
 		case 0x8400: case 0x8440: case 0x8480: case 0x84c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BVC   %s", symbol);
 			break;
 		case 0x8500: case 0x8540: case 0x8580: case 0x85c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BVS   %s", symbol);
 			break;
 		case 0x8600: case 0x8640: case 0x8680: case 0x86c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BCC   %s", symbol);
             break;
 		case 0x8700: case 0x8740: case 0x8780: case 0x87c0:
-			offset = 2 * (INT8)(op & 0xff);
+			offset = 2 * (int8_t)(op & 0xff);
 			symbol = set_ea_info( EA_DST, pc, offset, EA_REL_PC );
             sprintf (dst, "BCS   %s", symbol);
 			break;

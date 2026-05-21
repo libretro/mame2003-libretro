@@ -75,13 +75,13 @@
 #define ADDR_MASK		TMS32010_ADDR_MASK
 
 
-static UINT8 tms32010_reg_layout[] = {
+static uint8_t tms32010_reg_layout[] = {
 	TMS32010_PC,  TMS32010_SP,  TMS32010_STR, TMS32010_ACC,-1,
 	TMS32010_PREG,TMS32010_TREG,TMS32010_AR0, TMS32010_AR1,-1,
 	TMS32010_STK0,TMS32010_STK1,TMS32010_STK2,TMS32010_STK3,0
 };
 
-static UINT8 tms32010_win_layout[] = {
+static uint8_t tms32010_win_layout[] = {
 	28, 0,52, 4,	/* register window (top rows) */
 	 0, 0,27,22,	/* disassembler window (left colums) */
 	28, 5,52, 8,	/* memory #1 window (right, upper middle) */
@@ -95,15 +95,15 @@ static UINT8 tms32010_win_layout[] = {
 typedef struct			/* Page 3-6 shows all registers */
 {
 	/******************** CPU Internal Registers *******************/
-	UINT16	PC;
-	UINT16	PREVPC;		/* previous program counter */
-	UINT16	STR;
+	uint16_t	PC;
+	uint16_t	PREVPC;		/* previous program counter */
+	uint16_t	STR;
 	PAIR	ACC;
 	PAIR	ALU;
 	PAIR	Preg;
-	UINT16	Treg;
-	UINT16	AR[2];
-	UINT16	STACK[4];
+	uint16_t	Treg;
+	uint16_t	AR[2];
+	uint16_t	STACK[4];
 
 	/********************** Status data ****************************/
 	PAIR	opcode;
@@ -112,7 +112,7 @@ typedef struct			/* Page 3-6 shows all registers */
 
 static tms32010_Regs R;
 static PAIR oldacc;
-static UINT16 memaccess;
+static uint16_t memaccess;
 int    tms32010_icount;
 typedef void (*opcode_fn) (void);
 
@@ -143,36 +143,36 @@ typedef void (*opcode_fn) (void);
  *	Shortcuts
  ************************************************************************/
 
-static INLINE void CLR(UINT16 flag) { R.STR &= ~flag; R.STR |= 0x1efe; }
-static INLINE void SET(UINT16 flag) { R.STR |=  flag; R.STR |= 0x1efe; }
+static INLINE void CLR(uint16_t flag) { R.STR &= ~flag; R.STR |= 0x1efe; }
+static INLINE void SET(uint16_t flag) { R.STR |=  flag; R.STR |= 0x1efe; }
 
 
-static INLINE void CALCULATE_ADD_OVERFLOW(INT32 addval)
+static INLINE void CALCULATE_ADD_OVERFLOW(int32_t addval)
 {
-	if ((INT32)(~(oldacc.d ^ addval) & (oldacc.d ^ R.ACC.d)) < 0) {
+	if ((int32_t)(~(oldacc.d ^ addval) & (oldacc.d ^ R.ACC.d)) < 0) {
 		SET(OV_FLAG);
 		if (OVM)
-			R.ACC.d = ((INT32)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			R.ACC.d = ((int32_t)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 	}
 }
-static INLINE void CALCULATE_SUB_OVERFLOW(INT32 subval)
+static INLINE void CALCULATE_SUB_OVERFLOW(int32_t subval)
 {
-	if ((INT32)((oldacc.d ^ subval) & (oldacc.d ^ R.ACC.d)) < 0) {
+	if ((int32_t)((oldacc.d ^ subval) & (oldacc.d ^ R.ACC.d)) < 0) {
 		SET(OV_FLAG);
 		if (OVM)
-			R.ACC.d = ((INT32)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			R.ACC.d = ((int32_t)oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 	}
 }
 
-static INLINE UINT16 POP_STACK(void)
+static INLINE uint16_t POP_STACK(void)
 {
-	UINT16 data = R.STACK[3];
+	uint16_t data = R.STACK[3];
 	R.STACK[3] = R.STACK[2];
 	R.STACK[2] = R.STACK[1];
 	R.STACK[1] = R.STACK[0];
 	return (data & ADDR_MASK);
 }
-static INLINE void PUSH_STACK(UINT16 data)
+static INLINE void PUSH_STACK(uint16_t data)
 {
 	R.STACK[0] = R.STACK[1];
 	R.STACK[1] = R.STACK[2];
@@ -180,7 +180,7 @@ static INLINE void PUSH_STACK(UINT16 data)
 	R.STACK[3] = (data & ADDR_MASK);
 }
 
-static INLINE void GET_MEM_ADDR(UINT16 DMA)
+static INLINE void GET_MEM_ADDR(uint16_t DMA)
 {
 	if (R.opcode.b.l & 0x80)
 		memaccess = IND;
@@ -190,7 +190,7 @@ static INLINE void GET_MEM_ADDR(UINT16 DMA)
 static INLINE void UPDATE_AR(void)
 {
 	if (R.opcode.b.l & 0x30) {
-		UINT16 tmpAR = R.AR[ARP];
+		uint16_t tmpAR = R.AR[ARP];
 		if (R.opcode.b.l & 0x20) tmpAR++ ;
 		if (R.opcode.b.l & 0x10) tmpAR-- ;
 		R.AR[ARP] = (R.AR[ARP] & 0xfe00) | (tmpAR & 0x01ff);
@@ -205,11 +205,11 @@ static INLINE void UPDATE_ARP(void)
 }
 
 
-static INLINE void getdata(UINT8 shift,UINT8 signext)
+static INLINE void getdata(uint8_t shift,uint8_t signext)
 {
 	GET_MEM_ADDR(DMA_DP);
-	R.ALU.d = (UINT16)M_RDRAM(memaccess);
-	if (signext) R.ALU.d = (INT16)R.ALU.d;
+	R.ALU.d = (uint16_t)M_RDRAM(memaccess);
+	if (signext) R.ALU.d = (int16_t)R.ALU.d;
 	R.ALU.d <<= shift;
 	if (R.opcode.b.l & 0x80) {
 		UPDATE_AR();
@@ -217,7 +217,7 @@ static INLINE void getdata(UINT8 shift,UINT8 signext)
 	}
 }
 
-static INLINE void putdata(UINT16 data)
+static INLINE void putdata(uint16_t data)
 {
 	GET_MEM_ADDR(DMA_DP);
 	if (R.opcode.b.l & 0x80) {
@@ -226,7 +226,7 @@ static INLINE void putdata(UINT16 data)
 	}
 	M_WRTRAM(memaccess,data);
 }
-static INLINE void putdata_sar(UINT8 data)
+static INLINE void putdata_sar(uint8_t data)
 {
 	GET_MEM_ADDR(DMA_DP);
 	if (R.opcode.b.l & 0x80) {
@@ -235,7 +235,7 @@ static INLINE void putdata_sar(UINT8 data)
 	}
 	M_WRTRAM(memaccess,R.AR[data]);
 }
-static INLINE void putdata_sst(UINT16 data)
+static INLINE void putdata_sst(uint16_t data)
 {
 	GET_MEM_ADDR(DMA_DP1);		/* Page 1 only */
 	if (R.opcode.b.l & 0x80) {
@@ -263,7 +263,7 @@ static void illegal(void)
 
 static void abst(void)
 {
-		if ( (INT32)(R.ACC.d) < 0 ) {
+		if ( (int32_t)(R.ACC.d) < 0 ) {
 			R.ACC.d = -R.ACC.d;
 			if (OVM && (R.ACC.d == 0x80000000)) R.ACC.d-- ;
 		}
@@ -326,14 +326,14 @@ static void banz(void)
 }
 static void bgez(void)
 {
-		if ( (INT32)(R.ACC.d) >= 0 )
+		if ( (int32_t)(R.ACC.d) >= 0 )
 			R.PC = M_RDOP_ARG(R.PC);
 		else
 			R.PC++ ;
 }
 static void bgz(void)
 {
-		if ( (INT32)(R.ACC.d) > 0 )
+		if ( (int32_t)(R.ACC.d) > 0 )
 			R.PC = M_RDOP_ARG(R.PC);
 		else
 			R.PC++ ;
@@ -347,14 +347,14 @@ static void bioz(void)
 }
 static void blez(void)
 {
-		if ( (INT32)(R.ACC.d) <= 0 )
+		if ( (int32_t)(R.ACC.d) <= 0 )
 			R.PC = M_RDOP_ARG(R.PC);
 		else
 			R.PC++ ;
 }
 static void blz(void)
 {
-		if ( (INT32)(R.ACC.d) <  0 )
+		if ( (int32_t)(R.ACC.d) <  0 )
 			R.PC = M_RDOP_ARG(R.PC);
 		else
 			R.PC++ ;
@@ -494,12 +494,12 @@ static void ltd(void)
 static void mpy(void)
 {
 		getdata(0,0);
-		R.Preg.d = (INT16)R.ALU.w.l * (INT16)R.Treg;
+		R.Preg.d = (int16_t)R.ALU.w.l * (int16_t)R.Treg;
 		if (R.Preg.d == 0x40000000) R.Preg.d = 0xc0000000;
 }
 static void mpyk(void)
 {
-		R.Preg.d = (INT16)R.Treg * ((INT16)(R.opcode.w.l << 3) >> 3);
+		R.Preg.d = (int16_t)R.Treg * ((int16_t)(R.opcode.w.l << 3) >> 3);
 }
 static void nop(void)
 {
@@ -579,9 +579,9 @@ static void subc(void)
 		oldacc.d = R.ACC.d;
 		getdata(15,0);
 		R.ALU.d -= R.ALU.d;
-		if ((INT32)((oldacc.d ^ R.ALU.d) & (oldacc.d ^ R.ACC.d)) < 0)
+		if ((int32_t)((oldacc.d ^ R.ALU.d) & (oldacc.d ^ R.ACC.d)) < 0)
 			SET(OV_FLAG);
-		if ( (INT32)(R.ALU.d) >= 0 )
+		if ( (int32_t)(R.ALU.d) >= 0 )
 			R.ACC.d = ((R.ALU.d << 1) + 1);
 		else
 			R.ACC.d = (R.ACC.d << 1);

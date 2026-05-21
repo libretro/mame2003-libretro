@@ -21,7 +21,7 @@
 #define AMASK	0xfffff
 
 
-static UINT8 i86_reg_layout[] =
+static uint8_t i86_reg_layout[] =
 {
 	I86_AX, I86_BX, I86_DS, I86_ES, I86_SS, I86_FLAGS, I86_CS, I86_VECTOR, -1,
 	I86_CX, I86_DX, I86_SI, I86_DI, I86_SP, I86_BP, I86_IP,
@@ -29,7 +29,7 @@ static UINT8 i86_reg_layout[] =
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 i86_win_layout[] =
+static uint8_t i86_win_layout[] =
 {
 	0, 0, 80, 2,					   /* register window (top rows) */
 	0, 3, 34, 19,					   /* disassembler window (left colums) */
@@ -41,27 +41,27 @@ static UINT8 i86_win_layout[] =
 /* I86 registers */
 typedef union
 {									   /* eight general registers */
-	UINT16 w[8];					   /* viewed as 16 bits registers */
-	UINT8 b[16];					   /* or as 8 bit registers */
+	uint16_t w[8];					   /* viewed as 16 bits registers */
+	uint8_t b[16];					   /* or as 8 bit registers */
 }
 i86basicregs;
 
 typedef struct
 {
 	i86basicregs regs;
-	UINT32 pc;
-	UINT32 prevpc;
-	UINT32 base[4];
-	UINT16 sregs[4];
-	UINT16 flags;
+	uint32_t pc;
+	uint32_t prevpc;
+	uint32_t base[4];
+	uint16_t sregs[4];
+	uint16_t flags;
 	int (*irq_callback) (int irqline);
 	int AuxVal, OverVal, SignVal, ZeroVal, CarryVal, DirVal;		/* 0 or non-0 valued flags */
-	UINT8 ParityVal;
-	UINT8 TF, IF;				   /* 0 or 1 valued flags */
-	UINT8 MF;						   /* V30 mode flag */
-	UINT8 int_vector;
-	INT8 nmi_state;
-	INT8 irq_state;
+	uint8_t ParityVal;
+	uint8_t TF, IF;				   /* 0 or 1 valued flags */
+	uint8_t MF;						   /* V30 mode flag */
+	uint8_t int_vector;
+	int8_t nmi_state;
+	int8_t irq_state;
 	int extra_cycles;       /* extra cycles for interrupts */
 }
 i86_Regs;
@@ -79,7 +79,7 @@ static i86_Regs I;
 static unsigned prefix_base;		   /* base address of the latest prefix segment */
 static char seg_prefix;				   /* prefix segment indicator */
 
-static UINT8 parity_table[256];
+static uint8_t parity_table[256];
 
 static struct i86_timing cycles;
 
@@ -543,7 +543,7 @@ unsigned i186_dasm(char *buffer, unsigned pc)
 
 #define nec_ICount i86_ICount
 
-static UINT16 bytes[] =
+static uint16_t bytes[] =
 {
 	   1,	 2,    4,	 8,
 	  16,	32,   64,  128,

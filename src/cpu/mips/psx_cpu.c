@@ -63,7 +63,7 @@
 #define CAUSE_CE2 ( 2L << 28 )
 #define CAUSE_BD ( 1L << 31 )
 
-static UINT8 mips_reg_layout[] =
+static uint8_t mips_reg_layout[] =
 {
 	MIPS_PC, -1,
 	MIPS_DELAYV, MIPS_DELAYR, -1,
@@ -142,7 +142,7 @@ static UINT8 mips_reg_layout[] =
 	0
 };
 
-static UINT8 mips_win_layout[] = {
+static uint8_t mips_win_layout[] = {
 	45, 0,35,13,	/* register window (top right) */
 	 0, 0,44,13,	/* disassembler window (left, upper) */
 	 0,14,44, 8,	/* memory #1 window (left, middle) */
@@ -163,14 +163,14 @@ static const char *delayn[] =
 
 typedef struct
 {
-	UINT32 op;
-	UINT32 pc;
-	UINT32 delayv;
-	UINT32 delayr;
-	UINT32 hi;
-	UINT32 lo;
-	UINT32 r[ 32 ];
-	UINT32 cp0r[ 32 ];
+	uint32_t op;
+	uint32_t pc;
+	uint32_t delayv;
+	uint32_t delayr;
+	uint32_t hi;
+	uint32_t lo;
+	uint32_t r[ 32 ];
+	uint32_t cp0r[ 32 ];
 	PAIR cp2cr[ 32 ];
 	PAIR cp2dr[ 32 ];
 	int (*irq_callback)(int irqline);
@@ -180,7 +180,7 @@ mips_cpu_context mipscpu;
 
 int mips_ICount = 0;
 
-static UINT32 mips_mtc0_writemask[]=
+static uint32_t mips_mtc0_writemask[]=
 {
 	0xffffffff, /* INDEX */
 	0x00000000, /* RANDOM */
@@ -216,10 +216,10 @@ static UINT32 mips_mtc0_writemask[]=
 	0x00000000
 };
 
-static UINT32 getcp2dr( int n_reg );
-static void setcp2dr( int n_reg, UINT32 n_value );
-static UINT32 getcp2cr( int n_reg );
-static void setcp2cr( int n_reg, UINT32 n_value );
+static uint32_t getcp2dr( int n_reg );
+static void setcp2dr( int n_reg, uint32_t n_value );
+static uint32_t getcp2cr( int n_reg );
+static void setcp2cr( int n_reg, uint32_t n_value );
 static void docop2( int gteop );
 static void mips_exception( int exception );
 
@@ -232,7 +232,7 @@ void mips_stop( void )
 #endif
 }
 
-static INLINE void mips_set_cp0r( int reg, UINT32 value )
+static INLINE void mips_set_cp0r( int reg, uint32_t value )
 {
 	mipscpu.cp0r[ reg ] = value;
 	if( reg == CP0_SR || reg == CP0_CAUSE )
@@ -259,7 +259,7 @@ static INLINE void mips_commit_delayed_load( void )
 	}
 }
 
-static INLINE void mips_delayed_branch( UINT32 n_adr )
+static INLINE void mips_delayed_branch( uint32_t n_adr )
 {
 	if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 	{
@@ -296,7 +296,7 @@ static INLINE void mips_advance_pc( void )
 	}
 }
 
-static INLINE void mips_load( UINT32 n_r, UINT32 n_v )
+static INLINE void mips_load( uint32_t n_r, uint32_t n_v )
 {
 	mips_advance_pc();
 	if( n_r != 0 )
@@ -305,7 +305,7 @@ static INLINE void mips_load( UINT32 n_r, UINT32 n_v )
 	}
 }
 
-static INLINE void mips_delayed_load( UINT32 n_r, UINT32 n_v )
+static INLINE void mips_delayed_load( uint32_t n_r, uint32_t n_v )
 {
 	if( mipscpu.delayr == REGPC )
 	{
@@ -378,7 +378,7 @@ void mips_exit( void )
 
 int mips_execute( int cycles )
 {
-	UINT32 n_res;
+	uint32_t n_res;
 
 	mips_ICount = cycles;
 	do
@@ -398,7 +398,7 @@ int mips_execute( int cycles )
 				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] >> INS_SHAMT( mipscpu.op ) );
 				break;
 			case FUNCT_SRA:
-				mips_load( INS_RD( mipscpu.op ), (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] >> INS_SHAMT( mipscpu.op ) );
+				mips_load( INS_RD( mipscpu.op ), (int32_t)mipscpu.r[ INS_RT( mipscpu.op ) ] >> INS_SHAMT( mipscpu.op ) );
 				break;
 			case FUNCT_SLLV:
 				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] << ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
@@ -407,7 +407,7 @@ int mips_execute( int cycles )
 				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RT( mipscpu.op ) ] >> ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
 				break;
 			case FUNCT_SRAV:
-				mips_load( INS_RD( mipscpu.op ), (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] >> ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
+				mips_load( INS_RD( mipscpu.op ), (int32_t)mipscpu.r[ INS_RT( mipscpu.op ) ] >> ( mipscpu.r[ INS_RS( mipscpu.op ) ] & 31 ) );
 				break;
 			case FUNCT_JR:
 				if( INS_RD( mipscpu.op ) != 0 )
@@ -468,8 +468,8 @@ int mips_execute( int cycles )
 				}
 				else
 				{
-					INT64 n_res64;
-					n_res64 = MUL_64_32_32( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ], (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] );
+					int64_t n_res64;
+					n_res64 = MUL_64_32_32( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ], (int32_t)mipscpu.r[ INS_RT( mipscpu.op ) ] );
 					mips_advance_pc();
 					mipscpu.lo = LO32_32_64( n_res64 );
 					mipscpu.hi = HI32_32_64( n_res64 );
@@ -482,7 +482,7 @@ int mips_execute( int cycles )
 				}
 				else
 				{
-					UINT64 n_res64;
+					uint64_t n_res64;
 					n_res64 = MUL_U64_U32_U32( mipscpu.r[ INS_RS( mipscpu.op ) ], mipscpu.r[ INS_RT( mipscpu.op ) ] );
 					mips_advance_pc();
 					mipscpu.lo = LO32_U32_U64( n_res64 );
@@ -496,12 +496,12 @@ int mips_execute( int cycles )
 				}
 				else
 				{
-					UINT32 n_div;
-					UINT32 n_mod;
+					uint32_t n_div;
+					uint32_t n_mod;
 					if( mipscpu.r[ INS_RT( mipscpu.op ) ] != 0 )
 					{
-						n_div = (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] / (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ];
-						n_mod = (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] % (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ];
+						n_div = (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] / (int32_t)mipscpu.r[ INS_RT( mipscpu.op ) ];
+						n_mod = (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] % (int32_t)mipscpu.r[ INS_RT( mipscpu.op ) ];
 						mips_advance_pc();
 						mipscpu.lo = n_div;
 						mipscpu.hi = n_mod;
@@ -519,8 +519,8 @@ int mips_execute( int cycles )
 				}
 				else
 				{
-					UINT32 n_div;
-					UINT32 n_mod;
+					uint32_t n_div;
+					uint32_t n_mod;
 					if( mipscpu.r[ INS_RT( mipscpu.op ) ] != 0 )
 					{
 						n_div = mipscpu.r[ INS_RS( mipscpu.op ) ] / mipscpu.r[ INS_RT( mipscpu.op ) ];
@@ -538,7 +538,7 @@ int mips_execute( int cycles )
 			case FUNCT_ADD:
 				{
 					n_res = mipscpu.r[ INS_RS( mipscpu.op ) ] + mipscpu.r[ INS_RT( mipscpu.op ) ];
-					if( (INT32)( ~( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
+					if( (int32_t)( ~( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
 					{
 						mips_exception( EXC_OVF );
 					}
@@ -553,7 +553,7 @@ int mips_execute( int cycles )
 				break;
 			case FUNCT_SUB:
 				n_res = mipscpu.r[ INS_RS( mipscpu.op ) ] - mipscpu.r[ INS_RT( mipscpu.op ) ];
-				if( (INT32)( ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
+				if( (int32_t)( ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ mipscpu.r[ INS_RT( mipscpu.op ) ] ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
 				{
 					mips_exception( EXC_OVF );
 				}
@@ -578,7 +578,7 @@ int mips_execute( int cycles )
 				mips_load( INS_RD( mipscpu.op ), ~( mipscpu.r[ INS_RS( mipscpu.op ) ] | mipscpu.r[ INS_RT( mipscpu.op ) ] ) );
 				break;
 			case FUNCT_SLT:
-				mips_load( INS_RD( mipscpu.op ), (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < (INT32)mipscpu.r[ INS_RT( mipscpu.op ) ] );
+				mips_load( INS_RD( mipscpu.op ), (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] < (int32_t)mipscpu.r[ INS_RT( mipscpu.op ) ] );
 				break;
 			case FUNCT_SLTU:
 				mips_load( INS_RD( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] < mipscpu.r[ INS_RT( mipscpu.op ) ] );
@@ -592,7 +592,7 @@ int mips_execute( int cycles )
 			switch( INS_RT( mipscpu.op ) )
 			{
 			case RT_BLTZ:
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < 0 )
+				if( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] < 0 )
 				{
 					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
 				}
@@ -602,7 +602,7 @@ int mips_execute( int cycles )
 				}
 				break;
 			case RT_BGEZ:
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] >= 0 )
+				if( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] >= 0 )
 				{
 					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
 				}
@@ -613,7 +613,7 @@ int mips_execute( int cycles )
 				break;
 			case RT_BLTZAL:
 				n_res = mipscpu.pc + 8;
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < 0 )
+				if( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] < 0 )
 				{
 					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
 				}
@@ -625,7 +625,7 @@ int mips_execute( int cycles )
 				break;
 			case RT_BGEZAL:
 				n_res = mipscpu.pc + 8;
-				if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] >= 0 )
+				if( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] >= 0 )
 				{
 					mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
 				}
@@ -670,7 +670,7 @@ int mips_execute( int cycles )
 			{
 				mips_exception( EXC_RI );
 			}
-			else if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] <= 0 )
+			else if( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] <= 0 )
 			{
 				mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
 			}
@@ -684,7 +684,7 @@ int mips_execute( int cycles )
 			{
 				mips_exception( EXC_RI );
 			}
-			else if( (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] > 0 )
+			else if( (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] > 0 )
 			{
 				mips_delayed_branch( mipscpu.pc + 4 + ( MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) << 2 ) );
 			}
@@ -695,10 +695,10 @@ int mips_execute( int cycles )
 			break;
 		case OP_ADDI:
 			{
-				UINT32 n_imm;
+				uint32_t n_imm;
 				n_imm = MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				n_res = mipscpu.r[ INS_RS( mipscpu.op ) ] + n_imm;
-				if( (INT32)( ~( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_imm ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
+				if( (int32_t)( ~( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_imm ) & ( mipscpu.r[ INS_RS( mipscpu.op ) ] ^ n_res ) ) < 0 )
 				{
 					mips_exception( EXC_OVF );
 				}
@@ -712,10 +712,10 @@ int mips_execute( int cycles )
 			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
 			break;
 		case OP_SLTI:
-			mips_load( INS_RT( mipscpu.op ), (INT32)mipscpu.r[ INS_RS( mipscpu.op ) ] < MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
+			mips_load( INS_RT( mipscpu.op ), (int32_t)mipscpu.r[ INS_RS( mipscpu.op ) ] < MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
 			break;
 		case OP_SLTIU:
-			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] < (UINT32)MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
+			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] < (uint32_t)MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) ) );
 			break;
 		case OP_ANDI:
 			mips_load( INS_RT( mipscpu.op ), mipscpu.r[ INS_RS( mipscpu.op ) ] & INS_IMMEDIATE( mipscpu.op ) );
@@ -964,7 +964,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -978,7 +978,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1001,7 +1001,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
@@ -1015,7 +1015,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
@@ -1038,7 +1038,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1050,13 +1050,13 @@ int mips_execute( int cycles )
 					switch( n_adr & 3 )
 					{
 					case 0:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x00ffffff ) | ( (UINT32)cpu_readmem32ledw( n_adr + 3 ) << 24 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x00ffffff ) | ( (uint32_t)cpu_readmem32ledw( n_adr + 3 ) << 24 );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x0000ffff ) | ( (UINT32)cpu_readmem32ledw_word( n_adr + 1 ) << 16 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x0000ffff ) | ( (uint32_t)cpu_readmem32ledw_word( n_adr + 1 ) << 16 );
 						break;
 					case 2:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x000000ff ) | ( (UINT32)cpu_readmem32ledw( n_adr - 1 ) << 8 ) | ( (UINT32)cpu_readmem32ledw_word( n_adr ) << 16 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x000000ff ) | ( (uint32_t)cpu_readmem32ledw( n_adr - 1 ) << 8 ) | ( (uint32_t)cpu_readmem32ledw_word( n_adr ) << 16 );
 						break;
 					default:
 						n_res = cpu_readmem32ledw_dword( n_adr - 3 );
@@ -1067,7 +1067,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1079,13 +1079,13 @@ int mips_execute( int cycles )
 					switch( n_adr & 3 )
 					{
 					case 0:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x00ffffff ) | ( (UINT32)cpu_readmem32ledw( n_adr ) << 24 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x00ffffff ) | ( (uint32_t)cpu_readmem32ledw( n_adr ) << 24 );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x0000ffff ) | ( (UINT32)cpu_readmem32ledw_word( n_adr - 1 ) << 16 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x0000ffff ) | ( (uint32_t)cpu_readmem32ledw_word( n_adr - 1 ) << 16 );
 						break;
 					case 2:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x000000ff ) | ( (UINT32)cpu_readmem32ledw_word( n_adr - 2 ) << 8 ) | ( (UINT32)cpu_readmem32ledw( n_adr ) << 24 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0x000000ff ) | ( (uint32_t)cpu_readmem32ledw_word( n_adr - 2 ) << 8 ) | ( (uint32_t)cpu_readmem32ledw( n_adr ) << 24 );
 						break;
 					default:
 						n_res = cpu_readmem32ledw_dword( n_adr - 3 );
@@ -1105,7 +1105,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
@@ -1128,7 +1128,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1142,7 +1142,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1165,7 +1165,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
@@ -1179,7 +1179,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
@@ -1202,7 +1202,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1220,7 +1220,7 @@ int mips_execute( int cycles )
 						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xffff0000 ) | cpu_readmem32ledw_word( n_adr - 2 );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xff000000 ) | cpu_readmem32ledw_word( n_adr - 1 ) | ( (UINT32)cpu_readmem32ledw( n_adr + 1 ) << 16 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xff000000 ) | cpu_readmem32ledw_word( n_adr - 1 ) | ( (uint32_t)cpu_readmem32ledw( n_adr + 1 ) << 16 );
 						break;
 					default:
 						n_res = cpu_readmem32ledw_dword( n_adr );
@@ -1231,7 +1231,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1249,7 +1249,7 @@ int mips_execute( int cycles )
 						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xffff0000 ) | cpu_readmem32ledw_word( n_adr );
 						break;
 					case 1:
-						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xff000000 ) | cpu_readmem32ledw( n_adr ) | ( (UINT32)cpu_readmem32ledw_word( n_adr + 1 ) << 8 );
+						n_res = ( mipscpu.r[ INS_RT( mipscpu.op ) ] & 0xff000000 ) | cpu_readmem32ledw( n_adr ) | ( (uint32_t)cpu_readmem32ledw_word( n_adr + 1 ) << 8 );
 						break;
 					default:
 						n_res = cpu_readmem32ledw_dword( n_adr );
@@ -1269,7 +1269,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1284,7 +1284,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1308,7 +1308,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
@@ -1323,7 +1323,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 1 ) ) != 0 )
 				{
@@ -1347,7 +1347,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1377,7 +1377,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1418,7 +1418,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
@@ -1442,7 +1442,7 @@ int mips_execute( int cycles )
 			}
 			else if( ( mipscpu.cp0r[ CP0_SR ] & ( SR_RE | SR_KUC ) ) == ( SR_RE | SR_KUC ) )
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1472,7 +1472,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) ) != 0 )
 				{
@@ -1522,7 +1522,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
@@ -1558,7 +1558,7 @@ int mips_execute( int cycles )
 			}
 			else
 			{
-				UINT32 n_adr;
+				uint32_t n_adr;
 				n_adr = mipscpu.r[ INS_RS( mipscpu.op ) ] + MIPS_WORD_EXTEND( INS_IMMEDIATE( mipscpu.op ) );
 				if( ( n_adr & ( ( ( mipscpu.cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 				{
@@ -1898,7 +1898,7 @@ void mips_set_nmi_line( int state )
 
 void mips_set_irq_line( int irqline, int state )
 {
-	UINT32 ip;
+	uint32_t ip;
 
 	switch( irqline )
 	{
@@ -2117,7 +2117,7 @@ const char *mips_info( void *context, int regnum )
 	return buffer[ which ];
 }
 
-unsigned mips_dasm( char *buffer, UINT32 pc )
+unsigned mips_dasm( char *buffer, uint32_t pc )
 {
 	unsigned ret;
 	change_pc32ledw( pc );
@@ -2244,15 +2244,15 @@ unsigned mips_dasm( char *buffer, UINT32 pc )
 #define ZSF4 ( mipscpu.cp2cr[ 30 ].w.l )
 #define FLAG ( mipscpu.cp2cr[ 31 ].d )
 
-static UINT32 getcp2dr( int n_reg )
+static uint32_t getcp2dr( int n_reg )
 {
 	if( n_reg == 1 || n_reg == 3 || n_reg == 5 || n_reg == 8 || n_reg == 9 || n_reg == 10 || n_reg == 11 )
 	{
-		mipscpu.cp2dr[ n_reg ].d = (INT32)(INT16)mipscpu.cp2dr[ n_reg ].d;
+		mipscpu.cp2dr[ n_reg ].d = (int32_t)(int16_t)mipscpu.cp2dr[ n_reg ].d;
 	}
 	else if( n_reg == 17 || n_reg == 18 || n_reg == 19 )
 	{
-		mipscpu.cp2dr[ n_reg ].d = (UINT32)(UINT16)mipscpu.cp2dr[ n_reg ].d;
+		mipscpu.cp2dr[ n_reg ].d = (uint32_t)(uint16_t)mipscpu.cp2dr[ n_reg ].d;
 	}
 	else if( n_reg == 29 )
 	{
@@ -2262,7 +2262,7 @@ static UINT32 getcp2dr( int n_reg )
 	return mipscpu.cp2dr[ n_reg ].d;
 }
 
-static void setcp2dr( int n_reg, UINT32 n_value )
+static void setcp2dr( int n_reg, uint32_t n_value )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "set CP2DR%u=%08x", n_reg, n_value );
 	mipscpu.cp2dr[ n_reg ].d = n_value;
@@ -2281,8 +2281,8 @@ static void setcp2dr( int n_reg, UINT32 n_value )
 	}
 	else if( n_reg == 30 )
 	{
-		UINT32 n_lzcs = LZCS;
-		UINT32 n_lzcr = 0;
+		uint32_t n_lzcs = LZCS;
+		uint32_t n_lzcr = 0;
 
 		if( ( n_lzcs & 0x80000000 ) == 0 )
 		{
@@ -2297,19 +2297,19 @@ static void setcp2dr( int n_reg, UINT32 n_value )
 	}
 }
 
-static UINT32 getcp2cr( int n_reg )
+static uint32_t getcp2cr( int n_reg )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "get CP2CR%u=%08x", n_reg, mipscpu.cp2cr[ n_reg ].d );
 	return mipscpu.cp2cr[ n_reg ].d;
 }
 
-static void setcp2cr( int n_reg, UINT32 n_value )
+static void setcp2cr( int n_reg, uint32_t n_value )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "set CP2CR%u=%08x", n_reg, n_value );
 	mipscpu.cp2cr[ n_reg ].d = n_value;
 }
 
-static INLINE INT32 LIM( INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag )
+static INLINE int32_t LIM( int32_t n_value, int32_t n_max, int32_t n_min, uint32_t n_flag )
 {
 	if( n_value > n_max )
 	{
@@ -2324,7 +2324,7 @@ static INLINE INT32 LIM( INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag 
 	return n_value;
 }
 
-static INLINE INT64 BOUNDS( INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int n_minflag )
+static INLINE int64_t BOUNDS( int64_t n_value, int64_t n_max, int n_maxflag, int64_t n_min, int n_minflag )
 {
 	if( n_value > n_max )
 	{
@@ -2337,9 +2337,9 @@ static INLINE INT64 BOUNDS( INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_m
 	return n_value;
 }
 
-#define A1( a ) BOUNDS( ( a ), 0x7fffffff, 30, -(INT64)0x80000000, ( 1 << 27 ) )
-#define A2( a ) BOUNDS( ( a ), 0x7fffffff, 29, -(INT64)0x80000000, ( 1 << 26 ) )
-#define A3( a ) BOUNDS( ( a ), 0x7fffffff, 28, -(INT64)0x80000000, ( 1 << 25 ) )
+#define A1( a ) BOUNDS( ( a ), 0x7fffffff, 30, -(int64_t)0x80000000, ( 1 << 27 ) )
+#define A2( a ) BOUNDS( ( a ), 0x7fffffff, 29, -(int64_t)0x80000000, ( 1 << 26 ) )
+#define A3( a ) BOUNDS( ( a ), 0x7fffffff, 28, -(int64_t)0x80000000, ( 1 << 25 ) )
 #define Lm_B1( a, l ) LIM( ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 24 ) )
 #define Lm_B2( a, l ) LIM( ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 23 ) )
 #define Lm_B3( a, l ) LIM( ( a ), 0x7fff, -0x8000 * !l, ( 1 << 22 ) )
@@ -2348,7 +2348,7 @@ static INLINE INT64 BOUNDS( INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_m
 #define Lm_C3( a ) LIM( ( a ), 0x00ff, 0x0000, ( 1 << 19 ) )
 #define Lm_D( a ) LIM( ( a ), 0xffff, 0x0000, ( 1 << 31 ) | ( 1 << 18 ) )
 
-static INLINE UINT32 Lm_E( UINT32 n_z )
+static INLINE uint32_t Lm_E( uint32_t n_z )
 {
 	if( n_z <= H / 2 )
 	{
@@ -2362,7 +2362,7 @@ static INLINE UINT32 Lm_E( UINT32 n_z )
 	return n_z;
 }
 
-#define F( a ) BOUNDS( ( a ), 0x7fffffff, ( 1 << 31 ) | ( 1 << 16 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 15 ) )
+#define F( a ) BOUNDS( ( a ), 0x7fffffff, ( 1 << 31 ) | ( 1 << 16 ), -(int64_t)0x80000000, ( 1 << 31 ) | ( 1 << 15 ) )
 #define Lm_G1( a ) LIM( ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 14 ) )
 #define Lm_G2( a ) LIM( ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 13 ) )
 #define Lm_H( a ) LIM( ( a ), 0xfff, 0x000, ( 1 << 12 ) )
@@ -2373,26 +2373,26 @@ static void docop2( int gteop )
 	int n_v;
 	int n_lm;
 	int n_pass;
-	UINT16 n_v1;
-	UINT16 n_v2;
-	UINT16 n_v3;
-	const UINT16 **p_n_mx;
-	const UINT32 **p_n_cv;
-	static const UINT16 n_zm = 0;
-	static const UINT32 n_zc = 0;
-	static const UINT16 *p_n_vx[] = { &VX0, &VX1, &VX2 };
-	static const UINT16 *p_n_vy[] = { &VY0, &VY1, &VY2 };
-	static const UINT16 *p_n_vz[] = { &VZ0, &VZ1, &VZ2 };
-	static const UINT16 *p_n_rm[] = { &R11, &R12, &R13, &R21, &R22, &R23, &R31, &R32, &R33 };
-	static const UINT16 *p_n_lm[] = { &L11, &L12, &L13, &L21, &L22, &L23, &L31, &L32, &L33 };
-	static const UINT16 *p_n_cm[] = { &LR1, &LR2, &LR3, &LG1, &LG2, &LG3, &LB1, &LB2, &LB3 };
-	static const UINT16 *p_n_zm[] = { &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm };
-	static const UINT16 **p_p_n_mx[] = { p_n_rm, p_n_lm, p_n_cm, p_n_zm };
-	static const UINT32 *p_n_tr[] = { &TRX, &TRY, &TRZ };
-	static const UINT32 *p_n_bk[] = { &RBK, &GBK, &BBK };
-	static const UINT32 *p_n_fc[] = { &RFC, &GFC, &BFC };
-	static const UINT32 *p_n_zc[] = { &n_zc, &n_zc, &n_zc };
-	static const UINT32 **p_p_n_cv[] = { p_n_tr, p_n_bk, p_n_fc, p_n_zc };
+	uint16_t n_v1;
+	uint16_t n_v2;
+	uint16_t n_v3;
+	const uint16_t **p_n_mx;
+	const uint32_t **p_n_cv;
+	static const uint16_t n_zm = 0;
+	static const uint32_t n_zc = 0;
+	static const uint16_t *p_n_vx[] = { &VX0, &VX1, &VX2 };
+	static const uint16_t *p_n_vy[] = { &VY0, &VY1, &VY2 };
+	static const uint16_t *p_n_vz[] = { &VZ0, &VZ1, &VZ2 };
+	static const uint16_t *p_n_rm[] = { &R11, &R12, &R13, &R21, &R22, &R23, &R31, &R32, &R33 };
+	static const uint16_t *p_n_lm[] = { &L11, &L12, &L13, &L21, &L22, &L23, &L31, &L32, &L33 };
+	static const uint16_t *p_n_cm[] = { &LR1, &LR2, &LR3, &LG1, &LG2, &LG3, &LB1, &LB2, &LB3 };
+	static const uint16_t *p_n_zm[] = { &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm, &n_zm };
+	static const uint16_t **p_p_n_mx[] = { p_n_rm, p_n_lm, p_n_cm, p_n_zm };
+	static const uint32_t *p_n_tr[] = { &TRX, &TRY, &TRZ };
+	static const uint32_t *p_n_bk[] = { &RBK, &GBK, &BBK };
+	static const uint32_t *p_n_fc[] = { &RFC, &GFC, &BFC };
+	static const uint32_t *p_n_zc[] = { &n_zc, &n_zc, &n_zc };
+	static const uint32_t **p_p_n_cv[] = { p_n_tr, p_n_bk, p_n_fc, p_n_zc };
 
 	switch( GTE_OP( gteop ) )
 	{
@@ -2402,22 +2402,22 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "RTPS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT32)TRX << 12 ) + ( (INT16)R11 * (INT16)VX0 ) + ( (INT16)R12 * (INT16)VY0 ) + ( (INT16)R13 * (INT16)VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)(INT32)TRY << 12 ) + ( (INT16)R21 * (INT16)VX0 ) + ( (INT16)R22 * (INT16)VY0 ) + ( (INT16)R23 * (INT16)VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)(INT32)TRZ << 12 ) + ( (INT16)R31 * (INT16)VX0 ) + ( (INT16)R32 * (INT16)VY0 ) + ( (INT16)R33 * (INT16)VZ0 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 0 );
-			IR2 = Lm_B2( (INT32)MAC2, 0 );
-			IR3 = Lm_B3( (INT32)MAC3, 0 );
+			MAC1 = A1( ( ( (int64_t)(int32_t)TRX << 12 ) + ( (int16_t)R11 * (int16_t)VX0 ) + ( (int16_t)R12 * (int16_t)VY0 ) + ( (int16_t)R13 * (int16_t)VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)(int32_t)TRY << 12 ) + ( (int16_t)R21 * (int16_t)VX0 ) + ( (int16_t)R22 * (int16_t)VY0 ) + ( (int16_t)R23 * (int16_t)VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)(int32_t)TRZ << 12 ) + ( (int16_t)R31 * (int16_t)VX0 ) + ( (int16_t)R32 * (int16_t)VY0 ) + ( (int16_t)R33 * (int16_t)VZ0 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 0 );
+			IR2 = Lm_B2( (int32_t)MAC2, 0 );
+			IR3 = Lm_B3( (int32_t)MAC3, 0 );
 			SZ0 = SZ1;
 			SZ1 = SZ2;
 			SZ2 = SZ3;
-			SZ3 = Lm_D( (INT32)MAC3 );
+			SZ3 = Lm_D( (int32_t)MAC3 );
 			SXY0 = SXY1;
 			SXY1 = SXY2;
-			SX2 = Lm_G1( F( (INT64)(INT32)OFX + ( (INT64)(INT16)IR1 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 );
-			SY2 = Lm_G2( F( (INT64)(INT32)OFY + ( (INT64)(INT16)IR2 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 );
-			MAC0 = F( (INT64)(INT32)DQB + ( (INT64)(INT16)DQA * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) );
-			IR0 = Lm_H( (INT32)MAC0 >> 12 );
+			SX2 = Lm_G1( F( (int64_t)(int32_t)OFX + ( (int64_t)(int16_t)IR1 * ( ( (uint32_t)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 );
+			SY2 = Lm_G2( F( (int64_t)(int32_t)OFY + ( (int64_t)(int16_t)IR2 * ( ( (uint32_t)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 );
+			MAC0 = F( (int64_t)(int32_t)DQB + ( (int64_t)(int16_t)DQA * ( ( (uint32_t)H << 16 ) / Lm_E( SZ3 ) ) ) );
+			IR0 = Lm_H( (int32_t)MAC0 >> 12 );
 			return;
 		}
 		break;
@@ -2429,22 +2429,22 @@ static void docop2( int gteop )
 
 			for( n_v = 0; n_v < 3; n_v++ )
 			{
-				MAC1 = A1( ( ( (INT64)(INT32)TRX << 12 ) + ( (INT16)R11 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)R12 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)R13 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)(INT32)TRY << 12 ) + ( (INT16)R21 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)R22 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)R23 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)(INT32)TRZ << 12 ) + ( (INT16)R31 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)R32 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)R33 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 0 );
-				IR2 = Lm_B2( (INT32)MAC2, 0 );
-				IR3 = Lm_B3( (INT32)MAC3, 0 );
+				MAC1 = A1( ( ( (int64_t)(int32_t)TRX << 12 ) + ( (int16_t)R11 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)R12 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)R13 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)(int32_t)TRY << 12 ) + ( (int16_t)R21 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)R22 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)R23 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)(int32_t)TRZ << 12 ) + ( (int16_t)R31 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)R32 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)R33 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 0 );
+				IR2 = Lm_B2( (int32_t)MAC2, 0 );
+				IR3 = Lm_B3( (int32_t)MAC3, 0 );
 				SZ0 = SZ1;
 				SZ1 = SZ2;
 				SZ2 = SZ3;
-				SZ3 = Lm_D( (INT32)MAC3 );
+				SZ3 = Lm_D( (int32_t)MAC3 );
 				SXY0 = SXY1;
 				SXY1 = SXY2;
-				SX2 = Lm_G1( F( ( (INT64)(INT32)OFX + ( (INT64)(INT16)IR1 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 ) );
-				SY2 = Lm_G2( F( ( (INT64)(INT32)OFY + ( (INT64)(INT16)IR2 * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 ) );
-				MAC0 = F( (INT64)(INT32)DQB + ( (INT64)(INT16)DQA * ( ( (UINT32)H << 16 ) / Lm_E( SZ3 ) ) ) );
-				IR0 = Lm_H( (INT32)MAC0 >> 12 );
+				SX2 = Lm_G1( F( ( (int64_t)(int32_t)OFX + ( (int64_t)(int16_t)IR1 * ( ( (uint32_t)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 ) );
+				SY2 = Lm_G2( F( ( (int64_t)(int32_t)OFY + ( (int64_t)(int16_t)IR2 * ( ( (uint32_t)H << 16 ) / Lm_E( SZ3 ) ) ) ) >> 16 ) );
+				MAC0 = F( (int64_t)(int32_t)DQB + ( (int64_t)(int16_t)DQA * ( ( (uint32_t)H << 16 ) / Lm_E( SZ3 ) ) ) );
+				IR0 = Lm_H( (int32_t)MAC0 >> 12 );
 			}
 			return;
 		}
@@ -2473,13 +2473,13 @@ static void docop2( int gteop )
 			n_lm = GTE_LM( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT32)*p_n_cv[ 0 ] << 12 ) + ( (INT16)*p_n_mx[ 0 ] * (INT16)n_v1 ) + ( (INT16)*p_n_mx[ 1 ] * (INT16)n_v2 ) + ( (INT16)*p_n_mx[ 2 ] * (INT16)n_v3 ) ) >> n_sf );
-			MAC2 = A2( ( ( (INT64)(INT32)*p_n_cv[ 1 ] << 12 ) + ( (INT16)*p_n_mx[ 3 ] * (INT16)n_v1 ) + ( (INT16)*p_n_mx[ 4 ] * (INT16)n_v2 ) + ( (INT16)*p_n_mx[ 5 ] * (INT16)n_v3 ) ) >> n_sf );
-			MAC3 = A3( ( ( (INT64)(INT32)*p_n_cv[ 2 ] << 12 ) + ( (INT16)*p_n_mx[ 6 ] * (INT16)n_v1 ) + ( (INT16)*p_n_mx[ 7 ] * (INT16)n_v2 ) + ( (INT16)*p_n_mx[ 8 ] * (INT16)n_v3 ) ) >> n_sf );
+			MAC1 = A1( ( ( (int64_t)(int32_t)*p_n_cv[ 0 ] << 12 ) + ( (int16_t)*p_n_mx[ 0 ] * (int16_t)n_v1 ) + ( (int16_t)*p_n_mx[ 1 ] * (int16_t)n_v2 ) + ( (int16_t)*p_n_mx[ 2 ] * (int16_t)n_v3 ) ) >> n_sf );
+			MAC2 = A2( ( ( (int64_t)(int32_t)*p_n_cv[ 1 ] << 12 ) + ( (int16_t)*p_n_mx[ 3 ] * (int16_t)n_v1 ) + ( (int16_t)*p_n_mx[ 4 ] * (int16_t)n_v2 ) + ( (int16_t)*p_n_mx[ 5 ] * (int16_t)n_v3 ) ) >> n_sf );
+			MAC3 = A3( ( ( (int64_t)(int32_t)*p_n_cv[ 2 ] << 12 ) + ( (int16_t)*p_n_mx[ 6 ] * (int16_t)n_v1 ) + ( (int16_t)*p_n_mx[ 7 ] * (int16_t)n_v2 ) + ( (int16_t)*p_n_mx[ 8 ] * (int16_t)n_v3 ) ) >> n_sf );
 
-			IR1 = Lm_B1( (INT32)MAC1, n_lm );
-			IR2 = Lm_B2( (INT32)MAC2, n_lm );
-			IR3 = Lm_B3( (INT32)MAC3, n_lm );
+			IR1 = Lm_B1( (int32_t)MAC1, n_lm );
+			IR2 = Lm_B2( (int32_t)MAC2, n_lm );
+			IR3 = Lm_B3( (int32_t)MAC3, n_lm );
 			return;
 		}
 		break;
@@ -2489,24 +2489,24 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "DPCS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)R << 16 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)RFC - ( R << 4 ), 0 ) ) ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)G << 16 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)GFC - ( G << 4 ), 0 ) ) ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)B << 16 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)BFC - ( B << 4 ), 0 ) ) ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 0 );
-			IR2 = Lm_B2( (INT32)MAC2, 0 );
-			IR3 = Lm_B3( (INT32)MAC3, 0 );
+			MAC1 = A1( ( ( (int64_t)R << 16 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)RFC - ( R << 4 ), 0 ) ) ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)G << 16 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)GFC - ( G << 4 ), 0 ) ) ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)B << 16 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)BFC - ( B << 4 ), 0 ) ) ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 0 );
+			IR2 = Lm_B2( (int32_t)MAC2, 0 );
+			IR3 = Lm_B3( (int32_t)MAC3, 0 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;
@@ -2516,24 +2516,24 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "INTPL" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT16)IR1 << 12 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)RFC - (INT16)IR1, 0 ) ) ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)(INT16)IR2 << 12 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)GFC - (INT16)IR2, 0 ) ) ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)(INT16)IR3 << 12 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)BFC - (INT16)IR3, 0 ) ) ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 0 );
-			IR2 = Lm_B2( (INT32)MAC2, 0 );
-			IR3 = Lm_B3( (INT32)MAC3, 0 );
+			MAC1 = A1( ( ( (int64_t)(int16_t)IR1 << 12 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)RFC - (int16_t)IR1, 0 ) ) ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)(int16_t)IR2 << 12 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)GFC - (int16_t)IR2, 0 ) ) ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)(int16_t)IR3 << 12 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)BFC - (int16_t)IR3, 0 ) ) ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 0 );
+			IR2 = Lm_B2( (int32_t)MAC2, 0 );
+			IR3 = Lm_B3( (int32_t)MAC3, 0 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 );
+			R2 = Lm_C1( (int32_t)MAC1 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 );
+			G2 = Lm_C2( (int32_t)MAC2 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 );
+			B2 = Lm_C3( (int32_t)MAC3 );
 			return;
 		}
 		break;
@@ -2544,9 +2544,9 @@ static void docop2( int gteop )
 			n_sf = 12 * GTE_SF( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( (INT64)(INT16)IR1 * (INT16)IR1 ) >> n_sf );
-			MAC2 = A2( ( (INT64)(INT16)IR2 * (INT16)IR2 ) >> n_sf );
-			MAC3 = A3( ( (INT64)(INT16)IR3 * (INT16)IR3 ) >> n_sf );
+			MAC1 = A1( ( (int64_t)(int16_t)IR1 * (int16_t)IR1 ) >> n_sf );
+			MAC2 = A2( ( (int64_t)(int16_t)IR2 * (int16_t)IR2 ) >> n_sf );
+			MAC3 = A3( ( (int64_t)(int16_t)IR3 * (int16_t)IR3 ) >> n_sf );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -2559,30 +2559,30 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "NCS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT16)L11 * (INT16)VX0 ) + ( (INT16)L12 * (INT16)VY0 ) + ( (INT16)L13 * (INT16)VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)(INT16)L21 * (INT16)VX0 ) + ( (INT16)L22 * (INT16)VY0 ) + ( (INT16)L23 * (INT16)VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)(INT16)L31 * (INT16)VX0 ) + ( (INT16)L32 * (INT16)VY0 ) + ( (INT16)L33 * (INT16)VZ0 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
-			MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
+			MAC1 = A1( ( ( (int64_t)(int16_t)L11 * (int16_t)VX0 ) + ( (int16_t)L12 * (int16_t)VY0 ) + ( (int16_t)L13 * (int16_t)VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)(int16_t)L21 * (int16_t)VX0 ) + ( (int16_t)L22 * (int16_t)VY0 ) + ( (int16_t)L23 * (int16_t)VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)(int16_t)L31 * (int16_t)VX0 ) + ( (int16_t)L32 * (int16_t)VY0 ) + ( (int16_t)L33 * (int16_t)VZ0 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
+			MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;
@@ -2594,30 +2594,30 @@ static void docop2( int gteop )
 
 			for( n_v = 0; n_v < 3; n_v++ )
 			{
-				MAC1 = A1( ( ( (INT64)(INT16)L11 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L12 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L13 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)(INT16)L21 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L22 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L23 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)(INT16)L31 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L32 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L33 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
-				MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
+				MAC1 = A1( ( ( (int64_t)(int16_t)L11 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L12 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L13 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)(int16_t)L21 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L22 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L23 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)(int16_t)L31 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L32 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L33 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
+				MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
 				CD0 = CD1;
 				CD1 = CD2;
 				CD2 = CODE;
 				R0 = R1;
 				R1 = R2;
-				R2 = Lm_C1( (INT32)MAC1 >> 4 );
+				R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 				G0 = G1;
 				G1 = G2;
-				G2 = Lm_C2( (INT32)MAC2 >> 4 );
+				G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 				B0 = B1;
 				B1 = B2;
-				B2 = Lm_C3( (INT32)MAC3 >> 4 );
+				B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			}
 			return;
 		}
@@ -2628,36 +2628,36 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "NCDS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT16)L11 * (INT16)VX0 ) + ( (INT16)L12 * (INT16)VY0 ) + ( (INT16)L13 * (INT16)VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)(INT16)L21 * (INT16)VX0 ) + ( (INT16)L22 * (INT16)VY0 ) + ( (INT16)L23 * (INT16)VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)(INT16)L31 * (INT16)VX0 ) + ( (INT16)L32 * (INT16)VY0 ) + ( (INT16)L33 * (INT16)VZ0 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
-			MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
-			MAC1 = A1( ( ( ( (INT64)R << 4 ) * (INT16)IR1 ) + ( (INT16)IR0 * Lm_B1( (INT32)RFC - ( ( R * (INT16)IR1 ) >> 8 ), 0 ) ) ) >> 12 );
-			MAC2 = A2( ( ( ( (INT64)G << 4 ) * (INT16)IR2 ) + ( (INT16)IR0 * Lm_B2( (INT32)GFC - ( ( G * (INT16)IR2 ) >> 8 ), 0 ) ) ) >> 12 );
-			MAC3 = A3( ( ( ( (INT64)B << 4 ) * (INT16)IR3 ) + ( (INT16)IR0 * Lm_B3( (INT32)BFC - ( ( B * (INT16)IR3 ) >> 8 ), 0 ) ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
+			MAC1 = A1( ( ( (int64_t)(int16_t)L11 * (int16_t)VX0 ) + ( (int16_t)L12 * (int16_t)VY0 ) + ( (int16_t)L13 * (int16_t)VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)(int16_t)L21 * (int16_t)VX0 ) + ( (int16_t)L22 * (int16_t)VY0 ) + ( (int16_t)L23 * (int16_t)VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)(int16_t)L31 * (int16_t)VX0 ) + ( (int16_t)L32 * (int16_t)VY0 ) + ( (int16_t)L33 * (int16_t)VZ0 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
+			MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
+			MAC1 = A1( ( ( ( (int64_t)R << 4 ) * (int16_t)IR1 ) + ( (int16_t)IR0 * Lm_B1( (int32_t)RFC - ( ( R * (int16_t)IR1 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC2 = A2( ( ( ( (int64_t)G << 4 ) * (int16_t)IR2 ) + ( (int16_t)IR0 * Lm_B2( (int32_t)GFC - ( ( G * (int16_t)IR2 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC3 = A3( ( ( ( (int64_t)B << 4 ) * (int16_t)IR3 ) + ( (int16_t)IR0 * Lm_B3( (int32_t)BFC - ( ( B * (int16_t)IR3 ) >> 8 ), 0 ) ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;
@@ -2669,24 +2669,24 @@ static void docop2( int gteop )
 
 			for( n_pass = 0; n_pass < 3; n_pass++ )
 			{
-				MAC1 = A1( ( ( (INT64)R0 << 16 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)RFC - ( R0 << 4 ), 0 ) ) ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)G0 << 16 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)GFC - ( G0 << 4 ), 0 ) ) ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)B0 << 16 ) + ( (INT64)(INT16)IR0 * ( Lm_B1( (INT32)BFC - ( B0 << 4 ), 0 ) ) ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 0 );
-				IR2 = Lm_B2( (INT32)MAC2, 0 );
-				IR3 = Lm_B3( (INT32)MAC3, 0 );
+				MAC1 = A1( ( ( (int64_t)R0 << 16 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)RFC - ( R0 << 4 ), 0 ) ) ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)G0 << 16 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)GFC - ( G0 << 4 ), 0 ) ) ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)B0 << 16 ) + ( (int64_t)(int16_t)IR0 * ( Lm_B1( (int32_t)BFC - ( B0 << 4 ), 0 ) ) ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 0 );
+				IR2 = Lm_B2( (int32_t)MAC2, 0 );
+				IR3 = Lm_B3( (int32_t)MAC3, 0 );
 				CD0 = CD1;
 				CD1 = CD2;
 				CD2 = CODE;
 				R0 = R1;
 				R1 = R2;
-				R2 = Lm_C1( (INT32)MAC1 >> 4 );
+				R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 				G0 = G1;
 				G1 = G2;
-				G2 = Lm_C2( (INT32)MAC2 >> 4 );
+				G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 				B0 = B1;
 				B1 = B2;
-				B2 = Lm_C3( (INT32)MAC3 >> 4 );
+				B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			}
 			return;
 		}
@@ -2697,36 +2697,36 @@ static void docop2( int gteop )
 
 			for( n_v = 0; n_v < 3; n_v++ )
 			{
-				MAC1 = A1( ( ( (INT64)(INT16)L11 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L12 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L13 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)(INT16)L21 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L22 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L23 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)(INT16)L31 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L32 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L33 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
-				MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
-				MAC1 = A1( ( ( ( (INT64)R << 4 ) * (INT16)IR1 ) + ( (INT16)IR0 * Lm_B1( (INT32)RFC - ( ( R * (INT16)IR1 ) >> 8 ), 0 ) ) ) >> 12 );
-				MAC2 = A2( ( ( ( (INT64)G << 4 ) * (INT16)IR2 ) + ( (INT16)IR0 * Lm_B2( (INT32)GFC - ( ( G * (INT16)IR2 ) >> 8 ), 0 ) ) ) >> 12 );
-				MAC3 = A3( ( ( ( (INT64)B << 4 ) * (INT16)IR3 ) + ( (INT16)IR0 * Lm_B3( (INT32)BFC - ( ( B * (INT16)IR3 ) >> 8 ), 0 ) ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
+				MAC1 = A1( ( ( (int64_t)(int16_t)L11 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L12 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L13 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)(int16_t)L21 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L22 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L23 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)(int16_t)L31 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L32 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L33 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
+				MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
+				MAC1 = A1( ( ( ( (int64_t)R << 4 ) * (int16_t)IR1 ) + ( (int16_t)IR0 * Lm_B1( (int32_t)RFC - ( ( R * (int16_t)IR1 ) >> 8 ), 0 ) ) ) >> 12 );
+				MAC2 = A2( ( ( ( (int64_t)G << 4 ) * (int16_t)IR2 ) + ( (int16_t)IR0 * Lm_B2( (int32_t)GFC - ( ( G * (int16_t)IR2 ) >> 8 ), 0 ) ) ) >> 12 );
+				MAC3 = A3( ( ( ( (int64_t)B << 4 ) * (int16_t)IR3 ) + ( (int16_t)IR0 * Lm_B3( (int32_t)BFC - ( ( B * (int16_t)IR3 ) >> 8 ), 0 ) ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
 				CD0 = CD1;
 				CD1 = CD2;
 				CD2 = CODE;
 				R0 = R1;
 				R1 = R2;
-				R2 = Lm_C1( (INT32)MAC1 >> 4 );
+				R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 				G0 = G1;
 				G1 = G2;
-				G2 = Lm_C2( (INT32)MAC2 >> 4 );
+				G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 				B0 = B1;
 				B1 = B2;
-				B2 = Lm_C3( (INT32)MAC3 >> 4 );
+				B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			}
 			return;
 		}
@@ -2737,36 +2737,36 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "NCCS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT16)L11 * (INT16)VX0 ) + ( (INT16)L12 * (INT16)VY0 ) + ( (INT16)L13 * (INT16)VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)(INT16)L21 * (INT16)VX0 ) + ( (INT16)L22 * (INT16)VY0 ) + ( (INT16)L23 * (INT16)VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)(INT16)L31 * (INT16)VX0 ) + ( (INT16)L32 * (INT16)VY0 ) + ( (INT16)L33 * (INT16)VZ0 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
-			MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
-			MAC1 = A1( ( (INT64)R * (INT16)IR1 ) >> 8 );
-			MAC2 = A2( ( (INT64)G * (INT16)IR2 ) >> 8 );
-			MAC3 = A3( ( (INT64)B * (INT16)IR3 ) >> 8 );
-			IR1 = Lm_B1( (INT32)MAC1, 1 );
-			IR2 = Lm_B2( (INT32)MAC2, 1 );
-			IR3 = Lm_B3( (INT32)MAC3, 1 );
+			MAC1 = A1( ( ( (int64_t)(int16_t)L11 * (int16_t)VX0 ) + ( (int16_t)L12 * (int16_t)VY0 ) + ( (int16_t)L13 * (int16_t)VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)(int16_t)L21 * (int16_t)VX0 ) + ( (int16_t)L22 * (int16_t)VY0 ) + ( (int16_t)L23 * (int16_t)VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)(int16_t)L31 * (int16_t)VX0 ) + ( (int16_t)L32 * (int16_t)VY0 ) + ( (int16_t)L33 * (int16_t)VZ0 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
+			MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
+			MAC1 = A1( ( (int64_t)R * (int16_t)IR1 ) >> 8 );
+			MAC2 = A2( ( (int64_t)G * (int16_t)IR2 ) >> 8 );
+			MAC3 = A3( ( (int64_t)B * (int16_t)IR3 ) >> 8 );
+			IR1 = Lm_B1( (int32_t)MAC1, 1 );
+			IR2 = Lm_B2( (int32_t)MAC2, 1 );
+			IR3 = Lm_B3( (int32_t)MAC3, 1 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;
@@ -2778,36 +2778,36 @@ static void docop2( int gteop )
 
 			for( n_v = 0; n_v < 3; n_v++ )
 			{
-				MAC1 = A1( ( ( (INT64)(INT16)L11 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L12 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L13 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)(INT16)L21 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L22 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L23 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)(INT16)L31 * (INT16)*p_n_vx[ n_v ] ) + ( (INT16)L32 * (INT16)*p_n_vy[ n_v ] ) + ( (INT16)L33 * (INT16)*p_n_vz[ n_v ] ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
-				MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
-				MAC1 = A1( ( (INT64)R * (INT16)IR1 ) >> 8 );
-				MAC2 = A2( ( (INT64)G * (INT16)IR2 ) >> 8 );
-				MAC3 = A3( ( (INT64)B * (INT16)IR3 ) >> 8 );
-				IR1 = Lm_B1( (INT32)MAC1, 1 );
-				IR2 = Lm_B2( (INT32)MAC2, 1 );
-				IR3 = Lm_B3( (INT32)MAC3, 1 );
+				MAC1 = A1( ( ( (int64_t)(int16_t)L11 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L12 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L13 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)(int16_t)L21 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L22 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L23 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)(int16_t)L31 * (int16_t)*p_n_vx[ n_v ] ) + ( (int16_t)L32 * (int16_t)*p_n_vy[ n_v ] ) + ( (int16_t)L33 * (int16_t)*p_n_vz[ n_v ] ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
+				MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
+				MAC1 = A1( ( (int64_t)R * (int16_t)IR1 ) >> 8 );
+				MAC2 = A2( ( (int64_t)G * (int16_t)IR2 ) >> 8 );
+				MAC3 = A3( ( (int64_t)B * (int16_t)IR3 ) >> 8 );
+				IR1 = Lm_B1( (int32_t)MAC1, 1 );
+				IR2 = Lm_B2( (int32_t)MAC2, 1 );
+				IR3 = Lm_B3( (int32_t)MAC3, 1 );
 				CD0 = CD1;
 				CD1 = CD2;
 				CD2 = CODE;
 				R0 = R1;
 				R1 = R2;
-				R2 = Lm_C1( (INT32)MAC1 >> 4 );
+				R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 				G0 = G1;
 				G1 = G2;
-				G2 = Lm_C2( (INT32)MAC2 >> 4 );
+				G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 				B0 = B1;
 				B1 = B2;
-				B2 = Lm_C3( (INT32)MAC3 >> 4 );
+				B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			}
 			return;
 		}
@@ -2818,15 +2818,15 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "CC" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)RBK << 12 ) + ( (INT16)LR1 * (INT16)IR1 ) + ( (INT16)LR2 * (INT16)IR2 ) + ( (INT16)LR3 * (INT16)IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64)GBK << 12 ) + ( (INT16)LG1 * (INT16)IR1 ) + ( (INT16)LG2 * (INT16)IR2 ) + ( (INT16)LG3 * (INT16)IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64)BBK << 12 ) + ( (INT16)LB1 * (INT16)IR1 ) + ( (INT16)LB2 * (INT16)IR2 ) + ( (INT16)LB3 * (INT16)IR3 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t)RBK << 12 ) + ( (int16_t)LR1 * (int16_t)IR1 ) + ( (int16_t)LR2 * (int16_t)IR2 ) + ( (int16_t)LR3 * (int16_t)IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t)GBK << 12 ) + ( (int16_t)LG1 * (int16_t)IR1 ) + ( (int16_t)LG2 * (int16_t)IR2 ) + ( (int16_t)LG3 * (int16_t)IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t)BBK << 12 ) + ( (int16_t)LB1 * (int16_t)IR1 ) + ( (int16_t)LB2 * (int16_t)IR2 ) + ( (int16_t)LB3 * (int16_t)IR3 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( (INT64)R * (INT16)IR1 ) >> 8 );
-			MAC2 = A2( ( (INT64)G * (INT16)IR2 ) >> 8 );
-			MAC3 = A3( ( (INT64)B * (INT16)IR3 ) >> 8 );
+			MAC1 = A1( ( (int64_t)R * (int16_t)IR1 ) >> 8 );
+			MAC2 = A2( ( (int64_t)G * (int16_t)IR2 ) >> 8 );
+			MAC3 = A3( ( (int64_t)B * (int16_t)IR3 ) >> 8 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -2835,13 +2835,13 @@ static void docop2( int gteop )
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;
@@ -2851,7 +2851,7 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "NCLIP" );
 			FLAG = 0;
 
-			MAC0 = F( ( (INT64)(INT16)SX0 * (INT16)SY1 ) + ( (INT16)SX1 * (INT16)SY2 ) + ( (INT16)SX2 * (INT16)SY0 ) - ( (INT16)SX0 * (INT16)SY2 ) - ( (INT16)SX1 * (INT16)SY0 ) - ( (INT16)SX2 * (INT16)SY1 ) );
+			MAC0 = F( ( (int64_t)(int16_t)SX0 * (int16_t)SY1 ) + ( (int16_t)SX1 * (int16_t)SY2 ) + ( (int16_t)SX2 * (int16_t)SY0 ) - ( (int16_t)SX0 * (int16_t)SY2 ) - ( (int16_t)SX1 * (int16_t)SY0 ) - ( (int16_t)SX2 * (int16_t)SY1 ) );
 			return;
 		}
 		break;
@@ -2861,8 +2861,8 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "AVSZ3" );
 			FLAG = 0;
 
-			MAC0 = F( ( (INT64)(INT16)ZSF3 * SZ1 ) + ( (INT16)ZSF3 * SZ2 ) + ( (INT16)ZSF3 * SZ3 ) );
-			OTZ = Lm_D( (INT32)MAC0 >> 12 );
+			MAC0 = F( ( (int64_t)(int16_t)ZSF3 * SZ1 ) + ( (int16_t)ZSF3 * SZ2 ) + ( (int16_t)ZSF3 * SZ3 ) );
+			OTZ = Lm_D( (int32_t)MAC0 >> 12 );
 			return;
 		}
 		break;
@@ -2872,8 +2872,8 @@ static void docop2( int gteop )
 			log_cb(RETRO_LOG_DEBUG, LOGPRE "AVSZ4" );
 			FLAG = 0;
 
-			MAC0 = F( ( (INT64)(INT16)ZSF4 * SZ0 ) + ( (INT16)ZSF4 * SZ1 ) + ( (INT16)ZSF4 * SZ2 ) + ( (INT16)ZSF4 * SZ3 ) );
-			OTZ = Lm_D( (INT32)MAC0 >> 12 );
+			MAC0 = F( ( (int64_t)(int16_t)ZSF4 * SZ0 ) + ( (int16_t)ZSF4 * SZ1 ) + ( (int16_t)ZSF4 * SZ2 ) + ( (int16_t)ZSF4 * SZ3 ) );
+			OTZ = Lm_D( (int32_t)MAC0 >> 12 );
 			return;
 		}
 		break;
@@ -2884,12 +2884,12 @@ static void docop2( int gteop )
 			n_sf = 12 * GTE_SF( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT32)D2 * (INT16)IR3 ) - ( (INT64)(INT32)D3 * (INT16)IR2 ) ) >> n_sf );
-			MAC2 = A2( ( ( (INT64)(INT32)D3 * (INT16)IR1 ) - ( (INT64)(INT32)D1 * (INT16)IR3 ) ) >> n_sf );
-			MAC3 = A3( ( ( (INT64)(INT32)D1 * (INT16)IR2 ) - ( (INT64)(INT32)D2 * (INT16)IR1 ) ) >> n_sf );
-			IR1 = Lm_B1( (INT32)MAC1, 0 );
-			IR2 = Lm_B2( (INT32)MAC2, 0 );
-			IR3 = Lm_B3( (INT32)MAC3, 0 );
+			MAC1 = A1( ( ( (int64_t)(int32_t)D2 * (int16_t)IR3 ) - ( (int64_t)(int32_t)D3 * (int16_t)IR2 ) ) >> n_sf );
+			MAC2 = A2( ( ( (int64_t)(int32_t)D3 * (int16_t)IR1 ) - ( (int64_t)(int32_t)D1 * (int16_t)IR3 ) ) >> n_sf );
+			MAC3 = A3( ( ( (int64_t)(int32_t)D1 * (int16_t)IR2 ) - ( (int64_t)(int32_t)D2 * (int16_t)IR1 ) ) >> n_sf );
+			IR1 = Lm_B1( (int32_t)MAC1, 0 );
+			IR2 = Lm_B2( (int32_t)MAC2, 0 );
+			IR3 = Lm_B3( (int32_t)MAC3, 0 );
 			return;
 		}
 		break;
@@ -2900,24 +2900,24 @@ static void docop2( int gteop )
 			n_sf = 12 * GTE_SF( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( (INT64)(INT16)IR0 * (INT16)IR1 ) >> n_sf );
-			MAC2 = A2( ( (INT64)(INT16)IR0 * (INT16)IR2 ) >> n_sf );
-			MAC3 = A3( ( (INT64)(INT16)IR0 * (INT16)IR3 ) >> n_sf );
-			IR1 = Lm_B1( (INT32)MAC1, 0 );
-			IR2 = Lm_B2( (INT32)MAC2, 0 );
-			IR3 = Lm_B3( (INT32)MAC3, 0 );
+			MAC1 = A1( ( (int64_t)(int16_t)IR0 * (int16_t)IR1 ) >> n_sf );
+			MAC2 = A2( ( (int64_t)(int16_t)IR0 * (int16_t)IR2 ) >> n_sf );
+			MAC3 = A3( ( (int64_t)(int16_t)IR0 * (int16_t)IR3 ) >> n_sf );
+			IR1 = Lm_B1( (int32_t)MAC1, 0 );
+			IR2 = Lm_B2( (int32_t)MAC2, 0 );
+			IR3 = Lm_B3( (int32_t)MAC3, 0 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;
@@ -2928,24 +2928,24 @@ static void docop2( int gteop )
 			n_sf = 12 * GTE_SF( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64)(INT32)MAC1 << 12 ) + ( (INT16)IR0 * (INT16)IR1 ) ) >> n_sf );
-			MAC2 = A2( ( ( (INT64)(INT32)MAC2 << 12 ) + ( (INT16)IR0 * (INT16)IR2 ) ) >> n_sf );
-			MAC3 = A3( ( ( (INT64)(INT32)MAC3 << 12 ) + ( (INT16)IR0 * (INT16)IR3 ) ) >> n_sf );
-			IR1 = Lm_B1( (INT32)MAC1, 0 );
-			IR2 = Lm_B2( (INT32)MAC2, 0 );
-			IR3 = Lm_B3( (INT32)MAC3, 0 );
+			MAC1 = A1( ( ( (int64_t)(int32_t)MAC1 << 12 ) + ( (int16_t)IR0 * (int16_t)IR1 ) ) >> n_sf );
+			MAC2 = A2( ( ( (int64_t)(int32_t)MAC2 << 12 ) + ( (int16_t)IR0 * (int16_t)IR2 ) ) >> n_sf );
+			MAC3 = A3( ( ( (int64_t)(int32_t)MAC3 << 12 ) + ( (int16_t)IR0 * (int16_t)IR3 ) ) >> n_sf );
+			IR1 = Lm_B1( (int32_t)MAC1, 0 );
+			IR2 = Lm_B2( (int32_t)MAC2, 0 );
+			IR3 = Lm_B3( (int32_t)MAC3, 0 );
 			CD0 = CD1;
 			CD1 = CD2;
 			CD2 = CODE;
 			R0 = R1;
 			R1 = R2;
-			R2 = Lm_C1( (INT32)MAC1 >> 4 );
+			R2 = Lm_C1( (int32_t)MAC1 >> 4 );
 			G0 = G1;
 			G1 = G2;
-			G2 = Lm_C2( (INT32)MAC2 >> 4 );
+			G2 = Lm_C2( (int32_t)MAC2 >> 4 );
 			B0 = B1;
 			B1 = B2;
-			B2 = Lm_C3( (INT32)MAC3 >> 4 );
+			B2 = Lm_C3( (int32_t)MAC3 >> 4 );
 			return;
 		}
 		break;

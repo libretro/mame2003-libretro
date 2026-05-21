@@ -102,7 +102,7 @@
 			P |= F_V;											\
 		if( sum & 0xff00 )										\
 			P |= F_C;											\
-		A = (UINT8) sum;										\
+		A = (uint8_t) sum;										\
 	}															\
 	SET_NZ(A)
 
@@ -140,7 +140,7 @@
 			P |= F_V;											\
 		if( (sum & 0xff00) == 0 )								\
 			P |= F_C;											\
-		A = (UINT8) sum;										\
+		A = (uint8_t) sum;										\
 	}															\
 	SET_NZ(A)
 
@@ -177,14 +177,14 @@
  *	DEA Decrement accumulator
  ***************************************************************/
 #define DEA 													\
-	A = (UINT8)--A; 											\
+	A = (uint8_t)--A; 											\
 	SET_NZ(A)
 
 /* 65C02 *******************************************************
  *	INA Increment accumulator
  ***************************************************************/
 #define INA 													\
-	A = (UINT8)++A; 											\
+	A = (uint8_t)++A; 											\
 	SET_NZ(A)
 
 /* 65C02 *******************************************************
@@ -261,7 +261,7 @@
 	PUSH(PCH);													\
 	PUSH(PCL);													\
 	EAH = RDOPARG();											\
-	EAW = PCW + (INT16)(EAW-1); 								\
+	EAW = PCW + (int16_t)(EAW-1); 								\
 	PCD = EAD;													\
 	CHANGE_PC
 

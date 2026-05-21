@@ -5,8 +5,8 @@
 #include "mamedbg.h"
 #include "sh2.h"
 
-#define SIGNX8(x)	(((INT32)(x) << 24) >> 24)
-#define SIGNX12(x)	(((INT32)(x) << 20) >> 20)
+#define SIGNX8(x)	(((int32_t)(x) << 24) >> 24)
+#define SIGNX12(x)	(((int32_t)(x) << 20) >> 20)
 
 #define Rn ((opcode >> 8) & 15)
 #define Rm ((opcode >> 4) & 15)
@@ -16,7 +16,7 @@ static const char *regname[16] = {
 	"R8", "R9", "R10","R11","R12","R13","R14","SP"
 };
 
-static void op0000(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0000(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 
@@ -146,7 +146,7 @@ static void op0000(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op0001(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0001(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, (opcode & 15) * 4, EA_UINT8, EA_VALUE);
@@ -154,7 +154,7 @@ static void op0001(char *buffer, UINT32 pc, UINT16 opcode)
 	sprintf(buffer,"MOV.L   %s,@(%s,%s)\n", regname[Rm], sym, regname[Rn]);
 }
 
-static void op0010(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0010(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -215,7 +215,7 @@ static void op0010(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op0011(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0011(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -270,7 +270,7 @@ static void op0011(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op0100(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0100(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	switch(opcode & 0x3F)
 	{
@@ -410,7 +410,7 @@ static void op0100(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op0101(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0101(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, (opcode & 15) * 4, EA_UINT8, EA_VALUE);
@@ -418,7 +418,7 @@ static void op0101(char *buffer, UINT32 pc, UINT16 opcode)
 	sprintf(buffer, "MOV.L   @(%s,%s),%s\n", sym, regname[Rm], regname[Rn]);
 }
 
-static void op0110(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0110(char *buffer, uint32_t pc, uint16_t opcode)
 
 {
 	switch(opcode & 0xF)
@@ -480,14 +480,14 @@ static void op0110(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op0111(char *buffer, UINT32 pc, UINT16 opcode)
+static void op0111(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, opcode & 0xff, EA_UINT8, EA_VALUE);
 	sprintf(buffer, "ADD     #%s,%s\n", sym, regname[Rn]);
 }
 
-static void op1000(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1000(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	switch((opcode >> 8) & 15)
@@ -538,7 +538,7 @@ static void op1000(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op1001(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1001(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, (opcode & 0xff) * 2, EA_UINT16, EA_VALUE);
@@ -546,21 +546,21 @@ static void op1001(char *buffer, UINT32 pc, UINT16 opcode)
 	sprintf(buffer, "MOV.W   @(%s,PC),%s", sym, regname[Rn]);
 }
 
-static void op1010(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1010(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, SIGNX12(opcode & 0xfff) * 2 + pc + 2, EA_UINT32, EA_ABS_PC);
 	sprintf(buffer, "BRA     %s", sym);
 }
 
-static void op1011(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1011(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, SIGNX12(opcode & 0xfff) * 2 + pc + 2, EA_UINT32, EA_ABS_PC);
 	sprintf(buffer, "BSR     %s", sym);
 }
 
-static void op1100(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1100(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	switch((opcode >> 8) & 15)
@@ -643,7 +643,7 @@ static void op1100(char *buffer, UINT32 pc, UINT16 opcode)
 	}
 }
 
-static void op1101(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1101(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, (opcode & 0xff) * 4, EA_UINT8, EA_VALUE);
@@ -651,14 +651,14 @@ static void op1101(char *buffer, UINT32 pc, UINT16 opcode)
 	sprintf(buffer, "MOV.L   @(%s,PC),%s", sym, regname[Rn]);
 }
 
-static void op1110(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1110(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
-	sym = set_ea_info(0, (UINT32)(INT32)(INT16)(INT8)(opcode & 0xff), EA_UINT8, EA_VALUE);
+	sym = set_ea_info(0, (uint32_t)(int32_t)(int16_t)(int8_t)(opcode & 0xff), EA_UINT8, EA_VALUE);
 	sprintf(buffer, "MOV     #%s,%s", sym, regname[Rn]);
 }
 
-static void op1111(char *buffer, UINT32 pc, UINT16 opcode)
+static void op1111(char *buffer, uint32_t pc, uint16_t opcode)
 {
 	const char *sym;
 	sym = set_ea_info(0, opcode, EA_UINT16, EA_VALUE);
@@ -667,7 +667,7 @@ static void op1111(char *buffer, UINT32 pc, UINT16 opcode)
 
 unsigned DasmSH2(char *buffer, unsigned pc)
 {
-	UINT16 opcode;
+	uint16_t opcode;
 	opcode = cpu_readmem32bedw_word(pc & 0x1fffffff);
 	pc += 2;
 

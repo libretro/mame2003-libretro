@@ -35,13 +35,13 @@
 #endif
 
 typedef struct {				/* opcode structure */
-   UINT8	opcode; 			/* 8-bit opcode value */
-   UINT8	numoperands;
+   uint8_t	opcode; 			/* 8-bit opcode value */
+   uint8_t	numoperands;
    char 	name[6];			/* opcode name */
-   UINT8	mode;				/* addressing mode */
-   UINT8	size;				/* access size */
-   UINT8	access; 			/* access mode */
-   UINT8	numcycles;			/* number of cycles - not used */
+   uint8_t	mode;				/* addressing mode */
+   uint8_t	size;				/* access size */
+   uint8_t	access; 			/* access mode */
+   uint8_t	numcycles;			/* number of cycles - not used */
 } opcodeinfo;
 
 /* 6309 ADDRESSING MODES */
@@ -614,13 +614,13 @@ static opcodeinfo *pgpointers[3] =
    pg1opcodes,pg2opcodes,pg3opcodes,
 };
 
-static const UINT8 regid_6309[5] = {
+static const uint8_t regid_6309[5] = {
 	HD6309_X, HD6309_Y, HD6309_U, HD6309_S, HD6309_PC
 };
 
 static const char *regs_6309[5] = { "X","Y","U","S","PC" };
 
-static const UINT8 btmRegs_id[] = { HD6309_CC, HD6309_A, HD6309_B, 0 };
+static const uint8_t btmRegs_id[] = { HD6309_CC, HD6309_A, HD6309_B, 0 };
 
 static const char *btwRegs[5] = { "CC", "A", "B", "inv" };
 
@@ -646,7 +646,7 @@ static char *hexstring (int address)
 unsigned Dasm6309 (char *buffer, unsigned pc)
 {
 	int i, j, k, page=0, opcode, numoperands, mode, size, access;
-	UINT8 operandarray[4];
+	uint8_t operandarray[4];
 	const char *sym1, *sym2;
 	int rel, pb, offset, reg, pb2;
 	unsigned ea = 0;
@@ -727,13 +727,13 @@ unsigned Dasm6309 (char *buffer, unsigned pc)
 	{
 	case REL:	  /* 8-bit relative */
 		rel = operandarray[0];
-		sym1 = set_ea_info(0, pc, (INT8)rel, access);
+		sym1 = set_ea_info(0, pc, (int8_t)rel, access);
 		buffer += sprintf (buffer, "%s", sym1);
 		break;
 
 	case LREL:	  /* 16-bit long relative */
 		rel = (operandarray[0] << 8) + operandarray[1];
-		sym1 = set_ea_info(0, pc, (INT16)rel, access);
+		sym1 = set_ea_info(0, pc, (int16_t)rel, access);
 		buffer += sprintf (buffer, "%s", sym1);
 		break;
 
@@ -758,14 +758,14 @@ unsigned Dasm6309 (char *buffer, unsigned pc)
 		{	/* 8-bit offset */
 
 			/* KW 11/05/98 Fix of indirect opcodes		*/
-			offset = (INT8)cpu_readop_arg(pc);
+			offset = (int8_t)cpu_readop_arg(pc);
 			p++;
 			if( pb == 0x8c ) reg = 4;
 			if( (pb & 0x90) == 0x90 ) buffer += sprintf (buffer, "[");
 			if( pb == 0x8c )
 			{
-				sym1 = set_ea_info(1, pc, (INT8)offset, EA_REL_PC);
-				ea = (pc + (INT8)offset + activecpu_get_reg(regid_6309[reg])) & 0xffff;
+				sym1 = set_ea_info(1, pc, (int8_t)offset, EA_REL_PC);
+				ea = (pc + (int8_t)offset + activecpu_get_reg(regid_6309[reg])) & 0xffff;
 				buffer += sprintf (buffer, "%s,%s", sym1, regs_6309[reg]);
 			}
 			else
@@ -781,7 +781,7 @@ unsigned Dasm6309 (char *buffer, unsigned pc)
 
 			/* KW 11/05/98 Fix of indirect opcodes		*/
 
-			offset = (INT16)( (cpu_readop_arg(pc) << 8) + cpu_readop_arg(pc+1) );
+			offset = (int16_t)( (cpu_readop_arg(pc) << 8) + cpu_readop_arg(pc+1) );
 			p += 2;
 
 			if( pb == 0x8d )
@@ -790,7 +790,7 @@ unsigned Dasm6309 (char *buffer, unsigned pc)
 				buffer += sprintf(buffer, "[");
 			if( pb == 0x8d )
 			{
-				sym1 = set_ea_info(1, pc, (INT16)offset, EA_REL_PC);
+				sym1 = set_ea_info(1, pc, (int16_t)offset, EA_REL_PC);
 				buffer += sprintf (buffer, "%s,%s", sym1, regs_6309[reg]);
 			}
 			else if ( pb == 0x9f || pb == 0xbf || pb == 0xdf || pb == 0xff )
@@ -817,7 +817,7 @@ unsigned Dasm6309 (char *buffer, unsigned pc)
 		{
 			if( (pb & 0x90) == 0x90 ) buffer += sprintf (buffer, "[");
 
-			offset = (INT16)( (cpu_readop_arg(pc) << 8) + cpu_readop_arg(pc+1) );
+			offset = (int16_t)( (cpu_readop_arg(pc) << 8) + cpu_readop_arg(pc+1) );
 			p += 2;
 
 			sym1 = set_ea_info(1, offset, EA_INT16, EA_MEM_WR);
@@ -866,19 +866,19 @@ unsigned Dasm6309 (char *buffer, unsigned pc)
 				buffer += sprintf (buffer, ",%s", regs_6309[reg]);
 				break;
 			case 0x85:
-				ea = (activecpu_get_reg(regid_6309[reg]) + (INT8) activecpu_get_reg(HD6309_B)) & 0xffff;
+				ea = (activecpu_get_reg(regid_6309[reg]) + (int8_t) activecpu_get_reg(HD6309_B)) & 0xffff;
 				buffer += sprintf (buffer, "B,%s", regs_6309[reg]);
 				break;
 			case 0x86:
-				ea = (activecpu_get_reg(regid_6309[reg]) + (INT8) activecpu_get_reg(HD6309_A)) & 0xffff;
+				ea = (activecpu_get_reg(regid_6309[reg]) + (int8_t) activecpu_get_reg(HD6309_A)) & 0xffff;
 				buffer += sprintf (buffer, "A,%s", regs_6309[reg]);
 				break;
 			case 0x87:
-				ea = (activecpu_get_reg(regid_6309[reg]) + (INT8) activecpu_get_reg(HD6309_E)) & 0xffff;
+				ea = (activecpu_get_reg(regid_6309[reg]) + (int8_t) activecpu_get_reg(HD6309_E)) & 0xffff;
 				buffer += sprintf (buffer, "E,%s", regs_6309[reg]);
 				break;
 			case 0x8a:
-				ea = (activecpu_get_reg(regid_6309[reg]) + (INT8) activecpu_get_reg(HD6309_F)) & 0xffff;
+				ea = (activecpu_get_reg(regid_6309[reg]) + (int8_t) activecpu_get_reg(HD6309_F)) & 0xffff;
 				buffer += sprintf (buffer, "F,%s", regs_6309[reg]);
 				break;
 			case 0x8b:

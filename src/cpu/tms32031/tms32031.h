@@ -21,9 +21,9 @@
 
 struct tms32031_config
 {
-	UINT32		bootoffset;
-	void		(*xf0_w)(UINT8 val);
-	void		(*xf1_w)(UINT8 val);
+	uint32_t		bootoffset;
+	void		(*xf0_w)(uint8_t val);
+	void		(*xf1_w)(uint8_t val);
 };
 
 

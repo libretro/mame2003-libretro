@@ -1,6 +1,6 @@
 void InitTables(void)
 {
-	UINT32 t;
+	uint32_t t;
 
 	for (t=0; t<256; t++)
 	{

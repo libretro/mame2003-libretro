@@ -66,7 +66,7 @@
 #if FAST_MEMORY
 extern	MHELE	*cur_mwhard;
 extern	MHELE	*cur_mrhard;
-extern	UINT8	*RAM;
+extern	uint8_t	*RAM;
 #endif
 
 #define CHANGE_PC change_pc16(PCD)
@@ -229,7 +229,7 @@ extern	UINT8	*RAM;
 #define WR_IDY	EA_IDY; WRMEM(EAD, tmp)
 
 /* write back a value from tmp to the last EA */
-#define WB_ACC	A = (UINT8)tmp;
+#define WB_ACC	A = (uint8_t)tmp;
 #define WB_EA	WRMEM(EAD, tmp)
 
 /***************************************************************
@@ -282,7 +282,7 @@ extern	UINT8	*RAM;
 			P |= F_V;											\
 		if (sum & 0xff00)										\
 			P |= F_C;											\
-		A = (UINT8) sum;										\
+		A = (uint8_t) sum;										\
 		SET_NZ(A); \
 	}
 
@@ -290,7 +290,7 @@ extern	UINT8	*RAM;
  *	AND Logical and
  ***************************************************************/
 #define AND 													\
-	A = (UINT8)(A & tmp);										\
+	A = (uint8_t)(A & tmp);										\
 	SET_NZ(A)
 
 /* 6502 ********************************************************
@@ -298,7 +298,7 @@ extern	UINT8	*RAM;
  ***************************************************************/
 #define ASL 													\
 	P = (P & ~F_C) | ((tmp >> 7) & F_C);						\
-	tmp = (UINT8)(tmp << 1);									\
+	tmp = (uint8_t)(tmp << 1);									\
 	SET_NZ(tmp)
 
 /* 6502 ********************************************************
@@ -400,7 +400,7 @@ extern	UINT8	*RAM;
 	P &= ~F_C;													\
 	if (A >= tmp)												\
 		P |= F_C;												\
-	SET_NZ((UINT8)(A - tmp))
+	SET_NZ((uint8_t)(A - tmp))
 
 /* 6502 ********************************************************
  *	CPX Compare index X
@@ -409,7 +409,7 @@ extern	UINT8	*RAM;
 	P &= ~F_C;													\
 	if (X >= tmp)												\
 		P |= F_C;												\
-	SET_NZ((UINT8)(X - tmp))
+	SET_NZ((uint8_t)(X - tmp))
 
 /* 6502 ********************************************************
  *	CPY Compare index Y
@@ -418,34 +418,34 @@ extern	UINT8	*RAM;
 	P &= ~F_C;													\
 	if (Y >= tmp)												\
 		P |= F_C;												\
-	SET_NZ((UINT8)(Y - tmp))
+	SET_NZ((uint8_t)(Y - tmp))
 
 /* 6502 ********************************************************
  *	DEC Decrement memory
  ***************************************************************/
 #define DEC 													\
-	tmp = (UINT8)(tmp-1); 										\
+	tmp = (uint8_t)(tmp-1); 										\
 	SET_NZ(tmp)
 
 /* 6502 ********************************************************
  *	DEX Decrement index X
  ***************************************************************/
 #define DEX 													\
-	X = (UINT8)(X-1); 											\
+	X = (uint8_t)(X-1); 											\
 	SET_NZ(X)
 
 /* 6502 ********************************************************
  *	DEY Decrement index Y
  ***************************************************************/
 #define DEY 													\
-	Y = (UINT8)(Y-1); 											\
+	Y = (uint8_t)(Y-1); 											\
 	SET_NZ(Y)
 
 /* 6502 ********************************************************
  *	EOR Logical exclusive or
  ***************************************************************/
 #define EOR 													\
-	A = (UINT8)(A ^ tmp);										\
+	A = (uint8_t)(A ^ tmp);										\
 	SET_NZ(A)
 
 /* 6502 ********************************************************
@@ -458,21 +458,21 @@ extern	UINT8	*RAM;
  *	INC Increment memory
  ***************************************************************/
 #define INC 													\
-	tmp = (UINT8)(tmp+1); 										\
+	tmp = (uint8_t)(tmp+1); 										\
 	SET_NZ(tmp)
 
 /* 6502 ********************************************************
  *	INX Increment index X
  ***************************************************************/
 #define INX 													\
-	X = (UINT8)(X+1); 											\
+	X = (uint8_t)(X+1); 											\
 	SET_NZ(X)
 
 /* 6502 ********************************************************
  *	INY Increment index Y
  ***************************************************************/
 #define INY 													\
-	Y = (UINT8)(Y+1); 											\
+	Y = (uint8_t)(Y+1); 											\
 	SET_NZ(Y)
 
 /* 6502 ********************************************************
@@ -502,21 +502,21 @@ extern	UINT8	*RAM;
  *	LDA Load accumulator
  ***************************************************************/
 #define LDA 													\
-	A = (UINT8)tmp; 											\
+	A = (uint8_t)tmp; 											\
 	SET_NZ(A)
 
 /* 6502 ********************************************************
  *	LDX Load index X
  ***************************************************************/
 #define LDX 													\
-	X = (UINT8)tmp; 											\
+	X = (uint8_t)tmp; 											\
 	SET_NZ(X)
 
 /* 6502 ********************************************************
  *	LDY Load index Y
  ***************************************************************/
 #define LDY 													\
-	Y = (UINT8)tmp; 											\
+	Y = (uint8_t)tmp; 											\
 	SET_NZ(Y)
 
 /* 6502 ********************************************************
@@ -525,7 +525,7 @@ extern	UINT8	*RAM;
  ***************************************************************/
 #define LSR 													\
 	P = (P & ~F_C) | (tmp & F_C);								\
-	tmp = (UINT8)tmp >> 1;										\
+	tmp = (uint8_t)tmp >> 1;										\
 	SET_NZ(tmp)
 
 /* 6502 ********************************************************
@@ -537,7 +537,7 @@ extern	UINT8	*RAM;
  *	ORA Logical inclusive or
  ***************************************************************/
 #define ORA 													\
-	A = (UINT8)(A | tmp);										\
+	A = (uint8_t)(A | tmp);										\
 	SET_NZ(A)
 
 /* 6502 ********************************************************
@@ -582,7 +582,7 @@ extern	UINT8	*RAM;
 #define ROL 													\
 	tmp = (tmp << 1) | (P & F_C);								\
 	P = (P & ~F_C) | ((tmp >> 8) & F_C);						\
-	tmp = (UINT8)tmp;											\
+	tmp = (uint8_t)tmp;											\
 	SET_NZ(tmp)
 
 /* 6502 ********************************************************
@@ -592,7 +592,7 @@ extern	UINT8	*RAM;
 #define ROR 													\
 	tmp |= (P & F_C) << 8;										\
 	P = (P & ~F_C) | (tmp & F_C);								\
-	tmp = (UINT8)(tmp >> 1);									\
+	tmp = (uint8_t)(tmp >> 1);									\
 	SET_NZ(tmp)
 
 /* 6502 ********************************************************
@@ -659,7 +659,7 @@ extern	UINT8	*RAM;
 			P |= F_V;											\
 		if( (sum & 0xff00) == 0 )								\
 			P |= F_C;											\
-		A = (UINT8) sum;										\
+		A = (uint8_t) sum;										\
 		SET_NZ(A);												\
 	}
 

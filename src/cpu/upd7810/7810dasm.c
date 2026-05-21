@@ -15,10 +15,10 @@
 #include "upd7810.h"
 
 struct dasm_s {
-	UINT8	token;
+	uint8_t	token;
 	const void	*args;
-	UINT8	oplen;
-	UINT8	cycles;
+	uint8_t	oplen;
+	uint8_t	cycles;
 };
 
 enum
@@ -3966,7 +3966,7 @@ const char *regname[32] =
 
 unsigned Dasm( char *buffer, unsigned pc, struct dasm_s *dasmXX )
 {
-	UINT8 op = cpu_readop(pc++), op2, t;
+	uint8_t op = cpu_readop(pc++), op2, t;
 	int offset;
 	unsigned l, ea;
 	const char *symbol;
@@ -4032,7 +4032,7 @@ unsigned Dasm( char *buffer, unsigned pc, struct dasm_s *dasmXX )
 				break;
 			case 'o':   /* JR offset */
 				op2 = cpu_readop(pc++);
-				offset = (INT8)(op << 2) >> 2;
+				offset = (int8_t)(op << 2) >> 2;
 				symbol = set_ea_info(0, pc - 2, offset + 1, EA_REL_PC);
 				buffer += sprintf(buffer, "%s", symbol);
 				break;

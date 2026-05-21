@@ -14,9 +14,9 @@
 		6809 Microcomputer Programming & Interfacing with Experiments"
 			by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-	System dependencies:	UINT16 must be 16 bit unsigned int
-							UINT8 must be 8 bit unsigned int
-							UINT32 must be more than 16 bits
+	System dependencies:	uint16_t must be 16 bit unsigned int
+							uint8_t must be 8 bit unsigned int
+							uint32_t must be more than 16 bits
 							arrays up to 65536 bytes must be supported
 							machine must be twos complement
 
@@ -50,13 +50,13 @@
 #endif
 
 
-static UINT8 konami_reg_layout[] = {
+static uint8_t konami_reg_layout[] = {
 	KONAMI_PC, KONAMI_S, KONAMI_CC, KONAMI_A, KONAMI_B, KONAMI_X, -1,
 	KONAMI_Y, KONAMI_U, KONAMI_DP, KONAMI_NMI_STATE, KONAMI_IRQ_STATE, KONAMI_FIRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 konami_win_layout[] = {
+static uint8_t konami_win_layout[] = {
 	27, 0,53, 4,	/* register window (top, right rows) */
 	 0, 0,26,22,	/* disassembler window (left colums) */
 	27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -73,13 +73,13 @@ typedef struct
     PAIR    dp;         /* Direct Page register (page in MSB) */
 	PAIR	u, s;		/* Stack pointers */
 	PAIR	x, y;		/* Index registers */
-    UINT8   cc;
-	UINT8	ireg;		/* first opcode */
-    UINT8   irq_state[2];
+    uint8_t   cc;
+	uint8_t	ireg;		/* first opcode */
+    uint8_t   irq_state[2];
     int     extra_cycles; /* cycles used up by interrupts */
     int     (*irq_callback)(int irqline);
-    UINT8   int_state;  /* SYNC and CWAI flags */
-	UINT8	nmi_state;
+    uint8_t   int_state;  /* SYNC and CWAI flags */
+	uint8_t	nmi_state;
 } konami_Regs;
 
 /* flag bits in the cc register */
@@ -194,7 +194,7 @@ void (*konami_cpu_setlines_callback)( int lines ) = 0; /* callback called when A
 #define ROP(Addr)			KONAMI_RDOP(Addr)
 #define ROP_ARG(Addr)		KONAMI_RDOP_ARG(Addr)
 
-#define SIGNED(a)	(UINT16)(INT16)(INT8)(a)
+#define SIGNED(a)	(uint16_t)(int16_t)(int8_t)(a)
 
 /* macros to access memory */
 #define IMMBYTE(b)	{ b = ROP_ARG(PCD); PC++; }
@@ -221,8 +221,8 @@ void (*konami_cpu_setlines_callback)( int lines ) = 0; /* callback called when A
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)		if(!a)SEZ
-#define SET_Z8(a)		SET_Z((UINT8)a)
-#define SET_Z16(a)		SET_Z((UINT16)a)
+#define SET_Z8(a)		SET_Z((uint8_t)a)
+#define SET_Z16(a)		SET_Z((uint16_t)a)
 #define SET_N8(a)		CC|=((a&0x80)>>4)
 #define SET_N16(a)		CC|=((a&0x8000)>>12)
 #define SET_H(a,b,r)	CC|=(((a^b^r)&0x10)<<1)
@@ -231,7 +231,7 @@ void (*konami_cpu_setlines_callback)( int lines ) = 0; /* callback called when A
 #define SET_V8(a,b,r)	CC|=(((a^b^r^(r>>1))&0x80)>>6)
 #define SET_V16(a,b,r)	CC|=(((a^b^r^(r>>1))&0x8000)>>14)
 
-static UINT8 flags8i[256]=	 /* increment */
+static uint8_t flags8i[256]=	 /* increment */
 {
 CC_Z,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -250,7 +250,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 };
-static UINT8 flags8d[256]= /* decrement */
+static uint8_t flags8d[256]= /* decrement */
 {
 CC_Z,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -304,7 +304,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 
 /* macros for branch instructions */
 #define BRANCH(f) { 					\
-	UINT8 t;							\
+	uint8_t t;							\
 	IMMBYTE(t); 						\
 	if( f ) 							\
 	{									\
@@ -350,7 +350,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 }
 
 /* opcode timings */
-static UINT8 cycles1[] =
+static uint8_t cycles1[] =
 {
 	/*	 0	1  2  3  4	5  6  7  8	9  A  B  C	D  E  F */
   /*0*/  1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 5, 5, 5, 5,
@@ -371,13 +371,13 @@ static UINT8 cycles1[] =
   /*F*/  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
-static INLINE UINT32 RM16( UINT32 Addr )
+static INLINE uint32_t RM16( uint32_t Addr )
 {
-	UINT32 result = RM(Addr) << 8;
+	uint32_t result = RM(Addr) << 8;
 	return result | RM((Addr+1)&0xffff);
 }
 
-static INLINE void WM16( UINT32 Addr, PAIR *p )
+static INLINE void WM16( uint32_t Addr, PAIR *p )
 {
 	WM( Addr, p->b.h );
 	WM( (Addr+1)&0xffff, p->b.l );

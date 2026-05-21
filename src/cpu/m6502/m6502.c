@@ -91,13 +91,13 @@ extern void m6502_runtime_loader_init(void)
 #endif
 
 /* Layout of the registers in the debugger */
-static UINT8 m6502_reg_layout[] = {
+static uint8_t m6502_reg_layout[] = {
 	M6502_PC, M6502_S, M6502_P, M6502_A, M6502_X, M6502_Y, -1,
 	M6502_EA, M6502_ZP, M6502_NMI_STATE, M6502_IRQ_STATE, M6502_SO_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m6502_win_layout[] = {
+static uint8_t m6502_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -110,22 +110,22 @@ static UINT8 m6502_win_layout[] = {
  ****************************************************************************/
 typedef struct
 {
-	UINT8	subtype;		/* currently selected cpu sub type */
+	uint8_t	subtype;		/* currently selected cpu sub type */
 	void	(**insn)(void); /* pointer to the function pointer table */
 	PAIR	ppc;			/* previous program counter */
 	PAIR	pc; 			/* program counter */
 	PAIR	sp; 			/* stack pointer (always 100 - 1FF) */
 	PAIR	zp; 			/* zero page address */
 	PAIR	ea; 			/* effective address */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* X index register */
-	UINT8	y;				/* Y index register */
-	UINT8	p;				/* Processor status */
-	UINT8	pending_irq;	/* nonzero if an IRQ is pending */
-	UINT8	after_cli;		/* pending IRQ and last insn cleared I */
-	UINT8	nmi_state;
-	UINT8	irq_state;
-	UINT8   so_state;
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* X index register */
+	uint8_t	y;				/* Y index register */
+	uint8_t	p;				/* Processor status */
+	uint8_t	pending_irq;	/* nonzero if an IRQ is pending */
+	uint8_t	after_cli;		/* pending IRQ and last insn cleared I */
+	uint8_t	nmi_state;
+	uint8_t	irq_state;
+	uint8_t   so_state;
 	int 	(*irq_callback)(int irqline);	/* IRQ callback */
 }	m6502_Regs;
 
@@ -319,7 +319,7 @@ int m6502_execute(int cycles)
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		CALL_MAME_DEBUG;
@@ -479,13 +479,13 @@ unsigned m6502_dasm(char *buffer, unsigned pc)
  ****************************************************************************/
 #if (HAS_N2A03)
 /* Layout of the registers in the debugger */
-static UINT8 n2a03_reg_layout[] = {
+static uint8_t n2a03_reg_layout[] = {
 	N2A03_A,N2A03_X,N2A03_Y,N2A03_S,N2A03_PC,N2A03_P, -1,
 	N2A03_EA,N2A03_ZP,N2A03_NMI_STATE,N2A03_IRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 n2a03_win_layout[] = {
+static uint8_t n2a03_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -546,13 +546,13 @@ unsigned n2a03_dasm(char *buffer, unsigned pc)
  ****************************************************************************/
 #if (HAS_M6510)
 /* Layout of the registers in the debugger */
-static UINT8 m6510_reg_layout[] = {
+static uint8_t m6510_reg_layout[] = {
 	M6510_A,M6510_X,M6510_Y,M6510_S,M6510_PC,M6510_P, -1,
 	M6510_EA,M6510_ZP,M6510_NMI_STATE,M6510_IRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m6510_win_layout[] = {
+static uint8_t m6510_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -638,13 +638,13 @@ const char *m8502_info(void *context, int regnum)
 #if (HAS_M65C02)
 
 /* Layout of the registers in the debugger */
-static UINT8 m65c02_reg_layout[] = {
+static uint8_t m65c02_reg_layout[] = {
 	M65C02_A,M65C02_X,M65C02_Y,M65C02_S,M65C02_PC,M65C02_P, -1,
 	M65C02_EA,M65C02_ZP,M65C02_NMI_STATE,M65C02_IRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m65c02_win_layout[] = {
+static uint8_t m65c02_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -695,7 +695,7 @@ int m65c02_execute(int cycles)
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		CALL_MAME_DEBUG;
@@ -791,13 +791,13 @@ unsigned m65c02_dasm(char *buffer, unsigned pc)
  ****************************************************************************/
 #if (HAS_M65SC02)
 /* Layout of the registers in the debugger */
-static UINT8 m65sc02_reg_layout[] = {
+static uint8_t m65sc02_reg_layout[] = {
 	M65SC02_A,M65SC02_X,M65SC02_Y,M65SC02_S,M65SC02_PC,M65SC02_P, -1,
 	M65SC02_EA,M65SC02_ZP,M65SC02_NMI_STATE,M65SC02_IRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m65sc02_win_layout[] = {
+static uint8_t m65sc02_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -853,13 +853,13 @@ unsigned m65sc02_dasm(char *buffer, unsigned pc)
  ****************************************************************************/
 #if (HAS_DECO16)
 /* Layout of the registers in the debugger */
-static UINT8 deco16_reg_layout[] = {
+static uint8_t deco16_reg_layout[] = {
 	DECO16_A,DECO16_X,DECO16_Y,DECO16_S,DECO16_PC,DECO16_P, -1,
 	DECO16_EA,DECO16_ZP,DECO16_NMI_STATE,DECO16_IRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 deco16_win_layout[] = {
+static uint8_t deco16_win_layout[] = {
 	25, 0,55, 2,	/* register window (top, right rows) */
 	 0, 0,24,22,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -964,7 +964,7 @@ int deco16_execute(int cycles)
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		CALL_MAME_DEBUG;

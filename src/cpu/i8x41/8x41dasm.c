@@ -9,8 +9,8 @@ unsigned Dasm8x41(char *dst, unsigned pc)
 {
 	unsigned PC = pc;
 	const char *sym;
-	UINT8 op;
-	UINT8 arg;
+	uint8_t op;
+	uint8_t arg;
 
 	op = cpu_readop(PC++);
 	switch( op )

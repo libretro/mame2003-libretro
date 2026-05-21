@@ -44,8 +44,8 @@
 /* 16-bit registers that can be loaded signed or unsigned */
 typedef union
 {
-	UINT16	u;
-	INT16	s;
+	uint16_t	u;
+	int16_t	s;
 } ADSPREG16;
 
 
@@ -57,7 +57,7 @@ typedef union
 #else
 	struct { ADSPREG16 sr0, sr1; } srx;
 #endif
-	UINT32 sr;
+	uint32_t sr;
 } SHIFTRESULT;
 
 
@@ -66,12 +66,12 @@ typedef union
 {
 #ifdef MSB_FIRST
 	struct { ADSPREG16 mrzero, mr2, mr1, mr0; } mrx;
-	struct { UINT32 mr1, mr0; } mry;
+	struct { uint32_t mr1, mr0; } mry;
 #else
 	struct { ADSPREG16 mr0, mr1, mr2, mrzero; } mrx;
-	struct { UINT32 mr0, mr1; } mry;
+	struct { uint32_t mr0, mr1; } mry;
 #endif
-	UINT64 mr;
+	uint64_t mr;
 } MACRESULT;
 
 /* there are two banks of "core" registers */
@@ -108,51 +108,51 @@ typedef struct
 	ADSPCORE	alt;
 
 	/* Memory addressing registers */
-	UINT32		i[8];
-	INT32		m[8];
-	UINT32		l[8];
-	UINT32		lmask[8];
-	UINT32		base[8];
-	UINT8		px;
+	uint32_t		i[8];
+	int32_t		m[8];
+	uint32_t		l[8];
+	uint32_t		lmask[8];
+	uint32_t		base[8];
+	uint8_t		px;
 
 	/* other CPU registers */
-	UINT32		pc;
-	UINT32		ppc;
-	UINT32		loop;
-	UINT32		loop_condition;
-	UINT32		cntr;
+	uint32_t		pc;
+	uint32_t		ppc;
+	uint32_t		loop;
+	uint32_t		loop_condition;
+	uint32_t		cntr;
 
 	/* status registers */
-	UINT32		astat;
-	UINT32		sstat;
-	UINT32		mstat;
-	UINT32		astat_clear;
-	UINT32		idle;
+	uint32_t		astat;
+	uint32_t		sstat;
+	uint32_t		mstat;
+	uint32_t		astat_clear;
+	uint32_t		idle;
 
 	/* stacks */
-	UINT32		loop_stack[LOOP_STACK_DEPTH];
-	UINT32		cntr_stack[CNTR_STACK_DEPTH];
-	UINT32		pc_stack[PC_STACK_DEPTH];
-	UINT8		stat_stack[STAT_STACK_DEPTH][3];
-	INT32		pc_sp;
-	INT32		cntr_sp;
-	INT32		stat_sp;
-	INT32		loop_sp;
+	uint32_t		loop_stack[LOOP_STACK_DEPTH];
+	uint32_t		cntr_stack[CNTR_STACK_DEPTH];
+	uint32_t		pc_stack[PC_STACK_DEPTH];
+	uint8_t		stat_stack[STAT_STACK_DEPTH][3];
+	int32_t		pc_sp;
+	int32_t		cntr_sp;
+	int32_t		stat_sp;
+	int32_t		loop_sp;
 
 	/* external I/O */
-	UINT8		flagout;
-	UINT8		flagin;
-	UINT8		fl0;
-	UINT8		fl1;
-	UINT8		fl2;
+	uint8_t		flagout;
+	uint8_t		flagin;
+	uint8_t		fl0;
+	uint8_t		fl1;
+	uint8_t		fl2;
 
 	/* interrupt handling */
-	UINT8		imask;
-	UINT8		icntl;
-	UINT16		ifc;
-    UINT8    	irq_state[5];
-    UINT8    	irq_latch[5];
-    INT32		interrupt_cycles;
+	uint8_t		imask;
+	uint8_t		icntl;
+	uint16_t		ifc;
+    uint8_t    	irq_state[5];
+    uint8_t    	irq_latch[5];
+    int32_t		interrupt_cycles;
     int			(*irq_callback)(int irqline);
 } adsp2100_Regs;
 
@@ -175,15 +175,15 @@ static int chip_type = CHIP_TYPE_ADSP2100;
 static int mstat_mask;
 static int imask_mask;
 
-static UINT16 *reverse_table = 0;
-static UINT16 *mask_table = 0;
-static UINT8 *condition_table = 0;
+static uint16_t *reverse_table = 0;
+static uint16_t *mask_table = 0;
+static uint8_t *condition_table = 0;
 
 static RX_CALLBACK sport_rx_callback = 0;
 static TX_CALLBACK sport_tx_callback = 0;
 
 #if TRACK_HOTSPOTS
-static UINT32 pcbucket[0x4000];
+static uint32_t pcbucket[0x4000];
 #endif
 
 
@@ -199,25 +199,25 @@ static void check_irqs(void);
 **	MEMORY ACCESSORS
 **#################################################################################################*/
 
-static INLINE UINT32 RWORD_DATA(UINT32 addr)
+static INLINE uint32_t RWORD_DATA(uint32_t addr)
 {
 	addr <<= 1;
 	return ADSP2100_RDMEM_WORD(ADSP2100_DATA_OFFSET + addr);
 }
 
-static INLINE void WWORD_DATA(UINT32 addr, UINT32 data)
+static INLINE void WWORD_DATA(uint32_t addr, uint32_t data)
 {
 	addr <<= 1;
 	ADSP2100_WRMEM_WORD(ADSP2100_DATA_OFFSET + addr, data);
 }
 
-static INLINE UINT32 RWORD_PGM(UINT32 addr)
+static INLINE uint32_t RWORD_PGM(uint32_t addr)
 {
 	addr <<= 2;
-	return *(UINT32 *)&OP_ROM[ADSP2100_PGM_OFFSET + addr];
+	return *(uint32_t *)&OP_ROM[ADSP2100_PGM_OFFSET + addr];
 }
 
-static INLINE void WWORD_PGM(UINT32 addr, UINT32 data)
+static INLINE void WWORD_PGM(uint32_t addr, uint32_t data)
 {
 	addr <<= 2;
 	ADSP2100_WRPGM(&OP_ROM[ADSP2100_PGM_OFFSET + addr], data);
@@ -338,7 +338,7 @@ static INLINE int adsp2101_generate_irq(int which, int indx)
 
 static void check_irqs(void)
 {
-	UINT8 check;
+	uint8_t check;
 
 	if (chip_type >= CHIP_TYPE_ADSP2101)
 	{
@@ -537,11 +537,11 @@ static int create_tables(void)
 
 	/* allocate the tables */
 	if (!reverse_table)
-		reverse_table = (UINT16 *)malloc(0x4000 * sizeof(UINT16));
+		reverse_table = (uint16_t *)malloc(0x4000 * sizeof(uint16_t));
 	if (!mask_table)
-		mask_table = (UINT16 *)malloc(0x4000 * sizeof(UINT16));
+		mask_table = (uint16_t *)malloc(0x4000 * sizeof(uint16_t));
 	if (!condition_table)
-		condition_table = (UINT8 *)malloc(0x1000 * sizeof(UINT8));
+		condition_table = (uint8_t *)malloc(0x1000 * sizeof(uint8_t));
 
 	/* handle errors */
 	if (!reverse_table || !mask_table || !condition_table)
@@ -550,7 +550,7 @@ static int create_tables(void)
 	/* initialize the bit reversing table */
 	for (i = 0; i < 0x4000; i++)
 	{
-		UINT16 data = 0;
+		uint16_t data = 0;
 
 		data |= (i >> 13) & 0x0001;
 		data |= (i >> 11) & 0x0002;
@@ -674,7 +674,7 @@ int adsp2100_execute(int cycles)
 	/* core execution loop */
 	do
 	{
-		UINT32 op, temp;
+		uint32_t op, temp;
 
 		/* debugging */
 		adsp2100.ppc = adsp2100.pc;	/* copy PC to previous PC */
@@ -994,19 +994,19 @@ int adsp2100_execute(int cycles)
 				break;
 			case 0x30: case 0x31: case 0x32: case 0x33:
 				/* 001100xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 0) */
-				WRITE_REG(0, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(0, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x34: case 0x35: case 0x36: case 0x37:
 				/* 001101xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 1) */
-				WRITE_REG(1, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(1, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x38: case 0x39: case 0x3a: case 0x3b:
 				/* 001110xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 2) */
-				WRITE_REG(2, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(2, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x3c: case 0x3d: case 0x3e: case 0x3f:
 				/* 001111xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 3) */
-				WRITE_REG(3, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(3, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x40: case 0x41: case 0x42: case 0x43: case 0x44: case 0x45: case 0x46: case 0x47:
 			case 0x48: case 0x49: case 0x4a: case 0x4b: case 0x4c: case 0x4d: case 0x4e: case 0x4f:
@@ -1546,13 +1546,13 @@ void adsp2100_set_reg(int regnum, unsigned val)
 		case ADSP2100_MY0_SEC: adsp2100.alt.my0.s = val; break;
 		case ADSP2100_MY1_SEC: adsp2100.alt.my1.s = val; break;
 		case ADSP2100_MR0_SEC: adsp2100.alt.mr.mrx.mr0.s = val; break;
-		case ADSP2100_MR1_SEC: adsp2100.alt.mr.mrx.mr1.s = val; adsp2100.alt.mr.mrx.mr2.s = (INT16)val >> 15; break;
-		case ADSP2100_MR2_SEC: adsp2100.alt.mr.mrx.mr2.s = (INT8)val; break;
+		case ADSP2100_MR1_SEC: adsp2100.alt.mr.mrx.mr1.s = val; adsp2100.alt.mr.mrx.mr2.s = (int16_t)val >> 15; break;
+		case ADSP2100_MR2_SEC: adsp2100.alt.mr.mrx.mr2.s = (int8_t)val; break;
 		case ADSP2100_MF_SEC: adsp2100.alt.mf.u = val; break;
 
 		case ADSP2100_SI_SEC: adsp2100.alt.si.s = val; break;
-		case ADSP2100_SE_SEC: adsp2100.alt.se.s = (INT8)val; break;
-		case ADSP2100_SB_SEC: adsp2100.alt.sb.s = (INT32)(val << 27) >> 27; break;
+		case ADSP2100_SE_SEC: adsp2100.alt.se.s = (int8_t)val; break;
+		case ADSP2100_SB_SEC: adsp2100.alt.sb.s = (int32_t)(val << 27) >> 27; break;
 		case ADSP2100_SR0_SEC: adsp2100.alt.sr.srx.sr0.s = val; break;
 		case ADSP2100_SR1_SEC: adsp2100.alt.sr.srx.sr1.s = val; break;
 
@@ -1622,7 +1622,7 @@ void adsp2100_set_reg(int regnum, unsigned val)
 **	DEBUGGER DEFINITIONS
 **#################################################################################################*/
 
-static UINT8 adsp2100_reg_layout[] =
+static uint8_t adsp2100_reg_layout[] =
 {
 	ADSP2100_PC,		ADSP2100_AX0,	ADSP2100_MX0,	-1,
 	ADSP2100_CNTR, 		ADSP2100_AX1,	ADSP2100_MX1,	-1,
@@ -1645,7 +1645,7 @@ static UINT8 adsp2100_reg_layout[] =
 	ADSP2100_I7,		ADSP2100_L7,	ADSP2100_M7,	0
 };
 
-static UINT8 adsp2100_win_layout[] =
+static uint8_t adsp2100_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -1809,7 +1809,7 @@ unsigned adsp2100_dasm(char *buffer, unsigned pc)
  * ADSP2101 section
  **************************************************************************/
 
-static UINT8 adsp2101_reg_layout[] =
+static uint8_t adsp2101_reg_layout[] =
 {
 	ADSP2100_PC,		ADSP2100_AX0,	ADSP2100_MX0,	-1,
 	ADSP2100_CNTR, 		ADSP2100_AX1,	ADSP2100_MX1,	-1,
@@ -1832,7 +1832,7 @@ static UINT8 adsp2101_reg_layout[] =
 	ADSP2100_I7,		ADSP2100_L7,	ADSP2100_M7,	0
 };
 
-static UINT8 adsp2101_win_layout[] =
+static uint8_t adsp2101_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -1905,7 +1905,7 @@ void adsp2101_set_tx_callback(TX_CALLBACK cb)
  * ADSP2104 section
  **************************************************************************/
 
-static UINT8 adsp2104_reg_layout[] =
+static uint8_t adsp2104_reg_layout[] =
 {
 	ADSP2100_PC,		ADSP2100_AX0,	ADSP2100_MX0,	-1,
 	ADSP2100_CNTR, 		ADSP2100_AX1,	ADSP2100_MX1,	-1,
@@ -1928,7 +1928,7 @@ static UINT8 adsp2104_reg_layout[] =
 	ADSP2100_I7,		ADSP2100_L7,	ADSP2100_M7,	0
 };
 
-static UINT8 adsp2104_win_layout[] =
+static uint8_t adsp2104_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -2001,7 +2001,7 @@ void adsp2104_load_boot_data(data8_t *srcdata, data32_t *dstdata)
 	int i;
 	for (i = 0; i < pagelen; i++)
 	{
-		UINT32 opcode = (srcdata[BYTE_XOR_LE(i*4+0)] << 16) | (srcdata[BYTE_XOR_LE(i*4+1)] << 8) | srcdata[BYTE_XOR_LE(i*4+2)];
+		uint32_t opcode = (srcdata[BYTE_XOR_LE(i*4+0)] << 16) | (srcdata[BYTE_XOR_LE(i*4+1)] << 8) | srcdata[BYTE_XOR_LE(i*4+2)];
 		ADSP2100_WRPGM(&dstdata[i], opcode);
 	}
 }
@@ -2013,7 +2013,7 @@ void adsp2104_load_boot_data(data8_t *srcdata, data32_t *dstdata)
  * ADSP2105 section
  **************************************************************************/
 
-static UINT8 adsp2105_reg_layout[] =
+static uint8_t adsp2105_reg_layout[] =
 {
 	ADSP2100_PC,		ADSP2100_AX0,	ADSP2100_MX0,	-1,
 	ADSP2100_CNTR, 		ADSP2100_AX1,	ADSP2100_MX1,	-1,
@@ -2036,7 +2036,7 @@ static UINT8 adsp2105_reg_layout[] =
 	ADSP2100_I7,		ADSP2100_L7,	ADSP2100_M7,	0
 };
 
-static UINT8 adsp2105_win_layout[] =
+static uint8_t adsp2105_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -2115,7 +2115,7 @@ void adsp2105_load_boot_data(data8_t *srcdata, data32_t *dstdata)
  * ADSP2115 section
  **************************************************************************/
 
-static UINT8 adsp2115_reg_layout[] =
+static uint8_t adsp2115_reg_layout[] =
 {
 	ADSP2100_PC,		ADSP2100_AX0,	ADSP2100_MX0,	-1,
 	ADSP2100_CNTR, 		ADSP2100_AX1,	ADSP2100_MX1,	-1,
@@ -2138,7 +2138,7 @@ static UINT8 adsp2115_reg_layout[] =
 	ADSP2100_I7,		ADSP2100_L7,	ADSP2100_M7,	0
 };
 
-static UINT8 adsp2115_win_layout[] =
+static uint8_t adsp2115_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */

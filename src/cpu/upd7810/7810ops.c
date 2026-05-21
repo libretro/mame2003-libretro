@@ -217,7 +217,7 @@ static void MUL_C(void)
 /* 48 31: 0100 1000 0011 0001 */
 static void RLR_A(void)
 {
-	UINT8 carry=(PSW&CY)<<7;
+	uint8_t carry=(PSW&CY)<<7;
 	PSW = (PSW & ~CY) | (A & CY);
 	A = (A >> 1) | carry;
 }
@@ -225,7 +225,7 @@ static void RLR_A(void)
 /* 48 32: 0100 1000 0011 0010 */
 static void RLR_B(void)
 {
-	UINT8 carry=(PSW&CY)<<7;
+	uint8_t carry=(PSW&CY)<<7;
 	PSW = (PSW & ~CY) | (B & CY);
 	B = (B >> 1) | carry;
 }
@@ -233,7 +233,7 @@ static void RLR_B(void)
 /* 48 33: 0100 1000 0011 0011 */
 static void RLR_C(void)
 {
-	UINT8 carry=(PSW&CY)<<7;
+	uint8_t carry=(PSW&CY)<<7;
 	PSW = (PSW & ~CY) | (C & CY);
 	C = (C >> 1) | carry;
 }
@@ -241,7 +241,7 @@ static void RLR_C(void)
 /* 48 35: 0100 1000 0011 0101 */
 static void RLL_A(void)
 {
-	UINT8 carry=PSW&CY;
+	uint8_t carry=PSW&CY;
 	PSW = (PSW & ~CY) | ((A >> 7) & CY);
 	A = (A << 1) | carry;
 }
@@ -249,7 +249,7 @@ static void RLL_A(void)
 /* 48 36: 0100 1000 0011 0110 */
 static void RLL_B(void)
 {
-	UINT8 carry=PSW&CY;
+	uint8_t carry=PSW&CY;
 	PSW = (PSW & ~CY) | ((B >> 7) & CY);
 	B = (B << 1) | carry;
 }
@@ -257,7 +257,7 @@ static void RLL_B(void)
 /* 48 37: 0100 1000 0011 0111 */
 static void RLL_C(void)
 {
-	UINT8 carry=PSW&CY;
+	uint8_t carry=PSW&CY;
 	PSW = (PSW & ~CY) | ((C >> 7) & CY);
 	C = (C << 1) | carry;
 }
@@ -265,7 +265,7 @@ static void RLL_C(void)
 /* 48 38: 0100 1000 0011 1000 */
 static void RLD(void)
 {
-	UINT8 m = RM( HL ), tmp;
+	uint8_t m = RM( HL ), tmp;
 	tmp = (m << 4) | (A & 0x0f);
 	A = (A & 0xf0) | (m >> 4);
 	WM( HL, tmp );
@@ -274,7 +274,7 @@ static void RLD(void)
 /* 48 39: 0100 1000 0011 1001 */
 static void RRD(void)
 {
-	UINT8 m = RM( HL ), tmp;
+	uint8_t m = RM( HL ), tmp;
 	tmp = (A << 4) | (m >> 4);
 	A = (A & 0xf0) | (m & 0x0f);
 	WM( HL, tmp );
@@ -300,7 +300,7 @@ static void DIV_A(void)
 {
 	if (A)
 	{
-		UINT8 remainder;
+		uint8_t remainder;
 		remainder = EA % A;
 		EA /= A;
 		A = remainder;
@@ -314,7 +314,7 @@ static void DIV_B(void)
 {
 	if (B)
 	{
-		UINT8 remainder;
+		uint8_t remainder;
 		remainder = EA % B;
 		EA /= B;
 		B = remainder;
@@ -328,7 +328,7 @@ static void DIV_C(void)
 {
 	if (C)
 	{
-		UINT8 remainder;
+		uint8_t remainder;
 		remainder = EA % C;
 		EA /= C;
 		C = remainder;
@@ -658,7 +658,7 @@ static void LDEAX_Hp(void)
 /* 48 8b: 0100 1000 1000 1011 xxxx xxxx */
 static void LDEAX_D_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += DE;
 	EAL = RM( ea );
@@ -668,7 +668,7 @@ static void LDEAX_D_xx(void)
 /* 48 8c: 0100 1000 1000 1100 */
 static void LDEAX_H_A(void)
 {
-	UINT16 ea = HL + A;
+	uint16_t ea = HL + A;
 	EAL = RM( ea );
 	EAH = RM( ea + 1 );
 }
@@ -676,7 +676,7 @@ static void LDEAX_H_A(void)
 /* 48 8d: 0100 1000 1000 1101 */
 static void LDEAX_H_B(void)
 {
-	UINT16 ea = HL + B;
+	uint16_t ea = HL + B;
 	EAL = RM( ea );
 	EAH = RM( ea + 1 );
 }
@@ -684,7 +684,7 @@ static void LDEAX_H_B(void)
 /* 48 8e: 0100 1000 1000 1110 */
 static void LDEAX_H_EA(void)
 {
-	UINT16 ea = HL + EA;
+	uint16_t ea = HL + EA;
 	EAL = RM( ea );
 	EAH = RM( ea + 1 );
 }
@@ -692,7 +692,7 @@ static void LDEAX_H_EA(void)
 /* 48 8f: 0100 1000 1000 1111 xxxx xxxx */
 static void LDEAX_H_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += HL;
 	EAL = RM( ea );
@@ -732,7 +732,7 @@ static void STEAX_Hp(void)
 /* 48 9b: 0100 1000 1000 1011 xxxx xxxx */
 static void STEAX_D_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += DE;
 	WM( ea, EAL );
@@ -742,7 +742,7 @@ static void STEAX_D_xx(void)
 /* 48 9c: 0100 1000 1000 1100 */
 static void STEAX_H_A(void)
 {
-	UINT16 ea = HL + A;
+	uint16_t ea = HL + A;
 	WM( ea, EAL );
 	WM( ea + 1, EAH );
 }
@@ -750,7 +750,7 @@ static void STEAX_H_A(void)
 /* 48 9d: 0100 1000 1000 1101 */
 static void STEAX_H_B(void)
 {
-	UINT16 ea = HL + B;
+	uint16_t ea = HL + B;
 	WM( ea, EAL );
 	WM( ea + 1, EAH );
 }
@@ -758,7 +758,7 @@ static void STEAX_H_B(void)
 /* 48 9e: 0100 1000 1000 1110 */
 static void STEAX_H_EA(void)
 {
-	UINT16 ea = HL + EA;
+	uint16_t ea = HL + EA;
 	WM( ea, EAL );
 	WM( ea + 1, EAH );
 }
@@ -766,7 +766,7 @@ static void STEAX_H_EA(void)
 /* 48 9f: 0100 1000 1000 1111 xxxx xxxx */
 static void STEAX_H_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += HL;
 	WM( ea, EAL );
@@ -790,7 +790,7 @@ static void DSLL_EA(void)
 /* 48 a8: 0100 1000 1010 1000 */
 static void TABLE(void)
 {
-	UINT16 ea = PC + A + 1;
+	uint16_t ea = PC + A + 1;
 	C = RM( ea );
 	B = RM( ea + 1 );
 }
@@ -798,7 +798,7 @@ static void TABLE(void)
 /* 48 b0: 0100 1000 1011 0000 */
 static void DRLR_EA(void)
 {
-	UINT8 carry=PSW&CY;
+	uint8_t carry=PSW&CY;
 	PSW = (PSW & ~CY) | (EA & CY);
 	EA = (EA >> 1) | (carry << 15);
 }
@@ -806,7 +806,7 @@ static void DRLR_EA(void)
 /* 48 b4: 0100 1000 1011 0100 */
 static void DRLL_EA(void)
 {
-	UINT8 carry=PSW&CY;
+	uint8_t carry=PSW&CY;
 	PSW = (PSW & ~CY) | ((EA >> 15) & CY);
 	EA = (EA << 1) | carry;
 }
@@ -903,7 +903,7 @@ static void MOV_A_SMH(void)
 static void MOV_A_EOM(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
+	uint8_t eom = EOM & 0x22;
 	A = eom;
 }
 
@@ -1262,7 +1262,7 @@ static void ORA_L_A(void)
 /* 60 20: 0110 0000 0010 0000 */
 static void ADDNC_V_A(void)
 {
-	UINT8 tmp = V + A;
+	uint8_t tmp = V + A;
 	ZHC_ADD( tmp, V, 0 );
 	V = tmp;
 	SKIP_NC;
@@ -1271,7 +1271,7 @@ static void ADDNC_V_A(void)
 /* 60 21: 0110 0000 0010 0001 */
 static void ADDNC_A_A(void)
 {
-	UINT8 tmp = A + A;
+	uint8_t tmp = A + A;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -1280,7 +1280,7 @@ static void ADDNC_A_A(void)
 /* 60 22: 0110 0000 0010 0010 */
 static void ADDNC_B_A(void)
 {
-	UINT8 tmp = B + A;
+	uint8_t tmp = B + A;
 	ZHC_ADD( tmp, B, 0 );
 	B = tmp;
 	SKIP_NC;
@@ -1289,7 +1289,7 @@ static void ADDNC_B_A(void)
 /* 60 23: 0110 0000 0010 0011 */
 static void ADDNC_C_A(void)
 {
-	UINT8 tmp = C + A;
+	uint8_t tmp = C + A;
 	ZHC_ADD( tmp, C, 0 );
 	C = tmp;
 	SKIP_NC;
@@ -1298,7 +1298,7 @@ static void ADDNC_C_A(void)
 /* 60 24: 0110 0000 0010 0100 */
 static void ADDNC_D_A(void)
 {
-	UINT8 tmp = D + A;
+	uint8_t tmp = D + A;
 	ZHC_ADD( tmp, D, 0 );
 	D = tmp;
 	SKIP_NC;
@@ -1307,7 +1307,7 @@ static void ADDNC_D_A(void)
 /* 60 25: 0110 0000 0010 0101 */
 static void ADDNC_E_A(void)
 {
-	UINT8 tmp = E + A;
+	uint8_t tmp = E + A;
 	ZHC_ADD( tmp, E, 0 );
 	E = tmp;
 	SKIP_NC;
@@ -1316,7 +1316,7 @@ static void ADDNC_E_A(void)
 /* 60 26: 0110 0000 0010 0110 */
 static void ADDNC_H_A(void)
 {
-	UINT8 tmp = H + A;
+	uint8_t tmp = H + A;
 	ZHC_ADD( tmp, H, 0 );
 	H = tmp;
 	SKIP_NC;
@@ -1325,7 +1325,7 @@ static void ADDNC_H_A(void)
 /* 60 27: 0110 0000 0010 0111 */
 static void ADDNC_L_A(void)
 {
-	UINT8 tmp = L + A;
+	uint8_t tmp = L + A;
 	ZHC_ADD( tmp, L, 0 );
 	L = tmp;
 	SKIP_NC;
@@ -1334,7 +1334,7 @@ static void ADDNC_L_A(void)
 /* 60 28: 0110 0000 0010 1000 */
 static void GTA_V_A(void)
 {
-	UINT8 tmp = V - A - 1;
+	uint8_t tmp = V - A - 1;
 	ZHC_SUB( tmp, V, 0 );
 	SKIP_NC;
 }
@@ -1342,7 +1342,7 @@ static void GTA_V_A(void)
 /* 60 29: 0110 0000 0010 1001 */
 static void GTA_A_A(void)
 {
-	UINT8 tmp = A - A - 1;
+	uint8_t tmp = A - A - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -1350,7 +1350,7 @@ static void GTA_A_A(void)
 /* 60 2a: 0110 0000 0010 1010 */
 static void GTA_B_A(void)
 {
-	UINT8 tmp = B - A - 1;
+	uint8_t tmp = B - A - 1;
 	ZHC_SUB( tmp, B, 0 );
 	SKIP_NC;
 }
@@ -1358,7 +1358,7 @@ static void GTA_B_A(void)
 /* 60 2b: 0110 0000 0010 1011 */
 static void GTA_C_A(void)
 {
-	UINT8 tmp = C - A - 1;
+	uint8_t tmp = C - A - 1;
 	ZHC_SUB( tmp, C, 0 );
 	SKIP_NC;
 }
@@ -1366,7 +1366,7 @@ static void GTA_C_A(void)
 /* 60 2c: 0110 0000 0010 1100 */
 static void GTA_D_A(void)
 {
-	UINT8 tmp = D - A - 1;
+	uint8_t tmp = D - A - 1;
 	ZHC_SUB( tmp, D, 0 );
 	SKIP_NC;
 }
@@ -1374,7 +1374,7 @@ static void GTA_D_A(void)
 /* 60 2d: 0110 0000 0010 1101 */
 static void GTA_E_A(void)
 {
-	UINT8 tmp = E - A - 1;
+	uint8_t tmp = E - A - 1;
 	ZHC_SUB( tmp, E, 0 );
 	SKIP_NC;
 }
@@ -1382,7 +1382,7 @@ static void GTA_E_A(void)
 /* 60 2e: 0110 0000 0010 1110 */
 static void GTA_H_A(void)
 {
-	UINT8 tmp = H - A - 1;
+	uint8_t tmp = H - A - 1;
 	ZHC_SUB( tmp, H, 0 );
 	SKIP_NC;
 }
@@ -1390,7 +1390,7 @@ static void GTA_H_A(void)
 /* 60 2f: 0110 0000 0010 1111 */
 static void GTA_L_A(void)
 {
-	UINT8 tmp = L - A - 1;
+	uint8_t tmp = L - A - 1;
 	ZHC_SUB( tmp, L, 0 );
 	SKIP_NC;
 }
@@ -1398,7 +1398,7 @@ static void GTA_L_A(void)
 /* 60 30: 0110 0000 0011 0000 */
 static void SUBNB_V_A(void)
 {
-	UINT8 tmp = V - A;
+	uint8_t tmp = V - A;
 	ZHC_SUB( tmp, V, 0 );
 	V = tmp;
 	SKIP_NC;
@@ -1407,7 +1407,7 @@ static void SUBNB_V_A(void)
 /* 60 31: 0110 0000 0011 0001 */
 static void SUBNB_A_A(void)
 {
-	UINT8 tmp = A - A;
+	uint8_t tmp = A - A;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -1416,7 +1416,7 @@ static void SUBNB_A_A(void)
 /* 60 32: 0110 0000 0011 0010 */
 static void SUBNB_B_A(void)
 {
-	UINT8 tmp = B - A;
+	uint8_t tmp = B - A;
 	ZHC_SUB( tmp, B, 0 );
 	B = tmp;
 	SKIP_NC;
@@ -1425,7 +1425,7 @@ static void SUBNB_B_A(void)
 /* 60 33: 0110 0000 0011 0011 */
 static void SUBNB_C_A(void)
 {
-	UINT8 tmp = C - A;
+	uint8_t tmp = C - A;
 	ZHC_SUB( tmp, C, 0 );
 	C = tmp;
 	SKIP_NC;
@@ -1434,7 +1434,7 @@ static void SUBNB_C_A(void)
 /* 60 34: 0110 0000 0011 0100 */
 static void SUBNB_D_A(void)
 {
-	UINT8 tmp = D - A;
+	uint8_t tmp = D - A;
 	ZHC_SUB( tmp, D, 0 );
 	D = tmp;
 	SKIP_NC;
@@ -1443,7 +1443,7 @@ static void SUBNB_D_A(void)
 /* 60 35: 0110 0000 0011 0101 */
 static void SUBNB_E_A(void)
 {
-	UINT8 tmp = E - A;
+	uint8_t tmp = E - A;
 	ZHC_SUB( tmp, E, 0 );
 	E = tmp;
 	SKIP_NC;
@@ -1452,7 +1452,7 @@ static void SUBNB_E_A(void)
 /* 60 36: 0110 0000 0011 0110 */
 static void SUBNB_H_A(void)
 {
-	UINT8 tmp = H - A;
+	uint8_t tmp = H - A;
 	ZHC_SUB( tmp, H, 0 );
 	H = tmp;
 	SKIP_NC;
@@ -1461,7 +1461,7 @@ static void SUBNB_H_A(void)
 /* 60 37: 0110 0000 0011 0111 */
 static void SUBNB_L_A(void)
 {
-	UINT8 tmp = L - A;
+	uint8_t tmp = L - A;
 	ZHC_SUB( tmp, L, 0 );
 	L = tmp;
 	SKIP_NC;
@@ -1470,7 +1470,7 @@ static void SUBNB_L_A(void)
 /* 60 38: 0110 0000 0011 1000 */
 static void LTA_V_A(void)
 {
-	UINT8 tmp = V - A;
+	uint8_t tmp = V - A;
 	ZHC_SUB( tmp, V, 0 );
 	SKIP_CY;
 }
@@ -1478,7 +1478,7 @@ static void LTA_V_A(void)
 /* 60 39: 0110 0000 0011 1001 */
 static void LTA_A_A(void)
 {
-	UINT8 tmp = A - A;
+	uint8_t tmp = A - A;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -1486,7 +1486,7 @@ static void LTA_A_A(void)
 /* 60 3a: 0110 0000 0011 1010 */
 static void LTA_B_A(void)
 {
-	UINT8 tmp = B - A;
+	uint8_t tmp = B - A;
 	ZHC_SUB( tmp, B, 0 );
 	SKIP_CY;
 }
@@ -1494,7 +1494,7 @@ static void LTA_B_A(void)
 /* 60 3b: 0110 0000 0011 1011 */
 static void LTA_C_A(void)
 {
-	UINT8 tmp = C - A;
+	uint8_t tmp = C - A;
 	ZHC_SUB( tmp, C, 0 );
 	SKIP_CY;
 }
@@ -1502,7 +1502,7 @@ static void LTA_C_A(void)
 /* 60 3c: 0110 0000 0011 1100 */
 static void LTA_D_A(void)
 {
-	UINT8 tmp = D - A;
+	uint8_t tmp = D - A;
 	ZHC_SUB( tmp, D, 0 );
 	SKIP_CY;
 }
@@ -1510,7 +1510,7 @@ static void LTA_D_A(void)
 /* 60 3d: 0110 0000 0011 1101 */
 static void LTA_E_A(void)
 {
-	UINT8 tmp = E - A;
+	uint8_t tmp = E - A;
 	ZHC_SUB( tmp, E, 0 );
 	SKIP_CY;
 }
@@ -1518,7 +1518,7 @@ static void LTA_E_A(void)
 /* 60 3e: 0110 0000 0011 1110 */
 static void LTA_H_A(void)
 {
-	UINT8 tmp = H - A;
+	uint8_t tmp = H - A;
 	ZHC_SUB( tmp, H, 0 );
 	SKIP_CY;
 }
@@ -1526,7 +1526,7 @@ static void LTA_H_A(void)
 /* 60 3f: 0110 0000 0011 1111 */
 static void LTA_L_A(void)
 {
-	UINT8 tmp = L - A;
+	uint8_t tmp = L - A;
 	ZHC_SUB( tmp, L, 0 );
 	SKIP_CY;
 }
@@ -1534,7 +1534,7 @@ static void LTA_L_A(void)
 /* 60 40: 0110 0000 0100 0000 */
 static void ADD_V_A(void)
 {
-	UINT8 tmp = V + A;
+	uint8_t tmp = V + A;
 	ZHC_ADD( tmp, V, 0 );
 	V = tmp;
 }
@@ -1542,7 +1542,7 @@ static void ADD_V_A(void)
 /* 60 41: 0110 0000 0100 0001 */
 static void ADD_A_A(void)
 {
-	UINT8 tmp = A + A;
+	uint8_t tmp = A + A;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -1550,7 +1550,7 @@ static void ADD_A_A(void)
 /* 60 42: 0110 0000 0100 0010 */
 static void ADD_B_A(void)
 {
-	UINT8 tmp = B + A;
+	uint8_t tmp = B + A;
 	ZHC_ADD( tmp, B, 0 );
 	B = tmp;
 }
@@ -1558,7 +1558,7 @@ static void ADD_B_A(void)
 /* 60 43: 0110 0000 0100 0011 */
 static void ADD_C_A(void)
 {
-	UINT8 tmp = C + A;
+	uint8_t tmp = C + A;
 	ZHC_ADD( tmp, C, 0 );
 	C = tmp;
 }
@@ -1566,7 +1566,7 @@ static void ADD_C_A(void)
 /* 60 44: 0110 0000 0100 0100 */
 static void ADD_D_A(void)
 {
-	UINT8 tmp = D + A;
+	uint8_t tmp = D + A;
 	ZHC_ADD( tmp, D, 0 );
 	D = tmp;
 }
@@ -1574,7 +1574,7 @@ static void ADD_D_A(void)
 /* 60 45: 0110 0000 0100 0101 */
 static void ADD_E_A(void)
 {
-	UINT8 tmp = E + A;
+	uint8_t tmp = E + A;
 	ZHC_ADD( tmp, E, 0 );
 	E = tmp;
 }
@@ -1582,7 +1582,7 @@ static void ADD_E_A(void)
 /* 60 46: 0110 0000 0100 0110 */
 static void ADD_H_A(void)
 {
-	UINT8 tmp = H + A;
+	uint8_t tmp = H + A;
 	ZHC_ADD( tmp, H, 0 );
 	H = tmp;
 }
@@ -1590,7 +1590,7 @@ static void ADD_H_A(void)
 /* 60 47: 0110 0000 0100 0111 */
 static void ADD_L_A(void)
 {
-	UINT8 tmp = L + A;
+	uint8_t tmp = L + A;
 	ZHC_ADD( tmp, L, 0 );
 	L = tmp;
 }
@@ -1598,7 +1598,7 @@ static void ADD_L_A(void)
 /* 60 50: 0110 0000 0101 0000 */
 static void ADC_V_A(void)
 {
-	UINT8 tmp = V + A + (PSW & CY);
+	uint8_t tmp = V + A + (PSW & CY);
 	ZHC_ADD( tmp, V, (PSW & CY) );
 	V = tmp;
 }
@@ -1606,7 +1606,7 @@ static void ADC_V_A(void)
 /* 60 51: 0110 0000 0101 0001 */
 static void ADC_A_A(void)
 {
-	UINT8 tmp = A + A + (PSW & CY);
+	uint8_t tmp = A + A + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -1614,7 +1614,7 @@ static void ADC_A_A(void)
 /* 60 52: 0110 0000 0101 0010 */
 static void ADC_B_A(void)
 {
-	UINT8 tmp = B + A + (PSW & CY);
+	uint8_t tmp = B + A + (PSW & CY);
 	ZHC_ADD( tmp, B, (PSW & CY) );
 	B = tmp;
 }
@@ -1622,7 +1622,7 @@ static void ADC_B_A(void)
 /* 60 53: 0110 0000 0101 0011 */
 static void ADC_C_A(void)
 {
-	UINT8 tmp = C + A + (PSW & CY);
+	uint8_t tmp = C + A + (PSW & CY);
 	ZHC_ADD( tmp, C, (PSW & CY) );
 	C = tmp;
 }
@@ -1630,7 +1630,7 @@ static void ADC_C_A(void)
 /* 60 54: 0110 0000 0101 0100 */
 static void ADC_D_A(void)
 {
-	UINT8 tmp = D + A + (PSW & CY);
+	uint8_t tmp = D + A + (PSW & CY);
 	ZHC_ADD( tmp, D, (PSW & CY) );
 	D = tmp;
 }
@@ -1638,7 +1638,7 @@ static void ADC_D_A(void)
 /* 60 55: 0110 0000 0101 0101 */
 static void ADC_E_A(void)
 {
-	UINT8 tmp = E + A + (PSW & CY);
+	uint8_t tmp = E + A + (PSW & CY);
 	ZHC_ADD( tmp, E, (PSW & CY) );
 	E = tmp;
 }
@@ -1646,7 +1646,7 @@ static void ADC_E_A(void)
 /* 60 56: 0110 0000 0101 0110 */
 static void ADC_H_A(void)
 {
-	UINT8 tmp = H + A + (PSW & CY);
+	uint8_t tmp = H + A + (PSW & CY);
 	ZHC_ADD( tmp, H, (PSW & CY) );
 	H = tmp;
 }
@@ -1654,7 +1654,7 @@ static void ADC_H_A(void)
 /* 60 57: 0110 0000 0101 0111 */
 static void ADC_L_A(void)
 {
-	UINT8 tmp = L + A + (PSW & CY);
+	uint8_t tmp = L + A + (PSW & CY);
 	ZHC_ADD( tmp, L, (PSW & CY) );
 	L = tmp;
 }
@@ -1662,7 +1662,7 @@ static void ADC_L_A(void)
 /* 60 60: 0110 0000 0110 0000 */
 static void SUB_V_A(void)
 {
-	UINT8 tmp = V - A;
+	uint8_t tmp = V - A;
 	ZHC_SUB( tmp, V, 0 );
 	V = tmp;
 }
@@ -1670,7 +1670,7 @@ static void SUB_V_A(void)
 /* 60 61: 0110 0000 0110 0001 */
 static void SUB_A_A(void)
 {
-	UINT8 tmp = A - A;
+	uint8_t tmp = A - A;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -1678,7 +1678,7 @@ static void SUB_A_A(void)
 /* 60 62: 0110 0000 0110 0010 */
 static void SUB_B_A(void)
 {
-	UINT8 tmp = B - A;
+	uint8_t tmp = B - A;
 	ZHC_SUB( tmp, B, 0 );
 	B = tmp;
 }
@@ -1686,7 +1686,7 @@ static void SUB_B_A(void)
 /* 60 63: 0110 0000 0110 0011 */
 static void SUB_C_A(void)
 {
-	UINT8 tmp = C - A;
+	uint8_t tmp = C - A;
 	ZHC_SUB( tmp, C, 0 );
 	C = tmp;
 }
@@ -1694,7 +1694,7 @@ static void SUB_C_A(void)
 /* 60 64: 0110 0000 0110 0100 */
 static void SUB_D_A(void)
 {
-	UINT8 tmp = D - A;
+	uint8_t tmp = D - A;
 	ZHC_SUB( tmp, D, 0 );
 	D = tmp;
 }
@@ -1702,7 +1702,7 @@ static void SUB_D_A(void)
 /* 60 65: 0110 0000 0110 0101 */
 static void SUB_E_A(void)
 {
-	UINT8 tmp = E - A;
+	uint8_t tmp = E - A;
 	ZHC_SUB( tmp, E, 0 );
 	E = tmp;
 }
@@ -1710,7 +1710,7 @@ static void SUB_E_A(void)
 /* 60 66: 0110 0000 0110 0110 */
 static void SUB_H_A(void)
 {
-	UINT8 tmp = H - A;
+	uint8_t tmp = H - A;
 	ZHC_SUB( tmp, H, 0 );
 	H = tmp;
 }
@@ -1718,7 +1718,7 @@ static void SUB_H_A(void)
 /* 60 67: 0110 0000 0110 0111 */
 static void SUB_L_A(void)
 {
-	UINT8 tmp = L - A;
+	uint8_t tmp = L - A;
 	ZHC_SUB( tmp, L, 0 );
 	L = tmp;
 }
@@ -1726,7 +1726,7 @@ static void SUB_L_A(void)
 /* 60 68: 0110 0000 0110 1000 */
 static void NEA_V_A(void)
 {
-	UINT8 tmp = V - A;
+	uint8_t tmp = V - A;
 	ZHC_SUB( tmp, V, 0 );
 	SKIP_NZ;
 }
@@ -1734,7 +1734,7 @@ static void NEA_V_A(void)
 /* 60 69: 0110 0000 0110 1001 */
 static void NEA_A_A(void)
 {
-	UINT8 tmp = A - A;
+	uint8_t tmp = A - A;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -1742,7 +1742,7 @@ static void NEA_A_A(void)
 /* 60 6a: 0110 0000 0110 1010 */
 static void NEA_B_A(void)
 {
-	UINT8 tmp = B - A;
+	uint8_t tmp = B - A;
 	ZHC_SUB( tmp, B, 0 );
 	SKIP_NZ;
 }
@@ -1750,7 +1750,7 @@ static void NEA_B_A(void)
 /* 60 6b: 0110 0000 0110 1011 */
 static void NEA_C_A(void)
 {
-	UINT8 tmp = C - A;
+	uint8_t tmp = C - A;
 	ZHC_SUB( tmp, C, 0 );
 	SKIP_NZ;
 }
@@ -1758,7 +1758,7 @@ static void NEA_C_A(void)
 /* 60 6c: 0110 0000 0110 1100 */
 static void NEA_D_A(void)
 {
-	UINT8 tmp = D - A;
+	uint8_t tmp = D - A;
 	ZHC_SUB( tmp, D, 0 );
 	SKIP_NZ;
 }
@@ -1766,7 +1766,7 @@ static void NEA_D_A(void)
 /* 60 6d: 0110 0000 0110 1101 */
 static void NEA_E_A(void)
 {
-	UINT8 tmp = E - A;
+	uint8_t tmp = E - A;
 	ZHC_SUB( tmp, E, 0 );
 	SKIP_NZ;
 }
@@ -1774,7 +1774,7 @@ static void NEA_E_A(void)
 /* 60 6e: 0110 0000 0110 1110 */
 static void NEA_H_A(void)
 {
-	UINT8 tmp = H - A;
+	uint8_t tmp = H - A;
 	ZHC_SUB( tmp, H, 0 );
 	SKIP_NZ;
 }
@@ -1782,7 +1782,7 @@ static void NEA_H_A(void)
 /* 60 6f: 0110 0000 0110 1111 */
 static void NEA_L_A(void)
 {
-	UINT8 tmp = L - A;
+	uint8_t tmp = L - A;
 	ZHC_SUB( tmp, L, 0 );
 	SKIP_NZ;
 }
@@ -1790,7 +1790,7 @@ static void NEA_L_A(void)
 /* 60 70: 0110 0000 0111 0000 */
 static void SBB_V_A(void)
 {
-	UINT8 tmp = V - A - (PSW & CY);
+	uint8_t tmp = V - A - (PSW & CY);
 	ZHC_SUB( tmp, V, (PSW & CY) );
 	V = tmp;
 }
@@ -1798,7 +1798,7 @@ static void SBB_V_A(void)
 /* 60 71: 0110 0000 0111 0001 */
 static void SBB_A_A(void)
 {
-	UINT8 tmp = A - A - (PSW & CY);
+	uint8_t tmp = A - A - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -1806,7 +1806,7 @@ static void SBB_A_A(void)
 /* 60 72: 0110 0000 0111 0010 */
 static void SBB_B_A(void)
 {
-	UINT8 tmp = B - A - (PSW & CY);
+	uint8_t tmp = B - A - (PSW & CY);
 	ZHC_SUB( tmp, B, (PSW & CY) );
 	B = tmp;
 }
@@ -1814,7 +1814,7 @@ static void SBB_B_A(void)
 /* 60 73: 0110 0000 0111 0011 */
 static void SBB_C_A(void)
 {
-	UINT8 tmp = C - A - (PSW & CY);
+	uint8_t tmp = C - A - (PSW & CY);
 	ZHC_SUB( tmp, C, (PSW & CY) );
 	C = tmp;
 }
@@ -1822,7 +1822,7 @@ static void SBB_C_A(void)
 /* 60 74: 0110 0000 0111 0100 */
 static void SBB_D_A(void)
 {
-	UINT8 tmp = D - A - (PSW & CY);
+	uint8_t tmp = D - A - (PSW & CY);
 	ZHC_SUB( tmp, D, (PSW & CY) );
 	D = tmp;
 }
@@ -1830,7 +1830,7 @@ static void SBB_D_A(void)
 /* 60 75: 0110 0000 0111 0101 */
 static void SBB_E_A(void)
 {
-	UINT8 tmp = E - A - (PSW & CY);
+	uint8_t tmp = E - A - (PSW & CY);
 	ZHC_SUB( tmp, E, (PSW & CY) );
 	E = tmp;
 }
@@ -1838,7 +1838,7 @@ static void SBB_E_A(void)
 /* 60 76: 0110 0000 0111 0110 */
 static void SBB_H_A(void)
 {
-	UINT8 tmp = H - A - (PSW & CY);
+	uint8_t tmp = H - A - (PSW & CY);
 	ZHC_SUB( tmp, H, (PSW & CY) );
 	H = tmp;
 }
@@ -1846,7 +1846,7 @@ static void SBB_H_A(void)
 /* 60 77: 0110 0000 0111 0111 */
 static void SBB_L_A(void)
 {
-	UINT8 tmp = L - A - (PSW & CY);
+	uint8_t tmp = L - A - (PSW & CY);
 	ZHC_SUB( tmp, L, (PSW & CY) );
 	L = tmp;
 }
@@ -1854,7 +1854,7 @@ static void SBB_L_A(void)
 /* 60 78: 0110 0000 0111 1000 */
 static void EQA_V_A(void)
 {
-	UINT8 tmp = V - A;
+	uint8_t tmp = V - A;
 	ZHC_SUB( tmp, V, 0 );
 	SKIP_Z;
 }
@@ -1862,7 +1862,7 @@ static void EQA_V_A(void)
 /* 60 79: 0110 0000 0111 1001 */
 static void EQA_A_A(void)
 {
-	UINT8 tmp = A - A;
+	uint8_t tmp = A - A;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -1870,7 +1870,7 @@ static void EQA_A_A(void)
 /* 60 7a: 0110 0000 0111 1010 */
 static void EQA_B_A(void)
 {
-	UINT8 tmp = B - A;
+	uint8_t tmp = B - A;
 	ZHC_SUB( tmp, B, 0 );
 	SKIP_Z;
 }
@@ -1878,7 +1878,7 @@ static void EQA_B_A(void)
 /* 60 7b: 0110 0000 0111 1011 */
 static void EQA_C_A(void)
 {
-	UINT8 tmp = C - A;
+	uint8_t tmp = C - A;
 	ZHC_SUB( tmp, C, 0 );
 	SKIP_Z;
 }
@@ -1886,7 +1886,7 @@ static void EQA_C_A(void)
 /* 60 7c: 0110 0000 0111 1100 */
 static void EQA_D_A(void)
 {
-	UINT8 tmp = D - A;
+	uint8_t tmp = D - A;
 	ZHC_SUB( tmp, D, 0 );
 	SKIP_Z;
 }
@@ -1894,7 +1894,7 @@ static void EQA_D_A(void)
 /* 60 7d: 0110 0000 0111 1101 */
 static void EQA_E_A(void)
 {
-	UINT8 tmp = E - A;
+	uint8_t tmp = E - A;
 	ZHC_SUB( tmp, E, 0 );
 	SKIP_Z;
 }
@@ -1902,7 +1902,7 @@ static void EQA_E_A(void)
 /* 60 7e: 0110 0000 0111 1110 */
 static void EQA_H_A(void)
 {
-	UINT8 tmp = H - A;
+	uint8_t tmp = H - A;
 	ZHC_SUB( tmp, H, 0 );
 	SKIP_Z;
 }
@@ -1910,7 +1910,7 @@ static void EQA_H_A(void)
 /* 60 7f: 0110 0000 0111 1111 */
 static void EQA_L_A(void)
 {
-	UINT8 tmp = L - A;
+	uint8_t tmp = L - A;
 	ZHC_SUB( tmp, L, 0 );
 	SKIP_Z;
 }
@@ -2074,7 +2074,7 @@ static void ORA_A_L(void)
 /* 60 a0: 0110 0000 1010 0000 */
 static void ADDNC_A_V(void)
 {
-	UINT8 tmp = A + V;
+	uint8_t tmp = A + V;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2086,7 +2086,7 @@ static void ADDNC_A_V(void)
 /* 60 a2: 0110 0000 1010 0010 */
 static void ADDNC_A_B(void)
 {
-	UINT8 tmp = A + B;
+	uint8_t tmp = A + B;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2095,7 +2095,7 @@ static void ADDNC_A_B(void)
 /* 60 a3: 0110 0000 1010 0011 */
 static void ADDNC_A_C(void)
 {
-	UINT8 tmp = A + C;
+	uint8_t tmp = A + C;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2104,7 +2104,7 @@ static void ADDNC_A_C(void)
 /* 60 a4: 0110 0000 1010 0100 */
 static void ADDNC_A_D(void)
 {
-	UINT8 tmp = A + D;
+	uint8_t tmp = A + D;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2113,7 +2113,7 @@ static void ADDNC_A_D(void)
 /* 60 a5: 0110 0000 1010 0101 */
 static void ADDNC_A_E(void)
 {
-	UINT8 tmp = A + E;
+	uint8_t tmp = A + E;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2122,7 +2122,7 @@ static void ADDNC_A_E(void)
 /* 60 a6: 0110 0000 1010 0110 */
 static void ADDNC_A_H(void)
 {
-	UINT8 tmp = A + H;
+	uint8_t tmp = A + H;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2131,7 +2131,7 @@ static void ADDNC_A_H(void)
 /* 60 a7: 0110 0000 1010 0111 */
 static void ADDNC_A_L(void)
 {
-	UINT8 tmp = A + L;
+	uint8_t tmp = A + L;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2140,7 +2140,7 @@ static void ADDNC_A_L(void)
 /* 60 a8: 0110 0000 1010 1000 */
 static void GTA_A_V(void)
 {
-	UINT8 tmp = A - V - 1;
+	uint8_t tmp = A - V - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2151,7 +2151,7 @@ static void GTA_A_V(void)
 /* 60 aa: 0110 0000 1010 1010 */
 static void GTA_A_B(void)
 {
-	UINT8 tmp = A - B - 1;
+	uint8_t tmp = A - B - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2159,7 +2159,7 @@ static void GTA_A_B(void)
 /* 60 ab: 0110 0000 1010 1011 */
 static void GTA_A_C(void)
 {
-	UINT8 tmp = A - C - 1;
+	uint8_t tmp = A - C - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2167,7 +2167,7 @@ static void GTA_A_C(void)
 /* 60 ac: 0110 0000 1010 1100 */
 static void GTA_A_D(void)
 {
-	UINT8 tmp = A - D - 1;
+	uint8_t tmp = A - D - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2175,7 +2175,7 @@ static void GTA_A_D(void)
 /* 60 ad: 0110 0000 1010 1101 */
 static void GTA_A_E(void)
 {
-	UINT8 tmp = A - E - 1;
+	uint8_t tmp = A - E - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2183,7 +2183,7 @@ static void GTA_A_E(void)
 /* 60 ae: 0110 0000 1010 1110 */
 static void GTA_A_H(void)
 {
-	UINT8 tmp = A - H - 1;
+	uint8_t tmp = A - H - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2191,7 +2191,7 @@ static void GTA_A_H(void)
 /* 60 af: 0110 0000 1010 1111 */
 static void GTA_A_L(void)
 {
-	UINT8 tmp = A - L - 1;
+	uint8_t tmp = A - L - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -2199,7 +2199,7 @@ static void GTA_A_L(void)
 /* 60 b0: 0110 0000 1011 0000 */
 static void SUBNB_A_V(void)
 {
-	UINT8 tmp = A - V;
+	uint8_t tmp = A - V;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2211,7 +2211,7 @@ static void SUBNB_A_V(void)
 /* 60 b2: 0110 0000 1011 0010 */
 static void SUBNB_A_B(void)
 {
-	UINT8 tmp = A - B;
+	uint8_t tmp = A - B;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2220,7 +2220,7 @@ static void SUBNB_A_B(void)
 /* 60 b3: 0110 0000 1011 0011 */
 static void SUBNB_A_C(void)
 {
-	UINT8 tmp = A - C;
+	uint8_t tmp = A - C;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2229,7 +2229,7 @@ static void SUBNB_A_C(void)
 /* 60 b4: 0110 0000 1011 0100 */
 static void SUBNB_A_D(void)
 {
-	UINT8 tmp = A - D;
+	uint8_t tmp = A - D;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2238,7 +2238,7 @@ static void SUBNB_A_D(void)
 /* 60 b5: 0110 0000 1011 0101 */
 static void SUBNB_A_E(void)
 {
-	UINT8 tmp = A - E;
+	uint8_t tmp = A - E;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2247,7 +2247,7 @@ static void SUBNB_A_E(void)
 /* 60 b6: 0110 0000 1011 0110 */
 static void SUBNB_A_H(void)
 {
-	UINT8 tmp = A - H;
+	uint8_t tmp = A - H;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2256,7 +2256,7 @@ static void SUBNB_A_H(void)
 /* 60 b7: 0110 0000 1011 0111 */
 static void SUBNB_A_L(void)
 {
-	UINT8 tmp = A - L;
+	uint8_t tmp = A - L;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -2265,7 +2265,7 @@ static void SUBNB_A_L(void)
 /* 60 b8: 0110 0000 1011 1000 */
 static void LTA_A_V(void)
 {
-	UINT8 tmp = A - V;
+	uint8_t tmp = A - V;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2276,7 +2276,7 @@ static void LTA_A_V(void)
 /* 60 ba: 0110 0000 1011 1010 */
 static void LTA_A_B(void)
 {
-	UINT8 tmp = A - B;
+	uint8_t tmp = A - B;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2284,7 +2284,7 @@ static void LTA_A_B(void)
 /* 60 bb: 0110 0000 1011 1011 */
 static void LTA_A_C(void)
 {
-	UINT8 tmp = A - C;
+	uint8_t tmp = A - C;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2292,7 +2292,7 @@ static void LTA_A_C(void)
 /* 60 bc: 0110 0000 1011 1100 */
 static void LTA_A_D(void)
 {
-	UINT8 tmp = A - D;
+	uint8_t tmp = A - D;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2300,7 +2300,7 @@ static void LTA_A_D(void)
 /* 60 bd: 0110 0000 1011 1101 */
 static void LTA_A_E(void)
 {
-	UINT8 tmp = A - E;
+	uint8_t tmp = A - E;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2308,7 +2308,7 @@ static void LTA_A_E(void)
 /* 60 be: 0110 0000 1011 1110 */
 static void LTA_A_H(void)
 {
-	UINT8 tmp = A - H;
+	uint8_t tmp = A - H;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2316,7 +2316,7 @@ static void LTA_A_H(void)
 /* 60 bf: 0110 0000 1011 1111 */
 static void LTA_A_L(void)
 {
-	UINT8 tmp = A - L;
+	uint8_t tmp = A - L;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -2324,7 +2324,7 @@ static void LTA_A_L(void)
 /* 60 c0: 0110 0000 1100 0000 */
 static void ADD_A_V(void)
 {
-	UINT8 tmp = A + V;
+	uint8_t tmp = A + V;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2335,7 +2335,7 @@ static void ADD_A_V(void)
 /* 60 c2: 0110 0000 1100 0010 */
 static void ADD_A_B(void)
 {
-	UINT8 tmp = A + B;
+	uint8_t tmp = A + B;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2343,7 +2343,7 @@ static void ADD_A_B(void)
 /* 60 c3: 0110 0000 1100 0011 */
 static void ADD_A_C(void)
 {
-	UINT8 tmp = A + C;
+	uint8_t tmp = A + C;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2351,7 +2351,7 @@ static void ADD_A_C(void)
 /* 60 c4: 0110 0000 1100 0100 */
 static void ADD_A_D(void)
 {
-	UINT8 tmp = A + D;
+	uint8_t tmp = A + D;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2359,7 +2359,7 @@ static void ADD_A_D(void)
 /* 60 c5: 0110 0000 1100 0101 */
 static void ADD_A_E(void)
 {
-	UINT8 tmp = A + E;
+	uint8_t tmp = A + E;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2367,7 +2367,7 @@ static void ADD_A_E(void)
 /* 60 c6: 0110 0000 1100 0110 */
 static void ADD_A_H(void)
 {
-	UINT8 tmp = A + H;
+	uint8_t tmp = A + H;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2375,7 +2375,7 @@ static void ADD_A_H(void)
 /* 60 c7: 0110 0000 1100 0111 */
 static void ADD_A_L(void)
 {
-	UINT8 tmp = A + L;
+	uint8_t tmp = A + L;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -2455,7 +2455,7 @@ static void ONA_A_L(void)
 /* 60 d0: 0110 0000 1101 0000 */
 static void ADC_A_V(void)
 {
-	UINT8 tmp = A + V + (PSW & CY);
+	uint8_t tmp = A + V + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2466,7 +2466,7 @@ static void ADC_A_V(void)
 /* 60 d2: 0110 0000 1101 0010 */
 static void ADC_A_B(void)
 {
-	UINT8 tmp = A + B + (PSW & CY);
+	uint8_t tmp = A + B + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2474,7 +2474,7 @@ static void ADC_A_B(void)
 /* 60 d3: 0110 0000 1101 0011 */
 static void ADC_A_C(void)
 {
-	UINT8 tmp = A + C + (PSW & CY);
+	uint8_t tmp = A + C + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2482,7 +2482,7 @@ static void ADC_A_C(void)
 /* 60 d4: 0110 0000 1101 0100 */
 static void ADC_A_D(void)
 {
-	UINT8 tmp = A + D + (PSW & CY);
+	uint8_t tmp = A + D + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2490,7 +2490,7 @@ static void ADC_A_D(void)
 /* 60 d5: 0110 0000 1101 0101 */
 static void ADC_A_E(void)
 {
-	UINT8 tmp = A + E + (PSW & CY);
+	uint8_t tmp = A + E + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2498,7 +2498,7 @@ static void ADC_A_E(void)
 /* 60 d6: 0110 0000 1101 0110 */
 static void ADC_A_H(void)
 {
-	UINT8 tmp = A + H + (PSW & CY);
+	uint8_t tmp = A + H + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2506,7 +2506,7 @@ static void ADC_A_H(void)
 /* 60 d7: 0110 0000 1101 0111 */
 static void ADC_A_L(void)
 {
-	UINT8 tmp = A + L + (PSW & CY);
+	uint8_t tmp = A + L + (PSW & CY);
 	ZHC_ADD( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2586,7 +2586,7 @@ static void OFFA_A_L(void)
 /* 60 e0: 0110 0000 1110 0000 */
 static void SUB_A_V(void)
 {
-	UINT8 tmp = A - V;
+	uint8_t tmp = A - V;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2597,7 +2597,7 @@ static void SUB_A_V(void)
 /* 60 e2: 0110 0000 1110 0010 */
 static void SUB_A_B(void)
 {
-	UINT8 tmp = A - B;
+	uint8_t tmp = A - B;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2605,7 +2605,7 @@ static void SUB_A_B(void)
 /* 60 e3: 0110 0000 1110 0011 */
 static void SUB_A_C(void)
 {
-	UINT8 tmp = A - C;
+	uint8_t tmp = A - C;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2613,7 +2613,7 @@ static void SUB_A_C(void)
 /* 60 e4: 0110 0000 1110 0100 */
 static void SUB_A_D(void)
 {
-	UINT8 tmp = A - D;
+	uint8_t tmp = A - D;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2621,7 +2621,7 @@ static void SUB_A_D(void)
 /* 60 e5: 0110 0000 1110 0101 */
 static void SUB_A_E(void)
 {
-	UINT8 tmp = A - E;
+	uint8_t tmp = A - E;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2629,7 +2629,7 @@ static void SUB_A_E(void)
 /* 60 e6: 0110 0000 1110 0110 */
 static void SUB_A_H(void)
 {
-	UINT8 tmp = A - H;
+	uint8_t tmp = A - H;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2637,7 +2637,7 @@ static void SUB_A_H(void)
 /* 60 e7: 0110 0000 1110 0111 */
 static void SUB_A_L(void)
 {
-	UINT8 tmp = A - L;
+	uint8_t tmp = A - L;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -2645,7 +2645,7 @@ static void SUB_A_L(void)
 /* 60 e8: 0110 0000 1110 1000 */
 static void NEA_A_V(void)
 {
-	UINT8 tmp = A - V;
+	uint8_t tmp = A - V;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2656,7 +2656,7 @@ static void NEA_A_V(void)
 /* 60 ea: 0110 0000 1110 1010 */
 static void NEA_A_B(void)
 {
-	UINT8 tmp = A - B;
+	uint8_t tmp = A - B;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2664,7 +2664,7 @@ static void NEA_A_B(void)
 /* 60 eb: 0110 0000 1110 1011 */
 static void NEA_A_C(void)
 {
-	UINT8 tmp = A - C;
+	uint8_t tmp = A - C;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2672,7 +2672,7 @@ static void NEA_A_C(void)
 /* 60 ec: 0110 0000 1110 1100 */
 static void NEA_A_D(void)
 {
-	UINT8 tmp = A - D;
+	uint8_t tmp = A - D;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2680,7 +2680,7 @@ static void NEA_A_D(void)
 /* 60 ed: 0110 0000 1110 1101 */
 static void NEA_A_E(void)
 {
-	UINT8 tmp = A - E;
+	uint8_t tmp = A - E;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2688,7 +2688,7 @@ static void NEA_A_E(void)
 /* 60 ee: 0110 0000 1110 1110 */
 static void NEA_A_H(void)
 {
-	UINT8 tmp = A - H;
+	uint8_t tmp = A - H;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2696,7 +2696,7 @@ static void NEA_A_H(void)
 /* 60 ef: 0110 0000 1110 1111 */
 static void NEA_A_L(void)
 {
-	UINT8 tmp = A - L;
+	uint8_t tmp = A - L;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -2704,7 +2704,7 @@ static void NEA_A_L(void)
 /* 60 f0: 0110 0000 1111 0000 */
 static void SBB_A_V(void)
 {
-	UINT8 tmp = A - V - (PSW & CY);
+	uint8_t tmp = A - V - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2715,7 +2715,7 @@ static void SBB_A_V(void)
 /* 60 f2: 0110 0000 1111 0010 */
 static void SBB_A_B(void)
 {
-	UINT8 tmp = A - B - (PSW & CY);
+	uint8_t tmp = A - B - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2723,7 +2723,7 @@ static void SBB_A_B(void)
 /* 60 f3: 0110 0000 1111 0011 */
 static void SBB_A_C(void)
 {
-	UINT8 tmp = A - C - (PSW & CY);
+	uint8_t tmp = A - C - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2731,7 +2731,7 @@ static void SBB_A_C(void)
 /* 60 f4: 0110 0000 1111 0100 */
 static void SBB_A_D(void)
 {
-	UINT8 tmp = A - D - (PSW & CY);
+	uint8_t tmp = A - D - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2739,7 +2739,7 @@ static void SBB_A_D(void)
 /* 60 f5: 0110 0000 1111 0101 */
 static void SBB_A_E(void)
 {
-	UINT8 tmp = A - E - (PSW & CY);
+	uint8_t tmp = A - E - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2747,7 +2747,7 @@ static void SBB_A_E(void)
 /* 60 f6: 0110 0000 1111 0110 */
 static void SBB_A_H(void)
 {
-	UINT8 tmp = A - H - (PSW & CY);
+	uint8_t tmp = A - H - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2755,7 +2755,7 @@ static void SBB_A_H(void)
 /* 60 f7: 0110 0000 1111 0111 */
 static void SBB_A_L(void)
 {
-	UINT8 tmp = A - L - (PSW & CY);
+	uint8_t tmp = A - L - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -2763,7 +2763,7 @@ static void SBB_A_L(void)
 /* 60 f8: 0110 0000 1111 1000 */
 static void EQA_A_V(void)
 {
-	UINT8 tmp = A - V;
+	uint8_t tmp = A - V;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2774,7 +2774,7 @@ static void EQA_A_V(void)
 /* 60 fa: 0110 0000 1111 1010 */
 static void EQA_A_B(void)
 {
-	UINT8 tmp = A - B;
+	uint8_t tmp = A - B;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2782,7 +2782,7 @@ static void EQA_A_B(void)
 /* 60 fb: 0110 0000 1111 1011 */
 static void EQA_A_C(void)
 {
-	UINT8 tmp = A - C;
+	uint8_t tmp = A - C;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2790,7 +2790,7 @@ static void EQA_A_C(void)
 /* 60 fc: 0110 0000 1111 1100 */
 static void EQA_A_D(void)
 {
-	UINT8 tmp = A - D;
+	uint8_t tmp = A - D;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2798,7 +2798,7 @@ static void EQA_A_D(void)
 /* 60 fd: 0110 0000 1111 1101 */
 static void EQA_A_E(void)
 {
-	UINT8 tmp = A - E;
+	uint8_t tmp = A - E;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2806,7 +2806,7 @@ static void EQA_A_E(void)
 /* 60 fe: 0110 0000 1111 1110 */
 static void EQA_A_H(void)
 {
-	UINT8 tmp = A - H;
+	uint8_t tmp = A - H;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2814,7 +2814,7 @@ static void EQA_A_H(void)
 /* 60 ff: 0110 0000 1111 1111 */
 static void EQA_A_L(void)
 {
-	UINT8 tmp = A - L;
+	uint8_t tmp = A - L;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -2823,7 +2823,7 @@ static void EQA_A_L(void)
 /* 64 00: 0110 0100 0000 0000 xxxx xxxx */
 static void MVI_PA_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WP( UPD7810_PORTA, imm );
 }
@@ -2831,7 +2831,7 @@ static void MVI_PA_xx(void)
 /* 64 01: 0110 0100 0000 0001 xxxx xxxx */
 static void MVI_PB_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WP( UPD7810_PORTB, imm );
 }
@@ -2839,7 +2839,7 @@ static void MVI_PB_xx(void)
 /* 64 02: 0110 0100 0000 0010 xxxx xxxx */
 static void MVI_PC_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WP( UPD7810_PORTC, imm );
 }
@@ -2847,7 +2847,7 @@ static void MVI_PC_xx(void)
 /* 64 03: 0110 0100 0000 0011 xxxx xxxx */
 static void MVI_PD_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WP( UPD7810_PORTD, imm );
 }
@@ -2855,7 +2855,7 @@ static void MVI_PD_xx(void)
 /* 64 05: 0110 0100 0000 0101 xxxx xxxx */
 static void MVI_PF_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WP( UPD7810_PORTF, imm );
 }
@@ -2875,7 +2875,7 @@ static void MVI_MKL_xx(void)
 /* 64 08: 0110 0100 0000 1000 xxxx xxxx */
 static void ANI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA), imm;
+	uint8_t pa = RP( UPD7810_PORTA), imm;
 	RDOPARG( imm );
 	pa &= imm;
 	WP( UPD7810_PORTA, pa );
@@ -2885,7 +2885,7 @@ static void ANI_PA_xx(void)
 /* 64 09: 0110 0100 0000 1001 xxxx xxxx */
 static void ANI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB), imm;
+	uint8_t pb = RP( UPD7810_PORTB), imm;
 	RDOPARG( imm );
 	pb &= imm;
 	WP( UPD7810_PORTB, pb );
@@ -2895,7 +2895,7 @@ static void ANI_PB_xx(void)
 /* 64 0a: 0110 0100 0000 1010 xxxx xxxx */
 static void ANI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC), imm;
+	uint8_t pc = RP( UPD7810_PORTC), imm;
 	RDOPARG( imm );
 	pc &= imm;
 	WP( UPD7810_PORTC, pc );
@@ -2905,7 +2905,7 @@ static void ANI_PC_xx(void)
 /* 64 0b: 0110 0100 0000 1011 xxxx xxxx */
 static void ANI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), imm;
+	uint8_t pd = RP( UPD7810_PORTD ), imm;
 	RDOPARG( imm );
 	pd &= imm;
 	WP( UPD7810_PORTD, pd );
@@ -2915,7 +2915,7 @@ static void ANI_PD_xx(void)
 /* 64 0d: 0110 0100 0000 1101 xxxx xxxx */
 static void ANI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), imm;
+	uint8_t pf = RP( UPD7810_PORTF ), imm;
 	RDOPARG( imm );
 	pf &= imm;
 	WP( UPD7810_PORTF, pf );
@@ -2925,7 +2925,7 @@ static void ANI_PF_xx(void)
 /* 64 0e: 0110 0100 0000 1110 xxxx xxxx */
 static void ANI_MKH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	MKH &= imm;
 	SET_Z(MKH);
@@ -2934,7 +2934,7 @@ static void ANI_MKH_xx(void)
 /* 64 0f: 0110 0100 0000 1111 xxxx xxxx */
 static void ANI_MKL_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	MKL &= imm;
 	SET_Z(MKL);
@@ -2943,7 +2943,7 @@ static void ANI_MKL_xx(void)
 /* 64 10: 0110 0100 0001 0000 xxxx xxxx */
 static void XRI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), imm;
+	uint8_t pa = RP( UPD7810_PORTA ), imm;
 	RDOPARG( imm );
 	pa ^= imm;
 	WP( UPD7810_PORTA, pa );
@@ -2953,7 +2953,7 @@ static void XRI_PA_xx(void)
 /* 64 11: 0110 0100 0001 0001 xxxx xxxx */
 static void XRI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), imm;
+	uint8_t pb = RP( UPD7810_PORTB ), imm;
 	RDOPARG( imm );
 	pb ^= imm;
 	WP( UPD7810_PORTB, pb );
@@ -2963,7 +2963,7 @@ static void XRI_PB_xx(void)
 /* 64 12: 0110 0100 0001 0010 xxxx xxxx */
 static void XRI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), imm;
+	uint8_t pc = RP( UPD7810_PORTC ), imm;
 	RDOPARG( imm );
 	pc ^= imm;
 	WP( UPD7810_PORTC, pc );
@@ -2973,7 +2973,7 @@ static void XRI_PC_xx(void)
 /* 64 13: 0110 0100 0001 0011 xxxx xxxx */
 static void XRI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), imm;
+	uint8_t pd = RP( UPD7810_PORTD ), imm;
 	RDOPARG( imm );
 	pd ^= imm;
 	WP( UPD7810_PORTD, pd );
@@ -2983,7 +2983,7 @@ static void XRI_PD_xx(void)
 /* 64 15: 0110 0100 0001 0101 xxxx xxxx */
 static void XRI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), imm;
+	uint8_t pf = RP( UPD7810_PORTF ), imm;
 	RDOPARG( imm );
 	pf ^= imm;
 	WP( UPD7810_PORTF, pf );
@@ -2993,7 +2993,7 @@ static void XRI_PF_xx(void)
 /* 64 16: 0110 0100 0001 0110 xxxx xxxx */
 static void XRI_MKH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	MKH ^= imm;
 	SET_Z(MKH);
@@ -3002,7 +3002,7 @@ static void XRI_MKH_xx(void)
 /* 64 17: 0110 0100 0001 0111 xxxx xxxx */
 static void XRI_MKL_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	MKL ^= imm;
 	SET_Z(MKL);
@@ -3011,7 +3011,7 @@ static void XRI_MKL_xx(void)
 /* 64 18: 0110 0100 0001 1000 xxxx xxxx */
 static void ORI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), imm;
+	uint8_t pa = RP( UPD7810_PORTA ), imm;
 	RDOPARG( imm );
 	pa |= imm;
 	WP( UPD7810_PORTA, pa );
@@ -3021,7 +3021,7 @@ static void ORI_PA_xx(void)
 /* 64 19: 0110 0100 0001 1001 xxxx xxxx */
 static void ORI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), imm;
+	uint8_t pb = RP( UPD7810_PORTB ), imm;
 	RDOPARG( imm );
 	pb |= imm;
 	WP( UPD7810_PORTB, pb );
@@ -3031,7 +3031,7 @@ static void ORI_PB_xx(void)
 /* 64 1a: 0110 0100 0001 1010 xxxx xxxx */
 static void ORI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), imm;
+	uint8_t pc = RP( UPD7810_PORTC ), imm;
 	RDOPARG( imm );
 	pc |= imm;
 	WP( UPD7810_PORTC, pc );
@@ -3041,7 +3041,7 @@ static void ORI_PC_xx(void)
 /* 64 1b: 0110 0100 0001 1011 xxxx xxxx */
 static void ORI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), imm;
+	uint8_t pd = RP( UPD7810_PORTD ), imm;
 	RDOPARG( imm );
 	pd |= imm;
 	WP( UPD7810_PORTD, pd );
@@ -3051,7 +3051,7 @@ static void ORI_PD_xx(void)
 /* 64 1d: 0110 0100 0001 1101 xxxx xxxx */
 static void ORI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), imm;
+	uint8_t pf = RP( UPD7810_PORTF ), imm;
 	RDOPARG( imm );
 	pf |= imm;
 	WP( UPD7810_PORTF, pf );
@@ -3061,7 +3061,7 @@ static void ORI_PF_xx(void)
 /* 64 1e: 0110 0100 0001 1110 xxxx xxxx */
 static void ORI_MKH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	MKH |= imm;
 	SET_Z(MKH);
@@ -3070,7 +3070,7 @@ static void ORI_MKH_xx(void)
 /* 64 1f: 0110 0100 0001 1111 xxxx xxxx */
 static void ORI_MKL_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	MKL |= imm;
 	SET_Z(MKL);
@@ -3079,8 +3079,8 @@ static void ORI_MKL_xx(void)
 /* 64 20: 0110 0100 0010 0000 xxxx xxxx */
 static void ADINC_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA );
-	UINT8 tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA );
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa + imm;
@@ -3093,8 +3093,8 @@ static void ADINC_PA_xx(void)
 /* 64 21: 0110 0100 0010 0001 xxxx xxxx */
 static void ADINC_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB );
-	UINT8 tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB );
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb + imm;
@@ -3107,8 +3107,8 @@ static void ADINC_PB_xx(void)
 /* 64 22: 0110 0100 0010 0010 xxxx xxxx */
 static void ADINC_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC );
-	UINT8 tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC );
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc + imm;
@@ -3121,8 +3121,8 @@ static void ADINC_PC_xx(void)
 /* 64 23: 0110 0100 0010 0011 xxxx xxxx */
 static void ADINC_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD );
-	UINT8 tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD );
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd + imm;
@@ -3135,8 +3135,8 @@ static void ADINC_PD_xx(void)
 /* 64 25: 0110 0100 0010 0101 xxxx xxxx */
 static void ADINC_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF );
-	UINT8 tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF );
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf + imm;
@@ -3149,7 +3149,7 @@ static void ADINC_PF_xx(void)
 /* 64 26: 0110 0100 0010 0110 xxxx xxxx */
 static void ADINC_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH + imm;
@@ -3162,7 +3162,7 @@ static void ADINC_MKH_xx(void)
 /* 64 27: 0110 0100 0010 0111 xxxx xxxx */
 static void ADINC_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL + imm;
@@ -3175,7 +3175,7 @@ static void ADINC_MKL_xx(void)
 /* 64 28: 0110 0100 0010 1000 xxxx xxxx */
 static void GTI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), imm, tmp;
+	uint8_t pa = RP( UPD7810_PORTA ), imm, tmp;
 
 	RDOPARG( imm );
 	tmp = pa - imm - 1;
@@ -3187,7 +3187,7 @@ static void GTI_PA_xx(void)
 /* 64 29: 0110 0100 0010 1001 xxxx xxxx */
 static void GTI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), imm, tmp;
+	uint8_t pb = RP( UPD7810_PORTB ), imm, tmp;
 
 	RDOPARG( imm );
 	tmp = pb - imm - 1;
@@ -3199,7 +3199,7 @@ static void GTI_PB_xx(void)
 /* 64 2a: 0110 0100 0010 1010 xxxx xxxx */
 static void GTI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), imm, tmp;
+	uint8_t pc = RP( UPD7810_PORTC ), imm, tmp;
 
 	RDOPARG( imm );
 	tmp = pc - imm - 1;
@@ -3211,7 +3211,7 @@ static void GTI_PC_xx(void)
 /* 64 2b: 0110 0100 0010 1011 xxxx xxxx */
 static void GTI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), imm, tmp;
+	uint8_t pd = RP( UPD7810_PORTD ), imm, tmp;
 
 	RDOPARG( imm );
 	tmp = pd - imm - 1;
@@ -3223,7 +3223,7 @@ static void GTI_PD_xx(void)
 /* 64 2d: 0110 0100 0010 1101 xxxx xxxx */
 static void GTI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), imm, tmp;
+	uint8_t pf = RP( UPD7810_PORTF ), imm, tmp;
 
 	RDOPARG( imm );
 	tmp = pf - imm - 1;
@@ -3235,7 +3235,7 @@ static void GTI_PF_xx(void)
 /* 64 2e: 0110 0100 0010 1110 xxxx xxxx */
 static void GTI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm - 1;
@@ -3247,7 +3247,7 @@ static void GTI_MKH_xx(void)
 /* 64 2f: 0110 0100 0010 1111 xxxx xxxx */
 static void GTI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm - 1;
@@ -3259,7 +3259,7 @@ static void GTI_MKL_xx(void)
 /* 64 30: 0110 0100 0011 0000 xxxx xxxx */
 static void SUINB_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa - imm;
@@ -3272,7 +3272,7 @@ static void SUINB_PA_xx(void)
 /* 64 31: 0110 0100 0011 0001 xxxx xxxx */
 static void SUINB_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb - imm;
@@ -3285,7 +3285,7 @@ static void SUINB_PB_xx(void)
 /* 64 32: 0110 0100 0011 0010 xxxx xxxx */
 static void SUINB_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc - imm;
@@ -3298,7 +3298,7 @@ static void SUINB_PC_xx(void)
 /* 64 33: 0110 0100 0011 0011 xxxx xxxx */
 static void SUINB_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd - imm;
@@ -3311,7 +3311,7 @@ static void SUINB_PD_xx(void)
 /* 64 35: 0110 0100 0011 0101 xxxx xxxx */
 static void SUINB_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf - imm;
@@ -3324,7 +3324,7 @@ static void SUINB_PF_xx(void)
 /* 64 36: 0110 0100 0011 0110 xxxx xxxx */
 static void SUINB_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm;
@@ -3336,7 +3336,7 @@ static void SUINB_MKH_xx(void)
 /* 64 37: 0110 0100 0011 0111 xxxx xxxx */
 static void SUINB_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm;
@@ -3348,7 +3348,7 @@ static void SUINB_MKL_xx(void)
 /* 64 38: 0110 0100 0011 1000 xxxx xxxx */
 static void LTI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 	RDOPARG( imm );
 	tmp = pa - imm;
 	ZHC_SUB( tmp, pa, 0 );
@@ -3358,7 +3358,7 @@ static void LTI_PA_xx(void)
 /* 64 39: 0110 0100 0011 1001 xxxx xxxx */
 static void LTI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 	RDOPARG( imm );
 	tmp = pb - imm;
 	ZHC_SUB( tmp, pb, 0 );
@@ -3368,7 +3368,7 @@ static void LTI_PB_xx(void)
 /* 64 3a: 0110 0100 0011 1010 xxxx xxxx */
 static void LTI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 	RDOPARG( imm );
 	tmp = pc - imm;
 	ZHC_SUB( tmp, pc, 0 );
@@ -3378,7 +3378,7 @@ static void LTI_PC_xx(void)
 /* 64 3b: 0110 0100 0011 1011 xxxx xxxx */
 static void LTI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 	RDOPARG( imm );
 	tmp = pd - imm;
 	ZHC_SUB( tmp, pd, 0 );
@@ -3388,7 +3388,7 @@ static void LTI_PD_xx(void)
 /* 64 3d: 0110 0100 0011 1101 xxxx xxxx */
 static void LTI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 	RDOPARG( imm );
 	tmp = pf - imm;
 	ZHC_SUB( tmp, pf, 0 );
@@ -3398,7 +3398,7 @@ static void LTI_PF_xx(void)
 /* 64 3e: 0110 0100 0011 1110 xxxx xxxx */
 static void LTI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm;
@@ -3409,7 +3409,7 @@ static void LTI_MKH_xx(void)
 /* 64 3f: 0110 0100 0011 1111 xxxx xxxx */
 static void LTI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm;
@@ -3420,7 +3420,7 @@ static void LTI_MKL_xx(void)
 /* 64 40: 0110 0100 0100 0000 xxxx xxxx */
 static void ADI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa + imm;
@@ -3432,7 +3432,7 @@ static void ADI_PA_xx(void)
 /* 64 41: 0110 0100 0100 0001 xxxx xxxx */
 static void ADI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb + imm;
@@ -3444,7 +3444,7 @@ static void ADI_PB_xx(void)
 /* 64 42: 0110 0100 0100 0010 xxxx xxxx */
 static void ADI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc + imm;
@@ -3456,7 +3456,7 @@ static void ADI_PC_xx(void)
 /* 64 43: 0110 0100 0100 0011 xxxx xxxx */
 static void ADI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd + imm;
@@ -3468,7 +3468,7 @@ static void ADI_PD_xx(void)
 /* 64 45: 0110 0100 0100 0101 xxxx xxxx */
 static void ADI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf + imm;
@@ -3480,7 +3480,7 @@ static void ADI_PF_xx(void)
 /* 64 46: 0110 0100 0100 0110 xxxx xxxx */
 static void ADI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH + imm;
@@ -3491,7 +3491,7 @@ static void ADI_MKH_xx(void)
 /* 64 47: 0110 0100 0100 0111 xxxx xxxx */
 static void ADI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL + imm;
@@ -3502,7 +3502,7 @@ static void ADI_MKL_xx(void)
 /* 64 48: 0110 0100 0100 1000 xxxx xxxx */
 static void ONI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), imm;
+	uint8_t pa = RP( UPD7810_PORTA ), imm;
 
 	RDOPARG( imm );
 	if (pa & imm)
@@ -3512,7 +3512,7 @@ static void ONI_PA_xx(void)
 /* 64 49: 0110 0100 0100 1001 xxxx xxxx */
 static void ONI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), imm;
+	uint8_t pb = RP( UPD7810_PORTB ), imm;
 
 	RDOPARG( imm );
 	if (pb & imm)
@@ -3522,7 +3522,7 @@ static void ONI_PB_xx(void)
 /* 64 4a: 0110 0100 0100 1010 xxxx xxxx */
 static void ONI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), imm;
+	uint8_t pc = RP( UPD7810_PORTC ), imm;
 
 	RDOPARG( imm );
 	if (pc & imm)
@@ -3532,7 +3532,7 @@ static void ONI_PC_xx(void)
 /* 64 4b: 0110 0100 0100 1011 xxxx xxxx */
 static void ONI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), imm;
+	uint8_t pd = RP( UPD7810_PORTD ), imm;
 
 	RDOPARG( imm );
 	if (pd & imm)
@@ -3542,7 +3542,7 @@ static void ONI_PD_xx(void)
 /* 64 4d: 0110 0100 0100 1101 xxxx xxxx */
 static void ONI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), imm;
+	uint8_t pf = RP( UPD7810_PORTF ), imm;
 
 	RDOPARG( imm );
 	if (pf & imm)
@@ -3552,7 +3552,7 @@ static void ONI_PF_xx(void)
 /* 64 4e: 0110 0100 0100 1110 xxxx xxxx */
 static void ONI_MKH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (MKH & imm)
@@ -3562,7 +3562,7 @@ static void ONI_MKH_xx(void)
 /* 64 4f: 0110 0100 0100 1111 xxxx xxxx */
 static void ONI_MKL_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (MKL & imm)
@@ -3572,7 +3572,7 @@ static void ONI_MKL_xx(void)
 /* 64 50: 0110 0100 0101 0000 xxxx xxxx */
 static void ACI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa + imm + (PSW & CY);
@@ -3584,7 +3584,7 @@ static void ACI_PA_xx(void)
 /* 64 51: 0110 0100 0101 0001 xxxx xxxx */
 static void ACI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb + imm + (PSW & CY);
@@ -3596,7 +3596,7 @@ static void ACI_PB_xx(void)
 /* 64 52: 0110 0100 0101 0010 xxxx xxxx */
 static void ACI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc + imm + (PSW & CY);
@@ -3608,7 +3608,7 @@ static void ACI_PC_xx(void)
 /* 64 53: 0110 0100 0101 0011 xxxx xxxx */
 static void ACI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd + imm + (PSW & CY);
@@ -3620,7 +3620,7 @@ static void ACI_PD_xx(void)
 /* 64 55: 0110 0100 0101 0101 xxxx xxxx */
 static void ACI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf + imm + (PSW & CY);
@@ -3632,7 +3632,7 @@ static void ACI_PF_xx(void)
 /* 64 56: 0110 0100 0101 0110 xxxx xxxx */
 static void ACI_MKH_xx(void)
 {
-	UINT8 imm, tmp;
+	uint8_t imm, tmp;
 
 	RDOPARG( imm );
 	tmp = MKH + imm + (PSW & CY);
@@ -3643,7 +3643,7 @@ static void ACI_MKH_xx(void)
 /* 64 57: 0110 0100 0101 0111 xxxx xxxx */
 static void ACI_MKL_xx(void)
 {
-	UINT8 imm, tmp;
+	uint8_t imm, tmp;
 
 	RDOPARG( imm );
 	tmp = MKL + imm + (PSW & CY);
@@ -3654,7 +3654,7 @@ static void ACI_MKL_xx(void)
 /* 64 58: 0110 0100 0101 1000 xxxx xxxx */
 static void OFFI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), imm;
+	uint8_t pa = RP( UPD7810_PORTA ), imm;
 
 	RDOPARG( imm );
 	if (0 == (pa & imm))
@@ -3664,7 +3664,7 @@ static void OFFI_PA_xx(void)
 /* 64 59: 0110 0100 0101 1001 xxxx xxxx */
 static void OFFI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), imm;
+	uint8_t pb = RP( UPD7810_PORTB ), imm;
 
 	RDOPARG( imm );
 	if (0 == (pb & imm))
@@ -3674,7 +3674,7 @@ static void OFFI_PB_xx(void)
 /* 64 5a: 0110 0100 0101 1010 xxxx xxxx */
 static void OFFI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), imm;
+	uint8_t pc = RP( UPD7810_PORTC ), imm;
 
 	RDOPARG( imm );
 	if (0 == (pc & imm))
@@ -3684,7 +3684,7 @@ static void OFFI_PC_xx(void)
 /* 64 5b: 0110 0100 0101 1011 xxxx xxxx */
 static void OFFI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), imm;
+	uint8_t pd = RP( UPD7810_PORTD ), imm;
 
 	RDOPARG( imm );
 	if (0 == (pd & imm))
@@ -3694,7 +3694,7 @@ static void OFFI_PD_xx(void)
 /* 64 5d: 0110 0100 0101 1101 xxxx xxxx */
 static void OFFI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), imm;
+	uint8_t pf = RP( UPD7810_PORTF ), imm;
 
 	RDOPARG( imm );
 	if (0 == (pf & imm))
@@ -3704,7 +3704,7 @@ static void OFFI_PF_xx(void)
 /* 64 5e: 0110 0100 0101 1110 xxxx xxxx */
 static void OFFI_MKH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (MKH & imm))
@@ -3714,7 +3714,7 @@ static void OFFI_MKH_xx(void)
 /* 64 5f: 0110 0100 0101 1111 xxxx xxxx */
 static void OFFI_MKL_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (MKL & imm))
@@ -3724,7 +3724,7 @@ static void OFFI_MKL_xx(void)
 /* 64 60: 0110 0100 0110 0000 xxxx xxxx */
 static void SUI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa - imm;
@@ -3736,7 +3736,7 @@ static void SUI_PA_xx(void)
 /* 64 61: 0110 0100 0110 0001 xxxx xxxx */
 static void SUI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb - imm;
@@ -3748,7 +3748,7 @@ static void SUI_PB_xx(void)
 /* 64 62: 0110 0100 0110 0010 xxxx xxxx */
 static void SUI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc - imm;
@@ -3760,7 +3760,7 @@ static void SUI_PC_xx(void)
 /* 64 63: 0110 0100 0110 0011 xxxx xxxx */
 static void SUI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd - imm;
@@ -3772,7 +3772,7 @@ static void SUI_PD_xx(void)
 /* 64 65: 0110 0100 0110 0101 xxxx xxxx */
 static void SUI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf - imm;
@@ -3784,7 +3784,7 @@ static void SUI_PF_xx(void)
 /* 64 66: 0110 0100 0110 0110 xxxx xxxx */
 static void SUI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm;
@@ -3795,7 +3795,7 @@ static void SUI_MKH_xx(void)
 /* 64 67: 0110 0100 0110 0111 xxxx xxxx */
 static void SUI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm;
@@ -3806,7 +3806,7 @@ static void SUI_MKL_xx(void)
 /* 64 68: 0110 0100 0110 1000 xxxx xxxx */
 static void NEI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa - imm;
@@ -3817,7 +3817,7 @@ static void NEI_PA_xx(void)
 /* 64 69: 0110 0100 0110 1001 xxxx xxxx */
 static void NEI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb - imm;
@@ -3828,7 +3828,7 @@ static void NEI_PB_xx(void)
 /* 64 6a: 0110 0100 0110 1010 xxxx xxxx */
 static void NEI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc - imm;
@@ -3839,7 +3839,7 @@ static void NEI_PC_xx(void)
 /* 64 6b: 0110 0100 0110 1011 xxxx xxxx */
 static void NEI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd - imm;
@@ -3850,7 +3850,7 @@ static void NEI_PD_xx(void)
 /* 64 6d: 0110 0100 0110 1101 xxxx xxxx */
 static void NEI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf - imm;
@@ -3861,7 +3861,7 @@ static void NEI_PF_xx(void)
 /* 64 6e: 0110 0100 0110 1110 xxxx xxxx */
 static void NEI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm;
@@ -3872,7 +3872,7 @@ static void NEI_MKH_xx(void)
 /* 64 6f: 0110 0100 0110 1111 xxxx xxxx */
 static void NEI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm;
@@ -3883,7 +3883,7 @@ static void NEI_MKL_xx(void)
 /* 64 70: 0110 0100 0111 0000 xxxx xxxx */
 static void SBI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa - imm - (PSW & CY);
@@ -3895,7 +3895,7 @@ static void SBI_PA_xx(void)
 /* 64 71: 0110 0100 0111 0001 xxxx xxxx */
 static void SBI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb - imm - (PSW & CY);
@@ -3907,7 +3907,7 @@ static void SBI_PB_xx(void)
 /* 64 72: 0110 0100 0111 0010 xxxx xxxx */
 static void SBI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc - imm - (PSW & CY);
@@ -3919,7 +3919,7 @@ static void SBI_PC_xx(void)
 /* 64 73: 0110 0100 0111 0011 xxxx xxxx */
 static void SBI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd - imm - (PSW & CY);
@@ -3931,7 +3931,7 @@ static void SBI_PD_xx(void)
 /* 64 75: 0110 0100 0111 0101 xxxx xxxx */
 static void SBI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf - imm - (PSW & CY);
@@ -3943,7 +3943,7 @@ static void SBI_PF_xx(void)
 /* 64 76: 0110 0100 0111 0110 xxxx xxxx */
 static void SBI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm - (PSW & CY);
@@ -3954,7 +3954,7 @@ static void SBI_MKH_xx(void)
 /* 64 77: 0110 0100 0111 0111 xxxx xxxx */
 static void SBI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm - (PSW & CY);
@@ -3965,7 +3965,7 @@ static void SBI_MKL_xx(void)
 /* 64 78: 0110 0100 0111 1000 xxxx xxxx */
 static void EQI_PA_xx(void)
 {
-	UINT8 pa = RP( UPD7810_PORTA ), tmp, imm;
+	uint8_t pa = RP( UPD7810_PORTA ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pa - imm;
@@ -3976,7 +3976,7 @@ static void EQI_PA_xx(void)
 /* 64 79: 0110 0100 0111 1001 xxxx xxxx */
 static void EQI_PB_xx(void)
 {
-	UINT8 pb = RP( UPD7810_PORTB ), tmp, imm;
+	uint8_t pb = RP( UPD7810_PORTB ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pb - imm;
@@ -3987,7 +3987,7 @@ static void EQI_PB_xx(void)
 /* 64 7a: 0110 0100 0111 1010 xxxx xxxx */
 static void EQI_PC_xx(void)
 {
-	UINT8 pc = RP( UPD7810_PORTC ), tmp, imm;
+	uint8_t pc = RP( UPD7810_PORTC ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pc - imm;
@@ -3998,7 +3998,7 @@ static void EQI_PC_xx(void)
 /* 64 7b: 0110 0100 0111 1011 xxxx xxxx */
 static void EQI_PD_xx(void)
 {
-	UINT8 pd = RP( UPD7810_PORTD ), tmp, imm;
+	uint8_t pd = RP( UPD7810_PORTD ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pd - imm;
@@ -4009,7 +4009,7 @@ static void EQI_PD_xx(void)
 /* 64 7d: 0110 0100 0111 1101 xxxx xxxx */
 static void EQI_PF_xx(void)
 {
-	UINT8 pf = RP( UPD7810_PORTF ), tmp, imm;
+	uint8_t pf = RP( UPD7810_PORTF ), tmp, imm;
 
 	RDOPARG( imm );
 	tmp = pf - imm;
@@ -4020,7 +4020,7 @@ static void EQI_PF_xx(void)
 /* 64 7e: 0110 0100 0111 1110 xxxx xxxx */
 static void EQI_MKH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKH - imm;
@@ -4031,7 +4031,7 @@ static void EQI_MKH_xx(void)
 /* 64 7f: 0110 0100 0111 1111 xxxx xxxx */
 static void EQI_MKL_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = MKL - imm;
@@ -4067,7 +4067,7 @@ static void MVI_TMM_xx(void)
 /* 64 88: 0110 0100 1000 1000 xxxx xxxx */
 static void ANI_ANM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	ANM &= imm;
@@ -4077,7 +4077,7 @@ static void ANI_ANM_xx(void)
 /* 64 89: 0110 0100 1000 1001 xxxx xxxx */
 static void ANI_SMH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	SMH &= imm;
@@ -4088,8 +4088,8 @@ static void ANI_SMH_xx(void)
 static void ANI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	/* only bits #1 and #5 can be read */
@@ -4101,7 +4101,7 @@ static void ANI_EOM_xx(void)
 /* 64 8d: 0110 0100 1000 1101 xxxx xxxx */
 static void ANI_TMM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	TMM &= imm;
@@ -4111,7 +4111,7 @@ static void ANI_TMM_xx(void)
 /* 64 90: 0110 0100 1001 0000 xxxx xxxx */
 static void XRI_ANM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	ANM ^= imm;
@@ -4121,7 +4121,7 @@ static void XRI_ANM_xx(void)
 /* 64 91: 0110 0100 1001 0001 xxxx xxxx */
 static void XRI_SMH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	SMH ^= imm;
@@ -4132,8 +4132,8 @@ static void XRI_SMH_xx(void)
 static void XRI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	/* only bits #1 and #5 can be read */
@@ -4145,7 +4145,7 @@ static void XRI_EOM_xx(void)
 /* 64 95: 0110 0100 1001 0101 xxxx xxxx */
 static void XRI_TMM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	TMM ^= imm;
@@ -4155,7 +4155,7 @@ static void XRI_TMM_xx(void)
 /* 64 98: 0110 0100 1001 1000 xxxx xxxx */
 static void ORI_ANM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	ANM |= imm;
@@ -4165,7 +4165,7 @@ static void ORI_ANM_xx(void)
 /* 64 99: 0110 0100 1001 1001 xxxx xxxx */
 static void ORI_SMH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	SMH |= imm;
@@ -4176,8 +4176,8 @@ static void ORI_SMH_xx(void)
 static void ORI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	/* only bits #1 and #5 can be read */
@@ -4189,7 +4189,7 @@ static void ORI_EOM_xx(void)
 /* 64 9d: 0110 0100 1001 1101 xxxx xxxx */
 static void ORI_TMM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	TMM |= imm;
@@ -4199,7 +4199,7 @@ static void ORI_TMM_xx(void)
 /* 64 a0: 0110 0100 1010 0000 xxxx xxxx */
 static void ADINC_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM + imm;
@@ -4212,7 +4212,7 @@ static void ADINC_ANM_xx(void)
 /* 64 a1: 0110 0100 1010 0001 xxxx xxxx */
 static void ADINC_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH + imm;
@@ -4226,8 +4226,8 @@ static void ADINC_SMH_xx(void)
 static void ADINC_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	/* only bits #1 and #5 can be read */
@@ -4242,7 +4242,7 @@ static void ADINC_EOM_xx(void)
 /* 64 a5: 0110 0100 1010 0101 xxxx xxxx */
 static void ADINC_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM + imm;
@@ -4255,7 +4255,7 @@ static void ADINC_TMM_xx(void)
 /* 64 a8: 0110 0100 1010 1000 xxxx xxxx */
 static void GTI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm - 1;
@@ -4267,7 +4267,7 @@ static void GTI_ANM_xx(void)
 /* 64 a9: 0110 0100 1010 1001 xxxx xxxx */
 static void GTI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm - 1;
@@ -4280,8 +4280,8 @@ static void GTI_SMH_xx(void)
 static void GTI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm - 1;
@@ -4293,7 +4293,7 @@ static void GTI_EOM_xx(void)
 /* 64 ad: 0110 0100 1010 1101 xxxx xxxx */
 static void GTI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm - 1;
@@ -4305,7 +4305,7 @@ static void GTI_TMM_xx(void)
 /* 64 b0: 0110 0100 1011 0000 xxxx xxxx */
 static void SUINB_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm;
@@ -4317,7 +4317,7 @@ static void SUINB_ANM_xx(void)
 /* 64 b1: 0110 0100 1011 0001 xxxx xxxx */
 static void SUINB_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm;
@@ -4330,8 +4330,8 @@ static void SUINB_SMH_xx(void)
 static void SUINB_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm;
@@ -4344,7 +4344,7 @@ static void SUINB_EOM_xx(void)
 /* 64 b5: 0110 0100 1011 0101 xxxx xxxx */
 static void SUINB_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm;
@@ -4356,7 +4356,7 @@ static void SUINB_TMM_xx(void)
 /* 64 b8: 0110 0100 1011 1000 xxxx xxxx */
 static void LTI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm;
@@ -4367,7 +4367,7 @@ static void LTI_ANM_xx(void)
 /* 64 b9: 0110 0100 1011 1001 xxxx xxxx */
 static void LTI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm;
@@ -4379,8 +4379,8 @@ static void LTI_SMH_xx(void)
 static void LTI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm;
@@ -4391,7 +4391,7 @@ static void LTI_EOM_xx(void)
 /* 64 bd: 0110 0100 1011 1101 xxxx xxxx */
 static void LTI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm;
@@ -4402,7 +4402,7 @@ static void LTI_TMM_xx(void)
 /* 64 c0: 0110 0100 1100 0000 xxxx xxxx */
 static void ADI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM + imm;
@@ -4414,7 +4414,7 @@ static void ADI_ANM_xx(void)
 /* 64 c1: 0110 0100 1100 0001 xxxx xxxx */
 static void ADI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH + imm;
@@ -4427,8 +4427,8 @@ static void ADI_SMH_xx(void)
 static void ADI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom + imm;
@@ -4441,7 +4441,7 @@ static void ADI_EOM_xx(void)
 /* 64 c5: 0110 0100 1100 0101 xxxx xxxx */
 static void ADI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM + imm;
@@ -4453,7 +4453,7 @@ static void ADI_TMM_xx(void)
 /* 64 c8: 0110 0100 1100 1000 xxxx xxxx */
 static void ONI_ANM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (ANM & imm)
@@ -4463,7 +4463,7 @@ static void ONI_ANM_xx(void)
 /* 64 c9: 0110 0100 1100 1001 xxxx xxxx */
 static void ONI_SMH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (SMH & imm)
@@ -4474,8 +4474,8 @@ static void ONI_SMH_xx(void)
 static void ONI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (eom & imm)
@@ -4485,7 +4485,7 @@ static void ONI_EOM_xx(void)
 /* 64 cd: 0110 0100 1100 1101 xxxx xxxx */
 static void ONI_TMM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (TMM & imm)
@@ -4495,7 +4495,7 @@ static void ONI_TMM_xx(void)
 /* 64 d0: 0110 0100 1101 0000 xxxx xxxx */
 static void ACI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM + imm + (PSW & CY);
@@ -4507,7 +4507,7 @@ static void ACI_ANM_xx(void)
 /* 64 d1: 0110 0100 1101 0001 xxxx xxxx */
 static void ACI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH + imm + (PSW & CY);
@@ -4520,8 +4520,8 @@ static void ACI_SMH_xx(void)
 static void ACI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom + imm + (PSW & CY);
@@ -4534,7 +4534,7 @@ static void ACI_EOM_xx(void)
 /* 64 d5: 0110 0100 1101 0101 xxxx xxxx */
 static void ACI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM + imm + (PSW & CY);
@@ -4546,7 +4546,7 @@ static void ACI_TMM_xx(void)
 /* 64 d8: 0110 0100 1101 1000 xxxx xxxx */
 static void OFFI_ANM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (ANM & imm))
@@ -4556,7 +4556,7 @@ static void OFFI_ANM_xx(void)
 /* 64 d9: 0110 0100 1101 1001 xxxx xxxx */
 static void OFFI_SMH_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (SMH & imm))
@@ -4567,8 +4567,8 @@ static void OFFI_SMH_xx(void)
 static void OFFI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (eom & imm))
@@ -4578,7 +4578,7 @@ static void OFFI_EOM_xx(void)
 /* 64 dd: 0110 0100 1101 1101 xxxx xxxx */
 static void OFFI_TMM_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (TMM & imm))
@@ -4588,7 +4588,7 @@ static void OFFI_TMM_xx(void)
 /* 64 e0: 0110 0100 1110 0000 xxxx xxxx */
 static void SUI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm;
@@ -4599,7 +4599,7 @@ static void SUI_ANM_xx(void)
 /* 64 e1: 0110 0100 1110 0001 xxxx xxxx */
 static void SUI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm;
@@ -4611,8 +4611,8 @@ static void SUI_SMH_xx(void)
 static void SUI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm;
@@ -4624,7 +4624,7 @@ static void SUI_EOM_xx(void)
 /* 64 e5: 0110 0100 1110 0101 xxxx xxxx */
 static void SUI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm;
@@ -4635,7 +4635,7 @@ static void SUI_TMM_xx(void)
 /* 64 e8: 0110 0100 1110 1000 xxxx xxxx */
 static void NEI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm;
@@ -4646,7 +4646,7 @@ static void NEI_ANM_xx(void)
 /* 64 e9: 0110 0100 1110 1001 xxxx xxxx */
 static void NEI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm;
@@ -4658,8 +4658,8 @@ static void NEI_SMH_xx(void)
 static void NEI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm;
@@ -4670,7 +4670,7 @@ static void NEI_EOM_xx(void)
 /* 64 ed: 0110 0100 1110 1101 xxxx xxxx */
 static void NEI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm;
@@ -4681,7 +4681,7 @@ static void NEI_TMM_xx(void)
 /* 64 f0: 0110 0100 1111 0000 xxxx xxxx */
 static void SBI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm - (PSW & CY);
@@ -4692,7 +4692,7 @@ static void SBI_ANM_xx(void)
 /* 64 f1: 0110 0100 1111 0001 xxxx xxxx */
 static void SBI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm - (PSW & CY);
@@ -4704,8 +4704,8 @@ static void SBI_SMH_xx(void)
 static void SBI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm - (PSW & CY);
@@ -4717,7 +4717,7 @@ static void SBI_EOM_xx(void)
 /* 64 f5: 0110 0100 1111 0101 xxxx xxxx */
 static void SBI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm - (PSW & CY);
@@ -4728,7 +4728,7 @@ static void SBI_TMM_xx(void)
 /* 64 f8: 0110 0100 1111 1000 xxxx xxxx */
 static void EQI_ANM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = ANM - imm;
@@ -4739,7 +4739,7 @@ static void EQI_ANM_xx(void)
 /* 64 f9: 0110 0100 1111 1001 xxxx xxxx */
 static void EQI_SMH_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = SMH - imm;
@@ -4751,8 +4751,8 @@ static void EQI_SMH_xx(void)
 static void EQI_EOM_xx(void)
 {
 	/* only bits #1 and #5 can be read */
-	UINT8 eom = EOM & 0x22;
-	UINT8 tmp, imm;
+	uint8_t eom = EOM & 0x22;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = eom - imm;
@@ -4763,7 +4763,7 @@ static void EQI_EOM_xx(void)
 /* 64 fd: 0110 0100 1111 1101 xxxx xxxx */
 static void EQI_TMM_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = TMM - imm;
@@ -4871,7 +4871,7 @@ static void LHLD_w(void)
 /* 70 41: 0111 0000 0100 0001 */
 static void EADD_EA_A(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA + A;
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
@@ -4880,7 +4880,7 @@ static void EADD_EA_A(void)
 /* 70 42: 0111 0000 0100 0010 */
 static void EADD_EA_B(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA + B;
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
@@ -4889,7 +4889,7 @@ static void EADD_EA_B(void)
 /* 70 43: 0111 0000 0100 0011 */
 static void EADD_EA_C(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA + C;
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
@@ -4898,7 +4898,7 @@ static void EADD_EA_C(void)
 /* 70 61: 0111 0000 0110 0001 */
 static void ESUB_EA_A(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA - A;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
@@ -4907,7 +4907,7 @@ static void ESUB_EA_A(void)
 /* 70 62: 0111 0000 0110 0010 */
 static void ESUB_EA_B(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA - B;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
@@ -4916,7 +4916,7 @@ static void ESUB_EA_B(void)
 /* 70 63: 0111 0000 0110 0011 */
 static void ESUB_EA_C(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA - C;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
@@ -5260,7 +5260,7 @@ static void ORAX_Hm(void)
 /* 70 a1: 0111 0000 1010 0001 */
 static void ADDNCX_B(void)
 {
-	UINT8 tmp = A + RM( BC );
+	uint8_t tmp = A + RM( BC );
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -5269,7 +5269,7 @@ static void ADDNCX_B(void)
 /* 70 a2: 0111 0000 1010 0010 */
 static void ADDNCX_D(void)
 {
-	UINT8 tmp = A + RM( DE );
+	uint8_t tmp = A + RM( DE );
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -5278,7 +5278,7 @@ static void ADDNCX_D(void)
 /* 70 a3: 0111 0000 1010 0011 */
 static void ADDNCX_H(void)
 {
-	UINT8 tmp = A + RM( HL );
+	uint8_t tmp = A + RM( HL );
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -5287,7 +5287,7 @@ static void ADDNCX_H(void)
 /* 70 a4: 0111 0000 1010 0100 */
 static void ADDNCX_Dp(void)
 {
-	UINT8 tmp = A + RM( DE );
+	uint8_t tmp = A + RM( DE );
 	DE++;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5297,7 +5297,7 @@ static void ADDNCX_Dp(void)
 /* 70 a5: 0111 0000 1010 0101 */
 static void ADDNCX_Hp(void)
 {
-	UINT8 tmp = A + RM( HL );
+	uint8_t tmp = A + RM( HL );
 	HL++;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5307,7 +5307,7 @@ static void ADDNCX_Hp(void)
 /* 70 a6: 0111 0000 1010 0110 */
 static void ADDNCX_Dm(void)
 {
-	UINT8 tmp = A + RM( DE );
+	uint8_t tmp = A + RM( DE );
 	DE--;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5317,7 +5317,7 @@ static void ADDNCX_Dm(void)
 /* 70 a7: 0111 0000 1010 0111 */
 static void ADDNCX_Hm(void)
 {
-	UINT8 tmp = A + RM( HL );
+	uint8_t tmp = A + RM( HL );
 	HL--;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5327,7 +5327,7 @@ static void ADDNCX_Hm(void)
 /* 70 a9: 0111 0000 1010 1001 */
 static void GTAX_B(void)
 {
-	UINT8 tmp = A - RM( BC ) - 1;
+	uint8_t tmp = A - RM( BC ) - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -5335,7 +5335,7 @@ static void GTAX_B(void)
 /* 70 aa: 0111 0000 1010 1010 */
 static void GTAX_D(void)
 {
-	UINT8 tmp = A - RM( DE ) - 1;
+	uint8_t tmp = A - RM( DE ) - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -5343,7 +5343,7 @@ static void GTAX_D(void)
 /* 70 ab: 0111 0000 1010 1011 */
 static void GTAX_H(void)
 {
-	UINT8 tmp = A - RM( HL ) - 1;
+	uint8_t tmp = A - RM( HL ) - 1;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
 }
@@ -5351,7 +5351,7 @@ static void GTAX_H(void)
 /* 70 ac: 0111 0000 1010 1100 */
 static void GTAX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE ) - 1;
+	uint8_t tmp = A - RM( DE ) - 1;
 	DE++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
@@ -5360,7 +5360,7 @@ static void GTAX_Dp(void)
 /* 70 ad: 0111 0000 1010 1101 */
 static void GTAX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL ) - 1;
+	uint8_t tmp = A - RM( HL ) - 1;
 	HL++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
@@ -5369,7 +5369,7 @@ static void GTAX_Hp(void)
 /* 70 ae: 0111 0000 1010 1110 */
 static void GTAX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE ) - 1;
+	uint8_t tmp = A - RM( DE ) - 1;
 	DE--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
@@ -5378,7 +5378,7 @@ static void GTAX_Dm(void)
 /* 70 af: 0111 0000 1010 1111 */
 static void GTAX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL ) - 1;
+	uint8_t tmp = A - RM( HL ) - 1;
 	HL--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NC;
@@ -5387,7 +5387,7 @@ static void GTAX_Hm(void)
 /* 70 b1: 0111 0000 1011 0001 */
 static void SUBNBX_B(void)
 {
-	UINT8 tmp = A - RM( BC );
+	uint8_t tmp = A - RM( BC );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -5396,7 +5396,7 @@ static void SUBNBX_B(void)
 /* 70 b2: 0111 0000 1011 0010 */
 static void SUBNBX_D(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -5405,7 +5405,7 @@ static void SUBNBX_D(void)
 /* 70 b3: 0111 0000 1011 0011 */
 static void SUBNBX_H(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_NC;
@@ -5414,7 +5414,7 @@ static void SUBNBX_H(void)
 /* 70 b4: 0111 0000 1011 0100 */
 static void SUBNBX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE++;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
@@ -5424,7 +5424,7 @@ static void SUBNBX_Dp(void)
 /* 70 b5: 0111 0000 1011 0101 */
 static void SUBNBX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL++;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
@@ -5434,7 +5434,7 @@ static void SUBNBX_Hp(void)
 /* 70 b6: 0111 0000 1011 0110 */
 static void SUBNBX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE--;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
@@ -5444,7 +5444,7 @@ static void SUBNBX_Dm(void)
 /* 70 b7: 0111 0000 1011 0111 */
 static void SUBNBX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL--;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
@@ -5454,7 +5454,7 @@ static void SUBNBX_Hm(void)
 /* 70 b9: 0111 0000 1011 1001 */
 static void LTAX_B(void)
 {
-	UINT8 tmp = A - RM( BC );
+	uint8_t tmp = A - RM( BC );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -5462,7 +5462,7 @@ static void LTAX_B(void)
 /* 70 ba: 0111 0000 1011 1010 */
 static void LTAX_D(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -5470,7 +5470,7 @@ static void LTAX_D(void)
 /* 70 bb: 0111 0000 1011 1011 */
 static void LTAX_H(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
 }
@@ -5478,7 +5478,7 @@ static void LTAX_H(void)
 /* 70 bc: 0111 0000 1011 1100 */
 static void LTAX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
@@ -5487,7 +5487,7 @@ static void LTAX_Dp(void)
 /* 70 bd: 0111 0000 1011 1101 */
 static void LTAX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
@@ -5496,7 +5496,7 @@ static void LTAX_Hp(void)
 /* 70 be: 0111 0000 1011 1110 */
 static void LTAX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
@@ -5505,7 +5505,7 @@ static void LTAX_Dm(void)
 /* 70 bf: 0111 0000 1011 1111 */
 static void LTAX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_CY;
@@ -5514,7 +5514,7 @@ static void LTAX_Hm(void)
 /* 70 c1: 0111 0000 1100 0001 */
 static void ADDX_B(void)
 {
-	UINT8 tmp = A + RM( BC );
+	uint8_t tmp = A + RM( BC );
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -5522,7 +5522,7 @@ static void ADDX_B(void)
 /* 70 c2: 0111 0000 1100 0010 */
 static void ADDX_D(void)
 {
-	UINT8 tmp = A + RM( DE );
+	uint8_t tmp = A + RM( DE );
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -5530,7 +5530,7 @@ static void ADDX_D(void)
 /* 70 c3: 0111 0000 1100 0011 */
 static void ADDX_H(void)
 {
-	UINT8 tmp = A + RM( HL );
+	uint8_t tmp = A + RM( HL );
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -5538,7 +5538,7 @@ static void ADDX_H(void)
 /* 70 c4: 0111 0000 1100 0100 */
 static void ADDX_Dp(void)
 {
-	UINT8 tmp = A + RM( DE );
+	uint8_t tmp = A + RM( DE );
 	DE++;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5547,7 +5547,7 @@ static void ADDX_Dp(void)
 /* 70 c5: 0111 0000 1100 0101 */
 static void ADDX_Hp(void)
 {
-	UINT8 tmp = A + RM( HL );
+	uint8_t tmp = A + RM( HL );
 	HL++;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5556,7 +5556,7 @@ static void ADDX_Hp(void)
 /* 70 c6: 0111 0000 1100 0110 */
 static void ADDX_Dm(void)
 {
-	UINT8 tmp = A + RM( DE );
+	uint8_t tmp = A + RM( DE );
 	DE--;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5565,7 +5565,7 @@ static void ADDX_Dm(void)
 /* 70 c7: 0111 0000 1100 0111 */
 static void ADDX_Hm(void)
 {
-	UINT8 tmp = A + RM( HL );
+	uint8_t tmp = A + RM( HL );
 	HL--;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5641,7 +5641,7 @@ static void ONAX_Hm(void)
 /* 70 d1: 0111 0000 1101 0001 */
 static void ADCX_B(void)
 {
-	UINT8 tmp = A + RM( BC ) + (PSW & CY);
+	uint8_t tmp = A + RM( BC ) + (PSW & CY);
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -5649,7 +5649,7 @@ static void ADCX_B(void)
 /* 70 d2: 0111 0000 1101 0010 */
 static void ADCX_D(void)
 {
-	UINT8 tmp = A + RM( DE ) + (PSW & CY);
+	uint8_t tmp = A + RM( DE ) + (PSW & CY);
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -5657,7 +5657,7 @@ static void ADCX_D(void)
 /* 70 d3: 0111 0000 1101 0011 */
 static void ADCX_H(void)
 {
-	UINT8 tmp = A + RM( HL ) + (PSW & CY);
+	uint8_t tmp = A + RM( HL ) + (PSW & CY);
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 }
@@ -5665,7 +5665,7 @@ static void ADCX_H(void)
 /* 70 d4: 0111 0000 1101 0100 */
 static void ADCX_Dp(void)
 {
-	UINT8 tmp = A + RM( DE ) + (PSW & CY);
+	uint8_t tmp = A + RM( DE ) + (PSW & CY);
 	DE++;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5674,7 +5674,7 @@ static void ADCX_Dp(void)
 /* 70 d5: 0111 0000 1101 0101 */
 static void ADCX_Hp(void)
 {
-	UINT8 tmp = A + RM( HL ) + (PSW & CY);
+	uint8_t tmp = A + RM( HL ) + (PSW & CY);
 	HL++;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5683,7 +5683,7 @@ static void ADCX_Hp(void)
 /* 70 d6: 0111 0000 1101 0110 */
 static void ADCX_Dm(void)
 {
-	UINT8 tmp = A + RM( DE ) + (PSW & CY);
+	uint8_t tmp = A + RM( DE ) + (PSW & CY);
 	DE--;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5692,7 +5692,7 @@ static void ADCX_Dm(void)
 /* 70 d7: 0111 0000 1101 0111 */
 static void ADCX_Hm(void)
 {
-	UINT8 tmp = A + RM( HL ) + (PSW & CY);
+	uint8_t tmp = A + RM( HL ) + (PSW & CY);
 	HL--;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
@@ -5768,7 +5768,7 @@ static void OFFAX_Hm(void)
 /* 70 e1: 0111 0000 1110 0001 */
 static void SUBX_B(void)
 {
-	UINT8 tmp = A - RM( BC );
+	uint8_t tmp = A - RM( BC );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -5776,7 +5776,7 @@ static void SUBX_B(void)
 /* 70 e2: 0111 0000 1110 0010 */
 static void SUBX_D(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -5784,7 +5784,7 @@ static void SUBX_D(void)
 /* 70 e3: 0111 0000 1110 0011 */
 static void SUBX_H(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 }
@@ -5792,7 +5792,7 @@ static void SUBX_H(void)
 /* 70 e4: 0111 0000 1110 0100 */
 static void SUBX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	DE++;
@@ -5801,7 +5801,7 @@ static void SUBX_Dp(void)
 /* 70 e5: 0111 0000 1110 0101 */
 static void SUBX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	HL++;
@@ -5810,7 +5810,7 @@ static void SUBX_Hp(void)
 /* 70 e6: 0111 0000 1110 0110 */
 static void SUBX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	DE--;
@@ -5819,7 +5819,7 @@ static void SUBX_Dm(void)
 /* 70 e7: 0111 0000 1110 0111 */
 static void SUBX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	HL--;
@@ -5828,7 +5828,7 @@ static void SUBX_Hm(void)
 /* 70 e9: 0111 0000 1110 1001 */
 static void NEAX_B(void)
 {
-	UINT8 tmp = A - RM( BC );
+	uint8_t tmp = A - RM( BC );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -5836,7 +5836,7 @@ static void NEAX_B(void)
 /* 70 ea: 0111 0000 1110 1010 */
 static void NEAX_D(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -5844,7 +5844,7 @@ static void NEAX_D(void)
 /* 70 eb: 0111 0000 1110 1011 */
 static void NEAX_H(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
 }
@@ -5852,7 +5852,7 @@ static void NEAX_H(void)
 /* 70 ec: 0111 0000 1110 1100 */
 static void NEAX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
@@ -5861,7 +5861,7 @@ static void NEAX_Dp(void)
 /* 70 ed: 0111 0000 1110 1101 */
 static void NEAX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
@@ -5870,7 +5870,7 @@ static void NEAX_Hp(void)
 /* 70 ee: 0111 0000 1110 1110 */
 static void NEAX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
@@ -5879,7 +5879,7 @@ static void NEAX_Dm(void)
 /* 70 ef: 0111 0000 1110 1111 */
 static void NEAX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_NZ;
@@ -5888,7 +5888,7 @@ static void NEAX_Hm(void)
 /* 70 f1: 0111 0000 1111 0001 */
 static void SBBX_B(void)
 {
-	UINT8 tmp = A - RM( BC ) - (PSW & CY);
+	uint8_t tmp = A - RM( BC ) - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -5896,7 +5896,7 @@ static void SBBX_B(void)
 /* 70 f2: 0111 0000 1111 0010 */
 static void SBBX_D(void)
 {
-	UINT8 tmp = A - RM( DE ) - (PSW & CY);
+	uint8_t tmp = A - RM( DE ) - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -5904,7 +5904,7 @@ static void SBBX_D(void)
 /* 70 f3: 0111 0000 1111 0011 */
 static void SBBX_H(void)
 {
-	UINT8 tmp = A - RM( HL ) - (PSW & CY);
+	uint8_t tmp = A - RM( HL ) - (PSW & CY);
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
 }
@@ -5912,7 +5912,7 @@ static void SBBX_H(void)
 /* 70 f4: 0111 0000 1111 0100 */
 static void SBBX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE ) - (PSW & CY);
+	uint8_t tmp = A - RM( DE ) - (PSW & CY);
 	DE++;
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
@@ -5921,7 +5921,7 @@ static void SBBX_Dp(void)
 /* 70 f5: 0111 0000 1111 0101 */
 static void SBBX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL ) - (PSW & CY);
+	uint8_t tmp = A - RM( HL ) - (PSW & CY);
 	HL++;
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
@@ -5930,7 +5930,7 @@ static void SBBX_Hp(void)
 /* 70 f6: 0111 0000 1111 0110 */
 static void SBBX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE ) - (PSW & CY);
+	uint8_t tmp = A - RM( DE ) - (PSW & CY);
 	DE--;
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
@@ -5939,7 +5939,7 @@ static void SBBX_Dm(void)
 /* 70 f7: 0111 0000 1111 0111 */
 static void SBBX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL ) - (PSW & CY);
+	uint8_t tmp = A - RM( HL ) - (PSW & CY);
 	HL--;
 	ZHC_SUB( tmp, A, (PSW & CY) );
 	A = tmp;
@@ -5948,7 +5948,7 @@ static void SBBX_Hm(void)
 /* 70 f9: 0111 0000 1111 1001 */
 static void EQAX_B(void)
 {
-	UINT8 tmp = A - RM( BC );
+	uint8_t tmp = A - RM( BC );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -5956,7 +5956,7 @@ static void EQAX_B(void)
 /* 70 fa: 0111 0000 1111 1010 */
 static void EQAX_D(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -5964,7 +5964,7 @@ static void EQAX_D(void)
 /* 70 fb: 0111 0000 1111 1011 */
 static void EQAX_H(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
 }
@@ -5972,7 +5972,7 @@ static void EQAX_H(void)
 /* 70 fc: 0111 0000 1111 1100 */
 static void EQAX_Dp(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
@@ -5981,7 +5981,7 @@ static void EQAX_Dp(void)
 /* 70 fd: 0111 0000 1111 1101 */
 static void EQAX_Hp(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL++;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
@@ -5990,7 +5990,7 @@ static void EQAX_Hp(void)
 /* 70 fe: 0111 0000 1111 1110 */
 static void EQAX_Dm(void)
 {
-	UINT8 tmp = A - RM( DE );
+	uint8_t tmp = A - RM( DE );
 	DE--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
@@ -5999,7 +5999,7 @@ static void EQAX_Dm(void)
 /* 70 ff: 0111 0000 1111 1111 */
 static void EQAX_Hm(void)
 {
-	UINT8 tmp = A - RM( HL );
+	uint8_t tmp = A - RM( HL );
 	HL--;
 	ZHC_SUB( tmp, A, 0 );
 	SKIP_Z;
@@ -6009,7 +6009,7 @@ static void EQAX_Hm(void)
 /* 74 08: 0111 0100 0000 1000 xxxx xxxx */
 static void ANI_V_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	V &= imm;
 	SET_Z(V);
@@ -6018,7 +6018,7 @@ static void ANI_V_xx(void)
 /* 74 09: 0111 0100 0000 1001 xxxx xxxx */
 static void ANI_A_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	A &= imm;
 	SET_Z(A);
@@ -6027,7 +6027,7 @@ static void ANI_A_xx(void)
 /* 74 0a: 0111 0100 0000 1010 xxxx xxxx */
 static void ANI_B_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	B &= imm;
 	SET_Z(B);
@@ -6036,7 +6036,7 @@ static void ANI_B_xx(void)
 /* 74 0b: 0111 0100 0000 1011 xxxx xxxx */
 static void ANI_C_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	C &= imm;
 	SET_Z(C);
@@ -6045,7 +6045,7 @@ static void ANI_C_xx(void)
 /* 74 0c: 0111 0100 0000 1100 xxxx xxxx */
 static void ANI_D_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	D &= imm;
 	SET_Z(D);
@@ -6054,7 +6054,7 @@ static void ANI_D_xx(void)
 /* 74 0d: 0111 0100 0000 1101 xxxx xxxx */
 static void ANI_E_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	E &= imm;
 	SET_Z(E);
@@ -6063,7 +6063,7 @@ static void ANI_E_xx(void)
 /* 74 0e: 0111 0100 0000 1110 xxxx xxxx */
 static void ANI_H_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	H &= imm;
 	SET_Z(H);
@@ -6072,7 +6072,7 @@ static void ANI_H_xx(void)
 /* 74 0f: 0111 0100 0000 1111 xxxx xxxx */
 static void ANI_L_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	L &= imm;
 	SET_Z(L);
@@ -6081,7 +6081,7 @@ static void ANI_L_xx(void)
 /* 74 10: 0111 0100 0001 0000 xxxx xxxx */
 static void XRI_V_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	V ^= imm;
 	SET_Z(V);
@@ -6090,7 +6090,7 @@ static void XRI_V_xx(void)
 /* 74 11: 0111 0100 0001 0001 xxxx xxxx */
 static void XRI_A_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	A ^= imm;
 	SET_Z(A);
@@ -6099,7 +6099,7 @@ static void XRI_A_xx(void)
 /* 74 12: 0111 0100 0001 0010 xxxx xxxx */
 static void XRI_B_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	B ^= imm;
 	SET_Z(B);
@@ -6108,7 +6108,7 @@ static void XRI_B_xx(void)
 /* 74 13: 0111 0100 0001 0011 xxxx xxxx */
 static void XRI_C_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	C ^= imm;
 	SET_Z(C);
@@ -6117,7 +6117,7 @@ static void XRI_C_xx(void)
 /* 74 14: 0111 0100 0001 0100 xxxx xxxx */
 static void XRI_D_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	D ^= imm;
 	SET_Z(D);
@@ -6126,7 +6126,7 @@ static void XRI_D_xx(void)
 /* 74 15: 0111 0100 0001 0101 xxxx xxxx */
 static void XRI_E_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	E ^= imm;
 	SET_Z(E);
@@ -6135,7 +6135,7 @@ static void XRI_E_xx(void)
 /* 74 16: 0111 0100 0001 0110 xxxx xxxx */
 static void XRI_H_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	H ^= imm;
 	SET_Z(H);
@@ -6144,7 +6144,7 @@ static void XRI_H_xx(void)
 /* 74 17: 0111 0100 0001 0111 xxxx xxxx */
 static void XRI_L_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	L ^= imm;
 	SET_Z(L);
@@ -6153,7 +6153,7 @@ static void XRI_L_xx(void)
 /* 74 18: 0111 0100 0001 1000 xxxx xxxx */
 static void ORI_V_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	V |= imm;
 	SET_Z(V);
@@ -6162,7 +6162,7 @@ static void ORI_V_xx(void)
 /* 74 19: 0111 0100 0001 1001 xxxx xxxx */
 static void ORI_A_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	A |= imm;
 	SET_Z(A);
@@ -6171,7 +6171,7 @@ static void ORI_A_xx(void)
 /* 74 1a: 0111 0100 0001 1010 xxxx xxxx */
 static void ORI_B_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	B |= imm;
 	SET_Z(B);
@@ -6180,7 +6180,7 @@ static void ORI_B_xx(void)
 /* 74 1b: 0111 0100 0001 1011 xxxx xxxx */
 static void ORI_C_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	C |= imm;
 	SET_Z(C);
@@ -6189,7 +6189,7 @@ static void ORI_C_xx(void)
 /* 74 1c: 0111 0100 0001 1100 xxxx xxxx */
 static void ORI_D_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	D |= imm;
 	SET_Z(D);
@@ -6198,7 +6198,7 @@ static void ORI_D_xx(void)
 /* 74 1d: 0111 0100 0001 1101 xxxx xxxx */
 static void ORI_E_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	E |= imm;
 	SET_Z(E);
@@ -6207,7 +6207,7 @@ static void ORI_E_xx(void)
 /* 74 1e: 0111 0100 0001 1110 xxxx xxxx */
 static void ORI_H_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	H |= imm;
 	SET_Z(H);
@@ -6216,7 +6216,7 @@ static void ORI_H_xx(void)
 /* 74 1f: 0111 0100 0001 1111 xxxx xxxx */
 static void ORI_L_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	L |= imm;
 	SET_Z(L);
@@ -6225,7 +6225,7 @@ static void ORI_L_xx(void)
 /* 74 20: 0111 0100 0010 0000 xxxx xxxx */
 static void ADINC_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V + imm;
@@ -6238,7 +6238,7 @@ static void ADINC_V_xx(void)
 /* 74 21: 0111 0100 0010 0001 xxxx xxxx */
 static void ADINC_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A + imm;
@@ -6251,7 +6251,7 @@ static void ADINC_A_xx(void)
 /* 74 22: 0111 0100 0010 0010 xxxx xxxx */
 static void ADINC_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B + imm;
@@ -6264,7 +6264,7 @@ static void ADINC_B_xx(void)
 /* 74 23: 0111 0100 0010 0011 xxxx xxxx */
 static void ADINC_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C + imm;
@@ -6277,7 +6277,7 @@ static void ADINC_C_xx(void)
 /* 74 24: 0111 0100 0010 0100 xxxx xxxx */
 static void ADINC_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D + imm;
@@ -6290,7 +6290,7 @@ static void ADINC_D_xx(void)
 /* 74 25: 0111 0100 0010 0101 xxxx xxxx */
 static void ADINC_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E + imm;
@@ -6303,7 +6303,7 @@ static void ADINC_E_xx(void)
 /* 74 26: 0111 0100 0010 0110 xxxx xxxx */
 static void ADINC_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H + imm;
@@ -6316,7 +6316,7 @@ static void ADINC_H_xx(void)
 /* 74 27: 0111 0100 0010 0111 xxxx xxxx */
 static void ADINC_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L + imm;
@@ -6329,7 +6329,7 @@ static void ADINC_L_xx(void)
 /* 74 28: 0111 0100 0010 1000 xxxx xxxx */
 static void GTI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm - 1;
@@ -6341,7 +6341,7 @@ static void GTI_V_xx(void)
 /* 74 29: 0111 0100 0010 1001 xxxx xxxx */
 static void GTI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm - 1;
@@ -6353,7 +6353,7 @@ static void GTI_A_xx(void)
 /* 74 2a: 0111 0100 0010 1010 xxxx xxxx */
 static void GTI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm - 1;
@@ -6365,7 +6365,7 @@ static void GTI_B_xx(void)
 /* 74 2b: 0111 0100 0010 1011 xxxx xxxx */
 static void GTI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm - 1;
@@ -6377,7 +6377,7 @@ static void GTI_C_xx(void)
 /* 74 2c: 0111 0100 0010 1100 xxxx xxxx */
 static void GTI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm - 1;
@@ -6389,7 +6389,7 @@ static void GTI_D_xx(void)
 /* 74 2d: 0111 0100 0010 1101 xxxx xxxx */
 static void GTI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm - 1;
@@ -6401,7 +6401,7 @@ static void GTI_E_xx(void)
 /* 74 2e: 0111 0100 0010 1110 xxxx xxxx */
 static void GTI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm - 1;
@@ -6413,7 +6413,7 @@ static void GTI_H_xx(void)
 /* 74 2f: 0111 0100 0010 1111 xxxx xxxx */
 static void GTI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm - 1;
@@ -6425,7 +6425,7 @@ static void GTI_L_xx(void)
 /* 74 30: 0111 0100 0011 0000 xxxx xxxx */
 static void SUINB_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm;
@@ -6437,7 +6437,7 @@ static void SUINB_V_xx(void)
 /* 74 31: 0111 0100 0011 0001 xxxx xxxx */
 static void SUINB_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm;
@@ -6449,7 +6449,7 @@ static void SUINB_A_xx(void)
 /* 74 32: 0111 0100 0011 0010 xxxx xxxx */
 static void SUINB_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm;
@@ -6461,7 +6461,7 @@ static void SUINB_B_xx(void)
 /* 74 33: 0111 0100 0011 0011 xxxx xxxx */
 static void SUINB_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm;
@@ -6473,7 +6473,7 @@ static void SUINB_C_xx(void)
 /* 74 34: 0111 0100 0011 0100 xxxx xxxx */
 static void SUINB_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm;
@@ -6485,7 +6485,7 @@ static void SUINB_D_xx(void)
 /* 74 35: 0111 0100 0011 0101 xxxx xxxx */
 static void SUINB_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm;
@@ -6497,7 +6497,7 @@ static void SUINB_E_xx(void)
 /* 74 36: 0111 0100 0011 0110 xxxx xxxx */
 static void SUINB_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm;
@@ -6509,7 +6509,7 @@ static void SUINB_H_xx(void)
 /* 74 37: 0111 0100 0011 0111 xxxx xxxx */
 static void SUINB_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm;
@@ -6521,7 +6521,7 @@ static void SUINB_L_xx(void)
 /* 74 38: 0111 0100 0011 1000 xxxx xxxx */
 static void LTI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm;
@@ -6532,7 +6532,7 @@ static void LTI_V_xx(void)
 /* 74 39: 0111 0100 0011 1001 xxxx xxxx */
 static void LTI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm;
@@ -6543,7 +6543,7 @@ static void LTI_A_xx(void)
 /* 74 3a: 0111 0100 0011 1010 xxxx xxxx */
 static void LTI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm;
@@ -6554,7 +6554,7 @@ static void LTI_B_xx(void)
 /* 74 3b: 0111 0100 0011 1011 xxxx xxxx */
 static void LTI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm;
@@ -6565,7 +6565,7 @@ static void LTI_C_xx(void)
 /* 74 3c: 0111 0100 0011 1100 xxxx xxxx */
 static void LTI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm;
@@ -6576,7 +6576,7 @@ static void LTI_D_xx(void)
 /* 74 3d: 0111 0100 0011 1101 xxxx xxxx */
 static void LTI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm;
@@ -6587,7 +6587,7 @@ static void LTI_E_xx(void)
 /* 74 3e: 0111 0100 0011 1110 xxxx xxxx */
 static void LTI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm;
@@ -6598,7 +6598,7 @@ static void LTI_H_xx(void)
 /* 74 3f: 0111 0100 0011 1111 xxxx xxxx */
 static void LTI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm;
@@ -6609,7 +6609,7 @@ static void LTI_L_xx(void)
 /* 74 40: 0111 0100 0100 0000 xxxx xxxx */
 static void ADI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V + imm;
@@ -6621,7 +6621,7 @@ static void ADI_V_xx(void)
 /* 74 41: 0111 0100 0100 0001 xxxx xxxx */
 static void ADI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A + imm;
@@ -6633,7 +6633,7 @@ static void ADI_A_xx(void)
 /* 74 42: 0111 0100 0100 0010 xxxx xxxx */
 static void ADI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B + imm;
@@ -6645,7 +6645,7 @@ static void ADI_B_xx(void)
 /* 74 43: 0111 0100 0100 0011 xxxx xxxx */
 static void ADI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C + imm;
@@ -6657,7 +6657,7 @@ static void ADI_C_xx(void)
 /* 74 44: 0111 0100 0100 0100 xxxx xxxx */
 static void ADI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D + imm;
@@ -6669,7 +6669,7 @@ static void ADI_D_xx(void)
 /* 74 45: 0111 0100 0100 0101 xxxx xxxx */
 static void ADI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E + imm;
@@ -6681,7 +6681,7 @@ static void ADI_E_xx(void)
 /* 74 46: 0111 0100 0100 0110 xxxx xxxx */
 static void ADI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H + imm;
@@ -6693,7 +6693,7 @@ static void ADI_H_xx(void)
 /* 74 47: 0111 0100 0100 0111 xxxx xxxx */
 static void ADI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L + imm;
@@ -6705,7 +6705,7 @@ static void ADI_L_xx(void)
 /* 74 48: 0111 0100 0100 1000 xxxx xxxx */
 static void ONI_V_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (V & imm)
@@ -6715,7 +6715,7 @@ static void ONI_V_xx(void)
 /* 74 49: 0111 0100 0100 1001 xxxx xxxx */
 static void ONI_A_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (A & imm)
@@ -6725,7 +6725,7 @@ static void ONI_A_xx(void)
 /* 74 4a: 0111 0100 0100 1010 xxxx xxxx */
 static void ONI_B_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (B & imm)
@@ -6735,7 +6735,7 @@ static void ONI_B_xx(void)
 /* 74 4b: 0111 0100 0100 1011 xxxx xxxx */
 static void ONI_C_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (C & imm)
@@ -6745,7 +6745,7 @@ static void ONI_C_xx(void)
 /* 74 4c: 0111 0100 0100 1100 xxxx xxxx */
 static void ONI_D_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (D & imm)
@@ -6755,7 +6755,7 @@ static void ONI_D_xx(void)
 /* 74 4d: 0111 0100 0100 1101 xxxx xxxx */
 static void ONI_E_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (E & imm)
@@ -6765,7 +6765,7 @@ static void ONI_E_xx(void)
 /* 74 4e: 0111 0100 0100 1110 xxxx xxxx */
 static void ONI_H_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (H & imm)
@@ -6775,7 +6775,7 @@ static void ONI_H_xx(void)
 /* 74 4f: 0111 0100 0100 1111 xxxx xxxx */
 static void ONI_L_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (L & imm)
@@ -6785,7 +6785,7 @@ static void ONI_L_xx(void)
 /* 74 50: 0111 0100 0101 0000 xxxx xxxx */
 static void ACI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V + imm + (PSW & CY);
@@ -6796,7 +6796,7 @@ static void ACI_V_xx(void)
 /* 74 51: 0111 0100 0101 0001 xxxx xxxx */
 static void ACI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A + imm + (PSW & CY);
@@ -6807,7 +6807,7 @@ static void ACI_A_xx(void)
 /* 74 52: 0111 0100 0101 0010 xxxx xxxx */
 static void ACI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B + imm + (PSW & CY);
@@ -6818,7 +6818,7 @@ static void ACI_B_xx(void)
 /* 74 53: 0111 0100 0101 0011 xxxx xxxx */
 static void ACI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C + imm + (PSW & CY);
@@ -6829,7 +6829,7 @@ static void ACI_C_xx(void)
 /* 74 54: 0111 0100 0101 0100 xxxx xxxx */
 static void ACI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D + imm + (PSW & CY);
@@ -6840,7 +6840,7 @@ static void ACI_D_xx(void)
 /* 74 55: 0111 0100 0101 0101 xxxx xxxx */
 static void ACI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E + imm + (PSW & CY);
@@ -6851,7 +6851,7 @@ static void ACI_E_xx(void)
 /* 74 56: 0111 0100 0101 0110 xxxx xxxx */
 static void ACI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H + imm + (PSW & CY);
@@ -6862,7 +6862,7 @@ static void ACI_H_xx(void)
 /* 74 57: 0111 0100 0101 0111 xxxx xxxx */
 static void ACI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L + imm + (PSW & CY);
@@ -6873,7 +6873,7 @@ static void ACI_L_xx(void)
 /* 74 58: 0111 0100 0101 1000 xxxx xxxx */
 static void OFFI_V_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (V & imm))
@@ -6883,7 +6883,7 @@ static void OFFI_V_xx(void)
 /* 74 59: 0111 0100 0101 1001 xxxx xxxx */
 static void OFFI_A_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (A & imm))
@@ -6893,7 +6893,7 @@ static void OFFI_A_xx(void)
 /* 74 5a: 0111 0100 0101 1010 xxxx xxxx */
 static void OFFI_B_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (B & imm))
@@ -6903,7 +6903,7 @@ static void OFFI_B_xx(void)
 /* 74 5b: 0111 0100 0101 1011 xxxx xxxx */
 static void OFFI_C_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (C & imm))
@@ -6913,7 +6913,7 @@ static void OFFI_C_xx(void)
 /* 74 5c: 0111 0100 0101 1100 xxxx xxxx */
 static void OFFI_D_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (D & imm))
@@ -6923,7 +6923,7 @@ static void OFFI_D_xx(void)
 /* 74 5d: 0111 0100 0101 1101 xxxx xxxx */
 static void OFFI_E_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (E & imm))
@@ -6933,7 +6933,7 @@ static void OFFI_E_xx(void)
 /* 74 5e: 0111 0100 0101 1110 xxxx xxxx */
 static void OFFI_H_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (H & imm))
@@ -6943,7 +6943,7 @@ static void OFFI_H_xx(void)
 /* 74 5f: 0111 0100 0101 1111 xxxx xxxx */
 static void OFFI_L_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( imm );
 	if (0 == (L & imm))
@@ -6953,7 +6953,7 @@ static void OFFI_L_xx(void)
 /* 74 60: 0111 0100 0110 0000 xxxx xxxx */
 static void SUI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm;
@@ -6964,7 +6964,7 @@ static void SUI_V_xx(void)
 /* 74 61: 0111 0100 0110 0001 xxxx xxxx */
 static void SUI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm;
@@ -6975,7 +6975,7 @@ static void SUI_A_xx(void)
 /* 74 62: 0111 0100 0110 0010 xxxx xxxx */
 static void SUI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm;
@@ -6986,7 +6986,7 @@ static void SUI_B_xx(void)
 /* 74 63: 0111 0100 0110 0011 xxxx xxxx */
 static void SUI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm;
@@ -6997,7 +6997,7 @@ static void SUI_C_xx(void)
 /* 74 64: 0111 0100 0110 0100 xxxx xxxx */
 static void SUI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm;
@@ -7008,7 +7008,7 @@ static void SUI_D_xx(void)
 /* 74 65: 0111 0100 0110 0101 xxxx xxxx */
 static void SUI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm;
@@ -7019,7 +7019,7 @@ static void SUI_E_xx(void)
 /* 74 66: 0111 0100 0110 0110 xxxx xxxx */
 static void SUI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm;
@@ -7030,7 +7030,7 @@ static void SUI_H_xx(void)
 /* 74 67: 0111 0100 0110 0111 xxxx xxxx */
 static void SUI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm;
@@ -7041,7 +7041,7 @@ static void SUI_L_xx(void)
 /* 74 68: 0111 0100 0110 1000 xxxx xxxx */
 static void NEI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm;
@@ -7052,7 +7052,7 @@ static void NEI_V_xx(void)
 /* 74 69: 0111 0100 0110 1001 xxxx xxxx */
 static void NEI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm;
@@ -7063,7 +7063,7 @@ static void NEI_A_xx(void)
 /* 74 6a: 0111 0100 0110 1010 xxxx xxxx */
 static void NEI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm;
@@ -7074,7 +7074,7 @@ static void NEI_B_xx(void)
 /* 74 6b: 0111 0100 0110 1011 xxxx xxxx */
 static void NEI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm;
@@ -7085,7 +7085,7 @@ static void NEI_C_xx(void)
 /* 74 6c: 0111 0100 0110 1100 xxxx xxxx */
 static void NEI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm;
@@ -7096,7 +7096,7 @@ static void NEI_D_xx(void)
 /* 74 6d: 0111 0100 0110 1101 xxxx xxxx */
 static void NEI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm;
@@ -7107,7 +7107,7 @@ static void NEI_E_xx(void)
 /* 74 6e: 0111 0100 0110 1110 xxxx xxxx */
 static void NEI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm;
@@ -7118,7 +7118,7 @@ static void NEI_H_xx(void)
 /* 74 6f: 0111 0100 0110 1111 xxxx xxxx */
 static void NEI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm;
@@ -7129,7 +7129,7 @@ static void NEI_L_xx(void)
 /* 74 70: 0111 0100 0111 0000 xxxx xxxx */
 static void SBI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm - (PSW & CY);
@@ -7140,7 +7140,7 @@ static void SBI_V_xx(void)
 /* 74 71: 0111 0100 0111 0001 xxxx xxxx */
 static void SBI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm - (PSW & CY);
@@ -7151,7 +7151,7 @@ static void SBI_A_xx(void)
 /* 74 72: 0111 0100 0111 0010 xxxx xxxx */
 static void SBI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm - (PSW & CY);
@@ -7162,7 +7162,7 @@ static void SBI_B_xx(void)
 /* 74 73: 0111 0100 0111 0011 xxxx xxxx */
 static void SBI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm - (PSW & CY);
@@ -7173,7 +7173,7 @@ static void SBI_C_xx(void)
 /* 74 74: 0111 0100 0111 0100 xxxx xxxx */
 static void SBI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm - (PSW & CY);
@@ -7184,7 +7184,7 @@ static void SBI_D_xx(void)
 /* 74 75: 0111 0100 0111 0101 xxxx xxxx */
 static void SBI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm - (PSW & CY);
@@ -7195,7 +7195,7 @@ static void SBI_E_xx(void)
 /* 74 76: 0111 0100 0111 0110 xxxx xxxx */
 static void SBI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm - (PSW & CY);
@@ -7206,7 +7206,7 @@ static void SBI_H_xx(void)
 /* 74 77: 0111 0100 0111 0111 xxxx xxxx */
 static void SBI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm - (PSW & CY);
@@ -7217,7 +7217,7 @@ static void SBI_L_xx(void)
 /* 74 78: 0111 0100 0111 1000 xxxx xxxx */
 static void EQI_V_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = V - imm;
@@ -7228,7 +7228,7 @@ static void EQI_V_xx(void)
 /* 74 79: 0111 0100 0111 1001 xxxx xxxx */
 static void EQI_A_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = A - imm;
@@ -7239,7 +7239,7 @@ static void EQI_A_xx(void)
 /* 74 7a: 0111 0100 0111 1010 xxxx xxxx */
 static void EQI_B_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = B - imm;
@@ -7250,7 +7250,7 @@ static void EQI_B_xx(void)
 /* 74 7b: 0111 0100 0111 1011 xxxx xxxx */
 static void EQI_C_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = C - imm;
@@ -7261,7 +7261,7 @@ static void EQI_C_xx(void)
 /* 74 7c: 0111 0100 0111 1100 xxxx xxxx */
 static void EQI_D_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = D - imm;
@@ -7272,7 +7272,7 @@ static void EQI_D_xx(void)
 /* 74 7d: 0111 0100 0111 1101 xxxx xxxx */
 static void EQI_E_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = E - imm;
@@ -7283,7 +7283,7 @@ static void EQI_E_xx(void)
 /* 74 7e: 0111 0100 0111 1110 xxxx xxxx */
 static void EQI_H_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = H - imm;
@@ -7294,7 +7294,7 @@ static void EQI_H_xx(void)
 /* 74 7f: 0111 0100 0111 1111 xxxx xxxx */
 static void EQI_L_xx(void)
 {
-	UINT8 tmp, imm;
+	uint8_t tmp, imm;
 
 	RDOPARG( imm );
 	tmp = L - imm;
@@ -7397,7 +7397,7 @@ static void DOR_EA_HL(void)
 static void ADDNCW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 
@@ -7410,7 +7410,7 @@ static void ADDNCW_wa(void)
 /* 74 a5: 0111 0100 1010 0101 */
 static void DADDNC_EA_BC(void)
 {
-	UINT16 tmp = EA + BC;
+	uint16_t tmp = EA + BC;
 
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
@@ -7420,7 +7420,7 @@ static void DADDNC_EA_BC(void)
 /* 74 a6: 0111 0100 1010 0110 */
 static void DADDNC_EA_DE(void)
 {
-	UINT16 tmp = EA + DE;
+	uint16_t tmp = EA + DE;
 
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
@@ -7430,7 +7430,7 @@ static void DADDNC_EA_DE(void)
 /* 74 a7: 0111 0100 1010 0111 */
 static void DADDNC_EA_HL(void)
 {
-	UINT16 tmp = EA + HL;
+	uint16_t tmp = EA + HL;
 
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
@@ -7441,7 +7441,7 @@ static void DADDNC_EA_HL(void)
 static void GTAW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 	tmp = A - RM( ea.d ) - 1;
@@ -7452,7 +7452,7 @@ static void GTAW_wa(void)
 /* 74 ad: 0111 0100 1010 1101 */
 static void DGT_EA_BC(void)
 {
-	UINT16 tmp = EA - BC - 1;
+	uint16_t tmp = EA - BC - 1;
 	ZHC_SUB( tmp, EA, 0 );
 	SKIP_NC;
 }
@@ -7460,7 +7460,7 @@ static void DGT_EA_BC(void)
 /* 74 ae: 0111 0100 1010 1110 */
 static void DGT_EA_DE(void)
 {
-	UINT16 tmp = EA - DE - 1;
+	uint16_t tmp = EA - DE - 1;
 	ZHC_SUB( tmp, EA, 0 );
 	SKIP_NC;
 }
@@ -7468,7 +7468,7 @@ static void DGT_EA_DE(void)
 /* 74 af: 0111 0100 1010 1111 */
 static void DGT_EA_HL(void)
 {
-	UINT16 tmp = EA - HL - 1;
+	uint16_t tmp = EA - HL - 1;
 	ZHC_SUB( tmp, EA, 0 );
 	SKIP_NC;
 }
@@ -7477,7 +7477,7 @@ static void DGT_EA_HL(void)
 static void SUBNBW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 	tmp = A - RM( ea.d );
@@ -7489,7 +7489,7 @@ static void SUBNBW_wa(void)
 /* 74 b5: 0111 0100 1011 0101 */
 static void DSUBNB_EA_BC(void)
 {
-	UINT16 tmp = EA - BC;
+	uint16_t tmp = EA - BC;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
 	SKIP_NC;
@@ -7498,7 +7498,7 @@ static void DSUBNB_EA_BC(void)
 /* 74 b6: 0111 0100 1011 0110 */
 static void DSUBNB_EA_DE(void)
 {
-	UINT16 tmp = EA - DE;
+	uint16_t tmp = EA - DE;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
 	SKIP_NC;
@@ -7507,7 +7507,7 @@ static void DSUBNB_EA_DE(void)
 /* 74 b7: 0111 0100 1011 0111 */
 static void DSUBNB_EA_HL(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - HL;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7519,7 +7519,7 @@ static void DSUBNB_EA_HL(void)
 static void LTAW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 	tmp = A - RM( ea.d );
@@ -7530,7 +7530,7 @@ static void LTAW_wa(void)
 /* 74 bd: 0111 0100 1011 1101 */
 static void DLT_EA_BC(void)
 {
-	UINT16 tmp = EA - BC;
+	uint16_t tmp = EA - BC;
 	ZHC_SUB( tmp, EA, 0 );
 	SKIP_CY;
 }
@@ -7538,7 +7538,7 @@ static void DLT_EA_BC(void)
 /* 74 be: 0111 0100 1011 1110 */
 static void DLT_EA_DE(void)
 {
-	UINT16 tmp = EA - DE;
+	uint16_t tmp = EA - DE;
 	ZHC_SUB( tmp, EA, 0 );
 	SKIP_CY;
 }
@@ -7546,7 +7546,7 @@ static void DLT_EA_DE(void)
 /* 74 bf: 0111 0100 1011 1111 */
 static void DLT_EA_HL(void)
 {
-	UINT16 tmp = EA - HL;
+	uint16_t tmp = EA - HL;
 	ZHC_SUB( tmp, EA, 0 );
 	SKIP_CY;
 }
@@ -7555,7 +7555,7 @@ static void DLT_EA_HL(void)
 static void ADDW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 	RDOPARG( ea.b.l );
 	tmp = A + RM( ea.d );
 	ZHC_ADD( tmp, A, 0 );
@@ -7565,7 +7565,7 @@ static void ADDW_wa(void)
 /* 74 c5: 0111 0100 1100 0101 */
 static void DADD_EA_BC(void)
 {
-	UINT16 tmp = EA + BC;
+	uint16_t tmp = EA + BC;
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
 }
@@ -7573,7 +7573,7 @@ static void DADD_EA_BC(void)
 /* 74 c6: 0111 0100 1100 0110 */
 static void DADD_EA_DE(void)
 {
-	UINT16 tmp = EA + DE;
+	uint16_t tmp = EA + DE;
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
 }
@@ -7581,7 +7581,7 @@ static void DADD_EA_DE(void)
 /* 74 c7: 0111 0100 1100 0111 */
 static void DADD_EA_HL(void)
 {
-	UINT16 tmp = EA + HL;
+	uint16_t tmp = EA + HL;
 	ZHC_ADD( tmp, EA, 0 );
 	EA = tmp;
 }
@@ -7637,7 +7637,7 @@ static void ADCW_wa(void)
 /* 74 d5: 0111 0100 1101 0101 */
 static void DADC_EA_BC(void)
 {
-	UINT16 tmp = EA + BC + (PSW & CY);
+	uint16_t tmp = EA + BC + (PSW & CY);
 	ZHC_ADD( tmp, EA, (PSW & CY) );
 	EA = tmp;
 }
@@ -7645,7 +7645,7 @@ static void DADC_EA_BC(void)
 /* 74 d6: 0111 0100 1101 0110 */
 static void DADC_EA_DE(void)
 {
-	UINT16 tmp = EA + DE + (PSW & CY);
+	uint16_t tmp = EA + DE + (PSW & CY);
 	ZHC_ADD( tmp, EA, (PSW & CY) );
 	EA = tmp;
 }
@@ -7653,7 +7653,7 @@ static void DADC_EA_DE(void)
 /* 74 d7: 0111 0100 1101 0111 */
 static void DADC_EA_HL(void)
 {
-	UINT16 tmp = EA + HL + (PSW & CY);
+	uint16_t tmp = EA + HL + (PSW & CY);
 	ZHC_ADD( tmp, EA, (PSW & CY) );
 	EA = tmp;
 }
@@ -7701,7 +7701,7 @@ static void DOFF_EA_HL(void)
 static void SUBW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 	tmp = A - RM( ea.d );
@@ -7712,7 +7712,7 @@ static void SUBW_wa(void)
 /* 74 e5: 0111 0100 1110 0101 */
 static void DSUB_EA_BC(void)
 {
-	UINT16 tmp = EA - BC;
+	uint16_t tmp = EA - BC;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
 }
@@ -7720,7 +7720,7 @@ static void DSUB_EA_BC(void)
 /* 74 e6: 0111 0100 1110 0110 */
 static void DSUB_EA_DE(void)
 {
-	UINT16 tmp = EA - DE;
+	uint16_t tmp = EA - DE;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
 }
@@ -7728,7 +7728,7 @@ static void DSUB_EA_DE(void)
 /* 74 e7: 0111 0100 1110 0111 */
 static void DSUB_EA_HL(void)
 {
-	UINT16 tmp = EA - HL;
+	uint16_t tmp = EA - HL;
 	ZHC_SUB( tmp, EA, 0 );
 	EA = tmp;
 }
@@ -7745,7 +7745,7 @@ static void NEAW_wa(void)
 /* 74 ed: 0111 0100 1110 1101 */
 static void DNE_EA_BC(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - BC;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7755,7 +7755,7 @@ static void DNE_EA_BC(void)
 /* 74 ee: 0111 0100 1110 1110 */
 static void DNE_EA_DE(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - DE;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7765,7 +7765,7 @@ static void DNE_EA_DE(void)
 /* 74 ef: 0111 0100 1110 1111 */
 static void DNE_EA_HL(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - HL;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7776,7 +7776,7 @@ static void DNE_EA_HL(void)
 static void SBBW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 	tmp = A - RM( ea.d ) - (PSW & CY);
@@ -7787,7 +7787,7 @@ static void SBBW_wa(void)
 /* 74 f5: 0111 0100 1111 0101 */
 static void DSBB_EA_BC(void)
 {
-	UINT16 tmp = EA - BC - (PSW & CY);
+	uint16_t tmp = EA - BC - (PSW & CY);
 	ZHC_SUB( tmp, EA, (PSW & CY) );
 	EA = tmp;
 }
@@ -7795,7 +7795,7 @@ static void DSBB_EA_BC(void)
 /* 74 f6: 0111 0100 1111 0110 */
 static void DSBB_EA_DE(void)
 {
-	UINT16 tmp = EA - DE - (PSW & CY);
+	uint16_t tmp = EA - DE - (PSW & CY);
 	ZHC_SUB( tmp, EA, (PSW & CY) );
 	EA = tmp;
 }
@@ -7803,7 +7803,7 @@ static void DSBB_EA_DE(void)
 /* 74 f7: 0111 0100 1111 0111 */
 static void DSBB_EA_HL(void)
 {
-	UINT16 tmp = EA - HL - (PSW & CY);
+	uint16_t tmp = EA - HL - (PSW & CY);
 	ZHC_SUB( tmp, EA, (PSW & CY) );
 	EA = tmp;
 }
@@ -7812,7 +7812,7 @@ static void DSBB_EA_HL(void)
 static void EQAW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp;
+	uint8_t tmp;
 
 	RDOPARG( ea.b.l );
 	tmp = A - RM( ea.d );
@@ -7823,7 +7823,7 @@ static void EQAW_wa(void)
 /* 74 fd: 0111 0100 1111 1101 */
 static void DEQ_EA_BC(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - BC;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7833,7 +7833,7 @@ static void DEQ_EA_BC(void)
 /* 74 fe: 0111 0100 1111 1110 */
 static void DEQ_EA_DE(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - DE;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7843,7 +7843,7 @@ static void DEQ_EA_DE(void)
 /* 74 ff: 0111 0100 1111 1111 */
 static void DEQ_EA_HL(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = EA - HL;
 	ZHC_SUB( tmp, EA, 0 );
@@ -7892,7 +7892,7 @@ static void LXI_S_w(void)
 static void ANIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 m, imm;
+	uint8_t m, imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -7956,7 +7956,7 @@ static void MOV_A_L(void)
 /* 10: 0001 0000 */
 static void EXA(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = EA; EA = EA2; EA2 = tmp;
 	tmp = VA; VA = VA2; VA2 = tmp;
 }
@@ -7964,7 +7964,7 @@ static void EXA(void)
 /* 11: 0001 0001 */
 static void EXX(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = BC; BC = BC2; BC2 = tmp;
 	tmp = DE; DE = DE2; DE2 = tmp;
 	tmp = HL; HL = HL2; HL2 = tmp;
@@ -7973,7 +7973,7 @@ static void EXX(void)
 /* 48 AD (7807 only) */
 static void EXR(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = BC; BC = BC2; BC2 = tmp;
 	tmp = DE; DE = DE2; DE2 = tmp;
 	tmp = HL; HL = HL2; HL2 = tmp;
@@ -8004,7 +8004,7 @@ static void LXI_B_w(void)
 static void ORIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 m, imm;
+	uint8_t m, imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -8072,7 +8072,7 @@ static void MOV_L_A(void)
 static void INRW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp, m;
+	uint8_t tmp, m;
 
 	RDOPARG( ea.b.l );
 	m = RM( ea.d );
@@ -8112,7 +8112,7 @@ static void LXI_D_w(void)
 static void GTIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp, m, imm;
+	uint8_t tmp, m, imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -8178,7 +8178,7 @@ static void LDAX_Hm(void)
 static void DCRW_wa(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp, m;
+	uint8_t tmp, m;
 
 	RDOPARG( ea.b.l );
 	m = RM( ea.d );
@@ -8232,7 +8232,7 @@ static void LXI_H_w(void)
 static void LTIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp, m, imm;
+	uint8_t tmp, m, imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -8315,7 +8315,7 @@ static void CALL_w(void)
 /* 41: 0100 0001 */
 static void INR_A(void)
 {
-	UINT8 tmp = A + 1;
+	uint8_t tmp = A + 1;
 	ZHC_ADD( tmp, A, 0 );
 	A = tmp;
 	SKIP_CY;
@@ -8324,7 +8324,7 @@ static void INR_A(void)
 /* 42: 0100 0010 */
 static void INR_B(void)
 {
-	UINT8 tmp = B + 1;
+	uint8_t tmp = B + 1;
 	ZHC_ADD( tmp, B, 0 );
 	B = tmp;
 	SKIP_CY;
@@ -8333,7 +8333,7 @@ static void INR_B(void)
 /* 43: 0100 0011 */
 static void INR_C(void)
 {
-	UINT8 tmp = C + 1;
+	uint8_t tmp = C + 1;
 	ZHC_ADD( tmp, C, 0 );
 	C = tmp;
 	SKIP_CY;
@@ -8350,7 +8350,7 @@ static void LXI_EA_s(void)
 static void ONIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -8377,7 +8377,7 @@ static void PRE_48(void)
 /* 49: 0100 1001 xxxx xxxx */
 static void MVIX_BC_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WM( BC, imm );
 }
@@ -8385,7 +8385,7 @@ static void MVIX_BC_xx(void)
 /* 4a: 0100 1010 xxxx xxxx */
 static void MVIX_DE_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WM( DE, imm );
 }
@@ -8393,7 +8393,7 @@ static void MVIX_DE_xx(void)
 /* 4b: 0100 1011 xxxx xxxx */
 static void MVIX_HL_xx(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	RDOPARG( imm );
 	WM( HL, imm );
 }
@@ -8419,7 +8419,7 @@ static void PRE_4D(void)
 /* 4e: 0100 111d dddd dddd */
 static void JRE(void)
 {
-	UINT8 offs;
+	uint8_t offs;
 	RDOPARG( offs );
 	if (OP & 0x01)
 		PC -= 256 - offs;
@@ -8431,14 +8431,14 @@ static void JRE(void)
 /* 50: 0101 0000 */
 static void EXH(void)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 	tmp = HL; HL = HL2; HL2 = tmp;
 }
 
 /* 51: 0101 0001 */
 static void DCR_A(void)
 {
-	UINT8 tmp = A - 1;
+	uint8_t tmp = A - 1;
 	ZHC_SUB( tmp, A, 0 );
 	A = tmp;
 	SKIP_CY;
@@ -8447,7 +8447,7 @@ static void DCR_A(void)
 /* 52: 0101 0010 */
 static void DCR_B(void)
 {
-	UINT8 tmp = B - 1;
+	uint8_t tmp = B - 1;
 	ZHC_SUB( tmp, B, 0 );
 	B = tmp;
 	SKIP_CY;
@@ -8456,7 +8456,7 @@ static void DCR_B(void)
 /* 53: 0101 0011 */
 static void DCR_C(void)
 {
-	UINT8 tmp = C - 1;
+	uint8_t tmp = C - 1;
 	ZHC_SUB( tmp, C, 0 );
 	C = tmp;
 	SKIP_CY;
@@ -8479,7 +8479,7 @@ static void JMP_w(void)
 static void OFFIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 imm;
+	uint8_t imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -8585,7 +8585,7 @@ static void BIT_7_wa(void)
 /* 5d: 0101 1111 bbbb bbbb (7807 only) */
 static void SKN_bit(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	int val;
 
 	RDOPARG( imm );
@@ -8638,7 +8638,7 @@ static void SKN_bit(void)
 /* 58: 0101 1000 bbbb bbbb (7807 only) */
 static void SETB(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	int bit;
 
 	RDOPARG( imm );
@@ -8688,7 +8688,7 @@ static void SETB(void)
 /* 5b: 0101 1011 bbbb bbbb (7807 only) */
 static void CLR(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	int bit;
 
 	RDOPARG( imm );
@@ -8738,7 +8738,7 @@ static void CLR(void)
 /* 5d: 0101 1111 bbbb bbbb (7807 only) */
 static void SK_bit(void)
 {
-	UINT8 imm;
+	uint8_t imm;
 	int val;
 
 	RDOPARG( imm );
@@ -8800,7 +8800,7 @@ static void PRE_60(void)
 /* 61: 0110 0001 */
 static void DAA(void)
 {
-	UINT8 l = A & 0x0f, h = A >> 4, tmp, adj = 0x00;
+	uint8_t l = A & 0x0f, h = A >> 4, tmp, adj = 0x00;
 	if (0 == (PSW & HC))
 	{
 		if (l < 10)
@@ -8865,7 +8865,7 @@ static void PRE_64(void)
 static void NEIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp, m, imm;
+	uint8_t tmp, m, imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -8952,7 +8952,7 @@ static void PRE_70(void)
 static void MVIW_wa_xx(void)
 {
 	PAIR ea;
-	UINT8 imm;
+	uint8_t imm;
 
 	ea.d = 0;
 
@@ -8990,7 +8990,7 @@ static void PRE_74(void)
 static void EQIW_wa_xx(void)
 {
 	PAIR ea = upd7810.va;
-	UINT8 tmp, m, imm;
+	uint8_t tmp, m, imm;
 
 	RDOPARG( ea.b.l );
 	RDOPARG( imm );
@@ -9136,7 +9136,7 @@ static void EI(void)
 /* ab: 1010 1011 dddd dddd */
 static void LDAX_D_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += DE;
 	A = RM( ea );
@@ -9145,7 +9145,7 @@ static void LDAX_D_xx(void)
 /* ac: 1010 1100 */
 static void LDAX_H_A(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	ea = HL + A;
 	A = RM( ea );
 }
@@ -9153,7 +9153,7 @@ static void LDAX_H_A(void)
 /* ad: 1010 1101 */
 static void LDAX_H_B(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	ea = HL + B;
 	A = RM( ea );
 }
@@ -9161,7 +9161,7 @@ static void LDAX_H_B(void)
 /* ae: 1010 1110 */
 static void LDAX_H_EA(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	ea = HL + EA;
 	A = RM( ea );
 }
@@ -9169,7 +9169,7 @@ static void LDAX_H_EA(void)
 /* af: 1010 1111 dddd dddd */
 static void LDAX_H_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += HL;
 	A = RM( ea );
@@ -9268,7 +9268,7 @@ static void DI(void)
 /* bb: 1011 1011 dddd dddd */
 static void STAX_D_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG(ea);
 	ea += DE;
 	WM( ea, A );
@@ -9277,7 +9277,7 @@ static void STAX_D_xx(void)
 /* bc: 1011 1100 */
 static void STAX_H_A(void)
 {
-	UINT16 ea = A;
+	uint16_t ea = A;
 	ea += HL;
 	WM( ea, A );
 }
@@ -9285,7 +9285,7 @@ static void STAX_H_A(void)
 /* bd: 1011 1101 */
 static void STAX_H_B(void)
 {
-	UINT16 ea = B;
+	uint16_t ea = B;
 	ea += HL;
 	WM( ea, A );
 }
@@ -9293,7 +9293,7 @@ static void STAX_H_B(void)
 /* be: 1011 1110 */
 static void STAX_H_EA(void)
 {
-	UINT16 ea = EA;
+	uint16_t ea = EA;
 	ea += HL;
 	WM( ea, A );
 }
@@ -9301,7 +9301,7 @@ static void STAX_H_EA(void)
 /* bf: 1011 1111 dddd dddd */
 static void STAX_H_xx(void)
 {
-	UINT16 ea;
+	uint16_t ea;
 	RDOPARG( ea );
 	ea += HL;
 	WM( ea, A );
@@ -9310,7 +9310,7 @@ static void STAX_H_xx(void)
 /* c0: 11dd dddd */
 static void JR(void)
 {
-	INT8 offs = (INT8)(OP << 2) >> 2;
+	int8_t offs = (int8_t)(OP << 2) >> 2;
 	PC += offs;
 	change_pc16(PCD);
 }

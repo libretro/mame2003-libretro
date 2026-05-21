@@ -12,12 +12,12 @@
 **	MISC MACROS
 **#################################################################################################*/
 
-#define ZEXTEND(val,width) if (width) (val) &= ((UINT32)0xffffffff >> (32 - (width)))
-#define SEXTEND(val,width) if (width) (val) = (INT32)((val) << (32 - (width))) >> (32 - (width))
+#define ZEXTEND(val,width) if (width) (val) &= ((uint32_t)0xffffffff >> (32 - (width)))
+#define SEXTEND(val,width) if (width) (val) = (int32_t)((val) << (32 - (width))) >> (32 - (width))
 
-#define SXYTOL(val)	((((INT16)(val).y * state.convsp) + ((INT16)(val).x << state.pixelshift)) + OFFSET)
-#define DXYTOL(val)	((((INT16)(val).y * state.convdp) + ((INT16)(val).x << state.pixelshift)) + OFFSET)
-#define MXYTOL(val)	((((INT16)(val).y * state.convmp) + ((INT16)(val).x << state.pixelshift)) + OFFSET)
+#define SXYTOL(val)	((((int16_t)(val).y * state.convsp) + ((int16_t)(val).x << state.pixelshift)) + OFFSET)
+#define DXYTOL(val)	((((int16_t)(val).y * state.convdp) + ((int16_t)(val).x << state.pixelshift)) + OFFSET)
+#define MXYTOL(val)	((((int16_t)(val).y * state.convmp) + ((int16_t)(val).x << state.pixelshift)) + OFFSET)
 
 #define COUNT_CYCLES(x)	tms34010_ICount -= x
 #define COUNT_UNKNOWN_CYCLES(x) COUNT_CYCLES(x)
@@ -39,8 +39,8 @@
 #define SET_NZ(val)			{ SET_Z(val); SET_N(NOTZ_FLAG); }
 #define SET_V_SUB(a,b,r)	(V_FLAG = SIGN(((a) ^ (b)) & ((a) ^ (r))))
 #define SET_V_ADD(a,b,r)	(V_FLAG = SIGN(~((a) ^ (b)) & ((a) ^ (r))))
-#define SET_C_SUB(a,b)		(C_FLAG = (((UINT32)(b)) > ((UINT32)(a))))
-#define SET_C_ADD(a,b)		(C_FLAG = (((UINT32)(~(a))) < ((UINT32)(b))))
+#define SET_C_SUB(a,b)		(C_FLAG = (((uint32_t)(b)) > ((uint32_t)(a))))
+#define SET_C_ADD(a,b)		(C_FLAG = (((uint32_t)(~(a))) < ((uint32_t)(b))))
 #define SET_NZV_SUB(a,b,r)	{ SET_NZ(r); SET_V_SUB(a,b,r); }
 #define SET_NZCV_SUB(a,b,r)	{ SET_NZV_SUB(a,b,r); SET_C_SUB(a,b); }
 #define SET_NZCV_ADD(a,b,r)	{ SET_NZ(r); SET_V_ADD(a,b,r); SET_C_ADD(a,b); }
@@ -121,7 +121,7 @@ static void sub_xy_b(void) { SUB_XY(B); }
 
 #define CMP_XY(R)								\
 {												\
-	INT16 res;									\
+	int16_t res;									\
 	XY a = R##REG_XY(R##DSTREG);				\
 	XY b = R##REG_XY(R##SRCREG);				\
 	res = a.x-b.x;								\
@@ -137,9 +137,9 @@ static void cmp_xy_b(void) { CMP_XY(B); }
 
 #define CPW(R)									\
 {												\
-	INT32 res = 0;								\
-	INT16 x = R##REG_X(R##SRCREG);				\
-	INT16 y = R##REG_Y(R##SRCREG);				\
+	int32_t res = 0;								\
+	int16_t x = R##REG_X(R##SRCREG);				\
+	int16_t y = R##REG_Y(R##SRCREG);				\
 												\
 	res |= ((WSTART_X > x) ? 0x20  : 0);		\
 	res |= ((x > WEND_X)   ? 0x40  : 0);		\
@@ -161,7 +161,7 @@ static void cvxyl_b(void) { CVXYL(B); }
 
 #define MOVX(R)										\
 {													\
-	R##REG(R##DSTREG) = (R##REG(R##DSTREG) & 0xffff0000) | (UINT16)R##REG(R##SRCREG);	\
+	R##REG(R##DSTREG) = (R##REG(R##DSTREG) & 0xffff0000) | (uint16_t)R##REG(R##SRCREG);	\
   	COUNT_CYCLES(1);																	\
 }
 static void movx_a(void) { MOVX(A); }
@@ -169,7 +169,7 @@ static void movx_b(void) { MOVX(B); }
 
 #define MOVY(R)										\
 {													\
-	R##REG(R##DSTREG) = (R##REG(R##SRCREG) & 0xffff0000) | (UINT16)R##REG(R##DSTREG);	\
+	R##REG(R##DSTREG) = (R##REG(R##SRCREG) & 0xffff0000) | (uint16_t)R##REG(R##DSTREG);	\
   	COUNT_CYCLES(1);																	\
 }
 static void movy_a(void) { MOVY(A); }
@@ -283,8 +283,8 @@ static void drav_b(void) { DRAV(B); }
 
 #define ABS(R)			              			      		\
 {															\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 r = 0 - *rd;										\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t r = 0 - *rd;										\
 	SET_NZV_SUB(0,*rd,r);									\
 	if (!N_FLAG)											\
 	{														\
@@ -297,10 +297,10 @@ static void abs_b(void) { ABS(B); }
 
 #define ADD(R)			              			      		\
 {							 								\
-	INT32 a = R##REG(R##SRCREG);							\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 b = *rd;											\
-	INT32 r = *rd = a + b;									\
+	int32_t a = R##REG(R##SRCREG);							\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t b = *rd;											\
+	int32_t r = *rd = a + b;									\
 	SET_NZCV_ADD(a,b,r);									\
 	COUNT_CYCLES(1);										\
 }
@@ -311,10 +311,10 @@ static void add_b(void) { ADD(B); }
 {			  												\
 	/* I'm not sure to which side the carry is added to, should	*/	\
 	/* verify it against the examples */					\
-	INT32 a = R##REG(R##SRCREG);							\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 b = *rd;											\
-	INT32 r = *rd = a + b + (C_FLAG?1:0);					\
+	int32_t a = R##REG(R##SRCREG);							\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t b = *rd;											\
+	int32_t r = *rd = a + b + (C_FLAG?1:0);					\
 	SET_NZCV_ADD(a,b,r);									\
 	COUNT_CYCLES(1);										\
 }
@@ -323,10 +323,10 @@ static void addc_b(void) { ADDC(B); }
 
 #define ADDI_W(R)			              			      	\
 {			  												\
-	INT32 a = PARAM_WORD();									\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 b = *rd;											\
-	INT32 r = *rd = a + b;									\
+	int32_t a = PARAM_WORD();									\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t b = *rd;											\
+	int32_t r = *rd = a + b;									\
 	SET_NZCV_ADD(a,b,r);									\
 	COUNT_CYCLES(2);										\
 }
@@ -335,10 +335,10 @@ static void addi_w_b(void) { ADDI_W(B); }
 
 #define ADDI_L(R)			              			      	\
 {			  												\
-	INT32 a = PARAM_LONG();									\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 b = *rd;											\
-	INT32 r = *rd = a + b;									\
+	int32_t a = PARAM_LONG();									\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t b = *rd;											\
+	int32_t r = *rd = a + b;									\
 	SET_NZCV_ADD(a,b,r);									\
 	COUNT_CYCLES(3);										\
 }
@@ -347,8 +347,8 @@ static void addi_l_b(void) { ADDI_L(B); }
 
 #define ADDK(R)				              			      	\
 {			  												\
-	INT32 r,b,*rd;											\
-	INT32 a = PARAM_K; if (!a) a = 32;						\
+	int32_t r,b,*rd;											\
+	int32_t a = PARAM_K; if (!a) a = 32;						\
 	rd = &R##REG(R##DSTREG);								\
 	b = *rd;												\
 	r = *rd = a + b;										\
@@ -360,7 +360,7 @@ static void addk_b(void) { ADDK(B); }
 
 #define AND(R)				              			      	\
 {			  												\
-	INT32 *rd = &R##REG(R##DSTREG);							\
+	int32_t *rd = &R##REG(R##DSTREG);							\
 	*rd &= R##REG(R##SRCREG);								\
 	SET_Z(*rd);												\
 	COUNT_CYCLES(1);										\
@@ -370,7 +370,7 @@ static void and_b(void) { AND(B); }
 
 #define ANDI(R)				              			      	\
 {			  												\
-	INT32 *rd = &R##REG(R##DSTREG);							\
+	int32_t *rd = &R##REG(R##DSTREG);							\
 	*rd &= ~PARAM_LONG();									\
 	SET_Z(*rd);												\
 	COUNT_CYCLES(3);										\
@@ -380,7 +380,7 @@ static void andi_b(void) { ANDI(B); }
 
 #define ANDN(R)				              			      	\
 {			  												\
-	INT32 *rd = &R##REG(R##DSTREG);							\
+	int32_t *rd = &R##REG(R##DSTREG);							\
 	*rd &= ~R##REG(R##SRCREG);								\
 	SET_Z(*rd);												\
 	COUNT_CYCLES(1);										\
@@ -412,9 +412,9 @@ static void clrc(void)
 
 #define CMP(R)				       		       			    \
 {															\
-	INT32 *rs = &R##REG(R##SRCREG);							\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 r = *rd - *rs;									\
+	int32_t *rs = &R##REG(R##SRCREG);							\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t r = *rd - *rs;									\
 	SET_NZCV_SUB(*rd,*rs,r);								\
 	COUNT_CYCLES(1);										\
 }
@@ -423,9 +423,9 @@ static void cmp_b(void) { CMP(B); }
 
 #define CMPI_W(R)			       		       			    \
 {															\
-	INT32 r;												\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 t = ~PARAM_WORD();								\
+	int32_t r;												\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t t = ~PARAM_WORD();								\
 	r = *rd - t;											\
 	SET_NZCV_SUB(*rd,t,r);									\
 	COUNT_CYCLES(2);										\
@@ -435,9 +435,9 @@ static void cmpi_w_b(void) { CMPI_W(B); }
 
 #define CMPI_L(R)			       		       			    \
 {															\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 t = ~PARAM_LONG();								\
-	INT32 r = *rd - t;										\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t t = ~PARAM_LONG();								\
+	int32_t r = *rd - t;										\
 	SET_NZCV_SUB(*rd,t,r);									\
 	COUNT_CYCLES(3);										\
 }
@@ -452,8 +452,8 @@ static void dint(void)
 
 #define DIVS(R,N)			       		       			    \
 {															\
-	INT32 *rs  = &R##REG(R##SRCREG);						\
-	INT32 *rd1 = &R##REG(R##DSTREG);						\
+	int32_t *rs  = &R##REG(R##SRCREG);						\
+	int32_t *rd1 = &R##REG(R##DSTREG);						\
 	V_FLAG = N_FLAG = 0;									\
 	NOTZ_FLAG = 1;											\
 	if (!(R##DSTREG & (1*N)))								\
@@ -464,11 +464,11 @@ static void dint(void)
 		}													\
 		else												\
 		{													\
-			INT32 *rd2 = &R##REG(R##DSTREG+N);				\
-			INT64 dividend  = COMBINE_64_32_32(*rd1, *rd2); \
-			INT64 quotient  = DIV_64_64_32(dividend, *rs); 	\
-			INT32 remainder = MOD_32_64_32(dividend, *rs); 	\
-			UINT32 signbits = (INT32)quotient >> 31;	 	\
+			int32_t *rd2 = &R##REG(R##DSTREG+N);				\
+			int64_t dividend  = COMBINE_64_32_32(*rd1, *rd2); \
+			int64_t quotient  = DIV_64_64_32(dividend, *rs); 	\
+			int32_t remainder = MOD_32_64_32(dividend, *rs); 	\
+			uint32_t signbits = (int32_t)quotient >> 31;	 	\
 			if (HI32_32_64(quotient) != signbits)			\
 			{												\
 				V_FLAG = 1;									\
@@ -501,8 +501,8 @@ static void divs_b(void) { DIVS(B,0x10); }
 
 #define DIVU(R,N)			       		       			    \
 {										  					\
-	INT32 *rs  = &R##REG(R##SRCREG);						\
-	INT32 *rd1 = &R##REG(R##DSTREG);						\
+	int32_t *rs  = &R##REG(R##SRCREG);						\
+	int32_t *rd1 = &R##REG(R##DSTREG);						\
 	V_FLAG = 0;												\
 	NOTZ_FLAG = 1;											\
 	if (!(R##DSTREG & (1*N)))								\
@@ -513,10 +513,10 @@ static void divs_b(void) { DIVS(B,0x10); }
 		}													\
 		else												\
 		{													\
-			INT32 *rd2 = &R##REG(R##DSTREG+N);				\
-			UINT64 dividend  = COMBINE_U64_U32_U32(*rd1, *rd2);	\
-			UINT64 quotient  = DIV_U64_U64_U32(dividend, *rs);	\
-			UINT32 remainder = MOD_U32_U64_U32(dividend, *rs); 	\
+			int32_t *rd2 = &R##REG(R##DSTREG+N);				\
+			uint64_t dividend  = COMBINE_U64_U32_U32(*rd1, *rd2);	\
+			uint64_t quotient  = DIV_U64_U64_U32(dividend, *rs);	\
+			uint32_t remainder = MOD_U32_U64_U32(dividend, *rs); 	\
 			if (HI32_U32_U64(quotient) != 0)				\
 			{												\
 				V_FLAG = 1;									\
@@ -537,7 +537,7 @@ static void divs_b(void) { DIVS(B,0x10); }
 		}													\
 		else												\
 		{													\
-			*rd1 = (UINT32)*rd1 / (UINT32)*rs;			  	\
+			*rd1 = (uint32_t)*rd1 / (uint32_t)*rs;			  	\
 			SET_Z(*rd1);									\
 		}													\
 	}														\
@@ -555,8 +555,8 @@ static void eint(void)
 
 #define EXGF(F,R)			       		       			    	\
 {																\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	UINT32 temp = (FE##F##_FLAG ? 0x20 : 0) | FW(F);			\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	uint32_t temp = (FE##F##_FLAG ? 0x20 : 0) | FW(F);			\
 	FE##F##_FLAG = (*rd&0x20);									\
 	FW(F) = (*rd&0x1f);											\
 	SET_FW();													\
@@ -570,9 +570,9 @@ static void exgf1_b(void) { EXGF(1,B); }
 
 #define LMO(R)			       		       			    		\
 {																\
-	UINT32 res = 0;												\
-	UINT32 rs  = R##REG(R##SRCREG);								\
-	 INT32 *rd = &R##REG(R##DSTREG);							\
+	uint32_t res = 0;												\
+	uint32_t rs  = R##REG(R##SRCREG);								\
+	 int32_t *rd = &R##REG(R##DSTREG);							\
 	SET_Z(rs);													\
 	if (rs)														\
 	{															\
@@ -590,11 +590,11 @@ static void lmo_b(void) { LMO(B); }
 
 #define MMFM(R,N)			       		       			    	\
 {																\
-	INT32 i;													\
-	UINT16 l = (UINT16) PARAM_WORD();							\
+	int32_t i;													\
+	uint16_t l = (uint16_t) PARAM_WORD();							\
 	COUNT_CYCLES(3);											\
 	{															\
-		INT32 rd = R##DSTREG;									\
+		int32_t rd = R##DSTREG;									\
 		for (i = 15; i >= 0 ; i--)								\
 		{														\
 			if (l & 0x8000)										\
@@ -612,11 +612,11 @@ static void mmfm_b(void) { MMFM(B,0x10); }
 
 #define MMTM(R,N)			       		       			    	\
 {			  													\
-	UINT32 i;													\
-	UINT16 l = (UINT16) PARAM_WORD();							\
+	uint32_t i;													\
+	uint16_t l = (uint16_t) PARAM_WORD();							\
 	COUNT_CYCLES(2);											\
 	{															\
-		INT32 rd = R##DSTREG;									\
+		int32_t rd = R##DSTREG;									\
 		SET_N(R##REG(rd)^0x80000000);							\
 		for (i = 0; i  < 16; i++)								\
 		{														\
@@ -635,8 +635,8 @@ static void mmtm_b(void) { MMTM(B,0x10); }
 
 #define MODS(R)			       		       			    		\
 {				  												\
-	INT32 *rs = &R##REG(R##SRCREG);								\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rs = &R##REG(R##SRCREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	V_FLAG = (*rs == 0);										\
 	if (!V_FLAG)												\
 	{															\
@@ -650,12 +650,12 @@ static void mods_b(void) { MODS(B); }
 
 #define MODU(R)			       		       			    		\
 {				  												\
-	INT32 *rs = &R##REG(R##SRCREG);								\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rs = &R##REG(R##SRCREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	V_FLAG = (*rs == 0);										\
 	if (!V_FLAG)												\
 	{															\
-		*rd = (UINT32)*rd % (UINT32)*rs;						\
+		*rd = (uint32_t)*rd % (uint32_t)*rs;						\
 		SET_Z(*rd);												\
 	}															\
 	COUNT_CYCLES(35);											\
@@ -665,14 +665,14 @@ static void modu_b(void) { MODU(B); }
 
 #define MPYS(R,N)			       		       			    	\
 {																\
-	INT32 *rd1 = &R##REG(R##DSTREG);							\
+	int32_t *rd1 = &R##REG(R##DSTREG);							\
 																\
-	INT32 m1 = R##REG(R##SRCREG);								\
+	int32_t m1 = R##REG(R##SRCREG);								\
 	SEXTEND(m1, FW_INC(1));										\
 																\
 	if (!(R##DSTREG & (1*N)))									\
 	{															\
-		INT64 product    = MUL_64_32_32(m1, *rd1);				\
+		int64_t product    = MUL_64_32_32(m1, *rd1);				\
 		*rd1             = HI32_32_64(product);					\
 		R##REG(R##DSTREG+N) = LO32_32_64(product);				\
 		SET_Z(product!=0);										\
@@ -680,7 +680,7 @@ static void modu_b(void) { MODU(B); }
 	}															\
 	else														\
 	{															\
-		INT64 product    = MUL_64_32_32(m1, *rd1);				\
+		int64_t product    = MUL_64_32_32(m1, *rd1);				\
 		*rd1             = LO32_32_64(product);					\
 		SET_Z(product!=0);										\
 		SET_N(HI32_32_64(product));								\
@@ -692,21 +692,21 @@ static void mpys_b(void) { MPYS(B,0x10); }
 
 #define MPYU(R,N)			       		       			    	\
 {				  												\
-	INT32 *rd1 = &R##REG(R##DSTREG);							\
+	int32_t *rd1 = &R##REG(R##DSTREG);							\
 																\
-	UINT32 m1 = R##REG(R##SRCREG);								\
+	uint32_t m1 = R##REG(R##SRCREG);								\
 	ZEXTEND(m1, FW_INC(1));										\
 																\
 	if (!(R##DSTREG & (1*N)))									\
 	{															\
-		UINT64 product   = MUL_U64_U32_U32(m1, *rd1);			\
+		uint64_t product   = MUL_U64_U32_U32(m1, *rd1);			\
 		*rd1             = HI32_U32_U64(product);				\
 		R##REG(R##DSTREG+N) = LO32_U32_U64(product);			\
 		SET_Z(product!=0);										\
 	}															\
 	else														\
 	{															\
-		UINT64 product   = MUL_U64_U32_U32(m1, *rd1);			\
+		uint64_t product   = MUL_U64_U32_U32(m1, *rd1);			\
 		*rd1             = LO32_U32_U64(product);				\
 		SET_Z(product!=0);										\
 	}															\
@@ -717,8 +717,8 @@ static void mpyu_b(void) { MPYU(B,0x10); }
 
 #define NEG(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 r = 0 - *rd;											\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t r = 0 - *rd;											\
 	SET_NZCV_SUB(0,*rd,r);										\
 	*rd = r;													\
 	COUNT_CYCLES(1);											\
@@ -728,9 +728,9 @@ static void neg_b(void) { NEG(B); }
 
 #define NEGB(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 t = *rd + (C_FLAG?1:0);								\
-	INT32 r = 0 - t;											\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t t = *rd + (C_FLAG?1:0);								\
+	int32_t r = 0 - t;											\
 	SET_NZCV_SUB(0,t,r);										\
 	*rd = r;													\
 	COUNT_CYCLES(1);											\
@@ -745,7 +745,7 @@ static void nop(void)
 
 #define NOT(R)			       		       			    		\
 {								 								\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd = ~(*rd);												\
 	SET_Z(*rd);													\
 	COUNT_CYCLES(1);											\
@@ -755,7 +755,7 @@ static void not_b(void) { NOT(B); }
 
 #define OR(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd |= R##REG(R##SRCREG);									\
 	SET_Z(*rd);													\
 	COUNT_CYCLES(1);											\
@@ -765,7 +765,7 @@ static void or_b(void) { OR(B); }
 
 #define ORI(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd |= PARAM_LONG();										\
 	SET_Z(*rd);													\
 	COUNT_CYCLES(3);											\
@@ -791,7 +791,7 @@ static void setf1(void) { SETF(1); }
 
 #define SEXT(F,R)												\
 {							   									\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	SEXTEND(*rd,FW_INC(F));										\
 	SET_NZ(*rd);												\
 	COUNT_CYCLES(3);											\
@@ -803,15 +803,15 @@ static void sext1_b(void) { SEXT(1,B); }
 
 #define RL(R,K)			       		       			    		\
 {			 													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 res = *rd;											\
-	INT32 k = (K);												\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t res = *rd;											\
+	int32_t k = (K);												\
 	if (k)														\
 	{															\
 		res<<=(k-1);											\
 		C_FLAG = SIGN(res);										\
 		res<<=1;												\
-		res |= (((UINT32)*rd)>>((-k)&0x1f));					\
+		res |= (((uint32_t)*rd)>>((-k)&0x1f));					\
 		*rd = res;												\
 	}															\
 	else														\
@@ -828,13 +828,13 @@ static void rl_r_b(void) { RL(B,BREG(BSRCREG)&0x1f); }
 
 #define SLA(R,K)												\
 {				 												\
-	 INT32 *rd = &R##REG(R##DSTREG);							\
-	UINT32 res = *rd;											\
-	 INT32 k = K;												\
+	 int32_t *rd = &R##REG(R##DSTREG);							\
+	uint32_t res = *rd;											\
+	 int32_t k = K;												\
 	if (k)														\
 	{															\
-		UINT32 mask = (0xffffffff<<(31-k))&0x7fffffff;			\
-		UINT32 res2 = SIGN(res) ? res^mask : res;				\
+		uint32_t mask = (0xffffffff<<(31-k))&0x7fffffff;			\
+		uint32_t res2 = SIGN(res) ? res^mask : res;				\
 		V_FLAG = (res2 & mask);									\
 																\
 		res<<=(k-1);											\
@@ -856,9 +856,9 @@ static void sla_r_b(void) { SLA(B,BREG(BSRCREG)&0x1f); }
 
 #define SLL(R,K)												\
 {			 													\
-	 INT32 *rd = &R##REG(R##DSTREG);							\
-	UINT32 res = *rd;											\
-	 INT32 k = K;												\
+	 int32_t *rd = &R##REG(R##DSTREG);							\
+	uint32_t res = *rd;											\
+	 int32_t k = K;												\
 	if (k)														\
 	{															\
 		res<<=(k-1);											\
@@ -880,9 +880,9 @@ static void sll_r_b(void) { SLL(B,BREG(BSRCREG)&0x1f); }
 
 #define SRA(R,K)												\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 res = *rd;											\
-	INT32 k = (-(K)) & 0x1f;									\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t res = *rd;											\
+	int32_t k = (-(K)) & 0x1f;									\
 	if (k)														\
 	{															\
 		res>>=(k-1);											\
@@ -904,9 +904,9 @@ static void sra_r_b(void) { SRA(B,BREG(BSRCREG)); }
 
 #define SRL(R,K)												\
 {			  													\
-	 INT32 *rd = &R##REG(R##DSTREG);							\
-	UINT32 res = *rd;											\
-	 INT32 k = (-(K)) & 0x1f;									\
+	 int32_t *rd = &R##REG(R##DSTREG);							\
+	uint32_t res = *rd;											\
+	 int32_t k = (-(K)) & 0x1f;									\
 	if (k)														\
 	{															\
 		res>>=(k-1);											\
@@ -928,9 +928,9 @@ static void srl_r_b(void) { SRL(B,BREG(BSRCREG)); }
 
 #define SUB(R)			       		       			    		\
 {			  													\
-	INT32 *rs = &R##REG(R##SRCREG);								\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 r = *rd - *rs;										\
+	int32_t *rs = &R##REG(R##SRCREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t r = *rd - *rs;										\
 	SET_NZCV_SUB(*rd,*rs,r);									\
 	*rd = r;													\
 	COUNT_CYCLES(1);											\
@@ -940,9 +940,9 @@ static void sub_b(void) { SUB(B); }
 
 #define SUBB(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 t = R##REG(R##SRCREG);								\
-	INT32 r = *rd - t - (C_FLAG?1:0);							\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t t = R##REG(R##SRCREG);								\
+	int32_t r = *rd - t - (C_FLAG?1:0);							\
 	SET_NZCV_SUB(*rd,t,r);										\
 	*rd = r;													\
 	COUNT_CYCLES(1);											\
@@ -952,9 +952,9 @@ static void subb_b(void) { SUBB(B); }
 
 #define SUBI_W(R)			       		       			    	\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 r;													\
-	INT32 t = ~PARAM_WORD();									\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t r;													\
+	int32_t t = ~PARAM_WORD();									\
 	r = *rd - t;												\
 	SET_NZCV_SUB(*rd,t,r);										\
 	*rd = r;													\
@@ -965,9 +965,9 @@ static void subi_w_b(void) { SUBI_W(B); }
 
 #define SUBI_L(R)			       		       			    	\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 t = ~PARAM_LONG();									\
-	INT32 r = *rd - t;											\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t t = ~PARAM_LONG();									\
+	int32_t r = *rd - t;											\
 	SET_NZCV_SUB(*rd,t,r);										\
 	*rd = r;													\
 	COUNT_CYCLES(3);											\
@@ -977,9 +977,9 @@ static void subi_l_b(void) { SUBI_L(B); }
 
 #define SUBK(R)			       		       			    		\
 {			  													\
-	INT32 r;													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 t = PARAM_K; if (!t) t = 32;							\
+	int32_t r;													\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t t = PARAM_K; if (!t) t = 32;							\
 	r = *rd - t;												\
 	SET_NZCV_SUB(*rd,t,r);										\
 	*rd = r;													\
@@ -990,7 +990,7 @@ static void subk_b(void) { SUBK(B); }
 
 #define XOR(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd ^= R##REG(R##SRCREG);									\
 	SET_Z(*rd);													\
 	COUNT_CYCLES(1);											\
@@ -1000,7 +1000,7 @@ static void xor_b(void) { XOR(B); }
 
 #define XORI(R)			       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd ^= PARAM_LONG();										\
 	SET_Z(*rd);													\
 	COUNT_CYCLES(3);											\
@@ -1010,7 +1010,7 @@ static void xori_b(void) { XORI(B); }
 
 #define ZEXT(F,R)												\
 {																\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	ZEXTEND(*rd,FW_INC(F));										\
 	SET_Z(*rd);													\
 	COUNT_CYCLES(1);											\
@@ -1028,7 +1028,7 @@ static void zext1_b(void) { ZEXT(1,B); }
 
 #define MOVI_W(R)		       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd=PARAM_WORD();											\
 	SET_NZ(*rd);												\
 	CLR_V;														\
@@ -1039,7 +1039,7 @@ static void movi_w_b(void) { MOVI_W(B); }
 
 #define MOVI_L(R)		       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd=PARAM_LONG();											\
 	SET_NZ(*rd);												\
 	CLR_V;														\
@@ -1050,7 +1050,7 @@ static void movi_l_b(void) { MOVI_L(B); }
 
 #define MOVK(R)		       		       			    			\
 {																\
-	INT32 k = PARAM_K; if (!k) k = 32;							\
+	int32_t k = PARAM_K; if (!k) k = 32;							\
 	R##REG(R##DSTREG) = k;										\
 	COUNT_CYCLES(1);											\
 }
@@ -1067,8 +1067,8 @@ static void movb_rn_b(void) { MOVB_RN(B); }
 
 #define MOVB_NR(R)		       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	*rd = (INT8)RBYTE(R##REG(R##SRCREG));						\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	*rd = (int8_t)RBYTE(R##REG(R##SRCREG));						\
 	SET_NZ(*rd);												\
 	CLR_V;														\
 	COUNT_CYCLES(3);											\
@@ -1078,7 +1078,7 @@ static void movb_nr_b(void) { MOVB_NR(B); }
 
 #define MOVB_NN(R)												\
 {																\
-	WBYTE(R##REG(R##DSTREG),(UINT32)(UINT8)RBYTE(R##REG(R##SRCREG)));	\
+	WBYTE(R##REG(R##DSTREG),(uint32_t)(uint8_t)RBYTE(R##REG(R##SRCREG)));	\
 	COUNT_CYCLES(3);											\
 }
 static void movb_nn_a(void) { MOVB_NN(A); }
@@ -1086,7 +1086,7 @@ static void movb_nn_b(void) { MOVB_NN(B); }
 
 #define MOVB_R_NO(R)	       		       			    		\
 {							  									\
-	INT32 o = PARAM_WORD();										\
+	int32_t o = PARAM_WORD();										\
 	WBYTE(R##REG(R##DSTREG)+o,R##REG(R##SRCREG));				\
 	COUNT_CYCLES(3);											\
 }
@@ -1095,9 +1095,9 @@ static void movb_r_no_b(void) { MOVB_R_NO(B); }
 
 #define MOVB_NO_R(R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 o = PARAM_WORD();										\
-	*rd = (INT8)RBYTE(R##REG(R##SRCREG)+o);						\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t o = PARAM_WORD();										\
+	*rd = (int8_t)RBYTE(R##REG(R##SRCREG)+o);						\
 	SET_NZ(*rd);												\
 	CLR_V;														\
 	COUNT_CYCLES(5);											\
@@ -1107,9 +1107,9 @@ static void movb_no_r_b(void) { MOVB_NO_R(B); }
 
 #define MOVB_NO_NO(R)	       		       			    		\
 {																\
-	INT32 o1 = PARAM_WORD();									\
-	INT32 o2 = PARAM_WORD();									\
-	WBYTE(R##REG(R##DSTREG)+o2,(UINT32)(UINT8)RBYTE(R##REG(R##SRCREG)+o1));	\
+	int32_t o1 = PARAM_WORD();									\
+	int32_t o2 = PARAM_WORD();									\
+	WBYTE(R##REG(R##DSTREG)+o2,(uint32_t)(uint8_t)RBYTE(R##REG(R##SRCREG)+o1));	\
 	COUNT_CYCLES(5);											\
 }
 static void movb_no_no_a(void) { MOVB_NO_NO(A); }
@@ -1125,8 +1125,8 @@ static void movb_ra_b(void) { MOVB_RA(B); }
 
 #define MOVB_AR(R)	       		       			    			\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	*rd = (INT8)RBYTE(PARAM_LONG());							\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	*rd = (int8_t)RBYTE(PARAM_LONG());							\
 	SET_NZ(*rd);												\
 	CLR_V;														\
 	COUNT_CYCLES(5);											\
@@ -1136,14 +1136,14 @@ static void movb_ar_b(void) { MOVB_AR(B); }
 
 static void movb_aa(void)
 {
-	UINT32 bitaddrs=PARAM_LONG();
-	WBYTE(PARAM_LONG(),(UINT32)(UINT8)RBYTE(bitaddrs));
+	uint32_t bitaddrs=PARAM_LONG();
+	WBYTE(PARAM_LONG(),(uint32_t)(uint8_t)RBYTE(bitaddrs));
 	COUNT_CYCLES(6);
 }
 
 #define MOVE_RR(RS,RD)	       		       			    		\
 {																\
-	INT32 *rd = &RD##REG(RD##DSTREG);							\
+	int32_t *rd = &RD##REG(RD##DSTREG);							\
 	*rd = RS##REG(RS##SRCREG);									\
 	SET_NZ(*rd);												\
 	CLR_V;														\
@@ -1166,7 +1166,7 @@ static void move1_rn_b (void) { MOVE_RN(1,B); }
 
 #define MOVE_R_DN(F,R)	       		       			    		\
 {																\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd-=FW_INC(F);												\
 	WFIELD##F(*rd,R##REG(R##SRCREG));							\
 	COUNT_CYCLES(2);											\
@@ -1178,7 +1178,7 @@ static void move1_r_dn_b (void) { MOVE_R_DN(1,B); }
 
 #define MOVE_R_NI(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
     WFIELD##F(*rd,R##REG(R##SRCREG));							\
     *rd+=FW_INC(F);												\
 	COUNT_CYCLES(1);											\
@@ -1190,7 +1190,7 @@ static void move1_r_ni_b (void) { MOVE_R_NI(1,B); }
 
 #define MOVE_NR(F,R)	       		       			    		\
 {																\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd = RFIELD##F(R##REG(R##SRCREG));							\
 	SET_NZ(*rd);												\
 	CLR_V;														\
@@ -1203,8 +1203,8 @@ static void move1_nr_b (void) { MOVE_NR(1,B); }
 
 #define MOVE_DN_R(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 *rs = &R##REG(R##SRCREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t *rs = &R##REG(R##SRCREG);								\
 	*rs-=FW_INC(F);												\
 	*rd = RFIELD##F(*rs);										\
 	SET_NZ(*rd);												\
@@ -1218,9 +1218,9 @@ static void move1_dn_r_b (void) { MOVE_DN_R(1,B); }
 
 #define MOVE_NI_R(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 *rs = &R##REG(R##SRCREG);								\
-	INT32 data = RFIELD##F(*rs);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t *rs = &R##REG(R##SRCREG);								\
+	int32_t data = RFIELD##F(*rs);								\
 	*rs+=FW_INC(F);												\
 	*rd = data;													\
 	SET_NZ(*rd);												\
@@ -1244,9 +1244,9 @@ static void move1_nn_b (void) { MOVE_NN(1,B); }
 
 #define MOVE_DN_DN(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 *rs = &R##REG(R##SRCREG);								\
-	INT32 data;													\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t *rs = &R##REG(R##SRCREG);								\
+	int32_t data;													\
 	*rs-=FW_INC(F);												\
 	data = RFIELD##F(*rs);										\
 	*rd-=FW_INC(F);												\
@@ -1260,9 +1260,9 @@ static void move1_dn_dn_b (void) { MOVE_DN_DN(1,B); }
 
 #define MOVE_NI_NI(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 *rs = &R##REG(R##SRCREG);								\
-	INT32 data = RFIELD##F(*rs);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t *rs = &R##REG(R##SRCREG);								\
+	int32_t data = RFIELD##F(*rs);								\
 	*rs+=FW_INC(F);												\
 	WFIELD##F(*rd,data);										\
 	*rd+=FW_INC(F);												\
@@ -1275,7 +1275,7 @@ static void move1_ni_ni_b (void) { MOVE_NI_NI(1,B); }
 
 #define MOVE_R_NO(F,R)	       		       			    		\
 {								  								\
-	INT32 o = PARAM_WORD();										\
+	int32_t o = PARAM_WORD();										\
 	WFIELD##F(R##REG(R##DSTREG)+o,R##REG(R##SRCREG));			\
 	COUNT_CYCLES(3);											\
 }
@@ -1286,8 +1286,8 @@ static void move1_r_no_b (void) { MOVE_R_NO(1,B); }
 
 #define MOVE_NO_R(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 o = PARAM_WORD();										\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t o = PARAM_WORD();										\
 	*rd = RFIELD##F(R##REG(R##SRCREG)+o);						\
 	SET_NZ(*rd);												\
 	CLR_V;														\
@@ -1300,9 +1300,9 @@ static void move1_no_r_b (void) { MOVE_NO_R(1,B); }
 
 #define MOVE_NO_NI(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 o = PARAM_WORD();										\
-	INT32 data = RFIELD##F(R##REG(R##SRCREG)+o);				\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t o = PARAM_WORD();										\
+	int32_t data = RFIELD##F(R##REG(R##SRCREG)+o);				\
 	WFIELD##F(*rd,data);										\
 	*rd+=FW_INC(F);												\
 	COUNT_CYCLES(5);											\
@@ -1314,9 +1314,9 @@ static void move1_no_ni_b (void) { MOVE_NO_NI(1,B); }
 
 #define MOVE_NO_NO(F,R)	       		       			    		\
 {				 												\
-	INT32 o1 = PARAM_WORD();									\
-	INT32 o2 = PARAM_WORD();									\
-	INT32 data = RFIELD##F(R##REG(R##SRCREG)+o1);				\
+	int32_t o1 = PARAM_WORD();									\
+	int32_t o2 = PARAM_WORD();									\
+	int32_t data = RFIELD##F(R##REG(R##SRCREG)+o1);				\
 	WFIELD##F(R##REG(R##DSTREG)+o2,data);						\
 	COUNT_CYCLES(5);											\
 }
@@ -1337,7 +1337,7 @@ static void move1_ra_b (void) { MOVE_RA(1,B); }
 
 #define MOVE_AR(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
 	*rd = RFIELD##F(PARAM_LONG());								\
 	SET_NZ(*rd);												\
 	CLR_V;														\
@@ -1350,7 +1350,7 @@ static void move1_ar_b (void) { MOVE_AR(1,B); }
 
 #define MOVE_A_NI(F,R)	       		       			    		\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
+	int32_t *rd = &R##REG(R##DSTREG);								\
     WFIELD##F(*rd,RFIELD##F(PARAM_LONG()));						\
     *rd+=FW_INC(F);												\
 	COUNT_CYCLES(5);											\
@@ -1362,7 +1362,7 @@ static void move1_a_ni_b (void) { MOVE_A_NI(1,B); }
 
 #define MOVE_AA(F)		       		       			    		\
 {																\
-	UINT32 bitaddrs=PARAM_LONG();								\
+	uint32_t bitaddrs=PARAM_LONG();								\
 	WFIELD##F(PARAM_LONG(),RFIELD##F(bitaddrs));				\
 	COUNT_CYCLES(7);											\
 }
@@ -1500,8 +1500,8 @@ static void emu(void)
 
 #define EXGPC(R)												\
 {			  													\
-	INT32 *rd = &R##REG(R##DSTREG);								\
-	INT32 temppc = *rd;											\
+	int32_t *rd = &R##REG(R##DSTREG);								\
+	int32_t temppc = *rd;											\
 	*rd = PC;													\
 	PC = temppc;												\
 	CORRECT_ODD_PC("EXGPC");									\
@@ -1819,7 +1819,7 @@ static void putst_b (void) { PUTST(B); }
 
 static void reti(void)
 {
-	INT32 st = POP();
+	int32_t st = POP();
 	PC = POP();
 	CORRECT_ODD_PC("RETI");
 	change_pc29lew(TOBYTE(PC));
@@ -1829,7 +1829,7 @@ static void reti(void)
 
 static void rets(void)
 {
-	UINT32 offs;
+	uint32_t offs;
 	PC = POP();
 	CORRECT_ODD_PC("RETS");
 	change_pc29lew(TOBYTE(PC));
@@ -1851,7 +1851,7 @@ static void rev_b (void) { REV(B); }
 
 static void trap(void)
 {
-	UINT32 t = PARAM_N;
+	uint32_t t = PARAM_N;
 	if (t)
 	{
 		PUSH(PC);
@@ -1982,13 +1982,13 @@ New 34020 ops:
 
 #define ADD_XYI(R)								\
 {												\
-	UINT32 a = PARAM_LONG();					\
+	uint32_t a = PARAM_LONG();					\
 	XY *b = &R##REG_XY(R##DSTREG);				\
 	XY res;										\
-	res.x = b->x + (INT16)(a & 0xffff);			\
+	res.x = b->x + (int16_t)(a & 0xffff);			\
 	   N_FLAG = !res.x;							\
 	   V_FLAG = res.x & 0x8000;					\
-	res.y = b->y + ((INT32)a >> 16);			\
+	res.y = b->y + ((int32_t)a >> 16);			\
 	NOTZ_FLAG = res.y;							\
 	   C_FLAG = res.y & 0x8000;					\
   	*b = res;									\
@@ -2154,9 +2154,9 @@ static void cmovmc_b(void)
 
 #define CMPK(R)				       		       			    \
 {															\
-	INT32 r;												\
-	INT32 *rd = &R##REG(R##DSTREG);							\
-	INT32 t = PARAM_K; if (!t) t = 32;						\
+	int32_t r;												\
+	int32_t *rd = &R##REG(R##DSTREG);							\
+	int32_t t = PARAM_K; if (!t) t = 32;						\
 	r = *rd - t;											\
 	SET_NZCV_SUB(*rd,t,r);									\
 	COUNT_CYCLES(1);										\
@@ -2287,9 +2287,9 @@ static void retm(void)
 
 #define RMO(R)			       		       			    		\
 {																\
-	UINT32 res = 0;												\
-	UINT32 rs  = R##REG(R##SRCREG);								\
-	 INT32 *rd = &R##REG(R##DSTREG);							\
+	uint32_t res = 0;												\
+	uint32_t rs  = R##REG(R##SRCREG);								\
+	 int32_t *rd = &R##REG(R##DSTREG);							\
 	SET_Z(rs);													\
 	if (rs)														\
 	{															\
@@ -2308,7 +2308,7 @@ static void rmo_b(void) { RMO(B); }
 
 #define RPIX(R)									\
 {												\
-	UINT32 v = R##REG(R##DSTREG);				\
+	uint32_t v = R##REG(R##DSTREG);				\
 	switch (state.pixelshift)					\
 	{											\
 		case 1:									\

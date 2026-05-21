@@ -147,28 +147,28 @@
 /* get data from the opcode words */
 /* o is the opcode word offset	  */
 /* s is a nibble shift factor	  */
-#define GET_BIT(o)      UINT16 bit = 1 << (Z.op[o] & 15)
-#define GET_CCC(o,s)	UINT8 cc = (Z.op[o] >> (s)) & 15
+#define GET_BIT(o)      uint16_t bit = 1 << (Z.op[o] & 15)
+#define GET_CCC(o,s)	uint8_t cc = (Z.op[o] >> (s)) & 15
 
-#define GET_DST(o,s)	UINT8 dst = (Z.op[o] >> (s)) & 15
-#define GET_SRC(o,s)	UINT8 src = (Z.op[o] >> (s)) & 15
-#define GET_IDX(o,s)	UINT8 idx = (Z.op[o] >> (s)) & 15
-#define GET_CNT(o,s)	INT8 cnt = (Z.op[o] >> (s)) & 15
-#define GET_IMM4(o,s)	UINT8 imm4 = (Z.op[o] >> (s)) & 15
+#define GET_DST(o,s)	uint8_t dst = (Z.op[o] >> (s)) & 15
+#define GET_SRC(o,s)	uint8_t src = (Z.op[o] >> (s)) & 15
+#define GET_IDX(o,s)	uint8_t idx = (Z.op[o] >> (s)) & 15
+#define GET_CNT(o,s)	int8_t cnt = (Z.op[o] >> (s)) & 15
+#define GET_IMM4(o,s)	uint8_t imm4 = (Z.op[o] >> (s)) & 15
 
-#define GET_I4M1(o,s)	UINT8 i4p1 = ((Z.op[o] >> (s)) & 15) + 1
-#define GET_IMM1(o,s)	UINT8 imm1 = (Z.op[o] >> (s)) & 2
-#define GET_IMM2(o,s)	UINT8 imm2 = (Z.op[o] >> (s)) & 3
-#define GET_IMM3(o,s)	UINT8 imm3 = (Z.op[o] >> (s)) & 7
+#define GET_I4M1(o,s)	uint8_t i4p1 = ((Z.op[o] >> (s)) & 15) + 1
+#define GET_IMM1(o,s)	uint8_t imm1 = (Z.op[o] >> (s)) & 2
+#define GET_IMM2(o,s)	uint8_t imm2 = (Z.op[o] >> (s)) & 3
+#define GET_IMM3(o,s)	uint8_t imm3 = (Z.op[o] >> (s)) & 7
 
-#define GET_IMM8(o) 	UINT8 imm8 = (UINT8)Z.op[o]
+#define GET_IMM8(o) 	uint8_t imm8 = (uint8_t)Z.op[o]
 
-#define GET_IMM16(o)	UINT16 imm16 = Z.op[o]
-#define GET_IMM32		UINT32 imm32 = Z.op[2] + (Z.op[1] << 16)
-#define GET_DSP7		UINT8 dsp7 = Z.op[0] & 127
-#define GET_DSP8		INT8 dsp8 = (INT8)Z.op[0]
-#define GET_DSP16		UINT16 dsp16 = PC + (INT16)Z.op[1]
-#define GET_ADDR(o) 	UINT16 addr = (UINT16)Z.op[o]
+#define GET_IMM16(o)	uint16_t imm16 = Z.op[o]
+#define GET_IMM32		uint32_t imm32 = Z.op[2] + (Z.op[1] << 16)
+#define GET_DSP7		uint8_t dsp7 = Z.op[0] & 127
+#define GET_DSP8		int8_t dsp8 = (int8_t)Z.op[0]
+#define GET_DSP16		uint16_t dsp16 = PC + (int16_t)Z.op[1]
+#define GET_ADDR(o) 	uint16_t addr = (uint16_t)Z.op[o]
 
 /* structure for the opcode definition table */
 typedef struct {

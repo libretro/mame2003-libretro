@@ -84,27 +84,27 @@
 typedef struct
 {
 	/******************** CPU Internal Registers *******************/
-	UINT16	PC;
-	UINT16	PREVPC;		/* previous program counter */
-	UINT8	W;
-	UINT8	OPTION;
-	UINT16	CONFIG;
-	UINT8	ALU;
-	UINT16	WDT;
-	UINT8	TRISA;
-	UINT8	TRISB;
-	UINT8	TRISC;
-	UINT16	STACK[2];
-	UINT16	prescaler;	/* Note: this is really an 8-bit register */
+	uint16_t	PC;
+	uint16_t	PREVPC;		/* previous program counter */
+	uint8_t	W;
+	uint8_t	OPTION;
+	uint16_t	CONFIG;
+	uint8_t	ALU;
+	uint16_t	WDT;
+	uint8_t	TRISA;
+	uint8_t	TRISB;
+	uint8_t	TRISC;
+	uint16_t	STACK[2];
+	uint16_t	prescaler;	/* Note: this is really an 8-bit register */
 	PAIR	opcode;
-	UINT8	*picRAM;
+	uint8_t	*picRAM;
 } pic16C5x_Regs;
 
 static pic16C5x_Regs R;
-static UINT16 temp_config;
-static UINT8  old_T0;
-static INT8   old_data;
-static UINT8 picRAMmask;
+static uint16_t temp_config;
+static uint8_t  old_T0;
+static int8_t   old_data;
+static uint8_t picRAMmask;
 static int inst_cycles;
 static int delay_timer;
 static int picmodel;
@@ -182,8 +182,8 @@ static unsigned int bit_clr[8] = { 0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7
 static unsigned int bit_set[8] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
 
-static INLINE void CLR(UINT16 flag) { R.STATUS &= ~flag; }
-static INLINE void SET(UINT16 flag) { R.STATUS |=  flag; }
+static INLINE void CLR(uint16_t flag) { R.STATUS &= ~flag; }
+static INLINE void SET(uint16_t flag) { R.STATUS |=  flag; }
 
 
 
@@ -195,7 +195,7 @@ static INLINE void CALCULATE_Z_FLAG(void)
 
 static INLINE void CALCULATE_ADD_CARRY(void)
 {
-	if ((UINT8)(old_data) > (UINT8)(R.ALU)) {
+	if ((uint8_t)(old_data) > (uint8_t)(R.ALU)) {
 		SET(C_FLAG);
 	}
 	else {
@@ -205,7 +205,7 @@ static INLINE void CALCULATE_ADD_CARRY(void)
 
 static INLINE void CALCULATE_ADD_DIGITCARRY(void)
 {
-	if (((UINT8)(old_data) & 0x0f) > ((UINT8)(R.ALU) & 0x0f)) {
+	if (((uint8_t)(old_data) & 0x0f) > ((uint8_t)(R.ALU) & 0x0f)) {
 		SET(DC_FLAG);
 	}
 	else {
@@ -215,7 +215,7 @@ static INLINE void CALCULATE_ADD_DIGITCARRY(void)
 
 static INLINE void CALCULATE_SUB_CARRY(void)
 {
-	if ((UINT8)(old_data) < (UINT8)(R.ALU)) {
+	if ((uint8_t)(old_data) < (uint8_t)(R.ALU)) {
 		CLR(C_FLAG);
 	}
 	else {
@@ -225,7 +225,7 @@ static INLINE void CALCULATE_SUB_CARRY(void)
 
 static INLINE void CALCULATE_SUB_DIGITCARRY(void)
 {
-	if (((UINT8)(old_data) & 0x0f) < ((UINT8)(R.ALU) & 0x0f)) {
+	if (((uint8_t)(old_data) & 0x0f) < ((uint8_t)(R.ALU) & 0x0f)) {
 		CLR(DC_FLAG);
 	}
 	else {
@@ -235,22 +235,22 @@ static INLINE void CALCULATE_SUB_DIGITCARRY(void)
 
 
 
-static INLINE UINT16 POP_STACK(void)
+static INLINE uint16_t POP_STACK(void)
 {
-	UINT16 data = R.STACK[1];
+	uint16_t data = R.STACK[1];
 	R.STACK[1] = R.STACK[0];
 	return (data & ADDR_MASK);
 }
-static INLINE void PUSH_STACK(UINT16 data)
+static INLINE void PUSH_STACK(uint16_t data)
 {
 	R.STACK[0] = R.STACK[1];
 	R.STACK[1] = (data & ADDR_MASK);
 }
 
 
-static INLINE UINT8 GET_REGFILE(offs_t addr)	/* Read from internal memory */
+static INLINE uint8_t GET_REGFILE(offs_t addr)	/* Read from internal memory */
 {
-	UINT8 data;
+	uint8_t data;
 
 	if ((picmodel == 0x16C57) || (picmodel == 0x16C58))
 	{
@@ -290,7 +290,7 @@ static INLINE UINT8 GET_REGFILE(offs_t addr)	/* Read from internal memory */
 	return data;
 }
 
-static INLINE void STORE_REGFILE(offs_t addr, UINT8 data)	/* Write to internal memory */
+static INLINE void STORE_REGFILE(offs_t addr, uint8_t data)	/* Write to internal memory */
 {
 	if ((picmodel == 0x16C57) || (picmodel == 0x16C58))
 	{
@@ -327,7 +327,7 @@ static INLINE void STORE_REGFILE(offs_t addr, UINT8 data)	/* Write to internal m
 }
 
 
-static INLINE void STORE_RESULT(offs_t addr, UINT8 data)
+static INLINE void STORE_RESULT(offs_t addr, uint8_t data)
 {
 	if (R.opcode.b.l & 0x20)
 	{
@@ -786,7 +786,7 @@ static void pic16C5x_update_watchdog(int counts)
 
 	if ((R.opcode.w.l != 3) && (R.opcode.w.l != 4))
 	{
-		UINT16 old_WDT = R.WDT;
+		uint16_t old_WDT = R.WDT;
 
 		R.WDT -= counts;
 
@@ -1025,21 +1025,21 @@ void pic16C5x_set_irq_callback(int (*callback)(int irqline))
  ****************************************************************************/
 
 #if (HAS_PIC16C55 || HAS_PIC16C57)
-static UINT8 pic16C5x_3p_reg_layout[] = {
+static uint8_t pic16C5x_3p_reg_layout[] = {
 	PIC16C5x_PC,  PIC16C5x_STK0, PIC16C5x_STK1, PIC16C5x_STR,  PIC16C5x_OPT,  -1,
 	PIC16C5x_W,   PIC16C5x_TMR0, PIC16C5x_PSCL, PIC16C5x_PRTA, PIC16C5x_PRTB, PIC16C5x_PRTC, -1,
 	PIC16C5x_ALU, PIC16C5x_WDT,  PIC16C5x_FSR,  PIC16C5x_TRSA, PIC16C5x_TRSB, PIC16C5x_TRSC, 0
 };
 #endif
 #if (HAS_PIC16C54 || HAS_PIC16C56 || HAS_PIC16C58)
-static UINT8 pic16C5x_2p_reg_layout[] = {
+static uint8_t pic16C5x_2p_reg_layout[] = {
 	PIC16C5x_PC,  PIC16C5x_STK0, PIC16C5x_STK1, PIC16C5x_STR,  PIC16C5x_OPT, -1,
 	PIC16C5x_W,   PIC16C5x_TMR0, PIC16C5x_PSCL, PIC16C5x_PRTA, PIC16C5x_PRTB, -1,
 	PIC16C5x_ALU, PIC16C5x_WDT,  PIC16C5x_FSR,  PIC16C5x_TRSA, PIC16C5x_TRSB, 0
 };
 #endif
 
-static UINT8 pic16C5x_win_layout[] = {
+static uint8_t pic16C5x_win_layout[] = {
 	28, 0,53, 3,	/* register window (top rows) */
 	 0, 0,27,22,	/* disassembler window (left colums) */
 	28, 4,53, 8,	/* memory #1 window (right, upper middle) */

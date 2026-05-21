@@ -38,7 +38,7 @@
  ***************************************************************/
 #define ANC 													\
 	P &= ~F_C;													\
-	A = (UINT8)(A & tmp);										\
+	A = (uint8_t)(A & tmp);										\
 	if (A & 0x80)												\
 		P |= F_C;												\
 	SET_NZ(A)
@@ -118,7 +118,7 @@
 	X &= A; 													\
 	if (X >= tmp)												\
 		P |= F_C;												\
-	X = (UINT8)(X - tmp);										\
+	X = (uint8_t)(X - tmp);										\
 	SET_NZ(X)
 
 /* 6510 ********************************************************
@@ -127,18 +127,18 @@
  * between opcode read and operand read
  ***************************************************************/
 #define AXA 													\
-	A = (UINT8)( (A|0xee)& X & tmp);							\
+	A = (uint8_t)( (A|0xee)& X & tmp);							\
 	SET_NZ(A)
 
 /* 6510 ********************************************************
  *	DCP decrement data and compare
  ***************************************************************/
 #define DCP 													\
-	tmp = (UINT8)(tmp-1); 										\
+	tmp = (uint8_t)(tmp-1); 										\
 	P &= ~F_C;													\
 	if (A >= tmp)												\
 		P |= F_C;												\
-	SET_NZ((UINT8)(A - tmp))
+	SET_NZ((uint8_t)(A - tmp))
 
 /* 6502 ********************************************************
  *	DOP double no operation
@@ -150,21 +150,21 @@
  *	ISB increment and subtract with carry
  ***************************************************************/
 #define ISB 													\
-	tmp = (UINT8)(tmp+1); 										\
+	tmp = (uint8_t)(tmp+1); 										\
 	SBC
 
 /* 6510 ********************************************************
  *	LAX load accumulator and index X
  ***************************************************************/
 #define LAX 													\
-	A = X = (UINT8)tmp; 										\
+	A = X = (uint8_t)tmp; 										\
 	SET_NZ(A)
 
 /* 6510 ********************************************************
  *	OAL load accumulator and index X
  ***************************************************************/
 #define OAL 													\
-	A = X = (UINT8)((A|0xee)&tmp);								\
+	A = X = (uint8_t)((A|0xee)&tmp);								\
 	SET_NZ(A)
 
 /* 6510 ********************************************************
@@ -174,7 +174,7 @@
 #define RLA 													\
 	tmp = (tmp << 1) | (P & F_C);								\
 	P = (P & ~F_C) | ((tmp >> 8) & F_C);						\
-	tmp = (UINT8)tmp;											\
+	tmp = (uint8_t)tmp;											\
 	A &= tmp;													\
 	SET_NZ(A)
 
@@ -185,7 +185,7 @@
 #define RRA 													\
 	tmp |= (P & F_C) << 8;										\
 	P = (P & ~F_C) | (tmp & F_C);								\
-	tmp = (UINT8)(tmp >> 1);									\
+	tmp = (uint8_t)(tmp >> 1);									\
 	ADC
 
 /* 6510 ********************************************************
@@ -199,7 +199,7 @@
  ***************************************************************/
 #define SLO 													\
 	P = (P & ~F_C) | ((tmp >> 7) & F_C);						\
-	tmp = (UINT8)(tmp << 1);									\
+	tmp = (uint8_t)(tmp << 1);									\
 	A |= tmp;													\
 	SET_NZ(A)
 
@@ -209,7 +209,7 @@
  ***************************************************************/
 #define SRE 													\
 	P = (P & ~F_C) | (tmp & F_C);								\
-	tmp = (UINT8)tmp >> 1;										\
+	tmp = (uint8_t)tmp >> 1;										\
 	A ^= tmp;													\
 	SET_NZ(A)
 
@@ -229,7 +229,7 @@
     tmp = S & (EAH+1)
 #if 0
 	tmp = S = A & X;											\
-	tmp &= (UINT8)(cpu_readop_arg((PCW + 1) & 0xffff) + 1)
+	tmp &= (uint8_t)(cpu_readop_arg((PCW + 1) & 0xffff) + 1)
 #endif
 
 /* 6510 ********************************************************

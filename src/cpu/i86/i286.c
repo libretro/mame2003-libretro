@@ -23,7 +23,7 @@
 #include "i286intf.h"
 
 
-static UINT8 i286_reg_layout[] = {
+static uint8_t i286_reg_layout[] = {
 	I286_FLAGS,
 	I286_MSW,
 	I286_TR,
@@ -64,7 +64,7 @@ static UINT8 i286_reg_layout[] = {
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 i286_win_layout[] = {
+static uint8_t i286_win_layout[] = {
      0, 0,80, 6,    /* register window (top rows) */
 	 0, 7,40,15,	/* disassembler window (left colums) */
 	41, 7,39, 7,	/* memory #1 window (right, upper middle) */
@@ -81,39 +81,39 @@ static UINT8 i286_win_layout[] = {
 /* I86 registers */
 typedef union
 {                   /* eight general registers */
-    UINT16 w[8];    /* viewed as 16 bits registers */
-    UINT8  b[16];   /* or as 8 bit registers */
+    uint16_t w[8];    /* viewed as 16 bits registers */
+    uint8_t  b[16];   /* or as 8 bit registers */
 } i286basicregs;
 
 typedef struct
 {
     i286basicregs regs;
 	int 	amask;			/* address mask */
-    UINT32  pc;
-    UINT32  prevpc;
-	UINT16	flags;
-	UINT16	msw;
-	UINT32	base[4];
-	UINT16	sregs[4];
-	UINT16	limit[4];
-	UINT8 rights[4];
+    uint32_t  pc;
+    uint32_t  prevpc;
+	uint16_t	flags;
+	uint16_t	msw;
+	uint32_t	base[4];
+	uint16_t	sregs[4];
+	uint16_t	limit[4];
+	uint8_t rights[4];
 	struct {
-		UINT32 base;
-		UINT16 limit;
+		uint32_t base;
+		uint16_t limit;
 	} gdtr, idtr;
 	struct {
-		UINT16 sel;
-		UINT32 base;
-		UINT16 limit;
-		UINT8 rights;
+		uint16_t sel;
+		uint32_t base;
+		uint16_t limit;
+		uint8_t rights;
 	} ldtr, tr;
     int     (*irq_callback)(int irqline);
     int     AuxVal, OverVal, SignVal, ZeroVal, CarryVal, DirVal; /* 0 or non-0 valued flags */
-    UINT8	ParityVal;
-	UINT8	TF, IF; 	/* 0 or 1 valued flags */
-	UINT8	int_vector;
-	INT8	nmi_state;
-	INT8	irq_state;
+    uint8_t	ParityVal;
+	uint8_t	TF, IF; 	/* 0 or 1 valued flags */
+	uint8_t	int_vector;
+	int8_t	nmi_state;
+	int8_t	irq_state;
 	int 	extra_cycles;       /* extra cycles for interrupts */
 } i286_Regs;
 
@@ -126,7 +126,7 @@ static char seg_prefix;         /* prefix segment indicator */
 #define INT_IRQ 0x01
 #define NMI_IRQ 0x02
 
-static UINT8 parity_table[256];
+static uint8_t parity_table[256];
 
 static struct i86_timing cycles;
 

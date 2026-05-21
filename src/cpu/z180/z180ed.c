@@ -133,7 +133,7 @@ OP(ed,6d) { RETI;													} /* RETI			  */
 OP(ed,6e) { _IM = 0;												} /* IM   0 		  */
 OP(ed,6f) { RLD;													} /* RLD  (HL)		  */
 
-OP(ed,70) { UINT8 res = IN(_BC); _F = (_F & CF) | SZP[res]; 		} /* IN   0,(C) 	  */
+OP(ed,70) { uint8_t res = IN(_BC); _F = (_F & CF) | SZP[res]; 		} /* IN   0,(C) 	  */
 OP(ed,71) { OUT(_BC,0); 											} /* OUT  (C),0 	  */
 OP(ed,72) { SBC16( SP );											} /* SBC  HL,SP 	  */
 OP(ed,73) { EA = ARG16(); WM16( EA, &Z180.SP ); 					} /* LD   (w),SP	  */

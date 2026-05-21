@@ -2,15 +2,15 @@
 // AM1 Functions (for ReadAM)
 // **************************
 
-UINT32 am1Register(void)
+uint32_t am1Register(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=(UINT8)v60.reg[modVal&0x1F];
+		amOut=(uint8_t)v60.reg[modVal&0x1F];
 		break;
 	case 1:
-		amOut=(UINT16)v60.reg[modVal&0x1F];
+		amOut=(uint16_t)v60.reg[modVal&0x1F];
 		break;
 	case 2:
 		amOut=v60.reg[modVal&0x1F];
@@ -20,7 +20,7 @@ UINT32 am1Register(void)
 	return 1;
 }
 
-UINT32 am1RegisterIndirect(void)
+uint32_t am1RegisterIndirect(void)
 {
 	switch (modDim)
 	{
@@ -38,14 +38,14 @@ UINT32 am1RegisterIndirect(void)
 	return 1;
 }
 
-UINT32 bam1RegisterIndirect(void)
+uint32_t bam1RegisterIndirect(void)
 {
 	bamOffset=0;
 	amOut=MemRead32(v60.reg[modVal&0x1F]);
 	return 1;
 }
 
-UINT32 am1RegisterIndirectIndexed(void)
+uint32_t am1RegisterIndirectIndexed(void)
 {
 	switch (modDim)
 	{
@@ -63,7 +63,7 @@ UINT32 am1RegisterIndirectIndexed(void)
 	return 2;
 }
 
-UINT32 bam1RegisterIndirectIndexed(void)
+uint32_t bam1RegisterIndirectIndexed(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(v60.reg[modVal2&0x1F]+bamOffset/8);
@@ -71,7 +71,7 @@ UINT32 bam1RegisterIndirectIndexed(void)
 	return 2;
 }
 
-UINT32 am1Autoincrement(void)
+uint32_t am1Autoincrement(void)
 {
 	switch (modDim)
 	{
@@ -92,7 +92,7 @@ UINT32 am1Autoincrement(void)
 	return 1;
 }
 
-UINT32 bam1Autoincrement(void)
+uint32_t bam1Autoincrement(void)
 {
 	bamOffset=0;
 	amOut=MemRead32(v60.reg[modVal&0x1F]);
@@ -111,7 +111,7 @@ UINT32 bam1Autoincrement(void)
 	return 1;
 }
 
-UINT32 am1Autodecrement(void)
+uint32_t am1Autodecrement(void)
 {
 	switch (modDim)
 	{
@@ -132,7 +132,7 @@ UINT32 am1Autodecrement(void)
 	return 1;
 }
 
-UINT32 bam1Autodecrement(void)
+uint32_t bam1Autodecrement(void)
 {
 	bamOffset=0;
 	switch (modDim)
@@ -151,25 +151,25 @@ UINT32 bam1Autodecrement(void)
 	return 1;
 }
 
-UINT32 am1Displacement8(void)
+uint32_t am1Displacement8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1));
+		amOut=MemRead8(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1));
 		break;
 	case 1:
-		amOut=MemRead16(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1));
+		amOut=MemRead16(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1));
 		break;
 	case 2:
-		amOut=MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1));
+		amOut=MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1));
 		break;
 	}
 
 	return 2;
 }
 
-UINT32 bam1Displacement8(void)
+uint32_t bam1Displacement8(void)
 {
 	bamOffset=MemRead8(modAdd+1);
 	amOut=MemRead32(v60.reg[modVal&0x1F]+bamOffset/8);
@@ -178,25 +178,25 @@ UINT32 bam1Displacement8(void)
 }
 
 
-UINT32 am1Displacement16(void)
+uint32_t am1Displacement16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1));
+		amOut=MemRead8(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1));
 		break;
 	case 1:
-		amOut=MemRead16(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1));
+		amOut=MemRead16(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1));
 		break;
 	case 2:
-		amOut=MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1));
+		amOut=MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1));
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1Displacement16(void)
+uint32_t bam1Displacement16(void)
 {
 	bamOffset=OpRead16(modAdd+1);
 	amOut=MemRead32(v60.reg[modVal&0x1F]+bamOffset/8);
@@ -204,7 +204,7 @@ UINT32 bam1Displacement16(void)
 	return 3;
 }
 
-UINT32 am1Displacement32(void)
+uint32_t am1Displacement32(void)
 {
 	switch (modDim)
 	{
@@ -222,7 +222,7 @@ UINT32 am1Displacement32(void)
 	return 5;
 }
 
-UINT32 bam1Displacement32(void)
+uint32_t bam1Displacement32(void)
 {
 	bamOffset=OpRead32(modAdd+1);
 	amOut=MemRead32(v60.reg[modVal&0x1F]+bamOffset/8);
@@ -230,59 +230,59 @@ UINT32 bam1Displacement32(void)
 	return 5;
 }
 
-UINT32 am1DisplacementIndexed8(void)
+uint32_t am1DisplacementIndexed8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1DisplacementIndexed8(void)
+uint32_t bam1DisplacementIndexed8(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2)+bamOffset/8);
+	amOut=MemRead32(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2)+bamOffset/8);
 	bamOffset&=7;
 	return 3;
 }
 
-UINT32 am1DisplacementIndexed16(void)
+uint32_t am1DisplacementIndexed16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 4;
 }
 
-UINT32 bam1DisplacementIndexed16(void)
+uint32_t bam1DisplacementIndexed16(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2)+bamOffset/8);
+	amOut=MemRead32(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2)+bamOffset/8);
 	bamOffset&=7;
 	return 4;
 }
 
-UINT32 am1DisplacementIndexed32(void)
+uint32_t am1DisplacementIndexed32(void)
 {
 	switch (modDim)
 	{
@@ -300,7 +300,7 @@ UINT32 am1DisplacementIndexed32(void)
 	return 6;
 }
 
-UINT32 bam1DisplacementIndexed32(void)
+uint32_t bam1DisplacementIndexed32(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(v60.reg[modVal2&0x1F] + OpRead32(modAdd+2)+bamOffset/8);
@@ -309,25 +309,25 @@ UINT32 bam1DisplacementIndexed32(void)
 }
 
 
-UINT32 am1PCDisplacement8(void)
+uint32_t am1PCDisplacement8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(PC + (INT8)OpRead8(modAdd+1));
+		amOut=MemRead8(PC + (int8_t)OpRead8(modAdd+1));
 		break;
 	case 1:
-		amOut=MemRead16(PC + (INT8)OpRead8(modAdd+1));
+		amOut=MemRead16(PC + (int8_t)OpRead8(modAdd+1));
 		break;
 	case 2:
-		amOut=MemRead32(PC + (INT8)OpRead8(modAdd+1));
+		amOut=MemRead32(PC + (int8_t)OpRead8(modAdd+1));
 		break;
 	}
 
 	return 2;
 }
 
-UINT32 bam1PCDisplacement8(void)
+uint32_t bam1PCDisplacement8(void)
 {
 	bamOffset=OpRead8(modAdd+1);
 	amOut=MemRead32(PC+bamOffset/8);
@@ -335,25 +335,25 @@ UINT32 bam1PCDisplacement8(void)
 	return 2;
 }
 
-UINT32 am1PCDisplacement16(void)
+uint32_t am1PCDisplacement16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(PC + (INT16)OpRead16(modAdd+1));
+		amOut=MemRead8(PC + (int16_t)OpRead16(modAdd+1));
 		break;
 	case 1:
-		amOut=MemRead16(PC + (INT16)OpRead16(modAdd+1));
+		amOut=MemRead16(PC + (int16_t)OpRead16(modAdd+1));
 		break;
 	case 2:
-		amOut=MemRead32(PC + (INT16)OpRead16(modAdd+1));
+		amOut=MemRead32(PC + (int16_t)OpRead16(modAdd+1));
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1PCDisplacement16(void)
+uint32_t bam1PCDisplacement16(void)
 {
 	bamOffset=OpRead16(modAdd+1);
 	amOut=MemRead32(PC+bamOffset/8);
@@ -361,7 +361,7 @@ UINT32 bam1PCDisplacement16(void)
 	return 3;
 }
 
-UINT32 am1PCDisplacement32(void)
+uint32_t am1PCDisplacement32(void)
 {
 	switch (modDim)
 	{
@@ -379,7 +379,7 @@ UINT32 am1PCDisplacement32(void)
 	return 5;
 }
 
-UINT32 bam1PCDisplacement32(void)
+uint32_t bam1PCDisplacement32(void)
 {
 	bamOffset=OpRead32(modAdd+1);
 	amOut=MemRead32(PC+bamOffset/8);
@@ -387,60 +387,60 @@ UINT32 bam1PCDisplacement32(void)
 	return 5;
 }
 
-UINT32 am1PCDisplacementIndexed8(void)
+uint32_t am1PCDisplacementIndexed8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(PC + (INT8)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(PC + (int8_t)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(PC + (INT8)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(PC + (int8_t)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(PC + (INT8)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(PC + (int8_t)OpRead8(modAdd+2) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1PCDisplacementIndexed8(void)
+uint32_t bam1PCDisplacementIndexed8(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(PC + (INT8)OpRead8(modAdd+2)+bamOffset/8);
+	amOut=MemRead32(PC + (int8_t)OpRead8(modAdd+2)+bamOffset/8);
 	bamOffset&=7;
 	return 3;
 }
 
 
-UINT32 am1PCDisplacementIndexed16(void)
+uint32_t am1PCDisplacementIndexed16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(PC + (INT16)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(PC + (int16_t)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(PC + (INT16)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(PC + (int16_t)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(PC + (INT16)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(PC + (int16_t)OpRead16(modAdd+2) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 4;
 }
 
-UINT32 bam1PCDisplacementIndexed16(void)
+uint32_t bam1PCDisplacementIndexed16(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(PC + (INT16)OpRead16(modAdd+2)+bamOffset/8);
+	amOut=MemRead32(PC + (int16_t)OpRead16(modAdd+2)+bamOffset/8);
 	bamOffset&=7;
 	return 4;
 }
 
-UINT32 am1PCDisplacementIndexed32(void)
+uint32_t am1PCDisplacementIndexed32(void)
 {
 	switch (modDim)
 	{
@@ -458,7 +458,7 @@ UINT32 am1PCDisplacementIndexed32(void)
 	return 6;
 }
 
-UINT32 bam1PCDisplacementIndexed32(void)
+uint32_t bam1PCDisplacementIndexed32(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(PC + OpRead32(modAdd+2)+bamOffset/8);
@@ -466,57 +466,57 @@ UINT32 bam1PCDisplacementIndexed32(void)
 	return 6;
 }
 
-UINT32 am1DisplacementIndirect8(void)
+uint32_t am1DisplacementIndirect8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)));
+		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)));
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)));
+		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)));
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)));
+		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)));
 		break;
 	}
 
 	return 2;
 }
 
-UINT32 bam1DisplacementIndirect8(void)
+uint32_t bam1DisplacementIndirect8(void)
 {
 	bamOffset=0;
-	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)));
+	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)));
 	return 2;
 }
 
-UINT32 am1DisplacementIndirect16(void)
+uint32_t am1DisplacementIndirect16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)));
+		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)));
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)));
+		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)));
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)));
+		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)));
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1DisplacementIndirect16(void)
+uint32_t bam1DisplacementIndirect16(void)
 {
 	bamOffset=0;
-	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)));
+	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)));
 	return 3;
 }
 
-UINT32 am1DisplacementIndirect32(void)
+uint32_t am1DisplacementIndirect32(void)
 {
 	switch (modDim)
 	{
@@ -534,66 +534,66 @@ UINT32 am1DisplacementIndirect32(void)
 	return 5;
 }
 
-UINT32 bam1DisplacementIndirect32(void)
+uint32_t bam1DisplacementIndirect32(void)
 {
 	bamOffset=0;
 	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + OpRead32(modAdd+1)));
 	return 5;
 }
 
-UINT32 am1DisplacementIndirectIndexed8(void)
+uint32_t am1DisplacementIndirectIndexed8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(MemRead32(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(MemRead32(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1DisplacementIndirectIndexed8(void)
+uint32_t bam1DisplacementIndirectIndexed8(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (INT8)OpRead8(modAdd+2))+bamOffset/8);
+	amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (int8_t)OpRead8(modAdd+2))+bamOffset/8);
 	bamOffset&=7;
 	return 3;
 }
 
-UINT32 am1DisplacementIndirectIndexed16(void)
+uint32_t am1DisplacementIndirectIndexed16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(MemRead32(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(MemRead32(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 4;
 }
 
-UINT32 bam1DisplacementIndirectIndexed16(void)
+uint32_t bam1DisplacementIndirectIndexed16(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (INT16)OpRead16(modAdd+2))+bamOffset/8);
+	amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + (int16_t)OpRead16(modAdd+2))+bamOffset/8);
 	bamOffset&=7;
 	return 4;
 }
 
-UINT32 am1DisplacementIndirectIndexed32(void)
+uint32_t am1DisplacementIndirectIndexed32(void)
 {
 	switch (modDim)
 	{
@@ -611,7 +611,7 @@ UINT32 am1DisplacementIndirectIndexed32(void)
 	return 6;
 }
 
-UINT32 bam1DisplacementIndirectIndexed32(void)
+uint32_t bam1DisplacementIndirectIndexed32(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(MemRead32(v60.reg[modVal2&0x1F] + OpRead32(modAdd+2))+bamOffset/8);
@@ -619,57 +619,57 @@ UINT32 bam1DisplacementIndirectIndexed32(void)
 	return 6;
 }
 
-UINT32 am1PCDisplacementIndirect8(void)
+uint32_t am1PCDisplacementIndirect8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(PC + (INT8)OpRead8(modAdd+1)));
+		amOut=MemRead8(MemRead32(PC + (int8_t)OpRead8(modAdd+1)));
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(PC + (INT8)OpRead8(modAdd+1)));
+		amOut=MemRead16(MemRead32(PC + (int8_t)OpRead8(modAdd+1)));
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(PC + (INT8)OpRead8(modAdd+1)));
+		amOut=MemRead32(MemRead32(PC + (int8_t)OpRead8(modAdd+1)));
 		break;
 	}
 
 	return 2;
 }
 
-UINT32 bam1PCDisplacementIndirect8(void)
+uint32_t bam1PCDisplacementIndirect8(void)
 {
 	bamOffset=0;
-	amOut=MemRead32(MemRead32(PC + (INT8)OpRead8(modAdd+1)));
+	amOut=MemRead32(MemRead32(PC + (int8_t)OpRead8(modAdd+1)));
 	return 2;
 }
 
-UINT32 am1PCDisplacementIndirect16(void)
+uint32_t am1PCDisplacementIndirect16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(PC + (INT16)OpRead16(modAdd+1)));
+		amOut=MemRead8(MemRead32(PC + (int16_t)OpRead16(modAdd+1)));
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(PC + (INT16)OpRead16(modAdd+1)));
+		amOut=MemRead16(MemRead32(PC + (int16_t)OpRead16(modAdd+1)));
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(PC + (INT16)OpRead16(modAdd+1)));
+		amOut=MemRead32(MemRead32(PC + (int16_t)OpRead16(modAdd+1)));
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1PCDisplacementIndirect16(void)
+uint32_t bam1PCDisplacementIndirect16(void)
 {
 	bamOffset=0;
-	amOut=MemRead32(MemRead32(PC + (INT16)OpRead16(modAdd+1)));
+	amOut=MemRead32(MemRead32(PC + (int16_t)OpRead16(modAdd+1)));
 	return 3;
 }
 
-UINT32 am1PCDisplacementIndirect32(void)
+uint32_t am1PCDisplacementIndirect32(void)
 {
 	switch (modDim)
 	{
@@ -687,66 +687,66 @@ UINT32 am1PCDisplacementIndirect32(void)
 	return 5;
 }
 
-UINT32 bam1PCDisplacementIndirect32(void)
+uint32_t bam1PCDisplacementIndirect32(void)
 {
 	bamOffset=0;
 	amOut=MemRead32(MemRead32(PC + OpRead32(modAdd+1)));
 	return 5;
 }
 
-UINT32 am1PCDisplacementIndirectIndexed8(void)
+uint32_t am1PCDisplacementIndirectIndexed8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(PC + (INT8)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(MemRead32(PC + (int8_t)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(PC + (INT8)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(MemRead32(PC + (int8_t)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(PC + (INT8)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(MemRead32(PC + (int8_t)OpRead8(modAdd+2)) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1PCDisplacementIndirectIndexed8(void)
+uint32_t bam1PCDisplacementIndirectIndexed8(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(MemRead32(PC + (INT8)OpRead8(modAdd+2))+bamOffset/8);
+	amOut=MemRead32(MemRead32(PC + (int8_t)OpRead8(modAdd+2))+bamOffset/8);
 	bamOffset&=7;
 	return 3;
 }
 
-UINT32 am1PCDisplacementIndirectIndexed16(void)
+uint32_t am1PCDisplacementIndirectIndexed16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(PC + (INT16)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]);
+		amOut=MemRead8(MemRead32(PC + (int16_t)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]);
 		break;
 	case 1:
-		amOut=MemRead16(MemRead32(PC + (INT16)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*2);
+		amOut=MemRead16(MemRead32(PC + (int16_t)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*2);
 		break;
 	case 2:
-		amOut=MemRead32(MemRead32(PC + (INT16)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*4);
+		amOut=MemRead32(MemRead32(PC + (int16_t)OpRead16(modAdd+2)) + v60.reg[modVal&0x1F]*4);
 		break;
 	}
 
 	return 4;
 }
 
-UINT32 bam1PCDisplacementIndirectIndexed16(void)
+uint32_t bam1PCDisplacementIndirectIndexed16(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
-	amOut=MemRead32(MemRead32(PC + (INT16)OpRead16(modAdd+2))+bamOffset/8);
+	amOut=MemRead32(MemRead32(PC + (int16_t)OpRead16(modAdd+2))+bamOffset/8);
 	bamOffset&=7;
 	return 4;
 }
 
-UINT32 am1PCDisplacementIndirectIndexed32(void)
+uint32_t am1PCDisplacementIndirectIndexed32(void)
 {
 	switch (modDim)
 	{
@@ -764,7 +764,7 @@ UINT32 am1PCDisplacementIndirectIndexed32(void)
 	return 6;
 }
 
-UINT32 bam1PCDisplacementIndirectIndexed32(void)
+uint32_t bam1PCDisplacementIndirectIndexed32(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(MemRead32(PC + OpRead32(modAdd+2))+bamOffset/8);
@@ -772,63 +772,63 @@ UINT32 bam1PCDisplacementIndirectIndexed32(void)
 	return 6;
 }
 
-UINT32 am1DoubleDisplacement8(void)
+uint32_t am1DoubleDisplacement8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)) + (INT8)OpRead8(modAdd+2));
+		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)) + (int8_t)OpRead8(modAdd+2));
 		break;
 
 	case 1:
-		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)) + (INT8)OpRead8(modAdd+2));
+		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)) + (int8_t)OpRead8(modAdd+2));
 		break;
 
 	case 2:
-		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1)) + (INT8)OpRead8(modAdd+2));
+		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1)) + (int8_t)OpRead8(modAdd+2));
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1DoubleDisplacement8(void)
+uint32_t bam1DoubleDisplacement8(void)
 {
 	bamOffset=OpRead8(modAdd+2);
-	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT8)OpRead8(modAdd+1))+bamOffset/8);
+	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int8_t)OpRead8(modAdd+1))+bamOffset/8);
 	bamOffset&=7;
 	return 3;
 }
 
-UINT32 am1DoubleDisplacement16(void)
+uint32_t am1DoubleDisplacement16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)) + (INT16)OpRead16(modAdd+3));
+		amOut=MemRead8(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)) + (int16_t)OpRead16(modAdd+3));
 		break;
 
 	case 1:
-		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)) + (INT16)OpRead16(modAdd+3));
+		amOut=MemRead16(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)) + (int16_t)OpRead16(modAdd+3));
 		break;
 
 	case 2:
-		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1)) + (INT16)OpRead16(modAdd+3));
+		amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1)) + (int16_t)OpRead16(modAdd+3));
 		break;
 	}
 
 	return 5;
 }
 
-UINT32 bam1DoubleDisplacement16(void)
+uint32_t bam1DoubleDisplacement16(void)
 {
 	bamOffset=OpRead16(modAdd+3);
-	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (INT16)OpRead16(modAdd+1))+bamOffset/8);
+	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + (int16_t)OpRead16(modAdd+1))+bamOffset/8);
 	bamOffset&=7;
 	return 5;
 }
 
-UINT32 am1DoubleDisplacement32(void)
+uint32_t am1DoubleDisplacement32(void)
 {
 	switch (modDim)
 	{
@@ -848,7 +848,7 @@ UINT32 am1DoubleDisplacement32(void)
 	return 9;
 }
 
-UINT32 bam1DoubleDisplacement32(void)
+uint32_t bam1DoubleDisplacement32(void)
 {
 	bamOffset=OpRead32(modAdd+5);
 	amOut=MemRead32(MemRead32(v60.reg[modVal&0x1F] + OpRead32(modAdd+1))+bamOffset/8);
@@ -856,64 +856,64 @@ UINT32 bam1DoubleDisplacement32(void)
 	return 9;
 }
 
-UINT32 am1PCDoubleDisplacement8(void)
+uint32_t am1PCDoubleDisplacement8(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(PC + (INT8)OpRead8(modAdd+1)) + (INT8)OpRead8(modAdd+2));
+		amOut=MemRead8(MemRead32(PC + (int8_t)OpRead8(modAdd+1)) + (int8_t)OpRead8(modAdd+2));
 		break;
 
 	case 1:
-		amOut=MemRead16(MemRead32(PC + (INT8)OpRead8(modAdd+1)) + (INT8)OpRead8(modAdd+2));
+		amOut=MemRead16(MemRead32(PC + (int8_t)OpRead8(modAdd+1)) + (int8_t)OpRead8(modAdd+2));
 		break;
 
 	case 2:
-		amOut=MemRead32(MemRead32(PC + (INT8)OpRead8(modAdd+1)) + (INT8)OpRead8(modAdd+2));
+		amOut=MemRead32(MemRead32(PC + (int8_t)OpRead8(modAdd+1)) + (int8_t)OpRead8(modAdd+2));
 		break;
 	}
 
 	return 3;
 }
 
-UINT32 bam1PCDoubleDisplacement8(void)
+uint32_t bam1PCDoubleDisplacement8(void)
 {
 	bamOffset=OpRead8(modAdd+2);
-	amOut=MemRead32(MemRead32(PC + (INT8)OpRead8(modAdd+1))+bamOffset/8);
+	amOut=MemRead32(MemRead32(PC + (int8_t)OpRead8(modAdd+1))+bamOffset/8);
 	bamOffset&=7;
 	return 3;
 }
 
-UINT32 am1PCDoubleDisplacement16(void)
+uint32_t am1PCDoubleDisplacement16(void)
 {
 	switch (modDim)
 	{
 	case 0:
-		amOut=MemRead8(MemRead32(PC + (INT16)OpRead16(modAdd+1)) + (INT16)OpRead16(modAdd+3));
+		amOut=MemRead8(MemRead32(PC + (int16_t)OpRead16(modAdd+1)) + (int16_t)OpRead16(modAdd+3));
 		break;
 
 	case 1:
-		amOut=MemRead16(MemRead32(PC + (INT16)OpRead16(modAdd+1)) + (INT16)OpRead16(modAdd+3));
+		amOut=MemRead16(MemRead32(PC + (int16_t)OpRead16(modAdd+1)) + (int16_t)OpRead16(modAdd+3));
 		break;
 
 	case 2:
-		amOut=MemRead32(MemRead32(PC + (INT16)OpRead16(modAdd+1)) + (INT16)OpRead16(modAdd+3));
+		amOut=MemRead32(MemRead32(PC + (int16_t)OpRead16(modAdd+1)) + (int16_t)OpRead16(modAdd+3));
 		break;
 	}
 
 	return 5;
 }
 
-UINT32 bam1PCDoubleDisplacement16(void)
+uint32_t bam1PCDoubleDisplacement16(void)
 {
 	bamOffset=OpRead16(modAdd+3);
-	amOut=MemRead32(MemRead32(PC + (INT16)OpRead16(modAdd+1))+bamOffset/8);
+	amOut=MemRead32(MemRead32(PC + (int16_t)OpRead16(modAdd+1))+bamOffset/8);
 	bamOffset&=7;
 	return 5;
 }
 
 
-UINT32 am1PCDoubleDisplacement32(void)
+uint32_t am1PCDoubleDisplacement32(void)
 {
 	switch (modDim)
 	{
@@ -933,7 +933,7 @@ UINT32 am1PCDoubleDisplacement32(void)
 	return 9;
 }
 
-UINT32 bam1PCDoubleDisplacement32(void)
+uint32_t bam1PCDoubleDisplacement32(void)
 {
 	bamOffset=OpRead32(modAdd+5);
 	amOut=MemRead32(MemRead32(PC + OpRead32(modAdd+1))+bamOffset/8);
@@ -941,7 +941,7 @@ UINT32 bam1PCDoubleDisplacement32(void)
 	return 9;
 }
 
-UINT32 am1DirectAddress(void)
+uint32_t am1DirectAddress(void)
 {
 	switch (modDim)
 	{
@@ -961,14 +961,14 @@ UINT32 am1DirectAddress(void)
 	return 5;
 }
 
-UINT32 bam1DirectAddress(void)
+uint32_t bam1DirectAddress(void)
 {
 	bamOffset=0;
 	amOut=MemRead32(OpRead32(modAdd+1));
 	return 5;
 }
 
-UINT32 am1DirectAddressIndexed(void)
+uint32_t am1DirectAddressIndexed(void)
 {
 	switch (modDim)
 	{
@@ -988,7 +988,7 @@ UINT32 am1DirectAddressIndexed(void)
 	return 6;
 }
 
-UINT32 bam1DirectAddressIndexed(void)
+uint32_t bam1DirectAddressIndexed(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(OpRead32(modAdd+2)+bamOffset/8);
@@ -996,7 +996,7 @@ UINT32 bam1DirectAddressIndexed(void)
 	return 6;
 }
 
-UINT32 am1DirectAddressDeferred(void)
+uint32_t am1DirectAddressDeferred(void)
 {
 	switch (modDim)
 	{
@@ -1016,14 +1016,14 @@ UINT32 am1DirectAddressDeferred(void)
 	return 5;
 }
 
-UINT32 bam1DirectAddressDeferred(void)
+uint32_t bam1DirectAddressDeferred(void)
 {
 	bamOffset=0;
 	amOut=MemRead32(MemRead32(OpRead32(modAdd+1)));
 	return 5;
 }
 
-UINT32 am1DirectAddressDeferredIndexed(void)
+uint32_t am1DirectAddressDeferredIndexed(void)
 {
 	switch (modDim)
 	{
@@ -1043,7 +1043,7 @@ UINT32 am1DirectAddressDeferredIndexed(void)
 	return 6;
 }
 
-UINT32 bam1DirectAddressDeferredIndexed(void)
+uint32_t bam1DirectAddressDeferredIndexed(void)
 {
 	bamOffset=v60.reg[modVal&0x1F];
 	amOut=MemRead32(MemRead32(OpRead32(modAdd+2))+bamOffset/8);
@@ -1051,7 +1051,7 @@ UINT32 bam1DirectAddressDeferredIndexed(void)
 	return 6;
 }
 
-UINT32 am1Immediate(void)
+uint32_t am1Immediate(void)
 {
 	switch (modDim)
 	{
@@ -1076,7 +1076,7 @@ UINT32 am1Immediate(void)
 	return 1;
 }
 
-UINT32 am1ImmediateQuick(void)
+uint32_t am1ImmediateQuick(void)
 {
 	amOut=modVal&0xF;
 	return 1;
@@ -1088,73 +1088,73 @@ UINT32 am1ImmediateQuick(void)
 // AM1 Tables (for ReadAM)
 // ***********************
 
-UINT32 am1Error1(void)
+uint32_t am1Error1(void)
 {
 	logerror("CPU - AM1 - 1 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 bam1Error1(void)
+uint32_t bam1Error1(void)
 {
 	logerror("CPU - BAM1 - 1 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 am1Error2(void)
+uint32_t am1Error2(void)
 {
 	logerror("CPU - AM1 - 2 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 bam1Error2(void)
+uint32_t bam1Error2(void)
 {
 	logerror("CPU - BAM1 - 2 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 am1Error3(void)
+uint32_t am1Error3(void)
 {
 	logerror("CPU - AM1 - 3 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 bam1Error3(void)
+uint32_t bam1Error3(void)
 {
 	logerror("CPU - BAM1 - 3 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 am1Error4(void)
+uint32_t am1Error4(void)
 {
 	logerror("CPU - AM1 - 4 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 bam1Error4(void)
+uint32_t bam1Error4(void)
 {
 	logerror("CPU - BAM1 - 4 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 am1Error5(void)
+uint32_t am1Error5(void)
 {
 	logerror("CPU - AM1 - 5 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 bam1Error5(void)
+uint32_t bam1Error5(void)
 {
 	logerror("CPU - BAM1 - 5 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 bam1Error6(void)
+uint32_t bam1Error6(void)
 {
 	logerror("CPU - BAM1 - 6 (PC=%06x)\n", PC);
 	abort();
 }
 
-UINT32 (*AMTable1_G7a[16])(void) =
+uint32_t (*AMTable1_G7a[16])(void) =
 {
 	am1PCDisplacementIndexed8,
 	am1PCDisplacementIndexed16,
@@ -1174,7 +1174,7 @@ UINT32 (*AMTable1_G7a[16])(void) =
 	am1Error5
 };
 
-UINT32 (*BAMTable1_G7a[16])(void) =
+uint32_t (*BAMTable1_G7a[16])(void) =
 {
 	bam1PCDisplacementIndexed8,
 	bam1PCDisplacementIndexed16,
@@ -1195,7 +1195,7 @@ UINT32 (*BAMTable1_G7a[16])(void) =
 };
 
 
-UINT32 am1Group7a(void)
+uint32_t am1Group7a(void)
 {
 	if (!(modVal2&0x10))
 		return am1Error4();
@@ -1203,7 +1203,7 @@ UINT32 am1Group7a(void)
 	return AMTable1_G7a[modVal2&0xF]();
 }
 
-UINT32 bam1Group7a(void)
+uint32_t bam1Group7a(void)
 {
 	if (!(modVal2&0x10))
 		return bam1Error4();
@@ -1211,7 +1211,7 @@ UINT32 bam1Group7a(void)
 	return BAMTable1_G7a[modVal2&0xF]();
 }
 
-UINT32 (*AMTable1_G7[32])(void) =
+uint32_t (*AMTable1_G7[32])(void) =
 {
 	am1ImmediateQuick,
 	am1ImmediateQuick,
@@ -1247,7 +1247,7 @@ UINT32 (*AMTable1_G7[32])(void) =
   am1Error2
 };
 
-UINT32 (*BAMTable1_G7[32])(void) =
+uint32_t (*BAMTable1_G7[32])(void) =
 {
 	bam1Error6,
 	bam1Error6,
@@ -1285,7 +1285,7 @@ UINT32 (*BAMTable1_G7[32])(void) =
 
 
 
-UINT32 (*AMTable1_G6[8])(void) =
+uint32_t (*AMTable1_G6[8])(void) =
 {
 	am1DisplacementIndexed8,
 	am1DisplacementIndexed16,
@@ -1297,7 +1297,7 @@ UINT32 (*AMTable1_G6[8])(void) =
 	am1Group7a
 };
 
-UINT32 (*BAMTable1_G6[8])(void) =
+uint32_t (*BAMTable1_G6[8])(void) =
 {
 	bam1DisplacementIndexed8,
 	bam1DisplacementIndexed16,
@@ -1310,30 +1310,30 @@ UINT32 (*BAMTable1_G6[8])(void) =
 };
 
 
-UINT32 am1Group6(void)
+uint32_t am1Group6(void)
 {
 	modVal2=OpRead8(modAdd+1);
 	return AMTable1_G6[modVal2>>5]();
 }
 
-UINT32 bam1Group6(void)
+uint32_t bam1Group6(void)
 {
 	modVal2=OpRead8(modAdd+1);
 	return BAMTable1_G6[modVal2>>5]();
 }
 
 
-UINT32 am1Group7(void)
+uint32_t am1Group7(void)
 {
 	return AMTable1_G7[modVal&0x1F]();
 }
 
-UINT32 bam1Group7(void)
+uint32_t bam1Group7(void)
 {
 	return BAMTable1_G7[modVal&0x1F]();
 }
 
-UINT32 (*AMTable1[2][8])(void) =
+uint32_t (*AMTable1[2][8])(void) =
 {
 	{
 		am1Displacement8,
@@ -1359,7 +1359,7 @@ UINT32 (*AMTable1[2][8])(void) =
 };
 
 
-UINT32 (*BAMTable1[2][8])(void) =
+uint32_t (*BAMTable1[2][8])(void) =
 {
 	{
 		bam1Displacement8,

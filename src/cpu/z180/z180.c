@@ -50,7 +50,7 @@
 /* check for delay loops counting down BC */
 #define TIME_LOOP_HACKS 	1
 
-static UINT8 z180_reg_layout[] = {
+static uint8_t z180_reg_layout[] = {
 	Z180_PC, Z180_SP, Z180_AF,	Z180_BC,	Z180_DE,   Z180_HL, -1,
 	Z180_IX, Z180_IY, Z180_AF2, Z180_BC2,	Z180_DE2,  Z180_HL2, -1,
 	Z180_R,  Z180_I,  Z180_IL,	Z180_IM,	Z180_IFF1, Z180_IFF2, -1,
@@ -58,7 +58,7 @@ static UINT8 z180_reg_layout[] = {
 	Z180_CCR,Z180_ITC,Z180_CBR, Z180_BBR,	Z180_CBAR, Z180_OMCR, 0
 };
 
-static UINT8 z180_win_layout[] = {
+static uint8_t z180_win_layout[] = {
 	27, 0,53, 6,	/* register window (top rows) */
 	 0, 0,26,22,	/* disassembler window (left colums) */
 	27, 7,53, 6,	/* memory #1 window (right, upper middle) */
@@ -73,18 +73,18 @@ static UINT8 z180_win_layout[] = {
 typedef struct {
 /* 00 */	PAIR	PREPC,PC,SP,AF,BC,DE,HL,IX,IY;
 /* 24 */	PAIR	AF2,BC2,DE2,HL2;
-/* 34 */	UINT8	R,R2,IFF1,IFF2,HALT,IM,I;
-/* 3B */	UINT8	tmdr_latch; 		/* flag latched TMDR0H, TMDR1H values */
-/* 3C */	UINT32	iol;				/* I/O line status bits */
-/* 40 */	UINT8	io[64]; 			/* 64 internal 8 bit registers */
+/* 34 */	uint8_t	R,R2,IFF1,IFF2,HALT,IM,I;
+/* 3B */	uint8_t	tmdr_latch; 		/* flag latched TMDR0H, TMDR1H values */
+/* 3C */	uint32_t	iol;				/* I/O line status bits */
+/* 40 */	uint8_t	io[64]; 			/* 64 internal 8 bit registers */
 /* 80 */	offs_t	mmu[16];			/* MMU address translation */
-/* c0 */	UINT8	tmdr[2];			/* latched TMDR0H and TMDR1H values */
-/* c2 */	UINT8	irq_max;			/* number of daisy chain devices		*/
-/* c3 */	INT8	request_irq;		/* daisy chain next request device		*/
-/* c4 */	INT8	service_irq;		/* daisy chain next reti handling device */
-/* c5 */	UINT8	nmi_state;			/* nmi line state */
-/* c6 */	UINT8	irq_state[10];		/* irq line states (INT0,INT1,INT2) */
-/* d0 */	UINT8	int_state[Z80_MAXDAISY];
+/* c0 */	uint8_t	tmdr[2];			/* latched TMDR0H and TMDR1H values */
+/* c2 */	uint8_t	irq_max;			/* number of daisy chain devices		*/
+/* c3 */	int8_t	request_irq;		/* daisy chain next request device		*/
+/* c4 */	int8_t	service_irq;		/* daisy chain next reti handling device */
+/* c5 */	uint8_t	nmi_state;			/* nmi line state */
+/* c6 */	uint8_t	irq_state[10];		/* irq line states (INT0,INT1,INT2) */
+/* d0 */	uint8_t	int_state[Z80_MAXDAISY];
 /* d4 */	Z80_DaisyChain irq[Z80_MAXDAISY];
 /* e4 */	int 	(*irq_callback)(int irqline);
 /* e8 */	int 	extra_cycles;		/* extra cycles for interrupts */
@@ -725,18 +725,18 @@ typedef struct {
 
 int z180_icount;
 static Z180_Regs Z180;
-static UINT32 EA;
+static uint32_t EA;
 static int after_EI = 0;
 
-static UINT8 SZ[256];		/* zero and sign flags */
-static UINT8 SZ_BIT[256];	/* zero, sign and parity/overflow (=zero) flags for BIT opcode */
-static UINT8 SZP[256];		/* zero, sign and parity flags */
-static UINT8 SZHV_inc[256]; /* zero, sign, half carry and overflow flags INC r8 */
-static UINT8 SZHV_dec[256]; /* zero, sign, half carry and overflow flags DEC r8 */
+static uint8_t SZ[256];		/* zero and sign flags */
+static uint8_t SZ_BIT[256];	/* zero, sign and parity/overflow (=zero) flags for BIT opcode */
+static uint8_t SZP[256];		/* zero, sign and parity flags */
+static uint8_t SZHV_inc[256]; /* zero, sign, half carry and overflow flags INC r8 */
+static uint8_t SZHV_dec[256]; /* zero, sign, half carry and overflow flags DEC r8 */
 
 #if BIG_FLAGS_ARRAY
-static UINT8 *SZHVC_add = 0;
-static UINT8 *SZHVC_sub = 0;
+static uint8_t *SZHVC_add = 0;
+static uint8_t *SZHVC_sub = 0;
 #endif
 
 /****************************************************************************
@@ -1655,9 +1655,9 @@ static void z180_dma1(void)
 	z180_icount -= 6;
 }
 
-static void z180_write_iolines(UINT32 data)
+static void z180_write_iolines(uint32_t data)
 {
-	UINT32 changes = Z180.iol ^ data;
+	uint32_t changes = Z180.iol ^ data;
 
     /* I/O asynchronous clock 0 (active high) or DREQ0 (mux) */
 	if (changes & Z180_CKA0)
@@ -1825,10 +1825,10 @@ void z180_reset(void *param)
 	if( !SZHVC_add || !SZHVC_sub )
 	{
 		int oldval, newval, val;
-		UINT8 *padd, *padc, *psub, *psbc;
+		uint8_t *padd, *padc, *psub, *psbc;
 		/* allocate big flag arrays once */
-		SZHVC_add = (UINT8 *)malloc(2*256*256);
-		SZHVC_sub = (UINT8 *)malloc(2*256*256);
+		SZHVC_add = (uint8_t *)malloc(2*256*256);
+		SZHVC_sub = (uint8_t *)malloc(2*256*256);
 		if( !SZHVC_add || !SZHVC_sub )
 		{
 			LOG(("Z180: failed to allocate 2 * 128K flags arrays!!!\n"));

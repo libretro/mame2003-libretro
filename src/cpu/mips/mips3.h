@@ -181,7 +181,7 @@ extern void r5000le_reset(void *param);
 #define MIPS3DRC_COMPATIBLE_OPTIONS	(MIPS3DRC_STRICT_VERIFY | MIPS3DRC_STRICT_COP0 | MIPS3DRC_STRICT_COP1 | MIPS3DRC_STRICT_COP2)
 #define MIPS3DRC_FASTEST_OPTIONS	(MIPS3DRC_DIRECT_RAM)
 
-void mips3drc_set_options(UINT8 cpunum, UINT32 opts);
+void mips3drc_set_options(uint8_t cpunum, uint32_t opts);
 
 
 

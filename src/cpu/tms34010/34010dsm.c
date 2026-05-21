@@ -21,15 +21,15 @@
 #define PARAM_LONG(v) { v = (cpu_readmem29lew_word((_pc>>3)+2)<<16)|cpu_readmem29lew_word(_pc>>3); _pc += 32; }
 #endif
 
-static UINT8 rf;
-static UINT32 __pc, _pc;
-static UINT16 op,rs,rd;
+static uint8_t rf;
+static uint32_t __pc, _pc;
+static uint16_t op,rs,rd;
 
 static char *buffer;
 static char temp[20];
 
 
-static void print_reg(UINT8 reg)
+static void print_reg(uint8_t reg)
 {
 	if (reg != 0x0f)
 	{
@@ -61,7 +61,7 @@ static void print_src_des_reg(void)
 
 static void print_word_parm(void)
 {
-	UINT16 w;
+	uint16_t w;
 
 	PARAM_WORD(w);
 
@@ -71,7 +71,7 @@ static void print_word_parm(void)
 
 static void print_word_parm_1s_comp(void)
 {
-	UINT16 w;
+	uint16_t w;
 
 	PARAM_WORD(w);
 	w = ~w;
@@ -81,7 +81,7 @@ static void print_word_parm_1s_comp(void)
 
 static void print_long_parm(void)
 {
-	UINT32 l;
+	uint32_t l;
 
 	PARAM_LONG(l);
 	sprintf(temp, "%Xh", l);
@@ -90,7 +90,7 @@ static void print_long_parm(void)
 
 static void print_long_parm_1s_comp(void)
 {
-	UINT32 l;
+	uint32_t l;
 
 	PARAM_LONG(l);
 	sprintf(temp, "%Xh", ~l);
@@ -99,7 +99,7 @@ static void print_long_parm_1s_comp(void)
 
 static void print_constant(void)
 {
-	UINT8 constant = (op >> 5) & 0x1f;
+	uint8_t constant = (op >> 5) & 0x1f;
 
 	sprintf(temp, "%Xh", constant);
 	strcat(buffer, temp);
@@ -107,7 +107,7 @@ static void print_constant(void)
 
 static void print_constant_1_32(void)
 {
-	UINT8 constant = (op >> 5) & 0x1f;
+	uint8_t constant = (op >> 5) & 0x1f;
 	if (!constant) constant = 0x20;
 
 	sprintf(temp, "%Xh", constant);
@@ -116,7 +116,7 @@ static void print_constant_1_32(void)
 
 static void print_constant_1s_comp(void)
 {
-	UINT8 constant = (~op >> 5) & 0x1f;
+	uint8_t constant = (~op >> 5) & 0x1f;
 
 	sprintf(temp, "%Xh", constant);
 	strcat(buffer, temp);
@@ -124,7 +124,7 @@ static void print_constant_1s_comp(void)
 
 static void print_constant_2s_comp(void)
 {
-	UINT8 constant = 32 - ((op >> 5) & 0x1f);
+	uint8_t constant = 32 - ((op >> 5) & 0x1f);
 
 	sprintf(temp, "%Xh", constant);
 	strcat(buffer, temp);
@@ -132,11 +132,11 @@ static void print_constant_2s_comp(void)
 
 static void print_relative(void)
 {
-	UINT16 l;
-	INT16 ls;
+	uint16_t l;
+	int16_t ls;
 
 	PARAM_WORD(l);
-	ls = (INT16)l;
+	ls = (int16_t)l;
 
 	sprintf(temp, "%Xh", PC + 32 + (ls << 4));
 	strcat(buffer, temp);
@@ -144,7 +144,7 @@ static void print_relative(void)
 
 static void print_relative_8bit(void)
 {
-	INT8 ls = (INT8)op;
+	int8_t ls = (int8_t)op;
 
 	sprintf(temp, "%Xh", PC + 16 + (ls << 4));
 	strcat(buffer, temp);
@@ -152,7 +152,7 @@ static void print_relative_8bit(void)
 
 static void print_relative_5bit(void)
 {
-	INT8 ls = (INT8)((op >> 5) & 0x1f);
+	int8_t ls = (int8_t)((op >> 5) & 0x1f);
 	if (op & 0x0400) ls = -ls;
 
 	sprintf(temp, "%Xh", PC + 16 + (ls << 4));
@@ -188,7 +188,7 @@ static void print_condition_code(void)
 	}
 }
 
-static void print_reg_list_range(INT8 first, INT8 last)
+static void print_reg_list_range(int8_t first, int8_t last)
 {
 	if ((first != -1 ) && (first != last))
 	{
@@ -200,11 +200,11 @@ static void print_reg_list_range(INT8 first, INT8 last)
 	}
 }
 
-static void print_reg_list(UINT16 rev)
+static void print_reg_list(uint16_t rev)
 {
-	UINT16 l;
-	UINT8 i;
-	INT8 first = -1, last = 0;
+	uint16_t l;
+	uint8_t i;
+	int8_t first = -1, last = 0;
 
 	PARAM_WORD(l);
 
@@ -244,10 +244,10 @@ static void print_reg_list(UINT16 rev)
 }
 
 
-unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
+unsigned Dasm340x0(char *buff, uint32_t pc, int is_34020)
 {
-	UINT8 bad = 0;
-	UINT16 subop;
+	uint8_t bad = 0;
+	uint16_t subop;
 
 	__pc = _pc = pc;
 	buffer = buff;
@@ -439,7 +439,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x0000:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CEXEC  %d,%06X,%d", (x >> 7) & 1, (x >> 8) & 0x1fffff, (x >> 29) & 7);
 			}
@@ -450,7 +450,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x0020:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVGC ");
 				print_des_reg();
@@ -464,7 +464,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x0040:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVGC ");
 				print_des_reg();
@@ -481,7 +481,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x0060:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 
 				if (op == 0x0660 && (x & 0xff) == 0x01)
@@ -508,7 +508,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x0080:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVMC *");
 				rf = (x & 0x10) ? 'B' : 'A';
@@ -523,7 +523,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x00a0:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVCM *");
 				print_des_reg();
@@ -537,7 +537,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x00c0:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVCM *-");
 				print_des_reg();
@@ -551,7 +551,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x00e0:
 			if (is_34020 && (op & 0xfe00) == 0x0600)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVMC *");
 				rf = (x & 0x10) ? 'B' : 'A';
@@ -651,7 +651,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 		case 0x0020:
 			if (is_34020)
 			{
-				UINT32 x;
+				uint32_t x;
 				PARAM_LONG(x);
 				sprintf(buffer, "CMOVMC *-");
 				rf = (x & 0x10) ? 'B' : 'A';
@@ -1565,7 +1565,7 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 	case 0xd800:
 		if (is_34020)
 		{
-			UINT32 x;
+			uint32_t x;
 			PARAM_WORD(x);
 			sprintf(buffer, "CEXEC  %d,%06X,%d", op & 1, ((x << 5) & 0x1fffe0) | ((op >> 1) & 0x1f), (x >> 13) & 7);
 		}
@@ -1722,12 +1722,12 @@ unsigned Dasm340x0(char *buff, UINT32 pc, int is_34020)
 	return _pc - __pc;
 }
 
-unsigned Dasm34010(char *buff, UINT32 pc)
+unsigned Dasm34010(char *buff, uint32_t pc)
 {
 	return Dasm340x0(buff, pc, 0);
 }
 
-unsigned Dasm34020(char *buff, UINT32 pc)
+unsigned Dasm34020(char *buff, uint32_t pc)
 {
 	return Dasm340x0(buff, pc, 1);
 }

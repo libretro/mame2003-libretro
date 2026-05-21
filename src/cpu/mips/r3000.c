@@ -91,8 +91,8 @@
 #define RTVAL		(r3000.r[RTREG])
 #define RDVAL		(r3000.r[RDREG])
 
-#define SIMMVAL		((INT16)op)
-#define UIMMVAL		((UINT16)op)
+#define SIMMVAL		((int16_t)op)
+#define UIMMVAL		((uint16_t)op)
 #define LIMMVAL		(op & 0x03ffffff)
 
 #define ADDPC(x)	r3000.nextpc = r3000.pc + ((x) << 2)
@@ -136,32 +136,32 @@ typedef struct
 typedef struct
 {
 	/* core registers */
-	UINT32		pc;
-	UINT32		hi;
-	UINT32		lo;
-	UINT32		r[32];
+	uint32_t		pc;
+	uint32_t		hi;
+	uint32_t		lo;
+	uint32_t		r[32];
 
 	/* COP registers */
-	UINT32		cpr[4][32];
-	UINT32		ccr[4][32];
-	UINT8		cf[4];
+	uint32_t		cpr[4][32];
+	uint32_t		ccr[4][32];
+	uint8_t		cf[4];
 
 	/* internal stuff */
-	UINT32		ppc;
-	UINT32		nextpc;
+	uint32_t		ppc;
+	uint32_t		nextpc;
 	int			op;
 	int			interrupt_cycles;
 	int			hasfpu;
 	int 		(*irq_callback)(int irqline);
 
 	/* endian-dependent load/store */
-	void		(*lwl)(UINT32 op);
-	void		(*lwr)(UINT32 op);
-	void		(*swl)(UINT32 op);
-	void		(*swr)(UINT32 op);
+	void		(*lwl)(uint32_t op);
+	void		(*lwr)(uint32_t op);
+	void		(*swl)(uint32_t op);
+	void		(*swr)(uint32_t op);
 
 	/* memory accesses */
-	UINT8		bigendian;
+	uint8_t		bigendian;
 	memory_handlers cur;
 	const memory_handlers *memory_hand;
 	const memory_handlers *cache_hand;
@@ -181,15 +181,15 @@ typedef struct
 **	PROTOTYPES
 **#################################################################################################*/
 
-static void lwl_be(UINT32 op);
-static void lwr_be(UINT32 op);
-static void swl_be(UINT32 op);
-static void swr_be(UINT32 op);
+static void lwl_be(uint32_t op);
+static void lwr_be(uint32_t op);
+static void swl_be(uint32_t op);
+static void swr_be(uint32_t op);
 
-static void lwl_le(UINT32 op);
-static void lwr_le(UINT32 op);
-static void swl_le(UINT32 op);
-static void swr_le(UINT32 op);
+static void lwl_le(uint32_t op);
+static void lwr_le(uint32_t op);
+static void swl_le(uint32_t op);
+static void swr_le(uint32_t op);
 
 static data8_t readcache_be(offs_t offset);
 static data16_t readcache_be_word(offs_t offset);
@@ -295,7 +295,7 @@ static INLINE void generate_exception(int exception)
 }
 
 
-static INLINE void invalid_instruction(UINT32 op)
+static INLINE void invalid_instruction(uint32_t op)
 {
 	generate_exception(EXCEPTION_INVALIDOP);
 }
@@ -453,12 +453,12 @@ void r3000_exit(void)
 **	COP0 (SYSTEM) EXECUTION HANDLING
 **#################################################################################################*/
 
-static INLINE UINT32 get_cop0_reg(int idx)
+static INLINE uint32_t get_cop0_reg(int idx)
 {
 	return r3000.cpr[0][idx];
 }
 
-static INLINE void set_cop0_reg(int idx, UINT32 val)
+static INLINE void set_cop0_reg(int idx, uint32_t val)
 {
 	if (idx == COP0_Cause)
 	{
@@ -469,8 +469,8 @@ static INLINE void set_cop0_reg(int idx, UINT32 val)
 	}
 	else if (idx == COP0_Status)
 	{
-		UINT32 oldsr = r3000.cpr[0][idx];
-		UINT32 diff = oldsr ^ val;
+		uint32_t oldsr = r3000.cpr[0][idx];
+		uint32_t diff = oldsr ^ val;
 
 		/* handle cache isolation */
 		if (diff & SR_IsC)
@@ -498,17 +498,17 @@ static INLINE void set_cop0_reg(int idx, UINT32 val)
 		r3000.cpr[0][idx] = val;
 }
 
-static INLINE UINT32 get_cop0_creg(int idx)
+static INLINE uint32_t get_cop0_creg(int idx)
 {
 	return r3000.ccr[0][idx];
 }
 
-static INLINE void set_cop0_creg(int idx, UINT32 val)
+static INLINE void set_cop0_creg(int idx, uint32_t val)
 {
 	r3000.ccr[0][idx] = val;
 }
 
-static INLINE void handle_cop0(UINT32 op)
+static INLINE void handle_cop0(uint32_t op)
 {
 	if (!(SR & SR_COP0) && (SR & SR_KUc))
 		generate_exception(EXCEPTION_BADCOP);
@@ -566,27 +566,27 @@ static INLINE void handle_cop0(UINT32 op)
 **	COP1 (FPU) EXECUTION HANDLING
 **#################################################################################################*/
 
-static INLINE UINT32 get_cop1_reg(int idx)
+static INLINE uint32_t get_cop1_reg(int idx)
 {
 	return r3000.cpr[1][idx];
 }
 
-static INLINE void set_cop1_reg(int idx, UINT32 val)
+static INLINE void set_cop1_reg(int idx, uint32_t val)
 {
 	r3000.cpr[1][idx] = val;
 }
 
-static INLINE UINT32 get_cop1_creg(int idx)
+static INLINE uint32_t get_cop1_creg(int idx)
 {
 	return r3000.ccr[1][idx];
 }
 
-static INLINE void set_cop1_creg(int idx, UINT32 val)
+static INLINE void set_cop1_creg(int idx, uint32_t val)
 {
 	r3000.ccr[1][idx] = val;
 }
 
-static INLINE void handle_cop1(UINT32 op)
+static INLINE void handle_cop1(uint32_t op)
 {
 	if (!(SR & SR_COP1))
 		generate_exception(EXCEPTION_BADCOP);
@@ -635,27 +635,27 @@ static INLINE void handle_cop1(UINT32 op)
 **	COP2 (CUSTOM) EXECUTION HANDLING
 **#################################################################################################*/
 
-static INLINE UINT32 get_cop2_reg(int idx)
+static INLINE uint32_t get_cop2_reg(int idx)
 {
 	return r3000.cpr[2][idx];
 }
 
-static INLINE void set_cop2_reg(int idx, UINT32 val)
+static INLINE void set_cop2_reg(int idx, uint32_t val)
 {
 	r3000.cpr[2][idx] = val;
 }
 
-static INLINE UINT32 get_cop2_creg(int idx)
+static INLINE uint32_t get_cop2_creg(int idx)
 {
 	return r3000.ccr[2][idx];
 }
 
-static INLINE void set_cop2_creg(int idx, UINT32 val)
+static INLINE void set_cop2_creg(int idx, uint32_t val)
 {
 	r3000.ccr[2][idx] = val;
 }
 
-static INLINE void handle_cop2(UINT32 op)
+static INLINE void handle_cop2(uint32_t op)
 {
 	if (!(SR & SR_COP2))
 		generate_exception(EXCEPTION_BADCOP);
@@ -702,27 +702,27 @@ static INLINE void handle_cop2(UINT32 op)
 **	COP3 (CUSTOM) EXECUTION HANDLING
 **#################################################################################################*/
 
-static INLINE UINT32 get_cop3_reg(int idx)
+static INLINE uint32_t get_cop3_reg(int idx)
 {
 	return r3000.cpr[3][idx];
 }
 
-static INLINE void set_cop3_reg(int idx, UINT32 val)
+static INLINE void set_cop3_reg(int idx, uint32_t val)
 {
 	r3000.cpr[3][idx] = val;
 }
 
-static INLINE UINT32 get_cop3_creg(int idx)
+static INLINE uint32_t get_cop3_creg(int idx)
 {
 	return r3000.ccr[3][idx];
 }
 
-static INLINE void set_cop3_creg(int idx, UINT32 val)
+static INLINE void set_cop3_creg(int idx, uint32_t val)
 {
 	r3000.ccr[3][idx] = val;
 }
 
-static INLINE void handle_cop3(UINT32 op)
+static INLINE void handle_cop3(uint32_t op)
 {
 	if (!(SR & SR_COP3))
 		generate_exception(EXCEPTION_BADCOP);
@@ -783,8 +783,8 @@ int r3000_execute(int cycles)
 	/* core execution loop */
 	do
 	{
-		UINT32 op;
-		UINT64 temp64;
+		uint32_t op;
+		uint64_t temp64;
 		int temp;
 
 		/* debugging */
@@ -815,10 +815,10 @@ int r3000_execute(int cycles)
 				{
 					case 0x00:	/* SLL */		if (RDREG) RDVAL = RTVAL << SHIFT;						break;
 					case 0x02:	/* SRL */		if (RDREG) RDVAL = RTVAL >> SHIFT;						break;
-					case 0x03:	/* SRA */		if (RDREG) RDVAL = (INT32)RTVAL >> SHIFT;				break;
+					case 0x03:	/* SRA */		if (RDREG) RDVAL = (int32_t)RTVAL >> SHIFT;				break;
 					case 0x04:	/* SLLV */		if (RDREG) RDVAL = RTVAL << (RSVAL & 31);				break;
 					case 0x06:	/* SRLV */		if (RDREG) RDVAL = RTVAL >> (RSVAL & 31);				break;
-					case 0x07:	/* SRAV */		if (RDREG) RDVAL = (INT32)RTVAL >> (RSVAL & 31);		break;
+					case 0x07:	/* SRAV */		if (RDREG) RDVAL = (int32_t)RTVAL >> (RSVAL & 31);		break;
 					case 0x08:	/* JR */		SETPC(RSVAL);											break;
 					case 0x09:	/* JALR */		SETPCL(RSVAL,RDREG);									break;
 					case 0x0c:	/* SYSCALL */	generate_exception(EXCEPTION_SYSCALL);					break;
@@ -829,22 +829,22 @@ int r3000_execute(int cycles)
 					case 0x12:	/* MFLO */		if (RDREG) RDVAL = LOVAL;								break;
 					case 0x13:	/* MTLO */		LOVAL = RSVAL;											break;
 					case 0x18:	/* MULT */
-						temp64 = (INT64)(INT32)RSVAL * (INT64)(INT32)RTVAL;
-						LOVAL = (UINT32)temp64;
-						HIVAL = (UINT32)(temp64 >> 32);
+						temp64 = (int64_t)(int32_t)RSVAL * (int64_t)(int32_t)RTVAL;
+						LOVAL = (uint32_t)temp64;
+						HIVAL = (uint32_t)(temp64 >> 32);
 						r3000_icount -= 11;
 						break;
 					case 0x19:	/* MULTU */
-						temp64 = (UINT64)RSVAL * (UINT64)RTVAL;
-						LOVAL = (UINT32)temp64;
-						HIVAL = (UINT32)(temp64 >> 32);
+						temp64 = (uint64_t)RSVAL * (uint64_t)RTVAL;
+						LOVAL = (uint32_t)temp64;
+						HIVAL = (uint32_t)(temp64 >> 32);
 						r3000_icount -= 11;
 						break;
 					case 0x1a:	/* DIV */
 						if (RTVAL)
 						{
-							LOVAL = (INT32)RSVAL / (INT32)RTVAL;
-							HIVAL = (INT32)RSVAL % (INT32)RTVAL;
+							LOVAL = (int32_t)RSVAL / (int32_t)RTVAL;
+							HIVAL = (int32_t)RSVAL % (int32_t)RTVAL;
 						}
 						r3000_icount -= 34;
 						break;
@@ -870,8 +870,8 @@ int r3000_execute(int cycles)
 					case 0x25:	/* OR */		if (RDREG) RDVAL = RSVAL | RTVAL;						break;
 					case 0x26:	/* XOR */		if (RDREG) RDVAL = RSVAL ^ RTVAL;						break;
 					case 0x27:	/* NOR */		if (RDREG) RDVAL = ~(RSVAL | RTVAL);					break;
-					case 0x2a:	/* SLT */		if (RDREG) RDVAL = (INT32)RSVAL < (INT32)RTVAL;			break;
-					case 0x2b:	/* SLTU */		if (RDREG) RDVAL = (UINT32)RSVAL < (UINT32)RTVAL;		break;
+					case 0x2a:	/* SLT */		if (RDREG) RDVAL = (int32_t)RSVAL < (int32_t)RTVAL;			break;
+					case 0x2b:	/* SLTU */		if (RDREG) RDVAL = (uint32_t)RSVAL < (uint32_t)RTVAL;		break;
 					case 0x30:	/* TEQ */		invalid_instruction(op);								break;
 					case 0x31:	/* TGEU */		invalid_instruction(op);								break;
 					case 0x32:	/* TLT */		invalid_instruction(op);								break;
@@ -885,8 +885,8 @@ int r3000_execute(int cycles)
 			case 0x01:	/* REGIMM */
 				switch (RTREG)
 				{
-					case 0x00:	/* BLTZ */		if ((INT32)RSVAL < 0) ADDPC(SIMMVAL);					break;
-					case 0x01:	/* BGEZ */		if ((INT32)RSVAL >= 0) ADDPC(SIMMVAL);					break;
+					case 0x00:	/* BLTZ */		if ((int32_t)RSVAL < 0) ADDPC(SIMMVAL);					break;
+					case 0x01:	/* BGEZ */		if ((int32_t)RSVAL >= 0) ADDPC(SIMMVAL);					break;
 					case 0x02:	/* BLTZL */		invalid_instruction(op);								break;
 					case 0x03:	/* BGEZL */		invalid_instruction(op);								break;
 					case 0x08:	/* TGEI */		invalid_instruction(op);								break;
@@ -895,8 +895,8 @@ int r3000_execute(int cycles)
 					case 0x0b:	/* TLTIU */		invalid_instruction(op);								break;
 					case 0x0c:	/* TEQI */		invalid_instruction(op);								break;
 					case 0x0e:	/* TNEI */		invalid_instruction(op);								break;
-					case 0x10:	/* BLTZAL */	if ((INT32)RSVAL < 0) ADDPCL(SIMMVAL,31);				break;
-					case 0x11:	/* BGEZAL */	if ((INT32)RSVAL >= 0) ADDPCL(SIMMVAL,31);				break;
+					case 0x10:	/* BLTZAL */	if ((int32_t)RSVAL < 0) ADDPCL(SIMMVAL,31);				break;
+					case 0x11:	/* BGEZAL */	if ((int32_t)RSVAL >= 0) ADDPCL(SIMMVAL,31);				break;
 					case 0x12:	/* BLTZALL */	invalid_instruction(op);								break;
 					case 0x13:	/* BGEZALL */	invalid_instruction(op);								break;
 					default:	/* ??? */		invalid_instruction(op);								break;
@@ -907,15 +907,15 @@ int r3000_execute(int cycles)
 			case 0x03:	/* JAL */		ABSPCL(LIMMVAL,31);												break;
 			case 0x04:	/* BEQ */		if (RSVAL == RTVAL) ADDPC(SIMMVAL);								break;
 			case 0x05:	/* BNE */		if (RSVAL != RTVAL) ADDPC(SIMMVAL);								break;
-			case 0x06:	/* BLEZ */		if ((INT32)RSVAL <= 0) ADDPC(SIMMVAL);							break;
-			case 0x07:	/* BGTZ */		if ((INT32)RSVAL > 0) ADDPC(SIMMVAL);							break;
+			case 0x06:	/* BLEZ */		if ((int32_t)RSVAL <= 0) ADDPC(SIMMVAL);							break;
+			case 0x07:	/* BGTZ */		if ((int32_t)RSVAL > 0) ADDPC(SIMMVAL);							break;
 			case 0x08:	/* ADDI */
 				if (ENABLE_OVERFLOWS && RSVAL > ~SIMMVAL) generate_exception(EXCEPTION_OVERFLOW);
 				else if (RTREG) RTVAL = RSVAL + SIMMVAL;
 				break;
 			case 0x09:	/* ADDIU */		if (RTREG) RTVAL = RSVAL + SIMMVAL;								break;
-			case 0x0a:	/* SLTI */		if (RTREG) RTVAL = (INT32)RSVAL < (INT32)SIMMVAL;				break;
-			case 0x0b:	/* SLTIU */		if (RTREG) RTVAL = (UINT32)RSVAL < (UINT32)SIMMVAL;				break;
+			case 0x0a:	/* SLTI */		if (RTREG) RTVAL = (int32_t)RSVAL < (int32_t)SIMMVAL;				break;
+			case 0x0b:	/* SLTIU */		if (RTREG) RTVAL = (uint32_t)RSVAL < (uint32_t)SIMMVAL;				break;
 			case 0x0c:	/* ANDI */		if (RTREG) RTVAL = RSVAL & UIMMVAL;								break;
 			case 0x0d:	/* ORI */		if (RTREG) RTVAL = RSVAL | UIMMVAL;								break;
 			case 0x0e:	/* XORI */		if (RTREG) RTVAL = RSVAL ^ UIMMVAL;								break;
@@ -928,12 +928,12 @@ int r3000_execute(int cycles)
 			case 0x15:	/* BNEL */		invalid_instruction(op);										break;
 			case 0x16:	/* BLEZL */		invalid_instruction(op);										break;
 			case 0x17:	/* BGTZL */		invalid_instruction(op);										break;
-			case 0x20:	/* LB */		temp = RBYTE(SIMMVAL+RSVAL); if (RTREG) RTVAL = (INT8)temp;		break;
-			case 0x21:	/* LH */		temp = RWORD(SIMMVAL+RSVAL); if (RTREG) RTVAL = (INT16)temp;	break;
+			case 0x20:	/* LB */		temp = RBYTE(SIMMVAL+RSVAL); if (RTREG) RTVAL = (int8_t)temp;		break;
+			case 0x21:	/* LH */		temp = RWORD(SIMMVAL+RSVAL); if (RTREG) RTVAL = (int16_t)temp;	break;
 			case 0x22:	/* LWL */		(*r3000.lwl)(op);												break;
 			case 0x23:	/* LW */		temp = RLONG(SIMMVAL+RSVAL); if (RTREG) RTVAL = temp;			break;
-			case 0x24:	/* LBU */		temp = RBYTE(SIMMVAL+RSVAL); if (RTREG) RTVAL = (UINT8)temp;	break;
-			case 0x25:	/* LHU */		temp = RWORD(SIMMVAL+RSVAL); if (RTREG) RTVAL = (UINT16)temp;	break;
+			case 0x24:	/* LBU */		temp = RBYTE(SIMMVAL+RSVAL); if (RTREG) RTVAL = (uint8_t)temp;	break;
+			case 0x25:	/* LHU */		temp = RWORD(SIMMVAL+RSVAL); if (RTREG) RTVAL = (uint16_t)temp;	break;
 			case 0x26:	/* LWR */		(*r3000.lwr)(op);												break;
 			case 0x28:	/* SB */		WBYTE(SIMMVAL+RSVAL, RTVAL);									break;
 			case 0x29:	/* SH */		WWORD(SIMMVAL+RSVAL, RTVAL); 									break;
@@ -1093,7 +1093,7 @@ void r3000_set_reg(int regnum, unsigned val)
 **	DEBUGGER DEFINITIONS
 **#################################################################################################*/
 
-static UINT8 r3000_reg_layout[] =
+static uint8_t r3000_reg_layout[] =
 {
 	R3000_PC,		R3000_SR,		-1,
 	R3000_R0,	 	R3000_R16,		-1,
@@ -1114,7 +1114,7 @@ static UINT8 r3000_reg_layout[] =
 	R3000_R15,		R3000_R31,		0
 };
 
-static UINT8 r3000_win_layout[] =
+static uint8_t r3000_win_layout[] =
 {
 	 0, 0,30,20,	/* register window (top rows) */
 	31, 0,48,14,	/* disassembler window (left colums) */
@@ -1292,7 +1292,7 @@ static void writecache_le_dword(offs_t offset, data32_t data)
 **	COMPLEX OPCODE IMPLEMENTATIONS
 **#################################################################################################*/
 
-static void lwl_be(UINT32 op)
+static void lwl_be(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	data32_t temp = RLONG(offs & ~3);
@@ -1307,7 +1307,7 @@ static void lwl_be(UINT32 op)
 	}
 }
 
-static void lwr_be(UINT32 op)
+static void lwr_be(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	data32_t temp = RLONG(offs & ~3);
@@ -1322,7 +1322,7 @@ static void lwr_be(UINT32 op)
 	}
 }
 
-static void swl_be(UINT32 op)
+static void swl_be(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	if (!(offs & 3)) WLONG(offs, RTVAL);
@@ -1335,7 +1335,7 @@ static void swl_be(UINT32 op)
 }
 
 
-static void swr_be(UINT32 op)
+static void swr_be(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	if ((offs & 3) == 3) WLONG(offs & ~3, RTVAL);
@@ -1349,7 +1349,7 @@ static void swr_be(UINT32 op)
 
 
 
-static void lwl_le(UINT32 op)
+static void lwl_le(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	data32_t temp = RLONG(offs & ~3);
@@ -1364,7 +1364,7 @@ static void lwl_le(UINT32 op)
 	}
 }
 
-static void lwr_le(UINT32 op)
+static void lwr_le(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	data32_t temp = RLONG(offs & ~3);
@@ -1379,7 +1379,7 @@ static void lwr_le(UINT32 op)
 	}
 }
 
-static void swl_le(UINT32 op)
+static void swl_le(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	if (!(offs & 3)) WLONG(offs, RTVAL);
@@ -1391,7 +1391,7 @@ static void swl_le(UINT32 op)
 	}
 }
 
-static void swr_le(UINT32 op)
+static void swr_le(uint32_t op)
 {
 	offs_t offs = SIMMVAL + RSVAL;
 	if ((offs & 3) == 3) WLONG(offs & ~3, RTVAL);

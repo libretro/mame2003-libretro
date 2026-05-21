@@ -3,7 +3,7 @@
  *  HALT: must add log
  */
 
-UINT32 opBRK(void)
+uint32_t opBRK(void)
 {
 /*
 	UPDATEPSW();
@@ -22,7 +22,7 @@ UINT32 opBRK(void)
 	return 1;
 }
 
-UINT32 opBRKV(void)
+uint32_t opBRKV(void)
 {
 	UPDATEPSW();
 
@@ -40,14 +40,14 @@ UINT32 opBRKV(void)
 	return 0;
 }
 
-UINT32 opCLRTLBA(void)
+uint32_t opCLRTLBA(void)
 {
 	// @@@ TLB not yet supported
 	logerror("Skipping CLRTLBA opcode! PC=%x\n", PC);
 	return 1;
 }
 
-UINT32 opDISPOSE(void)
+uint32_t opDISPOSE(void)
 {
 	SP = FP;
 	FP = MemRead32(SP);
@@ -56,19 +56,19 @@ UINT32 opDISPOSE(void)
 	return 1;
 }
 
-UINT32 opHALT(void)
+uint32_t opHALT(void)
 {
 	// @@@ It should wait for an interrupt to occur
 	//logerror("HALT found: skipping");
 	return 1;
 }
 
-UINT32 opNOP(void) /* TRUSTED */
+uint32_t opNOP(void) /* TRUSTED */
 {
 	return 1;
 }
 
-UINT32 opRSR(void)
+uint32_t opRSR(void)
 {
 	PC = MemRead32(SP);
 	SP +=4;
@@ -77,7 +77,7 @@ UINT32 opRSR(void)
 	return 0;
 }
 
-UINT32 opTRAPFL(void)
+uint32_t opTRAPFL(void)
 {
 	UPDATEPSW();
 

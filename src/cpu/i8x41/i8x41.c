@@ -33,7 +33,7 @@
  *	 -ÿChanged ANLD, ORLD and MOVD instructions to act through Port 2 in
  *	   nibble mode.
  *	 -ÿCopied F0 and moved F1 flags to the STATE flag bits where they belong.
- *	 -ÿCorrected the 'addr' field by changing it from UINT8 to UINT16 for:
+ *	 -ÿCorrected the 'addr' field by changing it from uint8_t to uint16_t for:
  *	   'INC @Rr' 'MOV @Rr,A' 'MOV @Rr,#N' 'XCH A,@Rr' 'XCHD A,@Rr'
  *	 -ÿAdded mask to TIMER when the TEST1 Counter overflows.
  *	 - Seperated the prescaler out of the timer/counter, in order to correct
@@ -64,22 +64,22 @@
 #include "i8x41.h"
 
 typedef struct {
-	UINT16	ppc;
-	UINT16	pc;
-	UINT8	timer;
-	UINT8	prescaler;
-	UINT16	subtype;
-	UINT8	a;
-	UINT8	psw;
-	UINT8	state;
-	UINT8	enable;
-	UINT8	control;
-	UINT8	dbbi;
-	UINT8	dbbo;
-	UINT8	p1;
-	UINT8	p2;
-	UINT8	p2_hs;
-	UINT8	*ram;
+	uint16_t	ppc;
+	uint16_t	pc;
+	uint8_t	timer;
+	uint8_t	prescaler;
+	uint16_t	subtype;
+	uint8_t	a;
+	uint8_t	psw;
+	uint8_t	state;
+	uint8_t	enable;
+	uint8_t	control;
+	uint8_t	dbbi;
+	uint8_t	dbbo;
+	uint8_t	p1;
+	uint8_t	p2;
+	uint8_t	p2_hs;
+	uint8_t	*ram;
 	int 	(*irq_callback)(int irqline);
 }	I8X41;
 
@@ -88,13 +88,13 @@ int i8x41_ICount;
 static I8X41 i8x41;
 
 /* Layout of the registers in the debugger */
-static UINT8 i8x41_reg_layout[] = {
+static uint8_t i8x41_reg_layout[] = {
 	I8X41_PC, I8X41_SP, I8X41_PSW, I8X41_T, I8X41_DATA_DASM, I8X41_CMND_DASM, I8X41_STAT, I8X41_P1, I8X41_P2, -1,
 	I8X41_A, I8X41_R0, I8X41_R1, I8X41_R2, I8X41_R3, I8X41_R4, I8X41_R5, I8X41_R6, I8X41_R7, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 i8x41_win_layout[] = {
+static uint8_t i8x41_win_layout[] = {
 	 0, 0,80, 2,	/* register window (top rows) */
 	 0, 3,24,19,	/* disassembler window (left colums) */
 	25, 3,55, 9,	/* memory #1 window (right, upper middle) */
@@ -209,7 +209,7 @@ static INLINE void illegal(void)
  ***********************************/
 static INLINE void add_r(int r)
 {
-	UINT8 res = A + R(r);
+	uint8_t res = A + R(r);
 	if( res < A ) PSW |= FC;
 	if( (res & 0x0f) < (A & 0x0f) ) PSW |= FA;
 	A = res;
@@ -221,7 +221,7 @@ static INLINE void add_r(int r)
  ***********************************/
 static INLINE void add_rm(int r)
 {
-	UINT8 res = A + RM( M_IRAM + (R(r) & I8X42_intRAM_MASK) );
+	uint8_t res = A + RM( M_IRAM + (R(r) & I8X42_intRAM_MASK) );
 	if( res < A ) PSW |= FC;
 	if( (res & 0x0f) < (A & 0x0f) ) PSW |= FA;
 	A = res;
@@ -233,7 +233,7 @@ static INLINE void add_rm(int r)
  ***********************************/
 static INLINE void add_i(void)
 {
-	UINT8 res = A + ROP_ARG(PC);
+	uint8_t res = A + ROP_ARG(PC);
 	PC++;
 	if( res < A ) PSW |= FC;
 	if( (res & 0x0f) < (A & 0x0f) ) PSW |= FA;
@@ -246,7 +246,7 @@ static INLINE void add_i(void)
  ***********************************/
 static INLINE void addc_r(int r)
 {
-	UINT8 res = A + R(r) + (PSW >> 7);
+	uint8_t res = A + R(r) + (PSW >> 7);
 	if( res <= A ) PSW |= FC;
 	if( (res & 0x0f) <= (A & 0x0f) ) PSW |= FA;
 	A = res;
@@ -258,7 +258,7 @@ static INLINE void addc_r(int r)
  ***********************************/
 static INLINE void addc_rm(int r)
 {
-	UINT8 res = A + RM( M_IRAM + (R(r) & I8X42_intRAM_MASK) ) + (PSW >> 7);
+	uint8_t res = A + RM( M_IRAM + (R(r) & I8X42_intRAM_MASK) ) + (PSW >> 7);
 	if( res <= A ) PSW |= FC;
 	if( (res & 0x0f) <= (A & 0x0f) ) PSW |= FA;
 	A = res;
@@ -270,7 +270,7 @@ static INLINE void addc_rm(int r)
  ***********************************/
 static INLINE void addc_i(void)
 {
-	UINT8 res = A + ROP_ARG(PC);
+	uint8_t res = A + ROP_ARG(PC);
 	PC++;
 	if( res < A ) PSW |= FC;
 	if( (res & 0x0f) < (A & 0x0f) ) PSW |= FA;
@@ -311,7 +311,7 @@ static INLINE void anl_i(void)
  ***********************************/
 static INLINE void anl_p_i(int p)
 {
-	UINT8 val = ROP_ARG(PC);
+	uint8_t val = ROP_ARG(PC);
 	PC++;
 	/* changed to latched port scheme */
 	switch (p)
@@ -343,7 +343,7 @@ static INLINE void anld_p_a(int p)
  ***********************************/
 static INLINE void call_i(int page)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC++;
 	PUSH_PC_TO_STACK();
 	PC = page | adr;
@@ -429,7 +429,7 @@ static INLINE void cpl_f1(void)
  ***********************************/
 static INLINE void da_a(void)
 {
-	UINT8 res = A + ((PSW & FA) || ((A & 0x0f) > 0x09)) ? 0x06 : 0x00;
+	uint8_t res = A + ((PSW & FA) || ((A & 0x0f) > 0x09)) ? 0x06 : 0x00;
 	if( (PSW & FC) || ((res & 0xf0) > 0x90) )
 		res += 0x60;
 	if( res < A )
@@ -481,7 +481,7 @@ static INLINE void dis_tcnti(void)
  ***********************************/
 static INLINE void djnz_r_i(int r)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC++;
 	R(r) -= 1;
 	if( R(r) )
@@ -602,7 +602,7 @@ static INLINE void inc_r(int r)
  ***********************************/
 static INLINE void inc_rm(int r)
 {
-	UINT16 addr = M_IRAM + (R(r) & I8X42_intRAM_MASK);
+	uint16_t addr = M_IRAM + (R(r) & I8X42_intRAM_MASK);
 	WM( addr, RM(addr) + 1 );
 }
 
@@ -612,7 +612,7 @@ static INLINE void inc_rm(int r)
  ***********************************/
 static INLINE void jbb_i(int bit)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( A & (1 << bit) )
 		PC = (PC & 0x700) | adr;
@@ -624,7 +624,7 @@ static INLINE void jbb_i(int bit)
  ***********************************/
 static INLINE void jc_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( PSW & FC )
 		PC = (PC & 0x700) | adr;
@@ -636,7 +636,7 @@ static INLINE void jc_i(void)
  ***********************************/
 static INLINE void jf0_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( STATE & F0 )
 		PC = (PC & 0x700) | adr;
@@ -648,7 +648,7 @@ static INLINE void jf0_i(void)
  ***********************************/
 static INLINE void jf1_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( STATE & F1 )
 		PC = (PC & 0x700) | adr;
@@ -664,7 +664,7 @@ static INLINE void jmp_i(int page)
 	 * CALL is said to use 0aa1 (4 pages)
 	 * JMP is said to use aaa0 (8 pages)
 	 */
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC = page | adr;
 }
 
@@ -674,7 +674,7 @@ static INLINE void jmp_i(int page)
  ***********************************/
 static INLINE void jmpp_a(void)
 {
-	UINT16 adr = (PC & 0x700) | A;
+	uint16_t adr = (PC & 0x700) | A;
 	PC = (PC & 0x700) | RM(adr);
 }
 
@@ -684,7 +684,7 @@ static INLINE void jmpp_a(void)
  ***********************************/
 static INLINE void jnc_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( !(PSW & FC) )
 		PC = (PC & 0x700) | adr;
@@ -696,7 +696,7 @@ static INLINE void jnc_i(void)
  ***********************************/
 static INLINE void jnibf_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( 0 == (STATE & IBF) )
 		PC = (PC & 0x700) | adr;
@@ -708,7 +708,7 @@ static INLINE void jnibf_i(void)
  ***********************************/
 static INLINE void jnt0_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( 0 == RP(I8X41_t0) )
 		PC = (PC & 0x700) | adr;
@@ -720,11 +720,11 @@ static INLINE void jnt0_i(void)
  ***********************************/
 static INLINE void jnt1_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( !(ENABLE & CNT) )
 	{
-		UINT8 level = RP(I8X41_t1);
+		uint8_t level = RP(I8X41_t1);
 		if( level ) CONTROL |= TEST1;
 		else CONTROL &= ~TEST1;
 	}
@@ -738,7 +738,7 @@ static INLINE void jnt1_i(void)
  ***********************************/
 static INLINE void jnz_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( A )
 		PC = (PC & 0x700) | adr;
@@ -750,7 +750,7 @@ static INLINE void jnz_i(void)
  ***********************************/
 static INLINE void jobf_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( STATE & OBF )
 		PC = (PC & 0x700) | adr;
@@ -762,7 +762,7 @@ static INLINE void jobf_i(void)
  ***********************************/
 static INLINE void jtf_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( CONTROL & TOVF )
 		PC = (PC & 0x700) | adr;
@@ -775,7 +775,7 @@ static INLINE void jtf_i(void)
  ***********************************/
 static INLINE void jt0_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( RP(I8X41_t0) )
 		PC = (PC & 0x700) | adr;
@@ -787,11 +787,11 @@ static INLINE void jt0_i(void)
  ***********************************/
 static INLINE void jt1_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( !(ENABLE & CNT) )
 	{
-		UINT8 level = RP(I8X41_t1);
+		uint8_t level = RP(I8X41_t1);
 		if( level ) CONTROL |= TEST1;
 		else CONTROL &= ~TEST1;
 	}
@@ -805,7 +805,7 @@ static INLINE void jt1_i(void)
  ***********************************/
 static INLINE void jz_i(void)
 {
-	UINT8 adr = ROP_ARG(PC);
+	uint8_t adr = ROP_ARG(PC);
 	PC += 1;
 	if( !A )
 		PC = (PC & 0x700) | adr;
@@ -881,7 +881,7 @@ static INLINE void mov_r_a(int r)
  ***********************************/
 static INLINE void mov_r_i(int r)
 {
-	UINT8 val = ROP_ARG(PC);
+	uint8_t val = ROP_ARG(PC);
 	PC += 1;
 	R(r) = val;
 }
@@ -901,7 +901,7 @@ static INLINE void mov_rm_a(int r)
  ***********************************/
 static INLINE void mov_rm_i(int r)
 {
-	UINT8 val = ROP_ARG(PC);
+	uint8_t val = ROP_ARG(PC);
 	PC += 1;
 	WM( M_IRAM + (R(r) & I8X42_intRAM_MASK), val );
 }
@@ -956,7 +956,7 @@ static INLINE void movd_p_a(int p)
  ***********************************/
 static INLINE void movp_a_am(void)
 {
-	UINT16 addr = (PC & 0x700) | A;
+	uint16_t addr = (PC & 0x700) | A;
 	A = RM(addr);
 }
 
@@ -966,7 +966,7 @@ static INLINE void movp_a_am(void)
  ***********************************/
 static INLINE void movp3_a_am(void)
 {
-	UINT16 addr = 0x300 | A;
+	uint16_t addr = 0x300 | A;
 	A = RM(addr);
 }
 
@@ -1002,7 +1002,7 @@ static INLINE void orl_rm(int r)
  ***********************************/
 static INLINE void orl_i(void)
 {
-	UINT8 val = ROP_ARG(PC);
+	uint8_t val = ROP_ARG(PC);
 	PC++;
 	A = A | val;
 }
@@ -1013,7 +1013,7 @@ static INLINE void orl_i(void)
  ***********************************/
 static INLINE void orl_p_i(int p)
 {
-	UINT8 val = ROP_ARG(PC);
+	uint8_t val = ROP_ARG(PC);
 	PC++;
 	/* changed to latched port scheme */
 	switch (p)
@@ -1079,7 +1079,7 @@ static INLINE void out_p_a(int p)
  ***********************************/
 static INLINE void ret(void)
 {
-	UINT8 msb;
+	uint8_t msb;
 	PSW = (PSW & ~SP) | ((PSW - 1) & SP);
 	msb = RM(M_STACK + (PSW&SP) * 2 + 1);
 	PC = RM(M_STACK + (PSW&SP) * 2 + 0);
@@ -1092,7 +1092,7 @@ static INLINE void ret(void)
  ***********************************/
 static INLINE void retr(void)
 {
-	UINT8 msb;
+	uint8_t msb;
 	PSW = (PSW & ~SP) | ((PSW - 1) & SP);
 	msb = RM(M_STACK + (PSW&SP) * 2 + 1);
 	PC = RM(M_STACK + (PSW&SP) * 2 + 0);
@@ -1117,7 +1117,7 @@ static INLINE void rl_a(void)
  ***********************************/
 static INLINE void rlc_a(void)
 {
-	UINT8 c = PSW >> 7;
+	uint8_t c = PSW >> 7;
 	PSW = (PSW & ~FC) | (A >> 7);
 	A = (A << 1) | c;
 }
@@ -1137,7 +1137,7 @@ static INLINE void rr_a(void)
  ***********************************/
 static INLINE void rrc_a(void)
 {
-	UINT8 c = PSW & 0x80;
+	uint8_t c = PSW & 0x80;
 	PSW = (PSW & ~FC) | (A << 7);
 	A = (A >> 1) | c;
 }
@@ -1204,7 +1204,7 @@ static INLINE void swap_a(void)
  ***********************************/
 static INLINE void xch_a_r(int r)
 {
-	UINT8 tmp = R(r);
+	uint8_t tmp = R(r);
 	R(r) = A;
 	A = tmp;
 }
@@ -1215,8 +1215,8 @@ static INLINE void xch_a_r(int r)
  ***********************************/
 static INLINE void xch_a_rm(int r)
 {
-	UINT16 addr = M_IRAM + (R(r) & I8X42_intRAM_MASK);
-	UINT8 tmp = RM(addr);
+	uint16_t addr = M_IRAM + (R(r) & I8X42_intRAM_MASK);
+	uint8_t tmp = RM(addr);
 	WM( addr, A );
 	A = tmp;
 }
@@ -1227,8 +1227,8 @@ static INLINE void xch_a_rm(int r)
  ***********************************/
 static INLINE void xchd_a_rm(int r)
 {
-	UINT16 addr = M_IRAM + (R(r) & I8X42_intRAM_MASK);
-	UINT8 tmp = RM(addr);
+	uint16_t addr = M_IRAM + (R(r) & I8X42_intRAM_MASK);
+	uint8_t tmp = RM(addr);
 	WM( addr, (tmp & 0xf0) | (A & 0x0f) );
 	A = (A & 0xf0) | (tmp & 0x0f);
 }
@@ -1257,7 +1257,7 @@ static INLINE void xrl_rm(int r)
  ***********************************/
 static INLINE void xrl_i(void)
 {
-	UINT8 val = ROP_ARG(PC);
+	uint8_t val = ROP_ARG(PC);
 	PC++;
 	A = A ^ val;
 }
@@ -1267,7 +1267,7 @@ static INLINE void xrl_i(void)
  *	Cycle Timings
  ***********************************************************************/
 
-static UINT8 i8x41_cycles[] = {
+static uint8_t i8x41_cycles[] = {
 	1,1,1,2,2,1,1,1,2,2,2,2,2,2,2,2,
 	1,1,2,2,2,1,2,1,1,1,1,1,1,1,1,1,
 	1,1,1,2,2,1,2,1,1,1,1,1,1,1,1,1,
@@ -1355,7 +1355,7 @@ int i8x41_execute(int cycles)
 
 	do
 	{
-		UINT8 op = cpu_readop(PC);
+		uint8_t op = cpu_readop(PC);
 
 		PPC = PC;
 

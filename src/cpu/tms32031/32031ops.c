@@ -25,22 +25,22 @@
 #define FREGEXP(rnum)		(EXPONENT(&tms32031.r[rnum]))
 #define FREGMAN(rnum)		(MANTISSA(&tms32031.r[rnum]))
 
-#define FP2LONG(rnum)		((FREGEXP(rnum) << 24) | ((UINT32)FREGMAN(rnum) >> 8))
-#define LONG2FP(rnum,v)		do { SET_MANTISSA(&tms32031.r[rnum], (v) << 8); SET_EXPONENT(&tms32031.r[rnum], (INT32)(v) >> 24); } while (0)
+#define FP2LONG(rnum)		((FREGEXP(rnum) << 24) | ((uint32_t)FREGMAN(rnum) >> 8))
+#define LONG2FP(rnum,v)		do { SET_MANTISSA(&tms32031.r[rnum], (v) << 8); SET_EXPONENT(&tms32031.r[rnum], (int32_t)(v) >> 24); } while (0)
 #define SHORT2FP(rnum,v)	do { \
-								if ((UINT16)(v) == 0x8000) { SET_MANTISSA(&tms32031.r[rnum], 0); SET_EXPONENT(&tms32031.r[rnum], -128); } \
-								else { SET_MANTISSA(&tms32031.r[rnum], (v) << 20); SET_EXPONENT(&tms32031.r[rnum], (INT16)(v) >> 12); } \
+								if ((uint16_t)(v) == 0x8000) { SET_MANTISSA(&tms32031.r[rnum], 0); SET_EXPONENT(&tms32031.r[rnum], -128); } \
+								else { SET_MANTISSA(&tms32031.r[rnum], (v) << 20); SET_EXPONENT(&tms32031.r[rnum], (int16_t)(v) >> 12); } \
 							} while (0)
 
-#define DIRECT()			(((IREG(TMR_DP) & 0xff) << 16) | ((UINT16)OP))
+#define DIRECT()			(((IREG(TMR_DP) & 0xff) << 16) | ((uint16_t)OP))
 #define INDIRECT_D(o)		((*indirect_d[((o) >> 3) & 31])(o))
 #define INDIRECT_1(o)		((*indirect_1[((o) >> 3) & 31])(o))
 #define INDIRECT_1_DEF(o)	((*indirect_1_def[((o) >> 3) & 31])(o))
 
 #define SIGN(val)			((val) & 0x80000000)
 
-#define OVERFLOW_SUB(a,b,r)	((INT32)(((a) ^ (b)) & ((a) ^ (r))) < 0)
-#define OVERFLOW_ADD(a,b,r)	((INT32)(~((a) ^ (b)) & ((a) ^ (r))) < 0)
+#define OVERFLOW_SUB(a,b,r)	((int32_t)(((a) ^ (b)) & ((a) ^ (r))) < 0)
+#define OVERFLOW_ADD(a,b,r)	((int32_t)(~((a) ^ (b)) & ((a) ^ (r))) < 0)
 
 #define CLR_FLAGS(f)		do { IREG(TMR_ST) &= ~(f); } while (0)
 #define CLR_NVUF()			CLR_FLAGS(NFLAG | VFLAG | UFFLAG)
@@ -51,10 +51,10 @@
 #define OR_NZ(val)			do { IREG(TMR_ST) |= (((val) >> 28) & NFLAG) | (((val) == 0) << 2); } while (0)
 #define OR_NZF(reg)			do { IREG(TMR_ST) |= ((MANTISSA(reg) >> 28) & NFLAG) | (((MANTISSA(reg) + EXPONENT(reg) + 128) == 0) << 2); } while (0)
 #define OR_NUF(reg)			do { int temp = ((MANTISSA(reg) + EXPONENT(reg) + 128) == 0) << 4; IREG(TMR_ST) |= ((MANTISSA(reg) >> 28) & NFLAG) | (temp) | (temp << 2); } while (0)
-#define OR_V_SUB(a,b,r)		do { UINT32 temp = ((((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(TMR_ST) |= temp | (temp << 4); } while (0)
-#define OR_V_ADD(a,b,r)		do { UINT32 temp = ((~((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(TMR_ST) |= temp | (temp << 4); } while (0)
-#define OR_C_SUB(a,b,r)		do { IREG(TMR_ST) |= ((UINT32)(b) > (UINT32)(a)); } while (0)
-#define OR_C_ADD(a,b,r)		do { IREG(TMR_ST) |= ((UINT32)(~(a)) < (UINT32)(b)); } while (0)
+#define OR_V_SUB(a,b,r)		do { uint32_t temp = ((((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(TMR_ST) |= temp | (temp << 4); } while (0)
+#define OR_V_ADD(a,b,r)		do { uint32_t temp = ((~((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(TMR_ST) |= temp | (temp << 4); } while (0)
+#define OR_C_SUB(a,b,r)		do { IREG(TMR_ST) |= ((uint32_t)(b) > (uint32_t)(a)); } while (0)
+#define OR_C_ADD(a,b,r)		do { IREG(TMR_ST) |= ((uint32_t)(~(a)) < (uint32_t)(b)); } while (0)
 #define OR_NZCV_SUB(a,b,r)	do { OR_V_SUB(a,b,r); OR_C_SUB(a,b,r); OR_NZ(r); } while (0)
 #define OR_NZCV_ADD(a,b,r)	do { OR_V_ADD(a,b,r); OR_C_ADD(a,b,r); OR_NZ(r); } while (0)
 
@@ -76,8 +76,8 @@ void (*tms32031ops[])(void);
 **	LOCAL VARIABLES
 **#################################################################################################*/
 
-static UINT32 *defptr;
-static UINT32 defval;
+static uint32_t *defptr;
+static uint32_t defval;
 
 
 
@@ -126,7 +126,7 @@ static void update_special(int dreg)
 {
 	if (dreg == TMR_BK)
 	{
-		UINT32 temp = IREG(TMR_BK);
+		uint32_t temp = IREG(TMR_BK);
 		tms32031.bkmask = temp;
 		while (temp >>= 1)
 			tms32031.bkmask |= temp;
@@ -232,7 +232,7 @@ void double_to_dsp_with_flags(double val, union genreg *result)
 	}
 	else if (exponent > 127)
 	{
-		if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+		if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 			SET_MANTISSA(result, 0x7fffffff);
 		else
 		{
@@ -248,7 +248,7 @@ void double_to_dsp_with_flags(double val, union genreg *result)
 		SET_EXPONENT(result, -128);
 		IREG(TMR_ST) |= ZFLAG;
 	}
-	else if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+	else if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 	{
 		SET_MANTISSA(result, mantissa);
 		SET_EXPONENT(result, exponent);
@@ -269,18 +269,18 @@ void double_to_dsp_with_flags(double val, union genreg *result)
 #endif
 
 #if !USE_FP
-static INLINE int count_leading_zeros(UINT32 val)
+static INLINE int count_leading_zeros(uint32_t val)
 {
 	int count;
-	for (count = 0; (INT32)val >= 0; count++) val <<= 1;
+	for (count = 0; (int32_t)val >= 0; count++) val <<= 1;
 	return count;
 }
 
 
-static INLINE int count_leading_ones(UINT32 val)
+static INLINE int count_leading_ones(uint32_t val)
 {
 	int count;
-	for (count = 0; (INT32)val < 0; count++) val <<= 1;
+	for (count = 0; (int32_t)val < 0; count++) val <<= 1;
 	return count;
 }
 #endif
@@ -295,7 +295,7 @@ static void int2float(union genreg *srcdst)
 #else
 static void int2float(union genreg *srcdst)
 {
-	UINT32 man = MANTISSA(srcdst);
+	uint32_t man = MANTISSA(srcdst);
 	int exp, cnt;
 
 	/* never overflows or underflows */
@@ -309,14 +309,14 @@ static void int2float(union genreg *srcdst)
 	}
 
 	/* check for -1 here because count_leading_ones will infinite loop */
-	else if (man == (UINT32)-1)
+	else if (man == (uint32_t)-1)
 	{
 		man = 0;
 		exp = -1;
 	}
 
 	/* positive values; count leading zeros and shift */
-	else if ((INT32)man > 0)
+	else if ((int32_t)man > 0)
 	{
 		cnt = count_leading_zeros(man);
 		man <<= cnt;
@@ -343,12 +343,12 @@ static void int2float(union genreg *srcdst)
 #if USE_FP
 static void float2int(union genreg *srcdst)
 {
-	INT32 val;
+	int32_t val;
 
 	CLR_NZVUF();
 	if (EXPONENT(srcdst) > 30)
 	{
-		if ((INT32)MANTISSA(srcdst) >= 0)
+		if ((int32_t)MANTISSA(srcdst) >= 0)
 			val = 0x7fffffff;
 		else
 			val = 0x80000000;
@@ -362,7 +362,7 @@ static void float2int(union genreg *srcdst)
 #else
 static void float2int(union genreg *srcdst)
 {
-	INT32 man = MANTISSA(srcdst);
+	int32_t man = MANTISSA(srcdst);
 	int shift = 31 - EXPONENT(srcdst);
 
 	/* never underflows */
@@ -399,7 +399,7 @@ static void negf(union genreg *dst, union genreg *src)
 #else
 static void negf(union genreg *dst, union genreg *src)
 {
-	INT32 man = MANTISSA(src);
+	int32_t man = MANTISSA(src);
 
 	CLR_NZVUF();
 	if ((man & 0x7fffffff) != 0)
@@ -436,16 +436,16 @@ static void addf(union genreg *dst, union genreg *src1, union genreg *src2)
 #else
 static void addf(union genreg *dst, union genreg *src1, union genreg *src2)
 {
-	INT64 man;
-	INT64 m1, m2;
+	int64_t man;
+	int64_t m1, m2;
 	int exp, cnt;
 
 	/* reset over/underflow conditions */
 	CLR_NZVUF();
 
 	/* extract mantissas from 1.0.31 values to 1.1.31 values */
-	m1 = (INT64)MANTISSA(src1) ^ 0x80000000;
-	m2 = (INT64)MANTISSA(src2) ^ 0x80000000;
+	m1 = (int64_t)MANTISSA(src1) ^ 0x80000000;
+	m2 = (int64_t)MANTISSA(src2) ^ 0x80000000;
 
 	/* normalize based on the exponent */
 	if (EXPONENT(src1) > EXPONENT(src2))
@@ -484,24 +484,24 @@ static void addf(union genreg *dst, union genreg *src1, union genreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or < -2.0, normalize */
-	else if (man >= ((INT64)2 << 31) || man < ((INT64)-2 << 31))
+	else if (man >= ((int64_t)2 << 31) || man < ((int64_t)-2 << 31))
 	{
 		man >>= 1;
 		exp++;
 	}
 
 	/* if the mantissa is < 1.0 and > -1.0, normalize */
-	else if (man < ((INT64)1 << 31) && man >= ((INT64)-1 << 31))
+	else if (man < ((int64_t)1 << 31) && man >= ((int64_t)-1 << 31))
 	{
 		if (man > 0)
 		{
-			cnt = count_leading_zeros((UINT32)man);
+			cnt = count_leading_zeros((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
 		else
 		{
-			cnt = count_leading_ones((UINT32)man);
+			cnt = count_leading_ones((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
@@ -525,7 +525,7 @@ static void addf(union genreg *dst, union genreg *src1, union genreg *src2)
 
 	/* store the result back, removing the implicit one and putting */
 	/* back the sign bit */
-	SET_MANTISSA(dst, (UINT32)man ^ 0x80000000);
+	SET_MANTISSA(dst, (uint32_t)man ^ 0x80000000);
 	SET_EXPONENT(dst, exp);
 	OR_NZF(dst);
 }
@@ -542,16 +542,16 @@ static void subf(union genreg *dst, union genreg *src1, union genreg *src2)
 #else
 static void subf(union genreg *dst, union genreg *src1, union genreg *src2)
 {
-	INT64 man;
-	INT64 m1, m2;
+	int64_t man;
+	int64_t m1, m2;
 	int exp, cnt;
 
 	/* reset over/underflow conditions */
 	CLR_NZVUF();
 
 	/* extract mantissas from 1.0.31 values to 1.1.31 values */
-	m1 = (INT64)MANTISSA(src1) ^ 0x80000000;
-	m2 = (INT64)MANTISSA(src2) ^ 0x80000000;
+	m1 = (int64_t)MANTISSA(src1) ^ 0x80000000;
+	m2 = (int64_t)MANTISSA(src2) ^ 0x80000000;
 
 	/* normalize based on the exponent */
 	if (EXPONENT(src1) > EXPONENT(src2))
@@ -589,24 +589,24 @@ static void subf(union genreg *dst, union genreg *src1, union genreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or < -2.0, normalize */
-	else if (man >= ((INT64)2 << 31) || man < ((INT64)-2 << 31))
+	else if (man >= ((int64_t)2 << 31) || man < ((int64_t)-2 << 31))
 	{
 		man >>= 1;
 		exp++;
 	}
 
 	/* if the mantissa is < 1.0 and > -1.0, normalize */
-	else if (man < ((INT64)1 << 31) && man >= ((INT64)-1 << 31))
+	else if (man < ((int64_t)1 << 31) && man >= ((int64_t)-1 << 31))
 	{
 		if (man > 0)
 		{
-			cnt = count_leading_zeros((UINT32)man);
+			cnt = count_leading_zeros((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
 		else
 		{
-			cnt = count_leading_ones((UINT32)man);
+			cnt = count_leading_ones((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
@@ -632,7 +632,7 @@ static void subf(union genreg *dst, union genreg *src1, union genreg *src2)
 
 	/* store the result back, removing the implicit one and putting */
 	/* back the sign bit */
-	SET_MANTISSA(dst, (UINT32)man ^ 0x80000000);
+	SET_MANTISSA(dst, (uint32_t)man ^ 0x80000000);
 	SET_EXPONENT(dst, exp);
 	OR_NZF(dst);
 }
@@ -649,8 +649,8 @@ static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 #else
 static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 {
-	INT64 man;
-	INT32 m1, m2;
+	int64_t man;
+	int32_t m1, m2;
 	int exp;
 
 	/* reset over/underflow conditions */
@@ -670,7 +670,7 @@ static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 	m2 = (MANTISSA(src2) >> 8) ^ 0x800000;
 
 	/* multiply the mantissas and add the exponents */
-	man = (INT64)m1 * (INT64)m2;
+	man = (int64_t)m1 * (int64_t)m2;
 	exp = EXPONENT(src1) + EXPONENT(src2);
 
 	/* chop off the low bits, going from 1.2.46 down to 1.2.31 */
@@ -684,11 +684,11 @@ static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or <= -2.0, normalize */
-	else if (man >= ((INT64)2 << 31))
+	else if (man >= ((int64_t)2 << 31))
 	{
 		man >>= 1;
 		exp++;
-		if (man >= ((INT64)2 << 31))
+		if (man >= ((int64_t)2 << 31))
 		{
 			man >>= 1;
 			exp++;
@@ -696,7 +696,7 @@ static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or <= -2.0, normalize */
-	else if (man < ((INT64)-2 << 31))
+	else if (man < ((int64_t)-2 << 31))
 	{
 		man >>= 1;
 		exp++;
@@ -720,7 +720,7 @@ static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 
 	/* store the result back, removing the implicit one and putting */
 	/* back the sign bit */
-	SET_MANTISSA(dst, (UINT32)man ^ 0x80000000);
+	SET_MANTISSA(dst, (uint32_t)man ^ 0x80000000);
 	SET_EXPONENT(dst, exp);
 	OR_NZF(dst);
 }
@@ -739,64 +739,64 @@ static void mpyf(union genreg *dst, union genreg *src1, union genreg *src2)
 
 /* immediate displacement variants */
 
-static UINT32 mod00_d(UINT8 ar)
+static uint32_t mod00_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	return IREG(reg) + (UINT8)OP;
+	return IREG(reg) + (uint8_t)OP;
 }
 
-static UINT32 mod01_d(UINT8 ar)
+static uint32_t mod01_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	return IREG(reg) - (UINT8)OP;
+	return IREG(reg) - (uint8_t)OP;
 }
 
-static UINT32 mod02_d(UINT8 ar)
+static uint32_t mod02_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	IREG(reg) += (UINT8)OP;
+	IREG(reg) += (uint8_t)OP;
 	return IREG(reg);
 }
 
-static UINT32 mod03_d(UINT8 ar)
+static uint32_t mod03_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	IREG(reg) -= (UINT8)OP;
+	IREG(reg) -= (uint8_t)OP;
 	return IREG(reg);
 }
 
-static UINT32 mod04_d(UINT8 ar)
+static uint32_t mod04_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	IREG(reg) += (UINT8)OP;
+	uint32_t result = IREG(reg);
+	IREG(reg) += (uint8_t)OP;
 	return result;
 }
 
-static UINT32 mod05_d(UINT8 ar)
+static uint32_t mod05_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	IREG(reg) -= (UINT8)OP;
+	uint32_t result = IREG(reg);
+	IREG(reg) -= (uint8_t)OP;
 	return result;
 }
 
-static UINT32 mod06_d(UINT8 ar)
+static uint32_t mod06_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + (UINT8)OP;
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + (uint8_t)OP;
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
 	return result;
 }
 
-static UINT32 mod07_d(UINT8 ar)
+static uint32_t mod07_d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - (UINT8)OP;
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - (uint8_t)OP;
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
@@ -806,58 +806,58 @@ static UINT32 mod07_d(UINT8 ar)
 
 /* immediate displacement variants (implied 1) */
 
-static UINT32 mod00_1(UINT8 ar)
+static uint32_t mod00_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg) + 1;
 }
 
-static UINT32 mod01_1(UINT8 ar)
+static uint32_t mod01_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg) - 1;
 }
 
-static UINT32 mod02_1(UINT8 ar)
+static uint32_t mod02_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return ++IREG(reg);
 }
 
-static UINT32 mod03_1(UINT8 ar)
+static uint32_t mod03_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return --IREG(reg);
 }
 
-static UINT32 mod04_1(UINT8 ar)
+static uint32_t mod04_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg)++;
 }
 
-static UINT32 mod05_1(UINT8 ar)
+static uint32_t mod05_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg)--;
 }
 
-static UINT32 mod06_1(UINT8 ar)
+static uint32_t mod06_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + 1;
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + 1;
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
 	return result;
 }
 
-static UINT32 mod07_1(UINT8 ar)
+static uint32_t mod07_1(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - 1;
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - 1;
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
@@ -867,64 +867,64 @@ static UINT32 mod07_1(UINT8 ar)
 
 /* IR0 displacement variants */
 
-static UINT32 mod08(UINT8 ar)
+static uint32_t mod08(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg) + IREG(TMR_IR0);
 }
 
-static UINT32 mod09(UINT8 ar)
+static uint32_t mod09(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg) - IREG(TMR_IR0);
 }
 
-static UINT32 mod0a(UINT8 ar)
+static uint32_t mod0a(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(reg) += IREG(TMR_IR0);
 	return IREG(reg);
 }
 
-static UINT32 mod0b(UINT8 ar)
+static uint32_t mod0b(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(reg) -= IREG(TMR_IR0);
 	return IREG(reg);
 }
 
-static UINT32 mod0c(UINT8 ar)
+static uint32_t mod0c(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
+	uint32_t result = IREG(reg);
 	IREG(reg) += IREG(TMR_IR0);
 	return result;
 }
 
-static UINT32 mod0d(UINT8 ar)
+static uint32_t mod0d(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
+	uint32_t result = IREG(reg);
 	IREG(reg) -= IREG(TMR_IR0);
 	return result;
 }
 
-static UINT32 mod0e(UINT8 ar)
+static uint32_t mod0e(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + IREG(TMR_IR0);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + IREG(TMR_IR0);
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
 	return result;
 }
 
-static UINT32 mod0f(UINT8 ar)
+static uint32_t mod0f(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - IREG(TMR_IR0);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - IREG(TMR_IR0);
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
@@ -934,64 +934,64 @@ static UINT32 mod0f(UINT8 ar)
 
 /* IR1 displacement variants */
 
-static UINT32 mod10(UINT8 ar)
+static uint32_t mod10(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg) + IREG(TMR_IR1);
 }
 
-static UINT32 mod11(UINT8 ar)
+static uint32_t mod11(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg) - IREG(TMR_IR1);
 }
 
-static UINT32 mod12(UINT8 ar)
+static uint32_t mod12(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(reg) += IREG(TMR_IR1);
 	return IREG(reg);
 }
 
-static UINT32 mod13(UINT8 ar)
+static uint32_t mod13(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(reg) -= IREG(TMR_IR1);
 	return IREG(reg);
 }
 
-static UINT32 mod14(UINT8 ar)
+static uint32_t mod14(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
+	uint32_t result = IREG(reg);
 	IREG(reg) += IREG(TMR_IR1);
 	return result;
 }
 
-static UINT32 mod15(UINT8 ar)
+static uint32_t mod15(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
+	uint32_t result = IREG(reg);
 	IREG(reg) -= IREG(TMR_IR1);
 	return result;
 }
 
-static UINT32 mod16(UINT8 ar)
+static uint32_t mod16(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + IREG(TMR_IR1);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + IREG(TMR_IR1);
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
 	return result;
 }
 
-static UINT32 mod17(UINT8 ar)
+static uint32_t mod17(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - IREG(TMR_IR1);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - IREG(TMR_IR1);
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	IREG(reg) = (IREG(reg) & ~tms32031.bkmask) | (temp & tms32031.bkmask);
@@ -1001,19 +1001,19 @@ static UINT32 mod17(UINT8 ar)
 
 /* special variants */
 
-static UINT32 mod18(UINT8 ar)
+static uint32_t mod18(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(reg);
 }
 
-static UINT32 mod19(UINT8 ar)
+static uint32_t mod19(uint8_t ar)
 {
 	unimplemented();
 	return 0;
 }
 
-static UINT32 modillegal(UINT8 ar)
+static uint32_t modillegal(uint8_t ar)
 {
 	illegal();
 	return 0;
@@ -1022,7 +1022,7 @@ static UINT32 modillegal(UINT8 ar)
 
 /* immediate displacement variants (implied 1) */
 
-static UINT32 mod02_1_def(UINT8 ar)
+static uint32_t mod02_1_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1030,7 +1030,7 @@ static UINT32 mod02_1_def(UINT8 ar)
 	return defval;
 }
 
-static UINT32 mod03_1_def(UINT8 ar)
+static uint32_t mod03_1_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1038,7 +1038,7 @@ static UINT32 mod03_1_def(UINT8 ar)
 	return defval;
 }
 
-static UINT32 mod04_1_def(UINT8 ar)
+static uint32_t mod04_1_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1046,7 +1046,7 @@ static UINT32 mod04_1_def(UINT8 ar)
 	return IREG(reg);
 }
 
-static UINT32 mod05_1_def(UINT8 ar)
+static uint32_t mod05_1_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1054,11 +1054,11 @@ static UINT32 mod05_1_def(UINT8 ar)
 	return IREG(reg);
 }
 
-static UINT32 mod06_1_def(UINT8 ar)
+static uint32_t mod06_1_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + 1;
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + 1;
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	defptr = &IREG(reg);
@@ -1066,11 +1066,11 @@ static UINT32 mod06_1_def(UINT8 ar)
 	return result;
 }
 
-static UINT32 mod07_1_def(UINT8 ar)
+static uint32_t mod07_1_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - 1;
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - 1;
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	defptr = &IREG(reg);
@@ -1081,7 +1081,7 @@ static UINT32 mod07_1_def(UINT8 ar)
 
 /* IR0 displacement variants */
 
-static UINT32 mod0a_def(UINT8 ar)
+static uint32_t mod0a_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1089,7 +1089,7 @@ static UINT32 mod0a_def(UINT8 ar)
 	return defval;
 }
 
-static UINT32 mod0b_def(UINT8 ar)
+static uint32_t mod0b_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1097,7 +1097,7 @@ static UINT32 mod0b_def(UINT8 ar)
 	return defval;
 }
 
-static UINT32 mod0c_def(UINT8 ar)
+static uint32_t mod0c_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1105,7 +1105,7 @@ static UINT32 mod0c_def(UINT8 ar)
 	return IREG(reg);
 }
 
-static UINT32 mod0d_def(UINT8 ar)
+static uint32_t mod0d_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1113,11 +1113,11 @@ static UINT32 mod0d_def(UINT8 ar)
 	return IREG(reg);
 }
 
-static UINT32 mod0e_def(UINT8 ar)
+static uint32_t mod0e_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + IREG(TMR_IR0);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + IREG(TMR_IR0);
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	defptr = &IREG(reg);
@@ -1125,11 +1125,11 @@ static UINT32 mod0e_def(UINT8 ar)
 	return result;
 }
 
-static UINT32 mod0f_def(UINT8 ar)
+static uint32_t mod0f_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - IREG(TMR_IR0);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - IREG(TMR_IR0);
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	defptr = &IREG(reg);
@@ -1140,7 +1140,7 @@ static UINT32 mod0f_def(UINT8 ar)
 
 /* IR1 displacement variants */
 
-static UINT32 mod12_def(UINT8 ar)
+static uint32_t mod12_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1148,7 +1148,7 @@ static UINT32 mod12_def(UINT8 ar)
 	return defval;
 }
 
-static UINT32 mod13_def(UINT8 ar)
+static uint32_t mod13_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1156,7 +1156,7 @@ static UINT32 mod13_def(UINT8 ar)
 	return defval;
 }
 
-static UINT32 mod14_def(UINT8 ar)
+static uint32_t mod14_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1164,7 +1164,7 @@ static UINT32 mod14_def(UINT8 ar)
 	return IREG(reg);
 }
 
-static UINT32 mod15_def(UINT8 ar)
+static uint32_t mod15_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	defptr = &IREG(reg);
@@ -1172,11 +1172,11 @@ static UINT32 mod15_def(UINT8 ar)
 	return IREG(reg);
 }
 
-static UINT32 mod16_def(UINT8 ar)
+static uint32_t mod16_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) + IREG(TMR_IR1);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) + IREG(TMR_IR1);
 	if (temp >= IREG(TMR_BK))
 		temp -= IREG(TMR_BK);
 	defptr = &IREG(reg);
@@ -1184,11 +1184,11 @@ static UINT32 mod16_def(UINT8 ar)
 	return result;
 }
 
-static UINT32 mod17_def(UINT8 ar)
+static uint32_t mod17_def(uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(reg);
-	INT32 temp = (result & tms32031.bkmask) - IREG(TMR_IR1);
+	uint32_t result = IREG(reg);
+	int32_t temp = (result & tms32031.bkmask) - IREG(TMR_IR1);
 	if (temp < 0)
 		temp += IREG(TMR_BK);
 	defptr = &IREG(reg);
@@ -1199,7 +1199,7 @@ static UINT32 mod17_def(UINT8 ar)
 
 /* tables */
 
-static UINT32 (*indirect_d[0x20])(UINT8) =
+static uint32_t (*indirect_d[0x20])(uint8_t) =
 {
 	mod00_d,	mod01_d,	mod02_d,	mod03_d,	mod04_d,	mod05_d,	mod06_d,	mod07_d,
 	mod08,		mod09,		mod0a,		mod0b,		mod0c,		mod0d,		mod0e,		mod0f,
@@ -1208,7 +1208,7 @@ static UINT32 (*indirect_d[0x20])(UINT8) =
 };
 
 
-static UINT32 (*indirect_1[0x20])(UINT8) =
+static uint32_t (*indirect_1[0x20])(uint8_t) =
 {
 	mod00_1,	mod01_1,	mod02_1,	mod03_1,	mod04_1,	mod05_1,	mod06_1,	mod07_1,
 	mod08,		mod09,		mod0a,		mod0b,		mod0c,		mod0d,		mod0e,		mod0f,
@@ -1217,7 +1217,7 @@ static UINT32 (*indirect_1[0x20])(UINT8) =
 };
 
 
-static UINT32 (*indirect_1_def[0x20])(UINT8) =
+static uint32_t (*indirect_1_def[0x20])(uint8_t) =
 {
 	mod00_1,	mod01_1,	mod02_1_def,mod03_1_def,mod04_1_def,mod05_1_def,mod06_1_def,mod07_1_def,
 	mod08,		mod09,		mod0a_def,	mod0b_def,	mod0c_def,	mod0d_def,	mod0e_def,	mod0f_def,
@@ -1236,7 +1236,7 @@ static UINT32 (*indirect_1_def[0x20])(UINT8) =
 
 #define ABSF(dreg, sreg)												\
 {																		\
-	if ((INT32)FREGMAN(sreg) >= 0)										\
+	if ((int32_t)FREGMAN(sreg) >= 0)										\
 	{																	\
 		tms32031.r[dreg] = tms32031.r[sreg];							\
 		CLR_NZVUF();													\
@@ -1255,7 +1255,7 @@ static void absf_reg(void)
 
 static void absf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	ABSF(dreg, TMR_TEMP1);
@@ -1263,7 +1263,7 @@ static void absf_dir(void)
 
 static void absf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	ABSF(dreg, TMR_TEMP1);
@@ -1280,7 +1280,7 @@ static void absf_imm(void)
 
 #define ABSI(dreg, src)												\
 {																	\
-	UINT32 _res = ((INT32)src < 0) ? -src : src;					\
+	uint32_t _res = ((int32_t)src < 0) ? -src : src;					\
 	if (!OVM || _res != 0x80000000)									\
 		IREG(dreg) = _res;											\
 	else															\
@@ -1298,28 +1298,28 @@ static void absf_imm(void)
 
 static void absi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	ABSI(dreg, src);
 }
 
 static void absi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	ABSI(dreg, src);
 }
 
 static void absi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	ABSI(dreg, src);
 }
 
 static void absi_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
 	ABSI(dreg, src);
 }
@@ -1328,14 +1328,14 @@ static void absi_imm(void)
 
 #define ADDC(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = src1 + src2 + (IREG(TMR_ST) & CFLAG);				\
+	uint32_t _res = src1 + src2 + (IREG(TMR_ST) & CFLAG);				\
 	if (!OVM || !OVERFLOW_ADD(src1,src2,_res))						\
 		IREG(dreg) = _res;											\
 	else															\
-		IREG(dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
-		UINT32 tempc = src2 + (IREG(TMR_ST) & CFLAG);				\
+		uint32_t tempc = src2 + (IREG(TMR_ST) & CFLAG);				\
 		CLR_NZCVUF();												\
 		OR_NZCV_ADD(src1,tempc,_res);								\
 	}																\
@@ -1345,33 +1345,33 @@ static void absi_imm(void)
 
 static void addc_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDC(dreg, dst, src);
 }
 
 static void addc_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDC(dreg, dst, src);
 }
 
 static void addc_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDC(dreg, dst, src);
 }
 
 static void addc_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDC(dreg, dst, src);
 }
 
@@ -1385,7 +1385,7 @@ static void addf_reg(void)
 
 static void addf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	addf(&tms32031.r[dreg], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -1393,7 +1393,7 @@ static void addf_dir(void)
 
 static void addf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	addf(&tms32031.r[dreg], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -1410,11 +1410,11 @@ static void addf_imm(void)
 
 #define ADDI(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = src1 + src2;										\
+	uint32_t _res = src1 + src2;										\
 	if (!OVM || !OVERFLOW_ADD(src1,src2,_res))						\
 		IREG(dreg) = _res;											\
 	else															\
-		IREG(dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF();												\
@@ -1426,33 +1426,33 @@ static void addf_imm(void)
 
 static void addi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDI(dreg, dst, src);
 }
 
 static void addi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDI(dreg, dst, src);
 }
 
 static void addi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDI(dreg, dst, src);
 }
 
 static void addi_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ADDI(dreg, dst, src);
 }
 
@@ -1460,7 +1460,7 @@ static void addi_imm(void)
 
 #define AND(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) & (src2);									\
+	uint32_t _res = (src1) & (src2);									\
 	IREG(dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -1473,33 +1473,33 @@ static void addi_imm(void)
 
 static void and_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	AND(dreg, dst, src);
 }
 
 static void and_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	AND(dreg, dst, src);
 }
 
 static void and_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	AND(dreg, dst, src);
 }
 
 static void and_imm(void)
 {
-	UINT32 src = (UINT16)OP;
+	uint32_t src = (uint16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	AND(dreg, dst, src);
 }
 
@@ -1507,7 +1507,7 @@ static void and_imm(void)
 
 #define ANDN(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) & ~(src2);									\
+	uint32_t _res = (src1) & ~(src2);									\
 	IREG(dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -1520,33 +1520,33 @@ static void and_imm(void)
 
 static void andn_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ANDN(dreg, dst, src);
 }
 
 static void andn_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ANDN(dreg, dst, src);
 }
 
 static void andn_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ANDN(dreg, dst, src);
 }
 
 static void andn_imm(void)
 {
-	UINT32 src = (UINT16)OP;
+	uint32_t src = (uint16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	ANDN(dreg, dst, src);
 }
 
@@ -1554,19 +1554,19 @@ static void andn_imm(void)
 
 #define ASH(dreg, src, count)										\
 {																	\
-	UINT32 _res;													\
-	INT32 _count = (INT16)(count << 9) >> 9;	/* 7 LSBs */		\
+	uint32_t _res;													\
+	int32_t _count = (int16_t)(count << 9) >> 9;	/* 7 LSBs */		\
 	if (_count < 0)													\
 	{																\
 		if (_count >= -31)											\
-			_res = (INT32)src >> -_count;							\
+			_res = (int32_t)src >> -_count;							\
 		else														\
-			_res = (INT32)src >> 31;								\
+			_res = (int32_t)src >> 31;								\
 	}																\
 	else															\
 	{																\
 		if (_count <= 31)											\
-			_res = (INT32)src << _count;							\
+			_res = (int32_t)src << _count;							\
 		else														\
 			_res = 0;												\
 	}																\
@@ -1578,14 +1578,14 @@ static void andn_imm(void)
 		if (_count < 0)												\
 		{															\
 			if (_count >= -32)										\
-				OR_C(((INT32)src >> (-_count - 1)) & 1);			\
+				OR_C(((int32_t)src >> (-_count - 1)) & 1);			\
 			else													\
-				OR_C(((INT32)src >> 31) & 1);						\
+				OR_C(((int32_t)src >> 31) & 1);						\
 		}															\
 		else if (_count > 0)										\
 		{															\
 			if (_count <= 32)										\
-				OR_C(((UINT32)src << (_count - 1)) >> 31);			\
+				OR_C(((uint32_t)src << (_count - 1)) >> 31);			\
 		}															\
 	}																\
 	else if (dreg >= TMR_BK)										\
@@ -1596,7 +1596,7 @@ static void ash_reg(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = IREG(OP & 31);
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	ASH(dreg, src, count);
 }
 
@@ -1604,7 +1604,7 @@ static void ash_dir(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = RMEM(DIRECT());
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	ASH(dreg, src, count);
 }
 
@@ -1612,7 +1612,7 @@ static void ash_ind(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = RMEM(INDIRECT_D(OP >> 8));
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	ASH(dreg, src, count);
 }
 
@@ -1620,7 +1620,7 @@ static void ash_imm(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = OP;
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	ASH(dreg, src, count);
 }
 
@@ -1634,7 +1634,7 @@ static void cmpf_reg(void)
 
 static void cmpf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	subf(&tms32031.r[TMR_TEMP2], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -1642,7 +1642,7 @@ static void cmpf_dir(void)
 
 static void cmpf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	subf(&tms32031.r[TMR_TEMP2], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -1659,36 +1659,36 @@ static void cmpf_imm(void)
 
 #define CMPI(src1, src2)											\
 {																	\
-	UINT32 _res = src1 - src2;										\
+	uint32_t _res = src1 - src2;										\
 	CLR_NZCVUF();													\
 	OR_NZCV_SUB(src1,src2,_res);									\
 }
 
 static void cmpi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = IREG(OP & 31);
+	uint32_t dst = IREG((OP >> 16) & 31);
 	CMPI(dst, src);
 }
 
 static void cmpi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = RMEM(DIRECT());
+	uint32_t dst = IREG((OP >> 16) & 31);
 	CMPI(dst, src);
 }
 
 static void cmpi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t dst = IREG((OP >> 16) & 31);
 	CMPI(dst, src);
 }
 
 static void cmpi_imm(void)
 {
-	UINT32 src = (INT16)OP;
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = (int16_t)OP;
+	uint32_t dst = IREG((OP >> 16) & 31);
 	CMPI(dst, src);
 }
 
@@ -1704,7 +1704,7 @@ static void fix_reg(void)
 
 static void fix_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	LONG2FP(TMR_TEMP1, res);
 	float2int(&tms32031.r[TMR_TEMP1]);
@@ -1713,7 +1713,7 @@ static void fix_dir(void)
 
 static void fix_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	LONG2FP(TMR_TEMP1, res);
 	float2int(&tms32031.r[TMR_TEMP1]);
@@ -1738,28 +1738,28 @@ static void fix_imm(void)
 
 static void float_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
 static void float_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
 static void float_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
 static void float_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 7;
 	FLOAT(dreg, src);
 }
@@ -1780,7 +1780,7 @@ static void lde_reg(void)
 
 static void lde_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	SET_EXPONENT(&tms32031.r[dreg], EXPONENT(&tms32031.r[TMR_TEMP1]));
@@ -1790,7 +1790,7 @@ static void lde_dir(void)
 
 static void lde_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	SET_EXPONENT(&tms32031.r[dreg], EXPONENT(&tms32031.r[TMR_TEMP1]));
@@ -1819,7 +1819,7 @@ static void ldf_reg(void)
 
 static void ldf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(dreg, res);
 	CLR_NZVUF();
@@ -1828,7 +1828,7 @@ static void ldf_dir(void)
 
 static void ldf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(dreg, res);
 	CLR_NZVUF();
@@ -1864,28 +1864,28 @@ static void ldfi_ind(void) { unimplemented(); }
 
 static void ldi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	LDI(dreg, src);
 }
 
 static void ldi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	LDI(dreg, src);
 }
 
 static void ldi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	LDI(dreg, src);
 }
 
 static void ldi_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
 	LDI(dreg, src);
 }
@@ -1905,14 +1905,14 @@ static void ldm_reg(void)
 
 static void ldm_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	SET_MANTISSA(&tms32031.r[dreg], res);
 }
 
 static void ldm_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	SET_MANTISSA(&tms32031.r[dreg], res);
 }
@@ -1928,19 +1928,19 @@ static void ldm_imm(void)
 
 #define LSH(dreg, src, count)										\
 {																	\
-	UINT32 _res;													\
-	INT32 _count = (INT16)(count << 9) >> 9;	/* 7 LSBs */		\
+	uint32_t _res;													\
+	int32_t _count = (int16_t)(count << 9) >> 9;	/* 7 LSBs */		\
 	if (_count < 0)													\
 	{																\
 		if (_count >= -31)											\
-			_res = (UINT32)src >> -_count;							\
+			_res = (uint32_t)src >> -_count;							\
 		else														\
 			_res = 0;												\
 	}																\
 	else															\
 	{																\
 		if (_count <= 31)											\
-			_res = (UINT32)src << _count;							\
+			_res = (uint32_t)src << _count;							\
 		else														\
 			_res = 0;												\
 	}																\
@@ -1952,12 +1952,12 @@ static void ldm_imm(void)
 		if (_count < 0)												\
 		{															\
 			if (_count >= -32)										\
-				OR_C(((UINT32)src >> (-_count - 1)) & 1);			\
+				OR_C(((uint32_t)src >> (-_count - 1)) & 1);			\
 		}															\
 		else if (_count > 0)										\
 		{															\
 			if (_count <= 32)										\
-				OR_C(((UINT32)src << (_count - 1)) >> 31);			\
+				OR_C(((uint32_t)src << (_count - 1)) >> 31);			\
 		}															\
 	}																\
 	else if (dreg >= TMR_BK)										\
@@ -1968,7 +1968,7 @@ static void lsh_reg(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = IREG(OP & 31);
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	LSH(dreg, src, count);
 }
 
@@ -1976,7 +1976,7 @@ static void lsh_dir(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = RMEM(DIRECT());
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	LSH(dreg, src, count);
 }
 
@@ -1984,7 +1984,7 @@ static void lsh_ind(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = RMEM(INDIRECT_D(OP >> 8));
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	LSH(dreg, src, count);
 }
 
@@ -1992,7 +1992,7 @@ static void lsh_imm(void)
 {
 	int dreg = (OP >> 16) & 31;
 	int count = OP;
-	UINT32 src = IREG(dreg);
+	uint32_t src = IREG(dreg);
 	LSH(dreg, src, count);
 }
 
@@ -2006,7 +2006,7 @@ static void mpyf_reg(void)
 
 static void mpyf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	LONG2FP(TMR_TEMP1, res);
 	mpyf(&tms32031.r[dreg], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -2014,7 +2014,7 @@ static void mpyf_dir(void)
 
 static void mpyf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	LONG2FP(TMR_TEMP1, res);
 	mpyf(&tms32031.r[dreg], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -2031,7 +2031,7 @@ static void mpyf_imm(void)
 
 #define MPYI(dreg, src1, src2)										\
 {																	\
-	INT64 _res = (INT64)((INT32)(src1 << 8) >> 8) * (INT64)((INT32)(src2 << 8) >> 8);\
+	int64_t _res = (int64_t)((int32_t)(src1 << 8) >> 8) * (int64_t)((int32_t)(src2 << 8) >> 8);\
 	if (!OVM || (_res >= -0x80000000 && _res <= 0x7fffffff))		\
 		IREG(dreg) = _res;											\
 	else															\
@@ -2039,8 +2039,8 @@ static void mpyf_imm(void)
 	if (dreg < 8)													\
 	{																\
 		CLR_NZVUF();												\
-		OR_NZ((UINT32)_res);										\
-		if (_res < -(INT64)0x80000000 || _res > (INT64)0x7fffffff)	\
+		OR_NZ((uint32_t)_res);										\
+		if (_res < -(int64_t)0x80000000 || _res > (int64_t)0x7fffffff)	\
 			IREG(TMR_ST) |= VFLAG | LVFLAG;							\
 	}																\
 	else if (dreg >= TMR_BK)										\
@@ -2049,33 +2049,33 @@ static void mpyf_imm(void)
 
 static void mpyi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	MPYI(dreg, dst, src);
 }
 
 static void mpyi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	MPYI(dreg, dst, src);
 }
 
 static void mpyi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	MPYI(dreg, dst, src);
 }
 
 static void mpyi_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	MPYI(dreg, dst, src);
 }
 
@@ -2083,12 +2083,12 @@ static void mpyi_imm(void)
 
 #define NEGB(dreg, src)												\
 {																	\
-	UINT32 temps = 0 - (IREG(TMR_ST) & CFLAG);						\
-	UINT32 _res = temps - src;										\
+	uint32_t temps = 0 - (IREG(TMR_ST) & CFLAG);						\
+	uint32_t _res = temps - src;										\
 	if (!OVM || !OVERFLOW_SUB(temps,src,_res))						\
 		IREG(dreg) = _res;											\
 	else															\
-		IREG(dreg) = ((INT32)src < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(dreg) = ((int32_t)src < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF();												\
@@ -2100,28 +2100,28 @@ static void mpyi_imm(void)
 
 static void negb_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	NEGB(dreg, src);
 }
 
 static void negb_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	NEGB(dreg, src);
 }
 
 static void negb_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	NEGB(dreg, src);
 }
 
 static void negb_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
 	NEGB(dreg, src);
 }
@@ -2136,7 +2136,7 @@ static void negf_reg(void)
 
 static void negf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	negf(&tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -2144,7 +2144,7 @@ static void negf_dir(void)
 
 static void negf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	negf(&tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -2161,11 +2161,11 @@ static void negf_imm(void)
 
 #define NEGI(dreg, src)												\
 {																	\
-	UINT32 _res = 0 - src;											\
+	uint32_t _res = 0 - src;											\
 	if (!OVM || !OVERFLOW_SUB(0,src,_res))							\
 		IREG(dreg) = _res;											\
 	else															\
-		IREG(dreg) = ((INT32)src < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(dreg) = ((int32_t)src < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF();												\
@@ -2177,28 +2177,28 @@ static void negf_imm(void)
 
 static void negi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	NEGI(dreg, src);
 }
 
 static void negi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	NEGI(dreg, src);
 }
 
 static void negi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	NEGI(dreg, src);
 }
 
 static void negi_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
 	NEGI(dreg, src);
 }
@@ -2225,7 +2225,7 @@ static void norm_imm(void) { unimplemented(); }
 
 #define NOT(dreg, src)												\
 {																	\
-	UINT32 _res = ~(src);											\
+	uint32_t _res = ~(src);											\
 	IREG(dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -2238,28 +2238,28 @@ static void norm_imm(void) { unimplemented(); }
 
 static void not_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	NOT(dreg, src);
 }
 
 static void not_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	NOT(dreg, src);
 }
 
 static void not_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	NOT(dreg, src);
 }
 
 static void not_imm(void)
 {
-	UINT32 src = (UINT16)OP;
+	uint32_t src = (uint16_t)OP;
 	int dreg = (OP >> 16) & 31;
 	NOT(dreg, src);
 }
@@ -2269,7 +2269,7 @@ static void not_imm(void)
 static void pop(void)
 {
 	int dreg = (OP >> 16) & 31;
-	UINT32 val = RMEM(IREG(TMR_SP)--);
+	uint32_t val = RMEM(IREG(TMR_SP)--);
 	IREG(dreg) = val;
 	if (dreg < 8)
 	{
@@ -2283,7 +2283,7 @@ static void pop(void)
 static void popf(void)
 {
 	int dreg = (OP >> 16) & 7;
-	UINT32 val = RMEM(IREG(TMR_SP)--);
+	uint32_t val = RMEM(IREG(TMR_SP)--);
 	LONG2FP(dreg, val);
 	CLR_NZVUF();
 	OR_NZF(&tms32031.r[dreg]);
@@ -2304,7 +2304,7 @@ static void pushf(void)
 
 #define OR(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) | (src2);									\
+	uint32_t _res = (src1) | (src2);									\
 	IREG(dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -2317,33 +2317,33 @@ static void pushf(void)
 
 static void or_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	OR(dreg, dst, src);
 }
 
 static void or_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	OR(dreg, dst, src);
 }
 
 static void or_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	OR(dreg, dst, src);
 }
 
 static void or_imm(void)
 {
-	UINT32 src = (UINT16)OP;
+	uint32_t src = (uint16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	OR(dreg, dst, src);
 }
 
@@ -2355,7 +2355,7 @@ static void maxspeed(void) { unimplemented(); }
 
 #define RND(dreg)													\
 {																	\
-	INT32 man = FREGMAN(dreg);										\
+	int32_t man = FREGMAN(dreg);										\
 	CLR_NVUF();														\
 	if (man < 0x7fffff80)											\
 	{																\
@@ -2385,7 +2385,7 @@ static void rnd_reg(void)
 
 static void rnd_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(dreg, res);
 	RND(dreg);
@@ -2393,7 +2393,7 @@ static void rnd_dir(void)
 
 static void rnd_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(dreg, res);
 	RND(dreg);
@@ -2411,7 +2411,7 @@ static void rnd_imm(void)
 static void rol(void)
 {
 	int dreg = (OP >> 16) & 31;
-	UINT32 res = IREG(dreg);
+	uint32_t res = IREG(dreg);
 	int newcflag = res >> 31;
 	res = (res << 1) | newcflag;
 	IREG(dreg) = res;
@@ -2428,7 +2428,7 @@ static void rol(void)
 static void rolc(void)
 {
 	int dreg = (OP >> 16) & 31;
-	UINT32 res = IREG(dreg);
+	uint32_t res = IREG(dreg);
 	int newcflag = res >> 31;
 	res = (res << 1) | (IREG(TMR_ST) & CFLAG);
 	IREG(dreg) = res;
@@ -2445,7 +2445,7 @@ static void rolc(void)
 static void ror(void)
 {
 	int dreg = (OP >> 16) & 31;
-	UINT32 res = IREG(dreg);
+	uint32_t res = IREG(dreg);
 	int newcflag = res & 1;
 	res = (res >> 1) | (newcflag << 31);
 	IREG(dreg) = res;
@@ -2462,7 +2462,7 @@ static void ror(void)
 static void rorc(void)
 {
 	int dreg = (OP >> 16) & 31;
-	UINT32 res = IREG(dreg);
+	uint32_t res = IREG(dreg);
 	int newcflag = res & 1;
 	res = (res >> 1) | ((IREG(TMR_ST) & CFLAG) << 31);
 	IREG(dreg) = res;
@@ -2510,7 +2510,7 @@ static void rtps_ind(void)
 
 static void rtps_imm(void)
 {
-	IREG(TMR_RC) = (UINT16)OP;
+	IREG(TMR_RC) = (uint16_t)OP;
 	IREG(TMR_RS) = tms32031.pc;
 	IREG(TMR_RE) = tms32031.pc;
 	IREG(TMR_ST) |= RMFLAG;
@@ -2560,12 +2560,12 @@ static void sigi(void) { unimplemented(); }
 
 #define SUBB(dreg, src1, src2)										\
 {																	\
-	UINT32 temps = src1 - (IREG(TMR_ST) & CFLAG);					\
-	UINT32 _res = temps - src2;										\
+	uint32_t temps = src1 - (IREG(TMR_ST) & CFLAG);					\
+	uint32_t _res = temps - src2;										\
 	if (!OVM || !OVERFLOW_SUB(temps,src2,_res))						\
 		IREG(dreg) = _res;											\
 	else															\
-		IREG(dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF();												\
@@ -2577,33 +2577,33 @@ static void sigi(void) { unimplemented(); }
 
 static void subb_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, dst, src);
 }
 
 static void subb_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, dst, src);
 }
 
 static void subb_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, dst, src);
 }
 
 static void subb_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, dst, src);
 }
 
@@ -2611,7 +2611,7 @@ static void subb_imm(void)
 
 #define SUBC(dreg, src)												\
 {																	\
-	UINT32 dst = IREG(dreg);										\
+	uint32_t dst = IREG(dreg);										\
 	if (dst >= src)													\
 		IREG(dreg) = ((dst - src) << 1) | 1;						\
 	else															\
@@ -2622,28 +2622,28 @@ static void subb_imm(void)
 
 static void subc_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	SUBC(dreg, src);
 }
 
 static void subc_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
 	SUBC(dreg, src);
 }
 
 static void subc_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	SUBC(dreg, src);
 }
 
 static void subc_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
 	SUBC(dreg, src);
 }
@@ -2658,7 +2658,7 @@ static void subf_reg(void)
 
 static void subf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	subf(&tms32031.r[dreg], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -2666,7 +2666,7 @@ static void subf_dir(void)
 
 static void subf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	subf(&tms32031.r[dreg], &tms32031.r[dreg], &tms32031.r[TMR_TEMP1]);
@@ -2683,11 +2683,11 @@ static void subf_imm(void)
 
 #define SUBI(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = src1 - src2;										\
+	uint32_t _res = src1 - src2;										\
 	if (!OVM || !OVERFLOW_SUB(src1,src2,_res))						\
 		IREG(dreg) = _res;											\
 	else															\
-		IREG(dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF();												\
@@ -2699,33 +2699,33 @@ static void subf_imm(void)
 
 static void subi_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, dst, src);
 }
 
 static void subi_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, dst, src);
 }
 
 static void subi_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, dst, src);
 }
 
 static void subi_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, dst, src);
 }
 
@@ -2733,33 +2733,33 @@ static void subi_imm(void)
 
 static void subrb_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, src, dst);
 }
 
 static void subrb_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, src, dst);
 }
 
 static void subrb_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, src, dst);
 }
 
 static void subrb_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBB(dreg, src, dst);
 }
 
@@ -2773,7 +2773,7 @@ static void subrf_reg(void)
 
 static void subrf_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	subf(&tms32031.r[dreg], &tms32031.r[TMR_TEMP1], &tms32031.r[dreg]);
@@ -2781,7 +2781,7 @@ static void subrf_dir(void)
 
 static void subrf_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, res);
 	subf(&tms32031.r[dreg], &tms32031.r[TMR_TEMP1], &tms32031.r[dreg]);
@@ -2798,33 +2798,33 @@ static void subrf_imm(void)
 
 static void subri_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, src, dst);
 }
 
 static void subri_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, src, dst);
 }
 
 static void subri_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, src, dst);
 }
 
 static void subri_imm(void)
 {
-	UINT32 src = (INT16)OP;
+	uint32_t src = (int16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	SUBI(dreg, src, dst);
 }
 
@@ -2832,36 +2832,36 @@ static void subri_imm(void)
 
 #define TSTB(src1, src2)											\
 {																	\
-	UINT32 _res = (src1) & (src2);									\
+	uint32_t _res = (src1) & (src2);									\
 	CLR_NZVUF();													\
 	OR_NZ(_res);													\
 }
 
 static void tstb_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = IREG(OP & 31);
+	uint32_t dst = IREG((OP >> 16) & 31);
 	TSTB(dst, src);
 }
 
 static void tstb_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = RMEM(DIRECT());
+	uint32_t dst = IREG((OP >> 16) & 31);
 	TSTB(dst, src);
 }
 
 static void tstb_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t dst = IREG((OP >> 16) & 31);
 	TSTB(dst, src);
 }
 
 static void tstb_imm(void)
 {
-	UINT32 src = (UINT16)OP;
-	UINT32 dst = IREG((OP >> 16) & 31);
+	uint32_t src = (uint16_t)OP;
+	uint32_t dst = IREG((OP >> 16) & 31);
 	TSTB(dst, src);
 }
 
@@ -2869,7 +2869,7 @@ static void tstb_imm(void)
 
 #define XOR(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) ^ (src2);									\
+	uint32_t _res = (src1) ^ (src2);									\
 	IREG(dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -2882,33 +2882,33 @@ static void tstb_imm(void)
 
 static void xor_reg(void)
 {
-	UINT32 src = IREG(OP & 31);
+	uint32_t src = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	XOR(dreg, dst, src);
 }
 
 static void xor_dir(void)
 {
-	UINT32 src = RMEM(DIRECT());
+	uint32_t src = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	XOR(dreg, dst, src);
 }
 
 static void xor_ind(void)
 {
-	UINT32 src = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t src = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	XOR(dreg, dst, src);
 }
 
 static void xor_imm(void)
 {
-	UINT32 src = (UINT16)OP;
+	uint32_t src = (uint16_t)OP;
 	int dreg = (OP >> 16) & 31;
-	UINT32 dst = IREG(dreg);
+	uint32_t dst = IREG(dreg);
 	XOR(dreg, dst, src);
 }
 
@@ -2927,32 +2927,32 @@ static void iack_ind(void) { unimplemented(); }
 
 static void addc3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	ADDC(dreg, src1, src2);
 }
 
 static void addc3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	ADDC(dreg, src1, src2);
 }
 
 static void addc3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	ADDC(dreg, src1, src2);
 }
 
 static void addc3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	ADDC(dreg, src1, src2);
@@ -2970,7 +2970,7 @@ static void addf3_regreg(void)
 
 static void addf3_indreg(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int sreg2 = OP & 7;
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, src1);
@@ -2980,7 +2980,7 @@ static void addf3_indreg(void)
 static void addf3_regind(void)
 {
 	int sreg1 = (OP >> 8) & 7;
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP2, src2);
 	addf(&tms32031.r[dreg], &tms32031.r[sreg1], &tms32031.r[TMR_TEMP2]);
@@ -2988,8 +2988,8 @@ static void addf3_regind(void)
 
 static void addf3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, src1);
 	LONG2FP(TMR_TEMP2, src2);
@@ -3001,32 +3001,32 @@ static void addf3_indind(void)
 
 static void addi3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	ADDI(dreg, src1, src2);
 }
 
 static void addi3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	ADDI(dreg, src1, src2);
 }
 
 static void addi3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	ADDI(dreg, src1, src2);
 }
 
 static void addi3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	ADDI(dreg, src1, src2);
@@ -3036,32 +3036,32 @@ static void addi3_indind(void)
 
 static void and3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	AND(dreg, src1, src2);
 }
 
 static void and3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	AND(dreg, src1, src2);
 }
 
 static void and3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	AND(dreg, src1, src2);
 }
 
 static void and3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	AND(dreg, src1, src2);
@@ -3071,32 +3071,32 @@ static void and3_indind(void)
 
 static void andn3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	ANDN(dreg, src1, src2);
 }
 
 static void andn3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	ANDN(dreg, src1, src2);
 }
 
 static void andn3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	ANDN(dreg, src1, src2);
 }
 
 static void andn3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	ANDN(dreg, src1, src2);
@@ -3106,32 +3106,32 @@ static void andn3_indind(void)
 
 static void ash3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	ASH(dreg, src1, src2);
 }
 
 static void ash3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	ASH(dreg, src1, src2);
 }
 
 static void ash3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	ASH(dreg, src1, src2);
 }
 
 static void ash3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	ASH(dreg, src1, src2);
@@ -3148,7 +3148,7 @@ static void cmpf3_regreg(void)
 
 static void cmpf3_indreg(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int sreg2 = OP & 7;
 	LONG2FP(TMR_TEMP1, src1);
 	subf(&tms32031.r[TMR_TEMP1], &tms32031.r[TMR_TEMP1], &tms32031.r[sreg2]);
@@ -3157,15 +3157,15 @@ static void cmpf3_indreg(void)
 static void cmpf3_regind(void)
 {
 	int sreg1 = (OP >> 8) & 7;
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP2, src2);
 	subf(&tms32031.r[TMR_TEMP1], &tms32031.r[sreg1], &tms32031.r[TMR_TEMP2]);
 }
 
 static void cmpf3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src1);
 	LONG2FP(TMR_TEMP2, src2);
 	UPDATE_DEF();
@@ -3176,29 +3176,29 @@ static void cmpf3_indind(void)
 
 static void cmpi3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	CMPI(src1, src2);
 }
 
 static void cmpi3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	CMPI(src1, src2);
 }
 
 static void cmpi3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	CMPI(src1, src2);
 }
 
 static void cmpi3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	UPDATE_DEF();
 	CMPI(src1, src2);
 }
@@ -3207,32 +3207,32 @@ static void cmpi3_indind(void)
 
 static void lsh3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	LSH(dreg, src1, src2);
 }
 
 static void lsh3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	LSH(dreg, src1, src2);
 }
 
 static void lsh3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	LSH(dreg, src1, src2);
 }
 
 static void lsh3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	LSH(dreg, src1, src2);
@@ -3250,7 +3250,7 @@ static void mpyf3_regreg(void)
 
 static void mpyf3_indreg(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int sreg2 = OP & 7;
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, src1);
@@ -3260,7 +3260,7 @@ static void mpyf3_indreg(void)
 static void mpyf3_regind(void)
 {
 	int sreg1 = (OP >> 8) & 7;
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP2, src2);
 	mpyf(&tms32031.r[dreg], &tms32031.r[sreg1], &tms32031.r[TMR_TEMP2]);
@@ -3268,8 +3268,8 @@ static void mpyf3_regind(void)
 
 static void mpyf3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, src1);
 	LONG2FP(TMR_TEMP2, src2);
@@ -3281,32 +3281,32 @@ static void mpyf3_indind(void)
 
 static void mpyi3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	MPYI(dreg, src1, src2);
 }
 
 static void mpyi3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	MPYI(dreg, src1, src2);
 }
 
 static void mpyi3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	MPYI(dreg, src1, src2);
 }
 
 static void mpyi3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	MPYI(dreg, src1, src2);
@@ -3316,32 +3316,32 @@ static void mpyi3_indind(void)
 
 static void or3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	OR(dreg, src1, src2);
 }
 
 static void or3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	OR(dreg, src1, src2);
 }
 
 static void or3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	OR(dreg, src1, src2);
 }
 
 static void or3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	OR(dreg, src1, src2);
@@ -3351,32 +3351,32 @@ static void or3_indind(void)
 
 static void subb3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	SUBB(dreg, src1, src2);
 }
 
 static void subb3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	SUBB(dreg, src1, src2);
 }
 
 static void subb3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	SUBB(dreg, src1, src2);
 }
 
 static void subb3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	SUBB(dreg, src1, src2);
@@ -3394,7 +3394,7 @@ static void subf3_regreg(void)
 
 static void subf3_indreg(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int sreg2 = OP & 7;
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, src1);
@@ -3404,7 +3404,7 @@ static void subf3_indreg(void)
 static void subf3_regind(void)
 {
 	int sreg1 = (OP >> 8) & 7;
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP2, src2);
 	subf(&tms32031.r[dreg], &tms32031.r[sreg1], &tms32031.r[TMR_TEMP2]);
@@ -3412,8 +3412,8 @@ static void subf3_regind(void)
 
 static void subf3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(TMR_TEMP1, src1);
 	LONG2FP(TMR_TEMP2, src2);
@@ -3425,32 +3425,32 @@ static void subf3_indind(void)
 
 static void subi3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	SUBI(dreg, src1, src2);
 }
 
 static void subi3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	SUBI(dreg, src1, src2);
 }
 
 static void subi3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	SUBI(dreg, src1, src2);
 }
 
 static void subi3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	SUBI(dreg, src1, src2);
@@ -3460,29 +3460,29 @@ static void subi3_indind(void)
 
 static void tstb3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	TSTB(src1, src2);
 }
 
 static void tstb3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	TSTB(src1, src2);
 }
 
 static void tstb3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	TSTB(src1, src2);
 }
 
 static void tstb3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	UPDATE_DEF();
 	TSTB(src1, src2);
 }
@@ -3491,32 +3491,32 @@ static void tstb3_indind(void)
 
 static void xor3_regreg(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = IREG(OP & 31);
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = IREG(OP & 31);
 	int dreg = (OP >> 16) & 31;
 	XOR(dreg, src1, src2);
 }
 
 static void xor3_indreg(void)
 {
-	UINT32 src2 = IREG(OP & 31);
-	UINT32 src1 = RMEM(INDIRECT_1(OP >> 8));
+	uint32_t src2 = IREG(OP & 31);
+	uint32_t src1 = RMEM(INDIRECT_1(OP >> 8));
 	int dreg = (OP >> 16) & 31;
 	XOR(dreg, src1, src2);
 }
 
 static void xor3_regind(void)
 {
-	UINT32 src1 = IREG((OP >> 8) & 31);
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = IREG((OP >> 8) & 31);
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	XOR(dreg, src1, src2);
 }
 
 static void xor3_indind(void)
 {
-	UINT32 src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src2 = RMEM(INDIRECT_1(OP));
+	uint32_t src1 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src2 = RMEM(INDIRECT_1(OP));
 	int dreg = (OP >> 16) & 31;
 	UPDATE_DEF();
 	XOR(dreg, src1, src2);
@@ -3537,14 +3537,14 @@ static void ldfu_reg(void)
 
 static void ldfu_dir(void)
 {
-	UINT32 res = RMEM(DIRECT());
+	uint32_t res = RMEM(DIRECT());
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(dreg, res);
 }
 
 static void ldfu_ind(void)
 {
-	UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 	int dreg = (OP >> 16) & 7;
 	LONG2FP(dreg, res);
 }
@@ -3567,7 +3567,7 @@ static void ldflo_dir(void)
 {
 	if (CONDITION_LO)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3577,7 +3577,7 @@ static void ldflo_ind(void)
 {
 	if (CONDITION_LO)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3606,7 +3606,7 @@ static void ldfls_dir(void)
 {
 	if (CONDITION_LS)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3616,7 +3616,7 @@ static void ldfls_ind(void)
 {
 	if (CONDITION_LS)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3645,7 +3645,7 @@ static void ldfhi_dir(void)
 {
 	if (CONDITION_HI)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3655,7 +3655,7 @@ static void ldfhi_ind(void)
 {
 	if (CONDITION_HI)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3684,7 +3684,7 @@ static void ldfhs_dir(void)
 {
 	if (CONDITION_HS)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3694,7 +3694,7 @@ static void ldfhs_ind(void)
 {
 	if (CONDITION_HS)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3723,7 +3723,7 @@ static void ldfeq_dir(void)
 {
 	if (CONDITION_EQ)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3733,7 +3733,7 @@ static void ldfeq_ind(void)
 {
 	if (CONDITION_EQ)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3762,7 +3762,7 @@ static void ldfne_dir(void)
 {
 	if (CONDITION_NE)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3772,7 +3772,7 @@ static void ldfne_ind(void)
 {
 	if (CONDITION_NE)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3801,7 +3801,7 @@ static void ldflt_dir(void)
 {
 	if (CONDITION_LT)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3811,7 +3811,7 @@ static void ldflt_ind(void)
 {
 	if (CONDITION_LT)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3840,7 +3840,7 @@ static void ldfle_dir(void)
 {
 	if (CONDITION_LE)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3850,7 +3850,7 @@ static void ldfle_ind(void)
 {
 	if (CONDITION_LE)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3879,7 +3879,7 @@ static void ldfgt_dir(void)
 {
 	if (CONDITION_GT)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3889,7 +3889,7 @@ static void ldfgt_ind(void)
 {
 	if (CONDITION_GT)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3918,7 +3918,7 @@ static void ldfge_dir(void)
 {
 	if (CONDITION_GE)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3928,7 +3928,7 @@ static void ldfge_ind(void)
 {
 	if (CONDITION_GE)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3957,7 +3957,7 @@ static void ldfnv_dir(void)
 {
 	if (CONDITION_NV)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3967,7 +3967,7 @@ static void ldfnv_ind(void)
 {
 	if (CONDITION_NV)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -3996,7 +3996,7 @@ static void ldfv_dir(void)
 {
 	if (CONDITION_V)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4006,7 +4006,7 @@ static void ldfv_ind(void)
 {
 	if (CONDITION_V)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4035,7 +4035,7 @@ static void ldfnuf_dir(void)
 {
 	if (CONDITION_NUF)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4045,7 +4045,7 @@ static void ldfnuf_ind(void)
 {
 	if (CONDITION_NUF)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4074,7 +4074,7 @@ static void ldfuf_dir(void)
 {
 	if (CONDITION_UF)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4084,7 +4084,7 @@ static void ldfuf_ind(void)
 {
 	if (CONDITION_UF)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4113,7 +4113,7 @@ static void ldfnlv_dir(void)
 {
 	if (CONDITION_NLV)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4123,7 +4123,7 @@ static void ldfnlv_ind(void)
 {
 	if (CONDITION_NLV)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4152,7 +4152,7 @@ static void ldflv_dir(void)
 {
 	if (CONDITION_LV)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4162,7 +4162,7 @@ static void ldflv_ind(void)
 {
 	if (CONDITION_LV)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4191,7 +4191,7 @@ static void ldfnluf_dir(void)
 {
 	if (CONDITION_NLUF)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4201,7 +4201,7 @@ static void ldfnluf_ind(void)
 {
 	if (CONDITION_NLUF)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4230,7 +4230,7 @@ static void ldfluf_dir(void)
 {
 	if (CONDITION_LUF)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4240,7 +4240,7 @@ static void ldfluf_ind(void)
 {
 	if (CONDITION_LUF)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4269,7 +4269,7 @@ static void ldfzuf_dir(void)
 {
 	if (CONDITION_ZUF)
 	{
-		UINT32 res = RMEM(DIRECT());
+		uint32_t res = RMEM(DIRECT());
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4279,7 +4279,7 @@ static void ldfzuf_ind(void)
 {
 	if (CONDITION_ZUF)
 	{
-		UINT32 res = RMEM(INDIRECT_D(OP >> 8));
+		uint32_t res = RMEM(INDIRECT_D(OP >> 8));
 		int dreg = (OP >> 16) & 7;
 		LONG2FP(dreg, res);
 	}
@@ -4325,7 +4325,7 @@ static void ldiu_ind(void)
 static void ldiu_imm(void)
 {
 	int dreg = (OP >> 16) & 31;
-	IREG(dreg) = (INT16)OP;
+	IREG(dreg) = (int16_t)OP;
 	if (dreg >= TMR_BK)
 		update_special(dreg);
 }
@@ -4345,7 +4345,7 @@ static void ldilo_reg(void)
 
 static void ldilo_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_LO)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4357,7 +4357,7 @@ static void ldilo_dir(void)
 
 static void ldilo_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_LO)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4372,7 +4372,7 @@ static void ldilo_imm(void)
 	if (CONDITION_LO)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4393,7 +4393,7 @@ static void ldils_reg(void)
 
 static void ldils_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_LS)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4405,7 +4405,7 @@ static void ldils_dir(void)
 
 static void ldils_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_LS)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4420,7 +4420,7 @@ static void ldils_imm(void)
 	if (CONDITION_LS)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4441,7 +4441,7 @@ static void ldihi_reg(void)
 
 static void ldihi_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_HI)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4453,7 +4453,7 @@ static void ldihi_dir(void)
 
 static void ldihi_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_HI)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4468,7 +4468,7 @@ static void ldihi_imm(void)
 	if (CONDITION_HI)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4489,7 +4489,7 @@ static void ldihs_reg(void)
 
 static void ldihs_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_HS)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4501,7 +4501,7 @@ static void ldihs_dir(void)
 
 static void ldihs_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_HS)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4516,7 +4516,7 @@ static void ldihs_imm(void)
 	if (CONDITION_HS)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4537,7 +4537,7 @@ static void ldieq_reg(void)
 
 static void ldieq_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_EQ)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4549,7 +4549,7 @@ static void ldieq_dir(void)
 
 static void ldieq_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_EQ)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4564,7 +4564,7 @@ static void ldieq_imm(void)
 	if (CONDITION_EQ)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4585,7 +4585,7 @@ static void ldine_reg(void)
 
 static void ldine_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_NE)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4597,7 +4597,7 @@ static void ldine_dir(void)
 
 static void ldine_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_NE)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4612,7 +4612,7 @@ static void ldine_imm(void)
 	if (CONDITION_NE)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4633,7 +4633,7 @@ static void ldilt_reg(void)
 
 static void ldilt_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_LT)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4645,7 +4645,7 @@ static void ldilt_dir(void)
 
 static void ldilt_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_LT)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4660,7 +4660,7 @@ static void ldilt_imm(void)
 	if (CONDITION_LT)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4681,7 +4681,7 @@ static void ldile_reg(void)
 
 static void ldile_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_LE)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4693,7 +4693,7 @@ static void ldile_dir(void)
 
 static void ldile_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_LE)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4708,7 +4708,7 @@ static void ldile_imm(void)
 	if (CONDITION_LE)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4729,7 +4729,7 @@ static void ldigt_reg(void)
 
 static void ldigt_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_GT)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4741,7 +4741,7 @@ static void ldigt_dir(void)
 
 static void ldigt_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_GT)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4756,7 +4756,7 @@ static void ldigt_imm(void)
 	if (CONDITION_GT)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4777,7 +4777,7 @@ static void ldige_reg(void)
 
 static void ldige_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_GE)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4789,7 +4789,7 @@ static void ldige_dir(void)
 
 static void ldige_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_GE)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4804,7 +4804,7 @@ static void ldige_imm(void)
 	if (CONDITION_GE)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4825,7 +4825,7 @@ static void ldinv_reg(void)
 
 static void ldinv_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_NV)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4837,7 +4837,7 @@ static void ldinv_dir(void)
 
 static void ldinv_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_NV)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4852,7 +4852,7 @@ static void ldinv_imm(void)
 	if (CONDITION_NV)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4873,7 +4873,7 @@ static void ldiuf_reg(void)
 
 static void ldiuf_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_UF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4885,7 +4885,7 @@ static void ldiuf_dir(void)
 
 static void ldiuf_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_UF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4900,7 +4900,7 @@ static void ldiuf_imm(void)
 	if (CONDITION_UF)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4921,7 +4921,7 @@ static void ldinuf_reg(void)
 
 static void ldinuf_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_NUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4933,7 +4933,7 @@ static void ldinuf_dir(void)
 
 static void ldinuf_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_NUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4948,7 +4948,7 @@ static void ldinuf_imm(void)
 	if (CONDITION_NUF)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -4969,7 +4969,7 @@ static void ldiv_reg(void)
 
 static void ldiv_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_V)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4981,7 +4981,7 @@ static void ldiv_dir(void)
 
 static void ldiv_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_V)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -4996,7 +4996,7 @@ static void ldiv_imm(void)
 	if (CONDITION_V)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -5017,7 +5017,7 @@ static void ldinlv_reg(void)
 
 static void ldinlv_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_NLV)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5029,7 +5029,7 @@ static void ldinlv_dir(void)
 
 static void ldinlv_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_NLV)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5044,7 +5044,7 @@ static void ldinlv_imm(void)
 	if (CONDITION_NLV)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -5065,7 +5065,7 @@ static void ldilv_reg(void)
 
 static void ldilv_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_LV)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5077,7 +5077,7 @@ static void ldilv_dir(void)
 
 static void ldilv_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_LV)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5092,7 +5092,7 @@ static void ldilv_imm(void)
 	if (CONDITION_LV)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -5113,7 +5113,7 @@ static void ldinluf_reg(void)
 
 static void ldinluf_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_NLUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5125,7 +5125,7 @@ static void ldinluf_dir(void)
 
 static void ldinluf_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_NLUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5140,7 +5140,7 @@ static void ldinluf_imm(void)
 	if (CONDITION_NLUF)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -5161,7 +5161,7 @@ static void ldiluf_reg(void)
 
 static void ldiluf_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_LUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5173,7 +5173,7 @@ static void ldiluf_dir(void)
 
 static void ldiluf_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_LUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5188,7 +5188,7 @@ static void ldiluf_imm(void)
 	if (CONDITION_LUF)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -5209,7 +5209,7 @@ static void ldizuf_reg(void)
 
 static void ldizuf_dir(void)
 {
-	UINT32 val = RMEM(DIRECT());
+	uint32_t val = RMEM(DIRECT());
 	if (CONDITION_ZUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5221,7 +5221,7 @@ static void ldizuf_dir(void)
 
 static void ldizuf_ind(void)
 {
-	UINT32 val = RMEM(INDIRECT_D(OP >> 8));
+	uint32_t val = RMEM(INDIRECT_D(OP >> 8));
 	if (CONDITION_ZUF)
 	{
 		int dreg = (OP >> 16) & 31;
@@ -5236,7 +5236,7 @@ static void ldizuf_imm(void)
 	if (CONDITION_ZUF)
 	{
 		int dreg = (OP >> 16) & 31;
-		IREG(dreg) = (INT16)OP;
+		IREG(dreg) = (int16_t)OP;
 		if (dreg >= TMR_BK)
 			update_special(dreg);
 	}
@@ -5250,7 +5250,7 @@ static void ldizuf_imm(void)
 #pragma mark BRANCH OPS
 #endif
 
-static INLINE void execute_delayed(UINT32 newpc)
+static INLINE void execute_delayed(uint32_t newpc)
 {
 	tms32031.delayed = 1;
 
@@ -5329,7 +5329,7 @@ static void brc_imm(void)
 {
 	if (condition(OP >> 16))
 	{
-		tms32031.pc += (INT16)OP;
+		tms32031.pc += (int16_t)OP;
 		UPDATEPC(tms32031.pc);
 		tms32031_icount -= 3*2;
 	}
@@ -5338,7 +5338,7 @@ static void brc_imm(void)
 static void brcd_imm(void)
 {
 	if (condition(OP >> 16))
-		execute_delayed(tms32031.pc + 2 + (INT16)OP);
+		execute_delayed(tms32031.pc + 2 + (int16_t)OP);
 }
 
 /*-----------------------------------------------------*/
@@ -5372,7 +5372,7 @@ static void dbc_imm(void)
 	IREG(reg) = res | (IREG(reg) & 0xff000000);
 	if (condition(OP >> 16) && !(res & 0x800000))
 	{
-		tms32031.pc += (INT16)OP;
+		tms32031.pc += (int16_t)OP;
 		UPDATEPC(tms32031.pc);
 		tms32031_icount -= 3*2;
 	}
@@ -5384,7 +5384,7 @@ static void dbcd_imm(void)
 	int res = (IREG(reg) - 1) & 0xffffff;
 	IREG(reg) = res | (IREG(reg) & 0xff000000);
 	if (condition(OP >> 16) && !(res & 0x800000))
-		execute_delayed(tms32031.pc + 2 + (INT16)OP);
+		execute_delayed(tms32031.pc + 2 + (int16_t)OP);
 }
 
 /*-----------------------------------------------------*/
@@ -5405,7 +5405,7 @@ static void callc_imm(void)
 	if (condition(OP >> 16))
 	{
 		WMEM(++IREG(TMR_SP), tms32031.pc);
-		tms32031.pc += (INT16)OP;
+		tms32031.pc += (int16_t)OP;
 		UPDATEPC(tms32031.pc);
 		tms32031_icount -= 3*2;
 	}
@@ -5464,8 +5464,8 @@ static void retsc_reg(void)
 static void mpyaddf_0(void)
 {
 	/* src3 * src4, src1 + src2 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[TMR_TEMP1], &tms32031.r[TMR_TEMP2]);
@@ -5477,8 +5477,8 @@ static void mpyaddf_0(void)
 static void mpyaddf_1(void)
 {
 	/* src3 * src1, src4 + src2 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[TMR_TEMP1], &tms32031.r[(OP >> 19) & 7]);
@@ -5490,8 +5490,8 @@ static void mpyaddf_1(void)
 static void mpyaddf_2(void)
 {
 	/* src1 * src2, src3 + src4 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[(OP >> 19) & 7], &tms32031.r[(OP >> 16) & 7]);
@@ -5503,8 +5503,8 @@ static void mpyaddf_2(void)
 static void mpyaddf_3(void)
 {
 	/* src3 * src1, src2 + src4 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[TMR_TEMP1], &tms32031.r[(OP >> 19) & 7]);
@@ -5518,8 +5518,8 @@ static void mpyaddf_3(void)
 static void mpysubf_0(void)
 {
 	/* src3 * src4, src1 - src2 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[TMR_TEMP1], &tms32031.r[TMR_TEMP2]);
@@ -5531,8 +5531,8 @@ static void mpysubf_0(void)
 static void mpysubf_1(void)
 {
 	/* src3 * src1, src4 - src2 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[TMR_TEMP1], &tms32031.r[(OP >> 19) & 7]);
@@ -5544,8 +5544,8 @@ static void mpysubf_1(void)
 static void mpysubf_2(void)
 {
 	/* src1 * src2, src3 - src4 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[(OP >> 19) & 7], &tms32031.r[(OP >> 16) & 7]);
@@ -5557,8 +5557,8 @@ static void mpysubf_2(void)
 static void mpysubf_3(void)
 {
 	/* src3 * src1, src2 - src4 */
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
 	LONG2FP(TMR_TEMP1, src3);
 	LONG2FP(TMR_TEMP2, src4);
 	mpyf(&tms32031.r[TMR_TEMP3], &tms32031.r[TMR_TEMP1], &tms32031.r[(OP >> 19) & 7]);
@@ -5572,20 +5572,20 @@ static void mpysubf_3(void)
 static void mpyaddi_0(void)
 {
 	/* src3 * src4, src1 + src2 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src4 << 8) >> 8);
-	UINT32 ares = src1 + src2;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src4 << 8) >> 8);
+	uint32_t ares = src1 + src2;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src1,src2,ares))
-			ares = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5595,20 +5595,20 @@ static void mpyaddi_0(void)
 static void mpyaddi_1(void)
 {
 	/* src3 * src1, src4 + src2 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src4 + src2;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src4 + src2;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src4,src2,ares))
-			ares = ((INT32)src4 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src4 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5618,20 +5618,20 @@ static void mpyaddi_1(void)
 static void mpyaddi_2(void)
 {
 	/* src1 * src2, src3 + src4 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src1 << 8) >> 8) * (INT64)((INT32)(src2 << 8) >> 8);
-	UINT32 ares = src3 + src4;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src1 << 8) >> 8) * (int64_t)((int32_t)(src2 << 8) >> 8);
+	uint32_t ares = src3 + src4;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src3,src4,ares))
-			ares = ((INT32)src3 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src3 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5641,20 +5641,20 @@ static void mpyaddi_2(void)
 static void mpyaddi_3(void)
 {
 	/* src3 * src1, src2 + src4 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src2 + src4;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src2 + src4;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src2,src4,ares))
-			ares = ((INT32)src2 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src2 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5666,20 +5666,20 @@ static void mpyaddi_3(void)
 static void mpysubi_0(void)
 {
 	/* src3 * src4, src1 - src2 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src4 << 8) >> 8);
-	UINT32 ares = src1 - src2;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src4 << 8) >> 8);
+	uint32_t ares = src1 - src2;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src1,src2,ares))
-			ares = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5689,20 +5689,20 @@ static void mpysubi_0(void)
 static void mpysubi_1(void)
 {
 	/* src3 * src1, src4 - src2 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src4 - src2;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src4 - src2;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src4,src2,ares))
-			ares = ((INT32)src4 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src4 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5712,20 +5712,20 @@ static void mpysubi_1(void)
 static void mpysubi_2(void)
 {
 	/* src1 * src2, src3 - src4 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src1 << 8) >> 8) * (INT64)((INT32)(src2 << 8) >> 8);
-	UINT32 ares = src3 - src4;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src1 << 8) >> 8) * (int64_t)((int32_t)(src2 << 8) >> 8);
+	uint32_t ares = src3 - src4;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src3,src4,ares))
-			ares = ((INT32)src3 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src3 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5735,20 +5735,20 @@ static void mpysubi_2(void)
 static void mpysubi_3(void)
 {
 	/* src3 * src1, src2 - src4 */
-	UINT32 src1 = IREG((OP >> 19) & 7);
-	UINT32 src2 = IREG((OP >> 16) & 7);
-	UINT32 src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
-	UINT32 src4 = RMEM(INDIRECT_1(OP));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src2 - src4;
+	uint32_t src1 = IREG((OP >> 19) & 7);
+	uint32_t src2 = IREG((OP >> 16) & 7);
+	uint32_t src3 = RMEM(INDIRECT_1_DEF(OP >> 8));
+	uint32_t src4 = RMEM(INDIRECT_1(OP));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src2 - src4;
 
 	CLR_NZVUF();
 	if (OVM)
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src2,src4,ares))
-			ares = ((INT32)src2 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src2 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG((OP >> 23) & 1) = mres;
 	IREG(((OP >> 22) & 1) | 2) = ares;
@@ -5775,7 +5775,7 @@ static void stisti(void)
 
 static void ldfldf(void)
 {
-	UINT32 res;
+	uint32_t res;
 	int dreg;
 
 	res = RMEM(INDIRECT_1_DEF(OP >> 8));
@@ -5804,8 +5804,8 @@ static void ldildi(void)
 
 static void absfstf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		LONG2FP(TMR_TEMP1, src2);
@@ -5817,8 +5817,8 @@ static void absfstf(void)
 
 static void absisti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		ABSI(dreg, src2);
@@ -5829,8 +5829,8 @@ static void absisti(void)
 
 static void addf3stf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		LONG2FP(TMR_TEMP1, src2);
 		addf(&tms32031.r[(OP >> 22) & 7], &tms32031.r[(OP >> 19) & 7], &tms32031.r[TMR_TEMP1]);
@@ -5841,11 +5841,11 @@ static void addf3stf(void)
 
 static void addi3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 src1 = IREG((OP >> 19) & 7);
+		uint32_t src1 = IREG((OP >> 19) & 7);
 		ADDI(dreg, src1, src2);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -5854,11 +5854,11 @@ static void addi3sti(void)
 
 static void and3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 src1 = IREG((OP >> 19) & 7);
+		uint32_t src1 = IREG((OP >> 19) & 7);
 		AND(dreg, src1, src2);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -5867,11 +5867,11 @@ static void and3sti(void)
 
 static void ash3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 count = IREG((OP >> 19) & 7);
+		uint32_t count = IREG((OP >> 19) & 7);
 		ASH(dreg, src2, count);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -5880,8 +5880,8 @@ static void ash3sti(void)
 
 static void fixsti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		LONG2FP(dreg, src2);
@@ -5893,8 +5893,8 @@ static void fixsti(void)
 
 static void floatstf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		IREG(dreg) = src2;
@@ -5906,8 +5906,8 @@ static void floatstf(void)
 
 static void ldfstf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		LONG2FP(dreg, src2);
@@ -5918,8 +5918,8 @@ static void ldfstf(void)
 
 static void ldisti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	IREG((OP >> 22) & 7) = src2;
 	WMEM(INDIRECT_1(OP >> 8), src3);
 	UPDATE_DEF();
@@ -5927,11 +5927,11 @@ static void ldisti(void)
 
 static void lsh3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 count = IREG((OP >> 19) & 7);
+		uint32_t count = IREG((OP >> 19) & 7);
 		LSH(dreg, src2, count);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -5940,8 +5940,8 @@ static void lsh3sti(void)
 
 static void mpyf3stf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		LONG2FP(TMR_TEMP1, src2);
 		mpyf(&tms32031.r[(OP >> 22) & 7], &tms32031.r[(OP >> 19) & 7], &tms32031.r[TMR_TEMP1]);
@@ -5952,11 +5952,11 @@ static void mpyf3stf(void)
 
 static void mpyi3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 src1 = IREG((OP >> 19) & 7);
+		uint32_t src1 = IREG((OP >> 19) & 7);
 		MPYI(dreg, src1, src2);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -5965,8 +5965,8 @@ static void mpyi3sti(void)
 
 static void negfstf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		LONG2FP(TMR_TEMP1, src2);
 		negf(&tms32031.r[(OP >> 22) & 7], &tms32031.r[TMR_TEMP1]);
@@ -5977,8 +5977,8 @@ static void negfstf(void)
 
 static void negisti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		NEGI(dreg, src2);
@@ -5989,8 +5989,8 @@ static void negisti(void)
 
 static void notsti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
 		NOT(dreg, src2);
@@ -6001,11 +6001,11 @@ static void notsti(void)
 
 static void or3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 src1 = IREG((OP >> 19) & 7);
+		uint32_t src1 = IREG((OP >> 19) & 7);
 		OR(dreg, src1, src2);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -6014,8 +6014,8 @@ static void or3sti(void)
 
 static void subf3stf(void)
 {
-	UINT32 src3 = FP2LONG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = FP2LONG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		LONG2FP(TMR_TEMP1, src2);
 		subf(&tms32031.r[(OP >> 22) & 7], &tms32031.r[TMR_TEMP1], &tms32031.r[(OP >> 19) & 7]);
@@ -6026,11 +6026,11 @@ static void subf3stf(void)
 
 static void subi3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 src1 = IREG((OP >> 19) & 7);
+		uint32_t src1 = IREG((OP >> 19) & 7);
 		SUBI(dreg, src2, src1);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);
@@ -6039,11 +6039,11 @@ static void subi3sti(void)
 
 static void xor3sti(void)
 {
-	UINT32 src3 = IREG((OP >> 16) & 7);
-	UINT32 src2 = RMEM(INDIRECT_1_DEF(OP));
+	uint32_t src3 = IREG((OP >> 16) & 7);
+	uint32_t src2 = RMEM(INDIRECT_1_DEF(OP));
 	{
 		int dreg = (OP >> 22) & 7;
-		UINT32 src1 = IREG((OP >> 19) & 7);
+		uint32_t src1 = IREG((OP >> 19) & 7);
 		XOR(dreg, src1, src2);
 	}
 	WMEM(INDIRECT_1(OP >> 8), src3);

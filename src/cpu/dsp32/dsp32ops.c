@@ -44,8 +44,8 @@ extern int debug_key_pressed;
 #define SET_NZ00_24(r)		dsp32.nzcflags = ((r) & 0xffffff); dsp32.vflags = 0
 
 #define TRUNCATE24(a)		((a) & 0xffffff)
-#define EXTEND16_TO_24(a)	TRUNCATE24((INT32)(INT16)(a))
-#define REG16(a)			((UINT16)dsp32.r[a])
+#define EXTEND16_TO_24(a)	TRUNCATE24((int32_t)(int16_t)(a))
+#define REG16(a)			((uint16_t)dsp32.r[a])
 #define REG24(a)			(dsp32.r[a])
 
 #define WRITEABLE_REGS		(0x6f3efffe)
@@ -111,7 +111,7 @@ void (*dsp32ops[])(void);
 typedef union int_double
 {
 	double d;
-	UINT32 i[2];
+	uint32_t i[2];
 } int_double;
 
 
@@ -158,7 +158,7 @@ static INLINE void execute_one(void)
 #pragma mark CAU HELPERS
 #endif
 
-static UINT32 cau_read_pi_special(UINT8 i)
+static uint32_t cau_read_pi_special(uint8_t i)
 {
 	switch (i)
 	{
@@ -175,7 +175,7 @@ static UINT32 cau_read_pi_special(UINT8 i)
 }
 
 
-static void cau_write_pi_special(UINT8 i, UINT32 val)
+static void cau_write_pi_special(uint8_t i, uint32_t val)
 {
 	switch (i)
 	{
@@ -191,13 +191,13 @@ static void cau_write_pi_special(UINT8 i, UINT32 val)
 }
 
 
-static INLINE UINT8 cau_read_pi_1byte(int pi)
+static INLINE uint8_t cau_read_pi_1byte(int pi)
 {
 	int p = (pi >> 5) & 0x1f;
 	int i = (pi >> 0) & 0x1f;
 	if (p)
 	{
-		UINT32 result = RBYTE(dsp32.r[p]);
+		uint32_t result = RBYTE(dsp32.r[p]);
 		dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i]);
 		return result;
 	}
@@ -206,13 +206,13 @@ static INLINE UINT8 cau_read_pi_1byte(int pi)
 }
 
 
-static INLINE UINT16 cau_read_pi_2byte(int pi)
+static INLINE uint16_t cau_read_pi_2byte(int pi)
 {
 	int p = (pi >> 5) & 0x1f;
 	int i = (pi >> 0) & 0x1f;
 	if (p)
 	{
-		UINT32 result = RWORD(dsp32.r[p]);
+		uint32_t result = RWORD(dsp32.r[p]);
 		if (i < 22 || i > 23)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i]);
 		else
@@ -224,13 +224,13 @@ static INLINE UINT16 cau_read_pi_2byte(int pi)
 }
 
 
-static INLINE UINT32 cau_read_pi_4byte(int pi)
+static INLINE uint32_t cau_read_pi_4byte(int pi)
 {
 	int p = (pi >> 5) & 0x1f;
 	int i = (pi >> 0) & 0x1f;
 	if (p)
 	{
-		UINT32 result = RLONG(dsp32.r[p]);
+		uint32_t result = RLONG(dsp32.r[p]);
 		if (i < 22 || i > 23)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i]);
 		else
@@ -242,7 +242,7 @@ static INLINE UINT32 cau_read_pi_4byte(int pi)
 }
 
 
-static INLINE void cau_write_pi_1byte(int pi, UINT8 val)
+static INLINE void cau_write_pi_1byte(int pi, uint8_t val)
 {
 	int p = (pi >> 5) & 0x1f;
 	int i = (pi >> 0) & 0x1f;
@@ -256,7 +256,7 @@ static INLINE void cau_write_pi_1byte(int pi, UINT8 val)
 }
 
 
-static INLINE void cau_write_pi_2byte(int pi, UINT16 val)
+static INLINE void cau_write_pi_2byte(int pi, uint16_t val)
 {
 	int p = (pi >> 5) & 0x1f;
 	int i = (pi >> 0) & 0x1f;
@@ -273,13 +273,13 @@ static INLINE void cau_write_pi_2byte(int pi, UINT16 val)
 }
 
 
-static INLINE void cau_write_pi_4byte(int pi, UINT32 val)
+static INLINE void cau_write_pi_4byte(int pi, uint32_t val)
 {
 	int p = (pi >> 5) & 0x1f;
 	int i = (pi >> 0) & 0x1f;
 	if (p)
 	{
-		WLONG(dsp32.r[p], (INT32)(val << 8) >> 8);
+		WLONG(dsp32.r[p], (int32_t)(val << 8) >> 8);
 		if (i < 22 || i > 23)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i]);
 		else
@@ -327,11 +327,11 @@ static INLINE double dau_get_anzflags(void)
 }
 
 
-static INLINE UINT8 dau_get_avuflags(void)
+static INLINE uint8_t dau_get_avuflags(void)
 {
 #if (!IGNORE_DAU_UV_FLAGS)
 	int bufidx = (dsp32.abuf_index - 1) & 3;
-	UINT8 vuflags = dsp32.VUflags;
+	uint8_t vuflags = dsp32.VUflags;
 	while (dsp32_icount >= dsp32.abufcycle[bufidx] - 3 * 4)
 	{
 		vuflags = dsp32.abufVUflags[bufidx];
@@ -393,13 +393,13 @@ static INLINE void dau_set_val_flags(int aidx, double res)
 }
 
 
-static INLINE double dsp_to_double(UINT32 val)
+static INLINE double dsp_to_double(uint32_t val)
 {
 	int_double id;
 
 	if (val == 0)
 		return 0;
-	else if ((INT32)val > 0)
+	else if ((int32_t)val > 0)
 	{
 		int exponent = ((val & 0xff) - 128 + 1023) << 20;
 		id.i[BYTE_XOR_BE(0)] = exponent + (val >> 11);
@@ -416,7 +416,7 @@ static INLINE double dsp_to_double(UINT32 val)
 }
 
 
-static INLINE UINT32 double_to_dsp(double val)
+static INLINE uint32_t double_to_dsp(double val)
 {
 	int mantissa, exponent;
 	int_double id;
@@ -429,9 +429,9 @@ static INLINE UINT32 double_to_dsp(double val)
 	{
 //		debug_key_pressed = 1;
 //		fprintf(stderr, "Exponent = %d\n", exponent);
-		return ((INT32)id.i[BYTE_XOR_BE(0)] >= 0) ? 0x7fffffff : 0x800000ff;
+		return ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0) ? 0x7fffffff : 0x800000ff;
 	}
-	else if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+	else if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 		return exponent | mantissa;
 	else
 	{
@@ -467,7 +467,7 @@ static INLINE double dau_read_pi_double_1st(int pi, int multiplier)
 	lastp = p;
 	if (p)
 	{
-		UINT32 result = RLONG(dsp32.r[p]);
+		uint32_t result = RLONG(dsp32.r[p]);
 		if (i < 6)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i+16]);
 		else
@@ -490,7 +490,7 @@ static INLINE double dau_read_pi_double_2nd(int pi, int multiplier, double xval)
 	lastp = p;
 	if (p)
 	{
-		UINT32 result;
+		uint32_t result;
 		result = RLONG(dsp32.r[p]);
 		if (i < 6)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i+16]);
@@ -505,7 +505,7 @@ static INLINE double dau_read_pi_double_2nd(int pi, int multiplier, double xval)
 }
 
 
-static INLINE UINT32 dau_read_pi_4bytes(int pi)
+static INLINE uint32_t dau_read_pi_4bytes(int pi)
 {
 	int p = (pi >> 3) & 15;
 	int i = (pi >> 0) & 7;
@@ -513,7 +513,7 @@ static INLINE UINT32 dau_read_pi_4bytes(int pi)
 	lastp = p;
 	if (p)
 	{
-		UINT32 result = RLONG(dsp32.r[p]);
+		uint32_t result = RLONG(dsp32.r[p]);
 		if (i < 6)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i+16]);
 		else
@@ -527,7 +527,7 @@ static INLINE UINT32 dau_read_pi_4bytes(int pi)
 }
 
 
-static INLINE UINT16 dau_read_pi_2bytes(int pi)
+static INLINE uint16_t dau_read_pi_2bytes(int pi)
 {
 	int p = (pi >> 3) & 15;
 	int i = (pi >> 0) & 7;
@@ -535,7 +535,7 @@ static INLINE UINT16 dau_read_pi_2bytes(int pi)
 	lastp = p;
 	if (p)
 	{
-		UINT32 result = RWORD(dsp32.r[p]);
+		uint32_t result = RWORD(dsp32.r[p]);
 		if (i < 6)
 			dsp32.r[p] = TRUNCATE24(dsp32.r[p] + dsp32.r[i+16]);
 		else
@@ -570,7 +570,7 @@ static INLINE void dau_write_pi_double(int pi, double val)
 }
 
 
-static INLINE void dau_write_pi_4bytes(int pi, UINT32 val)
+static INLINE void dau_write_pi_4bytes(int pi, uint32_t val)
 {
 	int p = (pi >> 3) & 15;
 	int i = (pi >> 0) & 7;
@@ -592,7 +592,7 @@ static INLINE void dau_write_pi_4bytes(int pi, UINT32 val)
 }
 
 
-static INLINE void dau_write_pi_2bytes(int pi, UINT16 val)
+static INLINE void dau_write_pi_2bytes(int pi, uint16_t val)
 {
 	int p = (pi >> 3) & 15;
 	int i = (pi >> 0) & 7;
@@ -714,11 +714,11 @@ static int condition(int cond)
 
 static void nop(void)
 {
-	UINT32 op = OP;
+	uint32_t op = OP;
 	if (op == 0)
 		return;
 	execute_one();
-	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 	cpu_setopbase24ledw(dsp32.PC);
 
 }
@@ -726,9 +726,9 @@ static void nop(void)
 
 static void goto_t(void)
 {
-	UINT32 op = OP;
+	uint32_t op = OP;
 	execute_one();
-	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 	cpu_setopbase24ledw(dsp32.PC);
 }
 
@@ -737,9 +737,9 @@ static void goto_pl(void)
 {
 	if (!nFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -749,9 +749,9 @@ static void goto_mi(void)
 {
 	if (nFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -761,9 +761,9 @@ static void goto_ne(void)
 {
 	if (!zFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -773,9 +773,9 @@ static void goto_eq(void)
 {
 	if (zFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -785,9 +785,9 @@ static void goto_vc(void)
 {
 	if (!vFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -797,9 +797,9 @@ static void goto_vs(void)
 {
 	if (vFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -809,9 +809,9 @@ static void goto_cc(void)
 {
 	if (!cFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -821,9 +821,9 @@ static void goto_cs(void)
 {
 	if (cFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -833,9 +833,9 @@ static void goto_ge(void)
 {
 	if (!(nFLAG ^ vFLAG))
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -845,9 +845,9 @@ static void goto_lt(void)
 {
 	if (nFLAG ^ vFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -857,9 +857,9 @@ static void goto_gt(void)
 {
 	if (!(zFLAG | (nFLAG ^ vFLAG)))
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -869,9 +869,9 @@ static void goto_le(void)
 {
 	if (zFLAG | (nFLAG ^ vFLAG))
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -881,9 +881,9 @@ static void goto_hi(void)
 {
 	if (!cFLAG && !zFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -893,9 +893,9 @@ static void goto_ls(void)
 {
 	if (cFLAG || zFLAG)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -905,9 +905,9 @@ static void goto_auc(void)
 {
 	if (!(DEFERRED_VUFLAGS & UFLAGBIT))
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -917,9 +917,9 @@ static void goto_aus(void)
 {
 	if (DEFERRED_VUFLAGS & UFLAGBIT)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -929,9 +929,9 @@ static void goto_age(void)
 {
 	if (DEFERRED_NZFLAGS >= 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -941,9 +941,9 @@ static void goto_alt(void)
 {
 	if (DEFERRED_NZFLAGS < 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -953,9 +953,9 @@ static void goto_ane(void)
 {
 	if (DEFERRED_NZFLAGS != 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -965,9 +965,9 @@ static void goto_aeq(void)
 {
 	if (DEFERRED_NZFLAGS == 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -977,9 +977,9 @@ static void goto_avc(void)
 {
 	if (!(DEFERRED_VUFLAGS & VFLAGBIT))
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -989,9 +989,9 @@ static void goto_avs(void)
 {
 	if (DEFERRED_VUFLAGS & VFLAGBIT)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -1001,9 +1001,9 @@ static void goto_agt(void)
 {
 	if (DEFERRED_NZFLAGS > 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -1013,9 +1013,9 @@ static void goto_ale(void)
 {
 	if (DEFERRED_NZFLAGS <= 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -1120,13 +1120,13 @@ static void goto_irq2hi(void)
 static void dec_goto(void)
 {
 	int hr = (OP >> 21) & 0x1f;
-	int old = (INT16)dsp32.r[hr];
+	int old = (int16_t)dsp32.r[hr];
 	dsp32.r[hr] = EXTEND16_TO_24(dsp32.r[hr] - 1);
 	if (old >= 0)
 	{
-		UINT32 op = OP;
+		uint32_t op = OP;
 		execute_one();
-		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+		dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 		cpu_setopbase24ledw(dsp32.PC);
 	}
 }
@@ -1134,19 +1134,19 @@ static void dec_goto(void)
 
 static void call(void)
 {
-	UINT32 op = OP;
+	uint32_t op = OP;
 	int mr = (op >> 21) & 0x1f;
 	if (IS_WRITEABLE(mr))
 		dsp32.r[mr] = dsp32.PC + 4;
 	execute_one();
-	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (INT16)op);
+	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (int16_t)op);
 	cpu_setopbase24ledw(dsp32.PC);
 }
 
 
 static void goto24(void)
 {
-	UINT32 op = OP;
+	uint32_t op = OP;
 	execute_one();
 	dsp32.PC = TRUNCATE24(REG24((op >> 16) & 0x1f) + (op & 0xffff) + ((op >> 5) & 0xff0000));
 	cpu_setopbase24ledw(dsp32.PC);
@@ -1155,7 +1155,7 @@ static void goto24(void)
 
 static void call24(void)
 {
-	UINT32 op = OP;
+	uint32_t op = OP;
 	int mr = (op >> 16) & 0x1f;
 	if (IS_WRITEABLE(mr))
 		dsp32.r[mr] = dsp32.PC + 4;
@@ -1191,7 +1191,7 @@ static void add_si(void)
 {
 	int dr = (OP >> 21) & 0x1f;
 	int hrval = REG16((OP >> 16) & 0x1f);
-	int res = hrval + (UINT16)OP;
+	int res = hrval + (uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZCV_16(hrval, OP, res);
@@ -1425,7 +1425,7 @@ static void add_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = drval + (UINT16)OP;
+	int res = drval + (uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZCV_16(drval, OP, res);
@@ -1436,7 +1436,7 @@ static void subr_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = (UINT16)OP - drval;
+	int res = (uint16_t)OP - drval;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZCV_16(drval, OP, res);
@@ -1453,7 +1453,7 @@ static void sub_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = drval - (UINT16)OP;
+	int res = drval - (uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZCV_16(drval, OP, res);
@@ -1464,7 +1464,7 @@ static void andc_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = drval & ~(UINT16)OP;
+	int res = drval & ~(uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZ00_16(res);
@@ -1474,7 +1474,7 @@ static void andc_di(void)
 static void cmp_di(void)
 {
 	int drval = REG16((OP >> 16) & 0x1f);
-	int res = drval - (UINT16)OP;
+	int res = drval - (uint16_t)OP;
 	SET_NZCV_16(drval, OP, res);
 }
 
@@ -1483,7 +1483,7 @@ static void xor_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = drval ^ (UINT16)OP;
+	int res = drval ^ (uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZ00_16(res);
@@ -1494,7 +1494,7 @@ static void or_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = drval | (UINT16)OP;
+	int res = drval | (uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZ00_16(res);
@@ -1505,7 +1505,7 @@ static void and_di(void)
 {
 	int dr = (OP >> 16) & 0x1f;
 	int drval = REG16(dr);
-	int res = drval & (UINT16)OP;
+	int res = drval & (uint16_t)OP;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	SET_NZ00_16(res);
@@ -1515,7 +1515,7 @@ static void and_di(void)
 static void test_di(void)
 {
 	int drval = REG16((OP >> 16) & 0x1f);
-	int res = drval & (UINT16)OP;
+	int res = drval & (uint16_t)OP;
 	SET_NZ00_16(res);
 }
 
@@ -1876,7 +1876,7 @@ static void teste_di(void)
 static void load_hi(void)
 {
 	int dr = (OP >> 16) & 0x1f;
-	UINT32 res = RBYTE(EXTEND16_TO_24(OP));
+	uint32_t res = RBYTE(EXTEND16_TO_24(OP));
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
 	dsp32.nzcflags = res << 8;
@@ -1887,7 +1887,7 @@ static void load_hi(void)
 static void load_li(void)
 {
 	int dr = (OP >> 16) & 0x1f;
-	UINT32 res = RBYTE(EXTEND16_TO_24(OP));
+	uint32_t res = RBYTE(EXTEND16_TO_24(OP));
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = res;
 	dsp32.nzcflags = res << 8;
@@ -1897,7 +1897,7 @@ static void load_li(void)
 
 static void load_i(void)
 {
-	UINT32 res = RWORD(EXTEND16_TO_24(OP));
+	uint32_t res = RWORD(EXTEND16_TO_24(OP));
 	int dr = (OP >> 16) & 0x1f;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = EXTEND16_TO_24(res);
@@ -1908,7 +1908,7 @@ static void load_i(void)
 
 static void load_ei(void)
 {
-	UINT32 res = TRUNCATE24(RLONG(EXTEND16_TO_24(OP)));
+	uint32_t res = TRUNCATE24(RLONG(EXTEND16_TO_24(OP)));
 	int dr = (OP >> 16) & 0x1f;
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = res;
@@ -1937,7 +1937,7 @@ static void store_i(void)
 
 static void store_ei(void)
 {
-	WLONG(EXTEND16_TO_24(OP), (INT32)(REG24((OP >> 16) & 0x1f) << 8) >> 8);
+	WLONG(EXTEND16_TO_24(OP), (int32_t)(REG24((OP >> 16) & 0x1f) << 8) >> 8);
 }
 
 
@@ -1946,7 +1946,7 @@ static void load_hr(void)
 	if (!(OP & 0x400))
 	{
 		int dr = (OP >> 16) & 0x1f;
-		UINT32 res = cau_read_pi_1byte(OP) << 8;
+		uint32_t res = cau_read_pi_1byte(OP) << 8;
 		if (IS_WRITEABLE(dr))
 			dsp32.r[dr] = EXTEND16_TO_24(res);
 		dsp32.nzcflags = res << 8;
@@ -1962,7 +1962,7 @@ static void load_lr(void)
 	if (!(OP & 0x400))
 	{
 		int dr = (OP >> 16) & 0x1f;
-		UINT32 res = cau_read_pi_1byte(OP);
+		uint32_t res = cau_read_pi_1byte(OP);
 		if (IS_WRITEABLE(dr))
 			dsp32.r[dr] = res;
 		dsp32.nzcflags = res << 8;
@@ -1977,7 +1977,7 @@ static void load_r(void)
 {
 	if (!(OP & 0x400))
 	{
-		UINT32 res = cau_read_pi_2byte(OP);
+		uint32_t res = cau_read_pi_2byte(OP);
 		int dr = (OP >> 16) & 0x1f;
 		if (IS_WRITEABLE(dr))
 			dsp32.r[dr] = EXTEND16_TO_24(res);
@@ -1993,7 +1993,7 @@ static void load_er(void)
 {
 	if (!(OP & 0x400))
 	{
-		UINT32 res = TRUNCATE24(cau_read_pi_4byte(OP));
+		uint32_t res = TRUNCATE24(cau_read_pi_4byte(OP));
 		int dr = (OP >> 16) & 0x1f;
 		if (IS_WRITEABLE(dr))
 			dsp32.r[dr] = res;
@@ -2044,7 +2044,7 @@ static void store_er(void)
 static void load24(void)
 {
 	int dr = (OP >> 16) & 0x1f;
-	UINT32 res = (OP & 0xffff) + ((OP >> 5) & 0xff0000);
+	uint32_t res = (OP & 0xffff) + ((OP >> 5) & 0xff0000);
 	if (IS_WRITEABLE(dr))
 		dsp32.r[dr] = res;
 }
@@ -2476,7 +2476,7 @@ static void d5_oc(void)
 
 static void d5_float(void)
 {
-	double res = (double)(INT16)dau_read_pi_2bytes(OP >> 7);
+	double res = (double)(int16_t)dau_read_pi_2bytes(OP >> 7);
 	int zpi = (OP >> 0) & 0x7f;
 	if (zpi != 7)
 		dau_write_pi_double(zpi, res);
@@ -2488,10 +2488,10 @@ static void d5_int(void)
 {
 	double val = dau_read_pi_double_1st(OP >> 7, 0);
 	int zpi = (OP >> 0) & 0x7f;
-	INT16 res;
+	int16_t res;
 	if (!(dsp32.DAUC & 0x10)) val = floor(val + 0.5);
 	else val = ceil(val - 0.5);
-	res = (INT16)val;
+	res = (int16_t)val;
 	if (zpi != 7)
 		dau_write_pi_2bytes(zpi, res);
 	dau_set_val_noflags((OP >> 21) & 3, dsp_to_double(res << 16));
@@ -2549,7 +2549,7 @@ static void d5_ifagt(void)
 
 static void d5_float24(void)
 {
-	double res = (double)((INT32)(dau_read_pi_4bytes(OP >> 7) << 8) >> 8);
+	double res = (double)((int32_t)(dau_read_pi_4bytes(OP >> 7) << 8) >> 8);
 	int zpi = (OP >> 0) & 0x7f;
 	if (zpi != 7)
 		dau_write_pi_double(zpi, res);
@@ -2561,14 +2561,14 @@ static void d5_int24(void)
 {
 	double val = dau_read_pi_double_1st(OP >> 7, 0);
 	int zpi = (OP >> 0) & 0x7f;
-	INT32 res;
+	int32_t res;
 	if (!(dsp32.DAUC & 0x10)) val = floor(val + 0.5);
 	else val = ceil(val - 0.5);
-	res = (INT32)val;
+	res = (int32_t)val;
 	if (res > 0x7fffff) res = 0x7fffff;
 	else if (res < -0x800000) res = -0x800000;
 	if (zpi != 7)
-		dau_write_pi_4bytes(zpi, (INT32)(res << 8) >> 8);
+		dau_write_pi_4bytes(zpi, (int32_t)(res << 8) >> 8);
 	dau_set_val_noflags((OP >> 21) & 3, dsp_to_double(res << 8));
 }
 
@@ -2587,12 +2587,12 @@ static void d5_dsp(void)
 
 static void d5_seed(void)
 {
-	UINT32 val = dau_read_pi_4bytes(OP >> 7);
-	INT32 res = val ^ 0x7fffffff;
+	uint32_t val = dau_read_pi_4bytes(OP >> 7);
+	int32_t res = val ^ 0x7fffffff;
 	int zpi = (OP >> 0) & 0x7f;
 	if (zpi != 7)
 		dau_write_pi_4bytes(zpi, res);
-	dau_set_val_flags((OP >> 21) & 3, dsp_to_double((INT32)res));
+	dau_set_val_flags((OP >> 21) & 3, dsp_to_double((int32_t)res));
 }
 
 

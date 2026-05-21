@@ -223,13 +223,13 @@ Tons of thanks to the guy who posted these, whoever he is...
 #endif
 
 
-static INLINE void execute(UINT16 opcode);
+static INLINE void execute(uint16_t opcode);
 
 static void external_instruction_notify(int ext_op_ID);
-static UINT16 fetch(void);
-static UINT16 decipheraddr(UINT16 opcode);
-static UINT16 decipheraddrbyte(UINT16 opcode);
-static void contextswitch(UINT16 addr);
+static uint16_t fetch(void);
+static uint16_t decipheraddr(uint16_t opcode);
+static uint16_t decipheraddrbyte(uint16_t opcode);
+static void contextswitch(uint16_t addr);
 
 static void field_interrupt(void);
 
@@ -238,7 +238,7 @@ static void field_interrupt(void);
 /***************************/
 
 
-static UINT8 tms9900_reg_layout[] = {
+static uint8_t tms9900_reg_layout[] = {
 	TMS9900_PC, TMS9900_WP, TMS9900_STATUS, TMS9900_IR
 #ifdef MAME_DEBUG
 	, -1,
@@ -250,7 +250,7 @@ static UINT8 tms9900_reg_layout[] = {
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 tms9900_win_layout[] = {
+static uint8_t tms9900_win_layout[] = {
 	 0, 0,80, 4,	/* register window (top rows) */
 	 0, 5,31,17,	/* disassembler window (left colums) */
 	32, 5,48, 8,	/* memory #1 window (right, upper middle) */
@@ -340,12 +340,12 @@ a ST_MASK */
 typedef struct
 {
 /* "actual" tms9900 registers : */
-	UINT16 WP;  /* Workspace pointer */
-	UINT16 PC;  /* Program counter */
-	UINT16 STATUS;  /* STatus register */
+	uint16_t WP;  /* Workspace pointer */
+	uint16_t PC;  /* Program counter */
+	uint16_t STATUS;  /* STatus register */
 
 /* Now, data used for emulation */
-	UINT16 IR;  /* Instruction register, with the currently parsed opcode */
+	uint16_t IR;  /* Instruction register, with the currently parsed opcode */
 
 	int interrupt_pending;  /* true if an interrupt must be honored... */
 
@@ -373,7 +373,7 @@ typedef struct
 	                    special data on CRU bus */
 
 #ifdef MAME_DEBUG
-	UINT16 FR[16];  /* contains a copy of the workspace for the needs of the debugger */
+	uint16_t FR[16];  /* contains a copy of the workspace for the needs of the debugger */
 #endif
 
 #if (TMS99XX_MODEL == TMS9985_ID) || (TMS99XX_MODEL == TMS9995_ID)
@@ -383,14 +383,14 @@ typedef struct
 #if (TMS99XX_MODEL == TMS9995_ID)
 	/* on-chip event counter/timer*/
 	int decrementer_enabled;
-	UINT16 decrementer_interval;
-	UINT16 decrementer_count;	/* used in event counter mode*/
+	uint16_t decrementer_interval;
+	uint16_t decrementer_count;	/* used in event counter mode*/
 	void *timer;  /* used in timer mode */
 #endif
 
 #if (TMS99XX_MODEL == TMS9995_ID)
 	/* additionnal registers */
-	UINT16 flag; 	  /* flag register */
+	uint16_t flag; 	  /* flag register */
 	int MID_flag;   /* MID flag register */
 #endif
 
@@ -408,7 +408,7 @@ static tms99xx_Regs I =
 	0,        /* LOAD* inactive */
   16, 0,    /* INTREQ* inactive */
 };
-static UINT8 lastparity;  /* rather than handling ST_OP directly, we copy the last value which
+static uint8_t lastparity;  /* rather than handling ST_OP directly, we copy the last value which
                                   would set it here */
 /* Some instructions (i.e. XOP, BLWP, and MID) disable interrupt recognition until another
 instruction is executed : so they set this flag */
@@ -500,7 +500,7 @@ static void reset_decrementer(void);
 		}
 		else if (addr < 0xf0fc)
 		{
-			return *(UINT16 *)(& I.RAM[addr - 0xf000]);
+			return *(uint16_t *)(& I.RAM[addr - 0xf000]);
 		}
 		else if (addr < 0xfffa)
 		{
@@ -522,7 +522,7 @@ static void reset_decrementer(void);
 		}
 		else
 		{
-			return *(UINT16 *)(& I.RAM[addr - 0xff00]);
+			return *(uint16_t *)(& I.RAM[addr - 0xff00]);
 		}
 	}
 
@@ -536,7 +536,7 @@ static void reset_decrementer(void);
 		}
 		else if (addr < 0xf0fc)
 		{
-			*(UINT16 *)(& I.RAM[addr - 0xf000]) = data;
+			*(uint16_t *)(& I.RAM[addr - 0xf000]) = data;
 		}
 		else if (addr < 0xfffa)
 		{
@@ -552,7 +552,7 @@ static void reset_decrementer(void);
 		}
 		else
 		{
-			*(UINT16 *)(& I.RAM[addr - 0xff00]) = data;
+			*(uint16_t *)(& I.RAM[addr - 0xff00]) = data;
 		}
 	}
 
@@ -1426,7 +1426,7 @@ static void set_flag1(int val)
 /*
 	performs a normal write to CRU bus (used by SBZ, SBO, LDCR : address range 0 -> 0xFFF)
 */
-static void writeCRU(int CRUAddr, int Number, UINT16 Value)
+static void writeCRU(int CRUAddr, int Number, uint16_t Value)
 {
 #if (TMS99XX_MODEL == TMS9900_ID)
 	/* 3 MSBs are always 0 to support external instructions */
@@ -1566,7 +1566,7 @@ int READPORT(int Port)
 }
 #endif
 
-static UINT16 readCRU(int CRUAddr, int Number)
+static uint16_t readCRU(int CRUAddr, int Number)
 {
 #if (TMS99XX_MODEL == TMS9900_ID)
 	/* 3 MSBs are always 0 to support external instructions */
@@ -1633,17 +1633,17 @@ static UINT16 readCRU(int CRUAddr, int Number)
 
 /* fetch : read one word at * PC, and increment PC. */
 
-static UINT16 fetch(void)
+static uint16_t fetch(void)
 {
-	register UINT16 value = readword(I.PC);
+	register uint16_t value = readword(I.PC);
 	I.PC += 2;
 	return value;
 }
 
 /* contextswitch : performs a BLWP, ie change PC, WP, and save PC, WP and ST... */
-static void contextswitch(UINT16 addr)
+static void contextswitch(uint16_t addr)
 {
-	UINT16 oldWP, oldpc;
+	uint16_t oldWP, oldpc;
 
 	/* save old state */
 	oldWP = I.WP;
@@ -1666,10 +1666,10 @@ static void contextswitch(UINT16 addr)
  * NOTA : the LSB is always ignored in word adresses,
  * but we do not set to 0 because of XOP...
  */
-static UINT16 decipheraddr(UINT16 opcode)
+static uint16_t decipheraddr(uint16_t opcode)
 {
-	register UINT16 ts = opcode & 0x30;
-	register UINT16 reg = opcode & 0xF;
+	register uint16_t ts = opcode & 0x30;
+	register uint16_t reg = opcode & 0xF;
 
 	reg += reg;
 
@@ -1683,7 +1683,7 @@ static UINT16 decipheraddr(UINT16 opcode)
 	}
 	else if (ts == 0x20)
 	{
-		register UINT16 imm;
+		register uint16_t imm;
 
 		imm = fetch();
 
@@ -1700,7 +1700,7 @@ static UINT16 decipheraddr(UINT16 opcode)
 	}
 	else /*if (ts == 0x30)*/
 	{	/* *Rx+ */
-		register UINT16 response;
+		register uint16_t response;
 
 		reg += I.WP;    /* reg now contains effective address */
 
@@ -1713,10 +1713,10 @@ static UINT16 decipheraddr(UINT16 opcode)
 }
 
 /* decipheraddrbyte : compute and return the effective adress in byte instructions. */
-static UINT16 decipheraddrbyte(UINT16 opcode)
+static uint16_t decipheraddrbyte(uint16_t opcode)
 {
-	register UINT16 ts = opcode & 0x30;
-	register UINT16 reg = opcode & 0xF;
+	register uint16_t ts = opcode & 0x30;
+	register uint16_t reg = opcode & 0xF;
 
 	reg += reg;
 
@@ -1730,7 +1730,7 @@ static UINT16 decipheraddrbyte(UINT16 opcode)
 	}
 	else if (ts == 0x20)
 	{
-		register UINT16 imm;
+		register uint16_t imm;
 
 		imm = fetch();
 
@@ -1747,7 +1747,7 @@ static UINT16 decipheraddrbyte(UINT16 opcode)
 	}
 	else /*if (ts == 0x30)*/
 	{	/* *Rx+ */
-		register UINT16 response;
+		register uint16_t response;
 
 		reg += I.WP;    /* reg now contains effective address */
 
@@ -1784,7 +1784,7 @@ static UINT16 decipheraddrbyte(UINT16 opcode)
                                                                >0C00->0FFF (not for 99xxx)
 ============================================================================*/
 
-static void illegal(UINT16 opcode)
+static void illegal(uint16_t opcode)
 {
 	HANDLE_ILLEGAL;
 }
@@ -1804,7 +1804,7 @@ static void illegal(UINT16 opcode)
 
 tms99xxx : SRAM, SLAM, AM, SM
 ============================================================================*/
-static void h0000(UINT16 opcode)
+static void h0000(uint16_t opcode)
 {
 #if 0
 	if (opcode & 0x30)
@@ -1895,9 +1895,9 @@ static void h0000(UINT16 opcode)
 tms9989 and later : LST, LWP
 tms99xxx : BLSK
 ============================================================================*/
-static void h0040(UINT16 opcode)
+static void h0040(uint16_t opcode)
 {
-	register UINT16 addr;
+	register uint16_t addr;
 
 	addr = opcode & 0xF;
 	addr = ((addr + addr) + I.WP) & ~1;
@@ -1966,9 +1966,9 @@ static void h0040(UINT16 opcode)
 tms9989 and later : DIVS, MPYS
 tms99xxx : BIND
 ============================================================================*/
-static void h0100(UINT16 opcode)
+static void h0100(uint16_t opcode)
 {
-	register UINT16 src;
+	register uint16_t src;
 
 	src = decipheraddr(opcode) & ~1;
 
@@ -1985,7 +1985,7 @@ static void h0100(UINT16 opcode)
 		/* DIVS -- DIVide Signed */
 		/* R0 = (R0:R1)/S   R1 = (R0:R1)%S */
 		{
-			INT16 d = readword(src);
+			int16_t d = readword(src);
 			long divq = (READREG(R0) << 16) | READREG(R1);
 			long q = divq/d;
 
@@ -2010,7 +2010,7 @@ static void h0100(UINT16 opcode)
 		/* MPYS -- MultiPlY Signed */
 		/* Results:  R0:R1 = R0*S */
 		{
-			long prod = ((long) (INT16) READREG(R0)) * ((long) (INT16) readword(src));
+			long prod = ((long) (int16_t) READREG(R0)) * ((long) (int16_t) readword(src));
 
 			I.STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ);
 			if (prod > 0)
@@ -2052,10 +2052,10 @@ static void h0100(UINT16 opcode)
 
   LI, AI, ANDI, ORI, CI, STWP, STST, LIMI, LWPI, IDLE, RSET, RTWP, CKON, CKOF, LREX
 ============================================================================*/
-static void h0200(UINT16 opcode)
+static void h0200(uint16_t opcode)
 {
-	register UINT16 addr;
-	register UINT16 value;	/* used for anything */
+	register uint16_t addr;
+	register uint16_t value;	/* used for anything */
 
 	addr = opcode & 0xF;
 	addr = ((addr + addr) + I.WP) & ~1;
@@ -2231,10 +2231,10 @@ static void h0200(UINT16 opcode)
   BLWP, B, X, CLR, NEG, INV, INC, INCT, DEC, DECT, BL, SWPB, SETO, ABS
 tms99xxx : LDD, LDS
 ============================================================================*/
-static void h0400(UINT16 opcode)
+static void h0400(uint16_t opcode)
 {
-	register UINT16 addr = decipheraddr(opcode) & ~1;
-	register UINT16 value;  /* used for anything */
+	register uint16_t addr = decipheraddr(opcode) & ~1;
+	register uint16_t value;  /* used for anything */
 
 	switch ((opcode & 0x3C0) >> 6)
 	{
@@ -2269,7 +2269,7 @@ static void h0400(UINT16 opcode)
 	case 4:   /* NEG */
 		/* NEG --- NEGate */
 		/* *S = -*S */
-		value = - (INT16) readword(addr);
+		value = - (int16_t) readword(addr);
 		if (value)
 			I.STATUS &= ~ ST_C;
 		else
@@ -2352,9 +2352,9 @@ static void h0400(UINT16 opcode)
 
 		CYCLES(12, Mooof!);
 
-		if (((INT16) value) > 0)
+		if (((int16_t) value) > 0)
 			I.STATUS |= ST_LGT | ST_AGT;
-		else if (((INT16) value) < 0)
+		else if (((int16_t) value) < 0)
 		{
 			I.STATUS |= ST_LGT;
 			if (value == 0x8000)
@@ -2363,7 +2363,7 @@ static void h0400(UINT16 opcode)
 			if (! (value & 0x0FFF))
 				I.STATUS |= ST_DC;
 #endif
-			writeword(addr, - ((INT16) value));
+			writeword(addr, - ((int16_t) value));
 			CYCLES(2, Mooof!);
 		}
 		else
@@ -2375,14 +2375,14 @@ static void h0400(UINT16 opcode)
 		value = readword(addr);
 
 		CYCLES(12 /*Don't know for tms9989*/, 3);
-		if (((INT16) value) > 0)
+		if (((int16_t) value) > 0)
 			I.STATUS |= ST_LGT | ST_AGT;
-		else if (((INT16) value) < 0)
+		else if (((int16_t) value) < 0)
 		{
 			I.STATUS |= ST_LGT;
 			if (value == 0x8000)
 				I.STATUS |= ST_OV;
-			value = - ((INT16) value);
+			value = - ((int16_t) value);
 		}
 		else
 			I.STATUS |= ST_EQ;
@@ -2423,11 +2423,11 @@ static void h0400(UINT16 opcode)
 
   SRA, SRL, SLA, SRC
 ============================================================================*/
-static void h0800(UINT16 opcode)
+static void h0800(uint16_t opcode)
 {
-	register UINT16 addr;
-	register UINT16 cnt = (opcode & 0xF0) >> 4;
-	register UINT16 value;
+	register uint16_t addr;
+	register uint16_t cnt = (opcode & 0xF0) >> 4;
+	register uint16_t value;
 
 	addr = (opcode & 0xF);
 	addr = ((addr+addr) + I.WP) & ~1;
@@ -2491,7 +2491,7 @@ static void h0800(UINT16 opcode)
 tms99xxx : TMB, TCMB, TSMB
 tms99110a : CRI, NEGR, CRE, CER
 ============================================================================*/
-static void h0c00(UINT16 opcode)
+static void h0c00(uint16_t opcode)
 {
 	if (opcode & 0x30)
 	{
@@ -2594,9 +2594,9 @@ static void h0c00(UINT16 opcode)
 
 tms99110a : AR, CIR, SR, MR, DR, LR, STR
 ============================================================================*/
-static void h0c40(UINT16 opcode)
+static void h0c40(uint16_t opcode)
 {
-	register UINT16 src;
+	register uint16_t src;
 
 	src = decipheraddr(opcode) & ~1;
 
@@ -2654,10 +2654,10 @@ static void h0c40(UINT16 opcode)
   JMP, JLT, JLE, JEQ, JHE, JGT, JNE, JNC, JOC, JNO, JL, JH, JOP
   SBO, SBZ, TB
 ============================================================================*/
-static void h1000(UINT16 opcode)
+static void h1000(uint16_t opcode)
 {
 	/* we convert 8 bit signed word offset to a 16 bit effective word offset. */
-	register INT16 offset = ((INT8) opcode);
+	register int16_t offset = ((int8_t) opcode);
 
 
 	switch ((opcode & 0xF00) >> 8)
@@ -2795,7 +2795,7 @@ static void h1000(UINT16 opcode)
 		{
 			/* Let's set ST_OP. */
 			int i;
-			UINT8 a;
+			uint8_t a;
 				a = lastparity;
 			i = 0;
 
@@ -2859,11 +2859,11 @@ tms9940 : DCA, DCS, LIIM
 ==========================================================================*/
 
 /* xop, ldcr and stcr are handled elsewhere */
-static void h2000(UINT16 opcode)
+static void h2000(uint16_t opcode)
 {
-	register UINT16 dest = (opcode & 0x3C0) >> 6;
-	register UINT16 src;
-	register UINT16 value;
+	register uint16_t dest = (opcode & 0x3C0) >> 6;
+	register uint16_t src;
+	register uint16_t value;
 
 	src = decipheraddr(opcode);
 
@@ -2919,8 +2919,8 @@ static void h2000(UINT16 opcode)
 		dest = ((dest+dest) + I.WP) & ~1;
 		src &= ~1;
 		{
-			UINT16 d = readword(src);
-			UINT16 hi = readword(dest);
+			uint16_t d = readword(src);
+			uint16_t hi = readword(dest);
 			unsigned long divq = (((unsigned long) hi) << 16) | readword(dest+2);
 
 			if (d <= hi)
@@ -2942,7 +2942,7 @@ static void h2000(UINT16 opcode)
 	}
 }
 
-static void xop(UINT16 opcode)
+static void xop(uint16_t opcode)
 {	/* XOP */
 	/* XOP --- eXtended OPeration */
 	/* WP = *(40h+D), PC = *(42h+D) */
@@ -2950,8 +2950,8 @@ static void xop(UINT16 opcode)
 	/* New R11=S */
 	/* Xop bit set */
 
-	register UINT16 immediate = (opcode & 0x3C0) >> 6;
-	register UINT16 operand;
+	register uint16_t immediate = (opcode & 0x3C0) >> 6;
+	register uint16_t operand;
 
 #if (TMS99XX_MODEL == TMS9940_ID)
 		switch (immediate)
@@ -3043,11 +3043,11 @@ static void xop(UINT16 opcode)
 }
 
 /* LDCR and STCR */
-static void ldcr_stcr(UINT16 opcode)
+static void ldcr_stcr(uint16_t opcode)
 {
-	register UINT16 cnt = (opcode & 0x3C0) >> 6;
-	register UINT16 addr;
-	register UINT16 value;
+	register uint16_t cnt = (opcode & 0x3C0) >> 6;
+	register uint16_t addr;
+	register uint16_t value;
 
 	if (cnt == 0)
 		cnt = 16;
@@ -3143,11 +3143,11 @@ static void ldcr_stcr(UINT16 opcode)
 ============================================================================*/
 
 /* word instructions */
-static void h4000w(UINT16 opcode)
+static void h4000w(uint16_t opcode)
 {
-	register UINT16 src;
-	register UINT16 dest;
-	register UINT16 value;
+	register uint16_t src;
+	register uint16_t dest;
+	register uint16_t value;
 	int a,b;
 
 	src = decipheraddr(opcode) & ~1;
@@ -3213,11 +3213,11 @@ static void h4000w(UINT16 opcode)
 }
 
 /* byte instruction */
-static void h4000b(UINT16 opcode)
+static void h4000b(uint16_t opcode)
 {
-	register UINT16 src;
-	register UINT16 dest;
-	register UINT16 value;
+	register uint16_t src;
+	register uint16_t dest;
+	register uint16_t value;
 
 	src = decipheraddrbyte(opcode);
 	dest = decipheraddrbyte(opcode >> 6);
@@ -3279,13 +3279,13 @@ static void h4000b(UINT16 opcode)
 }
 
 
-static INLINE void execute(UINT16 opcode)
+static INLINE void execute(uint16_t opcode)
 {
 #if (TMS99XX_MODEL <= TMS9985_ID)
 
 	/* tms9900-like instruction set*/
 
-	static void (* jumptable[128])(UINT16) =
+	static void (* jumptable[128])(uint16_t) =
 	{
 		&illegal,&h0200,&h0400,&h0400,&h0800,&h0800,&illegal,&illegal,
 		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
@@ -3311,7 +3311,7 @@ static INLINE void execute(UINT16 opcode)
 
 	/* tms9989 and tms9995 include 4 extra instructions, and one additionnal instruction type */
 
-	static void (* jumptable[256])(UINT16) =
+	static void (* jumptable[256])(uint16_t) =
 	{
 		&h0040,&h0100,&h0200,&h0200,&h0400,&h0400,&h0400,&h0400,
 		&h0800,&h0800,&h0800,&h0800,&illegal,&illegal,&illegal,&illegal,
@@ -3353,7 +3353,7 @@ static INLINE void execute(UINT16 opcode)
 
 	/* tms99xxx include even more instruction types */
 
-	static void (* jumptable[1024])(UINT16) =
+	static void (* jumptable[1024])(uint16_t) =
 	{
 		&h0000,&h0040,&h0040,&illegal,&h0100,&h0100,&h0100,&h0100,
 		&h0200,&h0200,&h0200,&h0200,&h0200,&h0200,&h0200,&h0200,

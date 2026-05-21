@@ -12,9 +12,9 @@
 		6809 Microcomputer Programming & Interfacing with Experiments"
 			by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-	System dependencies:	UINT16 must be 16 bit unsigned int
-							UINT8 must be 8 bit unsigned int
-							UINT32 must be more than 16 bits
+	System dependencies:	uint16_t must be 16 bit unsigned int
+							uint8_t must be 8 bit unsigned int
+							uint32_t must be more than 16 bits
 							arrays up to 65536 bytes must be supported
 							machine must be twos complement
 
@@ -41,7 +41,7 @@
 
 #define IRQ_LEVEL_DETECT 0
 
-static UINT8 m6805_reg_layout[] = {
+static uint8_t m6805_reg_layout[] = {
 	M6805_PC, M6805_S, M6805_CC, M6805_A, M6805_X, M6805_IRQ_STATE, 0
 };
 
@@ -52,7 +52,7 @@ enum {
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m6805_win_layout[] = {
+static uint8_t m6805_win_layout[] = {
 	27, 0,53, 4,	/* register window (top, right rows) */
 	 0, 0,26,22,	/* disassembler window (left colums) */
 	27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -64,16 +64,16 @@ static UINT8 m6805_win_layout[] = {
 typedef struct
 {
 	int 	subtype;		/* Which sub-type is being emulated */
-	UINT32	amask;			/* Address bus width */
-	UINT32	sp_mask;		/* Stack pointer address mask */
-	UINT32	sp_low; 		/* Stack pointer low water mark (or floor) */
+	uint32_t	amask;			/* Address bus width */
+	uint32_t	sp_mask;		/* Stack pointer address mask */
+	uint32_t	sp_low; 		/* Stack pointer low water mark (or floor) */
     PAIR    pc;             /* Program counter */
 	PAIR	s;				/* Stack pointer */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* Index register */
-	UINT8	cc; 			/* Condition codes */
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* Index register */
+	uint8_t	cc; 			/* Condition codes */
 
-	UINT16	pending_interrupts; /* MB */
+	uint16_t	pending_interrupts; /* MB */
 	int 	(*irq_callback)(int irqline);
 	int 	irq_state[8];		/* KW Additional lines for HD63705 */
 	int		nmi_state;
@@ -136,12 +136,12 @@ int m6805_ICount=50000;
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)       if(!a)SEZ
-#define SET_Z8(a)	   SET_Z((UINT8)a)
+#define SET_Z8(a)	   SET_Z((uint8_t)a)
 #define SET_N8(a)	   CC|=((a&0x80)>>5)
 #define SET_H(a,b,r)   CC|=((a^b^r)&0x10)
 #define SET_C8(a)	   CC|=((a&0x100)>>8)
 
-static UINT8 flags8i[256]=	 /* increment */
+static uint8_t flags8i[256]=	 /* increment */
 {
 0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -160,7 +160,7 @@ static UINT8 flags8i[256]=	 /* increment */
 0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
 0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04
 };
-static UINT8 flags8d[256]= /* decrement */
+static uint8_t flags8d[256]= /* decrement */
 {
 0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -186,8 +186,8 @@ static UINT8 flags8d[256]= /* decrement */
 #define SET_NZ8(a)			{SET_N8(a);SET_Z(a);}
 #define SET_FLAGS8(a,b,r)	{SET_N8(r);SET_Z8(r);SET_C8(r);}
 
-/* for treating an unsigned UINT8 as a signed INT16 */
-#define SIGNED(b) ((INT16)(b&0x80?b|0xff00:b))
+/* for treating an unsigned uint8_t as a signed int16_t */
+#define SIGNED(b) ((int16_t)(b&0x80?b|0xff00:b))
 
 /* Macros for addressing modes */
 #define DIRECT EAD=0;IMMBYTE(ea.b.l)
@@ -216,7 +216,7 @@ static UINT8 flags8d[256]= /* decrement */
 #define IDX1BYTE(b) {INDEXED1;b=RM(EAD);}
 #define IDX2BYTE(b) {INDEXED2;b=RM(EAD);}
 /* Macros for branch instructions */
-#define BRANCH(f) { UINT8 t; IMMBYTE(t); if(f) { PC+=SIGNED(t); if (t==0xfe) { /* speed up busy loops */ if(m6805_ICount > 0) m6805_ICount = 0; } } }
+#define BRANCH(f) { uint8_t t; IMMBYTE(t); if(f) { PC+=SIGNED(t); if (t==0xfe) { /* speed up busy loops */ if(m6805_ICount > 0) m6805_ICount = 0; } } }
 
 /* what they say it is ... */
 static unsigned char cycles1[] =
@@ -244,7 +244,7 @@ static unsigned char cycles1[] =
 /* pre-clear a PAIR union; clearing h2 and h3 only might be faster? */
 #define CLEAR_PAIR(p)   p->d = 0
 
-static INLINE void rd_s_handler_b( UINT8 *b )
+static INLINE void rd_s_handler_b( uint8_t *b )
 {
 	SP_INC;
 	*b = RM( S );
@@ -259,7 +259,7 @@ static INLINE void rd_s_handler_w( PAIR *p )
 	p->b.l = RM( S );
 }
 
-static INLINE void wr_s_handler_b( UINT8 *b )
+static INLINE void wr_s_handler_b( uint8_t *b )
 {
 	WM( S, *b );
 	SP_DEC;
@@ -273,7 +273,7 @@ static INLINE void wr_s_handler_w( PAIR *p )
     SP_DEC;
 }
 
-static INLINE void RM16( UINT32 Addr, PAIR *p )
+static INLINE void RM16( uint32_t Addr, PAIR *p )
 {
 	CLEAR_PAIR(p);
     p->b.h = RM(Addr);
@@ -281,7 +281,7 @@ static INLINE void RM16( UINT32 Addr, PAIR *p )
 	p->b.l = RM(Addr);
 }
 
-static INLINE void WM16( UINT32 Addr, PAIR *p )
+static INLINE void WM16( uint32_t Addr, PAIR *p )
 {
 	WM( Addr, p->b.h );
 	if( ++Addr > AMASK ) Addr = 0;
@@ -534,7 +534,7 @@ void m6805_set_irq_callback(int (*callback)(int irqline))
 /* execute instructions on this CPU until icount expires */
 int m6805_execute(int cycles)
 {
-	UINT8 ireg;
+	uint8_t ireg;
 	m6805_ICount = cycles;
 
 	do
@@ -875,12 +875,12 @@ unsigned m6805_dasm(char *buffer, unsigned pc)
  * M68705 section
  ****************************************************************************/
 #if (HAS_M68705)
-static UINT8 m68705_reg_layout[] = {
+static uint8_t m68705_reg_layout[] = {
 	M68705_PC, M68705_S, M68705_CC, M68705_A, M68705_X, M68705_IRQ_STATE, 0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 m68705_win_layout[] = {
+static uint8_t m68705_win_layout[] = {
 	27, 0,53, 4,	/* register window (top, right rows) */
 	 0, 0,26,22,	/* disassembler window (left colums) */
 	27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -895,7 +895,7 @@ void m68705_init(void)
 
 void m68705_reset(void *param)
 {
-	UINT32 *p_amask = param;
+	uint32_t *p_amask = param;
 	m6805_reset(param);
 	/* Overide default 6805 type */
 	m6805.subtype = SUBTYPE_M68705;
@@ -941,13 +941,13 @@ unsigned m68705_dasm(char *buffer, unsigned pc)
  * HD63705 section
  ****************************************************************************/
 #if (HAS_HD63705)
-static UINT8 hd63705_reg_layout[] = {
+static uint8_t hd63705_reg_layout[] = {
 	HD63705_PC, HD63705_S, HD63705_CC, HD63705_A, HD63705_X, -1,-1,
 	HD63705_NMI_STATE, HD63705_IRQ1_STATE, HD63705_IRQ2_STATE, HD63705_ADCONV_STATE,0
 };
 
 /* Layout of the debugger windows x,y,w,h */
-static UINT8 hd63705_win_layout[] = {
+static uint8_t hd63705_win_layout[] = {
 	27, 0,53, 4,	/* register window (top, right rows) */
 	 0, 0,26,22,	/* disassembler window (left colums) */
 	27, 5,53, 8,	/* memory #1 window (right, upper middle) */

@@ -33,19 +33,19 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define SetZF(x)		(I.ZeroVal = (x))
 #define SetPF(x)		(I.ParityVal = (x))
 
-#define SetSZPF_Byte(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT8)(x))
-#define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT16)(x))
+#define SetSZPF_Byte(x) (I.SignVal=I.ZeroVal=I.ParityVal=(int8_t)(x))
+#define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(int16_t)(x))
 
 #define SetOFW_Add(x,y,z)	(I.OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x8000)
 #define SetOFB_Add(x,y,z)	(I.OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x80)
 #define SetOFW_Sub(x,y,z)	(I.OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x8000)
 #define SetOFB_Sub(x,y,z)	(I.OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x80)
 
-#define ADDB { UINT32 res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
-#define ADDW { UINT32 res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
+#define ADDB { uint32_t res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
+#define ADDW { uint32_t res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
 
-#define SUBB { UINT32 res=dst-src; SetCFB(res); SetOFB_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
-#define SUBW { UINT32 res=dst-src; SetCFW(res); SetOFW_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
+#define SUBB { uint32_t res=dst-src; SetCFB(res); SetOFB_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
+#define SUBW { uint32_t res=dst-src; SetCFW(res); SetOFW_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
 
 #define ORB dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Byte(dst)
 #define ORW dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Word(dst)
@@ -72,8 +72,8 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define DefaultBase(Seg) ((seg_prefix && (Seg==DS || Seg==SS)) ? prefix_base : I.sregs[Seg] << 4)
 
-#define GetMemB(Seg,Off) ((UINT8)cpu_readmem20((DefaultBase(Seg)+(Off))))
-#define GetMemW(Seg,Off) ((UINT16) cpu_readmem20((DefaultBase(Seg)+(Off))) + (cpu_readmem20((DefaultBase(Seg)+((Off)+1)))<<8) )
+#define GetMemB(Seg,Off) ((uint8_t)cpu_readmem20((DefaultBase(Seg)+(Off))))
+#define GetMemW(Seg,Off) ((uint16_t) cpu_readmem20((DefaultBase(Seg)+(Off))) + (cpu_readmem20((DefaultBase(Seg)+((Off)+1)))<<8) )
 
 #define PutMemB(Seg,Off,x) { cpu_writemem20((DefaultBase(Seg)+(Off)),(x)); }
 #define PutMemW(Seg,Off,x) { PutMemB(Seg,Off,(x)&0xff); PutMemB(Seg,(Off)+1,(BYTE)((x)>>8)); }
@@ -95,7 +95,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
 #define PEEKOP(addr) ((BYTE)cpu_readop(addr))
 
-#define GetModRM UINT32 ModRM=cpu_readop_arg((I.sregs[CS]<<4)+I.ip++)
+#define GetModRM uint32_t ModRM=cpu_readop_arg((I.sregs[CS]<<4)+I.ip++)
 
 /* Cycle count macros:
 	CLK  - cycle count is the same on all processors
@@ -110,10 +110,10 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 */
 
 #define CLK(all) nec_ICount-=all
-#define CLKS(v20,v30,v33) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33; nec_ICount-=(ccount>>cpu_type)&0x7f; }
-#define CLKW(v20o,v30o,v33o,v20e,v30e,v33e,addr) { const UINT32 ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; nec_ICount-=(addr&1)?((ocount>>cpu_type)&0x7f):((ecount>>cpu_type)&0x7f); }
-#define CLKM(v20,v30,v33,v20m,v30m,v33m) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33, mcount=(v20m<<16)|(v30m<<8)|v33m; nec_ICount-=( ModRM >=0xc0 )?((ccount>>cpu_type)&0x7f):((mcount>>cpu_type)&0x7f); }
-#define CLKR(v20o,v30o,v33o,v20e,v30e,v33e,vall,addr) { const UINT32 ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; if (ModRM >=0xc0) nec_ICount-=vall; else nec_ICount-=(addr&1)?((ocount>>cpu_type)&0x7f):((ecount>>cpu_type)&0x7f); }
+#define CLKS(v20,v30,v33) { const uint32_t ccount=(v20<<16)|(v30<<8)|v33; nec_ICount-=(ccount>>cpu_type)&0x7f; }
+#define CLKW(v20o,v30o,v33o,v20e,v30e,v33e,addr) { const uint32_t ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; nec_ICount-=(addr&1)?((ocount>>cpu_type)&0x7f):((ecount>>cpu_type)&0x7f); }
+#define CLKM(v20,v30,v33,v20m,v30m,v33m) { const uint32_t ccount=(v20<<16)|(v30<<8)|v33, mcount=(v20m<<16)|(v30m<<8)|v33m; nec_ICount-=( ModRM >=0xc0 )?((ccount>>cpu_type)&0x7f):((mcount>>cpu_type)&0x7f); }
+#define CLKR(v20o,v30o,v33o,v20e,v30e,v33e,vall,addr) { const uint32_t ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; if (ModRM >=0xc0) nec_ICount-=vall; else nec_ICount-=(addr&1)?((ocount>>cpu_type)&0x7f):((ecount>>cpu_type)&0x7f); }
 
 /************************************************************************/
 #define CompressFlags() (WORD)(CF | (PF << 2) | (AF << 4) | (ZF << 6) \
@@ -151,10 +151,10 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	I.regs.w[Reg]=tmp1
 
 #define JMP(flag)							\
-	int tmp = (int)((INT8)FETCH);			\
+	int tmp = (int)((int8_t)FETCH);			\
 	if (flag)								\
 	{										\
-		const UINT8 table[3]={3,10,10}; 	\
+		const uint8_t table[3]={3,10,10}; 	\
 		I.ip = (WORD)(I.ip+tmp);			\
 		nec_ICount-=table[cpu_type/8];		\
 		CHANGE_PC;							\
@@ -164,7 +164,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define ADJ4(param1,param2)					\
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))	\
 	{										\
-		UINT16 tmp;							\
+		uint16_t tmp;							\
 		tmp = I.regs.b[AL] + param1;		\
 		I.regs.b[AL] = tmp;					\
 		I.AuxVal = 1;						\
@@ -236,8 +236,8 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define SHL_WORD(c) nec_ICount-=c; dst <<= c;	SetCFW(dst); SetSZPF_Word(dst);	PutbackRMWord(ModRM,(WORD)dst)
 #define SHR_BYTE(c) nec_ICount-=c; dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
 #define SHR_WORD(c) nec_ICount-=c; dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-#define SHRA_BYTE(c) nec_ICount-=c; dst = ((INT8)dst) >> (c-1);	I.CarryVal = dst & 0x1;	dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHRA_WORD(c) nec_ICount-=c; dst = ((INT16)dst) >> (c-1);	I.CarryVal = dst & 0x1;	dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+#define SHRA_BYTE(c) nec_ICount-=c; dst = ((int8_t)dst) >> (c-1);	I.CarryVal = dst & 0x1;	dst = ((int8_t)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHRA_WORD(c) nec_ICount-=c; dst = ((int16_t)dst) >> (c-1);	I.CarryVal = dst & 0x1;	dst = ((int16_t)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 
 #define DIVUB												\
 	uresult = I.regs.w[AW];									\
@@ -250,9 +250,9 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	}
 
 #define DIVB												\
-	result = (INT16)I.regs.w[AW];							\
-	result2 = result % (INT16)((INT8)tmp);					\
-	if ((result /= (INT16)((INT8)tmp)) > 0xff) {			\
+	result = (int16_t)I.regs.w[AW];							\
+	result2 = result % (int16_t)((int8_t)tmp);					\
+	if ((result /= (int16_t)((int8_t)tmp)) > 0xff) {			\
 		nec_interrupt(0,0); break;							\
 	} else {												\
 		I.regs.b[AL] = result;								\
@@ -260,7 +260,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	}
 
 #define DIVUW												\
-	uresult = (((UINT32)I.regs.w[DW]) << 16) | I.regs.w[AW];\
+	uresult = (((uint32_t)I.regs.w[DW]) << 16) | I.regs.w[AW];\
 	uresult2 = uresult % tmp;								\
 	if ((uresult /= tmp) > 0xffff) {						\
 		nec_interrupt(0,0); break;							\
@@ -270,9 +270,9 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	}
 
 #define DIVW												\
-	result = ((UINT32)I.regs.w[DW] << 16) + I.regs.w[AW];	\
-	result2 = result % (INT32)((INT16)tmp);					\
-	if ((result /= (INT32)((INT16)tmp)) > 0xffff) {			\
+	result = ((uint32_t)I.regs.w[DW] << 16) + I.regs.w[AW];	\
+	result2 = result % (int32_t)((int16_t)tmp);					\
+	if ((result /= (int32_t)((int16_t)tmp)) > 0xffff) {			\
 		nec_interrupt(0,0); break;							\
 	} else {												\
 		I.regs.w[AW]=result;								\
@@ -284,7 +284,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	int count = (I.regs.b[CL]+1)/2;							\
 	unsigned di = I.regs.w[IY];								\
 	unsigned si = I.regs.w[IX];								\
-	const UINT8 table[3]={18,19,19};	 					\
+	const uint8_t table[3]={18,19,19};	 					\
 	if (seg_prefix) logerror("%06x: Warning: seg_prefix defined for add4s\n",activecpu_get_pc());	\
 	I.ZeroVal = I.CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\
@@ -309,7 +309,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	int i,v1,v2,result;										\
     unsigned di = I.regs.w[IY];								\
 	unsigned si = I.regs.w[IX];								\
-	const UINT8 table[3]={18,19,19};	 					\
+	const uint8_t table[3]={18,19,19};	 					\
 	if (seg_prefix) logerror("%06x: Warning: seg_prefix defined for sub4s\n",activecpu_get_pc());	\
 	I.ZeroVal = I.CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\
@@ -339,7 +339,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	int i,v1,v2,result;										\
     unsigned di = I.regs.w[IY];								\
 	unsigned si = I.regs.w[IX];								\
-	const UINT8 table[3]={14,19,19};						\
+	const uint8_t table[3]={14,19,19};						\
 	if (seg_prefix) logerror("%06x: Warning: seg_prefix defined for cmp4s\n",activecpu_get_pc());	\
 	I.ZeroVal = I.CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\

@@ -33,14 +33,14 @@
 
 #define SetCFB(x)		{_CY = ((x) & 0x100) ? 1 : 0; }
 #define SetCFW(x)		{_CY = ((x) & 0x10000) ? 1 : 0; }
-#define SetCFL(x)		{_CY = ((x) & (((UINT64)1) << 32)) ? 1 : 0; }
+#define SetCFL(x)		{_CY = ((x) & (((uint64_t)1) << 32)) ? 1 : 0; }
 
 #define SetSF(x)		(_S = (x))
 #define SetZF(x)		(_Z = (x))
 
-#define SetSZPF_Byte(x) 	{_Z = ((UINT8)(x)==0);  _S = ((x)&0x80) ? 1 : 0; }
-#define SetSZPF_Word(x) 	{_Z = ((UINT16)(x)==0);  _S = ((x)&0x8000) ? 1 : 0; }
-#define SetSZPF_Long(x) 	{_Z = ((UINT32)(x)==0);  _S = ((x)&0x80000000) ? 1 : 0; }
+#define SetSZPF_Byte(x) 	{_Z = ((uint8_t)(x)==0);  _S = ((x)&0x80) ? 1 : 0; }
+#define SetSZPF_Word(x) 	{_Z = ((uint16_t)(x)==0);  _S = ((x)&0x8000) ? 1 : 0; }
+#define SetSZPF_Long(x) 	{_Z = ((uint32_t)(x)==0);  _S = ((x)&0x80000000) ? 1 : 0; }
 
 #define ORB(dst,src)		{ (dst) |= (src); _CY = _OV = 0; SetSZPF_Byte(dst); }
 #define ORW(dst,src)		{ (dst) |= (src); _CY = _OV = 0; SetSZPF_Word(dst); }
@@ -54,26 +54,26 @@
 #define XORW(dst,src)		{ (dst) ^= (src); _CY = _OV = 0; SetSZPF_Word(dst); }
 #define XORL(dst,src)		{ (dst) ^= (src); _CY = _OV = 0; SetSZPF_Long(dst); }
 
-#define SUBB(dst, src)		{ unsigned res=(dst)-(src); SetCFB(res); SetOFB_Sub(res,src,dst); SetSZPF_Byte(res); dst=(UINT8)res; }
-#define SUBW(dst, src)		{ unsigned res=(dst)-(src); SetCFW(res); SetOFW_Sub(res,src,dst); SetSZPF_Word(res); dst=(UINT16)res; }
-#define SUBL(dst, src)		{ UINT64 res=(UINT64)(dst)-(INT64)(src); SetCFL(res); SetOFL_Sub(res,src,dst); SetSZPF_Long(res); dst=(UINT32)res; }
+#define SUBB(dst, src)		{ unsigned res=(dst)-(src); SetCFB(res); SetOFB_Sub(res,src,dst); SetSZPF_Byte(res); dst=(uint8_t)res; }
+#define SUBW(dst, src)		{ unsigned res=(dst)-(src); SetCFW(res); SetOFW_Sub(res,src,dst); SetSZPF_Word(res); dst=(uint16_t)res; }
+#define SUBL(dst, src)		{ uint64_t res=(uint64_t)(dst)-(int64_t)(src); SetCFL(res); SetOFL_Sub(res,src,dst); SetSZPF_Long(res); dst=(uint32_t)res; }
 
-#define ADDB(dst, src)		{ unsigned res=(dst)+(src); SetCFB(res); SetOFB_Add(res,src,dst); SetSZPF_Byte(res); dst=(UINT8)res; }
-#define ADDW(dst, src)		{ unsigned res=(dst)+(src); SetCFW(res); SetOFW_Add(res,src,dst); SetSZPF_Word(res); dst=(UINT16)res; }
-#define ADDL(dst, src)		{ UINT64 res=(UINT64)(dst)+(UINT64)(src); SetCFL(res); SetOFL_Add(res,src,dst); SetSZPF_Long(res); dst=(UINT32)res; }
+#define ADDB(dst, src)		{ unsigned res=(dst)+(src); SetCFB(res); SetOFB_Add(res,src,dst); SetSZPF_Byte(res); dst=(uint8_t)res; }
+#define ADDW(dst, src)		{ unsigned res=(dst)+(src); SetCFW(res); SetOFW_Add(res,src,dst); SetSZPF_Word(res); dst=(uint16_t)res; }
+#define ADDL(dst, src)		{ uint64_t res=(uint64_t)(dst)+(uint64_t)(src); SetCFL(res); SetOFL_Add(res,src,dst); SetSZPF_Long(res); dst=(uint32_t)res; }
 
 #define SETREG8(a, b)  (a) = ((a) & ~0xff) | ((b) & 0xff)
 #define SETREG16(a, b) (a) = ((a) & ~0xffff) | ((b) & 0xffff)
 
 // Ultra Function Tables
-static UINT32 (*OpCodeTable[256])(void);
+static uint32_t (*OpCodeTable[256])(void);
 
 typedef struct
 {
-	UINT8 CY;
-	UINT8 OV;
-	UINT8 S;
-	UINT8 Z;
+	uint8_t CY;
+	uint8_t OV;
+	uint8_t S;
+	uint8_t Z;
 } Flags;
 
 /* Workaround for LinuxPPC. */
@@ -84,13 +84,13 @@ typedef struct
 // v60 Register Inside (Hm... It's not a pentium inside :-))) )
 struct v60info {
 	struct cpu_info info;
-	UINT32 reg[68];
-	UINT32 tcb;
+	uint32_t reg[68];
+	uint32_t tcb;
 	Flags flags;
 	int irq_line;
 	int nmi_line;
 	int (*irq_cb)(int irqline);
-	UINT32 PPC;
+	uint32_t PPC;
 } v60;
 
 int v60_ICount;
@@ -200,10 +200,10 @@ const char *v60_reg_names[69] = {
 
 #define UPDATECPUFLAGS() \
 { \
-	_Z =  (UINT8)(PSW & 1); \
-	_S =  (UINT8)(PSW & 2); \
-	_OV = (UINT8)(PSW & 4); \
-	_CY = (UINT8)(PSW & 8); \
+	_Z =  (uint8_t)(PSW & 1); \
+	_S =  (uint8_t)(PSW & 2); \
+	_OV = (uint8_t)(PSW & 4); \
+	_CY = (uint8_t)(PSW & 8); \
 }
 
 #define UPDATEFPUFLAGS()	{ }
@@ -220,7 +220,7 @@ static void v60_try_irq(void);
 
 #define STACK_REG(IS,EL)	((IS)==0?37+(EL):36)
 
-static UINT32 v60ReadPSW(void)
+static uint32_t v60ReadPSW(void)
 {
 	v60.reg[STACK_REG((v60.reg[33]>>28)&1, (v60.reg[33]>>24)&3)] = SP;
 	UPDATEPSW();
@@ -232,9 +232,9 @@ static void v60ReloadStack(void)
 	SP = v60.reg[STACK_REG((v60.reg[33]>>28)&1, (v60.reg[33]>>24)&3)];
 }
 
-static void v60WritePSW(UINT32 newval)
+static void v60WritePSW(uint32_t newval)
 {
-	UINT32 oldval = v60ReadPSW();
+	uint32_t oldval = v60ReadPSW();
 	int oldIS, newIS, oldEL, newEL;
 
 	PSW = newval;
@@ -256,21 +256,21 @@ static void v60WritePSW(UINT32 newval)
 
 #define GETINTVECT(nint)	MemRead32(SBR + (nint)*4)
 
-static float u2f(UINT32 v)
+static float u2f(uint32_t v)
 {
 	union {
 		float ff;
-		UINT32 vv;
+		uint32_t vv;
 	} u;
 	u.vv = v;
 	return u.ff;
 }
 
-static UINT32 f2u(float f)
+static uint32_t f2u(float f)
 {
 	union {
 		float ff;
-		UINT32 vv;
+		uint32_t vv;
 	} u;
 	u.ff = f;
 	return u.vv;
@@ -289,7 +289,7 @@ static UINT32 f2u(float f)
 #include "op6.c"
 #include "op7a.c"
 
-UINT32 opUNHANDLED(void)
+uint32_t opUNHANDLED(void)
 {
 	logerror("Unhandled OpCode found : %02x at %08x\n", OpRead16(PC), PC);
 	abort();
@@ -371,7 +371,7 @@ void v60_exit(void)
 
 static void v60_do_irq(int vector)
 {
-	UINT32 tempPSW;
+	uint32_t tempPSW;
 	UPDATEPSW();
 	tempPSW=PSW;
 	v60WritePSW(PSW|((1<<28)));	
@@ -475,7 +475,7 @@ void v60_set_context(void *src)
 	}
 }
 
-static UINT8 v60_reg_layout[] = {
+static uint8_t v60_reg_layout[] = {
 	V60_PC, V60_TR, -1,
 	-1,
 	V60_R0, V60_R1, -1,
@@ -501,7 +501,7 @@ static UINT8 v60_reg_layout[] = {
 	V60_TCB, V60_PSW, 0
 };
 
-static UINT8 v60_win_layout[] = {
+static uint8_t v60_win_layout[] = {
 	45, 0,35,13,	/* register window (top right) */
 	 0, 0,44,13,	/* disassembler window (left, upper) */
 	 0,14,44, 8,	/* memory #1 window (left, middle) */

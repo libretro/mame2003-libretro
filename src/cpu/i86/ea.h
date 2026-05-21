@@ -1,5 +1,5 @@
 static unsigned EA;
-static UINT16 EO; /* HJB 12/13/98 effective offset of the address (before segment is added) */
+static uint16_t EO; /* HJB 12/13/98 effective offset of the address (before segment is added) */
 
 static unsigned EA_000(void) { i86_ICount-=7; EO=(WORD)(I.regs.w[BX]+I.regs.w[SI]); EA=DefaultBase(DS)+EO; return EA; }
 static unsigned EA_001(void) { i86_ICount-=8; EO=(WORD)(I.regs.w[BX]+I.regs.w[DI]); EA=DefaultBase(DS)+EO; return EA; }
@@ -10,14 +10,14 @@ static unsigned EA_005(void) { i86_ICount-=5; EO=I.regs.w[DI]; EA=DefaultBase(DS
 static unsigned EA_006(void) { i86_ICount-=6; EO=FETCHOP; EO+=FETCHOP<<8; EA=DefaultBase(DS)+EO; return EA; }
 static unsigned EA_007(void) { i86_ICount-=5; EO=I.regs.w[BX]; EA=DefaultBase(DS)+EO; return EA; }
 
-static unsigned EA_100(void) { i86_ICount-=11; EO=(WORD)(I.regs.w[BX]+I.regs.w[SI]+(INT8)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
-static unsigned EA_101(void) { i86_ICount-=12; EO=(WORD)(I.regs.w[BX]+I.regs.w[DI]+(INT8)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
-static unsigned EA_102(void) { i86_ICount-=12; EO=(WORD)(I.regs.w[BP]+I.regs.w[SI]+(INT8)FETCHOP); EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_103(void) { i86_ICount-=11; EO=(WORD)(I.regs.w[BP]+I.regs.w[DI]+(INT8)FETCHOP); EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_104(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[SI]+(INT8)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
-static unsigned EA_105(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[DI]+(INT8)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
-static unsigned EA_106(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[BP]+(INT8)FETCHOP); EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_107(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[BX]+(INT8)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
+static unsigned EA_100(void) { i86_ICount-=11; EO=(WORD)(I.regs.w[BX]+I.regs.w[SI]+(int8_t)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
+static unsigned EA_101(void) { i86_ICount-=12; EO=(WORD)(I.regs.w[BX]+I.regs.w[DI]+(int8_t)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
+static unsigned EA_102(void) { i86_ICount-=12; EO=(WORD)(I.regs.w[BP]+I.regs.w[SI]+(int8_t)FETCHOP); EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_103(void) { i86_ICount-=11; EO=(WORD)(I.regs.w[BP]+I.regs.w[DI]+(int8_t)FETCHOP); EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_104(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[SI]+(int8_t)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
+static unsigned EA_105(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[DI]+(int8_t)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
+static unsigned EA_106(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[BP]+(int8_t)FETCHOP); EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_107(void) { i86_ICount-=9; EO=(WORD)(I.regs.w[BX]+(int8_t)FETCHOP); EA=DefaultBase(DS)+EO; return EA; }
 
 static unsigned EA_200(void) { i86_ICount-=11; EO=FETCHOP; EO+=FETCHOP<<8; EO+=I.regs.w[BX]+I.regs.w[SI]; EA=DefaultBase(DS)+(WORD)EO; return EA; }
 static unsigned EA_201(void) { i86_ICount-=12; EO=FETCHOP; EO+=FETCHOP<<8; EO+=I.regs.w[BX]+I.regs.w[DI]; EA=DefaultBase(DS)+(WORD)EO; return EA; }

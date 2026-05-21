@@ -12,9 +12,9 @@
 		6809 Microcomputer Programming & Interfacing with Experiments"
 			by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-	System dependencies:	UINT16 must be 16 bit unsigned int
-							UINT8 must be 8 bit unsigned int
-							UINT32 must be more than 16 bits
+	System dependencies:	uint16_t must be 16 bit unsigned int
+							uint8_t must be 8 bit unsigned int
+							uint32_t must be more than 16 bits
 							arrays up to 65536 bytes must be supported
 							machine must be twos complement
 
@@ -91,28 +91,28 @@ typedef struct
 	PAIR	s;				/* Stack pointer */
 	PAIR	x;				/* Index register */
 	PAIR	d;				/* Accumulators */
-	UINT8	cc; 			/* Condition codes */
-	UINT8	wai_state;		/* WAI opcode state ,(or sleep opcode state) */
-	UINT8	nmi_state;		/* NMI line state */
-	UINT8	irq_state[2];	/* IRQ line state [IRQ1,TIN] */
-	UINT8	ic_eddge;		/* InputCapture eddge , b.0=fall,b.1=raise */
+	uint8_t	cc; 			/* Condition codes */
+	uint8_t	wai_state;		/* WAI opcode state ,(or sleep opcode state) */
+	uint8_t	nmi_state;		/* NMI line state */
+	uint8_t	irq_state[2];	/* IRQ line state [IRQ1,TIN] */
+	uint8_t	ic_eddge;		/* InputCapture eddge , b.0=fall,b.1=raise */
 
 	int		(*irq_callback)(int irqline);
 	int 	extra_cycles;	/* cycles used for interrupts */
 	void	(* const * insn)(void);	/* instruction table */
-	const UINT8 *cycles;			/* clock cycle of instruction table */
+	const uint8_t *cycles;			/* clock cycle of instruction table */
 	/* internal registers */
-	UINT8	port1_ddr;
-	UINT8	port2_ddr;
-	UINT8	port1_data;
-	UINT8	port2_data;
-	UINT8	tcsr;			/* Timer Control and Status Register */
-	UINT8	pending_tcsr;	/* pending IRQ flag for clear IRQflag process */
-	UINT8	irq2;			/* IRQ2 flags */
-	UINT8	ram_ctrl;
+	uint8_t	port1_ddr;
+	uint8_t	port2_ddr;
+	uint8_t	port1_data;
+	uint8_t	port2_data;
+	uint8_t	tcsr;			/* Timer Control and Status Register */
+	uint8_t	pending_tcsr;	/* pending IRQ flag for clear IRQflag process */
+	uint8_t	irq2;			/* IRQ2 flags */
+	uint8_t	ram_ctrl;
 	PAIR	counter;		/* free running counter */
 	PAIR	output_compare;	/* output compare       */
-	UINT16	input_capture;	/* input capture        */
+	uint16_t	input_capture;	/* input capture        */
 
 	PAIR	timer_over;
 }   m6800_Regs;
@@ -160,7 +160,7 @@ static PAIR ea; 		/* effective address */
 int m6800_ICount=50000;
 
 /* point of next timer event */
-static UINT32 timer_next;
+static uint32_t timer_next;
 
 /* DS -- THESE ARE RE-DEFINED IN m6800.h TO RAM, ROM or FUNCTIONS IN cpuintrf.c */
 #define RM				M6800_RDMEM
@@ -229,7 +229,7 @@ static UINT32 timer_next;
 
 /* operate one instruction for */
 #define ONE_MORE_INSN() {		\
-	UINT8 ireg; 							\
+	uint8_t ireg; 							\
 	pPPC = pPC; 							\
 	CALL_MAME_DEBUG;						\
 	ireg=M_RDOP(PCD);						\
@@ -266,8 +266,8 @@ static UINT32 timer_next;
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)		if(!a)SEZ
-#define SET_Z8(a)		SET_Z((UINT8)a)
-#define SET_Z16(a)		SET_Z((UINT16)a)
+#define SET_Z8(a)		SET_Z((uint8_t)a)
+#define SET_Z16(a)		SET_Z((uint16_t)a)
 #define SET_N8(a)		CC|=((a&0x80)>>4)
 #define SET_N16(a)		CC|=((a&0x8000)>>12)
 #define SET_H(a,b,r)	CC|=(((a^b^r)&0x10)<<1)
@@ -276,7 +276,7 @@ static UINT32 timer_next;
 #define SET_V8(a,b,r)	CC|=(((a^b^r^(r>>1))&0x80)>>6)
 #define SET_V16(a,b,r)	CC|=(((a^b^r^(r>>1))&0x8000)>>14)
 
-static const UINT8 flags8i[256]=	 /* increment */
+static const uint8_t flags8i[256]=	 /* increment */
 {
 0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -295,7 +295,7 @@ static const UINT8 flags8i[256]=	 /* increment */
 0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,
 0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08
 };
-static const UINT8 flags8d[256]= /* decrement */
+static const uint8_t flags8d[256]= /* decrement */
 {
 0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -323,15 +323,15 @@ static const UINT8 flags8d[256]= /* decrement */
 #define SET_FLAGS8(a,b,r)	{SET_N8(r);SET_Z8(r);SET_V8(a,b,r);SET_C8(r);}
 #define SET_FLAGS16(a,b,r)	{SET_N16(r);SET_Z16(r);SET_V16(a,b,r);SET_C16(r);}
 
-/* for treating an UINT8 as a signed INT16 */
-#define SIGNED(b) ((INT16)(b&0x80?b|0xff00:b))
+/* for treating an uint8_t as a signed int16_t */
+#define SIGNED(b) ((int16_t)(b&0x80?b|0xff00:b))
 
 /* Macros for addressing modes */
 #define DIRECT IMMBYTE(EAD)
 #define IMM8 EA=PC++
 #define IMM16 {EA=PC;PC+=2;}
 #define EXTENDED IMMWORD(ea)
-#define INDEXED {EA=X+(UINT8)M_RDOP_ARG(PCD);PC++;}
+#define INDEXED {EA=X+(uint8_t)M_RDOP_ARG(PCD);PC++;}
 
 /* macros to set status flags */
 #define SEC CC|=0x01
@@ -391,7 +391,7 @@ static const UINT8 flags8d[256]= /* decrement */
 #define BRANCH(f) {IMMBYTE(t);if(f){PC+=SIGNED(t);CHANGE_PC();}}
 #define NXORV  ((CC&0x08)^((CC&0x02)<<2))
 
-static const UINT8 cycles_6800[] =
+static const uint8_t cycles_6800[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/  0, 2, 0, 0, 0, 0, 2, 2, 4, 4, 2, 2, 2, 2, 2, 2,
@@ -412,7 +412,7 @@ static const UINT8 cycles_6800[] =
 	/*F*/  4, 4, 4, 0, 4, 4, 4, 5, 4, 4, 4, 4, 0, 0, 5, 6
 };
 
-static const UINT8 cycles_6803[] =
+static const uint8_t cycles_6803[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/  0, 2, 0, 0, 3, 3, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2,
@@ -433,7 +433,7 @@ static const UINT8 cycles_6803[] =
 	/*F*/  4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
 };
 
-static const UINT8 cycles_63701[] =
+static const uint8_t cycles_63701[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/  0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -454,7 +454,7 @@ static const UINT8 cycles_63701[] =
 	/*F*/  4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
 };
 
-static const UINT8 cycles_nsc8105[] =
+static const uint8_t cycles_nsc8105[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/  0, 0, 2, 0, 0, 2, 0, 2, 4, 2, 4, 2, 2, 2, 2, 2,
@@ -475,20 +475,20 @@ static const UINT8 cycles_nsc8105[] =
 	/*F*/  4, 4, 4, 0, 4, 4, 4, 5, 4, 4, 4, 4, 4, 5, 0, 6
 };
 
-static INLINE UINT32 RM16( UINT32 Addr )
+static INLINE uint32_t RM16( uint32_t Addr )
 {
-	UINT32 result = RM(Addr) << 8;
+	uint32_t result = RM(Addr) << 8;
 	return result | RM((Addr+1)&0xffff);
 }
 
-static INLINE void WM16( UINT32 Addr, PAIR *p )
+static INLINE void WM16( uint32_t Addr, PAIR *p )
 {
 	WM( Addr, p->b.h );
 	WM( (Addr+1)&0xffff, p->b.l );
 }
 
 /* IRQ enter */
-static void ENTER_INTERRUPT(const char *message,UINT16 irq_vector)
+static void ENTER_INTERRUPT(const char *message,uint16_t irq_vector)
 {
 	LOG((message, cpu_getactivecpu()));
 	if( m6800.wai_state & (M6800_WAI|M6800_SLP) )
@@ -742,7 +742,7 @@ void m6800_set_irq_callback(int (*callback)(int irqline))
  ****************************************************************************/
 int m6800_execute(int cycles)
 {
-	UINT8 ireg;
+	uint8_t ireg;
 	m6800_ICount = cycles;
 
 	CLEANUP_conters;
@@ -1037,13 +1037,13 @@ int m6800_execute(int cycles)
 const char *m6800_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 m6800_reg_layout[] = {
+	static uint8_t m6800_reg_layout[] = {
 		M6800_PC, M6800_S, M6800_CC, M6800_A, M6800_B, M6800_X, -1,
 		M6800_WAI_STATE, M6800_NMI_STATE, M6800_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 m6800_win_layout[] = {
+	static uint8_t m6800_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -1127,13 +1127,13 @@ void m6801_set_irq_callback(int (*callback)(int irqline)) { m6800_set_irq_callba
 const char *m6801_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 m6801_reg_layout[] = {
+	static uint8_t m6801_reg_layout[] = {
 		M6801_PC, M6801_S, M6801_CC, M6801_A, M6801_B, M6801_X, -1,
 		M6801_WAI_STATE, M6801_NMI_STATE, M6801_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 m6801_win_layout[] = {
+	static uint8_t m6801_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -1184,13 +1184,13 @@ void m6802_set_irq_callback(int (*callback)(int irqline)) { m6800_set_irq_callba
 const char *m6802_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 m6802_reg_layout[] = {
+	static uint8_t m6802_reg_layout[] = {
 		M6802_PC, M6802_S, M6802_CC, M6802_A, M6802_B, M6802_X, -1,
 		M6802_WAI_STATE, M6802_NMI_STATE, M6802_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 m6802_win_layout[] = {
+	static uint8_t m6802_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -1239,7 +1239,7 @@ void m6803_exit(void) { m6800_exit(); }
 #if (HAS_M6803||HAS_M6801)
 int m6803_execute(int cycles)
 {
-	UINT8 ireg;
+	uint8_t ireg;
 	m6803_ICount = cycles;
 
 	CLEANUP_conters;
@@ -1539,13 +1539,13 @@ void m6803_set_irq_callback(int (*callback)(int irqline)) { m6800_set_irq_callba
 const char *m6803_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 m6803_reg_layout[] = {
+	static uint8_t m6803_reg_layout[] = {
 		M6803_PC, M6803_S, M6803_CC, M6803_A, M6803_B, M6803_X, -1,
 		M6803_WAI_STATE, M6803_NMI_STATE, M6803_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 m6803_win_layout[] = {
+	static uint8_t m6803_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -1596,13 +1596,13 @@ void m6808_set_irq_callback(int (*callback)(int irqline)) { m6800_set_irq_callba
 const char *m6808_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 m6808_reg_layout[] = {
+	static uint8_t m6808_reg_layout[] = {
 		M6808_PC, M6808_S, M6808_CC, M6808_A, M6808_B, M6808_X, -1,
 		M6808_WAI_STATE, M6808_NMI_STATE, M6808_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 m6808_win_layout[] = {
+	static uint8_t m6808_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -1648,7 +1648,7 @@ void hd63701_exit(void) { m6800_exit(); }
  ****************************************************************************/
 int hd63701_execute(int cycles)
 {
-	UINT8 ireg;
+	uint8_t ireg;
 	hd63701_ICount = cycles;
 
 	CLEANUP_conters;
@@ -1946,13 +1946,13 @@ void hd63701_set_irq_callback(int (*callback)(int irqline)) { m6800_set_irq_call
 const char *hd63701_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 hd63701_reg_layout[] = {
+	static uint8_t hd63701_reg_layout[] = {
 		HD63701_PC, HD63701_S, HD63701_CC, HD63701_A, HD63701_B, HD63701_X, -1,
 		HD63701_WAI_STATE, HD63701_NMI_STATE, HD63701_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 hd63701_win_layout[] = {
+	static uint8_t hd63701_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */
@@ -2021,7 +2021,7 @@ void nsc8105_exit(void) { m6800_exit(); }
  ****************************************************************************/
 int nsc8105_execute(int cycles)
 {
-	UINT8 ireg;
+	uint8_t ireg;
 	nsc8105_ICount = cycles;
 
 	CLEANUP_conters;
@@ -2319,13 +2319,13 @@ void nsc8105_set_irq_callback(int (*callback)(int irqline)) { m6800_set_irq_call
 const char *nsc8105_info(void *context, int regnum)
 {
 	/* Layout of the registers in the debugger */
-	static UINT8 nsc8105_reg_layout[] = {
+	static uint8_t nsc8105_reg_layout[] = {
 		NSC8105_PC, NSC8105_S, NSC8105_CC, NSC8105_A, NSC8105_B, NSC8105_X, -1,
 		NSC8105_WAI_STATE, NSC8105_NMI_STATE, NSC8105_IRQ_STATE, 0
 	};
 
 	/* Layout of the debugger windows x,y,w,h */
-	static UINT8 nsc8105_win_layout[] = {
+	static uint8_t nsc8105_win_layout[] = {
 		27, 0,53, 4,	/* register window (top rows) */
 		 0, 0,26,22,	/* disassembler window (left colums) */
 		27, 5,53, 8,	/* memory #1 window (right, upper middle) */

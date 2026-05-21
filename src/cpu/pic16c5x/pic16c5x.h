@@ -81,7 +81,7 @@ void pic16c5x_config(int data);
  *	Input a word from given I/O port
  */
 
-#define PIC16C5x_In(Port) ((UINT8)cpu_readport16((Port)))
+#define PIC16C5x_In(Port) ((uint8_t)cpu_readport16((Port)))
 
 
 /****************************************************************************
@@ -99,7 +99,7 @@ void pic16c5x_config(int data);
  *	address 0 and are word entities.
  */
 
-#define PIC16C5x_RAM_RDMEM(A) ((UINT8)cpu_readmem16((A)+PIC16C5X_DATA_OFFSET))
+#define PIC16C5x_RAM_RDMEM(A) ((uint8_t)cpu_readmem16((A)+PIC16C5X_DATA_OFFSET))
 
 
 /****************************************************************************
