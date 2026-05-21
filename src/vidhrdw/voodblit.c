@@ -51,73 +51,6 @@ void RENDERFUNC(void)
 	int starty, stopy;
 	float fptemp;
 
-#if (0)
-	if (FBZMODE_BITS(4,1) || FBZMODE_BITS(10,1))
-	{
-		static const char *funcs[] = { "never", "lt", "eq", "le", "gt", "ne", "ge", "always" };
-		if (!FBZMODE_BITS(20,1))
-		{
-			if (!FBZMODE_BITS(3,1))
-				logerror("Depth Z: %c%c %s %08X,%08X,%08X -> %04X,%04X,%04X", FBZMODE_BITS(4,1) ? 'T' : ' ', FBZMODE_BITS(10,1) ? 'W' : ' ', funcs[FBZMODE_BITS(5,3)],
-					tri_startz,
-					tri_startz + (INT32)((tri_vb.y - tri_va.y) * (float)tri_dzdy) + (INT32)((tri_vb.x - tri_va.x) * (float)tri_dzdx),
-					tri_startz + (INT32)((tri_vc.y - tri_va.y) * (float)tri_dzdy) + (INT32)((tri_vc.x - tri_va.x) * (float)tri_dzdx),
-					(UINT16)(tri_startz >> 12),
-					(UINT16)(tri_startz + (INT32)((tri_vb.y - tri_va.y) * (float)tri_dzdy) + (INT32)((tri_vb.x - tri_va.x) * (float)tri_dzdx)) >> 12,
-					(UINT16)(tri_startz + (INT32)((tri_vc.y - tri_va.y) * (float)tri_dzdy) + (INT32)((tri_vc.x - tri_va.x) * (float)tri_dzdx)) >> 12);
-			else if (!FBZMODE_BITS(21,1))
-				logerror("Depth Wf: %c%c %s %f,%f,%f -> %04X,%04X,%04X", FBZMODE_BITS(4,1) ? 'T' : ' ', FBZMODE_BITS(10,1) ? 'W' : ' ', funcs[FBZMODE_BITS(5,3)],
-					tri_startw,
-					tri_startw + (INT32)((tri_vb.y - tri_va.y) * tri_dwdy) + (INT32)((tri_vb.x - tri_va.x) * tri_dwdx),
-					tri_startw + (INT32)((tri_vc.y - tri_va.y) * tri_dwdy) + (INT32)((tri_vc.x - tri_va.x) * tri_dwdx),
-					float_to_depth(tri_startw),
-					float_to_depth(tri_startw + (INT32)((tri_vb.y - tri_va.y) * tri_dwdy) + (INT32)((tri_vb.x - tri_va.x) * tri_dwdx)),
-					float_to_depth(tri_startw + (INT32)((tri_vc.y - tri_va.y) * tri_dwdy) + (INT32)((tri_vc.x - tri_va.x) * tri_dwdx)));
-			else
-				logerror("Depth Wz: %c%c %s %08X,%08X,%08X -> %04X,%04X,%04X", FBZMODE_BITS(4,1) ? 'T' : ' ', FBZMODE_BITS(10,1) ? 'W' : ' ', funcs[FBZMODE_BITS(5,3)],
-					tri_startz,
-					tri_startz + (INT32)((tri_vb.y - tri_va.y) * (float)tri_dzdy) + (INT32)((tri_vb.x - tri_va.x) * (float)tri_dzdx),
-					tri_startz + (INT32)((tri_vc.y - tri_va.y) * (float)tri_dzdy) + (INT32)((tri_vc.x - tri_va.x) * (float)tri_dzdx),
-					float_to_depth((float)(tri_startz) * (1.0 / 4096.0)),
-					float_to_depth((float)(tri_startz + (INT32)((tri_vb.y - tri_va.y) * tri_dzdy) + (INT32)((tri_vb.x - tri_va.x) * tri_dzdx)) * (1.0 / 4096.0)),
-					float_to_depth((float)(tri_startz + (INT32)((tri_vc.y - tri_va.y) * tri_dzdy) + (INT32)((tri_vc.x - tri_va.x) * tri_dzdx)) * (1.0 / 4096.0)));
-			
-			if (FBZMODE_BITS(16,1))
-				logerror(" + %04X\n", (UINT16)voodoo_regs[zaColor]);
-		}
-		else
-			logerror("Depth const: %04X\n", (UINT16)voodoo_regs[zaColor]);
-	}
-#endif
-
-#if (TRACK_LOD)
-	int lodbin[9];
-	if (loglod)
-	{
-		int tlod;
-		logerror("-----\n");
-		logerror("LOD: (%f,%f)-(%f,%f)-(%f,%f)\n", tri_va.x, tri_va.y, tri_vb.x, tri_vb.y, tri_vc.x, tri_vc.y);
-		logerror("LOD: startw0 = %f, dwdx = %f, dwdy = %f\n", tri_startw0, tri_dw0dx, tri_dw0dy);
-		logerror("LOD: dsdx=%f dtdx=%f tex0x=%f tex0x/startw0=%f, twidth=%d\n", tri_ds0dx, tri_dt0dx, tex0x, tex0x/tri_startw0, trex_width[0]);
-		logerror("LOD: dsdy=%f dtdy=%f tex0y=%f tex0y/startw0=%f, theight=%d\n", tri_ds0dy, tri_dt0dy, tex0y, tex0y/tri_startw0, trex_height[0]);
-		logerror("LOD: lodbase0 = %f (%f)\n", lodbase0, lodbase0 / 256.0f);
-		tlod = TRUNC_TO_INT((1.0f / tri_startw0) * lodbase0);
-		logerror("LOD: lodbase0 * startw0^2 = %f (%d)\n", (1.0f / tri_startw0) * lodbase0 / 256.0f, tlod);
-		if (tlod < 0)
-			tlod = 0;
-		else if (tlod < 65536)
-			tlod = lod_lookup[tlod];
-		else
-			tlod = 8 << 2;
-		memset(lodbin, 0, sizeof(lodbin));
-		logerror("LOD: final lod=%d, bias=%d, min=%d, max=%d\n", tlod, trex_lodbias[0], trex_lodmin[0], trex_lodmax[0]);
-	}
-#endif
-
-	/* check for unhandled stuff */
-	if ((voodoo_regs[tLOD] >> 24) & 1)
-		printf("tmultibaseaddr\n");
-	
 	/* sort the verticies */
 	vmin = &tri_va;
 	vmid = &tri_vb;
@@ -238,7 +171,6 @@ void RENDERFUNC(void)
 
 			/* loop over X */
 			voodoo_regs[fbiPixelsIn] += stopx - startx;
-			ADD_TO_PIXEL_COUNT(stopx - startx);
 			for (x = startx; x < stopx; x++)
 			{
 				INT32 r = 0, g = 0, b = 0, a = 0, depthval;
@@ -745,9 +677,6 @@ void RENDERFUNC(void)
 					else
 						texturebase = textureram[0] + ((voodoo_regs[0x100 + texBaseAddr] * 8 + 2 * trex_lod_offset[0][lod >> 2]) & texram_mask);
 					lodshift = trex_lod_width_shift[0][lod >> 2];
-#if (TRACK_LOD)
-					lodbin[lod >> 2]++;
-#endif
 
 #if (BILINEAR_FILTER)
 					/* point-sampled filter */
@@ -1512,10 +1441,6 @@ void RENDERFUNC(void)
 	}
 
 	voodoo_regs[fbiPixelsIn] &= 0xffffff;
-
-#if (TRACK_LOD)
-	if (loglod) logerror("LOD: bins=%d %d %d %d %d %d %d %d %d\n", lodbin[0], lodbin[1], lodbin[2], lodbin[3], lodbin[4], lodbin[5], lodbin[6], lodbin[7], lodbin[8]);
-#endif
 }
 
 /*

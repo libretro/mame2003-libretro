@@ -31,18 +31,6 @@
 #define ALPHA_BLENDING			(1)
 #define FOGGING					(1)
 
-/* debugging */
-#define DISPLAY_SWAP_BUFFERS	(0)
-#define DISPLAY_TEXTURE_MODES	(0)
-#define DISPLAY_STATISTICS		(0)
-#define DISPLAY_DEPTHBUF		(0)
-#define LOG_RENDERERS			(0)
-#define LOG_REGISTERS			(0)
-#define LOG_COMMANDS			(0)
-#define LOG_CMDFIFO				(0)
-#define LOG_CMDFIFO_VERBOSE		(0)
-#define TRACK_LOD				(0)
-
 /* constants */
 #define MAX_TMUS				(4)
 
@@ -190,18 +178,7 @@ static struct setup_vert setup_verts[3];
 static struct setup_vert setup_pending;
 
 /* debugging/stats */
-#if DISPLAY_STATISTICS
-static UINT32 polycount, pixelcount, lastfps, framecount, totalframes;
-#endif
 static UINT16 modes_used;
-static offs_t status_lastpc;
-static int status_lastpc_count;
-
-#if LOG_RENDERERS
-#define RENDERER_LIST_MAX	1024
-static UINT32 renderer_list[RENDERER_LIST_MAX][10];
-static int renderer_listcount;
-#endif
 
 static const UINT8 dither_matrix_4x4[16] =
 {
@@ -273,15 +250,6 @@ static void render_0c582c35_00515110_000b4739_0c2618cf(void);
 static void render_0c002c35_40515119_000b4739_0c26180f(void);
 
 static void fastfill(void);
-
-
-
-#if DISPLAY_STATISTICS
-#define ADD_TO_PIXEL_COUNT(a)	do { if ((a) > 0) pixelcount += (a); } while (0)
-#else
-#define ADD_TO_PIXEL_COUNT(a)
-#endif
-
 
 /*************************************
  *
@@ -472,92 +440,6 @@ static void fastfill(void);
 #define trexInit1		(0x320/4)
 #define nccTable		(0x324/4)
 
-
-
-/*************************************
- *
- *	Register string table for debug
- *
- *************************************/
-
-static const char *voodoo_reg_name[] =
-{
-	/* 0x000 */
-	"status",		"{intrCtrl}",	"vertexAx",		"vertexAy",
-	"vertexBx",		"vertexBy",		"vertexCx",		"vertexCy",
-	"startR",		"startG",		"startB",		"startZ",
-	"startA",		"startS",		"startT",		"startW",
-	/* 0x040 */
-	"dRdX",			"dGdX",			"dBdX",			"dZdX",
-	"dAdX",			"dSdX",			"dTdX",			"dWdX",
-	"dRdY",			"dGdY",			"dBdY",			"dZdY",
-	"dAdY",			"dSdY",			"dTdY",			"dWdY",
-	/* 0x080 */
-	"triangleCMD",	"reserved084",	"fvertexAx",	"fvertexAy",
-	"fvertexBx",	"fvertexBy",	"fvertexCx",	"fvertexCy",
-	"fstartR",		"fstartG",		"fstartB",		"fstartZ",
-	"fstartA",		"fstartS",		"fstartT",		"fstartW",
-	/* 0x0c0 */
-	"fdRdX",		"fdGdX",		"fdBdX",		"fdZdX",
-	"fdAdX",		"fdSdX",		"fdTdX",		"fdWdX",
-	"fdRdY",		"fdGdY",		"fdBdY",		"fdZdY",
-	"fdAdY",		"fdSdY",		"fdTdY",		"fdWdY",
-	/* 0x100 */
-	"ftriangleCMD",	"fbzColorPath",	"fogMode",		"alphaMode",
-	"fbzMode",		"lfbMode",		"clipLeftRight","clipLowYHighY",
-	"nopCMD",		"fastfillCMD",	"swapbufferCMD","fogColor",
-	"zaColor",		"chromaKey",	"{chromaRange}","{userIntrCMD}",
-	/* 0x140 */
-	"stipple",		"color0",		"color1",		"fbiPixelsIn",
-	"fbiChromaFail","fbiZfuncFail",	"fbiAfuncFail",	"fbiPixelsOut",
-	"fogTable160",	"fogTable164",	"fogTable168",	"fogTable16c",	
-	"fogTable170",	"fogTable174",	"fogTable178",	"fogTable17c",	
-	/* 0x180 */
-	"fogTable180",	"fogTable184",	"fogTable188",	"fogTable18c",
-	"fogTable190",	"fogTable194",	"fogTable198",	"fogTable19c",
-	"fogTable1a0",	"fogTable1a4",	"fogTable1a8",	"fogTable1ac",
-	"fogTable1b0",	"fogTable1b4",	"fogTable1b8",	"fogTable1bc",
-	/* 0x1c0 */
-	"fogTable1c0",	"fogTable1c4",	"fogTable1c8",	"fogTable1cc",
-	"fogTable1d0",	"fogTable1d4",	"fogTable1d8",	"fogTable1dc",
-	"{cmdFifoBaseAddr}","{cmdFifoBump}","{cmdFifoRdPtr}","{cmdFifoAMin}",
-	"{cmdFifoAMax}","{cmdFifoDepth}","{cmdFifoHoles}","reserved1fc",
-	/* 0x200 */
-	"fbiInit4",		"vRetrace",		"backPorch",	"videoDimensions",
-	"fbiInit0",		"fbiInit1",		"fbiInit2",		"fbiInit3",
-	"hSync",		"vSync",		"clutData",		"dacData",
-	"maxRgbDelta",	"{hBorder}",	"{vBorder}",	"{borderColor}",
-	/* 0x240 */
-	"{hvRetrace}",	"{fbiInit5}",	"{fbiInit6}",	"{fbiInit7}",
-	"reserved250",	"reserved254",	"{fbiSwapHistory}","{fbiTrianglesOut}",
-	"{sSetupMode}",	"{sVx}",		"{sVy}",		"{sARGB}",
-	"{sRed}",		"{sGreen}",		"{sBlue}",		"{sAlpha}",
-	/* 0x280 */
-	"{sVz}",		"{sWb}",		"{sWtmu0}",		"{sS/Wtmu0}",
-	"{sT/Wtmu0}",	"{sWtmu1}",		"{sS/Wtmu1}",	"{sT/Wtmu1}",
-	"{sDrawTriCMD}","{sBeginTriCMD}","reserved2a8",	"reserved2ac",
-	"reserved2b0",	"reserved2b4",	"reserved2b8",	"reserved2bc",
-	/* 0x2c0 */
-	"{bltSrcBaseAddr}","{bltDstBaseAddr}","{bltXYStrides}","{bltSrcChromaRange}",
-	"{bltDstChromaRange}","{bltClipX}","{bltClipY}","reserved2dc",
-	"{bltSrcXY}",	"{bltDstXY}",	"{bltSize}",	"{bltRop}",
-	"{bltColor}",	"reserved2f4",	"{bltCommand}",	"{bltData}",
-	/* 0x300 */
-	"textureMode",	"tLOD",			"tDetail",		"texBaseAddr",
-	"texBaseAddr_1","texBaseAddr_2","texBaseAddr_3_8","trexInit0",
-	"trexInit1",	"nccTable0.0",	"nccTable0.1",	"nccTable0.2",
-	"nccTable0.3",	"nccTable0.4",	"nccTable0.5",	"nccTable0.6",
-	/* 0x340 */
-	"nccTable0.7",	"nccTable0.8",	"nccTable0.9",	"nccTable0.A",
-	"nccTable0.B",	"nccTable1.0",	"nccTable1.1",	"nccTable1.2",
-	"nccTable1.3",	"nccTable1.4",	"nccTable1.5",	"nccTable1.6",
-	"nccTable1.7",	"nccTable1.8",	"nccTable1.9",	"nccTable1.A",
-	/* 0x380 */
-	"nccTable1.B"
-};
-
-
-
 /*************************************
  *
  *	Dither helper
@@ -615,48 +497,14 @@ static INLINE UINT16 float_to_depth(float val)
  *
  *************************************/
  
-#if (TRACK_LOD)
-static int loglod = 0;
-#endif
-
 static void swap_buffers(void)
 {
 	UINT16 *temp;
-
-#if DISPLAY_SWAP_BUFFERS
-static int swaps;
-swaps++;
-usrintf_showmessage("Swaps = %d", swaps);
-#endif
-	
 	force_partial_update(cpu_getscanline());
 	temp = frontbuf;
 	frontbuf = backbuf;
 	backbuf = temp;
 	
-#if DISPLAY_TEXTURE_MODES
-{
-	char tempstr[100];
-	int i;
-	tempstr[0] = 0;
-	for (i = 0; i < 16; i++)
-		if (modes_used & (1 << i))
-			sprintf(&tempstr[strlen(tempstr)], "%d ", i);
-	usrintf_showmessage("%s", tempstr);
-	modes_used = 0;
-}
-#endif
-	
-#if DISPLAY_STATISTICS
-{
-	int screen_area = (Machine->visible_area.max_x - Machine->visible_area.min_x + 1) * (Machine->visible_area.max_y - Machine->visible_area.min_y + 1);
-	usrintf_showmessage("Polys:%d  Render:%d%%  FPS:%d",
-			polycount, pixelcount * 100 / screen_area, lastfps);
-	polycount = pixelcount = 0;
-	framecount++;
-}
-#endif
-
 	logerror("---- swapbuffers\n");
 
 	if (pending_fastfill)
@@ -672,10 +520,6 @@ usrintf_showmessage("Swaps = %d", swaps);
 	}
 
 	cpu_trigger(13579);
-	
-#if (TRACK_LOD)
-	loglod = keyboard_pressed(KEYCODE_L);
-#endif
 }
 
 
@@ -916,21 +760,6 @@ VIDEO_START( voodoo2_2x4mb )
 
 VIDEO_STOP( voodoo )
 {
-#if LOG_RENDERERS
-	int i;
-
-	for (i = 0; i < renderer_listcount; i++)
-		printf("%08X%08X: %08X %08X %08X %08X %08X %08X %08X\n",
-			renderer_list[i][1],
-			renderer_list[i][0],
-			renderer_list[i][2],
-			renderer_list[i][3],
-			renderer_list[i][4],
-			renderer_list[i][5],
-			renderer_list[i][6],
-			renderer_list[i][7],
-			renderer_list[i][8]);
-#endif
 }
 
 
@@ -943,36 +772,8 @@ VIDEO_STOP( voodoo )
 
 VIDEO_UPDATE( voodoo )
 {
-	const unsigned short *pal;
 	unsigned palents, fb_pitch;
-	UINT16 *fb;
 	int x, y;
-
-#if DISPLAY_STATISTICS
-	totalframes++;
-	if (totalframes == (int)Machine->drv->frames_per_second)
-	{
-		lastfps = framecount;
-		framecount = totalframes = 0;
-	}
-#endif
-
-	logerror("--- video update (%d-%d) ---\n", cliprect->min_y, cliprect->max_y);
-
-#if (DISPLAY_DEPTHBUF)
-	if (keyboard_pressed(KEYCODE_D))
-	{
-		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
-		{
-			UINT16 *dest = (UINT16 *)bitmap->line[y];
-			UINT16 *source = &depthbuf[1024 * y];
-			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
-				*dest++ = pen_lookup[~*source++ & 0xf800];
-		}
-		return;
-	}
-#endif
-
 	/* Fast path: compose pen_lookup with the core's RGB565 palette LUT and
 	   paint straight into the frontend buffer, skipping the game bitmap and
 	   the conversion pass. The framebuffer pen is the same value the bitmap
@@ -980,8 +781,8 @@ VIDEO_UPDATE( voodoo )
 	   changes, so the fast path engages every frame. Falls back to the bitmap
 	   path when the output is not RGB565, the palette is unstable, or a
 	   flip/rotate/artwork/UI overlay is in the path. */
-	pal = mame2003_direct_rgb565_palette(&palents);
-	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	const uint16_t *pal = mame2003_direct_rgb565_palette(&palents);
+	UINT16 *fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
@@ -1116,50 +917,6 @@ static void fastfill(void)
  *
  *************************************/
 
-#if LOG_RENDERERS
-static void log_renderer(int pixels)
-{
-	UINT32 tmode1 = 0, tmode2 = 0;
-	int i;
-	
-	if ((voodoo_regs[textureMode + 0x100] & 0x201000) != 0x201000)
-	{
-		tmode1 = voodoo_regs[textureMode + 0x200] & TEXTUREMODE0_MASK;
-		if ((voodoo_regs[textureMode + 0x200] & 0x201000) != 0x201000)
-			tmode2 = voodoo_regs[textureMode + 0x300] & TEXTUREMODE0_MASK;
-	}
-
-	for (i = 0; i < renderer_listcount; i++)
-		if ((voodoo_regs[fbzColorPath]        & FBZCOLORPATH_MASK) == renderer_list[i][2] &&
-			(voodoo_regs[fogMode]             & FOGMODE_MASK     ) == renderer_list[i][3] &&
-			(voodoo_regs[alphaMode]           & ALPHAMODE_MASK   ) == renderer_list[i][4] &&
-			(voodoo_regs[fbzMode]             & FBZMODE_MASK     ) == renderer_list[i][5] &&
-			(voodoo_regs[textureMode + 0x100] & TEXTUREMODE0_MASK) == renderer_list[i][6] &&
-			(tmode1                           & TEXTUREMODE0_MASK) == renderer_list[i][7] &&
-			(tmode2                           & TEXTUREMODE0_MASK) == renderer_list[i][8])
-		{
-			UINT32 old = renderer_list[i][0];
-			renderer_list[i][0] += pixels;
-			if (renderer_list[i][0] < old)
-				renderer_list[i][1]++;
-			return;
-		}
-
-	renderer_list[renderer_listcount][0] = pixels;
-	renderer_list[renderer_listcount][2] = voodoo_regs[fbzColorPath]        & FBZCOLORPATH_MASK;
-	renderer_list[renderer_listcount][3] = voodoo_regs[fogMode]             & FOGMODE_MASK;
-	renderer_list[renderer_listcount][4] = voodoo_regs[alphaMode]           & ALPHAMODE_MASK;
-	renderer_list[renderer_listcount][5] = voodoo_regs[fbzMode]             & FBZMODE_MASK;
-	renderer_list[renderer_listcount][6] = voodoo_regs[textureMode + 0x100] & TEXTUREMODE0_MASK;
-	renderer_list[renderer_listcount][7] = tmode1                           & TEXTUREMODE0_MASK;
-	renderer_list[renderer_listcount][8] = tmode2                           & TEXTUREMODE0_MASK;
-	renderer_listcount++;
-}
-#else
-#define log_renderer(a)
-#endif
-
-
 static void draw_triangle(void)
 {
 	int totalpix = voodoo_regs[fbiPixelsIn];
@@ -1167,9 +924,6 @@ static void draw_triangle(void)
 	
 	voodoo_regs[fbiTrianglesOut] = (voodoo_regs[fbiTrianglesOut] + 1) & 0xffffff;
 	
-	if (LOG_COMMANDS)
-		logerror("%06X:FLOAT TRIANGLE command\n", activecpu_get_pc());
-
 	SETUP_FPU();
 	temp = voodoo_regs[fbzColorPath] & FBZCOLORPATH_MASK;
 	if (temp == 0x0c000035)
@@ -1299,10 +1053,6 @@ done:
 	RESTORE_FPU();
 	totalpix = voodoo_regs[fbiPixelsIn] - totalpix;
 	if (totalpix < 0) totalpix += 0x1000000;
-	log_renderer(totalpix);
-#if DISPLAY_STATISTICS
-	polycount++;
-#endif
 }
 
 
@@ -1518,25 +1268,20 @@ static UINT32 execute_cmdfifo(void)
 			switch ((command >> 3) & 7)
 			{
 				case 0:		/* NOP */
-					if (LOG_CMDFIFO) logerror("  NOP\n");
 					break;
 				
 				case 1:		/* JSR */
-					if (LOG_CMDFIFO) logerror("  JSR $%06X\n", target);
 					voodoo_regs[cmdFifoAMin] = voodoo_regs[cmdFifoAMax] = target - 4;
 					return target;
 				
 				case 2:		/* RET */
-					if (LOG_CMDFIFO) logerror("  RET $%06X\n", target);
 					break;
 				
 				case 3:		/* JMP LOCAL FRAME BUFFER */
-					if (LOG_CMDFIFO) logerror("  JMP LOCAL FRAMEBUF $%06X\n", target);
 					voodoo_regs[cmdFifoAMin] = voodoo_regs[cmdFifoAMax] = target - 4;
 					return target;
 				
 				case 4:		/* JMP AGP */
-					if (LOG_CMDFIFO) logerror("  JMP AGP $%06X\n", target);
 					voodoo_regs[cmdFifoAMin] = voodoo_regs[cmdFifoAMax] = target - 4;
 					return target;
 				
@@ -1552,14 +1297,12 @@ static UINT32 execute_cmdfifo(void)
 			inc = (command >> 15) & 1;
 			target = (command >> 3) & 0xfff;
 			
-			if (LOG_CMDFIFO) logerror("  PACKET TYPE 1: count=%d inc=%d reg=%04X\n", count, inc, target);
 			for (i = 0; i < count; i++, target += inc)
 				voodoo_regs_w(target, *src++, 0);
 			break;
 		
 		/* packet type 2 */
 		case 2:
-			if (LOG_CMDFIFO) logerror("  PACKET TYPE 2: mask=%X\n", (command >> 3) & 0x1ffffff);
 			for (i = 3; i <= 31; i++)
 				if (command & (1 << i))
 					voodoo_regs_w(bltSrcBaseAddr + (i - 3), *src++, 0);
@@ -1569,7 +1312,6 @@ static UINT32 execute_cmdfifo(void)
 		case 3:
 			count = (command >> 6) & 15;
 			code = (command >> 3) & 7;
-			if (LOG_CMDFIFO) logerror("  PACKET TYPE 3: count=%d code=%d mask=%03X\n", count, code, (command >> 10) & 0xfff);
 			
 			voodoo_regs[sSetupMode] = ((command >> 10) & 0xfff) | ((command >> 6) & 0xf0000);
 			for (i = 0; i < count; i++)
@@ -1645,7 +1387,6 @@ static UINT32 execute_cmdfifo(void)
 		case 4:
 			target = (command >> 3) & 0xfff;
 
-			if (LOG_CMDFIFO) logerror("  PACKET TYPE 4: mask=%X reg=%04X pad=%d\n", (command >> 15) & 0x3fff, target, command >> 29);
 			for (i = 15; i <= 28; i++)
 				if (command & (1 << i))
 					voodoo_regs_w(target + (i - 15), *src++, 0);
@@ -1659,13 +1400,11 @@ static UINT32 execute_cmdfifo(void)
 
 			if ((command >> 30) == 2)
 			{
-				if (LOG_CMDFIFO) logerror("  PACKET TYPE 5: LFB count=%d dest=%08X bd2=%X bdN=%X\n", count, target, (command >> 26) & 15, (command >> 22) & 15);
 				for (i = 0; i < count; i++)
 					voodoo_framebuf_w(target++, *src++, 0);
 			}
 			else if ((command >> 30) == 3)
 			{
-				if (LOG_CMDFIFO) logerror("  PACKET TYPE 5: textureRAM count=%d dest=%08X bd2=%X bdN=%X\n", count, target, (command >> 26) & 15, (command >> 22) & 15);
 				for (i = 0; i < count; i++)
 					voodoo_textureram_w(target++, *src++, 0);
 			}
@@ -1747,23 +1486,12 @@ WRITE32_HANDLER( voodoo2_regs_w )
 			voodoo_regs[cmdFifoHoles] += (voodoo_regs[cmdFifoAMax] - voodoo_regs[cmdFifoAMin]) / 4 - 1;
 		}
 		
-		if (LOG_CMDFIFO_VERBOSE) 
-		{
-			if ((cmdfifo[voodoo_regs[cmdFifoRdPtr]/4] & 7) == 3)
-				logerror("CMDFIFO(%06X)=%f  (min=%06X max=%06X d=%d h=%d)\n", addr, *(float *)&data, voodoo_regs[cmdFifoAMin], voodoo_regs[cmdFifoAMax], voodoo_regs[cmdFifoDepth], voodoo_regs[cmdFifoHoles]);
-			else if ((cmdfifo[voodoo_regs[cmdFifoRdPtr]/4] & 7) != 5)
-				logerror("CMDFIFO(%06X)=%08X  (min=%06X max=%06X d=%d h=%d)\n", addr, data, voodoo_regs[cmdFifoAMin], voodoo_regs[cmdFifoAMax], voodoo_regs[cmdFifoDepth], voodoo_regs[cmdFifoHoles]);
-		}
-
 		/* if we have data, process it */
 		if (voodoo_regs[cmdFifoDepth])
 		{
 			/* if we didn't have data before, use the first word to compute the expected count */
 			if (old_depth == 0)
-			{
 				cmdfifo_expected = compute_expected_depth();
-				if (LOG_CMDFIFO_VERBOSE) logerror("PACKET TYPE %d, expecting %d words\n", cmdfifo[voodoo_regs[cmdFifoRdPtr]/4] & 7, cmdfifo_expected);
-			}
 			
 			/* if we got everything, execute */
 			if (voodoo_regs[cmdFifoDepth] >= cmdfifo_expected)
@@ -1795,16 +1523,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 	if (chips & 8)
 		voodoo_regs[0x300 + offset] = data;
 
-	status_lastpc = ~0;
-
-	if (LOG_REGISTERS)
-	{
-		if (offset < fvertexAx || offset > fdWdY)
-			logerror("%06X:voodoo %s(%d) write = %08X\n", activecpu_get_pc(), (offset < 0x384/4) ? voodoo_reg_name[offset] : "oob", chips, data);
-		else
-			logerror("%06X:voodoo %s(%d) write = %f\n", activecpu_get_pc(), (offset < 0x384/4) ? voodoo_reg_name[offset] : "oob", chips, *(float *)&data);
-	}
-	
 	switch (offset)
 	{
 		/* fixed-point vertex data */
@@ -2204,13 +1922,9 @@ WRITE32_HANDLER( voodoo_regs_w )
 			break;
 	
 		case nopCMD:
-			if (LOG_COMMANDS)
-				logerror("%06X:NOP command\n", activecpu_get_pc());
 			break;
 	
 		case fastfillCMD:
-			if (LOG_COMMANDS)
-				logerror("%06X:FASTFILL command\n", activecpu_get_pc());
 			if (blocked_on_swap)
 			{
 				pending_fastfill = 1;
@@ -2235,8 +1949,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 				blocked_on_swap = 1;
 			}
 		
-			if (LOG_COMMANDS)
-				logerror("%06X:SWAPBUFFER command = %08X\n", activecpu_get_pc(), data);
 			break;
 	
 		case fbiInit4:
@@ -2302,17 +2014,9 @@ WRITE32_HANDLER( voodoo_regs_w )
 			/* bit 8-10 = register number */
 			/* bit 11 = write (0) or read (1) */
 			if (data & 0x800)
-			{
 				dac_read = ramdac_r((data >> 8) & 7);
-				if (LOG_REGISTERS)
-					logerror("-- dacData read reg %d; result = %02X\n", (data >> 8) & 7, dac_read);
-			}
 			else
-			{
 				ramdac_w((data >> 8) & 7, data);
-				if (LOG_REGISTERS)
-					logerror("-- dacData write reg %d = %02X\n", (data >> 8) & 7, data & 0xff);
-			}
 			break;
 		
 		case trexInit0:
@@ -2412,8 +2116,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 
 				trex_lod_offset[0] = &lod_offset_table[(data >> 21) & 3][0];
 				trex_lod_width_shift[0] = &lod_width_shift[(data >> 20) & 7][0];
-				if (LOG_REGISTERS)
-					logerror("%06X:trex[0] -- lodmin=%02X lodmax=%02X size=%dx%d\n", activecpu_get_pc(), trex_lodmin[0], trex_lodmax[0], trex_width[0], trex_height[0]);
 			}
 			if (chips & 4)
 			{
@@ -2426,8 +2128,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 
 				trex_lod_offset[1] = &lod_offset_table[(data >> 21) & 3][0];
 				trex_lod_width_shift[1] = &lod_width_shift[(data >> 20) & 7][0];
-				if (LOG_REGISTERS)
-					logerror("%06X:trex[1] -- lodmin=%02X lodmax=%02X size=%dx%d\n", activecpu_get_pc(), trex_lodmin[1], trex_lodmax[1], trex_width[1], trex_height[1]);
 			}
 			if (chips & 8)
 			{
@@ -2440,8 +2140,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 
 				trex_lod_offset[2] = &lod_offset_table[(data >> 21) & 3][0];
 				trex_lod_width_shift[2] = &lod_width_shift[(data >> 20) & 7][0];
-				if (LOG_REGISTERS)
-					logerror("%06X:trex[2] -- lodmin=%02X lodmax=%02X size=%dx%d\n",activecpu_get_pc(),  trex_lodmin[2], trex_lodmax[2], trex_width[2], trex_height[2]);
 			}
 			break;
 		
@@ -2699,21 +2397,6 @@ READ32_HANDLER( voodoo_regs_r )
 			result |= swaps_pending << 28;
 			
 			activecpu_eat_cycles(100);
-			
-			if (LOG_REGISTERS)
-			{
-				offs_t pc = activecpu_get_pc();
-				if (pc == status_lastpc)
-					status_lastpc_count++;
-				else
-				{
-					if (status_lastpc_count)
-						logerror("%06X:voodoo status read = %08X (x%d)\n", activecpu_get_pc(), result, status_lastpc_count);
-					status_lastpc_count = 0;
-					status_lastpc = pc;
-					logerror("%06X:voodoo status read = %08X\n", activecpu_get_pc(), result);
-				}
-			}
 			break;
 		}
 		
@@ -2722,14 +2405,10 @@ READ32_HANDLER( voodoo_regs_r )
 			if (init_enable & 0x00000004)
 				result = dac_read;
 
-			if (LOG_REGISTERS)
-				logerror("%06X:voodoo fbiInit2 read = %08X\n", activecpu_get_pc(), result);
 			break;
 		
 		case vRetrace:
 			result = cpu_getscanline();
-//			if (LOG_REGISTERS)
-//				logerror("%06X:voodoo vRetrace read = %08X\n", activecpu_get_pc(), result);
 			break;
 		
 		/* reserved area in the TMU read by the Vegas startup sequence */
@@ -2739,8 +2418,6 @@ READ32_HANDLER( voodoo_regs_r )
 			break;
 
 		default:
-			if (LOG_REGISTERS)
-				logerror("%06X:voodoo %s read = %08X\n", activecpu_get_pc(), (offset < 0x340/4) ? voodoo_reg_name[offset] : "oob", result);
 			break;
 	}
 	return result;

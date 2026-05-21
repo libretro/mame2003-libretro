@@ -4,21 +4,9 @@
 
 ****************************************************************************/
 
-
-#define LOG_COMM			(0)
-#define LOG_32031_IOPORTS	(0)
-#define LOG_WAVE			(0)
-
-
 #include "driver.h"
 #include "cpu/tms32031/tms32031.h"
 #include "cage.h"
-
-#if (LOG_WAVE)
-#include "sound/wavwrite.h"
-#endif
-
-
 
 /*************************************
  *
@@ -69,12 +57,6 @@ static UINT16 cage_from_main;
 static UINT16 cage_control;
 
 static data32_t *speedup_ram;
-
-#if (LOG_WAVE)
-static void *wavfile;
-#endif
-
-
 
 /*************************************
  *
@@ -249,14 +231,6 @@ static void dac_update(int num, INT16 **buffer, int length)
 
 	/* update the final values */
 	buffer_out = current;
-
-#if (LOG_WAVE)
-#if (DAC_BUFFER_CHANNELS == 4)
-	wav_add_data_16lr(wavfile, buffer[0], buffer[1], length);
-#else
-	wav_add_data_16lr(wavfile, (buffer[0] + buffer[2]) / 2, (buffer[1] + buffer[3]) / 2, length);
-#endif
-#endif
 }
 
 
@@ -284,20 +258,12 @@ static int custom_start(const struct MachineSound *msound)
 	sound_buffer = auto_malloc(DAC_BUFFER_SAMPLES * sizeof(INT16));
 	if (!sound_buffer)
 		return 1;
-
-#if (LOG_WAVE)
-	wavfile = wav_open("cage.wav", Machine->sample_rate, 2);
-#endif
-
 	return 0;
 }
 
 
 static void custom_stop(void)
 {
-#if (LOG_WAVE)
-	wav_close(wavfile);
-#endif
 }
 
 
@@ -447,15 +413,9 @@ static READ32_HANDLER( tms32031_io_r )
 {
 	UINT16 result = tms32031_io_regs[offset];
 	
-	switch (offset)
-	{
-		case DMA_GLOBAL_CTL:
-			result = (result & ~0xc) | (dma_enabled ? 0xc : 0x0);
-			break;
-	}
+	if (offset == DMA_GLOBAL_CTL)
+		return (result & ~0xc) | (dma_enabled ? 0xc : 0x0);
 
-	if (LOG_32031_IOPORTS)
-		logerror("CAGE:%06X:%s read -> %08X\n", activecpu_get_pc(), register_names[offset & 0x7f], result);
 	return result;
 }
 
@@ -464,9 +424,6 @@ static WRITE32_HANDLER( tms32031_io_w )
 {
 	COMBINE_DATA(&tms32031_io_regs[offset]);
 
-	if (LOG_32031_IOPORTS)
-		logerror("CAGE:%06X:%s write = %08X\n", activecpu_get_pc(), register_names[offset & 0x7f], tms32031_io_regs[offset]);
-	
 	switch (offset)
 	{
 		case DMA_GLOBAL_CTL:
@@ -547,8 +504,6 @@ static void update_control_lines(void)
 
 static READ32_HANDLER( cage_from_main_r )
 {
-	if (LOG_COMM)
-		logerror("%06X:CAGE read command = %04X\n", activecpu_get_pc(), cage_from_main);
 	cpu_to_cage_ready = 0;
 	update_control_lines();
 	return cage_from_main;
@@ -557,15 +512,11 @@ static READ32_HANDLER( cage_from_main_r )
 
 static WRITE32_HANDLER( cage_from_main_ack_w )
 {
-	if (LOG_COMM)
-		logerror("%06X:CAGE ack command = %04X\n", activecpu_get_pc(), cage_from_main);
 }
 
 
 static WRITE32_HANDLER( cage_to_main_w )
 {
-	if (LOG_COMM)
-		logerror("%06X:Data from CAGE = %04X\n", activecpu_get_pc(), data);
 	soundlatch_word_w(0, data, mem_mask);
 	cage_to_cpu_ready = 1;
 	update_control_lines();
@@ -585,8 +536,6 @@ static READ32_HANDLER( cage_io_status_r )
 
 UINT16 main_from_cage_r(void)
 {
-	if (LOG_COMM)
-		logerror("%06X:main read data = %04X\n", activecpu_get_pc(), soundlatch_word_r(0, 0));
 	cage_to_cpu_ready = 0;
 	update_control_lines();
 	return soundlatch_word_r(0, 0);
@@ -604,8 +553,6 @@ static void deferred_cage_w(int param)
 
 void main_to_cage_w(UINT16 data)
 {
-	if (LOG_COMM)
-		logerror("%06X:Command to CAGE = %04X\n", activecpu_get_pc(), data);
 	timer_set(TIME_NOW, data, deferred_cage_w);
 }
 
