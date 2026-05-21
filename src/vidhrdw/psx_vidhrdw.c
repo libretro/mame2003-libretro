@@ -219,16 +219,10 @@ static UINT16 m_p_n_prevpointlist4b[] = { 0, 2, 3, 1 };
 #define COORD_Y( a ) ( (INT16)a.w.h )
 
 /* The GPU rejects any primitive whose vertices span more than 1023 pixels in
-   x or y; without this oversized garbage polygons get rasterised. */
-INLINE int CullVertex( int a, int b )
-{
-	int d = a - b;
-	if( d < -1023 || d > 1023 )
-	{
-		return 1;
-	}
-	return 0;
-}
+   x or y; without this oversized garbage polygons get rasterised. A macro, so
+   it is always expanded regardless of optimisation level (a and b are pure
+   coordinate reads, so the double evaluation is harmless). */
+#define CullVertex( a, b ) ( ( (a) - (b) ) < -1023 || ( (a) - (b) ) > 1023 )
 
 #define CULLPOINT( PacketType, p1, p2 ) \
 ( \

@@ -833,7 +833,12 @@ CFLAGS += -DRETRO_PROFILE=$(RETRO_PROFILE)
 
 # Disable optimization when debugging #####################
 ifeq ($(DEBUG), 1)
-	CFLAGS += -O0 -g3
+	# -O0 means nothing is inlined; this code is full of bare `INLINE foo()`
+	# (no explicit static) functions that, under C99/C11 inline rules, emit no
+	# out-of-line copy and become undefined symbols at link. -fgnu89-inline
+	# restores the always-emit-a-callable-definition behaviour this codebase
+	# was written for, so a debug build links without inlining anything.
+	CFLAGS += -O0 -g3 -fgnu89-inline
 else
 	CFLAGS += -O2 -DNDEBUG
 endif
