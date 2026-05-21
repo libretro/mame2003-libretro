@@ -52,6 +52,8 @@ int setup_active(void);
 int is_game_paused(void);
 #endif
 
+int ui_overlay_active(void);
+
 #ifdef __GNUC__
 void CLIB_DECL usrintf_showmessage(const char *text,...)
       __attribute__ ((format (printf, 1, 2)));

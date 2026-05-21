@@ -7,6 +7,7 @@
 #include "common.h"
 #include "mame.h"
 #include "usrintrf.h"
+#include "artwork.h"
 #include "driver.h"
 
 #define MAX_LED 8
@@ -43,6 +44,18 @@ uint16_t *video_buffer;
 /* -1 = not yet probed, 0 = frontend has no software framebuffer (stop asking),
    1 = supported. Reset on each display (re)create. */
 int sw_framebuffer_supported = -1;
+
+/* Direct framebuffer fast path: when a driver paints straight into the output
+   via mame2003_direct_rgb565_begin(), direct_out/direct_out_pitch hold the
+   target it filled and direct_fb_pending marks it for delivery this frame
+   (skipping the game bitmap and the conversion pass). The target is the
+   frontend's software framebuffer when granted (painted in place, no copy),
+   otherwise the core's own video_buffer (delivered with one video_cb copy,
+   exactly as the normal path does without a software framebuffer). */
+static struct retro_framebuffer direct_fb;   /* scratch for the sw-fb fetch */
+static void    *direct_out;
+static unsigned direct_out_pitch;
+static int      direct_fb_pending;
 
 /* Possible pixel conversions (see corresponding function far below) */
 enum
@@ -247,6 +260,7 @@ int osd_create_display(
 
    /* Re-probe software-framebuffer support (the video driver may have changed). */
    sw_framebuffer_supported = -1;
+   direct_fb_pending = 0;
 
    mame2003_video_init_orientation();
    mame2003_video_init_conversion(rgb_components);
@@ -457,6 +471,55 @@ static bool get_current_sw_framebuffer(unsigned w, unsigned h, struct retro_fram
    return true;
 }
 
+/* See mame2003.h. Called from a driver's VIDEO_UPDATE to paint RGB565 straight
+   into the output, skipping the game bitmap and the conversion pass. Returns
+   the buffer (and sets *pitch_out) when the fast path is available this frame,
+   else NULL so the driver renders into the bitmap as usual. The target is
+   resolved once per frame and reused by partial updates. */
+void *mame2003_direct_rgb565_begin(unsigned *pitch_out)
+{
+   if (direct_fb_pending)
+   {
+      *pitch_out = direct_out_pitch;
+      return direct_out;
+   }
+
+   /* Gates (any failing -> normal bitmap path):
+      - output must be RGB565 (2-byte stride)
+      - no flip/rotate (the driver paints upright, row 0..h)
+      - the visible size must be known (not before the first visarea update)
+      - no artwork/UI compositor in the path, and no UI overlay this frame
+        (menu/popup/gfx viewer draw into the bitmap after the driver) */
+   if (video_stride_out != 2)                          return NULL;
+   if (video_flip_x || video_flip_y || video_swap_xy)  return NULL;
+   if (vis_width == 0 || vis_height == 0)               return NULL;
+   if (artwork_system_active())                         return NULL;
+   if (ui_overlay_active())                             return NULL;
+
+   /* Prefer the frontend's framebuffer: the driver paints it in place, so
+      there is no copy to the frontend at all. Otherwise paint the core's own
+      output buffer, which video_cb then copies to the frontend -- the same
+      copy the normal path makes when no software framebuffer is granted.
+      Either target drops the game-bitmap round-trip; the software framebuffer
+      additionally drops that final copy. */
+   if (get_current_sw_framebuffer(vis_width, vis_height, &direct_fb))
+   {
+      direct_out       = direct_fb.data;
+      direct_out_pitch = (unsigned)direct_fb.pitch;
+   }
+   else if (video_buffer)
+   {
+      direct_out       = video_buffer;
+      direct_out_pitch = vis_width * video_stride_out;
+   }
+   else
+      return NULL;
+
+   direct_fb_pending = 1;
+   *pitch_out = direct_out_pitch;
+   return direct_out;
+}
+
 extern bool retro_audio_buff_underrun;
 extern bool retro_audio_buff_active;
 extern unsigned retro_audio_buff_occupancy;
@@ -545,7 +608,15 @@ void osd_update_video_and_audio(struct mame_display *display)
       {
          if (!osd_skip_this_frame())
          {
-            if (video_do_bypass)
+            if (direct_fb_pending)
+            {
+               /* A driver painted RGB565 straight into the resolved target
+                  this frame (frontend framebuffer, or our own buffer when the
+                  frontend grants none); hand it over as-is. */
+               video_cb(direct_out, vis_width, vis_height, direct_out_pitch);
+               direct_fb_pending = 0;
+            }
+            else if (video_do_bypass)
             {
                unsigned min_y = display->game_visible_area.min_y;
                unsigned min_x = display->game_visible_area.min_x;
@@ -575,7 +646,10 @@ void osd_update_video_and_audio(struct mame_display *display)
             }
          }
          else
+         {
+            direct_fb_pending = 0;
             video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
+         }
       }
    }
    else if (video_cb)
@@ -585,6 +659,7 @@ void osd_update_video_and_audio(struct mame_display *display)
          retro_run -- matching the one-frame-per-retro_run contract that
          run-ahead/recording rely on. vis_width/vis_height were set on an
          earlier GAME_VISIBLE_AREA_CHANGED and persist. */
+      direct_fb_pending = 0;
       video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
    }
 

@@ -728,7 +728,7 @@ int artwork_create_display(struct osd_create_params *params, UINT32 *rgb_compone
 	artwork system is currently active
 -------------------------------------------------*/
 
-static int artwork_system_active(void)
+int artwork_system_active(void)
 {
 	return artwork_list || uioverlay;
 }

@@ -46,6 +46,24 @@ extern "C" {
 
 extern void mame2003_video_get_geometry(struct retro_game_geometry *geom);
 
+/* Direct framebuffer fast path (opt-in, per driver).
+
+   A driver whose VIDEO_UPDATE just converts a linear source into the screen
+   (a framebuffer game) can call this from VIDEO_UPDATE to obtain an RGB565
+   output buffer and paint straight into it, skipping both the game bitmap and
+   the core's conversion pass. Returns the buffer base and sets *pitch_out to
+   its byte stride, or NULL if the fast path is unavailable this frame -- in
+   which case the driver must render into the bitmap as usual.
+
+   The buffer is the frontend's software framebuffer when granted (painted in
+   place, no copy), otherwise the core's own output buffer (delivered with one
+   video_cb copy, as the normal path does without a software framebuffer); the
+   game-bitmap round-trip is dropped either way. NULL is returned unless all
+   hold: output format is RGB565, no flip/rotate, and no artwork or UI overlay
+   is active this frame. The buffer covers the visible area at its natural
+   orientation; the driver fills rows [0, height). */
+extern void *mame2003_direct_rgb565_begin(unsigned *pitch_out);
+
 
 /******************************************************************************
 

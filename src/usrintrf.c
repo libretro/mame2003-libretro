@@ -3427,3 +3427,13 @@ int setup_active(void)
 {
 	return setup_selected;
 }
+
+/* Nonzero when the UI will draw on top of the game this frame: the config/
+   cheat menu is open, a popup message is counting down (this includes the
+   startup warnings), or the gfx viewer is up. handle_user_interface() draws
+   these into the game bitmap after the driver renders, so a direct-to-
+   framebuffer driver must fall back to the normal path while any are active. */
+int ui_overlay_active(void)
+{
+	return setup_selected || (messagecounter > 0) || toggle_showgfx;
+}
