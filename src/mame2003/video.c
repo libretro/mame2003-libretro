@@ -470,6 +470,15 @@ void osd_update_video_and_audio(struct mame_display *display)
             video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
       }
    }
+   else if (video_cb)
+   {
+      /* Nothing in the game display changed this frame. Still emit exactly
+         one (duplicated) frame, so the frontend gets one video update per
+         retro_run -- matching the one-frame-per-retro_run contract that
+         run-ahead/recording rely on. vis_width/vis_height were set on an
+         earlier GAME_VISIBLE_AREA_CHANGED and persist. */
+      video_cb(NULL, vis_width, vis_height, vis_width * video_stride_out);
+   }
 
    /* Update LED indicators state */
    if (led_state_cb && display->changed_flags & LED_STATE_CHANGED)
