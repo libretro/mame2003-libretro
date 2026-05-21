@@ -84,7 +84,7 @@ static uint8_t collision_check(struct rectangle* rect)
 	{
 		for (x = rect->min_x; x <= rect->max_x; x++)
 		{
-			pen_t a = read_pixel(helper, x, y);
+			uint32_t a = read_pixel(helper, x, y);
 
 			if (a == 0)
 			{

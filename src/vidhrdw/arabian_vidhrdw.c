@@ -378,7 +378,7 @@ WRITE_HANDLER( arabian_videoram_w )
 
 VIDEO_UPDATE( arabian )
 {
-	pen_t *colortable = &Machine->remapped_colortable[(arabian_video_control >> 3) << 8];
+	uint32_t *colortable = &Machine->remapped_colortable[(arabian_video_control >> 3) << 8];
 	int y;
 
 	/* render the screen from the bitmap */

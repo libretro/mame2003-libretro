@@ -27,7 +27,7 @@ struct sprite
 	uint8_t *pen_data;	/* points to top left corner of tile data */
 	int line_offset;
 
-	pen_t *pal_data;
+	uint32_t *pal_data;
 
 	int x_offset, y_offset;
 	int tile_width, tile_height;
@@ -123,7 +123,7 @@ static struct sprite *sprite_list_create(int num_sprites)
 
 static void get_sprite_info(void)
 {
-	pen_t *base_pal = Machine->remapped_colortable;
+	uint32_t *base_pal = Machine->remapped_colortable;
 	uint8_t *base_gfx = memory_region(REGION_GFX1);
 	int gfx_max     = memory_region_length(REGION_GFX1);
 
@@ -222,7 +222,7 @@ static void do_blit_zoom16(struct sprite *sprite)
 #define FPY_HALF (1<<(PRECISION_Y-1))
 
 	unsigned char *src_base;
-	pen_t *pal_base;
+	uint32_t *pal_base;
 	uint16_t *rgb_base, *dst_ptr, *dst_end;
 	int src_pitch, dst_pitch, src_f0y, src_fdy, src_f0x, src_fdx, src_fpx;
 	int eax, ebx, ecx;
@@ -640,7 +640,7 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 #define MIDCURB_DY 5
 #define TOPCURB_DY 7
 
-	static pen_t road_color[48] =
+	static uint32_t road_color[48] =
 	{
 		0x3f1,0x3f3,0x3f5,0x3fd,0x3fd,0x3fb,0x3fd,0x7ff,	// road color 0
 		0x3f0,0x3f2,0x3f4,0x3fc,0x3fc,0x3fb,0x3fc,0x7fe,	// road color 1
@@ -650,12 +650,12 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 		    0,    0,    0,0x3f6,    0,    0,    0,    0		// topcutb color 1
 	};
 
-	pen_t road_rgb[48];
+	uint32_t road_rgb[48];
 
 	uint8_t *src_base, *src_ptr;
 	uint16_t *dst_base, *dst_ptr, *dst_end, **dst_line;
 	uint32_t *dw_ptr, *dw_end;
-	pen_t *pal_ptr, *rgb_ptr;
+	uint32_t *pal_ptr, *rgb_ptr;
 
 	int dst_pitch, scrollx, sy;
 	int mdy, tdy, edx, ebx, eax;
@@ -803,7 +803,7 @@ static void wecleman_draw_cloud( struct mame_bitmap *bitmap,
 {
 	uint8_t *src_base, *src_ptr;
 	uint16_t *tmap_ptr, *dst_base, *dst_charbase, *dst_ptr;
-	pen_t *pal_base, *pal_ptr;
+	uint32_t *pal_base, *pal_ptr;
 
 	int tilew, tileh;
 	int tmskipx, tmskipy, tmscanx, tmmaskx, tmmasky;
@@ -1282,7 +1282,7 @@ VIDEO_START( hotchase )
 
 VIDEO_UPDATE ( wecleman )
 {
-	pen_t *mrct;
+	uint32_t *mrct;
 	int video_on;
 	int fg_x, bg_x, fg_y, bg_y;
 	int cloud_sx, cloud_sy;

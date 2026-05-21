@@ -107,7 +107,7 @@ VIDEO_UPDATE( tickee )
 {
 	int v, h, width, xoffs, beamx, beamy;
 	uint8_t *base1 = (uint8_t *)tickee_vram;
-	pen_t pen_lookup[256];
+	uint32_t pen_lookup[256];
 	uint32_t offset;
 
 	/* fill out the pen array based on the palette bank */

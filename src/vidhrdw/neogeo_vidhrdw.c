@@ -320,7 +320,7 @@ static void NeoMVSDrawGfxLine(uint16_t **line,const struct GfxElement *gfx,
 	int col;
 	int mydword;
 	uint8_t *fspr = memory_region(REGION_GFX3);
-	const pen_t *paldata = &gfx->colortable[gfx->color_granularity * color];
+	const uint32_t *paldata = &gfx->colortable[gfx->color_granularity * color];
 
 	if (sx <= -16) return;
 

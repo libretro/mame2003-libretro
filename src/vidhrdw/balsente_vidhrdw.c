@@ -285,7 +285,7 @@ VIDEO_UPDATE( balsente )
 	for (y = 0; y < 240; y++)
 		if (scanline_dirty[y] || update_all)
 		{
-			pen_t *pens = &Machine->pens[scanline_palette[y] * 256];
+			uint32_t *pens = &Machine->pens[scanline_palette[y] * 256];
 			draw_scanline8(tmpbitmap, 0, y, 256, &local_videoram[y * 256], pens, -1);
 			scanline_dirty[y] = 0;
 		}

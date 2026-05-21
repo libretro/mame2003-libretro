@@ -470,7 +470,7 @@ struct GfxElement *builduifont(void)
 	/* set up the bogus colortable */
 	if (font)
 	{
-		static pen_t colortable[2*2];
+		static uint32_t colortable[2*2];
 
 		/* colortable will be set at run time */
 		font->colortable = colortable;
@@ -711,7 +711,7 @@ static void ui_multitextbox_ex(struct mame_bitmap *bitmap, const char *begin, co
 void ui_drawbox(struct mame_bitmap *bitmap, int leftx, int topy, int width, int height)
 {
 	struct rectangle bounds, tbounds;
-	pen_t black, white;
+	uint32_t black, white;
 
 	/* make a rect and clip it */
 	bounds.min_x = uirotbounds.min_x + leftx;
@@ -1053,7 +1053,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 	char buf[80];
 /*	int changed = 1;*/
 	int total_colors = 0;
-	pen_t *colortable = NULL;
+	uint32_t *colortable = NULL;
 	static const struct rectangle fullrect = { 0, 10000, 0, 10000 };
 
 

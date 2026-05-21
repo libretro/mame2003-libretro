@@ -352,7 +352,7 @@ static WRITE_HANDLER( gun_in0_w )
 			int x = readinputport( 4 );
 			int y = readinputport( 5 );
 			uint32_t pix, color_base;
-			pen_t *pens = Machine->pens;
+			uint32_t *pens = Machine->pens;
 
 			/* get the pixel at the gun position */
 			pix = ppu2c03b_get_pixel( 0, x, y );

@@ -273,7 +273,7 @@ static void chaknpop_draw_bitmap(struct mame_bitmap *bitmap)
 
 		for (i = 0x80; i > 0; i >>= 1, x += dx)
 		{
-			pen_t color = 0;
+			uint32_t color = 0;
 
 			if (vram1[offs] & i)
 				color |= 0x200;	// green lower cage
@@ -286,7 +286,7 @@ static void chaknpop_draw_bitmap(struct mame_bitmap *bitmap)
 
 			if (color)
 			{
-				pen_t pen = read_pixel(bitmap, x, y);
+				uint32_t pen = read_pixel(bitmap, x, y);
 				pen |= color;
 				plot_pixel(bitmap, x, y, pen);
 			}

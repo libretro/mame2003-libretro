@@ -330,7 +330,7 @@ static void mcr12_update_sprites(void)
  *
  *************************************/
 
-static void render_sprite_tile(struct mame_bitmap *bitmap, pen_t *pens, int tile_index)
+static void render_sprite_tile(struct mame_bitmap *bitmap, uint32_t *pens, int tile_index)
 {
 	int sx = tile_index % 32;
 	int sy = tile_index / 32;

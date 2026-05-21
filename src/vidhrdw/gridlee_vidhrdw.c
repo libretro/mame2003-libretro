@@ -136,7 +136,7 @@ WRITE_HANDLER( gridlee_palette_select_w )
 
 VIDEO_UPDATE( gridlee )
 {
-	pen_t *pens = &Machine->pens[palettebank_vis * 32];
+	uint32_t *pens = &Machine->pens[palettebank_vis * 32];
 	int x, y, i;
 
 	/* draw scanlines from the VRAM directly */

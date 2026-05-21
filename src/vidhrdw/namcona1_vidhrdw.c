@@ -278,7 +278,7 @@ static void pdraw_masked_tile(
 		int bShadow )
 {
 	const struct GfxElement *gfx,*mask;
-	const pen_t *paldata;
+	const uint32_t *paldata;
 	uint8_t *gfx_addr;
 	int gfx_pitch;
 	uint8_t *mask_addr;
@@ -423,7 +423,7 @@ static void pdraw_opaque_tile(
 		int bShadow )
 {
 	const struct GfxElement *gfx;
-	const pen_t *paldata;
+	const uint32_t *paldata;
 	uint8_t *gfx_addr;
 	int gfx_pitch;
 	int x,y,temp;
@@ -578,7 +578,7 @@ static void draw_sprites( struct mame_bitmap *bitmap )
 	}
 } /* draw_sprites */
 
-static void draw_pixel_line( uint16_t *pDest, uint8_t *pPri, uint16_t *pSource, const pen_t *paldata )
+static void draw_pixel_line( uint16_t *pDest, uint8_t *pPri, uint16_t *pSource, const uint32_t *paldata )
 {
 	int x;
 	uint16_t data;
@@ -606,7 +606,7 @@ static void draw_background( struct mame_bitmap *bitmap, const struct rectangle 
 	uint16_t xdata, ydata;
 	int scrollx, scrolly;
 	struct rectangle clip;
-	const pen_t *paldata;
+	const uint32_t *paldata;
 	struct GfxElement *pGfx;
 
 	pGfx = Machine->gfx[0];

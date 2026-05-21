@@ -375,7 +375,7 @@ static void sys24_tile_draw_rect_rgb(struct mame_bitmap *bm, struct mame_bitmap 
 	const uint16_t *source  = ((uint16_t *)bm->base) + sx + sy*bm->rowpixels;
 	const uint8_t  *trans = ((uint8_t *) tm->base) + sx + sy*tm->rowpixels;
 	uint16_t       *dest = dm->base;
-	pen_t        *pens   = Machine->pens;
+	uint32_t        *pens   = Machine->pens;
 
 	tpri |= TILE_FLAG_FG_OPAQUE;
 

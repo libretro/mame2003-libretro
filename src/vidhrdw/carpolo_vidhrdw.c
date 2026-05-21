@@ -487,7 +487,7 @@ static int check_sprite_left_goal_collision(int x1, int y1, int code1, int flipy
 			{
 				if ((read_pixel(sprite_goal_collision_bitmap1, x, y) == Machine->pens[1]))
 				{
-					pen_t pix = read_pixel(sprite_goal_collision_bitmap2, x, y);
+					uint32_t pix = read_pixel(sprite_goal_collision_bitmap2, x, y);
 
 					if (pix == Machine->pens[LEFT_GOAL_COLOR])
 					{
@@ -553,7 +553,7 @@ static int check_sprite_right_goal_collision(int x1, int y1, int code1, int flip
 			{
 				if ((read_pixel(sprite_goal_collision_bitmap1, x, y) == Machine->pens[1]))
 				{
-					pen_t pix = read_pixel(sprite_goal_collision_bitmap2, x, y);
+					uint32_t pix = read_pixel(sprite_goal_collision_bitmap2, x, y);
 
 					if (pix == Machine->pens[RIGHT_GOAL_COLOR])
 					{

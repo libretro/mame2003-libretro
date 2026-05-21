@@ -684,7 +684,7 @@ VIDEO_UPDATE( tubep )
 
 	/* draw background ram */
 	{
-		pen_t *pens = &Machine->pens[ 32 ]; //change it later
+		uint32_t *pens = &Machine->pens[ 32 ]; //change it later
 
 		uint32_t h,v;
 		unsigned char * romBxx = memory_region(REGION_USER1) + 0x2000*background_romsel;
@@ -806,7 +806,7 @@ VIDEO_UPDATE( rjammer )
 
 	/* draw background ram */
 	{
-		pen_t *pens = &Machine->pens[ 0x00 ];
+		uint32_t *pens = &Machine->pens[ 0x00 ];
 
 		uint32_t h,v;
 		unsigned char * rom13D  = memory_region(REGION_USER1);

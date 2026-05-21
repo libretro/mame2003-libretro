@@ -689,7 +689,7 @@ static void turbo_render(struct mame_bitmap *bitmap)
 	uint8_t *sprite_priority_base = &sprite_priority[(turbo_fbpla & 7) << 7];
 	uint8_t *road_gfxdata_base = &road_gfxdata[(turbo_opc << 5) & 0x7e0];
 	uint16_t *road_palette_base = &road_expanded_palette[(turbo_fbcol & 1) << 4];
-	pen_t *colortable;
+	uint32_t *colortable;
 	int x, y, i;
 
 	/* suck up the sprite parameter data */
@@ -819,7 +819,7 @@ static void turbo_render(struct mame_bitmap *bitmap)
 static void subroc3d_render(struct mame_bitmap *bitmap)
 {
 	uint8_t *sprite_priority_base = &sprite_expanded_priority[(subroc3d_ply & 15) << 8];
-	pen_t *colortable;
+	uint32_t *colortable;
 	int y;
 
 	/* suck up the sprite parameter data */

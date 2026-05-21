@@ -129,7 +129,7 @@ WRITE32_HANDLER( namco_rozvideoram32_w );
 /* C45 Land (Road) Emulation */
 
 int namco_road_init( int gfxbank );
-void namco_road_set_transparent_color(pen_t pen);
+void namco_road_set_transparent_color(uint32_t pen);
 void namco_road_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int pri );
 
 READ16_HANDLER( namco_road16_r );

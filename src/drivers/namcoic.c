@@ -776,7 +776,7 @@ static unsigned char *mpRoadDirty;
 static int mbRoadSomethingIsDirty;
 static int mRoadGfxBank;
 static struct tilemap *mpRoadTilemap;
-static pen_t mRoadTransparentColor;
+static uint32_t mRoadTransparentColor;
 static int mbRoadNeedTransparent;
 
 #define ROAD_COLS			64
@@ -918,7 +918,7 @@ namco_road_init( int gfxbank )
 } /* namco_road_init */
 
 void
-namco_road_set_transparent_color(pen_t pen)
+namco_road_set_transparent_color(uint32_t pen)
 {
 	mbRoadNeedTransparent = 1;
 	mRoadTransparentColor = pen;

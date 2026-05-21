@@ -6339,7 +6339,7 @@ static int K056832_update_linemap(struct mame_bitmap *bitmap, int page, int flag
 	int all_dirty, line;
 	int offs, mask;
 
-	pen_t *pal_ptr;
+	uint32_t *pal_ptr;
 	const uint8_t  *src_base, *src_ptr;
 	uint8_t  *xpr_ptr;
 	uint16_t *dst_ptr;
@@ -7513,7 +7513,7 @@ READ16_HANDLER( K053250_1_rom_r )
 
 static void K053250_pdraw_scanline8(
 		struct mame_bitmap *bitmap,int x,int y,int length,
-		const uint8_t *src,pen_t *pens,int transparent_pen,uint32_t orient,int pri)
+		const uint8_t *src,uint32_t *pens,int transparent_pen,uint32_t orient,int pri)
 {
 	/* 8bpp destination */
 	if (bitmap->depth == 8)
@@ -7887,7 +7887,7 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 #else
 
 // utility function to render a clipped scanline vertically or horizontally
-static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *palette, uint8_t *source,
+static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, uint32_t *palette, uint8_t *source,
 		const struct rectangle *cliprect, int linepos, int scroll, int zoom,
 		uint32_t clipmask, uint32_t wrapmask, uint32_t orientation, int priority)
 {
@@ -7902,7 +7902,7 @@ static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *p
 	int src_x;
 	int src_fx, src_fdx;
 	int pix_data, dst_offset;
-	pen_t  *pal_base;
+	uint32_t  *pal_base;
 	uint8_t  *pri_base;
 	uint32_t *dst_base;
 	int dst_adv;
@@ -8119,7 +8119,7 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 	struct K053250_CHIPTAG *chip_ptr;
 	uint16_t *line_ram;
 	uint8_t *pix_base, *pix_ptr, *regs;
-	pen_t *pal_base, *pal_ptr;
+	uint32_t *pal_base, *pal_ptr;
 	uint32_t rommask, src_clipmask, src_wrapmask, dst_wrapmask;
 	int map_scrollx, map_scrolly, ctrl, orientation;
 	int dst_minx, dst_maxx, dst_miny, dst_maxy;

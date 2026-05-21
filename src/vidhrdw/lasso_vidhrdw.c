@@ -334,7 +334,7 @@ static void draw_lasso( struct mame_bitmap *bitmap)
 {
 	const uint8_t *source = lasso_bitmap_ram;
 	int x,y;
-	pen_t pen = Machine->pens[0x3f];
+	uint32_t pen = Machine->pens[0x3f];
 
 
 	for (y = 0; y < 256; y++)

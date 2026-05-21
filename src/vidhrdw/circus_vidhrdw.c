@@ -272,7 +272,7 @@ static void ripcord_draw_skydiver( struct mame_bitmap *bitmap )
 {
 	const struct GfxElement *gfx;
 	const struct rectangle *clip;
-	pen_t *pal_ptr;
+	uint32_t *pal_ptr;
 	uint8_t  *src_lineptr, *src_pixptr;
 	uint16_t *dst_lineptr, *dst_lineend;
 	unsigned int code, color;

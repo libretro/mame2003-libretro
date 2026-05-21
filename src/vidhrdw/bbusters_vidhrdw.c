@@ -159,7 +159,7 @@ static INLINE const uint8_t *get_source_ptr(unsigned int sprite, int dx, int dy,
 
 static void bbusters_draw_block(struct mame_bitmap *dest,int x,int y,int size,int flipx,int flipy,unsigned int sprite,int color,int bank,int block)
 {
-	const pen_t *pal = &Machine->gfx[bank]->colortable[Machine->gfx[bank]->color_granularity * (color % Machine->gfx[bank]->total_colors)];
+	const uint32_t *pal = &Machine->gfx[bank]->colortable[Machine->gfx[bank]->color_granularity * (color % Machine->gfx[bank]->total_colors)];
 	unsigned int xinc=(scale_line_count * 0x10000 ) / size;
 	uint8_t pixel;
 	int x_index;

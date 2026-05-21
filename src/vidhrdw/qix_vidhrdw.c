@@ -236,7 +236,7 @@ WRITE_HANDLER( qix_palettebank_w )
 
 VIDEO_UPDATE( qix )
 {
-	pen_t *pens = &Machine->pens[qix_palettebank * 256];
+	uint32_t *pens = &Machine->pens[qix_palettebank * 256];
 	int y;
 
 	/* draw the bitmap */

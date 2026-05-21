@@ -35,9 +35,9 @@ struct mame_bitmap
 	int rowbytes;		/* bytes per row (including padding) */
 
 	/* functions to render in the correct orientation */
-	void (*plot)(struct mame_bitmap *bitmap,int x,int y,pen_t pen);
-	pen_t (*read)(struct mame_bitmap *bitmap,int x,int y);
-	void (*plot_box)(struct mame_bitmap *bitmap,int x,int y,int width,int height,pen_t pen);
+	void (*plot)(struct mame_bitmap *bitmap,int x,int y,uint32_t pen);
+	uint32_t (*read)(struct mame_bitmap *bitmap,int x,int y);
+	void (*plot_box)(struct mame_bitmap *bitmap,int x,int y,int width,int height,uint32_t pen);
 };
 
 

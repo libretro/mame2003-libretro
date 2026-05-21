@@ -481,7 +481,7 @@ void system32_draw_sprite ( struct mame_bitmap *bitmap, const struct rectangle *
 	uint32_t xdst,ydst;
 	/* um .. probably a better way to do this */
 	struct GfxElement *gfx=Machine->gfx[0];
-	const pen_t *paldata = &gfx->colortable[0];
+	const uint32_t *paldata = &gfx->colortable[0];
 
 	/* if the gfx data is coming from RAM instead of ROM change the pointer */
 	if ( sys32sprite_rambasedgfx ) {

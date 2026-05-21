@@ -873,7 +873,7 @@ void deco16_pdrawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 	int ox,oy,cx,cy;
 	int x_index,y_index,x,y;
 
-	const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
+	const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
 	int source_base = (code % gfx->total_elements) * gfx->height;
 
 	/* check bounds */

@@ -83,13 +83,13 @@ struct RunningMachine
 	/* remapped palette pen numbers. When you write directly to a bitmap in a
 	   non-paletteized mode, use this array to look up the pen number. For example,
 	   if you want to use color #6 in the palette, use pens[6] instead of just 6. */
-	pen_t *					pens;
+	uint32_t *					pens;
 
 	/* lookup table used to map gfx pen numbers to color numbers */
 	uint16_t *				game_colortable;
 
 	/* the above, already remapped through Machine->pens */
-	pen_t *					remapped_colortable;
+	uint32_t *					remapped_colortable;
 
 	/* video color depth: 16, 15 or 32 */
 	int						color_depth;
@@ -138,10 +138,10 @@ struct RunningMachine
 	struct mame_bitmap *	debug_bitmap;
 
 	/* pen array for the debugger, analagous to the pens above */
-	pen_t *					debug_pens;
+	uint32_t *					debug_pens;
 
 	/* colortable mapped through the pens, as for the game */
-	pen_t *					debug_remapped_colortable;
+	uint32_t *					debug_remapped_colortable;
 
 	/* font used by the debugger */
 	struct GfxElement *		debugger_font;

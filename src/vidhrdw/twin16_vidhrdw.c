@@ -108,7 +108,7 @@ WRITE16_HANDLER( twin16_video_register_w )
 static void draw_sprite( /* slow slow slow, but it's ok for now */
 	struct mame_bitmap *bitmap,
 	const uint16_t *pen_data,
-	const pen_t *pal_data,
+	const uint32_t *pal_data,
 	int xpos, int ypos,
 	int width, int height,
 	int flipx, int flipy, int pri )
@@ -224,7 +224,7 @@ static void draw_sprites( struct mame_bitmap *bitmap)
 			int xpos = source[1];
 			int ypos = source[2];
 
-			const pen_t *pal_data = Machine->pens+((attributes&0xf)+0x10)*16;
+			const uint32_t *pal_data = Machine->pens+((attributes&0xf)+0x10)*16;
 			int height	= 16<<((attributes>>6)&0x3);
 			int width	= 16<<((attributes>>4)&0x3);
 			const uint16_t *pen_data = 0;
@@ -353,7 +353,7 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 			*/
 			const uint16_t *gfx_data = gfx_base + (code&0x7ff)*16 + bank_table[(code>>11)&0x3]*0x8000;
 			int color = (code>>13);
-			pen_t *pal_data = Machine->pens + 16*(0x20+color+8*palette);
+			uint32_t *pal_data = Machine->pens + 16*(0x20+color+8*palette);
 
 			{
 				int y;

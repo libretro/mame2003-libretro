@@ -20,7 +20,7 @@
 #define CHARGEN_NUM_CHARS		512		/* max number of characters handled by the chargen */
 
 /* default monochromatic colortable */
-pen_t default_colortable_mono[] =
+uint32_t default_colortable_mono[] =
 {
 	0,1,2,3,
 	0,1,2,3,
@@ -37,7 +37,7 @@ typedef struct {
 	struct mame_bitmap		*bitmap;				/* target bitmap */
 	uint8_t					*videoram;				/* video ram */
 	uint8_t					*spriteram;				/* sprite ram */
-	pen_t					*colortable_mono;		/* monochromatic color table modified at run time */
+	uint32_t					*colortable_mono;		/* monochromatic color table modified at run time */
 	uint8_t					*dirtychar;				/* an array flagging dirty characters */
 	int						chars_are_dirty;		/* master flag to check if theres any dirty character */
 	void 					*scanline_timer;		/* scanline timer */
@@ -297,8 +297,8 @@ static void draw_background( const int num, uint8_t *line_priority )
 	uint8_t scroll_x_coarse, scroll_y_coarse, scroll_y_fine, color_mask;
 	int x, tile_index, start, i;
 
-	const pen_t *color_table;
-	const pen_t *paldata;
+	const uint32_t *color_table;
+	const uint32_t *paldata;
 	const uint8_t *sd;
 
 	/* setup the color mask and colortable to use */
@@ -418,7 +418,7 @@ static void draw_sprites( const int num, uint8_t *line_priority )
 	const int char_modulo = Machine->gfx[gfx_bank]->char_modulo;
 	const int line_modulo = Machine->gfx[gfx_bank]->line_modulo;
 	const uint8_t *sprites = chips[num].spriteram;
-	pen_t *color_table = Machine->gfx[gfx_bank]->colortable;
+	uint32_t *color_table = Machine->gfx[gfx_bank]->colortable;
 	uint8_t *gfx_data = Machine->gfx[gfx_bank]->gfxdata;
 	int *ppu_regs = &chips[num].regs[0];
 
@@ -433,7 +433,7 @@ static void draw_sprites( const int num, uint8_t *line_priority )
 	int drawn;
 	int start;
 
-	const pen_t *paldata;
+	const uint32_t *paldata;
 	const uint8_t *sd;
 
 	/* determine if the sprites are 8x8 or 8x16 */

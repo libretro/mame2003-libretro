@@ -139,7 +139,7 @@ VIDEO_START( thief ){
 VIDEO_UPDATE( thief ){
 	unsigned int offs;
 	int flipscreen = thief_video_control&1;
-	const pen_t *pal_data = Machine->pens;
+	const uint32_t *pal_data = Machine->pens;
 	uint8_t *dirty = dirtybuffer;
 	const uint8_t *source = videoram;
 	struct mame_bitmap *page;

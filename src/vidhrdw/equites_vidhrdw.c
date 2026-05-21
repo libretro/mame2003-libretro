@@ -46,7 +46,7 @@ uint16_t *splndrbt_scrollx, *splndrbt_scrolly;
 
 static void video_init_common(void)
 {
-	pen_t *colortable;
+	uint32_t *colortable;
 	int i;
 
 	colortable = Machine->remapped_colortable;
@@ -280,7 +280,7 @@ MACHINE_INIT( splndrbt )
 // Equites Hardware
 static void equites_update_clut(void)
 {
-	pen_t *colortable;
+	uint32_t *colortable;
 	int i, c;
 
 	colortable = Machine->remapped_colortable;
@@ -399,7 +399,7 @@ VIDEO_UPDATE( equites )
 // Splendor Blast Hardware
 static void splndrbt_update_clut(void)
 {
-	pen_t *colortable;
+	uint32_t *colortable;
 	int c;
 
 	colortable = Machine->remapped_colortable;

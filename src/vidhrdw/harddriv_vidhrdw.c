@@ -478,8 +478,8 @@ VIDEO_EOF( harddriv )
 
 VIDEO_UPDATE( harddriv )
 {
-	pen_t *pens = &Machine->pens[gfx_palettebank * 256];
-	pen_t black = get_black_pen();
+	uint32_t *pens = &Machine->pens[gfx_palettebank * 256];
+	uint32_t black = get_black_pen();
 	uint32_t adjusted_offs;
 	int start, end, x, y;
 	int lzero, rzero, draw;

@@ -137,11 +137,11 @@ int palette_get_total_colors_with_ui(void);
 
 void palette_update_display(struct mame_display *display);
 
-void palette_set_color(pen_t pen, uint8_t r, uint8_t g, uint8_t b);
-void palette_get_color(pen_t pen, uint8_t *r, uint8_t *g, uint8_t *b);
-void palette_set_colors(pen_t color_base, const uint8_t *colors, int color_count);
+void palette_set_color(uint32_t pen, uint8_t r, uint8_t g, uint8_t b);
+void palette_get_color(uint32_t pen, uint8_t *r, uint8_t *g, uint8_t *b);
+void palette_set_colors(uint32_t color_base, const uint8_t *colors, int color_count);
 
-void palette_set_brightness(pen_t pen, double bright);
+void palette_set_brightness(uint32_t pen, double bright);
 void palette_set_shadow_factor(double factor);
 void palette_set_highlight_factor(double factor);
 
@@ -178,7 +178,7 @@ void palette_set_global_brightness(double brightness);
 void palette_set_global_brightness_adjust(double adjustment);
 double palette_get_global_brightness(void);
 
-pen_t get_black_pen(void);
+uint32_t get_black_pen(void);
 
 
 /* here are some functions to handle commonly used palette layouts, so you don't

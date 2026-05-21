@@ -1255,7 +1255,7 @@ static INLINE void f3_drawscanlines(
 		uint32_t orient,
 		int skip_layer_num)
 {
-	pen_t *clut = &Machine->remapped_colortable[0];
+	uint32_t *clut = &Machine->remapped_colortable[0];
 	uint32_t bgcolor=clut[0];
 	int length;
 
@@ -2343,7 +2343,7 @@ static INLINE void f3_drawgfx( struct mame_bitmap *dest_bmp,const struct GfxElem
 
 	if( gfx && gfx->colortable )
 	{
-		const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
+		const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
 //		int palBase = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)] - Machine->remapped_colortable;
 		int source_base = (code % gfx->total_elements) * 16;
 
@@ -2508,7 +2508,7 @@ static INLINE void f3_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct Gfx
 
 	if( gfx && gfx->colortable )
 	{
-		const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
+		const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
 //		int palBase = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)] - Machine->remapped_colortable;
 		int source_base = (code % gfx->total_elements) * 16;
 

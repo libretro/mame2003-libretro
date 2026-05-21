@@ -35,7 +35,7 @@ static void blendbitmaps(
 	if (sy > ey) return;
 
 	{
-		pen_t *paldata = Machine->pens;
+		uint32_t *paldata = Machine->pens;
 		uint32_t *end;
 
 		uint16_t *sd1 = ((uint16_t *)src1->line[0]);								/* source data   */

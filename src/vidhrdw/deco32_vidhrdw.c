@@ -359,7 +359,7 @@ static void deco32_draw_sprite(struct mame_bitmap *dest,const struct rectangle *
 		uint32_t code,uint32_t priority,int flipx,int flipy,int sx,int sy)
 {
 /*	priority = (priority >> 8) & 0x1f;*/
-/*	const pen_t *pal = &gfx->colortable[gfx->color_granularity * (priority % gfx->total_colors)];*/
+/*	const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (priority % gfx->total_colors)];*/
 	const uint8_t *code_base = gfx->gfxdata + (((code % gfx->total_elements) * gfx->height) * gfx->line_modulo);
 	int ox,oy,cx,cy;
 	int x_index,y_index,x,y;
@@ -577,7 +577,7 @@ static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const stru
 	{
 		if( gfx && gfx->colortable )
 		{
-			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
+			const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
 			int source_base = (code % gfx->total_elements) * gfx->height;
 
 /*			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;*/
@@ -1611,10 +1611,10 @@ VIDEO_UPDATE( fghthist )
 
 static void mixDualAlphaSprites( struct mame_bitmap *bitmap, const struct rectangle *clip, const struct GfxElement *gfx0, const struct GfxElement *gfx1, int mixAlphaTilemap)
 {
-	const pen_t *pens = Machine->pens;
-	const pen_t *pal0 = &pens[1024]; /* gfx0->color_base -> 3*/
-	const pen_t *pal1 = &pens[1536]; /* gfx1->color_base -> 4*/
-	const pen_t *pal2 = &pens[(deco32_pri&1) ? 0 : 512]; /* Machine->gfx[(deco32_pri&1) ? 1 : 2]->color_base -> 0 - 512*/
+	const uint32_t *pens = Machine->pens;
+	const uint32_t *pal0 = &pens[1024]; /* gfx0->color_base -> 3*/
+	const uint32_t *pal1 = &pens[1536]; /* gfx1->color_base -> 4*/
+	const uint32_t *pal2 = &pens[(deco32_pri&1) ? 0 : 512]; /* Machine->gfx[(deco32_pri&1) ? 1 : 2]->color_base -> 0 - 512*/
 	int x,y;
 
 	/* Mix sprites into main bitmap, based on priority & alpha */

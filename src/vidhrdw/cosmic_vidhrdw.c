@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 
-static pen_t (*map_color)(uint8_t x, uint8_t y);
+static uint32_t (*map_color)(uint8_t x, uint8_t y);
 
 static int color_registers[3];
 static int background_enable;
@@ -24,10 +24,10 @@ WRITE_HANDLER( cosmic_color_register_w )
 }
 
 
-static pen_t panic_map_color(uint8_t x, uint8_t y)
+static uint32_t panic_map_color(uint8_t x, uint8_t y)
 {
 	uint32_t offs;
-	pen_t pen;
+	uint32_t pen;
 
 
 	offs = (color_registers[0] << 9) | (color_registers[2] << 10) | ((x >> 4) << 5) | (y >> 3);
@@ -39,10 +39,10 @@ static pen_t panic_map_color(uint8_t x, uint8_t y)
 	return pen & 0x0f;
 }
 
-static pen_t cosmica_map_color(uint8_t x, uint8_t y)
+static uint32_t cosmica_map_color(uint8_t x, uint8_t y)
 {
 	uint32_t offs;
-	pen_t pen;
+	uint32_t pen;
 
 
 	offs = (color_registers[0] << 9) | ((x >> 4) << 5) | (y >> 3);
@@ -54,10 +54,10 @@ static pen_t cosmica_map_color(uint8_t x, uint8_t y)
 	return pen & 0x07;
 }
 
-static pen_t cosmicg_map_color(uint8_t x, uint8_t y)
+static uint32_t cosmicg_map_color(uint8_t x, uint8_t y)
 {
 	uint32_t offs;
-	pen_t pen;
+	uint32_t pen;
 
 
 	offs = (color_registers[0] << 8) | (color_registers[1] << 9) | ((y >> 4) << 4) | (x >> 4);
@@ -68,10 +68,10 @@ static pen_t cosmicg_map_color(uint8_t x, uint8_t y)
 	return pen & 0x0f;
 }
 
-static pen_t magspot2_map_color(uint8_t x, uint8_t y)
+static uint32_t magspot2_map_color(uint8_t x, uint8_t y)
 {
 	uint32_t offs;
-	pen_t pen;
+	uint32_t pen;
 
 
 	offs = (color_registers[0] << 9) | ((x >> 3) << 4) | (y >> 4);
@@ -272,7 +272,7 @@ static void draw_bitmap(struct mame_bitmap *bitmap)
 			uint8_t x = offs << 3;
 			uint8_t y = offs >> 5;
 
-			pen_t pen = Machine->pens[map_color(x, y)];
+			uint32_t pen = Machine->pens[map_color(x, y)];
 
 
 			for (i = 0; i < 8; i++)
@@ -444,7 +444,7 @@ static void devzone_draw_grid(struct mame_bitmap *bitmap)
 			{
 				if (!(vert_data & horz_data & 0x80))	/* NAND gate */
 				{
-					pen_t pen = Machine->pens[4];	/* blue */
+					uint32_t pen = Machine->pens[4];	/* blue */
 
 					if (flip_screen)
 						plot_pixel(bitmap, 255-x, 255-y, pen);
@@ -574,7 +574,7 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 
 			if (color != 0)
 			{
-				pen_t pen = Machine->pens[color];
+				uint32_t pen = Machine->pens[color];
 
 				if (flip_screen)
 					plot_pixel(bitmap, 255-x, 255-y, pen);

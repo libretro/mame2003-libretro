@@ -455,8 +455,8 @@ VIDEO_EOF( firetrk )
 		{
 			for (x = car[i].x; x < car[i].x + width; x++)
 			{
-				pen_t a;
-				pen_t b;
+				uint32_t a;
+				uint32_t b;
 
 				if (x < playfield_window.min_x)
 					continue;

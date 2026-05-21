@@ -283,7 +283,7 @@ void draw_background(struct mame_bitmap *bitmap, const struct rectangle *cliprec
 		int stop3 = latches[11] >> 4;
 		uint8_t *mixer = &background_mixer[(latches[12] << 4) & 0xf0];
 		uint8_t scanline[VISIBLE_X_MAX];
-		pen_t *pens;
+		uint32_t *pens;
 
 		/* the cocktail flip flag controls whether we count up or down in X */
 		if (!exerion_cocktail_flip)

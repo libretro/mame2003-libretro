@@ -117,8 +117,8 @@ static void triplhnt_draw_sprites(struct mame_bitmap* bitmap, const struct recta
 			{
 				for (y = rect.min_y; y <= rect.max_y; y++)
 				{
-					pen_t a = read_pixel(helper, x, y);
-					pen_t b = read_pixel(bitmap, x, y);
+					uint32_t a = read_pixel(helper, x, y);
+					uint32_t b = read_pixel(bitmap, x, y);
 
 					if (a == 2 && b == 7)
 					{

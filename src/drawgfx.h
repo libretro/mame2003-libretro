@@ -64,7 +64,7 @@ struct GfxElement
 	uint16_t color_granularity;	/* number of colors for each color code */
 							/* (for example, 4 for 2 bitplanes gfx) */
 	uint32_t total_colors;
-	pen_t *colortable;	/* map color codes to screen pens */
+	uint32_t *colortable;	/* map color codes to screen pens */
 	uint32_t *pen_usage;	/* an array of total_elements entries. */
 						/* It is a table of the pens each character uses */
 						/* (bit 0 = pen 0, and so on). This is used by */
@@ -173,10 +173,10 @@ void copyscrollbitmap(struct mame_bitmap *dest,struct mame_bitmap *src,
 void copyscrollbitmap_remap(struct mame_bitmap *dest,struct mame_bitmap *src,
 		int rows,const int *rowscroll,int cols,const int *colscroll,
 		const struct rectangle *clip,int transparency,int transparent_color);
-void draw_scanline8(struct mame_bitmap *bitmap,int x,int y,int length,const uint8_t *src,pen_t *pens,int transparent_pen);
-void draw_scanline16(struct mame_bitmap *bitmap,int x,int y,int length,const uint16_t *src,pen_t *pens,int transparent_pen);
-void pdraw_scanline8(struct mame_bitmap *bitmap,int x,int y,int length,const uint8_t *src,pen_t *pens,int transparent_pen,int pri);
-void pdraw_scanline16(struct mame_bitmap *bitmap,int x,int y,int length,const uint16_t *src,pen_t *pens,int transparent_pen,int pri);
+void draw_scanline8(struct mame_bitmap *bitmap,int x,int y,int length,const uint8_t *src,uint32_t *pens,int transparent_pen);
+void draw_scanline16(struct mame_bitmap *bitmap,int x,int y,int length,const uint16_t *src,uint32_t *pens,int transparent_pen);
+void pdraw_scanline8(struct mame_bitmap *bitmap,int x,int y,int length,const uint8_t *src,uint32_t *pens,int transparent_pen,int pri);
+void pdraw_scanline16(struct mame_bitmap *bitmap,int x,int y,int length,const uint16_t *src,uint32_t *pens,int transparent_pen,int pri);
 void extract_scanline8(struct mame_bitmap *bitmap,int x,int y,int length,uint8_t *dst);
 void extract_scanline16(struct mame_bitmap *bitmap,int x,int y,int length,uint16_t *dst);
 
@@ -257,7 +257,7 @@ void copyrozbitmap(struct mame_bitmap *dest,struct mame_bitmap *src,
 		uint32_t startx,uint32_t starty,int incxx,int incxy,int incyx,int incyy,int wraparound,
 		const struct rectangle *clip,int transparency,int transparent_color,uint32_t priority);
 
-void fillbitmap(struct mame_bitmap *dest,pen_t pen,const struct rectangle *clip);
+void fillbitmap(struct mame_bitmap *dest,uint32_t pen,const struct rectangle *clip);
 void drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,int scalex,int scaley);

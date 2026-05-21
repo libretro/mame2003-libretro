@@ -171,7 +171,7 @@ mydrawgfxzoom(
 	}
 	if( gfx && gfx->colortable )
 	{
-		const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
+		const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
 		uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 		int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 		int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;

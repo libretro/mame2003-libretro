@@ -291,7 +291,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 
 static void draw_bitmap(struct mame_bitmap *bitmap, const struct rectangle *cliprect)
 {
-	pen_t *pens = &Machine->pens[512 + (videoflags & 15) * 16];
+	uint32_t *pens = &Machine->pens[512 + (videoflags & 15) * 16];
 	int x, y;
 
 	/* draw any non-transparent scanlines from the VRAM directly */

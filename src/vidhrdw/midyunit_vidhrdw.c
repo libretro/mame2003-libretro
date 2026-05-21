@@ -39,7 +39,7 @@ static uint8_t	autoerase_enable;
 
 /* palette-related variables */
 static uint32_t	palette_mask;
-static pen_t *	pen_map;
+static uint32_t *	pen_map;
 
 /* videoram-related variables */
 static uint16_t *	local_videoram;

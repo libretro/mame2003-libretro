@@ -48,12 +48,12 @@ static struct tilemap *bg_tilemap, *fg_tilemap;
 
 ***************************************************************************/
 
-static void set_color(pen_t pen, int i)
+static void set_color(uint32_t pen, int i)
 {
 	uint8_t r,g,b;
 	int bit0, bit1, bit2, bit3;
 
-	pen_t total = Machine->drv->total_colors;
+	uint32_t total = Machine->drv->total_colors;
 
 	bit0 = (fastfred_color_prom[i + 0*total] >> 0) & 0x01;
 	bit1 = (fastfred_color_prom[i + 0*total] >> 1) & 0x01;
@@ -76,7 +76,7 @@ static void set_color(pen_t pen, int i)
 
 PALETTE_INIT( fastfred )
 {
-	pen_t i;
+	uint32_t i;
 	#define TOTAL_COLORS(gfxn) (Machine->gfx[gfxn]->total_colors * Machine->gfx[gfxn]->color_granularity)
 	#define COLOR(gfxn,offs) (colortable[Machine->drv->gfxdecodeinfo[gfxn].color_codes_start + offs])
 
@@ -92,7 +92,7 @@ PALETTE_INIT( fastfred )
 	/* characters and sprites use the same palette */
 	for (i = 0; i < TOTAL_COLORS(0); i++)
 	{
-		pen_t color;
+		uint32_t color;
 
 		if ((i & 0x07) == 0)
 			color = 0;

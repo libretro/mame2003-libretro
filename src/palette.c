@@ -59,8 +59,8 @@ static uint16_t shadow_factor, highlight_factor;
 static double global_brightness, global_brightness_adjust, global_gamma;
 
 static uint8_t colormode, highlight_method;
-static pen_t total_colors;
-static pen_t total_colors_with_ui;
+static uint32_t total_colors;
+static uint32_t total_colors_with_ui;
 
 static uint8_t color_correct_table[(MAX_PEN_BRIGHTNESS * MAX_PEN_BRIGHTNESS) >> PEN_BRIGHTNESS_BITS];
 
@@ -73,7 +73,7 @@ static uint8_t color_correct_table[(MAX_PEN_BRIGHTNESS * MAX_PEN_BRIGHTNESS) >> 
 static int palette_alloc(void);
 static void palette_reset(void);
 static void recompute_adjusted_palette(int brightness_or_gamma_changed);
-static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright);
+static void internal_modify_pen(uint32_t pen, rgb_t color, int pen_bright);
 
 
 
@@ -738,7 +738,7 @@ int palette_init(void)
 	/* now compute the remapped_colortable */
 	for (i = 0; i < Machine->drv->color_table_len; i++)
 	{
-		pen_t color = Machine->game_colortable[i];
+		uint32_t color = Machine->game_colortable[i];
 
 		/* check for invalid colors set by Machine->drv->init_palette */
 		if (color < total_colors)
@@ -822,7 +822,7 @@ void palette_update_display(struct mame_display *display)
 	pen and recompute its adjusted RGB value
 -------------------------------------------------*/
 
-static void internal_modify_single_pen(pen_t pen, rgb_t color, int pen_bright)
+static void internal_modify_single_pen(uint32_t pen, rgb_t color, int pen_bright)
 {
 	rgb_t adjusted_color;
 
@@ -868,7 +868,7 @@ static void internal_modify_single_pen(pen_t pen, rgb_t color, int pen_bright)
 	its corresponding shadow/highlight
 -------------------------------------------------*/
 
-static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright) /** new highlight operation*/
+static void internal_modify_pen(uint32_t pen, rgb_t color, int pen_bright) /** new highlight operation*/
 {
 #define FMAX (0xff<<PEN_BRIGHTNESS_BITS)
 
@@ -1017,7 +1017,7 @@ static void palette_reset(void)
 	entry
 -------------------------------------------------*/
 
-void palette_set_color(pen_t pen, uint8_t r, uint8_t g, uint8_t b)
+void palette_set_color(uint32_t pen, uint8_t r, uint8_t g, uint8_t b)
 {
 	/* make sure we're in range */
 	if (pen >= total_colors)
@@ -1031,7 +1031,7 @@ void palette_set_color(pen_t pen, uint8_t r, uint8_t g, uint8_t b)
 }
 
 /* handy wrapper for palette_set_color */
-void palette_set_colors(pen_t color_base, const uint8_t *colors, int color_count)
+void palette_set_colors(uint32_t color_base, const uint8_t *colors, int color_count)
 {
         while(color_count--)
         {
@@ -1045,7 +1045,7 @@ void palette_set_colors(pen_t color_base, const uint8_t *colors, int color_count
 	entry
 -------------------------------------------------*/
 
-void palette_get_color(pen_t pen, uint8_t *r, uint8_t *g, uint8_t *b)
+void palette_get_color(uint32_t pen, uint8_t *r, uint8_t *g, uint8_t *b)
 {
 	/* special case the black pen */
 	if (pen == get_black_pen())
@@ -1071,7 +1071,7 @@ void palette_get_color(pen_t pen, uint8_t *r, uint8_t *g, uint8_t *b)
 	brightness factor
 -------------------------------------------------*/
 
-void palette_set_brightness(pen_t pen, double bright)
+void palette_set_brightness(uint32_t pen, double bright)
 {
 	/* compute the integral brightness value */
 	int brightval = (int)(bright * (double)(1 << PEN_BRIGHTNESS_BITS));
@@ -1212,7 +1212,7 @@ double palette_get_global_brightness(void)
 	fillbitmap() the background with black
 -------------------------------------------------*/
 
-pen_t get_black_pen(void)
+uint32_t get_black_pen(void)
 {
 	return Machine->uifont->colortable[0];
 }
@@ -1375,7 +1375,7 @@ WRITE_HANDLER( paletteram_BBGGRRII_w )
 }
 
 
-static INLINE void changecolor_xxxxBBBBGGGGRRRR(pen_t color,int data)
+static INLINE void changecolor_xxxxBBBBGGGGRRRR(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1422,7 +1422,7 @@ WRITE16_HANDLER( paletteram16_xxxxBBBBGGGGRRRR_word_w )
 }
 
 
-static INLINE void changecolor_xxxxBBBBRRRRGGGG(pen_t color,int data)
+static INLINE void changecolor_xxxxBBBBRRRRGGGG(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1469,7 +1469,7 @@ WRITE16_HANDLER( paletteram16_xxxxBBBBRRRRGGGG_word_w )
 }
 
 
-static INLINE void changecolor_xxxxRRRRBBBBGGGG(pen_t color,int data)
+static INLINE void changecolor_xxxxRRRRBBBBGGGG(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1498,7 +1498,7 @@ WRITE_HANDLER( paletteram_xxxxRRRRBBBBGGGG_split2_w )
 }
 
 
-static INLINE void changecolor_xxxxRRRRGGGGBBBB(pen_t color,int data)
+static INLINE void changecolor_xxxxRRRRGGGGBBBB(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1533,7 +1533,7 @@ WRITE16_HANDLER( paletteram16_xxxxRRRRGGGGBBBB_word_w )
 }
 
 
-static INLINE void changecolor_RRRRGGGGBBBBxxxx(pen_t color,int data)
+static INLINE void changecolor_RRRRGGGGBBBBxxxx(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1574,7 +1574,7 @@ WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBxxxx_word_w )
 }
 
 
-static INLINE void changecolor_BBBBGGGGRRRRxxxx(pen_t color,int data)
+static INLINE void changecolor_BBBBGGGGRRRRxxxx(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1615,7 +1615,7 @@ WRITE16_HANDLER( paletteram16_BBBBGGGGRRRRxxxx_word_w )
 }
 
 
-static INLINE void changecolor_xBBBBBGGGGGRRRRR(pen_t color,int data)
+static INLINE void changecolor_xBBBBBGGGGGRRRRR(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1662,7 +1662,7 @@ WRITE16_HANDLER( paletteram16_xBBBBBGGGGGRRRRR_word_w )
 }
 
 
-static INLINE void changecolor_xRRRRRGGGGGBBBBB(pen_t color,int data)
+static INLINE void changecolor_xRRRRRGGGGGBBBBB(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1691,7 +1691,7 @@ WRITE16_HANDLER( paletteram16_xRRRRRGGGGGBBBBB_word_w )
 }
 
 
-static INLINE void changecolor_xGGGGGRRRRRBBBBB(pen_t color,int data)
+static INLINE void changecolor_xGGGGGRRRRRBBBBB(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1714,7 +1714,7 @@ WRITE16_HANDLER( paletteram16_xGGGGGRRRRRBBBBB_word_w )
 }
 
 
-static INLINE void changecolor_xGGGGGBBBBBRRRRR(pen_t color,int data)
+static INLINE void changecolor_xGGGGGBBBBBRRRRR(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1737,7 +1737,7 @@ WRITE16_HANDLER( paletteram16_xGGGGGBBBBBRRRRR_word_w )
 }
 
 
-static INLINE void changecolor_RRRRRGGGGGBBBBBx(pen_t color,int data)
+static INLINE void changecolor_RRRRRGGGGGBBBBBx(uint32_t color,int data)
 {
 	int r,g,b;
 
@@ -1766,7 +1766,7 @@ WRITE16_HANDLER( paletteram16_RRRRRGGGGGBBBBBx_word_w )
 }
 
 
-static INLINE void changecolor_IIIIRRRRGGGGBBBB(pen_t color,int data)
+static INLINE void changecolor_IIIIRRRRGGGGBBBB(uint32_t color,int data)
 {
 	int i,r,g,b;
 
@@ -1792,7 +1792,7 @@ WRITE16_HANDLER( paletteram16_IIIIRRRRGGGGBBBB_word_w )
 }
 
 
-static INLINE void changecolor_RRRRGGGGBBBBIIII(pen_t color,int data)
+static INLINE void changecolor_RRRRGGGGBBBBIIII(uint32_t color,int data)
 {
 	int i,r,g,b;
 
@@ -1864,7 +1864,7 @@ WRITE16_HANDLER( paletteram16_xbgr_word_w )
 }
 
 
-static INLINE void changecolor_RRRRGGGGBBBBRGBx(pen_t color,int data)
+static INLINE void changecolor_RRRRGGGGBBBBRGBx(uint32_t color,int data)
 {
 	int r,g,b;
 

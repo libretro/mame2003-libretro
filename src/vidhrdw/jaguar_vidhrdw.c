@@ -203,7 +203,7 @@ static uint16_t gpu_regs[GPU_REGS];
 static void *vi_timer;
 static uint8_t cpu_irq_state;
 
-static pen_t *pen_table;
+static uint32_t *pen_table;
 
 
 
@@ -747,7 +747,7 @@ VIDEO_START( cojag )
 	if (jagobj_init())
 		return 1;
 
-	pen_table = auto_malloc(65536 * sizeof(pen_t));
+	pen_table = auto_malloc(65536 * sizeof(uint32_t));
 	if (!pen_table)
 		return 1;
 

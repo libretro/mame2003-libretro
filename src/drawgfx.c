@@ -16,9 +16,9 @@
 #endif
 
 
-typedef void (*plot_pixel_proc)(struct mame_bitmap *bitmap,int x,int y,pen_t pen);
-typedef pen_t (*read_pixel_proc)(struct mame_bitmap *bitmap,int x,int y);
-typedef void (*plot_box_proc)(struct mame_bitmap *bitmap,int x,int y,int width,int height,pen_t pen);
+typedef void (*plot_pixel_proc)(struct mame_bitmap *bitmap,int x,int y,uint32_t pen);
+typedef uint32_t (*read_pixel_proc)(struct mame_bitmap *bitmap,int x,int y);
+typedef void (*plot_box_proc)(struct mame_bitmap *bitmap,int x,int y,int width,int height,uint32_t pen);
 
 
 uint8_t gfx_drawmode_table[256];
@@ -554,7 +554,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata,uint8_t *pridata,uint32_t pmask
+#define COLOR_ARG const uint32_t *paldata,uint8_t *pridata,uint32_t pmask
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) { if (((1 << (pridata[dest] & 0x1f)) & pmask) == 0) { if (pridata[dest] & 0x80) { dstdata[dest] = palette_shadow_table[n];} else { dstdata[dest] = (n);} } pridata[dest] = (pridata[dest] & 0x7f) | afterdrawmask; }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_pri8 args body
@@ -576,7 +576,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata
+#define COLOR_ARG const uint32_t *paldata
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) {dstdata[dest] = (n);}
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##8 args body
@@ -647,7 +647,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata,uint8_t *pridata,uint32_t pmask
+#define COLOR_ARG const uint32_t *paldata,uint8_t *pridata,uint32_t pmask
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) { if (((1 << (pridata[dest] & 0x1f)) & pmask) == 0) { if (pridata[dest] & 0x80) { dstdata[dest] = palette_shadow_table[n];} else { dstdata[dest] = (n);} } pridata[dest] = (pridata[dest] & 0x7f) | afterdrawmask; }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_pri16 args body
@@ -669,7 +669,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata
+#define COLOR_ARG const uint32_t *paldata
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) {dstdata[dest] = (n);}
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##16 args body
@@ -747,7 +747,7 @@ static INLINE uint32_t SHADOW32(uint32_t c) {
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata,uint8_t *pridata,uint32_t pmask
+#define COLOR_ARG const uint32_t *paldata,uint8_t *pridata,uint32_t pmask
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) { uint8_t r8=pridata[dest]; if(!(1<<(r8&0x1f)&pmask)){ if(afterdrawmask){ r8&=0x7f; r8|=0x1f; dstdata[dest]=(n); pridata[dest]=r8; } else if(!(r8&0x80)){ dstdata[dest]=SHADOW32(n); pridata[dest]|=0x80; } } }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_pri32 args body
@@ -769,7 +769,7 @@ static INLINE uint32_t SHADOW32(uint32_t c) {
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata
+#define COLOR_ARG const uint32_t *paldata
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) {dstdata[dest] = (n);}
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##32 args body
@@ -1277,7 +1277,7 @@ void copyrozbitmap(struct mame_bitmap *dest,struct mame_bitmap *src,
 
 
 /* fill a bitmap using the specified pen */
-void fillbitmap(struct mame_bitmap *dest,pen_t pen,const struct rectangle *clip)
+void fillbitmap(struct mame_bitmap *dest,uint32_t pen,const struct rectangle *clip)
 {
 	int sx,sy,ex,ey,y;
 
@@ -1417,7 +1417,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 	{
 		if( gfx && gfx->colortable )
 		{
-			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
+			const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
 			uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
@@ -2009,7 +2009,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 	{
 		if( gfx && gfx->colortable )
 		{
-			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
+			const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
 			uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
@@ -2766,7 +2766,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 	{
 		if( gfx && gfx->colortable )
 		{
-			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
+			const uint32_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
 			uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
@@ -3461,23 +3461,23 @@ void mdrawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 	profiler_mark(PROFILER_END);
 }
 
-void plot_pixel2(struct mame_bitmap *bitmap1,struct mame_bitmap *bitmap2,int x,int y,pen_t pen)
+void plot_pixel2(struct mame_bitmap *bitmap1,struct mame_bitmap *bitmap2,int x,int y,uint32_t pen)
 {
 	plot_pixel(bitmap1, x, y, pen);
 	plot_pixel(bitmap2, x, y, pen);
 }
 
-static void pp_8(struct mame_bitmap *b,int x,int y,pen_t p)  { ((uint8_t *)b->line[y])[x] = p; }
-static void pp_16(struct mame_bitmap *b,int x,int y,pen_t p)  { ((uint16_t *)b->line[y])[x] = p; }
-static void pp_32(struct mame_bitmap *b,int x,int y,pen_t p)  { ((uint32_t *)b->line[y])[x] = p; }
+static void pp_8(struct mame_bitmap *b,int x,int y,uint32_t p)  { ((uint8_t *)b->line[y])[x] = p; }
+static void pp_16(struct mame_bitmap *b,int x,int y,uint32_t p)  { ((uint16_t *)b->line[y])[x] = p; }
+static void pp_32(struct mame_bitmap *b,int x,int y,uint32_t p)  { ((uint32_t *)b->line[y])[x] = p; }
 
-static pen_t rp_8(struct mame_bitmap *b,int x,int y)  { return ((uint8_t *)b->line[y])[x]; }
-static pen_t rp_16(struct mame_bitmap *b,int x,int y)  { return ((uint16_t *)b->line[y])[x]; }
-static pen_t rp_32(struct mame_bitmap *b,int x,int y)  { return ((uint32_t *)b->line[y])[x]; }
+static uint32_t rp_8(struct mame_bitmap *b,int x,int y)  { return ((uint8_t *)b->line[y])[x]; }
+static uint32_t rp_16(struct mame_bitmap *b,int x,int y)  { return ((uint16_t *)b->line[y])[x]; }
+static uint32_t rp_32(struct mame_bitmap *b,int x,int y)  { return ((uint32_t *)b->line[y])[x]; }
 
-static void pb_8(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint8_t *)b->line[y])[x] = p; x++; } y++; } }
-static void pb_16(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint16_t *)b->line[y])[x] = p; x++; } y++; } }
-static void pb_32(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint32_t *)b->line[y])[x] = p; x++; } y++; } }
+static void pb_8(struct mame_bitmap *b,int x,int y,int w,int h,uint32_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint8_t *)b->line[y])[x] = p; x++; } y++; } }
+static void pb_16(struct mame_bitmap *b,int x,int y,int w,int h,uint32_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint16_t *)b->line[y])[x] = p; x++; } y++; } }
+static void pb_32(struct mame_bitmap *b,int x,int y,int w,int h,uint32_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint32_t *)b->line[y])[x] = p; x++; } y++; } }
 
 
 void set_pixel_functions(struct mame_bitmap *bitmap)
@@ -4846,7 +4846,7 @@ DECLARE(blockmove_NtoN_opaque_noremap_flipx,(
 DECLARE(blockmove_NtoN_opaque_remap,(
 		const DATA_TYPE *srcdata,int srcwidth,int srcheight,int srcmodulo,
 		DATA_TYPE *dstdata,int dstmodulo,
-		const pen_t *paldata),
+		const uint32_t *paldata),
 {
 	DATA_TYPE *end;
 
@@ -4881,7 +4881,7 @@ DECLARE(blockmove_NtoN_opaque_remap,(
 DECLARE(blockmove_NtoN_opaque_remap_flipx,(
 		const DATA_TYPE *srcdata,int srcwidth,int srcheight,int srcmodulo,
 		DATA_TYPE *dstdata,int dstmodulo,
-		const pen_t *paldata),
+		const uint32_t *paldata),
 {
 	DATA_TYPE *end;
 
@@ -4989,7 +4989,7 @@ DECLARE(blockmove_NtoN_blend_noremap_flipx,(
 DECLARE(blockmove_NtoN_blend_remap,(
 		const DATA_TYPE *srcdata,int srcwidth,int srcheight,int srcmodulo,
 		DATA_TYPE *dstdata,int dstmodulo,
-		const pen_t *paldata,int srcshift),
+		const uint32_t *paldata,int srcshift),
 {
 	DATA_TYPE *end;
 
@@ -5027,7 +5027,7 @@ DECLARE(blockmove_NtoN_blend_remap,(
 DECLARE(blockmove_NtoN_blend_remap_flipx,(
 		const DATA_TYPE *srcdata,int srcwidth,int srcheight,int srcmodulo,
 		DATA_TYPE *dstdata,int dstmodulo,
-		const pen_t *paldata,int srcshift),
+		const uint32_t *paldata,int srcshift),
 {
 	DATA_TYPE *end;
 
@@ -5108,7 +5108,7 @@ DECLARE(drawgfx_core,(
 		int dw = ex-sx+1;										/* dest width */
 		int dh = ey-sy+1;										/* dest height */
 		int dm = ((DATA_TYPE *)dest->line[1])-((DATA_TYPE *)dest->line[0]);	/* dest modulo */
-		const pen_t *paldata = &gfx->colortable[gfx->color_granularity * color];
+		const uint32_t *paldata = &gfx->colortable[gfx->color_granularity * color];
 		uint8_t *pribuf = (pri_buffer) ? ((uint8_t *)pri_buffer->line[sy]) + sx : NULL;
 
 		/* optimizations for 1:1 mapping */
@@ -5657,7 +5657,7 @@ DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbi
 
 DECLAREG(draw_scanline, (
 		struct mame_bitmap *bitmap,int x,int y,int length,
-		const DATA_TYPE *src,pen_t *pens,int transparent_pen),
+		const DATA_TYPE *src,uint32_t *pens,int transparent_pen),
 {
 	/* 8bpp destination */
 	if (bitmap->depth == 8)
@@ -5800,7 +5800,7 @@ DECLAREG(draw_scanline, (
 
 DECLAREG(pdraw_scanline, (
 		struct mame_bitmap *bitmap,int x,int y,int length,
-		const DATA_TYPE *src,pen_t *pens,int transparent_pen,int pri),
+		const DATA_TYPE *src,uint32_t *pens,int transparent_pen,int pri),
 {
 	/* 8bpp destination */
 	if (bitmap->depth == 8)

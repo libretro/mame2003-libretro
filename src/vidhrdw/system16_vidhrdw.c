@@ -223,7 +223,7 @@ static void draw_sprite( //*
 	struct mame_bitmap *bitmap,
 	const struct rectangle *cliprect,
 	const unsigned char *addr, int pitch,
-	const pen_t *paldata,
+	const uint32_t *paldata,
 	int x0, int y0, int screen_width, int screen_height,
 	int width, int height,
 	int flipx, int flipy,
@@ -231,7 +231,7 @@ static void draw_sprite( //*
 	int shadow,
 	int shadow_pen, int eos )
 {
-	const pen_t *shadow_base = Machine->gfx[0]->colortable + (Machine->drv->total_colors/2);
+	const uint32_t *shadow_base = Machine->gfx[0]->colortable + (Machine->drv->total_colors/2);
 	const uint8_t *source;
 	int full_shadow=shadow&SYS16_SPR_SHADOW;
 	int partial_shadow=shadow&SYS16_SPR_PARTIAL_SHADOW;
@@ -362,7 +362,7 @@ static void draw_sprite( //*
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int b3d ) //*
 {
-	const pen_t *base_pal = Machine->gfx[0]->colortable;
+	const uint32_t *base_pal = Machine->gfx[0]->colortable;
 	const unsigned char *base_gfx = memory_region(REGION_GFX2);
 	const int gfx_rom_size = memory_region_length(REGION_GFX2);
 	const uint16_t *source = sys16_spriteram;
@@ -1211,8 +1211,8 @@ static void render_gr(struct mame_bitmap *bitmap,const struct rectangle *cliprec
 	int yflip=0, ypos;
 	int dx=1,xoff=0;
 
-	pen_t *paldata1 = Machine->gfx[0]->colortable + sys16_gr_palette;
-	pen_t *paldata2 = Machine->gfx[0]->colortable + sys16_gr_palette_default;
+	uint32_t *paldata1 = Machine->gfx[0]->colortable + sys16_gr_palette;
+	uint32_t *paldata2 = Machine->gfx[0]->colortable + sys16_gr_palette_default;
 
 #if 0
 if( keyboard_pressed( KEYCODE_S ) ){
@@ -1410,8 +1410,8 @@ static void render_grv2(struct mame_bitmap *bitmap,const struct rectangle *clipr
 
 	int second_road = sys16_gr_second_road[0];
 
-	pen_t *paldata1 = Machine->gfx[0]->colortable + sys16_gr_palette;
-	pen_t *paldata2 = Machine->gfx[0]->colortable + sys16_gr_palette_default;
+	uint32_t *paldata1 = Machine->gfx[0]->colortable + sys16_gr_palette;
+	uint32_t *paldata2 = Machine->gfx[0]->colortable + sys16_gr_palette_default;
 
 	priority=priority << 11;
 

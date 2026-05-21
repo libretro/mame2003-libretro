@@ -427,7 +427,7 @@ static void pdo16np( uint16_t *dest, const uint16_t *source, int count, uint8_t 
 static void pdo15( uint16_t *dest, const uint16_t *source, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		dest[i] = clut[source[i]];
@@ -439,7 +439,7 @@ static void pdo15( uint16_t *dest, const uint16_t *source, int count, uint8_t *p
 static void pdo32( uint32_t *dest, const uint16_t *source, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		dest[i] = clut[source[i]];
@@ -454,7 +454,7 @@ static void npdo32( uint32_t *dest, const uint16_t *source, int count, uint8_t *
 	int oddcount = count & 3;
 	int unrcount = count & ~3;
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<oddcount; i++ )
 	{
 		dest[i] = clut[source[i]];
@@ -530,7 +530,7 @@ static void pdt16np( uint16_t *dest, const uint16_t *source, const uint8_t *pMas
 static void pdt15( uint16_t *dest, const uint16_t *source, const uint8_t *pMask, int mask, int value, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		if( (pMask[i]&mask)==value )
@@ -545,7 +545,7 @@ static void pdt15( uint16_t *dest, const uint16_t *source, const uint8_t *pMask,
 static void pdt32( uint32_t *dest, const uint16_t *source, const uint8_t *pMask, int mask, int value, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		if( (pMask[i]&mask)==value )
@@ -563,7 +563,7 @@ static void npdt32( uint32_t *dest, const uint16_t *source, const uint8_t *pMask
 	int oddcount = count & 3;
 	int unrcount = count & ~3;
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 
 	for( i=0; i<oddcount; i++ )
 	{
@@ -585,7 +585,7 @@ static void npdt32( uint32_t *dest, const uint16_t *source, const uint8_t *pMask
 static void pbo15( uint16_t *dest, const uint16_t *source, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		dest[i] = alpha_blend16(dest[i], clut[source[i]]);
@@ -597,7 +597,7 @@ static void pbo15( uint16_t *dest, const uint16_t *source, int count, uint8_t *p
 static void pbo32( uint32_t *dest, const uint16_t *source, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		dest[i] = alpha_blend32(dest[i], clut[source[i]]);
@@ -612,7 +612,7 @@ static void npbo32( uint32_t *dest, const uint16_t *source, int count, uint8_t *
 	int oddcount = count & 3;
 	int unrcount = count & ~3;
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<oddcount; i++ )
 	{
 		dest[i] = alpha_blend32(dest[i], clut[source[i]]);
@@ -633,7 +633,7 @@ static void npbo32( uint32_t *dest, const uint16_t *source, int count, uint8_t *
 static void pbt15( uint16_t *dest, const uint16_t *source, const uint8_t *pMask, int mask, int value, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		if( (pMask[i]&mask)==value )
@@ -648,7 +648,7 @@ static void pbt15( uint16_t *dest, const uint16_t *source, const uint8_t *pMask,
 static void pbt32( uint32_t *dest, const uint16_t *source, const uint8_t *pMask, int mask, int value, int count, uint8_t *pri, uint32_t pcode )
 {
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 	for( i=0; i<count; i++ )
 	{
 		if( (pMask[i]&mask)==value )
@@ -666,7 +666,7 @@ static void npbt32( uint32_t *dest, const uint16_t *source, const uint8_t *pMask
 	int oddcount = count & 3;
 	int unrcount = count & ~3;
 	int i;
-	pen_t *clut = &Machine->remapped_colortable[pcode >> 16];
+	uint32_t *clut = &Machine->remapped_colortable[pcode >> 16];
 
 	for( i=0; i<oddcount; i++ )
 	{
@@ -685,7 +685,7 @@ static void npbt32( uint32_t *dest, const uint16_t *source, const uint8_t *pMask
 
 /***********************************************************************************/
 
-#define PAL_INIT const pen_t *pPalData = tile_info.pal_data
+#define PAL_INIT const uint32_t *pPalData = tile_info.pal_data
 #define PAL_GET(pen) pPalData[pen]
 #define TRANSP(f) f ## _ind
 #include "tilemap.c"

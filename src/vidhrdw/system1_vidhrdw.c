@@ -237,7 +237,7 @@ static void draw_sprite(struct mame_bitmap *bitmap,int spr_number)
 {
 	int sy,row,height,src,bank;
 	unsigned char *sprite_base;
-	pen_t *sprite_palette;
+	uint32_t *sprite_palette;
 	int16_t skip;	/* bytes to skip before drawing each row (can be negative) */
 	unsigned char *gfx;
 

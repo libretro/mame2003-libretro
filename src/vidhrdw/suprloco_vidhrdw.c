@@ -204,7 +204,7 @@ static void render_sprite(struct mame_bitmap *bitmap,const struct rectangle *cli
 {
 	int sx,sy,col,row,height,src,adjy,dy;
 	unsigned char *spr_reg;
-	pen_t *spr_palette;
+	uint32_t *spr_palette;
 	short skip;	/* bytes to skip before drawing each row (can be negative) */
 
 

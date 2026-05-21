@@ -87,7 +87,7 @@ struct sprite_cave {
 	const uint8_t *pen_data;	/* points to top left corner of tile data */
 	int line_offset;
 
-	const pen_t *pal_data;
+	const uint32_t *pal_data;
 	int tile_width, tile_height;
 	int total_width, total_height;	/* in screen coordinates */
 	int x, y, xcount0, ycount0;
@@ -527,7 +527,7 @@ static void get_sprite_info_cave(void)
 {
 	const int region				=	REGION_GFX1;
 
-	const pen_t          *base_pal	=	Machine->remapped_colortable + 0;
+	const uint32_t          *base_pal	=	Machine->remapped_colortable + 0;
 	const unsigned char  *base_gfx	=	memory_region(region);
 	int                   code_max	=	memory_region_length(region) / (16*16);
 
@@ -648,7 +648,7 @@ static void get_sprite_info_donpachi(void)
 {
 	const int region				=	REGION_GFX1;
 
-	const pen_t          *base_pal	=	Machine->remapped_colortable + 0;
+	const uint32_t          *base_pal	=	Machine->remapped_colortable + 0;
 	const unsigned char  *base_gfx	=	memory_region(region);
 	int                   code_max	=	memory_region_length(region) / (16*16);
 
@@ -895,7 +895,7 @@ static void do_blit_zoom16_cave( const struct sprite_cave *sprite ){
 
 	{
 		const unsigned char *pen_data = sprite->pen_data -1 -sprite->line_offset;
-		const pen_t         *pal_data = sprite->pal_data;
+		const uint32_t         *pal_data = sprite->pal_data;
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
@@ -987,7 +987,7 @@ static void do_blit_zoom16_cave_zb( const struct sprite_cave *sprite ){
 
 	{
 		const unsigned char *pen_data = sprite->pen_data -1 -sprite->line_offset;
-		const pen_t         *pal_data = sprite->pal_data;
+		const uint32_t         *pal_data = sprite->pal_data;
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
@@ -1081,7 +1081,7 @@ static void do_blit_16_cave( const struct sprite_cave *sprite ){
 
 	{
 		const unsigned char *pen_data = sprite->pen_data;
-		const pen_t         *pal_data = sprite->pal_data;
+		const uint32_t         *pal_data = sprite->pal_data;
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
@@ -1158,7 +1158,7 @@ static void do_blit_16_cave_zb( const struct sprite_cave *sprite ){
 
 	{
 		const unsigned char *pen_data = sprite->pen_data;
-		const pen_t         *pal_data = sprite->pal_data;
+		const uint32_t         *pal_data = sprite->pal_data;
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
