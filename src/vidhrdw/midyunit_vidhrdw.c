@@ -788,6 +788,9 @@ VIDEO_UPDATE( midyunit )
 	int hsblnk, heblnk, leftscroll;
 	int v, width, xoffs;
 	UINT32 offset;
+	const unsigned short *pal;
+	unsigned palents, fb_pitch;
+	UINT16 *fb;
 
 	/* get the current blanking values */
 	cpuintrf_push_context(0);
@@ -810,6 +813,44 @@ VIDEO_UPDATE( midyunit )
 	/* adjust for the left scroll hack */
 	xoffs += leftscroll;
 	width -= leftscroll;
+
+	/* Fast path: convert the framebuffer straight into the frontend buffer,
+	   composing pen_map (the same remap the bitmap path applies via
+	   draw_scanline16) with the core's RGB565 palette LUT, and blanking the
+	   left-scroll columns exactly as the bitmap path does. Skips the game
+	   bitmap and the conversion pass. The visible area is 0-origin, so screen
+	   row v / column x map directly into the buffer. */
+	pal = mame2003_direct_rgb565_palette(&palents);
+	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	if (fb)
+	{
+		UINT16 black = pal[get_black_pen()];
+
+		for (v = cliprect->min_y; v <= cliprect->max_y; v++)
+		{
+			const UINT16 *src = &local_videoram[offset & 0x3ffff];
+			UINT16 *dst = (UINT16 *)((UINT8 *)fb + v * fb_pitch) + xoffs;
+			int x;
+
+			for (x = 0; x < width; x++)
+				dst[x] = pal[pen_map[src[x]]];
+
+			offset += 512;
+		}
+
+		if (leftscroll > 0)
+		{
+			for (v = cliprect->min_y; v <= cliprect->max_y; v++)
+			{
+				UINT16 *dst = (UINT16 *)((UINT8 *)fb + v * fb_pitch);
+				int x;
+
+				for (x = cliprect->min_x; x < leftscroll; x++)
+					dst[x] = black;
+			}
+		}
+		return;
+	}
 
 	/* loop over rows */
 	for (v = cliprect->min_y; v <= cliprect->max_y; v++)
