@@ -123,6 +123,42 @@ static void copy_pixels(struct mame_bitmap *bitmap, const struct rectangle *clip
 	if (williams_blitter_remap && clip->min_y == Machine->visible_area.min_y)
 		blaster_back_color = 0;
 
+	/* Fast path: the early Williams opaque full-frame readout (transparent_pen
+	   == -1, no Blaster background remap). Unpack the 4bpp pairs and convert
+	   straight into the frontend buffer with the core's RGB565 palette LUT
+	   composed with Machine->pens, exactly as the draw_scanline8 path does,
+	   skipping the scanline buffer, the game bitmap, and the conversion pass.
+	   The visible area is not 0-origin here, so translate the destination by
+	   the visible-area minimum. Falls back to the bitmap path otherwise. */
+	if (transparent_pen == -1 && !williams_blitter_remap)
+	{
+		const unsigned short *pal;
+		unsigned palents, fb_pitch;
+		UINT16 *fb;
+
+		pal = mame2003_direct_rgb565_palette(&palents);
+		fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+		if (fb)
+		{
+			int vminx = Machine->visible_area.min_x;
+			int vminy = Machine->visible_area.min_y;
+
+			for (y = clip->min_y; y <= clip->max_y; y++)
+			{
+				const UINT8 *source = &williams_videoram[y + 256 * (xoffset / 2)];
+				UINT16 *dest = (UINT16 *)((UINT8 *)fb + (y - vminy) * fb_pitch) + (xoffset - vminx);
+
+				for (x = 0; x < pairs; x++, source += 256)
+				{
+					int pix = *source;
+					*dest++ = pal[Machine->pens[pix >> 4]];
+					*dest++ = pal[Machine->pens[pix & 0x0f]];
+				}
+			}
+			return;
+		}
+	}
+
 	/* loop over rows */
 	for (y = clip->min_y; y <= clip->max_y; y++)
 	{
