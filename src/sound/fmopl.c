@@ -2087,7 +2087,7 @@ void YM3812UpdateOne(int which, int16_t *buffer, int length)
 {
 	FM_OPL		*OPL = OPL_YM3812[which];
 	uint8_t		rhythm = OPL->rhythm&0x20;
-	OPLSAMPLE	*buf = buffer;
+	int16_t	*buf = buffer;
 	int i;
 
 	if( (void *)OPL != cur_chip ){
@@ -2237,7 +2237,7 @@ void YM3526UpdateOne(int which, int16_t *buffer, int length)
 {
 	FM_OPL		*OPL = OPL_YM3526[which];
 	uint8_t		rhythm = OPL->rhythm&0x20;
-	OPLSAMPLE	*buf = buffer;
+	int16_t	*buf = buffer;
 	int i;
 
 	if( (void *)OPL != cur_chip ){
@@ -2412,7 +2412,7 @@ void Y8950UpdateOne(int which, int16_t *buffer, int length)
 	FM_OPL		*OPL = OPL_Y8950[which];
 	uint8_t		rhythm  = OPL->rhythm&0x20;
 	YM_DELTAT	*DELTAT = OPL->deltat;
-	OPLSAMPLE	*buf    = buffer;
+	int16_t	*buf    = buffer;
 
 	if( (void *)OPL != cur_chip ){
 		cur_chip = (void *)OPL;

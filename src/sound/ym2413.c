@@ -2072,8 +2072,8 @@ void YM2413UpdateOne(int which, int16_t **buffers, int length)
 {
 	YM2413		*chip  = OPLL_YM2413[which];
 	uint8_t		rhythm = chip->rhythm&0x20;
-	SAMP		*bufMO = buffers[0];
-	SAMP		*bufRO = buffers[1];
+	int16_t		*bufMO = buffers[0];
+	int16_t		*bufRO = buffers[1];
 
 	int i;
 

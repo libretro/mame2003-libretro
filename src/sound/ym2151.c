@@ -2347,7 +2347,7 @@ void YM2151UpdateOne(int num, int16_t **buffers, int length)
 {
 	int i;
 	signed int outl,outr;
-	SAMP *bufL, *bufR;
+	int16_t *bufL, *bufR;
 
 	bufL = buffers[0];
 	bufR = buffers[1];
@@ -2424,8 +2424,8 @@ void YM2151UpdateOne(int num, int16_t **buffers, int length)
 		outr >>= FINAL_SH;
       MAME_CLAMP_SAMPLE(outl);
       MAME_CLAMP_SAMPLE(outr);
-		((SAMP*)bufL)[i] = (SAMP)outl;
-		((SAMP*)bufR)[i] = (SAMP)outr;
+		((int16_t*)bufL)[i] = (int16_t)outl;
+		((int16_t*)bufR)[i] = (int16_t)outr;
 
 		SAVE_ALL_CHANNELS
 

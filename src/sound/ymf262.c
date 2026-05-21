@@ -2552,10 +2552,10 @@ void YMF262UpdateOne(int which, int16_t **buffers, int length)
 	OPL3		*chip  = YMF262[which];
 	uint8_t		rhythm = chip->rhythm&0x20;
 
-	OPL3SAMPLE	*ch_a = buffers[0];
-	OPL3SAMPLE	*ch_b = buffers[1];
-	OPL3SAMPLE	*ch_c = buffers[2];
-	OPL3SAMPLE	*ch_d = buffers[3];
+	int16_t	*ch_a = buffers[0];
+	int16_t	*ch_b = buffers[1];
+	int16_t	*ch_c = buffers[2];
+	int16_t	*ch_d = buffers[3];
 
 	int i;
 

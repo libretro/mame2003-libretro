@@ -35,12 +35,6 @@
 /* 16- and 8-bit samples (signed) are supported*/
 #define SAMPLE_BITS 16
 
-#if (SAMPLE_BITS==16)
-	typedef int16_t SAMP;
-#endif
-#if (SAMPLE_BITS==8)
-	typedef signed char SAMP;
-#endif
 
 /*
 ** Initialize YM2151 emulator(s).
