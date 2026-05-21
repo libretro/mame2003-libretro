@@ -943,6 +943,9 @@ VIDEO_STOP( voodoo )
 
 VIDEO_UPDATE( voodoo )
 {
+	const unsigned short *pal;
+	unsigned palents, fb_pitch;
+	UINT16 *fb;
 	int x, y;
 
 #if DISPLAY_STATISTICS
@@ -969,6 +972,27 @@ VIDEO_UPDATE( voodoo )
 		return;
 	}
 #endif
+
+	/* Fast path: compose pen_lookup with the core's RGB565 palette LUT and
+	   paint straight into the frontend buffer, skipping the game bitmap and
+	   the conversion pass. The framebuffer pen is the same value the bitmap
+	   path stores, and the palette is a fixed RGB565 decode that never
+	   changes, so the fast path engages every frame. Falls back to the bitmap
+	   path when the output is not RGB565, the palette is unstable, or a
+	   flip/rotate/artwork/UI overlay is in the path. */
+	pal = mame2003_direct_rgb565_palette(&palents);
+	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	if (fb)
+	{
+		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
+		{
+			const UINT16 *source = &frontbuf[1024 * y];
+			UINT16 *dest = (UINT16 *)((UINT8 *)fb + y * fb_pitch);
+			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
+				*dest++ = pal[pen_lookup[*source++]];
+		}
+		return;
+	}
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
