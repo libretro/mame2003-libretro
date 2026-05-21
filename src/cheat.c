@@ -7692,7 +7692,7 @@ static void RestoreRegionBackup(SearchRegion * region)
 static UINT8 DefaultEnableRegion(SearchRegion * region, SearchInfo * info)
 {
 	mem_write_handler	handler = region->writeHandler->handler;
-	UINT32				handlerAddress = (UINT32)handler;
+	FPTR				handlerAddress = (FPTR)handler;
 
 	switch(info->searchSpeed)
 	{
@@ -7747,8 +7747,8 @@ static UINT8 DefaultEnableRegion(SearchRegion * region, SearchInfo * info)
 			return 0;
 
 		case kSearchSpeed_Medium:
-			if(	(handlerAddress >= ((UINT32)MWA_BANK1)) &&
-				(handlerAddress <= ((UINT32)MWA_BANK24)))
+			if(	(handlerAddress >= ((FPTR)MWA_BANK1)) &&
+				(handlerAddress <= ((FPTR)MWA_BANK24)))
 				return 1;
 
 			if(handler == MWA_RAM)
@@ -7789,21 +7789,21 @@ static void SetSearchRegionDefaultName(SearchRegion * region)
 			if(region->writeHandler)
 			{
 				mem_write_handler	handler = region->writeHandler->handler;
-				UINT32				handlerAddress = (UINT32)handler;
+				FPTR				handlerAddress = (FPTR)handler;
 
-				if(	(handlerAddress >= ((UINT32)MWA_BANK1)) &&
-					(handlerAddress <= ((UINT32)MWA_BANK24)))
+				if(	(handlerAddress >= ((FPTR)MWA_BANK1)) &&
+					(handlerAddress <= ((FPTR)MWA_BANK24)))
 				{
-					sprintf(desc, "BANK%.2d", (handlerAddress - ((UINT32)MWA_BANK1)) + 1);
+					sprintf(desc, "BANK%.2d", (int)((handlerAddress - ((FPTR)MWA_BANK1)) + 1));
 				}
 				else
 				{
 					switch(handlerAddress)
 					{
-						case (UINT32)MWA_NOP:		strcpy(desc, "NOP   ");	break;
-						case (UINT32)MWA_RAM:		strcpy(desc, "RAM   ");	break;
-						case (UINT32)MWA_ROM:		strcpy(desc, "ROM   ");	break;
-						case (UINT32)MWA_RAMROM:	strcpy(desc, "RAMROM");	break;
+						case (FPTR)MWA_NOP:		strcpy(desc, "NOP   ");	break;
+						case (FPTR)MWA_RAM:		strcpy(desc, "RAM   ");	break;
+						case (FPTR)MWA_ROM:		strcpy(desc, "ROM   ");	break;
+						case (FPTR)MWA_RAMROM:	strcpy(desc, "RAMROM");	break;
 						default:					strcpy(desc, "CUSTOM");	break;
 					}
 				}
