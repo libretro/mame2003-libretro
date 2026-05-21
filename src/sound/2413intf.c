@@ -19,7 +19,7 @@ static int stream[MAX_2413];
 static const struct YM2413interface *intf;
 
 /*
-void YM2413DAC_update(int chip,INT16 *buffer,int length)
+void YM2413DAC_update(int chip,int16_t *buffer,int length)
 {
 	static int out = 0;
 

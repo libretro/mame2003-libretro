@@ -24,42 +24,42 @@
 
 typedef struct
 {
-	INT8  extout;
-	INT16 lfoFreq;
-	INT8  lfowave;
-	INT8  pms, ams;
-	INT8  detune;
-	INT8  multiple;
-	INT8  tl;
-	INT8  keyscale;
-	INT8  ar;
-	INT8  decay1rate, decay2rate;
-	INT8  decay1lvl;
-	INT8  relrate;
-	INT32 fns;
-	INT8  block;
-	INT8  feedback;
-	INT8  waveform;
-	INT8  accon;
-	INT8  algorithm;
-	INT8  ch0lvl, ch1lvl, ch2lvl, ch3lvl;	
+	int8_t  extout;
+	int16_t lfoFreq;
+	int8_t  lfowave;
+	int8_t  pms, ams;
+	int8_t  detune;
+	int8_t  multiple;
+	int8_t  tl;
+	int8_t  keyscale;
+	int8_t  ar;
+	int8_t  decay1rate, decay2rate;
+	int8_t  decay1lvl;
+	int8_t  relrate;
+	int32_t fns;
+	int8_t  block;
+	int8_t  feedback;
+	int8_t  waveform;
+	int8_t  accon;
+	int8_t  algorithm;
+	int8_t  ch0lvl, ch1lvl, ch2lvl, ch3lvl;	
 
-	UINT32 startaddr;
-	UINT32 loopaddr;
-	UINT32 endaddr;
-	INT8   fs, srcnote, srcb;
+	uint32_t startaddr;
+	uint32_t loopaddr;
+	uint32_t endaddr;
+	int8_t   fs, srcnote, srcb;
 
-	UINT32 step;
-	UINT32 stepptr;
+	uint32_t step;
+	uint32_t stepptr;
 
-	INT8 active;
-	INT8 bits;
+	int8_t active;
+	int8_t bits;
 
 } YMF271Slot;
 
 typedef struct
 {
-	INT8 sync, pfm;
+	int8_t sync, pfm;
 } YMF271Group;
 
 typedef struct
@@ -67,17 +67,17 @@ typedef struct
 	YMF271Slot slots[48];
 	YMF271Group groups[12];
 
-	INT32 timerA, timerB;
-	INT32 timerAVal, timerBVal;
-	INT32 irqstate;
-	INT8  status;
-	INT8  enable;
+	int32_t timerA, timerB;
+	int32_t timerAVal, timerBVal;
+	int32_t irqstate;
+	int8_t  status;
+	int8_t  enable;
 
 	void *timA, *timB;
 
-	INT8  reg0, reg1, reg2, reg3, pcmreg, timerreg;
+	int8_t  reg0, reg1, reg2, reg3, pcmreg, timerreg;
 
-	const UINT8 *rom;
+	const uint8_t *rom;
 	void (*irq_callback)(int);
 } YMF271Chip;
 
@@ -87,17 +87,17 @@ static int pcm_tab[] = { 0, 4, 8, -1, 12, 16, 20, -1, 24, 28, 32, -1, 36, 40, 44
 
 static YMF271Chip YMF271[MAX_YMF271];
 
-static INT32 volume[256*4];			// precalculated attenuation values with some marging for enveloppe and pan levels
+static int32_t volume[256*4];			// precalculated attenuation values with some marging for enveloppe and pan levels
 
-static void ymf271_pcm_update(int num, INT16 **outputs, int length)
+static void ymf271_pcm_update(int num, int16_t **outputs, int length)
 {
 	int i, j;
-	INT32 mix[48000*2];
-	INT32 *mixp;
-	INT16 sample = 0;
+	int32_t mix[48000*2];
+	int32_t *mixp;
+	int16_t sample = 0;
 	YMF271Chip *chip = &YMF271[num];
 	YMF271Slot *slot;
-	const UINT8 *rombase;
+	const uint8_t *rombase;
 
 	memset(mix, 0, sizeof(mix[0])*length*2);
 
@@ -185,7 +185,7 @@ static void ymf271_write_fm(YMF271Chip *chip, int grp, int adr, int data)
 					}
 
 					step = ((slot->fns/2) | 1024) << (oct + 7);
-					slot->step = (UINT32) ((((INT64)step)*(44100/4)) / Machine->sample_rate);
+					slot->step = (uint32_t) ((((int64_t)step)*(44100/4)) / Machine->sample_rate);
 
 //					logerror("step %x\n", slot->step);
 				}
@@ -496,7 +496,7 @@ static int ymf271_r(int chipnum, int offset)
 	return 0;
 }
 
-static void ymf271_init(int i, UINT8 *rom, void (*cb)(int))
+static void ymf271_init(int i, uint8_t *rom, void (*cb)(int))
 {
 	memset(&YMF271[i], 0, sizeof(YMF271Chip));
 

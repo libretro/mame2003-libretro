@@ -42,8 +42,8 @@ static k051649_sound_channel channel_list[5];
 static int stream,mclock,rate;
 
 /* mixer tables and internal buffers */
-static INT16 *mixer_table;
-static INT16 *mixer_lookup;
+static int16_t *mixer_table;
+static int16_t *mixer_lookup;
 static short *mixer_buffer;
 
 /* build a table to divide by the number of voices */
@@ -54,7 +54,7 @@ static int make_mixer_table(int voices)
 	int gain = 8;
 
 	/* allocate memory */
-	mixer_table = malloc(512 * voices * sizeof(INT16));
+	mixer_table = malloc(512 * voices * sizeof(int16_t));
 	if (!mixer_table)
 		return 1;
 
@@ -75,7 +75,7 @@ static int make_mixer_table(int voices)
 
 
 /* generate sound to the mix buffer */
-static void K051649_update(int ch, INT16 *buffer, int length)
+static void K051649_update(int ch, int16_t *buffer, int length)
 {
 	k051649_sound_channel *voice=channel_list;
 	short *mix;

@@ -7,17 +7,17 @@
 
 
 struct rf5c58 {
-	UINT8 regs[8][7];
-	UINT8 sel;
-	UINT8 keyon;
-	UINT8 *ram;
-	UINT32 addr[8];
+	uint8_t regs[8][7];
+	uint8_t sel;
+	uint8_t keyon;
+	uint8_t *ram;
+	uint32_t addr[8];
 	int clock;
 	double ratio;
 	int stream;
 } rpcm;
 
-static void RF5C68_update( int num, INT16 **buffer, int length )
+static void RF5C68_update( int num, int16_t **buffer, int length )
 {
 	int ch;
 	memset(buffer[0], 0, length*2);
@@ -27,19 +27,19 @@ static void RF5C68_update( int num, INT16 **buffer, int length )
 		if(!(rpcm.keyon & (1<<ch))) {
 			int voll = ( rpcm.regs[ch][1]       & 0xf)*rpcm.regs[ch][0];
 			int volr = ((rpcm.regs[ch][1] >> 4) & 0xf)*rpcm.regs[ch][0];
-			UINT32 addr = rpcm.addr[ch];
-			UINT32 step = ((rpcm.regs[ch][3] << 8) | rpcm.regs[ch][2])*rpcm.ratio;
+			uint32_t addr = rpcm.addr[ch];
+			uint32_t step = ((rpcm.regs[ch][3] << 8) | rpcm.regs[ch][2])*rpcm.ratio;
 			int i;
 
 			for(i=0; i<length; i++) {
-				INT8 v;
+				int8_t v;
 				v = rpcm.ram[addr >> 16];
-				if(v == (INT8)0xff) {
+				if(v == (int8_t)0xff) {
 					addr = (rpcm.regs[ch][5] << 24) | (rpcm.regs[ch][4] << 16);
 					v = rpcm.ram[addr >> 16];
 				}
 				if(v<0)
-					v = 127-(UINT8)v;
+					v = 127-(uint8_t)v;
 
 				buffer[0][i] += (v*voll) >> 5;
 				buffer[1][i] += (v*volr) >> 5;
@@ -87,7 +87,7 @@ WRITE_HANDLER( RF5C68_reg_w )
 		rpcm.sel = data;
 		break;
 	case 8: {
-		UINT8 map = (~rpcm.keyon)|data;
+		uint8_t map = (~rpcm.keyon)|data;
 		if(map != 0xff) {
 			int i;
 			for(i=0; i<8; i++)

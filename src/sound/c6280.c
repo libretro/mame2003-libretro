@@ -64,7 +64,7 @@
 /* Local function prototypes */
 void c6280_init(int which, double clk, double rate, double volume);
 void c6280_write(int which, int offset, int data);
-void c6280_update(int which, INT16 **buffer, int length);
+void c6280_update(int which, int16_t **buffer, int length);
 
 static int stream[MAX_C6280];
 c6280_t c6280[MAX_C6280];
@@ -86,14 +86,14 @@ void c6280_init(int which, double clk, double rate, double volume)
     for(i = 0; i < 4096; i += 1)
     {
         step = ((clk / rate) * 4096) / (i+1);
-        p->wave_freq_tab[(1 + i) & 0xFFF] = (UINT32)step;
+        p->wave_freq_tab[(1 + i) & 0xFFF] = (uint32_t)step;
     }
 
     /* Make noise frequency table */
     for(i = 0; i < 32; i += 1)
     {
         step = ((clk / rate) * 32) / (i+1);
-        p->noise_freq_tab[i] = (UINT32)step;
+        p->noise_freq_tab[i] = (uint32_t)step;
     }
 
     /* Make volume table */
@@ -101,7 +101,7 @@ void c6280_init(int which, double clk, double rate, double volume)
     step = 48.0 / 32.0;
     for(i = 0; i < 31; i++)
     {
-        p->volume_table[i] = (UINT16)level;
+        p->volume_table[i] = (uint16_t)level;
         level /= pow(10.0, step / 20.0);
     }
     p->volume_table[31] = 0;
@@ -192,7 +192,7 @@ void c6280_write(int which, int offset, int data)
 }
 
 
-void c6280_update(int num, INT16 **buffer, int length)
+void c6280_update(int num, int16_t **buffer, int length)
 {
     static int scale_tab[] = {
         0x00, 0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F,
@@ -242,7 +242,7 @@ void c6280_update(int num, INT16 **buffer, int length)
             if((ch >= 4) && (p->channel[ch].noise_control & 0x80))
             {
                 /* Noise mode */
-                UINT32 step = p->noise_freq_tab[(p->channel[ch].noise_control & 0x1F) ^ 0x1F];
+                uint32_t step = p->noise_freq_tab[(p->channel[ch].noise_control & 0x1F) ^ 0x1F];
                 for(i = 0; i < length; i += 1)
                 {
                     static int data = 0;
@@ -252,8 +252,8 @@ void c6280_update(int num, INT16 **buffer, int length)
                         data = (rand() & 1) ? 0x1F : 0;
                     }
                     p->channel[ch].noise_counter &= 0x7FF;
-                    buffer[0][i] += (INT16)(vll * (data - 16));
-                    buffer[1][i] += (INT16)(vlr * (data - 16));
+                    buffer[0][i] += (int16_t)(vll * (data - 16));
+                    buffer[1][i] += (int16_t)(vlr * (data - 16));
                 }
             }
             else
@@ -262,24 +262,24 @@ void c6280_update(int num, INT16 **buffer, int length)
                 /* DDA mode */
                 for(i = 0; i < length; i++)
                 {
-                    buffer[0][i] += (INT16)(vll * (p->channel[ch].dda - 16));
-                    buffer[1][i] += (INT16)(vlr * (p->channel[ch].dda - 16));
+                    buffer[0][i] += (int16_t)(vll * (p->channel[ch].dda - 16));
+                    buffer[1][i] += (int16_t)(vlr * (p->channel[ch].dda - 16));
                 }
             }
             else
             {
                 /* Waveform mode */
-                UINT32 step = p->wave_freq_tab[p->channel[ch].frequency];
+                uint32_t step = p->wave_freq_tab[p->channel[ch].frequency];
                 for(i = 0; i < length; i += 1)
                 {
                     int offset;
-                    INT16 data;
+                    int16_t data;
                     offset = (p->channel[ch].counter >> 12) & 0x1F;
                     p->channel[ch].counter += step;
                     p->channel[ch].counter &= 0x1FFFF;
                     data = p->channel[ch].waveform[offset];
-                    buffer[0][i] += (INT16)(vll * (data - 16));
-                    buffer[1][i] += (INT16)(vlr * (data - 16));
+                    buffer[0][i] += (int16_t)(vll * (data - 16));
+                    buffer[1][i] += (int16_t)(vlr * (data - 16));
                 }
             }
         }

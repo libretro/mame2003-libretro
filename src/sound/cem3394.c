@@ -112,21 +112,21 @@ typedef struct
 	double filter_zero_freq;		/* frequency of filter at 0.0V */
 
 	double values[8];				/* raw values of registers */
-	UINT8 wave_select;				/* flags which waveforms are enabled */
+	uint8_t wave_select;				/* flags which waveforms are enabled */
 
-	UINT32 volume;					/* linear overall volume (0-256) */
-	UINT32 mixer_internal;			/* linear internal volume (0-256) */
-	UINT32 mixer_external;			/* linear external volume (0-256) */
+	uint32_t volume;					/* linear overall volume (0-256) */
+	uint32_t mixer_internal;			/* linear internal volume (0-256) */
+	uint32_t mixer_external;			/* linear external volume (0-256) */
 
-	UINT32 position;				/* current VCO frequency position (0.FRACTION_BITS) */
-	UINT32 step;					/* per-sample VCO step (0.FRACTION_BITS) */
+	uint32_t position;				/* current VCO frequency position (0.FRACTION_BITS) */
+	uint32_t step;					/* per-sample VCO step (0.FRACTION_BITS) */
 
-	UINT32 filter_position;			/* current filter frequency position (0.FRACTION_BITS) */
-	UINT32 filter_step;				/* per-sample filter step (0.FRACTION_BITS) */
-	UINT32 modulation_depth;		/* fraction of total by which we modulate (0.FRACTION_BITS) */
-	INT16 last_ext;					/* last external sample we read */
+	uint32_t filter_position;			/* current filter frequency position (0.FRACTION_BITS) */
+	uint32_t filter_step;				/* per-sample filter step (0.FRACTION_BITS) */
+	uint32_t modulation_depth;		/* fraction of total by which we modulate (0.FRACTION_BITS) */
+	int16_t last_ext;					/* last external sample we read */
 
-	UINT32 pulse_width;				/* fractional pulse width (0.FRACTION_BITS) */
+	uint32_t pulse_width;				/* fractional pulse width (0.FRACTION_BITS) */
 } sound_chip;
 
 
@@ -137,18 +137,18 @@ static sound_chip chip_list[MAX_CEM3394];
 static double inv_sample_rate;
 static int sample_rate;
 
-static INT16 *mixer_buffer;
-static INT16 *external_buffer;
+static int16_t *mixer_buffer;
+static int16_t *external_buffer;
 
 
 /* generate sound to the mix buffer in mono */
-static void cem3394_update(int ch, INT16 *buffer, int length)
+static void cem3394_update(int ch, int16_t *buffer, int length)
 {
 	sound_chip *chip = &chip_list[ch];
 	int int_volume = (chip->volume * chip->mixer_internal) / 256;
 	int ext_volume = (chip->volume * chip->mixer_external) / 256;
-	UINT32 step = chip->step, position, end_position = 0;
-	INT16 *mix, *ext;
+	uint32_t step = chip->step, position, end_position = 0;
+	int16_t *mix, *ext;
 	int i;
 
 	/* external volume is effectively 0 if no external function */
@@ -162,15 +162,15 @@ static void cem3394_update(int ch, INT16 *buffer, int length)
 	/* bail if nothing's going on */
 	if (int_volume == 0 && ext_volume == 0)
 	{
-		memset(buffer, 0, sizeof(INT16) * length);
+		memset(buffer, 0, sizeof(int16_t) * length);
 		return;
 	}
 
 	/* if there's external stuff, fetch and process it now */
 	if (ext_volume != 0)
 	{
-		UINT32 fposition = chip->filter_position, fstep = chip->filter_step, depth;
-		INT16 last_ext = chip->last_ext;
+		uint32_t fposition = chip->filter_position, fstep = chip->filter_step, depth;
+		int16_t last_ext = chip->last_ext;
 
 		/* fetch the external data */
 		(*chip->external)(ch, length, external_buffer);
@@ -186,8 +186,8 @@ static void cem3394_update(int ch, INT16 *buffer, int length)
 		   external sample to filter_freq by allowing only 2 transitions for every cycle */
 		for (i = 0, ext = external_buffer, position = chip->position; i < length; i++, ext++)
 		{
-			UINT32 newposition;
-			INT32 stepadjust;
+			uint32_t newposition;
+			int32_t stepadjust;
 
 			/* update the position and compute the adjustment from a triangle wave */
 			if (position & (1 << (FRACTION_BITS - 1)))
@@ -221,7 +221,7 @@ static void cem3394_update(int ch, INT16 *buffer, int length)
 		/* odd value for volume) */
 		if (ENABLE_PULSE && (chip->wave_select & WAVE_PULSE))
 		{
-			UINT32 pulse_width = chip->pulse_width;
+			uint32_t pulse_width = chip->pulse_width;
 
 			/* this is a kludge; Snake Pit uses very small pulse widths in the tune during */
 			/* level 1; this makes the melody almost silent unless we enforce a minimum */
@@ -248,10 +248,10 @@ static void cem3394_update(int ch, INT16 *buffer, int length)
 			/* otherwise, we compute a volume and watch for cycle boundary crossings */
 			else
 			{
-				INT16 volume = 0x1932 * pulse_width / step;
+				int16_t volume = 0x1932 * pulse_width / step;
 				for (i = 0, mix = mixer_buffer, position = chip->position; i < length; i++, mix++)
 				{
-					UINT32 newposition = position + step;
+					uint32_t newposition = position + step;
 					if ((newposition ^ position) & ~FRACTION_MASK)
 						*mix = volume;
 					else
@@ -264,7 +264,7 @@ static void cem3394_update(int ch, INT16 *buffer, int length)
 
 		/* otherwise, clear the mixing buffer */
 		else
-			memset(mixer_buffer, 0, sizeof(INT16) * length);
+			memset(mixer_buffer, 0, sizeof(int16_t) * length);
 
 		/* handle the sawtooth component; it maxes out at 0x2000, which is 27% larger */
 		/* than the pulse */
@@ -285,7 +285,7 @@ static void cem3394_update(int ch, INT16 *buffer, int length)
 		{
 			for (i = 0, mix = mixer_buffer, position = chip->position; i < length; i++, mix++)
 			{
-				INT16 value;
+				int16_t value;
 				if (position & (1 << (FRACTION_BITS - 1)))
 					value = 0x2000 - ((position >> (FRACTION_BITS - 14)) & 0x1fff);
 				else
@@ -353,7 +353,7 @@ int cem3394_sh_start(const struct MachineSound *msound)
 	}
 
 	/* allocate memory for a mixer buffer and external buffer (1 second should do it!) */
-	mixer_buffer = malloc(2 * sample_rate * sizeof(INT16));
+	mixer_buffer = malloc(2 * sample_rate * sizeof(int16_t));
 	if (!mixer_buffer)
 		return 1;
 	external_buffer = mixer_buffer + sample_rate;
@@ -396,7 +396,7 @@ static INLINE double compute_db(double voltage)
 }
 
 
-static INLINE UINT32 compute_db_volume(double voltage)
+static INLINE uint32_t compute_db_volume(double voltage)
 {
 	double temp;
 
@@ -422,7 +422,7 @@ static INLINE UINT32 compute_db_volume(double voltage)
 	}
 
 	/* convert from dB to volume and return */
-	return (UINT32)(256.0 * pow(0.891251, temp));
+	return (uint32_t)(256.0 * pow(0.891251, temp));
 }
 
 
@@ -445,7 +445,7 @@ void cem3394_set_voltage(int chipnum, int input, double voltage)
 		/* frequency varies from -4.0 to +4.0, at 0.75V/octave */
 		case CEM3394_VCO_FREQUENCY:
 			temp = chip->vco_zero_freq * pow(2.0, -voltage * (1.0 / 0.75));
-			chip->step = (UINT32)(temp * inv_sample_rate * FRACTION_ONE_D);
+			chip->step = (uint32_t)(temp * inv_sample_rate * FRACTION_ONE_D);
 			break;
 
 		/* wave select determines triangle/sawtooth enable */
@@ -471,7 +471,7 @@ void cem3394_set_voltage(int chipnum, int input, double voltage)
 				temp = voltage * 0.5;
 				if (LIMIT_WIDTH)
 					temp = MINIMUM_WIDTH + (MAXIMUM_WIDTH - MINIMUM_WIDTH) * temp;
-				chip->pulse_width = (UINT32)(temp * FRACTION_ONE_D);
+				chip->pulse_width = (uint32_t)(temp * FRACTION_ONE_D);
 				chip->wave_select |= WAVE_PULSE;
 			}
 			break;
@@ -499,18 +499,18 @@ void cem3394_set_voltage(int chipnum, int input, double voltage)
 		/* filter frequency varies from -4.0 to +4.0, at 0.375V/octave */
 		case CEM3394_FILTER_FREQENCY:
 			temp = chip->filter_zero_freq * pow(2.0, -voltage * (1.0 / 0.375));
-			chip->filter_step = (UINT32)(temp * inv_sample_rate * FRACTION_ONE_D);
+			chip->filter_step = (uint32_t)(temp * inv_sample_rate * FRACTION_ONE_D);
 			break;
 
 		/* modulation depth is 0.01 at 0V and 2.0 at 3.5V; how it grows from one to the other */
 		/* is still unclear at this point */
 		case CEM3394_MODULATION_AMOUNT:
 			if (voltage < 0.0)
-				chip->modulation_depth = (UINT32)(0.01 * FRACTION_ONE_D);
+				chip->modulation_depth = (uint32_t)(0.01 * FRACTION_ONE_D);
 			else if (voltage > 3.5)
-				chip->modulation_depth = (UINT32)(2.00 * FRACTION_ONE_D);
+				chip->modulation_depth = (uint32_t)(2.00 * FRACTION_ONE_D);
 			else
-				chip->modulation_depth = (UINT32)(((voltage * (1.0 / 3.5)) * 1.99 + 0.01) * FRACTION_ONE_D);
+				chip->modulation_depth = (uint32_t)(((voltage * (1.0 / 3.5)) * 1.99 + 0.01) * FRACTION_ONE_D);
 			break;
 
 		/* this is not yet implemented */

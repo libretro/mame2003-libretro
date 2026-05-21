@@ -12,15 +12,15 @@
 
 struct hc55516_data
 {
-	INT8 	channel;
-	UINT8	last_clock;
-	UINT8	databit;
-	UINT8	shiftreg;
+	int8_t 	channel;
+	uint8_t	last_clock;
+	uint8_t	databit;
+	uint8_t	shiftreg;
 
-	INT16	curr_value;
-	INT16	next_value;
+	int16_t	curr_value;
+	int16_t	next_value;
 
-	UINT32	update_count;
+	uint32_t	update_count;
 
 	double 	filter;
 	double	integrator;
@@ -31,7 +31,7 @@ static struct hc55516_data hc55516[MAX_HC55516];
 static double charge, decay, leak;
 
 
-static void hc55516_update(int num, INT16 *buffer, int length);
+static void hc55516_update(int num, int16_t *buffer, int length);
 
 
 
@@ -68,10 +68,10 @@ int hc55516_sh_start(const struct MachineSound *msound)
 }
 
 
-void hc55516_update(int num, INT16 *buffer, int length)
+void hc55516_update(int num, int16_t *buffer, int length)
 {
 	struct hc55516_data *chip = &hc55516[num];
-	INT32 data, slope;
+	int32_t data, slope;
 	int i;
 
 	/* zero-length? bail */
@@ -88,7 +88,7 @@ void hc55516_update(int num, INT16 *buffer, int length)
 
 	/* compute the interpolation slope */
 	data = chip->curr_value;
-	slope = ((INT32)chip->next_value - data) / length;
+	slope = ((int32_t)chip->next_value - data) / length;
 	chip->curr_value = chip->next_value;
 
 	/* reset the sample count */

@@ -21,28 +21,28 @@
 enum { MAIN_CLOCK = 10000 };
 
 static struct {
-	INT16 amp;
-	UINT8 pitch;
-	UINT8 repeat;
-	UINT8 pcount, rcount;
-	UINT8 pcounto, rcounto;
-	UINT32 RNG;
+	int16_t amp;
+	uint8_t pitch;
+	uint8_t repeat;
+	uint8_t pcount, rcount;
+	uint8_t pcounto, rcounto;
+	uint32_t RNG;
 	int stream;
 	int voiced;
-	UINT8 fifo[15];
+	uint8_t fifo[15];
 	int fifo_pos;
 
 	void (*drq)(int state);
 
 	struct {
-		INT16 F, B;
-		INT16 z1, z2;
+		int16_t F, B;
+		int16_t z1, z2;
 	} filter[6];
 } sp0250;
 
 // Internal ROM to the chip, cf. manual
 
-static UINT16 coefs[128] = {
+static uint16_t coefs[128] = {
 	  0,   9,  17,  25,  33,  41,  49,  57,  65,  73,  81,  89,  97, 105, 113, 121,
 	129, 137, 145, 153, 161, 169, 177, 185, 193, 201, 203, 217, 225, 233, 241, 249,
 	257, 265, 273, 281, 289, 297, 301, 305, 309, 313, 317, 321, 325, 329, 333, 337,
@@ -55,14 +55,14 @@ static UINT16 coefs[128] = {
 
 // To be checked, somehow
 
-static UINT16 sp0250_ga(UINT8 v)
+static uint16_t sp0250_ga(uint8_t v)
 {
 	return (v & 0x1f) << (v>>5);
 }
 
-static INT16 sp0250_gc(UINT8 v)
+static int16_t sp0250_gc(uint8_t v)
 {
-	INT16 res = coefs[v & 0x7f];
+	int16_t res = coefs[v & 0x7f];
 	if(!(v & 0x80))
 		res = -res;
 	return res;
@@ -120,11 +120,11 @@ static void sp0250_timer_tick(int param)
 	}
 }
 
-static void sp0250_update(int num, INT16 *output, int length)
+static void sp0250_update(int num, int16_t *output, int length)
 {
 	int i;
 	for(i=0; i<length; i++) {
-		INT16 z0 = 0;
+		int16_t z0 = 0;
 		int f;
 
 		if(sp0250.voiced)

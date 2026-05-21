@@ -49,7 +49,7 @@ Registers per channel:
 data16_t *gaelco_sndregs;
 
 /* table for converting from 8 to 16 bits with volume control */
-INT16 volume_table[VOLUME_LEVELS][256];
+int16_t volume_table[VOLUME_LEVELS][256];
 
 /* this structure defines a channel */
 struct gaelcosnd_channel
@@ -63,7 +63,7 @@ struct gaelcosnd_channel
 struct GAELCOSND
 {
 	int stream;												/* our stream */
-	UINT8 *snd_data;										/* PCM data */
+	uint8_t *snd_data;										/* PCM data */
 	int banks[4];											/* start of each ROM bank */
 	struct gaelcosnd_channel channel[GAELCO_NUM_CHANNELS];	/* 7 stereo channels */
 };
@@ -81,7 +81,7 @@ void *	wavraw;					/* raw waveform */
 			Writes length bytes to the sound buffer
   ============================================================================*/
 
-static void gaelco_sh_update(int param, INT16 **buffer, int length)
+static void gaelco_sh_update(int param, int16_t **buffer, int length)
 {
 	int j, ch;
 
@@ -274,7 +274,7 @@ int gaelcosnd_sh_start(const struct MachineSound *msound, int chip)
 		gaelcosnd.banks[j] = intf->banks[j];
 	}
 	gaelcosnd.stream = stream_init_multi(2, name, volume, 8000, 0, gaelco_sh_update);
-	gaelcosnd.snd_data = (UINT8 *)memory_region(intf->region);
+	gaelcosnd.snd_data = (uint8_t *)memory_region(intf->region);
 
 	/* init volume table */
 	for (vol = 0; vol < VOLUME_LEVELS; vol++){

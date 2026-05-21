@@ -119,14 +119,14 @@ static struct {
 	struct UPD7759_chip {
 		int channel;
 
-		const UINT8 *rom;
-		const UINT8 *cur_rombank;
+		const uint8_t *rom;
+		const uint8_t *cur_rombank;
 
-		UINT8 reset, start, port;
-		UINT8 playing;
-		UINT8 buffer[512];
+		uint8_t reset, start, port;
+		uint8_t playing;
+		uint8_t buffer[512];
 		int buffer_ptr;
-		UINT32 rr_pos;
+		uint32_t rr_pos;
 
 		int play_length;
 		void *timer;
@@ -134,7 +134,7 @@ static struct {
 		int param_mode, drq, suspend, waiting, wait_samples;
 
 		int freq;
-		UINT32 step, pos;
+		uint32_t step, pos;
 
 		int sample, state, nibble, skip_last_nibble, next_skip_last_nibble, started;
 	} chip[MAX_UPD7759];
@@ -164,10 +164,10 @@ const static int UPD7759_state[16] = { -1, -1, 0, 0, 1, 2, 2, 3, -1, -1, 0, 0, 1
 static void UPD7759_standalone_load_data(int chip);
 
 //  Generate the sound
-static void UPD7759_update(int chip, INT16 *buffer, int length)
+static void UPD7759_update(int chip, int16_t *buffer, int length)
 {
 	int sample, state, nibble, count;
-	UINT32 pos, step;
+	uint32_t pos, step;
 	const unsigned char *data;
 	int i;
 	struct UPD7759_chip *ch = &UPD7759_chips.chip[chip];
@@ -324,10 +324,10 @@ int UPD7759_sh_start(const struct MachineSound *msound)
 	return 0;
 }
 
-static void UPD7759_set_frequency(struct UPD7759_chip *ch, UINT8 data)
+static void UPD7759_set_frequency(struct UPD7759_chip *ch, uint8_t data)
 {
 	ch->freq = (640000/4) / ((data & 0x1f)+1);
-	ch->step = (((UINT64)(640000/4))<<16)/(Machine->sample_rate*((data & 0x1f)+1));
+	ch->step = (((uint64_t)(640000/4))<<16)/(Machine->sample_rate*((data & 0x1f)+1));
 }
 
 static void UPD7759_start_play(int chip, int length)
@@ -337,7 +337,7 @@ static void UPD7759_start_play(int chip, int length)
 	ch->next_skip_last_nibble = length&1;
 }
 
-static void UPD7759_cmd_w(int chip, UINT8 data)
+static void UPD7759_cmd_w(int chip, uint8_t data)
 {
 	enum { PARAM_8x = 1 };
 
@@ -453,7 +453,7 @@ static void UPD7759_standalone_load_data(int chip)
 	}
 }
 
-void UPD7759_reset_w(int chip, UINT8 data)
+void UPD7759_reset_w(int chip, uint8_t data)
 {
 	struct UPD7759_chip *ch = &UPD7759_chips.chip[chip];
 
@@ -481,7 +481,7 @@ void UPD7759_reset_w(int chip, UINT8 data)
 	}
 }
 
-void UPD7759_start_w(int chip, UINT8 data)
+void UPD7759_start_w(int chip, uint8_t data)
 {
 	struct UPD7759_chip *ch = &UPD7759_chips.chip[chip];
 	int old_start;
@@ -499,7 +499,7 @@ void UPD7759_start_w(int chip, UINT8 data)
 
 	// Start sample on rising edge, but ignore if already playing
 	if(!old_start && data && !ch->playing && UPD7759_chips.intf->mode == UPD7759_STANDALONE_MODE) {
-		UINT8 scount;
+		uint8_t scount;
 
 		if(memcmp(ch->cur_rombank+1, "\x5A\xA5\x69\x55", 4))
 			logerror("UPD7759.%d: Header check failure on sample start\n", chip);
@@ -525,7 +525,7 @@ void UPD7759_start_w(int chip, UINT8 data)
 	}
 }
 
-void UPD7759_port_w(int chip, UINT8 data)
+void UPD7759_port_w(int chip, uint8_t data)
 {
 	struct UPD7759_chip *ch = &UPD7759_chips.chip[chip];
 
@@ -560,7 +560,7 @@ int UPD7759_busy_r(int chip)
 	return !ch->playing;
 }
 
-void UPD7759_set_bank_base(int chip, UINT32 base)
+void UPD7759_set_bank_base(int chip, uint32_t base)
 {
 	struct UPD7759_chip *ch = &UPD7759_chips.chip[chip];
 

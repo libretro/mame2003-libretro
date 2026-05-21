@@ -344,7 +344,7 @@ static int *tunes[] = {NULL,tune1,tune2,tune3,tune4};
 
 
 
-static void tms36xx_sound_update(int param, INT16 *buffer, int length)
+static void tms36xx_sound_update(int param, int16_t *buffer, int length)
 {
 	struct TMS36XX *tms = tms36xx[param];
 	int samplerate = tms->samplerate;

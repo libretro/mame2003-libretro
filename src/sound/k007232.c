@@ -214,12 +214,12 @@ static void KDAC_A_make_fncode( void ){
 /*    Konami PCM update                         */
 /************************************************/
 
-static void KDAC_A_update(int chip, INT16 **buffer, int buffer_len)
+static void KDAC_A_update(int chip, int16_t **buffer, int buffer_len)
 {
   int i;
 
-  memset(buffer[0],0,buffer_len * sizeof(INT16));
-  memset(buffer[1],0,buffer_len * sizeof(INT16));
+  memset(buffer[0],0,buffer_len * sizeof(int16_t));
+  memset(buffer[1],0,buffer_len * sizeof(int16_t));
 
   for( i = 0; i < KDAC_A_PCM_MAX; i++ )
     {

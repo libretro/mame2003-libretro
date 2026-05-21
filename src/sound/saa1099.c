@@ -127,7 +127,7 @@ static int amplitude_lookup[16] = {
 	12*32767/16, 13*32767/16, 14*32767/16, 15*32767/16
 };
 
-static UINT8 envelope[8][64] = {
+static uint8_t envelope[8][64] = {
 	/* zero amplitude */
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -214,7 +214,7 @@ static void saa1099_envelope(int chip, int ch)
 }
 
 
-static void saa1099_update(int chip, INT16 **buffer, int length)
+static void saa1099_update(int chip, int16_t **buffer, int length)
 {
 	struct SAA1099 *saa = &saa1099[chip];
     int j, ch;
@@ -223,8 +223,8 @@ static void saa1099_update(int chip, INT16 **buffer, int length)
 	if (!saa->all_ch_enable)
 	{
 		/* init output data */
-		memset(buffer[LEFT],0,length*sizeof(INT16));
-		memset(buffer[RIGHT],0,length*sizeof(INT16));
+		memset(buffer[LEFT],0,length*sizeof(int16_t));
+		memset(buffer[RIGHT],0,length*sizeof(int16_t));
         return;
 	}
 

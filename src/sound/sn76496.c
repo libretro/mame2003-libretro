@@ -145,7 +145,7 @@ WRITE_HANDLER( SN76496_3_w ) {	SN76496Write(3,data); }
 
 
 
-static void SN76496Update(int chip,INT16 *buffer,int length)
+static void SN76496Update(int chip,int16_t *buffer,int length)
 {
 	int i;
 	struct SN76496 *R = &sn[chip];

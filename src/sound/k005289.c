@@ -45,8 +45,8 @@ static const unsigned char *sound_prom;
 static int stream,mclock,rate;
 
 /* mixer tables and internal buffers */
-static INT16 *mixer_table;
-static INT16 *mixer_lookup;
+static int16_t *mixer_table;
+static int16_t *mixer_lookup;
 static short *mixer_buffer;
 
 static int k005289_A_frequency,k005289_B_frequency;
@@ -62,7 +62,7 @@ static int make_mixer_table(int voices)
 	int gain = 16;
 
 	/* allocate memory */
-	mixer_table = malloc(256 * voices * sizeof(INT16));
+	mixer_table = malloc(256 * voices * sizeof(int16_t));
 	if (!mixer_table)
 		return 1;
 
@@ -83,14 +83,14 @@ static int make_mixer_table(int voices)
 
 
 /* generate sound to the mix buffer */
-static void K005289_update(int ch, INT16 *buffer, int length)
+static void K005289_update(int ch, int16_t *buffer, int length)
 {
 	k005289_sound_channel *voice=channel_list;
 	short *mix;
 	int i,v,f;
 
 	/* zap the contents of the mixer buffer */
-	memset(mixer_buffer, 0, length * sizeof(INT16));
+	memset(mixer_buffer, 0, length * sizeof(int16_t));
 
 	v=voice[0].volume;
 	f=voice[0].frequency;

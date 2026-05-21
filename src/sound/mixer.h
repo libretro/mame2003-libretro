@@ -86,14 +86,14 @@ const char *mixer_get_name(int channel);
 */
 void mixer_set_volume(int channel,int volume);
 
-void mixer_play_sample(int channel,INT8 *data,int len,int freq,int loop);
-void mixer_play_sample_16(int channel,INT16 *data,int len,int freq,int loop);
+void mixer_play_sample(int channel,int8_t *data,int len,int freq,int loop);
+void mixer_play_sample_16(int channel,int16_t *data,int len,int freq,int loop);
 void mixer_stop_sample(int channel);
 int mixer_is_sample_playing(int channel);
 void mixer_set_sample_frequency(int channel,int freq);
 void mixer_sound_enable_global_w(int enable);
 
-void mixer_play_streamed_sample_16(int channel,INT16 *data,int len,int freq);
+void mixer_play_streamed_sample_16(int channel,int16_t *data,int len,int freq);
 int mixer_samples_this_frame(void);
 int mixer_need_samples_this_frame(int channel,int freq);
 void mixer_set_lowpass_frequency(int ch, int freq);
@@ -107,8 +107,8 @@ int mixer_get_default_mixing_level(int level);
 
 struct mixer_config
 {
-	UINT8 default_levels[MIXER_MAX_CHANNELS];
-	UINT8 mixing_levels[MIXER_MAX_CHANNELS];
+	uint8_t default_levels[MIXER_MAX_CHANNELS];
+	uint8_t mixing_levels[MIXER_MAX_CHANNELS];
 };
 
 void mixer_load_config(const struct mixer_config *config);

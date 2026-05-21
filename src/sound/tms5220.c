@@ -38,11 +38,11 @@
 
 /* these contain data that describes the 128-bit data FIFO */
 #define FIFO_SIZE 16
-static UINT8 fifo[FIFO_SIZE];
-static UINT8 fifo_head;
-static UINT8 fifo_tail;
-static UINT8 fifo_count;
-static UINT8 fifo_bits_taken;
+static uint8_t fifo[FIFO_SIZE];
+static uint8_t fifo_head;
+static uint8_t fifo_tail;
+static uint8_t fifo_count;
+static uint8_t fifo_bits_taken;
 
 
 /* these contain global status bits */
@@ -53,48 +53,48 @@ static UINT8 fifo_bits_taken;
 	tms5220_speaking is true.  Else, we can play nothing as well, which is a
 	speed-up...
 */
-static UINT8 tms5220_speaking;	/* Speak or Speak External command in progress */
-static UINT8 speak_external;	/* Speak External command in progress */
+static uint8_t tms5220_speaking;	/* Speak or Speak External command in progress */
+static uint8_t speak_external;	/* Speak External command in progress */
 #if USE_OBSOLETE_HACK
-static UINT8 speak_delay_frames;
+static uint8_t speak_delay_frames;
 #endif
-static UINT8 talk_status; 		/* tms5220 is really currently speaking */
-static UINT8 first_frame;		/* we have just started speaking, and we are to parse the first frame */
-static UINT8 last_frame;		/* we are doing the frame of sound */
-static UINT8 buffer_low;		/* FIFO has less than 8 bytes in it */
-static UINT8 buffer_empty;		/* FIFO is empty*/
-static UINT8 irq_pin;			/* state of the IRQ pin (output) */
+static uint8_t talk_status; 		/* tms5220 is really currently speaking */
+static uint8_t first_frame;		/* we have just started speaking, and we are to parse the first frame */
+static uint8_t last_frame;		/* we are doing the frame of sound */
+static uint8_t buffer_low;		/* FIFO has less than 8 bytes in it */
+static uint8_t buffer_empty;		/* FIFO is empty*/
+static uint8_t irq_pin;			/* state of the IRQ pin (output) */
 
 static void (*irq_func)(int state); /* called when the state of the IRQ pin changes */
 
 
 /* these contain data describing the current and previous voice frames */
-static UINT16 old_energy;
-static UINT16 old_pitch;
+static uint16_t old_energy;
+static uint16_t old_pitch;
 static int old_k[10];
 
-static UINT16 new_energy;
-static UINT16 new_pitch;
+static uint16_t new_energy;
+static uint16_t new_pitch;
 static int new_k[10];
 
 
 /* these are all used to contain the current state of the sound generation */
-static UINT16 current_energy;
-static UINT16 current_pitch;
+static uint16_t current_energy;
+static uint16_t current_pitch;
 static int current_k[10];
 
-static UINT16 target_energy;
-static UINT16 target_pitch;
+static uint16_t target_energy;
+static uint16_t target_pitch;
 static int target_k[10];
 
-static UINT8 interp_count;		/* number of interp periods (0-7) */
-static UINT8 sample_count;		/* sample number within interp (0-24) */
+static uint8_t interp_count;		/* number of interp periods (0-7) */
+static uint8_t sample_count;		/* sample number within interp (0-24) */
 static int pitch_count;
 
 static int u[11];
 static int x[10];
 
-static INT8 randbit;
+static int8_t randbit;
 
 
 /* Static function prototypes */
@@ -116,7 +116,7 @@ static void (*read_and_branch_callback)(void) = NULL;
 static int schedule_dummy_read;			/* set after each load address, so that next read operation
 										  is preceded by a dummy read */
 
-static UINT8 data_register;				/* data register, used by read command */
+static uint8_t data_register;				/* data register, used by read command */
 static int RDB_flag;					/* whether we should read data register or status register */
 
 /* flag for tms0285 emulation */
@@ -381,7 +381,7 @@ int tms5220_int_read(void)
 
 ***********************************************************************************************/
 
-void tms5220_process(INT16 *buffer, unsigned int size)
+void tms5220_process(int16_t *buffer, unsigned int size)
 {
     int buf_count=0;
     int i, interp_period;

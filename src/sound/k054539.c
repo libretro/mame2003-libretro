@@ -74,15 +74,15 @@ static struct {
 		int cur_limit;
 		unsigned char *cur_zone;
 		unsigned char *rom;
-		UINT32 rom_size;
-		UINT32 rom_mask;
+		uint32_t rom_size;
+		uint32_t rom_mask;
 		int stream;
 
 		struct K054539_channel {
-			UINT32 pos;
-			UINT32 pfrac;
-			INT32 val;
-			INT32 pval;
+			uint32_t pos;
+			uint32_t pfrac;
+			int32_t val;
+			int32_t pval;
 		} channels[8];
 	} chip[MAX_K054539];
 } K054539_chips;
@@ -124,11 +124,11 @@ static void K054539_keyoff(int chip, int channel)
 		K054539_chips.chip[chip].regs[0x22c] &= ~(1 << channel);
 }
 
-static void K054539_update(int chip, INT16 **buffer, int length)
+static void K054539_update(int chip, int16_t **buffer, int length)
 {
 #define VOL_CAP 1.80
 
-	static INT16 dpcm[16] = {
+	static int16_t dpcm[16] = {
 		0<<8, 1<<8, 4<<8, 9<<8, 16<<8, 25<<8, 36<<8, 49<<8,
 		-64<<8, -49<<8, -36<<8, -25<<8, -16<<8, -9<<8, -4<<8, -1<<8
 	};
@@ -137,7 +137,7 @@ static void K054539_update(int chip, INT16 **buffer, int length)
 	short *rev_max;
 	short *rbase, *rbuffer, *rev_top;
 	unsigned char *samples;
-	UINT32 rom_mask;
+	uint32_t rom_mask;
 
 	unsigned char *base1, *base2;
 	struct K054539_channel *chan;
@@ -233,9 +233,9 @@ else
 
 #define UPDATE_CHANNELS																	\
 			do {																		\
-				*bufl++ += (INT16)(cur_val*lvol);										\
-				*bufr++ += (INT16)(cur_val*rvol);										\
-				*revb++ += (INT16)(cur_val*rbvol);										\
+				*bufl++ += (int16_t)(cur_val*lvol);										\
+				*bufr++ += (int16_t)(cur_val*rvol);										\
+				*revb++ += (int16_t)(cur_val*rbvol);										\
 			} while(0)
 
 			switch(base2[0] & 0xc) {
@@ -247,12 +247,12 @@ else
 						cur_pos += pdelta;
 
 						cur_pval = cur_val;
-						cur_val = (INT16)(samples[cur_pos] << 8);
-						if(cur_val == (INT16)0x8000) {
+						cur_val = (int16_t)(samples[cur_pos] << 8);
+						if(cur_val == (int16_t)0x8000) {
 							if(base2[1] & 1) {
 								cur_pos = (base1[0x08] | (base1[0x09] << 8) | (base1[0x0a] << 16)) & rom_mask;
-								cur_val = (INT16)(samples[cur_pos] << 8);
-								if(cur_val != (INT16)0x8000)
+								cur_val = (int16_t)(samples[cur_pos] << 8);
+								if(cur_val != (int16_t)0x8000)
 									continue;
 							}
 							K054539_keyoff(chip, ch);
@@ -275,12 +275,12 @@ else
 						cur_pos += pdelta;
 
 						cur_pval = cur_val;
-						cur_val = (INT16)(samples[cur_pos] | samples[cur_pos+1]<<8);
-						if(cur_val == (INT16)0x8000) {
+						cur_val = (int16_t)(samples[cur_pos] | samples[cur_pos+1]<<8);
+						if(cur_val == (int16_t)0x8000) {
 							if(base2[1] & 1) {
 								cur_pos = (base1[0x08] | (base1[0x09] << 8) | (base1[0x0a] << 16)) & rom_mask;
-								cur_val = (INT16)(samples[cur_pos] | samples[cur_pos+1]<<8);
-								if(cur_val != (INT16)0x8000)
+								cur_val = (int16_t)(samples[cur_pos] | samples[cur_pos+1]<<8);
+								if(cur_val != (int16_t)0x8000)
 									continue;
 							}
 							K054539_keyoff(chip, ch);

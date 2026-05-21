@@ -48,13 +48,13 @@ static int TimPris[3];
 static int TimCnt[3];
 
 // DMA stuff
-static UINT32 scsp_dmea;
-static UINT16 scsp_drga;
+static uint32_t scsp_dmea;
+static uint16_t scsp_drga;
 #define	scsp_dgate		scsp_regs[0x416/2] & 0x4000
 #define	scsp_ddir		scsp_regs[0x416/2] & 0x2000
 #define scsp_dexe 		scsp_regs[0x416/2] & 0x1000
 #define dma_transfer_end	((scsp_regs[0x424/2] & 0x10)>>4)|(((scsp_regs[0x426/2] & 0x10)>>4)<<1)|(((scsp_regs[0x428/2] & 0x10)>>4)<<2)
-static UINT16 scsp_dtlg;
+static uint16_t scsp_dtlg;
 static void dma_scsp(void); 		/*SCSP DMA transfer function*/
 
 #define SHIFT	12
@@ -895,9 +895,9 @@ static void SCSP_DoMasterSamples(int chip, int nsamples)
 
 static void dma_scsp()
 {
-	static UINT16 tmp_dma[2], *scsp_regs;
+	static uint16_t tmp_dma[2], *scsp_regs;
 
-	scsp_regs = (UINT16 *)SCSP->udata.datab;
+	scsp_regs = (uint16_t *)SCSP->udata.datab;
 
 	logerror("SCSP: DMA transfer START\n"
 			 "DMEA: %04x DRGA: %04x DTLG: %04x\n"
@@ -1006,7 +1006,7 @@ READ16_HANDLER( SCSP_0_r )
 
 WRITE16_HANDLER( SCSP_0_w )
 {
-	UINT16 tmp, *scsp_regs;
+	uint16_t tmp, *scsp_regs;
 
 	stream_update(SCSPs[0].stream, 0);
 
@@ -1015,7 +1015,7 @@ WRITE16_HANDLER( SCSP_0_w )
 	COMBINE_DATA(&tmp);
 	SCSP_w16(offset*2, tmp);
 
-	scsp_regs = (UINT16 *)SCSP->udata.datab;
+	scsp_regs = (uint16_t *)SCSP->udata.datab;
 
 	// check DMA
 	switch(offset*2)

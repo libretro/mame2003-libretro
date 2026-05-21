@@ -60,29 +60,29 @@ static long pantbl[16];		// pre-calculated panning table
 // sample info struct
 typedef struct PCM_t
 {
-	INT32	st;
-	INT32	size;
-	INT32	loop;
-	UINT8	env[4];
+	int32_t	st;
+	int32_t	size;
+	int32_t	loop;
+	uint8_t	env[4];
 } PCMInfoT;
 
 // voice structure
 typedef struct Voice_t
 {
-	INT8    active;		// active flag
-	INT8	loop;	        // loop flag
-	INT32   end;		// length of sample
-	INT32	loopst;		// loop start offset
+	int8_t    active;		// active flag
+	int8_t	loop;	        // loop flag
+	int32_t   end;		// length of sample
+	int32_t	loopst;		// loop start offset
 	int     pan;		// panning
-	INT32 	vol;		// volume
-	INT8    *pSamp;		// pointer to start of sample data
+	int32_t 	vol;		// volume
+	int8_t    *pSamp;		// pointer to start of sample data
 
-	INT32	ptdelta;	// pitch step
-	INT32	ptoffset;	// fixed point offset
-	INT32	ptsum;		// fixed point sum
+	int32_t	ptdelta;	// pitch step
+	int32_t	ptoffset;	// fixed point offset
+	int32_t	ptsum;		// fixed point sum
   	int 	relamt;		// release amount
   	int 	relcount;	// release counter
-	INT8	relstage;	// release stage
+	int8_t	relstage;	// release stage
 } VoiceT;
 
 // chip structure
@@ -121,9 +121,9 @@ static void MultiPCM_postload(void)
 	}
 }
 
-static void MultiPCM_update(int chip, INT16 **buffer, int length )
+static void MultiPCM_update(int chip, int16_t **buffer, int length )
 {
-	INT16  *datap[2];
+	int16_t  *datap[2];
 	int i, j;
 	signed long lvol, rvol, mlvol, mrvol;
 	signed char *pSamp;

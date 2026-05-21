@@ -83,12 +83,12 @@ static int	rate;								// Output sampling rate (Hz)
 static int	stream;								// Stream handle
 static int	address;							// address eor data
 static int	sound_enable = 0;					// sound output enable/disable
-static UINT8	x1_010_reg[0x2000];				// X1-010 Register & wave form area
-static UINT8	HI_WORD_BUF[0x2000];			// X1-010 16bit access ram check avoidance work
-static UINT32	smp_offset[SETA_NUM_CHANNELS];
-static UINT32	env_offset[SETA_NUM_CHANNELS];
+static uint8_t	x1_010_reg[0x2000];				// X1-010 Register & wave form area
+static uint8_t	HI_WORD_BUF[0x2000];			// X1-010 16bit access ram check avoidance work
+static uint32_t	smp_offset[SETA_NUM_CHANNELS];
+static uint32_t	env_offset[SETA_NUM_CHANNELS];
 
-static UINT32 base_clock;
+static uint32_t base_clock;
 
 /* mixer tables and internal buffers */
 //static short	*mixer_buffer = NULL;
@@ -97,13 +97,13 @@ static UINT32 base_clock;
 /*--------------------------------------------------------------
  generate sound to the mix buffer
 --------------------------------------------------------------*/
-void seta_sh_update( int param, INT16 **buffer, int length )
+void seta_sh_update( int param, int16_t **buffer, int length )
 {
 	X1_010_CHANNEL	*reg;
 	int		ch, i, volL, volR, freq;
-	register INT8	*start, *end, data;
-	register UINT8	*env;
-	register UINT32	smp_offs, smp_step, env_offs, env_step, delta;
+	register int8_t	*start, *end, data;
+	register uint8_t	*env;
+	register uint32_t	smp_offs, smp_step, env_offs, env_step, delta;
 
 	// mixer buffer zero clear
 	memset( buffer[0], 0, length*sizeof(short) );
@@ -114,18 +114,18 @@ void seta_sh_update( int param, INT16 **buffer, int length )
 	for( ch = 0; ch < SETA_NUM_CHANNELS; ch++ ) {
 		reg = (X1_010_CHANNEL *)&(x1_010_reg[ch*sizeof(X1_010_CHANNEL)]);
 		if( (reg->status&1) != 0 ) {							// Key On
-			INT16 *bufL = buffer[0];
-			INT16 *bufR = buffer[1];
+			int16_t *bufL = buffer[0];
+			int16_t *bufR = buffer[1];
 			if( (reg->status&2) == 0 ) {						// PCM sampling
-				start    = (INT8 *)(reg->start      *0x1000+memory_region(REGION_SOUND1));
-				end      = (INT8 *)((0x100-reg->end)*0x1000+memory_region(REGION_SOUND1));
+				start    = (int8_t *)(reg->start      *0x1000+memory_region(REGION_SOUND1));
+				end      = (int8_t *)((0x100-reg->end)*0x1000+memory_region(REGION_SOUND1));
 				volL     = ((reg->volume>>4)&0xf)*VOL_BASE;
 				volR     = ((reg->volume>>0)&0xf)*VOL_BASE;
 				smp_offs = smp_offset[ch];
 				freq     = reg->frequency&0x1f;
 				// Meta Fox does not write the frequency register. Ever
 				if( freq == 0 ) freq = 4;
-				smp_step = (UINT32)((float)base_clock/8192.0
+				smp_step = (uint32_t)((float)base_clock/8192.0
 							*freq*(1<<FREQ_BASE_BITS)/(float)rate);
 #if LOG_SOUND
 				if( smp_offs == 0 ) {
@@ -147,14 +147,14 @@ void seta_sh_update( int param, INT16 **buffer, int length )
 				}
 				smp_offset[ch] = smp_offs;
 			} else {											// Wave form
-				start    = (INT8 *)&(x1_010_reg[reg->volume*128+0x1000]);
+				start    = (int8_t *)&(x1_010_reg[reg->volume*128+0x1000]);
 				smp_offs = smp_offset[ch];
 				freq     = (reg->pitch_hi<<8)+reg->frequency;
-				smp_step = (UINT32)((float)base_clock/128.0/1024.0/4.0*freq*(1<<FREQ_BASE_BITS)/(float)rate);
+				smp_step = (uint32_t)((float)base_clock/128.0/1024.0/4.0*freq*(1<<FREQ_BASE_BITS)/(float)rate);
 
-				env      = (UINT8 *)&(x1_010_reg[reg->end*128]);
+				env      = (uint8_t *)&(x1_010_reg[reg->end*128]);
 				env_offs = env_offset[ch];
-				env_step = (UINT32)((float)base_clock/128.0/1024.0/4.0*reg->start*(1<<ENV_BASE_BITS)/(float)rate);
+				env_step = (uint32_t)((float)base_clock/128.0/1024.0/4.0*reg->start*(1<<ENV_BASE_BITS)/(float)rate);
 #if LOG_SOUND
 /* Print some more debug info */
 				if( smp_offs == 0 ) {
@@ -274,7 +274,7 @@ WRITE_HANDLER( seta_sound_w )
 
 READ16_HANDLER( seta_sound_word_r )
 {
-	UINT16	ret;
+	uint16_t	ret;
 
 	ret = HI_WORD_BUF[offset]<<8;
 	ret += (seta_sound_r( offset )&0xff);

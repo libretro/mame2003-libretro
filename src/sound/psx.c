@@ -27,7 +27,7 @@ static INLINE void verboselog( int n_level, const char *s_fmt, ... )
 	}
 }
 
-static UINT8 *m_p_n_ram;
+static uint8_t *m_p_n_ram;
 static size_t m_n_ramsize;
 
 static data16_t m_n_mainvolumeleft;
@@ -73,7 +73,7 @@ static INLINE void psxwritelong( data32_t n_address, data32_t n_data )
 	*( (data32_t *)&m_p_n_ram[ n_address ] ) = n_data;
 }
 
-static void spu_read( UINT32 n_address, INT32 n_size )
+static void spu_read( uint32_t n_address, int32_t n_size )
 {
 	data32_t n_spuoffset;
 
@@ -89,7 +89,7 @@ static void spu_read( UINT32 n_address, INT32 n_size )
 	}
 }
 
-static void spu_write( UINT32 n_address, INT32 n_size )
+static void spu_write( uint32_t n_address, int32_t n_size )
 {
 	data32_t n_spuoffset;
 

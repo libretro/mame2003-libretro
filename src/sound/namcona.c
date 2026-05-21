@@ -43,29 +43,29 @@
 
 static int mSampleRate;
 static int mStream;
-static INT16 *mpMixerBuffer;
-static INT32 *mpPitchTable;
+static int16_t *mpMixerBuffer;
+static int32_t *mpPitchTable;
 static data16_t *mpROM;
 static data16_t *mpMetaData;
 
 struct voice
 {
-	INT32 bActive;
+	int32_t bActive;
 
-	INT32 flags;
-	INT32 start; /* fixed point */
-	INT32 end;   /* fixed point */
-	INT32 loop;  /* fixed point */
-	INT32 baseFreq;
-	INT32 bank;
+	int32_t flags;
+	int32_t start; /* fixed point */
+	int32_t end;   /* fixed point */
+	int32_t loop;  /* fixed point */
+	int32_t baseFreq;
+	int32_t bank;
 
-	INT32 delta; /* fixed point */
-	INT32 pos;
-	INT32 volume;
-	INT32 masterVolume; /* copied from pSequence->volume each time a note is played */
-	INT32 pan;
-	INT32 dnote;
-	INT32 detune;
+	int32_t delta; /* fixed point */
+	int32_t pos;
+	int32_t volume;
+	int32_t masterVolume; /* copied from pSequence->volume each time a note is played */
+	int32_t pan;
+	int32_t dnote;
+	int32_t detune;
 } mVoice[MAX_VOICE];
 
 struct sequence
@@ -144,19 +144,19 @@ ReadPCMSample( int addr, int flag )
 } /* ReadPCMSample */
 
 static void
-RenderSamples( INT16 **buffer, INT16 *pSource, int length )
+RenderSamples( int16_t **buffer, int16_t *pSource, int length )
 {
 	int i;
-	INT16 * pDest1 = buffer[0];
-	INT16 * pDest2 = buffer[1];
+	int16_t * pDest1 = buffer[0];
+	int16_t * pDest2 = buffer[1];
 	for (i = 0; i < length; i++)
 	{
-		INT32 dataL = /* 100 * */ (*pSource++);
-		INT32 dataR = /* 100 * */ (*pSource++);
+		int32_t dataL = /* 100 * */ (*pSource++);
+		int32_t dataR = /* 100 * */ (*pSource++);
       MAME_CLAMP_SAMPLE(dataL);
       MAME_CLAMP_SAMPLE(dataR);
-		*pDest1++ = (INT16)dataL; /* stereo left */
-		*pDest2++ = (INT16)dataR; /* stereo right */
+		*pDest1++ = (int16_t)dataL; /* stereo left */
+		*pDest2++ = (int16_t)dataR; /* stereo right */
 	}
 } /* RenderSamples */
 
@@ -538,7 +538,7 @@ UpdateSequence( struct sequence *pSequence )
 } /* UpdateSequence */
 
 static void
-UpdateSound( int ch, INT16 **buffer, int length )
+UpdateSound( int ch, int16_t **buffer, int length )
 {
 	int i;
 
@@ -548,19 +548,19 @@ UpdateSound( int ch, INT16 **buffer, int length )
 	}
 
 	if( length>mSampleRate ) length = mSampleRate;
-	memset(mpMixerBuffer, 0, length * sizeof(INT16) * 2);
+	memset(mpMixerBuffer, 0, length * sizeof(int16_t) * 2);
 	for( i=0;i<MAX_VOICE;i++ )
 	{
 		struct voice *pVoice = &mVoice[i];
 		if( pVoice->bActive && pVoice->delta )
 		{
-			INT32 delta  = pVoice->delta;
-			INT32 end    = pVoice->end;
-			INT32 pos    = pVoice->pos;
-			INT32 vol    = pVoice->volume*pVoice->masterVolume/8;
-			INT32 pan    = pVoice->pan;
-			INT16 *pDest = mpMixerBuffer;
-			INT16 dat;
+			int32_t delta  = pVoice->delta;
+			int32_t end    = pVoice->end;
+			int32_t pos    = pVoice->pos;
+			int32_t vol    = pVoice->volume*pVoice->masterVolume/8;
+			int32_t pan    = pVoice->pan;
+			int16_t *pDest = mpMixerBuffer;
+			int16_t dat;
 			int j;
 			for( j=0; j<length; j++ )
 			{
@@ -610,10 +610,10 @@ NAMCONA_sh_start( const struct MachineSound *msound )
 	memset( mVoice, 0x00, sizeof(mVoice) );
 	memset( mSequence, 0x00, sizeof(mSequence) );
 
-	mpMixerBuffer = auto_malloc( sizeof(INT16)*mSampleRate*2 );
+	mpMixerBuffer = auto_malloc( sizeof(int16_t)*mSampleRate*2 );
 	if( mpMixerBuffer )
 	{
-		mpPitchTable = auto_malloc( sizeof(INT32)*0xff );
+		mpPitchTable = auto_malloc( sizeof(int32_t)*0xff );
 		if( mpPitchTable )
 		{
 			int i;
@@ -631,7 +631,7 @@ NAMCONA_sh_start( const struct MachineSound *msound )
 					data++;
 					freq /= kTwelfthRootTwo;
 				}
-				mpPitchTable[i] = (INT32)freq;
+				mpPitchTable[i] = (int32_t)freq;
 			}
 			return 0;
 		}

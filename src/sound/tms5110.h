@@ -24,7 +24,7 @@ void tms5110_PDC_set(int data);
 int tms5110_status_read(void);
 int tms5110_ready_read(void);
 
-void tms5110_process(INT16 *buffer, unsigned int size);
+void tms5110_process(int16_t *buffer, unsigned int size);
 
 #endif
 

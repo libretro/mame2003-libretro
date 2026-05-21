@@ -93,45 +93,45 @@ static int schannel;
 
 /* need to save state */
 
-static UINT8 *VLM5030_rom;
+static uint8_t *VLM5030_rom;
 static int VLM5030_address_mask;
-static UINT16 VLM5030_address;
-static UINT8 pin_BSY;
-static UINT8 pin_ST;
-static UINT8 pin_VCU;
-static UINT8 pin_RST;
-static UINT8 latch_data;
-static UINT16 vcu_addr_h;
-static UINT8 VLM5030_parameter;
-static UINT8 VLM5030_phase;
+static uint16_t VLM5030_address;
+static uint8_t pin_BSY;
+static uint8_t pin_ST;
+static uint8_t pin_VCU;
+static uint8_t pin_RST;
+static uint8_t latch_data;
+static uint16_t vcu_addr_h;
+static uint8_t VLM5030_parameter;
+static uint8_t VLM5030_phase;
 
 /* state of option paramter */
 static int VLM5030_frame_size;
 static int pitch_offset;
-static UINT8 interp_step;
+static uint8_t interp_step;
 
-static UINT8 interp_count;       /* number of interp periods    */
-static UINT8 sample_count;       /* sample number within interp */
-static UINT8 pitch_count;
+static uint8_t interp_count;       /* number of interp periods    */
+static uint8_t sample_count;       /* sample number within interp */
+static uint8_t pitch_count;
 
 /* these contain data describing the current and previous voice frames */
-static UINT16 old_energy;
-static UINT8 old_pitch;
-static INT16  old_k[10];
-static UINT16 target_energy;
-static UINT8 target_pitch;
-static INT16 target_k[10];
+static uint16_t old_energy;
+static uint8_t old_pitch;
+static int16_t  old_k[10];
+static uint16_t target_energy;
+static uint8_t target_pitch;
+static int16_t target_k[10];
 
-static UINT16 new_energy;
-static UINT8 new_pitch;
-static INT16 new_k[10];
+static uint16_t new_energy;
+static uint8_t new_pitch;
+static int16_t new_k[10];
 
 /* these are all used to contain the current state of the sound generation */
 static unsigned int current_energy;
 static unsigned int current_pitch;
 static int current_k[10];
 
-static INT32 x[10];
+static int32_t x[10];
 
 /* phase value */
 enum {
@@ -191,7 +191,7 @@ static const unsigned char pitchtable [0x20]=
    86, 94, 102,110,118,126          /* 26-31 : 8step       */
 };
 
-static const INT16 K1_table[] = {
+static const int16_t K1_table[] = {
   -24898,  -25672,  -26446,  -27091,  -27736,  -28252,  -28768,  -29155,
   -29542,  -29929,  -30316,  -30574,  -30832,  -30961,  -31219,  -31348,
   -31606,  -31735,  -31864,  -31864,  -31993,  -32122,  -32122,  -32251,
@@ -201,17 +201,17 @@ static const INT16 K1_table[] = {
        0,   -1935,   -3999,   -6063,   -7998,   -9804,  -11610,  -13416,
   -15093,  -16642,  -18061,  -19480,  -20770,  -21931,  -22963,  -23995
 };
-static const INT16 K2_table[] = {
+static const int16_t K2_table[] = {
        0,   -3096,   -6321,   -9417,  -12513,  -15351,  -18061,  -20770,
   -23092,  -25285,  -27220,  -28897,  -30187,  -31348,  -32122,  -32638,
        0,   32638,   32122,   31348,   30187,   28897,   27220,   25285,
    23092,   20770,   18061,   15351,   12513,    9417,    6321,    3096
 };
-static const INT16 K3_table[] = {
+static const int16_t K3_table[] = {
        0,   -3999,   -8127,  -12255,  -16384,  -20383,  -24511,  -28639,
    32638,   28639,   24511,   20383,   16254,   12255,    8127,    3999
 };
-static const INT16 K5_table[] = {
+static const int16_t K5_table[] = {
        0,   -8127,  -16384,  -24511,   32638,   24511,   16254,    8127
 };
 
@@ -284,7 +284,7 @@ static int parse_frame (void)
 }
 
 /* decode and buffering data */
-static void vlm5030_update_callback(int num,INT16 *buffer, int length)
+static void vlm5030_update_callback(int num,int16_t *buffer, int length)
 {
 	int buf_count=0;
 	int interp_effect;
@@ -445,7 +445,7 @@ static void VLM5030_update(void)
 }
 
 /* setup parameteroption when RST=H */
-static void VLM5030_setup_parameter(UINT8 param)
+static void VLM5030_setup_parameter(uint8_t param)
 {
 	/* latch parameter value */
 	VLM5030_parameter = param;
@@ -512,7 +512,7 @@ static void VLM5030_reset(void)
 /* set speech rom address */
 void VLM5030_set_rom(void *speech_rom)
 {
-	VLM5030_rom = (UINT8 *)speech_rom;
+	VLM5030_rom = (uint8_t *)speech_rom;
 }
 
 /* get BSY pin level */
@@ -525,7 +525,7 @@ int VLM5030_BSY(void)
 /* latch contoll data */
 WRITE_HANDLER( VLM5030_data_w )
 {
-	latch_data = (UINT8)data;
+	latch_data = (uint8_t)data;
 }
 
 /* set RST pin level : reset / set table address A8-A15 */
@@ -652,7 +652,7 @@ int VLM5030_sh_start(const struct MachineSound *msound)
 	schannel = mixer_allocate_channel(intf->volume);
 
 #ifdef _STATE_H
-	/* don't restore "UINT8 *VLM5030_rom" when use VLM5030_set_rom() */
+	/* don't restore "uint8_t *VLM5030_rom" when use VLM5030_set_rom() */
 
 	state_save_register_UINT16 (VLM_NAME,0,"address", &VLM5030_address, 1);
 	state_save_register_UINT8  (VLM_NAME,0,"busy"   , &pin_BSY        , 1);

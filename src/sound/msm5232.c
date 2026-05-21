@@ -14,23 +14,23 @@
 */
 
 typedef struct {
-	UINT8 mode;
+	uint8_t mode;
 
 	int		TG_count_period;
 	int		TG_count;
 
-	UINT8	TG_cnt;		/* 7 bits binary counter (frequency output) */
-	UINT8	TG_out16;	/* bit number (of TG_cnt) for 16' output */
-	UINT8	TG_out8;	/* bit number (of TG_cnt) for  8' output */
-	UINT8	TG_out4;	/* bit number (of TG_cnt) for  4' output */
-	UINT8	TG_out2;	/* bit number (of TG_cnt) for  2' output */
+	uint8_t	TG_cnt;		/* 7 bits binary counter (frequency output) */
+	uint8_t	TG_out16;	/* bit number (of TG_cnt) for 16' output */
+	uint8_t	TG_out8;	/* bit number (of TG_cnt) for  8' output */
+	uint8_t	TG_out4;	/* bit number (of TG_cnt) for  4' output */
+	uint8_t	TG_out2;	/* bit number (of TG_cnt) for  2' output */
 
 	int		egvol;
 	int		eg_sect;
 	int		counter;
 	int		eg;
 
-	UINT8	eg_arm;		/* attack/release mode */
+	uint8_t	eg_arm;		/* attack/release mode */
 
 	double	ar_rate;
 	double	dr_rate;
@@ -43,10 +43,10 @@ typedef struct {
 typedef struct {
 	VOICE	voi[8];
 
-	UINT32 EN_out16[2];	/* enable 16' output masks for both groups (0-disabled ; ~0 -enabled) */
-	UINT32 EN_out8[2];	/* enable 8'  output masks */
-	UINT32 EN_out4[2];	/* enable 4'  output masks */
-	UINT32 EN_out2[2];	/* enable 2'  output masks */
+	uint32_t EN_out16[2];	/* enable 16' output masks for both groups (0-disabled ; ~0 -enabled) */
+	uint32_t EN_out8[2];	/* enable 8'  output masks */
+	uint32_t EN_out4[2];	/* enable 4'  output masks */
+	uint32_t EN_out2[2];	/* enable 2'  output masks */
 
 	int noise_cnt;
 	int noise_step;
@@ -59,8 +59,8 @@ typedef struct {
 	double	ar_tbl[8];
 	double	dr_tbl[16];
 
-	UINT8   control1;
-	UINT8   control2;
+	uint8_t   control1;
+	uint8_t   control2;
 
 	int		clock;		/* chip clock in Hz */
 	int		rate;		/* sample rate in Hz */
@@ -78,7 +78,7 @@ typedef struct {
 /* Chip has 88x12bits ROM   (addressing (in hex) from 0x00 to 0x57) */
 #define ROM(counter,bindiv)	(counter|(bindiv<<9))
 
-static UINT16 MSM5232_ROM[88]={
+static uint16_t MSM5232_ROM[88]={
 /* higher values are Programmable Counter data (9 bits) */
 /* lesser values are Binary Counter shift data (3 bits) */
 
@@ -353,7 +353,7 @@ static void msm5232_write(int which, int ofst, int data)
 				if ( chip->voi[ch].pitch != (data&0x7f) )
 				{
 					int n;
-					UINT16 pg;
+					uint16_t pg;
 
 					chip->voi[ch].pitch = data&0x7f;
 
@@ -684,11 +684,11 @@ static INLINE void TG_group_advance(MSM5232 *chip, int groupidx)
 #endif
 
 
-void MSM5232_update_one(int which, INT16** buffer, int samples)
+void MSM5232_update_one(int which, int16_t** buffer, int samples)
 {
 	MSM5232 *chip = &msm5232[which];
-	INT16 *buf1 = buffer[0];
-	INT16 *buf2 = buffer[1];
+	int16_t *buf1 = buffer[0];
+	int16_t *buf2 = buffer[1];
 	int i;
 
 	for (i=0; i<samples; i++)

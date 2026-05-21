@@ -102,7 +102,7 @@ static int left_accum[ACCUMULATOR_SAMPLES];
 static int right_accum[ACCUMULATOR_SAMPLES];
 
 /* 16-bit mix buffers */
-static INT16 mix_buffer[ACCUMULATOR_SAMPLES*2]; /* *2 for stereo */
+static int16_t mix_buffer[ACCUMULATOR_SAMPLES*2]; /* *2 for stereo */
 
 /* global sample tracking */
 static unsigned samples_this_frame;
@@ -200,12 +200,12 @@ static void mixer_channel_resample_set(struct mixer_channel_data *channel, unsig
 	src - source vector, (updated at the exit)
 	src_len - max number of source samples
 */
-static unsigned mixer_channel_resample_16(struct mixer_channel_data* channel, filter_state* state, int volume, int* dst, unsigned dst_len, INT16** psrc, unsigned src_len)
+static unsigned mixer_channel_resample_16(struct mixer_channel_data* channel, filter_state* state, int volume, int* dst, unsigned dst_len, int16_t** psrc, unsigned src_len)
 {
 	unsigned dst_base = (accum_base + channel->samples_available) & ACCUMULATOR_MASK;
 	unsigned dst_pos = dst_base;
 
-	INT16* src = *psrc;
+	int16_t* src = *psrc;
 
 	assert( dst_len <= ACCUMULATOR_MASK );
 
@@ -215,7 +215,7 @@ static unsigned mixer_channel_resample_16(struct mixer_channel_data* channel, fi
 		{
 			/* copy */
 			unsigned len;
-			INT16* src_end;
+			int16_t* src_end;
 			if (src_len > dst_len)
 				len = dst_len;
 			else
@@ -263,7 +263,7 @@ static unsigned mixer_channel_resample_16(struct mixer_channel_data* channel, fi
 #endif
 		} else {
 			/* end address */
-			INT16* src_end = src + src_len;
+			int16_t* src_end = src + src_len;
 			unsigned dst_pos_end = (dst_pos + dst_len) & ACCUMULATOR_MASK;
 
 			int step = channel->step;
@@ -294,7 +294,7 @@ static unsigned mixer_channel_resample_16(struct mixer_channel_data* channel, fi
 		int pivot = channel->pivot;
 
 		/* end address */
-		INT16* src_end = src + src_len;
+		int16_t* src_end = src + src_len;
 		unsigned dst_pos_end = (dst_pos + dst_len) & ACCUMULATOR_MASK;
 
 		/* volume */
@@ -343,12 +343,12 @@ static unsigned mixer_channel_resample_16(struct mixer_channel_data* channel, fi
 	return (dst_pos - dst_base) & ACCUMULATOR_MASK;
 }
 
-static unsigned mixer_channel_resample_8(struct mixer_channel_data *channel, filter_state* state, int volume, int* dst, unsigned dst_len, INT8** psrc, unsigned src_len)
+static unsigned mixer_channel_resample_8(struct mixer_channel_data *channel, filter_state* state, int volume, int* dst, unsigned dst_len, int8_t** psrc, unsigned src_len)
 {
 	unsigned dst_base = (accum_base + channel->samples_available) & ACCUMULATOR_MASK;
 	unsigned dst_pos = dst_base;
 
-	INT8* src = *psrc;
+	int8_t* src = *psrc;
 
 	assert( dst_len <= ACCUMULATOR_MASK );
 
@@ -358,7 +358,7 @@ static unsigned mixer_channel_resample_8(struct mixer_channel_data *channel, fil
 		{
 			/* copy */
 			unsigned len;
-			INT8* src_end;
+			int8_t* src_end;
 			if (src_len > dst_len)
 				len = dst_len;
 			else
@@ -373,7 +373,7 @@ static unsigned mixer_channel_resample_8(struct mixer_channel_data *channel, fil
 			}
 		} else {
 			/* end address */
-			INT8* src_end = src + src_len;
+			int8_t* src_end = src + src_len;
 			unsigned dst_pos_end = (dst_pos + dst_len) & ACCUMULATOR_MASK;
 
 			int step = channel->step;
@@ -404,7 +404,7 @@ static unsigned mixer_channel_resample_8(struct mixer_channel_data *channel, fil
 		int pivot = channel->pivot;
 
 		/* end address */
-		INT8* src_end = src + src_len;
+		int8_t* src_end = src + src_len;
 		unsigned dst_pos_end = (dst_pos + dst_len) & ACCUMULATOR_MASK;
 
 		/* volume */
@@ -454,7 +454,7 @@ static unsigned mixer_channel_resample_8(struct mixer_channel_data *channel, fil
 }
 
 /* Mix a 8 bit channel */
-static unsigned mixer_channel_resample_8_pan(struct mixer_channel_data *channel, int* volume, unsigned dst_len, INT8** src, unsigned src_len)
+static unsigned mixer_channel_resample_8_pan(struct mixer_channel_data *channel, int* volume, unsigned dst_len, int8_t** src, unsigned src_len)
 {
 	unsigned count;
 
@@ -466,7 +466,7 @@ static unsigned mixer_channel_resample_8_pan(struct mixer_channel_data *channel,
 		/* save */
 		unsigned save_pivot = channel->pivot;
 		unsigned save_frac = channel->frac;
-		INT8* save_src = *src;
+		int8_t* save_src = *src;
 		count = mixer_channel_resample_8(channel, channel->left, volume[0], left_accum, dst_len, src, src_len);
 		/* restore */
 		channel->pivot = save_pivot;
@@ -480,7 +480,7 @@ static unsigned mixer_channel_resample_8_pan(struct mixer_channel_data *channel,
 }
 
 /* Mix a 16 bit channel */
-static unsigned mixer_channel_resample_16_pan(struct mixer_channel_data *channel, int* volume, unsigned dst_len, INT16** src, unsigned src_len)
+static unsigned mixer_channel_resample_16_pan(struct mixer_channel_data *channel, int* volume, unsigned dst_len, int16_t** src, unsigned src_len)
 {
 	unsigned count;
 
@@ -492,7 +492,7 @@ static unsigned mixer_channel_resample_16_pan(struct mixer_channel_data *channel
 		/* save */
 		unsigned save_pivot = channel->pivot;
 		unsigned save_frac = channel->frac;
-		INT16* save_src = *src;
+		int16_t* save_src = *src;
 		count = mixer_channel_resample_16(channel, channel->left, volume[0], left_accum, dst_len, src, src_len);
 		/* restore */
 		channel->pivot = save_pivot;
@@ -511,7 +511,7 @@ static unsigned mixer_channel_resample_16_pan(struct mixer_channel_data *channel
 
 void mix_sample_8(struct mixer_channel_data *channel, int samples_to_generate)
 {
-	INT8 *source, *source_end;
+	int8_t *source, *source_end;
 	int mixing_volume[2];
 
 	/* compute the overall mixing volume */
@@ -546,7 +546,7 @@ void mix_sample_8(struct mixer_channel_data *channel, int samples_to_generate)
 
 			/* if we're looping, wrap to the beginning */
 			else
-				source -= (INT8 *)source_end - (INT8 *)channel->data_start;
+				source -= (int8_t *)source_end - (int8_t *)channel->data_start;
 		}
 	}
 
@@ -560,7 +560,7 @@ void mix_sample_8(struct mixer_channel_data *channel, int samples_to_generate)
 
 void mix_sample_16(struct mixer_channel_data *channel, int samples_to_generate)
 {
-	INT16 *source, *source_end;
+	int16_t *source, *source_end;
 	int mixing_volume[2];
 
 	/* compute the overall mixing volume */
@@ -595,7 +595,7 @@ void mix_sample_16(struct mixer_channel_data *channel, int samples_to_generate)
 
 			/* if we're looping, wrap to the beginning */
 			else
-				source -= (INT16 *)source_end - (INT16 *)channel->data_start;
+				source -= (int16_t *)source_end - (int16_t *)channel->data_start;
 		}
 	}
 
@@ -613,7 +613,7 @@ static unsigned char silence_data[FILTER_FLUSH];
 /* Flush the state of the filter playing some 0 samples */
 static void mixer_flush(struct mixer_channel_data *channel)
 {
-	INT8 *source_begin, *source_end;
+	int8_t *source_begin, *source_end;
 	int mixing_volume[2];
 	unsigned save_available;
 
@@ -627,8 +627,8 @@ static void mixer_flush(struct mixer_channel_data *channel)
 	mixing_volume[1] = 0;
 
 	/* null data */
-	source_begin = (INT8*)silence_data;
-	source_end = (INT8*)silence_data + FILTER_FLUSH;
+	source_begin = (int8_t*)silence_data;
+	source_end = (int8_t*)silence_data + FILTER_FLUSH;
 
 	/* save the number of samples availables */
 	save_available = channel->samples_available;
@@ -738,7 +738,7 @@ void mixer_sh_update(void)
 {
 	struct mixer_channel_data* channel;
 	unsigned accum_pos = accum_base;
-	INT16 *mix;
+	int16_t *mix;
 	int sample;
 	int i;
 
@@ -1063,7 +1063,7 @@ void mixer_write_config(mame_file *f)
 	mixer_play_streamed_sample_16
 ***************************************************************************/
 
-void mixer_play_streamed_sample_16(int ch, INT16 *data, int len, int freq)
+void mixer_play_streamed_sample_16(int ch, int16_t *data, int len, int freq)
 {
 	struct mixer_channel_data *channel = &mixer_channel[ch];
 	int mixing_volume[2];
@@ -1122,7 +1122,7 @@ int mixer_need_samples_this_frame(int channel,int freq)
 	mixer_play_sample
 ***************************************************************************/
 
-void mixer_play_sample(int ch, INT8 *data, int len, int freq, int loop)
+void mixer_play_sample(int ch, int8_t *data, int len, int freq, int loop)
 {
 	struct mixer_channel_data *channel = &mixer_channel[ch];
 
@@ -1140,7 +1140,7 @@ void mixer_play_sample(int ch, INT8 *data, int len, int freq, int loop)
 	/* now determine where to mix it */
 	channel->data_start = data;
 	channel->data_current = data;
-	channel->data_end = (UINT8 *)data + len;
+	channel->data_end = (uint8_t *)data + len;
 	channel->is_playing = 1;
 	channel->is_looping = loop;
 	channel->is_16bit = 0;
@@ -1151,7 +1151,7 @@ void mixer_play_sample(int ch, INT8 *data, int len, int freq, int loop)
 	mixer_play_sample_16
 ***************************************************************************/
 
-void mixer_play_sample_16(int ch, INT16 *data, int len, int freq, int loop)
+void mixer_play_sample_16(int ch, int16_t *data, int len, int freq, int loop)
 {
 	struct mixer_channel_data *channel = &mixer_channel[ch];
 
@@ -1169,7 +1169,7 @@ void mixer_play_sample_16(int ch, INT16 *data, int len, int freq, int loop)
 	/* now determine where to mix it */
 	channel->data_start = data;
 	channel->data_current = data;
-	channel->data_end = (UINT8 *)data + len;
+	channel->data_end = (uint8_t *)data + len;
 	channel->is_playing = 1;
 	channel->is_looping = loop;
 	channel->is_16bit = 1;

@@ -28,7 +28,7 @@ static int emulation_rate;
 static int div_by_N_factor;
 static int buffer_len;
 
-static INT16 *astrocade_buffer[MAX_ASTROCADE_CHIPS];
+static int16_t *astrocade_buffer[MAX_ASTROCADE_CHIPS];
 
 static int sample_pos[MAX_ASTROCADE_CHIPS];
 
@@ -72,7 +72,7 @@ static int randbit = 1;
 
 static void astrocade_update(int num, int newpos)
 {
-	INT16 *buffer = astrocade_buffer[num];
+	int16_t *buffer = astrocade_buffer[num];
 
 	int pos = sample_pos[num];
 	int i, data, data16, noise_plus_osc, vib_plus_osc;
@@ -180,7 +180,7 @@ int astrocade_sh_start(const struct MachineSound *msound)
 	/* reserve buffer */
 	for (i = 0;i < intf->num;i++)
 	{
-		if ((astrocade_buffer[i] = malloc(sizeof(INT16)*buffer_len)) == 0)
+		if ((astrocade_buffer[i] = malloc(sizeof(int16_t)*buffer_len)) == 0)
 		{
 			while (--i >= 0) free(astrocade_buffer[i]);
 			return 1;

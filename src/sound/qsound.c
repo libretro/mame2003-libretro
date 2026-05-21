@@ -69,7 +69,7 @@ typedef signed short QSOUND_SRC_SAMPLE;
 
 #define QSOUND_CLOCKDIV 166			 /* Clock divider */
 #define QSOUND_CHANNELS 16
-typedef INT16 QSOUND_SAMPLE;
+typedef int16_t QSOUND_SAMPLE;
 
 struct QSOUND_CHANNEL
 {
@@ -121,7 +121,7 @@ static FILE *fpRawDataR;
 #endif
 
 /* Function prototypes */
-void qsound_update( int num, INT16 **buffer, int length );
+void qsound_update( int num, int16_t **buffer, int length );
 void qsound_set_command(int data, int value);
 
 #if QSOUND_DRIVER2
@@ -373,7 +373,7 @@ void qsound_set_command(int data, int value)
 
 /* Driver 1 - based on the Amuse source */
 
-void qsound_update( int num, INT16 **buffer, int length )
+void qsound_update( int num, int16_t **buffer, int length )
 {
 	int i,j;
 	int rvol, lvol, count;

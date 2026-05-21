@@ -13,10 +13,10 @@ void streams_sh_update(void);
 
 int stream_init(const char *name,int default_mixing_level,
 		int sample_rate,
-		int param,void (*callback)(int param,INT16 *buffer,int length));
+		int param,void (*callback)(int param,int16_t *buffer,int length));
 int stream_init_multi(int channels,const char **names,const int *default_mixing_levels,
 		int sample_rate,
-		int param,void (*callback)(int param,INT16 **buffer,int length));
+		int param,void (*callback)(int param,int16_t **buffer,int length));
 void stream_update(int channel,int min_interval);	/* min_interval is in usec */
 
 #ifdef __cplusplus

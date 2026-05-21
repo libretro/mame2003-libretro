@@ -96,11 +96,11 @@
 /* LOCAL GLOBAL VARIABLE DEFINITIONS */
 
 /* structures to hold the 6 tia sound control bytes */
-static UINT8 AUDC[2];                   /* AUDCx (15, 16) */
-static UINT8 AUDF[2];                   /* AUDFx (17, 18) */
-static INT16 AUDV[2];                   /* AUDVx (19, 1A) */
+static uint8_t AUDC[2];                   /* AUDCx (15, 16) */
+static uint8_t AUDF[2];                   /* AUDFx (17, 18) */
+static int16_t AUDV[2];                   /* AUDVx (19, 1A) */
 
-static INT16 Outvol[2];                 /* last output volume for each channel */
+static int16_t Outvol[2];                 /* last output volume for each channel */
 
 static int tia_gain;					/* initialized in tia_sound_init() */
 
@@ -113,33 +113,33 @@ static int tia_gain;					/* initialized in tia_sound_init() */
 
 /* HJB: poly bits are initialized at runtime */
 
-static UINT8 Bit4[POLY4_SIZE];
-static UINT8 Bit5[POLY5_SIZE];
-static UINT8 Bit9[POLY9_SIZE];
+static uint8_t Bit4[POLY4_SIZE];
+static uint8_t Bit5[POLY5_SIZE];
+static uint8_t Bit9[POLY9_SIZE];
 
 /* I've treated the 'Div by 31' counter as another polynomial because of */
 /* the way it operates.  It does not have a 50% duty cycle, but instead */
 /* has a 13:18 ratio (of course, 13+18 = 31).  This could also be */
 /* implemented by using counters. */
 
-static UINT8 Div31[POLY5_SIZE] =
+static uint8_t Div31[POLY5_SIZE] =
     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 
-static UINT8 P4[2];                     /* Position pointer for the 4-bit POLY array */
-static UINT8 P5[2];                     /* Position pointer for the 5-bit POLY array */
-static UINT16 P9[2];                    /* Position pointer for the 9-bit POLY array */
+static uint8_t P4[2];                     /* Position pointer for the 4-bit POLY array */
+static uint8_t P5[2];                     /* Position pointer for the 5-bit POLY array */
+static uint16_t P9[2];                    /* Position pointer for the 9-bit POLY array */
 
-static UINT8 Div_n_cnt[2];              /* Divide by n counter. one for each channel */
-static UINT8 Div_n_max[2];              /* Divide by n maximum, one for each channel */
+static uint8_t Div_n_cnt[2];              /* Divide by n counter. one for each channel */
+static uint8_t Div_n_max[2];              /* Divide by n maximum, one for each channel */
 
 
 /* In my routines, I treat the sample output as another divide by N counter. */
 /* For better accuracy, the Samp_n_cnt has a fixed binary decimal point */
 /* which has 8 binary digits to the right of the decimal point. */
 
-static UINT16 Samp_n_max;               /* Sample max, multiplied by 256 */
-static UINT16 Samp_n_cnt;               /* Sample cnt. */
+static uint16_t Samp_n_max;               /* Sample max, multiplied by 256 */
+static uint16_t Samp_n_cnt;               /* Sample cnt. */
 
 static int oversampling;				/* Added oversampling for sample_rate > clock_rate */
 
@@ -162,8 +162,8 @@ static int oversampling;				/* Added oversampling for sample_rate > clock_rate *
 
 WRITE_HANDLER( tia_sound_w )
 {
-    UINT16 new_val = 0;
-    UINT8 chan;
+    uint16_t new_val = 0;
+    uint8_t chan;
 
     tia_sh_update();
 
@@ -262,12 +262,12 @@ WRITE_HANDLER( tia_sound_w )
 /*                                                                           */
 /*****************************************************************************/
 
-void tia_process(int param, INT16 *buffer, int length)
+void tia_process(int param, int16_t *buffer, int length)
 {
-    UINT8 audc0, audc1;
-    UINT8 div_n_cnt0, div_n_cnt1;
-    UINT8 p5_0, p5_1;
-    INT16 audv0, audv1, outvol_0, outvol_1;
+    uint8_t audc0, audc1;
+    uint8_t div_n_cnt0, div_n_cnt1;
+    uint8_t p5_0, p5_1;
+    int16_t audv0, audv1, outvol_0, outvol_1;
 
     audc0 = AUDC[0];
     audc1 = AUDC[1];
@@ -464,7 +464,7 @@ void tia_process(int param, INT16 *buffer, int length)
 
 }
 
-static void poly_init(UINT8 *poly, int size, int left, int right, int add)
+static void poly_init(uint8_t *poly, int size, int left, int right, int add)
 {
     int mask = (1 << size) - 1;
     int i, x = 0;
@@ -505,13 +505,13 @@ void tia_sound_init(int clock, int sample_rate, int gain)
     poly_init(Bit9, 9, 2, 7, 0x00080);
 
     /* calculate the sample 'divide by N' value based on the playback freq. */
-    Samp_n_max = ((UINT16)(UINT32)clock << 8) / sample_rate;
+    Samp_n_max = ((uint16_t)(uint32_t)clock << 8) / sample_rate;
     Samp_n_cnt = Samp_n_max;                     /* initialize all bits of the sample counter */
 
 	if (Samp_n_max < 256) /* we need to use oversampling for sample_rate > clock_rate */
 	                      /* at the Machine->sample_rate for now */
 	{
-    	Samp_n_max = ((UINT16)(UINT32)sample_rate << 8) / clock;
+    	Samp_n_max = ((uint16_t)(uint32_t)sample_rate << 8) / clock;
 		Samp_n_cnt = Samp_n_max;
 		oversampling = 1;
 	}

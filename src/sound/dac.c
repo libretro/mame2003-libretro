@@ -9,7 +9,7 @@ static int SignedVolTable[256];
 
 
 
-static void DAC_update(int num,INT16 *buffer,int length)
+static void DAC_update(int num,int16_t *buffer,int length)
 {
 	int out = output[num];
 

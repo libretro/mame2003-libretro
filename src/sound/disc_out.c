@@ -14,8 +14,8 @@
 
 struct dso_output_context
 {
-	INT16 left;
-	INT16 right;
+	int16_t left;
+	int16_t right;
 };
 
 /************************************************************************/
@@ -36,8 +36,8 @@ int dso_output_step(struct node_description *node)
 	struct dso_output_context *context;
 	context=(struct dso_output_context*)node->context;
 	/* Clamp outputs */
-	if(node->input[0]<-32768) context->left=-32768;  else if(node->input[0]>32767) context->left=32767;  else context->left=(INT16)node->input[0];
-	if(node->input[1]<-32768) context->right=-32768; else if(node->input[1]>32767) context->right=32767; else context->right=(INT16)node->input[1];
+	if(node->input[0]<-32768) context->left=-32768;  else if(node->input[0]>32767) context->left=32767;  else context->left=(int16_t)node->input[0];
+	if(node->input[1]<-32768) context->right=-32768; else if(node->input[1]>32767) context->right=32767; else context->right=(int16_t)node->input[1];
 	return 0;
 }
 

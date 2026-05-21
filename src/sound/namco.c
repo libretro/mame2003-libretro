@@ -41,13 +41,13 @@
 /* this structure defines the parameters for a channel */
 typedef struct
 {
-	UINT32 frequency;
-	UINT32 counter;
+	uint32_t frequency;
+	uint32_t counter;
 	int volume[2];
 	int noise_sw;
 	int noise_state;
 	int noise_seed;
-	UINT32 noise_counter;
+	uint32_t noise_counter;
 	int waveform_select;
 } sound_channel;
 
@@ -69,13 +69,13 @@ static int sample_rate;
 static int f_fracbits;
 
 /* decoded waveform table */
-static INT16 *waveform[MAX_VOLUME];
+static int16_t *waveform[MAX_VOLUME];
 
 
 /* update the decoded waveform data */
 static void update_namcos1_waveform(int offset, data8_t data)
 {
-	INT16 wdata;
+	int16_t wdata;
 	int v;
 
 	/* use full byte, first 4 high bits, then low 4 bits */
@@ -92,7 +92,7 @@ static void update_namcos1_waveform(int offset, data8_t data)
 /* build the decoded waveform table */
 static int build_decoded_waveform(int region)
 {
-	INT16 *p;
+	int16_t *p;
 	int size;
 	int offset;
 	int v;
@@ -102,7 +102,7 @@ static int build_decoded_waveform(int region)
 	else
 		size = 32 * 8;		/* 32 samples, 8 waveforms */
 
-	if ((p = (INT16 *)auto_malloc(size * MAX_VOLUME * sizeof (INT16))) == NULL)
+	if ((p = (int16_t *)auto_malloc(size * MAX_VOLUME * sizeof (int16_t))) == NULL)
 		return 1;
 
 	for (v = 0; v < MAX_VOLUME; v++)
@@ -136,11 +136,11 @@ static int build_decoded_waveform(int region)
 
 
 /* generate sound by oversampling */
-static INLINE UINT32 namco_update_one(INT16 *buffer, int length, const INT16 *wave, UINT32 counter, UINT32 freq)
+static INLINE uint32_t namco_update_one(int16_t *buffer, int length, const int16_t *wave, uint32_t counter, uint32_t freq)
 {
 	while (length-- > 0)
 	{
-		INT16 data = 0;
+		int16_t data = 0;
 		int i;
 
 		for (i = 0; i < OVERSAMPLING_RATE; i++)
@@ -157,12 +157,12 @@ static INLINE UINT32 namco_update_one(INT16 *buffer, int length, const INT16 *wa
 
 
 /* generate sound to the mix buffer in mono */
-static void namco_update_mono(int ch, INT16 *buffer, int length)
+static void namco_update_mono(int ch, int16_t *buffer, int length)
 {
 	sound_channel *voice;
 
 	/* zap the contents of the buffer */
-	memset(buffer, 0, length * sizeof(INT16));
+	memset(buffer, 0, length * sizeof(int16_t));
 
 	/* if no sound, we're done */
 	if (sound_enable == 0)
@@ -171,7 +171,7 @@ static void namco_update_mono(int ch, INT16 *buffer, int length)
 	/* loop over each voice and add its contribution */
 	for (voice = channel_list; voice < last_channel; voice++)
 	{
-		INT16 *mix = buffer;
+		int16_t *mix = buffer;
 		int v = voice->volume[0];
 
 		if (voice->noise_sw)
@@ -181,9 +181,9 @@ static void namco_update_mono(int ch, INT16 *buffer, int length)
 			/* only update if we have non-zero volume and frequency */
 			if (v && f)
 			{
-				UINT32 delta = (f << (f_fracbits - 15 + 4)) * OVERSAMPLING_RATE;
-				UINT32 c = voice->noise_counter;
-				INT16 noise_data = OUTPUT_LEVEL(0x07 * (v >> 1) * OVERSAMPLING_RATE);
+				uint32_t delta = (f << (f_fracbits - 15 + 4)) * OVERSAMPLING_RATE;
+				uint32_t c = voice->noise_counter;
+				int16_t noise_data = OUTPUT_LEVEL(0x07 * (v >> 1) * OVERSAMPLING_RATE);
 				int i;
 
 				/* add our contribution */
@@ -216,7 +216,7 @@ static void namco_update_mono(int ch, INT16 *buffer, int length)
 			/* only update if we have non-zero volume and frequency */
 			if (v && voice->frequency)
 			{
-				const INT16 *w = &waveform[v][voice->waveform_select * 32];
+				const int16_t *w = &waveform[v][voice->waveform_select * 32];
 
 				/* generate sound into buffer and update the counter for this voice */
 				voice->counter = namco_update_one(mix, length, w, voice->counter, voice->frequency);
@@ -227,13 +227,13 @@ static void namco_update_mono(int ch, INT16 *buffer, int length)
 
 
 /* generate sound to the mix buffer in stereo */
-static void namco_update_stereo(int ch, INT16 **buffer, int length)
+static void namco_update_stereo(int ch, int16_t **buffer, int length)
 {
 	sound_channel *voice;
 
 	/* zap the contents of the buffers */
-	memset(buffer[0], 0, length * sizeof(INT16));
-	memset(buffer[1], 0, length * sizeof(INT16));
+	memset(buffer[0], 0, length * sizeof(int16_t));
+	memset(buffer[1], 0, length * sizeof(int16_t));
 
 	/* if no sound, we're done */
 	if (sound_enable == 0)
@@ -242,8 +242,8 @@ static void namco_update_stereo(int ch, INT16 **buffer, int length)
 	/* loop over each voice and add its contribution */
 	for (voice = channel_list; voice < last_channel; voice++)
 	{
-		INT16 *lmix = buffer[0];
-		INT16 *rmix = buffer[1];
+		int16_t *lmix = buffer[0];
+		int16_t *rmix = buffer[1];
 		int lv = voice->volume[0];
 		int rv = voice->volume[1];
 
@@ -254,10 +254,10 @@ static void namco_update_stereo(int ch, INT16 **buffer, int length)
 			/* only update if we have non-zero volume and frequency */
 			if ((lv || rv) && f)
 			{
-				UINT32 delta = (f << (f_fracbits - 15 + 4)) * OVERSAMPLING_RATE;
-				UINT32 c = voice->noise_counter;
-				INT16 l_noise_data = OUTPUT_LEVEL(0x07 * (lv >> 1) * OVERSAMPLING_RATE);
-				INT16 r_noise_data = OUTPUT_LEVEL(0x07 * (rv >> 1) * OVERSAMPLING_RATE);
+				uint32_t delta = (f << (f_fracbits - 15 + 4)) * OVERSAMPLING_RATE;
+				uint32_t c = voice->noise_counter;
+				int16_t l_noise_data = OUTPUT_LEVEL(0x07 * (lv >> 1) * OVERSAMPLING_RATE);
+				int16_t r_noise_data = OUTPUT_LEVEL(0x07 * (rv >> 1) * OVERSAMPLING_RATE);
 				int i;
 
 				/* add our contribution */
@@ -297,12 +297,12 @@ static void namco_update_stereo(int ch, INT16 **buffer, int length)
 			if (voice->frequency)
 			{
 				/* save the counter for this voice */
-				UINT32 c = voice->counter;
+				uint32_t c = voice->counter;
 
 				/* only update if we have non-zero left volume */
 				if (lv)
 				{
-					const INT16 *lw = &waveform[lv][voice->waveform_select * 32];
+					const int16_t *lw = &waveform[lv][voice->waveform_select * 32];
 
 					/* generate sound into the buffer */
 					c = namco_update_one(lmix, length, lw, voice->counter, voice->frequency);
@@ -311,7 +311,7 @@ static void namco_update_stereo(int ch, INT16 **buffer, int length)
 				/* only update if we have non-zero right volume */
 				if (rv)
 				{
-					const INT16 *rw = &waveform[rv][voice->waveform_select * 32];
+					const int16_t *rw = &waveform[rv][voice->waveform_select * 32];
 
 					/* generate sound into the buffer */
 					c = namco_update_one(rmix, length, rw, voice->counter, voice->frequency);

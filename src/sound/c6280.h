@@ -11,26 +11,26 @@ struct C6280_interface
 };
 
 typedef struct {
-    UINT16 frequency;
-    UINT8 control;
-    UINT8 balance;
-    UINT8 waveform[32];
-    UINT8 index;
-    INT16 dda;
-    UINT8 noise_control;
-    UINT32 noise_counter;
-    UINT32 counter;
+    uint16_t frequency;
+    uint8_t control;
+    uint8_t balance;
+    uint8_t waveform[32];
+    uint8_t index;
+    int16_t dda;
+    uint8_t noise_control;
+    uint32_t noise_counter;
+    uint32_t counter;
 } t_channel;
 
 typedef struct {
-    UINT8 select;
-    UINT8 balance;
-    UINT8 lfo_frequency;
-    UINT8 lfo_control;
+    uint8_t select;
+    uint8_t balance;
+    uint8_t lfo_frequency;
+    uint8_t lfo_control;
     t_channel channel[8];
-    INT16 volume_table[32];
-    UINT32 noise_freq_tab[32];
-    UINT32 wave_freq_tab[4096];
+    int16_t volume_table[32];
+    uint32_t noise_freq_tab[32];
+    uint32_t wave_freq_tab[4096];
 } c6280_t;
 
 /* Function prototypes */

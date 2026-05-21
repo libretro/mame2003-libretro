@@ -27,14 +27,14 @@
 
 /* the state of the streamed output */
 static const struct TMS5110interface *intf;
-static INT16 last_sample, curr_sample;
-static UINT32 source_step;
-static UINT32 source_pos;
+static int16_t last_sample, curr_sample;
+static uint32_t source_step;
+static uint32_t source_pos;
 static int stream;
 
 
 /* static function prototypes */
-static void tms5110_update(int ch, INT16 *buffer, int length);
+static void tms5110_update(int ch, int16_t *buffer, int length);
 
 
 
@@ -164,12 +164,12 @@ int tms5110_ready_r(void)
 
 ******************************************************************************/
 
-static void tms5110_update(int ch, INT16 *buffer, int length)
+static void tms5110_update(int ch, int16_t *buffer, int length)
 {
-	INT16 sample_data[MAX_SAMPLE_CHUNK], *curr_data = sample_data;
-	INT16 prev = last_sample, curr = curr_sample;
-	UINT32 final_pos;
-	UINT32 new_samples;
+	int16_t sample_data[MAX_SAMPLE_CHUNK], *curr_data = sample_data;
+	int16_t prev = last_sample, curr = curr_sample;
+	uint32_t final_pos;
+	uint32_t new_samples;
 
 	/* finish off the current sample */
 	if (source_pos > 0)
@@ -177,7 +177,7 @@ static void tms5110_update(int ch, INT16 *buffer, int length)
 		/* interpolate */
 		while (length > 0 && source_pos < FRAC_ONE)
 		{
-			*buffer++ = (((INT32)prev * (FRAC_ONE - source_pos)) + ((INT32)curr * source_pos)) >> FRAC_BITS;
+			*buffer++ = (((int32_t)prev * (FRAC_ONE - source_pos)) + ((int32_t)curr * source_pos)) >> FRAC_BITS;
 			source_pos += source_step;
 			length--;
 		}
@@ -209,7 +209,7 @@ static void tms5110_update(int ch, INT16 *buffer, int length)
 		/* interpolate */
 		while (length > 0 && source_pos < FRAC_ONE)
 		{
-			*buffer++ = (((INT32)prev * (FRAC_ONE - source_pos)) + ((INT32)curr * source_pos)) >> FRAC_BITS;
+			*buffer++ = (((int32_t)prev * (FRAC_ONE - source_pos)) + ((int32_t)curr * source_pos)) >> FRAC_BITS;
 			source_pos += source_step;
 			length--;
 		}
@@ -245,5 +245,5 @@ void tms5110_set_frequency(int frequency)
 	/* update the stream and compute a new step size */
 	if (stream != -1)
 		stream_update(stream, 0);
-	source_step = (UINT32)((double)(frequency / 80) * (double)FRAC_ONE / (double)Machine->sample_rate);
+	source_step = (uint32_t)((double)(frequency / 80) * (double)FRAC_ONE / (double)Machine->sample_rate);
 }

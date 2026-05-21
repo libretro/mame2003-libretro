@@ -30,46 +30,46 @@
 /* struct describing a single playing ADPCM voice */
 struct YMZ280BVoice
 {
-	UINT8 playing;			/* 1 if we are actively playing */
+	uint8_t playing;			/* 1 if we are actively playing */
 
-	UINT8 keyon;			/* 1 if the key is on */
-	UINT8 looping;			/* 1 if looping is enabled */
-	UINT8 mode;				/* current playback mode */
-	UINT16 fnum;			/* frequency */
-	UINT8 level;			/* output level */
-	UINT8 pan;				/* panning */
+	uint8_t keyon;			/* 1 if the key is on */
+	uint8_t looping;			/* 1 if looping is enabled */
+	uint8_t mode;				/* current playback mode */
+	uint16_t fnum;			/* frequency */
+	uint8_t level;			/* output level */
+	uint8_t pan;				/* panning */
 
-	UINT32 start;			/* start address, in nibbles */
-	UINT32 stop;			/* stop address, in nibbles */
-	UINT32 loop_start;		/* loop start address, in nibbles */
-	UINT32 loop_end;		/* loop end address, in nibbles */
-	UINT32 position;		/* current position, in nibbles */
+	uint32_t start;			/* start address, in nibbles */
+	uint32_t stop;			/* stop address, in nibbles */
+	uint32_t loop_start;		/* loop start address, in nibbles */
+	uint32_t loop_end;		/* loop end address, in nibbles */
+	uint32_t position;		/* current position, in nibbles */
 
-	INT32 signal;			/* current ADPCM signal */
-	INT32 step;				/* current ADPCM step */
+	int32_t signal;			/* current ADPCM signal */
+	int32_t step;				/* current ADPCM step */
 
-	INT32 loop_signal;		/* signal at loop start */
-	INT32 loop_step;		/* step at loop start */
-	UINT32 loop_count;		/* number of loops so far */
+	int32_t loop_signal;		/* signal at loop start */
+	int32_t loop_step;		/* step at loop start */
+	uint32_t loop_count;		/* number of loops so far */
 
-	INT32 output_left;		/* output volume (left) */
-	INT32 output_right;		/* output volume (right) */
-	INT32 output_step;		/* step value for frequency conversion */
-	INT32 output_pos;		/* current fractional position */
-	INT16 last_sample;		/* last sample output */
-	INT16 curr_sample;		/* current sample target */
+	int32_t output_left;		/* output volume (left) */
+	int32_t output_right;		/* output volume (right) */
+	int32_t output_step;		/* step value for frequency conversion */
+	int32_t output_pos;		/* current fractional position */
+	int16_t last_sample;		/* last sample output */
+	int16_t curr_sample;		/* current sample target */
 };
 
 struct YMZ280BChip
 {
 	int stream;						/* which stream are we using */
-	UINT8 *region_base;				/* pointer to the base of the region */
-	UINT8 current_register;			/* currently accessible register */
-	UINT8 status_register;			/* current status register */
-	UINT8 irq_state;				/* current IRQ state */
-	UINT8 irq_mask;					/* current IRQ mask */
-	UINT8 irq_enable;				/* current IRQ enable */
-	UINT8 keyon_enable;				/* key on enable */
+	uint8_t *region_base;				/* pointer to the base of the region */
+	uint8_t current_register;			/* currently accessible register */
+	uint8_t status_register;			/* current status register */
+	uint8_t irq_state;				/* current IRQ state */
+	uint8_t irq_mask;					/* current IRQ mask */
+	uint8_t irq_enable;				/* current IRQ enable */
+	uint8_t keyon_enable;				/* key on enable */
 	double master_clock;			/* master clock frequency */
 	void (*irq_callback)(int);		/* IRQ callback */
 	struct YMZ280BVoice	voice[8];	/* the 8 voices */
@@ -80,8 +80,8 @@ struct YMZ280BChip
 };
 
 static struct YMZ280BChip ymz280b[MAX_YMZ280B];
-static INT32 *accumulator;
-static INT16 *scratch;
+static int32_t *accumulator;
+static int16_t *scratch;
 
 /* step size index shift table */
 static int index_scale[8] = { 0x0e6, 0x0e6, 0x0e6, 0x0e6, 0x133, 0x199, 0x200, 0x266 };
@@ -133,7 +133,7 @@ static INLINE void update_step(struct YMZ280BChip *chip, struct YMZ280BVoice *vo
 		frequency = chip->master_clock * (double)((voice->fnum & 0x0ff) + 1) * (1.0 / 256.0);
 	else
 		frequency = chip->master_clock * (double)((voice->fnum & 0x1ff) + 1) * (1.0 / 256.0);
-	voice->output_step = (UINT32)(frequency * (double)FRAC_ONE / (double)Machine->sample_rate);
+	voice->output_step = (uint32_t)(frequency * (double)FRAC_ONE / (double)Machine->sample_rate);
 }
 
 
@@ -183,7 +183,7 @@ static void compute_tables(void)
 
 ***********************************************************************************************/
 
-static int generate_adpcm(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer, int samples)
+static int generate_adpcm(struct YMZ280BVoice *voice, uint8_t *base, int16_t *buffer, int samples)
 {
 	int position = voice->position;
 	int signal = voice->signal;
@@ -283,7 +283,7 @@ static int generate_adpcm(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer
 
 ***********************************************************************************************/
 
-static int generate_pcm8(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer, int samples)
+static int generate_pcm8(struct YMZ280BVoice *voice, uint8_t *base, int16_t *buffer, int samples)
 {
 	int position = voice->position;
 	int val;
@@ -298,7 +298,7 @@ static int generate_pcm8(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer,
 			val = base[position / 2];
 
 			/* output to the buffer, scaling by the volume */
-			*buffer++ = (INT8)val * 256;
+			*buffer++ = (int8_t)val * 256;
 			samples--;
 
 			/* next! */
@@ -318,7 +318,7 @@ static int generate_pcm8(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer,
 			val = base[position / 2];
 
 			/* output to the buffer, scaling by the volume */
-			*buffer++ = (INT8)val * 256;
+			*buffer++ = (int8_t)val * 256;
 			samples--;
 
 			/* next! */
@@ -347,7 +347,7 @@ static int generate_pcm8(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer,
 
 ***********************************************************************************************/
 
-static int generate_pcm16(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer, int samples)
+static int generate_pcm16(struct YMZ280BVoice *voice, uint8_t *base, int16_t *buffer, int samples)
 {
 	int position = voice->position;
 	int val;
@@ -359,7 +359,7 @@ static int generate_pcm16(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer
 		while (samples)
 		{
 			/* fetch the current value */
-			val = (INT16)((base[position / 2 + 1] << 8) + base[position / 2]);
+			val = (int16_t)((base[position / 2 + 1] << 8) + base[position / 2]);
 
 			/* output to the buffer, scaling by the volume */
 			*buffer++ = val;
@@ -379,7 +379,7 @@ static int generate_pcm16(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer
 		while (samples)
 		{
 			/* fetch the current value */
-			val = (INT16)((base[position / 2 + 1] << 8) + base[position / 2]);
+			val = (int16_t)((base[position / 2 + 1] << 8) + base[position / 2]);
 
 			/* output to the buffer, scaling by the volume */
 			*buffer++ = val;
@@ -411,11 +411,11 @@ static int generate_pcm16(struct YMZ280BVoice *voice, UINT8 *base, INT16 *buffer
 
 ***********************************************************************************************/
 
-static void ymz280b_update(int num, INT16 **buffer, int length)
+static void ymz280b_update(int num, int16_t **buffer, int length)
 {
 	struct YMZ280BChip *chip = &ymz280b[num];
-	INT32 *lacc = accumulator;
-	INT32 *racc = accumulator + length;
+	int32_t *lacc = accumulator;
+	int32_t *racc = accumulator + length;
 	int v;
 
 	/* clear out the accumulator */
@@ -425,13 +425,13 @@ static void ymz280b_update(int num, INT16 **buffer, int length)
 	for (v = 0; v < 8; v++)
 	{
 		struct YMZ280BVoice *voice = &chip->voice[v];
-		INT16 prev = voice->last_sample;
-		INT16 curr = voice->curr_sample;
-		INT16 *curr_data = scratch;
-		INT32 *ldest = lacc;
-		INT32 *rdest = racc;
-		UINT32 new_samples, samples_left;
-		UINT32 final_pos;
+		int16_t prev = voice->last_sample;
+		int16_t curr = voice->curr_sample;
+		int16_t *curr_data = scratch;
+		int32_t *ldest = lacc;
+		int32_t *rdest = racc;
+		uint32_t new_samples, samples_left;
+		uint32_t final_pos;
 		int remaining = length;
 		int lvol = voice->output_left;
 		int rvol = voice->output_right;
@@ -446,7 +446,7 @@ static void ymz280b_update(int num, INT16 **buffer, int length)
 			/* interpolate */
 			while (remaining > 0 && voice->output_pos < FRAC_ONE)
 			{
-				int interp_sample = (((INT32)prev * (FRAC_ONE - voice->output_pos)) + ((INT32)curr * voice->output_pos)) >> FRAC_BITS;
+				int interp_sample = (((int32_t)prev * (FRAC_ONE - voice->output_pos)) + ((int32_t)curr * voice->output_pos)) >> FRAC_BITS;
 				*ldest++ += interp_sample * lvol;
 				*rdest++ += interp_sample * rvol;
 				voice->output_pos += voice->output_step;
@@ -511,7 +511,7 @@ static void ymz280b_update(int num, INT16 **buffer, int length)
 			/* interpolate */
 			while (remaining > 0 && voice->output_pos < FRAC_ONE)
 			{
-				int interp_sample = (((INT32)prev * (FRAC_ONE - voice->output_pos)) + ((INT32)curr * voice->output_pos)) >> FRAC_BITS;
+				int interp_sample = (((int32_t)prev * (FRAC_ONE - voice->output_pos)) + ((int32_t)curr * voice->output_pos)) >> FRAC_BITS;
 				*ldest++ += interp_sample * lvol;
 				*rdest++ += interp_sample * rvol;
 				voice->output_pos += voice->output_step;
@@ -855,7 +855,7 @@ static void write_to_register(struct YMZ280BChip *chip, int data)
 
 static int compute_status(struct YMZ280BChip *chip)
 {
-	UINT8 result = chip->status_register;
+	uint8_t result = chip->status_register;
 
 	/* force an update */
 	stream_update(chip->stream, 0);

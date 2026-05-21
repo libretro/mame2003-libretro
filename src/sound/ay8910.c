@@ -367,10 +367,10 @@ WRITE16_HANDLER( AY8910_write_port_4_msb_w ) { if (ACCESSING_MSB) AY8910Write(4,
 
 
 
-static void AY8910Update(int chip,INT16 **buffer,int length)
+static void AY8910Update(int chip,int16_t **buffer,int length)
 {
 	struct AY8910 *PSG = &AYPSG[chip];
-	INT16 *buf1,*buf2,*buf3;
+	int16_t *buf1,*buf2,*buf3;
 	int outn;
 
 	buf1 = buffer[0];

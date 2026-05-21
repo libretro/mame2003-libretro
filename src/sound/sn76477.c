@@ -112,7 +112,7 @@ struct SN76477 {
 	double oneshot_res; 	/* pin 24 */
 	int mixer;				/* pin 25,26,27 */
 
-	INT16 vol_lookup[VMAX+1-VMIN];	/* volume lookup table */
+	int16_t vol_lookup[VMAX+1-VMIN];	/* volume lookup table */
 };
 
 static struct SN76477interface *intf;
@@ -810,7 +810,7 @@ void SN76477_set_oneshot_cap(int chip, double cap)
 /*****************************************************************************
  * mixer select 0 0 0 : VCO
  *****************************************************************************/
-static void SN76477_update_0(int chip, INT16 *buffer, int length)
+static void SN76477_update_0(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -824,7 +824,7 @@ static void SN76477_update_0(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 0 0 1 : SLF
  *****************************************************************************/
-static void SN76477_update_1(int chip, INT16 *buffer, int length)
+static void SN76477_update_1(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -838,7 +838,7 @@ static void SN76477_update_1(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 0 1 0 : NOISE
  *****************************************************************************/
-static void SN76477_update_2(int chip, INT16 *buffer, int length)
+static void SN76477_update_2(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -852,7 +852,7 @@ static void SN76477_update_2(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 0 1 1 : VCO and NOISE
  *****************************************************************************/
-static void SN76477_update_3(int chip, INT16 *buffer, int length)
+static void SN76477_update_3(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -867,7 +867,7 @@ static void SN76477_update_3(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 1 0 0 : SLF and NOISE
  *****************************************************************************/
-static void SN76477_update_4(int chip, INT16 *buffer, int length)
+static void SN76477_update_4(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -882,7 +882,7 @@ static void SN76477_update_4(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 1 0 1 : VCO, SLF and NOISE
  *****************************************************************************/
-static void SN76477_update_5(int chip, INT16 *buffer, int length)
+static void SN76477_update_5(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -898,7 +898,7 @@ static void SN76477_update_5(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 1 1 0 : VCO and SLF
  *****************************************************************************/
-static void SN76477_update_6(int chip, INT16 *buffer, int length)
+static void SN76477_update_6(int chip, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[chip];
 	while( length-- )
@@ -913,13 +913,13 @@ static void SN76477_update_6(int chip, INT16 *buffer, int length)
 /*****************************************************************************
  * mixer select 1 1 1 : Inhibit
  *****************************************************************************/
-static void SN76477_update_7(int chip, INT16 *buffer, int length)
+static void SN76477_update_7(int chip, int16_t *buffer, int length)
 {
 	while( length-- )
 		*buffer++ = 0;
 }
 
-static void SN76477_sound_update(int param, INT16 *buffer, int length)
+static void SN76477_sound_update(int param, int16_t *buffer, int length)
 {
 	struct SN76477 *sn = sn76477[param];
 	if( sn->enable )

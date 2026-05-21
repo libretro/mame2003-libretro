@@ -5,8 +5,8 @@
 struct wav_data
 {
 	FILE *file;
-	UINT32 total_offs;
-	UINT32 data_offs;
+	uint32_t total_offs;
+	uint32_t data_offs;
 };
 
 #ifdef MSB_FIRST
@@ -20,8 +20,8 @@ struct wav_data
 void *wav_open(const char *filename, int sample_rate, int channels)
 {
 	struct wav_data *wav;
-	UINT32 bps, temp32;
-	UINT16 align, temp16;
+	uint32_t bps, temp32;
+	uint16_t align, temp16;
 
 	/* allocate memory for the wav struct */
 	wav = malloc(sizeof(struct wav_data));
@@ -95,8 +95,8 @@ void *wav_open(const char *filename, int sample_rate, int channels)
 void wav_close(void *wavptr)
 {
 	struct wav_data *wav = wavptr;
-	UINT32 total = ftell(wav->file);
-	UINT32 temp32;
+	uint32_t total = ftell(wav->file);
+	uint32_t temp32;
 
 	/* update the total file size */
 	fseek(wav->file, wav->total_offs, SEEK_SET);
@@ -114,7 +114,7 @@ void wav_close(void *wavptr)
 }
 
 
-void wav_add_data_16(void *wavptr, INT16 *data, int samples)
+void wav_add_data_16(void *wavptr, int16_t *data, int samples)
 {
 	struct wav_data *wav = wavptr;
 
@@ -124,10 +124,10 @@ void wav_add_data_16(void *wavptr, INT16 *data, int samples)
 }
 
 
-void wav_add_data_32(void *wavptr, INT32 *data, int samples, int shift)
+void wav_add_data_32(void *wavptr, int32_t *data, int samples, int shift)
 {
 	struct wav_data *wav = wavptr;
-	INT16 *temp;
+	int16_t *temp;
 	int i;
 
 	/* allocate temp memory */
@@ -151,10 +151,10 @@ void wav_add_data_32(void *wavptr, INT32 *data, int samples, int shift)
 }
 
 
-void wav_add_data_16lr(void *wavptr, INT16 *left, INT16 *right, int samples)
+void wav_add_data_16lr(void *wavptr, int16_t *left, int16_t *right, int samples)
 {
 	struct wav_data *wav = wavptr;
-	INT16 *temp;
+	int16_t *temp;
 	int i;
 
 	/* allocate temp memory */
@@ -175,10 +175,10 @@ void wav_add_data_16lr(void *wavptr, INT16 *left, INT16 *right, int samples)
 }
 
 
-void wav_add_data_32lr(void *wavptr, INT32 *left, INT32 *right, int samples, int shift)
+void wav_add_data_32lr(void *wavptr, int32_t *left, int32_t *right, int samples, int shift)
 {
 	struct wav_data *wav = wavptr;
-	INT16 *temp;
+	int16_t *temp;
 	int i;
 
 	/* allocate temp memory */

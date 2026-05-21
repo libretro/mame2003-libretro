@@ -643,7 +643,7 @@ logerror("invalid apu write: $%02X at $%04X\n", value, address);
 /* UPDATE SOUND BUFFER USING CURRENT DATA */
 static INLINE void apu_update(int chip)
 {
-   static INT16 *buffer16 = NULL;
+   static int16_t *buffer16 = NULL;
    int accum;
    int endp = sound_scalebufferpos(samps_per_sync);
    int elapsed;

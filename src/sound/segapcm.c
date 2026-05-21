@@ -6,16 +6,16 @@
 
 struct segapcm
 {
-	UINT8  *ram;
-	UINT16 low[16];
-	const UINT8 *rom, *rom_end;
-	UINT32 *step;
+	uint8_t  *ram;
+	uint16_t low[16];
+	const uint8_t *rom, *rom_end;
+	uint32_t *step;
 	int rate;
 	int bankshift;
 	int bankmask;
 } spcm;
 
-static void SEGAPCM_update(int num, INT16 **buffer, int length)
+static void SEGAPCM_update(int num, int16_t **buffer, int length)
 {
 	int ch;
 	memset(buffer[0], 0, length*2);
@@ -23,21 +23,21 @@ static void SEGAPCM_update(int num, INT16 **buffer, int length)
 
 	for(ch=0; ch<16; ch++)
 		if(!(spcm.ram[0x86+8*ch] & 1)) {
-			UINT8 *base = spcm.ram+8*ch;
-			UINT32 addr = (base[5] << 24) | (base[4] << 16) | spcm.low[ch];
-			UINT16 loop = (base[0x85] << 8)|base[0x84];
-			UINT8 end = base[6]+1;
-			UINT8 delta = base[7];
-			UINT32 step = spcm.step[delta];
-			UINT8 voll = base[2];
-			UINT8 volr = base[3];
-			UINT8 flags = base[0x86];
-			const UINT8 *rom = spcm.rom + ((flags & spcm.bankmask) << spcm.bankshift);
+			uint8_t *base = spcm.ram+8*ch;
+			uint32_t addr = (base[5] << 24) | (base[4] << 16) | spcm.low[ch];
+			uint16_t loop = (base[0x85] << 8)|base[0x84];
+			uint8_t end = base[6]+1;
+			uint8_t delta = base[7];
+			uint32_t step = spcm.step[delta];
+			uint8_t voll = base[2];
+			uint8_t volr = base[3];
+			uint8_t flags = base[0x86];
+			const uint8_t *rom = spcm.rom + ((flags & spcm.bankmask) << spcm.bankshift);
 			int i;
 
 			for(i=0; i<length; i++) {
-				INT8 v;
-				const UINT8 *ptr;
+				int8_t v;
+				const uint8_t *ptr;
 				if((addr >> 24) == end) {
 					if(!(flags & 2))
 						addr = loop << 16;
@@ -72,10 +72,10 @@ int SEGAPCM_sh_start( const struct MachineSound *msound )
 
 	spcm.rate = intf->mode == SEGAPCM_SAMPLE15K ? 4000000/256 : 4000000/128;
 
-	spcm.rom = (const UINT8 *)memory_region(intf->region);
+	spcm.rom = (const uint8_t *)memory_region(intf->region);
 	spcm.rom_end = spcm.rom + memory_region_length(intf->region);
 	spcm.ram = auto_malloc(0x800);
-	spcm.step = auto_malloc(sizeof(UINT32)*256);
+	spcm.step = auto_malloc(sizeof(uint32_t)*256);
 
 	if(!spcm.ram || !spcm.step)
 		return 1;
@@ -85,7 +85,7 @@ int SEGAPCM_sh_start( const struct MachineSound *msound )
 
 	memset(spcm.ram, 0xff, 0x800);
 
-	spcm.bankshift = (UINT8)(intf->bank);
+	spcm.bankshift = (uint8_t)(intf->bank);
 	mask = intf->bank >> 16;
 	if(!mask)
 		mask = BANK_MASK7>>16;

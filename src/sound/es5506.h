@@ -18,7 +18,7 @@ struct ES5505interface
 	int region1[MAX_ES5505];						/* memory region where the sample ROM lives */
 	int mixing_level[MAX_ES5505];					/* master volume */
 	void (*irq_callback[MAX_ES5505])(int state);	/* irq callback */
-	UINT16 (*read_port[MAX_ES5505])(void);			/* input port read */
+	uint16_t (*read_port[MAX_ES5505])(void);			/* input port read */
 };
 
 int ES5505_sh_start(const struct MachineSound *msound);
@@ -44,7 +44,7 @@ struct ES5506interface
 	int region3[MAX_ES5506];						/* memory region where the sample ROM lives */
 	int mixing_level[MAX_ES5506];					/* master volume */
 	void (*irq_callback[MAX_ES5506])(int state);	/* irq callback */
-	UINT16 (*read_port[MAX_ES5506])(void);			/* input port read */
+	uint16_t (*read_port[MAX_ES5506])(void);			/* input port read */
 };
 
 int ES5506_sh_start(const struct MachineSound *msound);

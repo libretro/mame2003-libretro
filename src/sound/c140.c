@@ -27,33 +27,33 @@ Unmapped registers:
 
 struct voice_registers
 {
-	UINT8 volume_right;
-	UINT8 volume_left;
-	UINT8 frequency_msb;
-	UINT8 frequency_lsb;
-	UINT8 bank;
-	UINT8 mode;
-	UINT8 start_msb;
-	UINT8 start_lsb;
-	UINT8 end_msb;
-	UINT8 end_lsb;
-	UINT8 loop_msb;
-	UINT8 loop_lsb;
-	UINT8 reserved[4];
+	uint8_t volume_right;
+	uint8_t volume_left;
+	uint8_t frequency_msb;
+	uint8_t frequency_lsb;
+	uint8_t bank;
+	uint8_t mode;
+	uint8_t start_msb;
+	uint8_t start_lsb;
+	uint8_t end_msb;
+	uint8_t end_lsb;
+	uint8_t loop_msb;
+	uint8_t loop_lsb;
+	uint8_t reserved[4];
 };
 
 static int sample_rate;
 static int stream;
 static int banking_type;
 /* internal buffers */
-static INT16 *mixer_buffer_left;
-static INT16 *mixer_buffer_right;
+static int16_t *mixer_buffer_left;
+static int16_t *mixer_buffer_right;
 
 static int baserate;
 static void *pRom;
-static UINT8 REG[0x200];
+static uint8_t REG[0x200];
 
-static INT16 pcmtbl[8];		//2000.06.26 CAB
+static int16_t pcmtbl[8];		//2000.06.26 CAB
 
 typedef struct
 {
@@ -184,35 +184,35 @@ WRITE_HANDLER( C140_w )
 	}
 }
 
-static INLINE int limit(INT32 in)
+static INLINE int limit(int32_t in)
 {
 	if(in>0x7fff)		return 0x7fff;
 	else if(in<-0x8000)	return -0x8000;
 	return in;
 }
 
-static void update_stereo(int ch, INT16 **buffer, int length)
+static void update_stereo(int ch, int16_t **buffer, int length)
 {
 	int		i,j;
 
-	INT32	rvol,lvol;
-	INT32	dt;
-	INT32	sdt;
-	INT32	st,ed,sz;
+	int32_t	rvol,lvol;
+	int32_t	dt;
+	int32_t	sdt;
+	int32_t	st,ed,sz;
 
-	INT8	*pSampleData;
-	INT32	frequency,delta,offset,pos;
-	INT32	cnt;
-	INT32	lastdt,prevdt,dltdt;
+	int8_t	*pSampleData;
+	int32_t	frequency,delta,offset,pos;
+	int32_t	cnt;
+	int32_t	lastdt,prevdt,dltdt;
 	float	pbase=(float)baserate*2.0 / (float)sample_rate;
 
-	INT16	*lmix, *rmix;
+	int16_t	*lmix, *rmix;
 
 	if(length>sample_rate) length=sample_rate;
 
 	/* zap the contents of the mixer buffer */
-	memset(mixer_buffer_left, 0, length * sizeof(INT16));
-	memset(mixer_buffer_right, 0, length * sizeof(INT16));
+	memset(mixer_buffer_left, 0, length * sizeof(int16_t));
+	memset(mixer_buffer_right, 0, length * sizeof(int16_t));
 
 	//--- audio update
 	for( i=0;i<MAX_VOICE;i++ )
@@ -356,8 +356,8 @@ static void update_stereo(int ch, INT16 **buffer, int length)
 	lmix = mixer_buffer_left;
 	rmix = mixer_buffer_right;
 	{
-		INT16 *dest1 = buffer[0];
-		INT16 *dest2 = buffer[1];
+		int16_t *dest1 = buffer[0];
+		int16_t *dest2 = buffer[1];
 		for (i = 0; i < length; i++)
 		{
 			*dest1++ = limit(8*(*lmix++));
@@ -386,7 +386,7 @@ int C140_sh_start( const struct MachineSound *msound )
 	/* make decompress pcm table */		//2000.06.26 CAB
 	{
 		int i;
-		INT32 segbase=0;
+		int32_t segbase=0;
 		for(i=0;i<8;i++)
 		{
 			pcmtbl[i]=segbase;	//segment base value
@@ -401,7 +401,7 @@ int C140_sh_start( const struct MachineSound *msound )
 	}
 
 	/* allocate a pair of buffers to mix into - 1 second's worth should be more than enough */
-	mixer_buffer_left = malloc(2 * sizeof(INT16)*sample_rate );
+	mixer_buffer_left = malloc(2 * sizeof(int16_t)*sample_rate );
 	if( mixer_buffer_left )
 	{
 		mixer_buffer_right = mixer_buffer_left + sample_rate;

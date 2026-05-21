@@ -76,7 +76,7 @@ static struct IremGA20_channel_def
 static float *sr_table;
 static int *sr_xlat;
 
-void IremGA20_update( int param, INT16 **buffer, int length )
+void IremGA20_update( int param, int16_t **buffer, int length )
 {
 	unsigned long rate[4], pos[4], end[4], vol[4], play[4];
 	uintptr_t edi, ebp, esi;
@@ -257,8 +257,8 @@ int IremGA20_sh_start(const struct MachineSound *msound)
 			IremGA20_chip.intf->mixing_level, Machine->sample_rate,
 			0, IremGA20_update );
 
-	state_save_register_UINT8("sound", 0, "IremGA20_channel", (UINT8*) IremGA20_channel, sizeof(IremGA20_channel));
-	state_save_register_UINT8("sound", 0, "IremGA20_chip",    (UINT8*) &IremGA20_chip,   sizeof(IremGA20_chip));
+	state_save_register_UINT8("sound", 0, "IremGA20_channel", (uint8_t*) IremGA20_channel, sizeof(IremGA20_channel));
+	state_save_register_UINT8("sound", 0, "IremGA20_chip",    (uint8_t*) &IremGA20_chip,   sizeof(IremGA20_chip));
 
 	return 0;
 }

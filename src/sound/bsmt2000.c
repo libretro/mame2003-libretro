@@ -59,27 +59,27 @@
 struct BSMT2000Voice
 {
 	/* external state */
-	UINT16		reg[REG_TOTAL];			/* 9 registers */
-	UINT32		position;				/* current position */
-	UINT32		loop_start_position;	/* loop start position */
-	UINT32		loop_stop_position;		/* loop stop position */
-	UINT32		adjusted_rate;			/* adjusted rate */
+	uint16_t		reg[REG_TOTAL];			/* 9 registers */
+	uint32_t		position;				/* current position */
+	uint32_t		loop_start_position;	/* loop start position */
+	uint32_t		loop_stop_position;		/* loop stop position */
+	uint32_t		adjusted_rate;			/* adjusted rate */
 };
 
 struct BSMT2000Chip
 {
 	int			stream;					/* which stream are we using */
-	INT8 *		region_base;			/* pointer to the base of the region */
+	int8_t *		region_base;			/* pointer to the base of the region */
 	int			total_banks;			/* number of total banks in the region */
 	int			voices;					/* number of voices */
 	double 		master_clock;			/* master clock frequency */
 
-	INT32		output_step;			/* step value for frequency conversion */
-	INT32		output_pos;				/* current fractional position */
-	INT32		last_lsample;			/* last sample output */
-	INT32		last_rsample;			/* last sample output */
-	INT32		curr_lsample;			/* current sample target */
-	INT32		curr_rsample;			/* current sample target */
+	int32_t		output_step;			/* step value for frequency conversion */
+	int32_t		output_pos;				/* current fractional position */
+	int32_t		last_lsample;			/* last sample output */
+	int32_t		last_rsample;			/* last sample output */
+	int32_t		curr_lsample;			/* current sample target */
+	int32_t		curr_rsample;			/* current sample target */
 
 	struct BSMT2000Voice *voice;		/* the voices */
 	struct BSMT2000Voice compressed;	/* the compressed voice */
@@ -99,8 +99,8 @@ struct BSMT2000Chip
 ***********************************************************************************************/
 
 static struct BSMT2000Chip bsmt2000[MAX_BSMT2000];
-static INT32 *accumulator;
-static INT32 *scratch;
+static int32_t *accumulator;
+static int32_t *scratch;
 
 
 
@@ -112,17 +112,17 @@ static INT32 *scratch;
 ***********************************************************************************************/
 
 #define interpolate(sample1, sample2, accum)										\
-		(sample1 * (INT32)(0x10000 - (accum & 0xffff)) + 							\
-		 sample2 * (INT32)(accum & 0xffff)) >> 16;
+		(sample1 * (int32_t)(0x10000 - (accum & 0xffff)) + 							\
+		 sample2 * (int32_t)(accum & 0xffff)) >> 16;
 
 #define interpolate2(sample1, sample2, accum)										\
-		(sample1 * (INT32)(0x8000 - (accum & 0x7fff)) + 							\
-		 sample2 * (INT32)(accum & 0x7fff)) >> 15;
+		(sample1 * (int32_t)(0x8000 - (accum & 0x7fff)) + 							\
+		 sample2 * (int32_t)(accum & 0x7fff)) >> 15;
 
 #if BACKEND_INTERPOLATE
 #define backend_interpolate(sample1, sample2, position)								\
-		(sample1 * (INT32)(FRAC_ONE - position) + 									\
-		 sample2 * (INT32)position) >> FRAC_BITS;
+		(sample1 * (int32_t)(FRAC_ONE - position) + 									\
+		 sample2 * (int32_t)position) >> FRAC_BITS;
 #else
 #define backend_interpolate(sample1, sample2, position)	sample1
 #endif
@@ -135,7 +135,7 @@ static INT32 *scratch;
 
 ***********************************************************************************************/
 
-static void generate_samples(struct BSMT2000Chip *chip, INT32 *left, INT32 *right, int samples)
+static void generate_samples(struct BSMT2000Chip *chip, int32_t *left, int32_t *right, int samples)
 {
 	struct BSMT2000Voice *voice;
 	int v;
@@ -156,20 +156,20 @@ static void generate_samples(struct BSMT2000Chip *chip, INT32 *left, INT32 *righ
 		/* compute the region base */
 		if (voice->reg[REG_BANK] < chip->total_banks)
 		{
-			INT8 *base = &chip->region_base[voice->reg[REG_BANK] * 0x10000];
-			INT32 *lbuffer = left, *rbuffer = right;
-			UINT32 rate = voice->adjusted_rate;
-			UINT32 pos = voice->position;
-			INT32 lvol = voice->reg[REG_LEFTVOL];
-			INT32 rvol = voice->reg[REG_RIGHTVOL];
+			int8_t *base = &chip->region_base[voice->reg[REG_BANK] * 0x10000];
+			int32_t *lbuffer = left, *rbuffer = right;
+			uint32_t rate = voice->adjusted_rate;
+			uint32_t pos = voice->position;
+			int32_t lvol = voice->reg[REG_LEFTVOL];
+			int32_t rvol = voice->reg[REG_RIGHTVOL];
 			int remaining = samples;
 
 			/* loop while we still have samples to generate */
 			while (remaining--)
 			{
 				/* fetch two samples */
-				INT32 val1 = base[pos >> 16];
-				INT32 val2 = base[(pos >> 16) + 1];
+				int32_t val1 = base[pos >> 16];
+				int32_t val2 = base[(pos >> 16) + 1];
 				pos += rate;
 
 				/* interpolate */
@@ -193,20 +193,20 @@ static void generate_samples(struct BSMT2000Chip *chip, INT32 *left, INT32 *righ
 	voice = &chip->compressed;
 	if (chip->voices == 11 && voice->reg[REG_BANK] < chip->total_banks)
 	{
-		INT8 *base = &chip->region_base[voice->reg[REG_BANK] * 0x10000];
-		INT32 *lbuffer = left, *rbuffer = right;
-		UINT32 rate = voice->adjusted_rate;
-		UINT32 pos = voice->position;
-		INT32 lvol = voice->reg[REG_LEFTVOL];
-		INT32 rvol = voice->reg[REG_RIGHTVOL];
+		int8_t *base = &chip->region_base[voice->reg[REG_BANK] * 0x10000];
+		int32_t *lbuffer = left, *rbuffer = right;
+		uint32_t rate = voice->adjusted_rate;
+		uint32_t pos = voice->position;
+		int32_t lvol = voice->reg[REG_LEFTVOL];
+		int32_t rvol = voice->reg[REG_RIGHTVOL];
 		int remaining = samples;
 
 		/* loop while we still have samples to generate */
 		while (remaining-- && pos < voice->loop_stop_position)
 		{
 			/* fetch two samples -- note: this is wrong, just a guess!!!*/
-			INT32 val1 = (INT8)((base[pos >> 16] << ((pos >> 13) & 4)) & 0xf0);
-			INT32 val2 = (INT8)((base[(pos + 0x8000) >> 16] << (((pos + 0x8000) >> 13) & 4)) & 0xf0);
+			int32_t val1 = (int8_t)((base[pos >> 16] << ((pos >> 13) & 4)) & 0xf0);
+			int32_t val2 = (int8_t)((base[(pos + 0x8000) >> 16] << (((pos + 0x8000) >> 13) & 4)) & 0xf0);
 			pos += rate;
 
 			/* interpolate */
@@ -230,17 +230,17 @@ static void generate_samples(struct BSMT2000Chip *chip, INT32 *left, INT32 *righ
 
 ***********************************************************************************************/
 
-static void bsmt2000_update(int num, INT16 **buffer, int length)
+static void bsmt2000_update(int num, int16_t **buffer, int length)
 {
 	struct BSMT2000Chip *chip = &bsmt2000[num];
-	INT32 *lsrc = scratch, *rsrc = scratch;
-	INT32 lprev = chip->last_lsample;
-	INT32 rprev = chip->last_rsample;
-	INT32 lcurr = chip->curr_lsample;
-	INT32 rcurr = chip->curr_rsample;
-	INT16 *ldest = buffer[0];
-	INT16 *rdest = buffer[1];
-	INT32 interp;
+	int32_t *lsrc = scratch, *rsrc = scratch;
+	int32_t lprev = chip->last_lsample;
+	int32_t rprev = chip->last_rsample;
+	int32_t lcurr = chip->curr_lsample;
+	int32_t rcurr = chip->curr_rsample;
+	int16_t *ldest = buffer[0];
+	int16_t *rdest = buffer[1];
+	int32_t interp;
 	int remaining = length;
 	int samples_left = 0;
 
@@ -268,7 +268,7 @@ static void bsmt2000_update(int num, INT16 **buffer, int length)
 			if (samples_left == 0)
 			{
 				/* compute how many new samples we need */
-				UINT32 final_pos = chip->output_pos + (remaining - 1) * chip->output_step;
+				uint32_t final_pos = chip->output_pos + (remaining - 1) * chip->output_step;
 				samples_left = final_pos >> FRAC_BITS;
 				if (samples_left > MAX_SAMPLE_CHUNK)
 					samples_left = MAX_SAMPLE_CHUNK;
@@ -393,7 +393,7 @@ int BSMT2000_sh_start(const struct MachineSound *msound)
 			return 1;
 
 		/* initialize the regions */
-		bsmt2000[i].region_base = (INT8 *)memory_region(intf->region[i]);
+		bsmt2000[i].region_base = (int8_t *)memory_region(intf->region[i]);
 		bsmt2000[i].total_banks = memory_region_length(intf->region[i]) / 0x10000;
 
 		/* initialize the rest of the structure */

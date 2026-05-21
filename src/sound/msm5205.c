@@ -93,7 +93,7 @@ static const struct MSM5205interface *msm5205_intf;
 static struct MSM5205Voice msm5205[MAX_MSM5205];
 
 /* stream update callbacks */
-static void MSM5205_update(int chip,INT16 *buffer,int length)
+static void MSM5205_update(int chip,int16_t *buffer,int length)
 {
 	struct MSM5205Voice *voice = &msm5205[chip];
 
@@ -108,7 +108,7 @@ static void MSM5205_update(int chip,INT16 *buffer,int length)
 		}
 	}
 	else
-		memset (buffer,0,length*sizeof(INT16));
+		memset (buffer,0,length*sizeof(int16_t));
 }
 
 /* timer callback at VCLK low eddge */

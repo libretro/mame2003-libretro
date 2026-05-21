@@ -74,57 +74,57 @@
 struct ES5506Voice
 {
 	/* external state */
-	UINT32		control;				/* control register */
-	UINT32		freqcount;				/* frequency count register */
-	UINT32		start;					/* start register */
-	UINT32		lvol;					/* left volume register */
-	UINT32		end;					/* end register */
-	UINT32		lvramp;					/* left volume ramp register */
-	UINT32		accum;					/* accumulator register */
-	UINT32		rvol;					/* right volume register */
-	UINT32		rvramp;					/* right volume ramp register */
-	UINT32		ecount;					/* envelope count register */
-	UINT32		k2;						/* k2 register */
-	UINT32		k2ramp;					/* k2 ramp register */
-	UINT32		k1;						/* k1 register */
-	UINT32		k1ramp;					/* k1 ramp register */
-	INT32		o4n1;					/* filter storage O4(n-1) */
-	INT32		o3n1;					/* filter storage O3(n-1) */
-	INT32		o3n2;					/* filter storage O3(n-2) */
-	INT32		o2n1;					/* filter storage O2(n-1) */
-	INT32		o2n2;					/* filter storage O2(n-2) */
-	INT32		o1n1;					/* filter storage O1(n-1) */
-	UINT32		exbank;					/* external address bank */
+	uint32_t		control;				/* control register */
+	uint32_t		freqcount;				/* frequency count register */
+	uint32_t		start;					/* start register */
+	uint32_t		lvol;					/* left volume register */
+	uint32_t		end;					/* end register */
+	uint32_t		lvramp;					/* left volume ramp register */
+	uint32_t		accum;					/* accumulator register */
+	uint32_t		rvol;					/* right volume register */
+	uint32_t		rvramp;					/* right volume ramp register */
+	uint32_t		ecount;					/* envelope count register */
+	uint32_t		k2;						/* k2 register */
+	uint32_t		k2ramp;					/* k2 ramp register */
+	uint32_t		k1;						/* k1 register */
+	uint32_t		k1ramp;					/* k1 ramp register */
+	int32_t		o4n1;					/* filter storage O4(n-1) */
+	int32_t		o3n1;					/* filter storage O3(n-1) */
+	int32_t		o3n2;					/* filter storage O3(n-2) */
+	int32_t		o2n1;					/* filter storage O2(n-1) */
+	int32_t		o2n2;					/* filter storage O2(n-2) */
+	int32_t		o1n1;					/* filter storage O1(n-1) */
+	uint32_t		exbank;					/* external address bank */
 
 	/* internal state */
-	UINT8		index;					/* index of this voice */
-	UINT8		filtcount;				/* filter count */
+	uint8_t		index;					/* index of this voice */
+	uint8_t		filtcount;				/* filter count */
 };
 
 struct ES5506Chip
 {
 	int			stream;					/* which stream are we using */
-	UINT16 *	region_base[4];			/* pointer to the base of the region */
-	UINT32 		write_latch;			/* currently accumulated data for write */
-	UINT32 		read_latch;				/* currently accumulated data for read */
+	uint16_t *	region_base[4];			/* pointer to the base of the region */
+	uint32_t 		write_latch;			/* currently accumulated data for write */
+	uint32_t 		read_latch;				/* currently accumulated data for read */
 	double 		master_clock;			/* master clock frequency */
 	void 		(*irq_callback)(int);	/* IRQ callback */
-	UINT16		(*port_read)(void);		/* input port read */
+	uint16_t		(*port_read)(void);		/* input port read */
 
-	UINT8 		current_page;			/* current register page */
-	UINT8		active_voices;			/* number of active voices */
-	UINT8		mode;					/* MODE register */
-	UINT8		wst;					/* W_ST register */
-	UINT8		wend;					/* W_END register */
-	UINT8		lrend;					/* LR_END register */
-	UINT8		irqv;					/* IRQV register */
+	uint8_t 		current_page;			/* current register page */
+	uint8_t		active_voices;			/* number of active voices */
+	uint8_t		mode;					/* MODE register */
+	uint8_t		wst;					/* W_ST register */
+	uint8_t		wend;					/* W_END register */
+	uint8_t		lrend;					/* LR_END register */
+	uint8_t		irqv;					/* IRQV register */
 
-	INT32		output_step;			/* step value for frequency conversion */
-	INT32		output_pos;				/* current fractional position */
-	INT32		last_lsample;			/* last sample output */
-	INT32		last_rsample;			/* last sample output */
-	INT32		curr_lsample;			/* current sample target */
-	INT32		curr_rsample;			/* current sample target */
+	int32_t		output_step;			/* step value for frequency conversion */
+	int32_t		output_pos;				/* current fractional position */
+	int32_t		last_lsample;			/* last sample output */
+	int32_t		last_rsample;			/* last sample output */
+	int32_t		curr_lsample;			/* current sample target */
+	int32_t		curr_rsample;			/* current sample target */
 
 	struct 		ES5506Voice voice[32];	/* the 32 voices */
 
@@ -143,12 +143,12 @@ struct ES5506Chip
 ***********************************************************************************************/
 
 static struct ES5506Chip es5506[MAX_ES5506];
-static INT32 *accumulator;
-static INT32 *scratch;
+static int32_t *accumulator;
+static int32_t *scratch;
 
-static INT16 *ulaw_lookup;
-static UINT16 *volume_lookup;
-static UINT32 accum_mask;
+static int16_t *ulaw_lookup;
+static uint16_t *volume_lookup;
+static uint32_t accum_mask;
 
 //static FILE *eslog;
 
@@ -203,16 +203,16 @@ static int compute_tables(void)
 	/* generate ulaw lookup table */
 	for (i = 0; i < (1 << ULAW_MAXBITS); i++)
 	{
-		UINT16 rawval = (i << (16 - ULAW_MAXBITS)) | (1 << (15 - ULAW_MAXBITS));
-		UINT8 exponent = rawval >> 13;
-		UINT32 mantissa = (rawval << 3) & 0xffff;
+		uint16_t rawval = (i << (16 - ULAW_MAXBITS)) | (1 << (15 - ULAW_MAXBITS));
+		uint8_t exponent = rawval >> 13;
+		uint32_t mantissa = (rawval << 3) & 0xffff;
 
 		if (exponent == 0)
-			ulaw_lookup[i] = (INT16)mantissa >> 7;
+			ulaw_lookup[i] = (int16_t)mantissa >> 7;
 		else
 		{
 			mantissa = (mantissa >> 1) | (~mantissa & 0x8000);
-			ulaw_lookup[i] = (INT16)mantissa >> (7 - exponent);
+			ulaw_lookup[i] = (int16_t)mantissa >> (7 - exponent);
 		}
 	}
 
@@ -225,8 +225,8 @@ static int compute_tables(void)
 	/* generate ulaw lookup table */
 	for (i = 0; i < 4096; i++)
 	{
-		UINT8 exponent = i >> 8;
-		UINT32 mantissa = (i & 0xff) | 0x100;
+		uint8_t exponent = i >> 8;
+		uint32_t mantissa = (i & 0xff) | 0x100;
 
 		volume_lookup[i] = (mantissa << 11) >> (20 - exponent);
 	}
@@ -244,13 +244,13 @@ static int compute_tables(void)
 ***********************************************************************************************/
 
 #define interpolate(sample1, sample2, accum)										\
-		(sample1 * (INT32)(0x800 - (voice->accum & 0x7ff)) + 						\
-		 sample2 * (INT32)(voice->accum & 0x7ff)) >> 11;
+		(sample1 * (int32_t)(0x800 - (voice->accum & 0x7ff)) + 						\
+		 sample2 * (int32_t)(voice->accum & 0x7ff)) >> 11;
 
 #ifdef BACKEND_INTERPOLATE
 #define backend_interpolate(sample1, sample2, position)								\
-		(sample1 * (INT32)(FRAC_ONE - position) + 									\
-		 sample2 * (INT32)position) >> FRAC_BITS;
+		(sample1 * (int32_t)(FRAC_ONE - position) + 									\
+		 sample2 * (int32_t)position) >> FRAC_BITS;
 #else
 #define backend_interpolate(sample1, sample2, position)	sample1
 #endif
@@ -267,11 +267,11 @@ static int compute_tables(void)
 do																								\
 {																								\
 	/* pole 1 is always low-pass using K1 */													\
-	sample = ((INT32)(voice->k1 >> 2) * (sample - voice->o1n1) / 16384) + voice->o1n1;			\
+	sample = ((int32_t)(voice->k1 >> 2) * (sample - voice->o1n1) / 16384) + voice->o1n1;			\
 	voice->o1n1 = sample;																		\
 																								\
 	/* pole 2 is always low-pass using K1 */													\
-	sample = ((INT32)(voice->k1 >> 2) * (sample - voice->o2n1) / 16384) + voice->o2n1;			\
+	sample = ((int32_t)(voice->k1 >> 2) * (sample - voice->o2n1) / 16384) + voice->o2n1;			\
 	voice->o2n2 = voice->o2n1;																	\
 	voice->o2n1 = sample;																		\
 																								\
@@ -280,45 +280,45 @@ do																								\
 	{																							\
 		case 0:																					\
 			/* pole 3 is high-pass using K2 */													\
-			sample = sample - voice->o2n2 + ((INT32)(voice->k2 >> 2) * voice->o3n1) / 32768 + voice->o3n1 / 2; \
+			sample = sample - voice->o2n2 + ((int32_t)(voice->k2 >> 2) * voice->o3n1) / 32768 + voice->o3n1 / 2; \
 			voice->o3n2 = voice->o3n1;															\
 			voice->o3n1 = sample;																\
 																								\
 			/* pole 4 is high-pass using K2 */													\
-			sample = sample - voice->o3n2 + ((INT32)(voice->k2 >> 2) * voice->o4n1) / 32768 + voice->o4n1 / 2; \
+			sample = sample - voice->o3n2 + ((int32_t)(voice->k2 >> 2) * voice->o4n1) / 32768 + voice->o4n1 / 2; \
 			voice->o4n1 = sample;																\
 			break;																				\
 																								\
 		case CONTROL_LP3:																		\
 			/* pole 3 is low-pass using K1 */													\
-			sample = ((INT32)(voice->k1 >> 2) * (sample - voice->o3n1) / 16384) + voice->o3n1;	\
+			sample = ((int32_t)(voice->k1 >> 2) * (sample - voice->o3n1) / 16384) + voice->o3n1;	\
 			voice->o3n2 = voice->o3n1;															\
 			voice->o3n1 = sample;																\
 																								\
 			/* pole 4 is high-pass using K2 */													\
-			sample = sample - voice->o3n2 + ((INT32)(voice->k2 >> 2) * voice->o4n1) / 32768 + voice->o4n1 / 2; \
+			sample = sample - voice->o3n2 + ((int32_t)(voice->k2 >> 2) * voice->o4n1) / 32768 + voice->o4n1 / 2; \
 			voice->o4n1 = sample;																\
 			break;																				\
 																								\
 		case CONTROL_LP4:																		\
 			/* pole 3 is low-pass using K2 */													\
-			sample = ((INT32)(voice->k2 >> 2) * (sample - voice->o3n1) / 16384) + voice->o3n1;	\
+			sample = ((int32_t)(voice->k2 >> 2) * (sample - voice->o3n1) / 16384) + voice->o3n1;	\
 			voice->o3n2 = voice->o3n1;															\
 			voice->o3n1 = sample;																\
 																								\
 			/* pole 4 is low-pass using K2 */													\
-			sample = ((INT32)(voice->k2 >> 2) * (sample - voice->o4n1) / 16384) + voice->o4n1;	\
+			sample = ((int32_t)(voice->k2 >> 2) * (sample - voice->o4n1) / 16384) + voice->o4n1;	\
 			voice->o4n1 = sample;																\
 			break;																				\
 																								\
 		case CONTROL_LP4 | CONTROL_LP3:															\
 			/* pole 3 is low-pass using K1 */													\
-			sample = ((INT32)(voice->k1 >> 2) * (sample - voice->o3n1) / 16384) + voice->o3n1;	\
+			sample = ((int32_t)(voice->k1 >> 2) * (sample - voice->o3n1) / 16384) + voice->o3n1;	\
 			voice->o3n2 = voice->o3n1;															\
 			voice->o3n1 = sample;																\
 																								\
 			/* pole 4 is low-pass using K2 */													\
-			sample = ((INT32)(voice->k2 >> 2) * (sample - voice->o4n1) / 16384) + voice->o4n1;	\
+			sample = ((int32_t)(voice->k2 >> 2) * (sample - voice->o4n1) / 16384) + voice->o4n1;	\
 			voice->o4n1 = sample;																\
 			break;																				\
 	}																							\
@@ -343,32 +343,32 @@ do																					\
 	/* ramp left volume */															\
 	if (voice->lvramp)																\
 	{																				\
-		voice->lvol += (INT8)voice->lvramp * count;									\
-		if ((INT32)voice->lvol < 0) voice->lvol = 0;								\
+		voice->lvol += (int8_t)voice->lvramp * count;									\
+		if ((int32_t)voice->lvol < 0) voice->lvol = 0;								\
 		else if (voice->lvol > 0xffff) voice->lvol = 0xffff;						\
 	}																				\
 																					\
 	/* ramp right volume */															\
 	if (voice->rvramp)																\
 	{																				\
-		voice->rvol += (INT8)voice->rvramp * count;									\
-		if ((INT32)voice->rvol < 0) voice->rvol = 0;								\
+		voice->rvol += (int8_t)voice->rvramp * count;									\
+		if ((int32_t)voice->rvol < 0) voice->rvol = 0;								\
 		else if (voice->rvol > 0xffff) voice->rvol = 0xffff;						\
 	}																				\
 																					\
 	/* ramp k1 filter constant */													\
-	if (voice->k1ramp && ((INT32)voice->k1ramp >= 0 || !(voice->filtcount & 7)))	\
+	if (voice->k1ramp && ((int32_t)voice->k1ramp >= 0 || !(voice->filtcount & 7)))	\
 	{																				\
-		voice->k1 += (INT8)voice->k1ramp * count;									\
-		if ((INT32)voice->k1 < 0) voice->k1 = 0;									\
+		voice->k1 += (int8_t)voice->k1ramp * count;									\
+		if ((int32_t)voice->k1 < 0) voice->k1 = 0;									\
 		else if (voice->k1 > 0xffff) voice->k1 = 0xffff;							\
 	}																				\
 																					\
 	/* ramp k2 filter constant */													\
-	if (voice->k2ramp && ((INT32)voice->k2ramp >= 0 || !(voice->filtcount & 7)))	\
+	if (voice->k2ramp && ((int32_t)voice->k2ramp >= 0 || !(voice->filtcount & 7)))	\
 	{																				\
-		voice->k2 += (INT8)voice->k2ramp * count;									\
-		if ((INT32)voice->k2 < 0) voice->k2 = 0;									\
+		voice->k2 += (int8_t)voice->k2ramp * count;									\
+		if ((int32_t)voice->k2 < 0) voice->k2 = 0;									\
 		else if (voice->k2 > 0xffff) voice->k2 = 0xffff;							\
 	}																				\
 																					\
@@ -471,10 +471,10 @@ do																					\
 
 ***********************************************************************************************/
 
-static void generate_dummy(struct ES5506Voice *voice, UINT16 *base, INT32 *lbuffer, INT32 *rbuffer, int samples)
+static void generate_dummy(struct ES5506Voice *voice, uint16_t *base, int32_t *lbuffer, int32_t *rbuffer, int samples)
 {
-	UINT32 freqcount = voice->freqcount;
-	UINT32 accum = voice->accum & accum_mask;
+	uint32_t freqcount = voice->freqcount;
+	uint32_t accum = voice->accum & accum_mask;
 
 	/* outer loop, in case we switch directions */
 	while (samples > 0 && !(voice->control & CONTROL_STOPMASK))
@@ -532,12 +532,12 @@ alldone:
 
 ***********************************************************************************************/
 
-static void generate_ulaw(struct ES5506Voice *voice, UINT16 *base, INT32 *lbuffer, INT32 *rbuffer, int samples)
+static void generate_ulaw(struct ES5506Voice *voice, uint16_t *base, int32_t *lbuffer, int32_t *rbuffer, int samples)
 {
-	UINT32 freqcount = voice->freqcount;
-	UINT32 accum = voice->accum & accum_mask;
-	INT32 lvol = volume_lookup[voice->lvol >> 4];
-	INT32 rvol = volume_lookup[voice->rvol >> 4];
+	uint32_t freqcount = voice->freqcount;
+	uint32_t accum = voice->accum & accum_mask;
+	int32_t lvol = volume_lookup[voice->lvol >> 4];
+	int32_t rvol = volume_lookup[voice->rvol >> 4];
 
 	/* pre-add the bank offset */
 	base += voice->exbank;
@@ -553,8 +553,8 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
-				INT32 val1 = base[accum >> 11];
-				INT32 val2 = base[((accum + (1 << 11)) & accum_mask) >> 11];
+				int32_t val1 = base[accum >> 11];
+				int32_t val2 = base[((accum + (1 << 11)) & accum_mask) >> 11];
 
 				/* decompress u-law */
 				val1 = ulaw_lookup[val1 >> (16 - ULAW_MAXBITS)];
@@ -591,8 +591,8 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
-				INT32 val1 = base[accum >> 11];
-				INT32 val2 = base[((accum + (1 << 11)) & accum_mask) >> 11];
+				int32_t val1 = base[accum >> 11];
+				int32_t val2 = base[((accum + (1 << 11)) & accum_mask) >> 11];
 
 				/* decompress u-law */
 				val1 = ulaw_lookup[val1 >> (16 - ULAW_MAXBITS)];
@@ -638,12 +638,12 @@ alldone:
 
 ***********************************************************************************************/
 
-static void generate_pcm(struct ES5506Voice *voice, UINT16 *base, INT32 *lbuffer, INT32 *rbuffer, int samples)
+static void generate_pcm(struct ES5506Voice *voice, uint16_t *base, int32_t *lbuffer, int32_t *rbuffer, int samples)
 {
-	UINT32 freqcount = voice->freqcount;
-	UINT32 accum = voice->accum & accum_mask;
-	INT32 lvol = volume_lookup[voice->lvol >> 4];
-	INT32 rvol = volume_lookup[voice->rvol >> 4];
+	uint32_t freqcount = voice->freqcount;
+	uint32_t accum = voice->accum & accum_mask;
+	int32_t lvol = volume_lookup[voice->lvol >> 4];
+	int32_t rvol = volume_lookup[voice->rvol >> 4];
 
 	/* pre-add the bank offset */
 	base += voice->exbank;
@@ -659,8 +659,8 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
-				INT32 val1 = (INT16)base[accum >> 11];
-				INT32 val2 = (INT16)base[((accum + (1 << 11)) & accum_mask) >> 11];
+				int32_t val1 = (int16_t)base[accum >> 11];
+				int32_t val2 = (int16_t)base[((accum + (1 << 11)) & accum_mask) >> 11];
 
 				/* interpolate */
 				val1 = interpolate(val1, val2, accum);
@@ -693,8 +693,8 @@ reverse:
 			while (samples--)
 			{
 				/* fetch two samples */
-				INT32 val1 = (INT16)base[accum >> 11];
-				INT32 val2 = (INT16)base[((accum + (1 << 11)) & accum_mask) >> 11];
+				int32_t val1 = (int16_t)base[accum >> 11];
+				int32_t val2 = (int16_t)base[((accum + (1 << 11)) & accum_mask) >> 11];
 
 				/* interpolate */
 				val1 = interpolate(val1, val2, accum);
@@ -736,7 +736,7 @@ alldone:
 
 ***********************************************************************************************/
 
-static void generate_samples(struct ES5506Chip *chip, INT32 *left, INT32 *right, int samples)
+static void generate_samples(struct ES5506Chip *chip, int32_t *left, int32_t *right, int samples)
 {
 	int v;
 
@@ -752,7 +752,7 @@ static void generate_samples(struct ES5506Chip *chip, INT32 *left, INT32 *right,
 	for (v = 0; v <= chip->active_voices; v++)
 	{
 		struct ES5506Voice *voice = &chip->voice[v];
-		UINT16 *base = chip->region_base[voice->control >> 14];
+		uint16_t *base = chip->region_base[voice->control >> 14];
 
 		/* special case: if end == start, stop the voice */
 		if (voice->start == voice->end)
@@ -797,17 +797,17 @@ static void generate_samples(struct ES5506Chip *chip, INT32 *left, INT32 *right,
 
 ***********************************************************************************************/
 
-static void es5506_update(int num, INT16 **buffer, int length)
+static void es5506_update(int num, int16_t **buffer, int length)
 {
 	struct ES5506Chip *chip = &es5506[num];
-	INT32 *lsrc = scratch, *rsrc = scratch;
-	INT32 lprev = chip->last_lsample;
-	INT32 rprev = chip->last_rsample;
-	INT32 lcurr = chip->curr_lsample;
-	INT32 rcurr = chip->curr_rsample;
-	INT16 *ldest = buffer[0];
-	INT16 *rdest = buffer[1];
-	INT32 interp;
+	int32_t *lsrc = scratch, *rsrc = scratch;
+	int32_t lprev = chip->last_lsample;
+	int32_t rprev = chip->last_rsample;
+	int32_t lcurr = chip->curr_lsample;
+	int32_t rcurr = chip->curr_rsample;
+	int16_t *ldest = buffer[0];
+	int16_t *rdest = buffer[1];
+	int32_t interp;
 	int remaining = length;
 	int samples_left = 0;
 
@@ -835,7 +835,7 @@ static void es5506_update(int num, INT16 **buffer, int length)
 			if (samples_left == 0)
 			{
 				/* compute how many new samples we need */
-				UINT32 final_pos = chip->output_pos + (remaining - 1) * chip->output_step;
+				uint32_t final_pos = chip->output_pos + (remaining - 1) * chip->output_step;
 				samples_left = final_pos >> FRAC_BITS;
 				if (samples_left > MAX_SAMPLE_CHUNK)
 					samples_left = MAX_SAMPLE_CHUNK;
@@ -940,10 +940,10 @@ int ES5506_sh_start(const struct MachineSound *msound)
 			return 1;
 
 		/* initialize the regions */
-		es5506[i].region_base[0] = intf->region0[i] ? (UINT16 *)memory_region(intf->region0[i]) : NULL;
-		es5506[i].region_base[1] = intf->region1[i] ? (UINT16 *)memory_region(intf->region1[i]) : NULL;
-		es5506[i].region_base[2] = intf->region2[i] ? (UINT16 *)memory_region(intf->region2[i]) : NULL;
-		es5506[i].region_base[3] = intf->region3[i] ? (UINT16 *)memory_region(intf->region3[i]) : NULL;
+		es5506[i].region_base[0] = intf->region0[i] ? (uint16_t *)memory_region(intf->region0[i]) : NULL;
+		es5506[i].region_base[1] = intf->region1[i] ? (uint16_t *)memory_region(intf->region1[i]) : NULL;
+		es5506[i].region_base[2] = intf->region2[i] ? (uint16_t *)memory_region(intf->region2[i]) : NULL;
+		es5506[i].region_base[3] = intf->region3[i] ? (uint16_t *)memory_region(intf->region3[i]) : NULL;
 
 		/* initialize the rest of the structure */
 		es5506[i].master_clock = (double)intf->baseclock[i];
@@ -1031,7 +1031,7 @@ void ES5506_sh_stop(void)
 
 ***********************************************************************************************/
 
-static INLINE void es5506_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, UINT32 data)
+static INLINE void es5506_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint32_t data)
 {
 	switch (offset)
 	{
@@ -1153,7 +1153,7 @@ static INLINE void es5506_reg_write_low(struct ES5506Chip *chip, struct ES5506Vo
 }
 
 
-static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, UINT32 data)
+static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint32_t data)
 {
 	switch (offset)
 	{
@@ -1190,7 +1190,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			break;
 
 		case 0x20/8:	/* O4(n-1) */
-			voice->o4n1 = (INT32)(data << 14) >> 14;
+			voice->o4n1 = (int32_t)(data << 14) >> 14;
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "voice %d, O4(n-1)=%05x\n", chip->current_page & 0x1f, voice->o4n1 & 0x3ffff);
@@ -1198,7 +1198,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			break;
 
 		case 0x28/8:	/* O3(n-1) */
-			voice->o3n1 = (INT32)(data << 14) >> 14;
+			voice->o3n1 = (int32_t)(data << 14) >> 14;
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "voice %d, O3(n-1)=%05x\n", chip->current_page & 0x1f, voice->o3n1 & 0x3ffff);
@@ -1206,7 +1206,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			break;
 
 		case 0x30/8:	/* O3(n-2) */
-			voice->o3n2 = (INT32)(data << 14) >> 14;
+			voice->o3n2 = (int32_t)(data << 14) >> 14;
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "voice %d, O3(n-2)=%05x\n", chip->current_page & 0x1f, voice->o3n2 & 0x3ffff);
@@ -1214,7 +1214,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			break;
 
 		case 0x38/8:	/* O2(n-1) */
-			voice->o2n1 = (INT32)(data << 14) >> 14;
+			voice->o2n1 = (int32_t)(data << 14) >> 14;
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "voice %d, O2(n-1)=%05x\n", chip->current_page & 0x1f, voice->o2n1 & 0x3ffff);
@@ -1222,7 +1222,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			break;
 
 		case 0x40/8:	/* O2(n-2) */
-			voice->o2n2 = (INT32)(data << 14) >> 14;
+			voice->o2n2 = (int32_t)(data << 14) >> 14;
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "voice %d, O2(n-2)=%05x\n", chip->current_page & 0x1f, voice->o2n2 & 0x3ffff);
@@ -1230,7 +1230,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			break;
 
 		case 0x48/8:	/* O1(n-1) */
-			voice->o1n1 = (INT32)(data << 14) >> 14;
+			voice->o1n1 = (int32_t)(data << 14) >> 14;
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "voice %d, O1(n-1)=%05x\n", chip->current_page & 0x1f, voice->o1n1 & 0x3ffff);
@@ -1259,7 +1259,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 	}
 }
 
-static INLINE void es5506_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, UINT32 data)
+static INLINE void es5506_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint32_t data)
 {
 	switch (offset)
 	{
@@ -1372,9 +1372,9 @@ static void es5506_reg_write(struct ES5506Chip *chip, offs_t offset, data8_t dat
 
 ***********************************************************************************************/
 
-static INLINE UINT32 es5506_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint32_t es5506_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	switch (offset)
 	{
@@ -1448,9 +1448,9 @@ static INLINE UINT32 es5506_reg_read_low(struct ES5506Chip *chip, struct ES5506V
 }
 
 
-static INLINE UINT32 es5506_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint32_t es5506_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	switch (offset)
 	{
@@ -1523,9 +1523,9 @@ static INLINE UINT32 es5506_reg_read_high(struct ES5506Chip *chip, struct ES5506
 	return result;
 }
 
-static INLINE UINT32 es5506_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint32_t es5506_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	switch (offset)
 	{
@@ -1690,7 +1690,7 @@ void ES5505_sh_stop(void)
 
 ***********************************************************************************************/
 
-static INLINE void es5505_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, UINT16 data, UINT16 mem_mask)
+static INLINE void es5505_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	switch (offset)
 	{
@@ -1869,7 +1869,7 @@ static INLINE void es5505_reg_write_low(struct ES5506Chip *chip, struct ES5506Vo
 }
 
 
-static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, UINT16 data, UINT16 mem_mask)
+static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	switch (offset)
 	{
@@ -1896,7 +1896,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			if (ACCESSING_LSB)
 				voice->o4n1 = (voice->o4n1 & ~0x00ff) | (data & 0x00ff);
 			if (ACCESSING_MSB)
-				voice->o4n1 = (INT16)((voice->o4n1 & ~0xff00) | (data & 0xff00));
+				voice->o4n1 = (int16_t)((voice->o4n1 & ~0xff00) | (data & 0xff00));
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "%06x:voice %d, O4(n-1)=%05x\n", activecpu_get_previouspc(), chip->current_page & 0x1f, voice->o4n1 & 0x3ffff);
@@ -1907,7 +1907,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			if (ACCESSING_LSB)
 				voice->o3n1 = (voice->o3n1 & ~0x00ff) | (data & 0x00ff);
 			if (ACCESSING_MSB)
-				voice->o3n1 = (INT16)((voice->o3n1 & ~0xff00) | (data & 0xff00));
+				voice->o3n1 = (int16_t)((voice->o3n1 & ~0xff00) | (data & 0xff00));
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "%06x:voice %d, O3(n-1)=%05x\n", activecpu_get_previouspc(), chip->current_page & 0x1f, voice->o3n1 & 0x3ffff);
@@ -1918,7 +1918,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			if (ACCESSING_LSB)
 				voice->o3n2 = (voice->o3n2 & ~0x00ff) | (data & 0x00ff);
 			if (ACCESSING_MSB)
-				voice->o3n2 = (INT16)((voice->o3n2 & ~0xff00) | (data & 0xff00));
+				voice->o3n2 = (int16_t)((voice->o3n2 & ~0xff00) | (data & 0xff00));
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "%06x:voice %d, O3(n-2)=%05x\n", activecpu_get_previouspc(), chip->current_page & 0x1f, voice->o3n2 & 0x3ffff);
@@ -1929,7 +1929,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			if (ACCESSING_LSB)
 				voice->o2n1 = (voice->o2n1 & ~0x00ff) | (data & 0x00ff);
 			if (ACCESSING_MSB)
-				voice->o2n1 = (INT16)((voice->o2n1 & ~0xff00) | (data & 0xff00));
+				voice->o2n1 = (int16_t)((voice->o2n1 & ~0xff00) | (data & 0xff00));
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "%06x:voice %d, O2(n-1)=%05x\n", activecpu_get_previouspc(), chip->current_page & 0x1f, voice->o2n1 & 0x3ffff);
@@ -1940,7 +1940,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			if (ACCESSING_LSB)
 				voice->o2n2 = (voice->o2n2 & ~0x00ff) | (data & 0x00ff);
 			if (ACCESSING_MSB)
-				voice->o2n2 = (INT16)((voice->o2n2 & ~0xff00) | (data & 0xff00));
+				voice->o2n2 = (int16_t)((voice->o2n2 & ~0xff00) | (data & 0xff00));
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "%06x:voice %d, O2(n-2)=%05x\n", activecpu_get_previouspc(), chip->current_page & 0x1f, voice->o2n2 & 0x3ffff);
@@ -1951,7 +1951,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 			if (ACCESSING_LSB)
 				voice->o1n1 = (voice->o1n1 & ~0x00ff) | (data & 0x00ff);
 			if (ACCESSING_MSB)
-				voice->o1n1 = (INT16)((voice->o1n1 & ~0xff00) | (data & 0xff00));
+				voice->o1n1 = (int16_t)((voice->o1n1 & ~0xff00) | (data & 0xff00));
 #ifdef LOG_COMMANDS
 			if (LOG_COMMANDS && eslog)
 				fprintf(eslog, "%06x:voice %d, O1(n-1)=%05x (accum=%08x)\n", activecpu_get_previouspc(), chip->current_page & 0x1f, voice->o2n1 & 0x3ffff, voice->accum);
@@ -1992,7 +1992,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 }
 
 
-static INLINE void es5505_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, UINT16 data, UINT16 mem_mask)
+static INLINE void es5505_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	switch (offset)
 	{
@@ -2065,9 +2065,9 @@ static void es5505_reg_write(struct ES5506Chip *chip, offs_t offset, data16_t da
 
 ***********************************************************************************************/
 
-static INLINE UINT16 es5505_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint16_t es5505_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 
 	switch (offset)
 	{
@@ -2143,9 +2143,9 @@ static INLINE UINT16 es5505_reg_read_low(struct ES5506Chip *chip, struct ES5506V
 }
 
 
-static INLINE UINT16 es5505_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint16_t es5505_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 
 	switch (offset)
 	{
@@ -2216,9 +2216,9 @@ static INLINE UINT16 es5505_reg_read_high(struct ES5506Chip *chip, struct ES5506
 }
 
 
-static INLINE UINT16 es5505_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint16_t es5505_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 
 	switch (offset)
 	{
