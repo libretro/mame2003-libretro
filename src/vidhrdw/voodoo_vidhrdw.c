@@ -90,6 +90,11 @@ static UINT8 dac_read;
 
 static data32_t init_enable;
 
+/* When a driver composites on top of the readout (e.g. carnevil's gun
+   crosshairs draw into the game bitmap after VIDEO_UPDATE), it must force the
+   bitmap path so the composited result is the one delivered. Defaults on. */
+static int direct_fb_ok = 1;
+
 /* texel tables */
 static UINT32 *texel_lookup[MAX_TMUS][16];
 static UINT8 texel_lookup_dirty[MAX_TMUS][16];
@@ -777,7 +782,7 @@ VIDEO_UPDATE( voodoo )
 	   changes, so the fast path engages every frame. Falls back to the bitmap
 	   path when the output is not RGB565, the palette is unstable, or a
 	   flip/rotate/artwork/UI overlay is in the path. */
-	const uint16_t *pal = mame2003_direct_rgb565_palette(&palents);
+	const uint16_t *pal = direct_fb_ok ? mame2003_direct_rgb565_palette(&palents) : NULL;
 	UINT16 *fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
@@ -811,6 +816,11 @@ VIDEO_UPDATE( voodoo )
 void voodoo_set_init_enable(data32_t newval)
 {
 	init_enable = newval;
+}
+
+void voodoo_enable_direct_fb(int enable)
+{
+	direct_fb_ok = enable;
 }
 
 

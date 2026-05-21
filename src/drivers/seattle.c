@@ -857,8 +857,12 @@ static VIDEO_UPDATE( carnevil )
 {
 	int beamx, beamy;
 
-	/* first do common video update */
+	/* the crosshairs are composited into the game bitmap below, so the
+	   readout must take the bitmap path (not paint straight to the frontend
+	   buffer) for the composited result to be the one delivered */
+	voodoo_enable_direct_fb(0);
 	video_update_voodoo(bitmap, cliprect);
+	voodoo_enable_direct_fb(1);
 
 	/* now draw the crosshairs */
 	get_crosshair_xy(0, &beamx, &beamy);

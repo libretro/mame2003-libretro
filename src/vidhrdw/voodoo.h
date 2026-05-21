@@ -17,6 +17,8 @@ VIDEO_UPDATE( voodoo );
 
 void voodoo_set_init_enable(data32_t newval);
 
+void voodoo_enable_direct_fb(int enable);
+
 void voodoo_reset(void);
 
 WRITE32_HANDLER( voodoo_regs_w );
