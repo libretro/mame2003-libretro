@@ -751,16 +751,19 @@ int osd_update_audio_stream(INT16 *buffer)
 	int i,j;
 	if ( Machine->sample_rate !=0 && buffer)
 	{
-		memcpy(samples_buffer, buffer, samples_per_frame * (usestereo ? 4 : 2));
-
 		if (usestereo)
-			audio_batch_cb(samples_buffer, samples_per_frame);
+			/* MAME already produces interleaved stereo S16, which is exactly
+			   what audio_batch_cb expects, so hand it the mix buffer directly
+			   instead of copying through samples_buffer first. */
+			audio_batch_cb(buffer, samples_per_frame);
 		else
 		{
+			/* Mono: duplicate each sample across both channels, reading
+			   straight from the mix buffer (no intermediate copy). */
 			for (i = 0, j = 0; i < samples_per_frame; i++)
 			{
-				conversion_buffer[j++] = samples_buffer[i];
-				conversion_buffer[j++] = samples_buffer[i];
+				conversion_buffer[j++] = buffer[i];
+				conversion_buffer[j++] = buffer[i];
 			}
 			audio_batch_cb(conversion_buffer,samples_per_frame);
 		}
