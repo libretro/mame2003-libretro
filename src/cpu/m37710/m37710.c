@@ -769,6 +769,11 @@ static CPU_RESET( m37710 )
 {
 	m37710i_cpu_struct *cpustate = get_safe_token(device);
 
+	/* remember which cpu slot we are; reset runs inside this cpu's context,
+	   so the active index is ours. the internal timers fire cpu_triggerint
+	   with it, which must hit this cpu and not cpu 0. */
+	cpustate->cpunum = cpu_getactivecpu();
+
 	/* Start the CPU */
 	CPU_STOPPED = 0;
 
@@ -896,7 +901,7 @@ static CPU_INIT( m37710 )
 	m37710i_cpu_struct *cpustate = get_safe_token(device);
 	int i;
 
-	memset(cpustate, 0, sizeof(cpustate));
+	memset(cpustate, 0, sizeof(*cpustate));
 
 	INT_ACK = irqcallback;
 	cpustate->device = device;

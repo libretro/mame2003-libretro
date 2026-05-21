@@ -735,6 +735,29 @@ static MEMORY_WRITE16_START( c76_writemem )
 	{ 0x004000, 0x00bfff, c76_shared_w },
 MEMORY_END
 
+/* The M37710 core exposes its on-chip I/O ports (P0-P8) and the eight A/D
+   converter channels through the CPU's separate I/O address space, so that
+   space has to be installed even when nothing is wired to those pins. Tekken
+   drives none of them, but the core reads them during boot; without a map the
+   port read lands on an uninstalled handler table and jumps to a null
+   pointer. Provide an idle map across the range the core touches. */
+static READ16_HANDLER( c76_io_r )
+{
+	return 0;
+}
+
+static WRITE16_HANDLER( c76_io_w )
+{
+}
+
+static PORT_READ16_START( c76_readport )
+	{ 0x000000, 0x0000ff, c76_io_r },
+PORT_END
+
+static PORT_WRITE16_START( c76_writeport )
+	{ 0x000000, 0x0000ff, c76_io_w },
+PORT_END
+
 /* C76 services three interrupt sources per frame (matches the real timing). */
 static INTERRUPT_GEN( c76_interrupt )
 {
@@ -805,6 +828,7 @@ static MACHINE_DRIVER_START( coh100_tekken )
 
 	MDRV_CPU_ADD( M37710, 16934400 ) /* Namco C76 sound CPU */
 	MDRV_CPU_MEMORY( c76_readmem, c76_writemem )
+	MDRV_CPU_PORTS( c76_readport, c76_writeport )
 	MDRV_CPU_VBLANK_INT( c76_interrupt, 3 )
 
 	MDRV_INTERLEAVE( 100 )
