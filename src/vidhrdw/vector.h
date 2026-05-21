@@ -55,19 +55,19 @@ VIDEO_UPDATE( vector );
 typedef struct
 {
 	int x; int y;
-	rgb_t col;
+	uint32_t col;
 	int intensity;
 	int arg1; int arg2; /* start/end in pixel array or clipping info */
 	int status;         /* for dirty and clipping handling */
-	rgb_t (*callback)(void);
+	uint32_t (*callback)(void);
 } point;
 
 void vector_register_aux_renderer(int (*aux_renderer)(point *start, int num_points));
 
 void vector_clear_list (void);
-void vector_draw_to (int x2, int y2, rgb_t col, int intensity, int dirty, rgb_t (*color_callback)(void));
-void vector_add_point (int x, int y, rgb_t color, int intensity);
-void vector_add_point_callback (int x, int y, rgb_t (*color_callback)(void), int intensity);
+void vector_draw_to (int x2, int y2, uint32_t col, int intensity, int dirty, uint32_t (*color_callback)(void));
+void vector_add_point (int x, int y, uint32_t color, int intensity);
+void vector_add_point_callback (int x, int y, uint32_t (*color_callback)(void), int intensity);
 void vector_add_clip (int minx, int miny, int maxx, int maxy);
 void vector_set_gamma(float _gamma);
 float vector_get_gamma(void);

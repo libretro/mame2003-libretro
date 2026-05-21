@@ -71,7 +71,7 @@ struct artwork_callbacks
 struct overlay_piece
 {
 	uint8_t type;
-	rgb_t color;
+	uint32_t color;
 	float left, top, right, bottom;
 };
 

@@ -304,7 +304,7 @@ struct mame_display
     /* game bitmap and display information */
     struct mame_bitmap *  game_bitmap;            /* points to game's bitmap */
     struct rectangle      game_bitmap_update;     /* bounds that need to be updated */
-    const rgb_t *         game_palette;           /* points to game's adjusted palette */
+    const uint32_t *         game_palette;           /* points to game's adjusted palette */
     uint32_t                game_palette_entries;   /* number of palette entries in game's palette */
     uint32_t *              game_palette_dirty;     /* points to game's dirty palette bitfield */
     struct rectangle      game_visible_area;      /* the game's visible area */
@@ -312,7 +312,7 @@ struct mame_display
 
     /* debugger bitmap and display information */
     struct mame_bitmap *	debug_bitmap;           /* points to debugger's bitmap */
-    const rgb_t *         debug_palette;          /* points to debugger's palette */
+    const uint32_t *         debug_palette;          /* points to debugger's palette */
     uint32_t                debug_palette_entries;  /* number of palette entries in debugger's palette */
     uint8_t                 debug_focus;            /* set to 1 if debugger has focus */
 

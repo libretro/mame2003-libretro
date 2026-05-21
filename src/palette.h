@@ -81,8 +81,6 @@ extern "C" {
 
 struct mame_display;		/* declared elsewhere */
 
-typedef uint32_t rgb_t;
-typedef uint16_t rgb15_t;
 
 
 
@@ -262,7 +260,7 @@ void palette_init_RRRR_GGGG_BBBB(uint16_t *colortable, const uint8_t *color_prom
     a 15-bit OSD-specified RGB value
 -------------------------------------------------*/
 
-static INLINE rgb15_t rgb_to_rgb15(rgb_t rgb)
+static INLINE uint16_t rgb_to_rgb15(uint32_t rgb)
 {
 	return ((RGB_RED(rgb) >> 3) << 10) | ((RGB_GREEN(rgb) >> 3) << 5) | ((RGB_BLUE(rgb) >> 3) << 0);
 }

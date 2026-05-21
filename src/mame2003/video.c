@@ -33,7 +33,7 @@ unsigned video_do_bypass;
 unsigned video_stride_in, video_stride_out;
 bool video_flip_x, video_flip_y, video_swap_xy;
 bool video_hw_transpose;
-const rgb_t *video_palette;
+const uint32_t *video_palette;
 /* Palette pre-resolved to the RGB565 output format, rebuilt only when the
    game palette changes, so the per-pixel path is a plain table lookup with no
    arithmetic. */
@@ -308,7 +308,7 @@ void osd_close_display(void)
 /* Rebuild the RGB565 palette lookup from the game's adjusted palette. Called
    only when the palette actually changes, moving the XRGB8888->RGB565
    conversion off the per-pixel path and onto the (much rarer) palette update. */
-static void rebuild_palette_565(const rgb_t *pal, unsigned entries)
+static void rebuild_palette_565(const uint32_t *pal, unsigned entries)
 {
    unsigned i;
 

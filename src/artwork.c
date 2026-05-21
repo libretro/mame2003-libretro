@@ -436,11 +436,11 @@ static int validate_pieces(void);
 static void sort_pieces(void);
 static void update_palette_lookup(struct mame_display *display);
 static int update_layers(void);
-static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
-static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
-static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
-static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
-static void render_ui_overlay(struct mame_bitmap *bitmap, uint32_t *dirty, const rgb_t *palette, struct mame_display *display);
+static void render_game_bitmap(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display);
+static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display);
+static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display);
+static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display);
+static void render_ui_overlay(struct mame_bitmap *bitmap, uint32_t *dirty, const uint32_t *palette, struct mame_display *display);
 static void erase_rect(struct mame_bitmap *bitmap, const struct rectangle *bounds, uint32_t color);
 static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds, const uint32_t *hintlist);
 static void add_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds);
@@ -478,7 +478,7 @@ static INLINE void union_rect(struct rectangle *dst, const struct rectangle *src
 	brightness for an RGB pixel
 -------------------------------------------------*/
 
-static INLINE uint8_t compute_brightness(rgb_t rgb)
+static INLINE uint8_t compute_brightness(uint32_t rgb)
 {
 	return (RGB_RED(rgb) * 222 + RGB_GREEN(rgb) * 707 + RGB_BLUE(rgb) * 71) / 1000;
 }
@@ -1397,7 +1397,7 @@ static void update_palette_lookup(struct mame_display *display)
 				if ( (dirtyflags & 1) && (i + j < display->game_palette_entries ) )
 				{
 					/* extract the RGB values */
-					rgb_t rgbvalue = display->game_palette[i + j];
+					uint32_t rgbvalue = display->game_palette[i + j];
 					int r = RGB_RED(rgbvalue);
 					int g = RGB_GREEN(rgbvalue);
 					int b = RGB_BLUE(rgbvalue);
@@ -1418,7 +1418,7 @@ static void update_palette_lookup(struct mame_display *display)
 
 #define PIXEL(x,y,srcdstbase,srcdstrpix,bits)	(*((uint##bits##_t *)srcdstbase##base + (y) * srcdstrpix##rowpixels + (x)))
 
-static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display)
+static void render_game_bitmap(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display)
 {
 	int srcrowpixels = bitmap->rowpixels;
 	int dstrowpixels = final->rowpixels;
@@ -1543,7 +1543,7 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 	bitmap on top of an underlay
 -------------------------------------------------*/
 
-static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display)
+static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display)
 {
 	int srcrowpixels = bitmap->rowpixels;
 	int dstrowpixels = final->rowpixels;
@@ -1675,7 +1675,7 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t 
 	bitmap blended with an overlay
 -------------------------------------------------*/
 
-static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display)
+static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display)
 {
 	int srcrowpixels = bitmap->rowpixels;
 	int dstrowpixels = final->rowpixels;
@@ -1815,7 +1815,7 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *
 	added to an underlay
 -------------------------------------------------*/
 
-static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display)
+static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, const uint32_t *palette, struct mame_display *display)
 {
 	int srcrowpixels = bitmap->rowpixels;
 	int dstrowpixels = final->rowpixels;
@@ -1960,7 +1960,7 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 	render_ui_overlay - render the UI overlay
 -------------------------------------------------*/
 
-static void render_ui_overlay(struct mame_bitmap *bitmap, uint32_t *dirty, const rgb_t *palette, struct mame_display *display)
+static void render_ui_overlay(struct mame_bitmap *bitmap, uint32_t *dirty, const uint32_t *palette, struct mame_display *display)
 {
 	int srcrowpixels = bitmap->rowpixels;
 	int dstrowpixels = final->rowpixels;
@@ -2314,7 +2314,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 		for (y = 0; y < png.height; y++)
 			for (x = 0; x < png.width; x++, src++)
 			{
-				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
+				uint32_t pixel = read_pixel(piece->rawbitmap, x, y);
 				uint8_t alpha = compute_brightness(MAKE_RGB(png.palette[*src * 3], png.palette[*src * 3 + 1], png.palette[*src * 3 + 2]));
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(alpha, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}
@@ -2331,7 +2331,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 		for (y = 0; y < png.height; y++)
 			for (x = 0; x < png.width; x++, src++)
 			{
-				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
+				uint32_t pixel = read_pixel(piece->rawbitmap, x, y);
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(*src, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}
 	}
@@ -2344,7 +2344,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 		for (y = 0; y < png.height; y++)
 			for (x = 0; x < png.width; x++, src += 3)
 			{
-				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
+				uint32_t pixel = read_pixel(piece->rawbitmap, x, y);
 				uint8_t alpha = compute_brightness(MAKE_RGB(src[0], src[1], src[2]));
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(alpha, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}
@@ -2358,7 +2358,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 		for (y = 0; y < png.height; y++)
 			for (x = 0; x < png.width; x++, src += 4)
 			{
-				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
+				uint32_t pixel = read_pixel(piece->rawbitmap, x, y);
 				uint8_t alpha = compute_brightness(MAKE_RGB(src[0], src[1], src[2]));
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(alpha, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}

@@ -81,10 +81,10 @@ static int xmin, ymin, xmax, ymax; /* clipping area */
 
 static int vector_runs;	/* vector runs per refresh */
 
-static void (*vector_draw_aa_pixel)(int x, int y, rgb_t col, int dirty);
+static void (*vector_draw_aa_pixel)(int x, int y, uint32_t col, int dirty);
 
-static void vector_draw_aa_pixel_15 (int x, int y, rgb_t col, int dirty);
-static void vector_draw_aa_pixel_32 (int x, int y, rgb_t col, int dirty);
+static void vector_draw_aa_pixel_15 (int x, int y, uint32_t col, int dirty);
+static void vector_draw_aa_pixel_32 (int x, int y, uint32_t col, int dirty);
 
 void vector_register_aux_renderer(int (*aux_renderer)(point *start, int num_points))
 {
@@ -250,7 +250,7 @@ static void vector_clear_pixels (void)
 #define LIMIT5(x) ((x < 0x1f)? x : 0x1f)
 #define LIMIT8(x) ((x < 0xff)? x : 0xff)
 
-static void vector_draw_aa_pixel_15 (int x, int y, rgb_t col, int dirty)
+static void vector_draw_aa_pixel_15 (int x, int y, uint32_t col, int dirty)
 {
 	vector_pixel_t coords;
 	uint32_t dst;
@@ -274,7 +274,7 @@ static void vector_draw_aa_pixel_15 (int x, int y, rgb_t col, int dirty)
 		vector_dirty_list[dirty_index++] = coords;
 }
 
-static void vector_draw_aa_pixel_32 (int x, int y, rgb_t col, int dirty)
+static void vector_draw_aa_pixel_32 (int x, int y, uint32_t col, int dirty)
 {
 	vector_pixel_t coords;
 	uint32_t dst;
@@ -311,7 +311,7 @@ static void vector_draw_aa_pixel_32 (int x, int y, rgb_t col, int dirty)
  * written by Andrew Caldwell
  */
 
-void vector_draw_to(int x2, int y2, rgb_t col, int intensity, int dirty, rgb_t (*color_callback)(void))
+void vector_draw_to(int x2, int y2, uint32_t col, int intensity, int dirty, uint32_t (*color_callback)(void))
 {
 	unsigned char a1;
 	int dx,dy,sx,sy,cx,cy,width;
@@ -463,7 +463,7 @@ int vector_logging = 0;
  * Adds a line end point to the vertices list. The vector processor emulation
  * needs to call this.
  */
-void vector_add_point (int x, int y, rgb_t color, int intensity)
+void vector_add_point (int x, int y, uint32_t color, int intensity)
 {
 	point *newpoint;
 
@@ -495,7 +495,7 @@ void vector_add_point (int x, int y, rgb_t color, int intensity)
 	}
 }
 
-void vector_add_point_callback (int x, int y, rgb_t (*color_callback)(void), int intensity)
+void vector_add_point_callback (int x, int y, uint32_t (*color_callback)(void), int intensity)
 {
 	point *newpoint;
 

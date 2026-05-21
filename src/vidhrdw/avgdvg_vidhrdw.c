@@ -90,7 +90,7 @@
 static uint8_t vector_engine;
 static uint8_t flipword;
 static uint8_t busy;
-static rgb_t colorram[32];
+static uint32_t colorram[32];
 
 static int width, height;
 static int xcenter, ycenter;
@@ -106,7 +106,7 @@ int vector_updates; /* avgdvg_go_w()'s per Mame frame, should be 1 */
 #define NUM_BANKS (2)
 static unsigned char *vectorbank[NUM_BANKS];
 
-static rgb_t sparkle_callback(void);
+static uint32_t sparkle_callback(void);
 
 
 
@@ -472,13 +472,13 @@ void avg_apply_flipping_and_swapping(int *x, int *y)
 	}
 }
 
-void avg_add_point(int x, int y, rgb_t color, int intensity)
+void avg_add_point(int x, int y, uint32_t color, int intensity)
 {
 	avg_apply_flipping_and_swapping(&x, &y);
 	vector_add_point(x, y, color, intensity);
 }
 
-void avg_add_point_callback(int x, int y, rgb_t (*color_callback)(void), int intensity)
+void avg_add_point_callback(int x, int y, uint32_t (*color_callback)(void), int intensity)
 {
 	avg_apply_flipping_and_swapping(&x, &y);
 	vector_add_point_callback(x, y, color_callback, intensity);
@@ -1152,7 +1152,7 @@ WRITE16_HANDLER( quantum_colorram_w )
 }
 
 
-static rgb_t sparkle_callback(void)
+static uint32_t sparkle_callback(void)
 {
 	return colorram[16 + ((rand() >> 8) & 15)];
 }

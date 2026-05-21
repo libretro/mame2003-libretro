@@ -47,8 +47,8 @@ uint32_t *paletteram32;
 	LOCAL VARIABLES
 -------------------------------------------------*/
 
-static rgb_t *game_palette;			/* RGB palette as set by the driver */
-static rgb_t *adjusted_palette;		/* actual RGB palette after brightness/gamma adjustments */
+static uint32_t *game_palette;			/* RGB palette as set by the driver */
+static uint32_t *adjusted_palette;		/* actual RGB palette after brightness/gamma adjustments */
 static uint32_t *dirty_palette;
 static uint16_t *pen_brightness;
 
@@ -73,7 +73,7 @@ static uint8_t color_correct_table[(MAX_PEN_BRIGHTNESS * MAX_PEN_BRIGHTNESS) >> 
 static int palette_alloc(void);
 static void palette_reset(void);
 static void recompute_adjusted_palette(int brightness_or_gamma_changed);
-static void internal_modify_pen(uint32_t pen, rgb_t color, int pen_bright);
+static void internal_modify_pen(uint32_t pen, uint32_t color, int pen_bright);
 
 
 
@@ -82,7 +82,7 @@ static void internal_modify_pen(uint32_t pen, rgb_t color, int pen_bright);
 	a 15-bit OSD-specified RGB value
 -------------------------------------------------*/
 
-static INLINE uint16_t rgb_to_direct15(rgb_t rgb)
+static INLINE uint16_t rgb_to_direct15(uint32_t rgb)
 {
 	return  (  RGB_RED(rgb) >> 3) * (direct_rgb_components[0] / 0x1f) +
 			(RGB_GREEN(rgb) >> 3) * (direct_rgb_components[1] / 0x1f) +
@@ -96,7 +96,7 @@ static INLINE uint16_t rgb_to_direct15(rgb_t rgb)
 	a 32-bit OSD-specified RGB value
 -------------------------------------------------*/
 
-static INLINE uint32_t rgb_to_direct32(rgb_t rgb)
+static INLINE uint32_t rgb_to_direct32(uint32_t rgb)
 {
 	return    RGB_RED(rgb) * (direct_rgb_components[0] / 0xff) +
 			RGB_GREEN(rgb) * (direct_rgb_components[1] / 0xff) +
@@ -110,7 +110,7 @@ static INLINE uint32_t rgb_to_direct32(rgb_t rgb)
 	entry for brightness and gamma
 -------------------------------------------------*/
 
-static INLINE rgb_t adjust_palette_entry(rgb_t entry, int pen_bright)
+static INLINE uint32_t adjust_palette_entry(uint32_t entry, int pen_bright)
 {
 	int r = color_correct_table[(RGB_RED(entry) * pen_bright) >> PEN_BRIGHTNESS_BITS];
 	int g = color_correct_table[(RGB_GREEN(entry) * pen_bright) >> PEN_BRIGHTNESS_BITS];
@@ -822,9 +822,9 @@ void palette_update_display(struct mame_display *display)
 	pen and recompute its adjusted RGB value
 -------------------------------------------------*/
 
-static void internal_modify_single_pen(uint32_t pen, rgb_t color, int pen_bright)
+static void internal_modify_single_pen(uint32_t pen, uint32_t color, int pen_bright)
 {
-	rgb_t adjusted_color;
+	uint32_t adjusted_color;
 
 	/* skip if out of bounds or not ready */
 	if (pen >= total_colors)
@@ -868,7 +868,7 @@ static void internal_modify_single_pen(uint32_t pen, rgb_t color, int pen_bright
 	its corresponding shadow/highlight
 -------------------------------------------------*/
 
-static void internal_modify_pen(uint32_t pen, rgb_t color, int pen_bright) /** new highlight operation*/
+static void internal_modify_pen(uint32_t pen, uint32_t color, int pen_bright) /** new highlight operation*/
 {
 #define FMAX (0xff<<PEN_BRIGHTNESS_BITS)
 
