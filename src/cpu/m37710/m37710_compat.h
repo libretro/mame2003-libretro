@@ -46,8 +46,11 @@ extern const address_space m37710_space_io;
 #endif
 
 /* ---- memory access ------------------------------------------------------ */
-/* M37710: 16-bit data, 24-bit address, little-endian. All core accesses are
-   byte-wide. Program space -> main bus; io space -> I/O ports. */
+/* M37710: 16-bit data bus, 24-bit address, little-endian. The opcode core
+   issues byte reads/writes against both names (memory_*_byte_8le for the
+   on-chip I/O ports, memory_*_byte_16le for the program bus) plus 16-bit word
+   accesses (memory_*_word_16le). Program space -> 24lew main bus; io space ->
+   the I/O port handlers. */
 INLINE UINT8 m37710_compat_read8(const address_space *space, offs_t address)
 {
 	if (space != NULL && *space == M37710_AS_IO)
@@ -65,8 +68,47 @@ INLINE void m37710_compat_write8(const address_space *space, offs_t address, UIN
 	cpu_writemem24lew(address, data);
 }
 
-#define memory_read_byte_8le(space, address)        m37710_compat_read8(space, address)
-#define memory_write_byte_8le(space, address, data) m37710_compat_write8(space, address, data)
+/* 16-bit word access. The M37710 can read/write words at odd addresses, so
+   the program path uses the aligned 24lew word accessor when it can and falls
+   back to two byte cycles when not (same approach as the v60 24lew bus). The
+   io side, only ever hit at even port indices, assembles from byte cycles. */
+INLINE UINT16 m37710_compat_read16(const address_space *space, offs_t address)
+{
+	if (space != NULL && *space == M37710_AS_IO)
+		return (UINT16)(cpu_readport24lew(address) |
+		                (cpu_readport24lew(address + 1) << 8));
+	if (address & 1)
+		return (UINT16)(cpu_readmem24lew(address) |
+		                (cpu_readmem24lew(address + 1) << 8));
+	return cpu_readmem24lew_word(address);
+}
+
+INLINE void m37710_compat_write16(const address_space *space, offs_t address, UINT16 data)
+{
+	if (space != NULL && *space == M37710_AS_IO)
+	{
+		cpu_writeport24lew(address,     (UINT8)(data & 0xff));
+		cpu_writeport24lew(address + 1, (UINT8)((data >> 8) & 0xff));
+		return;
+	}
+	if (address & 1)
+	{
+		cpu_writemem24lew(address,     (UINT8)(data & 0xff));
+		cpu_writemem24lew(address + 1, (UINT8)((data >> 8) & 0xff));
+		return;
+	}
+	cpu_writemem24lew_word(address, data);
+}
+
+#define memory_read_byte_8le(space, address)         m37710_compat_read8(space, address)
+#define memory_write_byte_8le(space, address, data)  m37710_compat_write8(space, address, data)
+#define memory_read_byte_16le(space, address)        m37710_compat_read8(space, address)
+#define memory_write_byte_16le(space, address, data) m37710_compat_write8(space, address, data)
+#define memory_read_word_16le(space, address)        m37710_compat_read16(space, address)
+#define memory_write_word_16le(space, address, data) m37710_compat_write16(space, address, data)
+
+/* Per-instruction debug hook: no integrated debugger in this build. */
+#define debugger_instruction_hook(device, pc)        ((void)0)
 
 /* ---- device model ------------------------------------------------------- */
 /* There is exactly one C76 per board, so the device object collapses to a
