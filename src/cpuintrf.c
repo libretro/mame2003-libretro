@@ -130,6 +130,9 @@
 #if (HAS_PSXCPU)
 #include "cpu/mips/psx.h"
 #endif
+#if (HAS_M37710)
+#include "cpu/m37710/m37710.h"
+#endif
 #if (HAS_ASAP)
 #include "cpu/asap/asap.h"
 #endif
@@ -555,6 +558,9 @@ const struct cpu_interface cpuintrf[] =
 #endif
 #if (HAS_PSXCPU)
 	CPU0(PSXCPU,   mips,	 1,  0,1.00,32,32ledw, 0,32,LE,4, 4 ),
+#endif
+#if (HAS_M37710)
+	CPU0(M37710,   m37710, M37710_LINE_MAX, -1,1.00,16,24lew,  0,24,LE,1, 6 ),
 #endif
 #if (HAS_ASAP)
 	#define asap_ICount asap_icount

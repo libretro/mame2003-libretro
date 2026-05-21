@@ -253,6 +253,9 @@ enum
 #if (HAS_PSXCPU)
 	CPU_PSXCPU,
 #endif
+#if (HAS_M37710)
+	CPU_M37710,
+#endif
 #if (HAS_ASAP)
 	CPU_ASAP,
 #endif
