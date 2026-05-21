@@ -222,7 +222,7 @@ WRITE_HANDLER( decocass_colorram_w )
 	tilemap_mark_tile_dirty( fg_tilemap, offset );
 }
 
-static void mark_bg_tile_dirty(offs_t offset)
+static void mark_bg_tile_dirty(uint32_t offset)
 {
 	if (offset & 0x80)
 		tilemap_mark_tile_dirty( bg_tilemap_r, offset );

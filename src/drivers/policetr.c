@@ -87,7 +87,7 @@ static uint32_t *speedup_data;
 static uint32_t last_cycles;
 static uint32_t loop_count;
 
-static offs_t speedup_pc;
+static uint32_t speedup_pc;
 
 
 

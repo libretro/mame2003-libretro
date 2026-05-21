@@ -39,7 +39,7 @@ READ_HANDLER( missile_video_r )
 }
 
 /********************************************************************************************/
-static void missile_blit_w (offs_t offset)
+static void missile_blit_w (uint32_t offset)
 {
 	int x, y;
 	int bottom;

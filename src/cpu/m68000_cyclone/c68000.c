@@ -62,13 +62,13 @@ static void cyclone_Clear_Interrupt (int level)
 	update_irq_line();
 }
 
-static uint32_t cpu_readmem24bew_dword(offs_t address)
+static uint32_t cpu_readmem24bew_dword(uint32_t address)
 {
 	uint32_t result = cpu_readmem24bew_word(address) << 16;
 	return result | cpu_readmem24bew_word(address + 2);
 }
 
-static void cpu_writemem24bew_dword(offs_t address, uint32_t data)
+static void cpu_writemem24bew_dword(uint32_t address, uint32_t data)
 {
 	cpu_writemem24bew_word(address, data >> 16);
 	cpu_writemem24bew_word(address + 2, data);

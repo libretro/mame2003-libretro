@@ -3798,7 +3798,7 @@ static DRIVER_INIT( stunrun )
 
 
 uint32_t *rddsp32_speedup;
-offs_t rddsp32_speedup_pc;
+uint32_t rddsp32_speedup_pc;
 READ32_HANDLER( rddsp32_speedup_r )
 {
 	if (activecpu_get_pc() == rddsp32_speedup_pc && (*rddsp32_speedup >> 16) == 0)
@@ -3846,7 +3846,7 @@ static DRIVER_INIT( racedriv )
 }
 
 
-static void racedrvc_init_common(offs_t gsp_protection)
+static void racedrvc_init_common(uint32_t gsp_protection)
 {
 	/* initialize the boards */
 	init_multisync(1);
@@ -3890,7 +3890,7 @@ static READ16_HANDLER( steeltal_dummy_r )
 }
 
 
-static void steeltal_init_common(offs_t ds3_transfer_pc, int proto_sloop)
+static void steeltal_init_common(uint32_t ds3_transfer_pc, int proto_sloop)
 {
 	/* initialize the boards */
 	init_multisync(0);

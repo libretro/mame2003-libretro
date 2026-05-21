@@ -31,7 +31,7 @@ static uint8_t dacmute;
 static uint8_t cramen;
 static uint8_t irq68k;
 
-static offs_t sound_rom_offs;
+static uint32_t sound_rom_offs;
 
 static uint8_t *rombase;
 static uint32_t romsize;

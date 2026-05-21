@@ -49,15 +49,15 @@ size_t hdgsp_vram_size;
  *
  *************************************/
 
-static offs_t vram_mask;
+static uint32_t vram_mask;
 
 static uint8_t shiftreg_enable;
 
 static uint32_t *mask_table;
 static uint8_t *gsp_shiftreg_source;
 
-static offs_t gfx_offset;
-static offs_t gfx_rowbytes;
+static uint32_t gfx_offset;
+static uint32_t gfx_rowbytes;
 static int gfx_offsetscan;
 static int8_t gfx_finescroll;
 static uint8_t gfx_palettebank;
@@ -480,7 +480,7 @@ VIDEO_UPDATE( harddriv )
 {
 	pen_t *pens = &Machine->pens[gfx_palettebank * 256];
 	pen_t black = get_black_pen();
-	offs_t adjusted_offs;
+	uint32_t adjusted_offs;
 	int start, end, x, y;
 	int lzero, rzero, draw;
 

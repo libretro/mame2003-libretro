@@ -1356,7 +1356,7 @@ static READ32_HANDLER( generic_speedup_r )
 }
 
 
-static void init_crusnusa_common(offs_t speedup)
+static void init_crusnusa_common(uint32_t speedup)
 {
 	dcs_init();
 	adc_shift = 24;
@@ -1369,7 +1369,7 @@ static DRIVER_INIT( crusnu40 ) { init_crusnusa_common(0xc957); }
 static DRIVER_INIT( crusnu21 ) { init_crusnusa_common(0xc051); }
 
 
-static void init_crusnwld_common(offs_t speedup)
+static void init_crusnwld_common(uint32_t speedup)
 {
 	dcs_init();
 	adc_shift = 16;

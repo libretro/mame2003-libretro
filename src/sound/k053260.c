@@ -272,7 +272,7 @@ static INLINE void check_bounds( int chip, int channel ) {
 #endif
 }
 
-void K053260_write( int chip, offs_t offset, uint8_t data )
+void K053260_write( int chip, uint32_t offset, uint8_t data )
 {
 	int i, t;
 	int r = offset;
@@ -390,7 +390,7 @@ void K053260_write( int chip, offs_t offset, uint8_t data )
 	}
 }
 
-uint8_t K053260_read( int chip, offs_t offset )
+uint8_t K053260_read( int chip, uint32_t offset )
 {
 	struct K053260_chip_def *ic = &K053260_chip[chip];
 

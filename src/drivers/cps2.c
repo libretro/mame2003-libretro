@@ -287,17 +287,17 @@ READ16_HANDLER( cps2_qsound_volume_r )
 }
 
 
-static uint8_t CPS2_Read8(offs_t address)
+static uint8_t CPS2_Read8(uint32_t address)
 {
 	return m68k_read_pcrelative_8(address);
 }
 
-static uint16_t CPS2_Read16(offs_t address)
+static uint16_t CPS2_Read16(uint32_t address)
 {
 	return m68k_read_pcrelative_16(address);
 }
 
-static uint32_t CPS2_Read32(offs_t address)
+static uint32_t CPS2_Read32(uint32_t address)
 {
 	return m68k_read_pcrelative_32(address);
 }

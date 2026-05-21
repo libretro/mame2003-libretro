@@ -363,7 +363,7 @@ static INLINE void adjust_xyaddress(int offset)
 static WRITE_HANDLER( xypixel_w )
 {
 	/* determine the offset, then adjust it */
-	offs_t pixeloffs = tms34061.regs[TMS34061_XYADDRESS];
+	uint32_t pixeloffs = tms34061.regs[TMS34061_XYADDRESS];
 	if (offset)
 		adjust_xyaddress(offset);
 
@@ -386,7 +386,7 @@ static WRITE_HANDLER( xypixel_w )
 static READ_HANDLER( xypixel_r )
 {
 	/* determine the offset, then adjust it */
-	offs_t pixeloffs = tms34061.regs[TMS34061_XYADDRESS];
+	uint32_t pixeloffs = tms34061.regs[TMS34061_XYADDRESS];
 	if (offset)
 		adjust_xyaddress(offset);
 
@@ -410,7 +410,7 @@ static READ_HANDLER( xypixel_r )
 
 void tms34061_w(int col, int row, int func, uint8_t data)
 {
-	offs_t offs;
+	uint32_t offs;
 
 	/* the function code determines what to do */
 	switch (func)
@@ -471,7 +471,7 @@ void tms34061_w(int col, int row, int func, uint8_t data)
 uint8_t tms34061_r(int col, int row, int func)
 {
 	int result = 0;
-	offs_t offs;
+	uint32_t offs;
 
 	/* the function code determines what to do */
 	switch (func)

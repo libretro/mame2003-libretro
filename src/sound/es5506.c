@@ -1031,7 +1031,7 @@ void ES5506_sh_stop(void)
 
 ***********************************************************************************************/
 
-static INLINE void es5506_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint32_t data)
+static INLINE void es5506_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset, uint32_t data)
 {
 	switch (offset)
 	{
@@ -1153,7 +1153,7 @@ static INLINE void es5506_reg_write_low(struct ES5506Chip *chip, struct ES5506Vo
 }
 
 
-static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint32_t data)
+static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset, uint32_t data)
 {
 	switch (offset)
 	{
@@ -1259,7 +1259,7 @@ static INLINE void es5506_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 	}
 }
 
-static INLINE void es5506_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint32_t data)
+static INLINE void es5506_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset, uint32_t data)
 {
 	switch (offset)
 	{
@@ -1337,7 +1337,7 @@ static INLINE void es5506_reg_write_test(struct ES5506Chip *chip, struct ES5506V
 	}
 }
 
-static void es5506_reg_write(struct ES5506Chip *chip, offs_t offset, uint8_t data)
+static void es5506_reg_write(struct ES5506Chip *chip, uint32_t offset, uint8_t data)
 {
 	struct ES5506Voice *voice = &chip->voice[chip->current_page & 0x1f];
 	int shift = 8 * (offset & 3);
@@ -1372,7 +1372,7 @@ static void es5506_reg_write(struct ES5506Chip *chip, offs_t offset, uint8_t dat
 
 ***********************************************************************************************/
 
-static INLINE uint32_t es5506_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint32_t es5506_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset)
 {
 	uint32_t result = 0;
 
@@ -1448,7 +1448,7 @@ static INLINE uint32_t es5506_reg_read_low(struct ES5506Chip *chip, struct ES550
 }
 
 
-static INLINE uint32_t es5506_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint32_t es5506_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset)
 {
 	uint32_t result = 0;
 
@@ -1523,7 +1523,7 @@ static INLINE uint32_t es5506_reg_read_high(struct ES5506Chip *chip, struct ES55
 	return result;
 }
 
-static INLINE uint32_t es5506_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint32_t es5506_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset)
 {
 	uint32_t result = 0;
 
@@ -1545,7 +1545,7 @@ static INLINE uint32_t es5506_reg_read_test(struct ES5506Chip *chip, struct ES55
 	return result;
 }
 
-static uint8_t es5506_reg_read(struct ES5506Chip *chip, offs_t offset)
+static uint8_t es5506_reg_read(struct ES5506Chip *chip, uint32_t offset)
 {
 	struct ES5506Voice *voice = &chip->voice[chip->current_page & 0x1f];
 	int shift = 8 * (offset & 3);
@@ -1690,7 +1690,7 @@ void ES5505_sh_stop(void)
 
 ***********************************************************************************************/
 
-static INLINE void es5505_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint16_t data, uint16_t mem_mask)
+static INLINE void es5505_reg_write_low(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset, uint16_t data, uint16_t mem_mask)
 {
 	switch (offset)
 	{
@@ -1869,7 +1869,7 @@ static INLINE void es5505_reg_write_low(struct ES5506Chip *chip, struct ES5506Vo
 }
 
 
-static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint16_t data, uint16_t mem_mask)
+static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset, uint16_t data, uint16_t mem_mask)
 {
 	switch (offset)
 	{
@@ -1992,7 +1992,7 @@ static INLINE void es5505_reg_write_high(struct ES5506Chip *chip, struct ES5506V
 }
 
 
-static INLINE void es5505_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset, uint16_t data, uint16_t mem_mask)
+static INLINE void es5505_reg_write_test(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset, uint16_t data, uint16_t mem_mask)
 {
 	switch (offset)
 	{
@@ -2039,7 +2039,7 @@ static INLINE void es5505_reg_write_test(struct ES5506Chip *chip, struct ES5506V
 }
 
 
-static void es5505_reg_write(struct ES5506Chip *chip, offs_t offset, uint16_t data, uint16_t mem_mask)
+static void es5505_reg_write(struct ES5506Chip *chip, uint32_t offset, uint16_t data, uint16_t mem_mask)
 {
 	struct ES5506Voice *voice = &chip->voice[chip->current_page & 0x1f];
 
@@ -2065,7 +2065,7 @@ static void es5505_reg_write(struct ES5506Chip *chip, offs_t offset, uint16_t da
 
 ***********************************************************************************************/
 
-static INLINE uint16_t es5505_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint16_t es5505_reg_read_low(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset)
 {
 	uint16_t result = 0;
 
@@ -2143,7 +2143,7 @@ static INLINE uint16_t es5505_reg_read_low(struct ES5506Chip *chip, struct ES550
 }
 
 
-static INLINE uint16_t es5505_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint16_t es5505_reg_read_high(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset)
 {
 	uint16_t result = 0;
 
@@ -2216,7 +2216,7 @@ static INLINE uint16_t es5505_reg_read_high(struct ES5506Chip *chip, struct ES55
 }
 
 
-static INLINE uint16_t es5505_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, offs_t offset)
+static INLINE uint16_t es5505_reg_read_test(struct ES5506Chip *chip, struct ES5506Voice *voice, uint32_t offset)
 {
 	uint16_t result = 0;
 
@@ -2249,7 +2249,7 @@ static INLINE uint16_t es5505_reg_read_test(struct ES5506Chip *chip, struct ES55
 }
 
 
-static uint16_t es5505_reg_read(struct ES5506Chip *chip, offs_t offset)
+static uint16_t es5505_reg_read(struct ES5506Chip *chip, uint32_t offset)
 {
 	struct ES5506Voice *voice = &chip->voice[chip->current_page & 0x1f];
 	uint16_t result = 0;

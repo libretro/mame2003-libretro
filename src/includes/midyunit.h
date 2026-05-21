@@ -19,9 +19,9 @@ extern uint16_t *midyunit_scratch_ram;
 extern uint16_t *midyunit_cmos_ram;
 extern uint32_t 	midyunit_cmos_page;
 
-extern offs_t 	midyunit_speedup_pc;
-extern offs_t 	midyunit_speedup_offset;
-extern offs_t 	midyunit_speedup_spin[3];
+extern uint32_t 	midyunit_speedup_pc;
+extern uint32_t 	midyunit_speedup_offset;
+extern uint32_t 	midyunit_speedup_spin[3];
 extern uint16_t *midyunit_speedup_base;
 
 WRITE16_HANDLER( midyunit_cmos_w );

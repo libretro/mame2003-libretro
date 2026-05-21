@@ -118,7 +118,7 @@ static void atarigen_set_vol(int volume, const char *string);
 static void vblank_timer(int param);
 static void scanline_timer(int scanline);
 
-static void atarivc_common_w(offs_t offset, uint16_t newword);
+static void atarivc_common_w(uint32_t offset, uint16_t newword);
 
 static void unhalt_cpu(int param);
 
@@ -1042,7 +1042,7 @@ WRITE16_HANDLER( atarivc_w )
 	write.
 ---------------------------------------------------------------*/
 
-static void atarivc_common_w(offs_t offset, uint16_t newword)
+static void atarivc_common_w(uint32_t offset, uint16_t newword)
 {
 	int oldword = atarivc_data[offset];
 	atarivc_data[offset] = newword;

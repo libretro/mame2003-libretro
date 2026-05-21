@@ -316,7 +316,7 @@ void sailormn_get_tile_info_2(int tile_index)
 }
 
 
-static INLINE void vram_w(uint16_t *VRAM, struct tilemap *TILEMAP, UNUSEDARG offs_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
+static INLINE void vram_w(uint16_t *VRAM, struct tilemap *TILEMAP, UNUSEDARG uint32_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
 {
 	if ((VRAM[offset] & ~mem_mask)==(data & ~mem_mask)) return;
 	COMBINE_DATA(&VRAM[offset]);
@@ -338,7 +338,7 @@ static INLINE void vram_w(uint16_t *VRAM, struct tilemap *TILEMAP, UNUSEDARG off
 	and 408000-407fff both go to the 8x8 tilemap ram. Use this function
 	in this cases. Note that the get_tile_info function looks in the
 	4000-7fff range for tiles, so we have to write the data there. */
-static INLINE void vram_8x8_w(uint16_t *VRAM, struct tilemap *TILEMAP,UNUSEDARG offs_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
+static INLINE void vram_8x8_w(uint16_t *VRAM, struct tilemap *TILEMAP,UNUSEDARG uint32_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
 {
 	offset %= 0x4000/2;
 	if ((VRAM[offset] & ~mem_mask)==(data & ~mem_mask)) return;

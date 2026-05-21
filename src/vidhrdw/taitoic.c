@@ -1114,7 +1114,7 @@ READ16_HANDLER( PC080SN_word_1_r )
 	return PC080SN_ram[1][offset];
 }
 
-static void PC080SN_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
+static void PC080SN_word_w(int chip,uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int oldword = PC080SN_ram[chip][offset];
 
@@ -1148,7 +1148,7 @@ WRITE16_HANDLER( PC080SN_word_1_w )
 	PC080SN_word_w(1,offset,data,mem_mask);
 }
 
-static void PC080SN_xscroll_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
+static void PC080SN_xscroll_word_w(int chip,uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC080SN_ctrl[chip][offset]);
 
@@ -1166,7 +1166,7 @@ static void PC080SN_xscroll_word_w(int chip,offs_t offset,uint16_t data,uint32_t
 	}
 }
 
-static void PC080SN_yscroll_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
+static void PC080SN_yscroll_word_w(int chip,uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC080SN_ctrl[chip][offset+2]);
 
@@ -1186,7 +1186,7 @@ static void PC080SN_yscroll_word_w(int chip,offs_t offset,uint16_t data,uint32_t
 	}
 }
 
-static void PC080SN_ctrl_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
+static void PC080SN_ctrl_word_w(int chip,uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC080SN_ctrl[chip][offset+4]);
 
@@ -1508,7 +1508,7 @@ READ16_HANDLER( PC090OJ_word_0_r )	// in case we find a game using 2...
 	return PC090OJ_ram[offset];
 }
 
-static void PC090OJ_word_w(offs_t offset,uint16_t data,uint32_t mem_mask)
+static void PC090OJ_word_w(uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC090OJ_ram[offset]);
 
@@ -2847,7 +2847,7 @@ READ16_HANDLER( TC0100SCN_word_2_r )
 	return TC0100SCN_ram[2][offset];
 }
 
-static void TC0100SCN_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
+static void TC0100SCN_word_w(int chip,uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int oldword = TC0100SCN_ram[chip][offset];
 
@@ -2930,7 +2930,7 @@ READ16_HANDLER( TC0100SCN_ctrl_word_2_r )
 }
 
 
-static void TC0100SCN_ctrl_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
+static void TC0100SCN_ctrl_word_w(int chip,uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&TC0100SCN_ctrl[chip][offset]);
 
@@ -3707,7 +3707,7 @@ READ16_HANDLER( TC0480SCP_word_r )
 	return TC0480SCP_ram[offset];
 }
 
-static void TC0480SCP_word_write(offs_t offset,uint16_t data,uint32_t mem_mask)
+static void TC0480SCP_word_write(uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int oldword = TC0480SCP_ram[offset];
 	COMBINE_DATA(&TC0480SCP_ram[offset]);
@@ -3769,7 +3769,7 @@ READ16_HANDLER( TC0480SCP_ctrl_word_r )
 	return TC0480SCP_ctrl[offset];
 }
 
-static void TC0480SCP_ctrl_word_write(offs_t offset,uint16_t data,uint32_t mem_mask)
+static void TC0480SCP_ctrl_word_write(uint32_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int flip = TC0480SCP_pri_reg & 0x40;
 

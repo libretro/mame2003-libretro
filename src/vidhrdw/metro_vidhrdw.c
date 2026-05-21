@@ -312,7 +312,7 @@ static INLINE void get_tile_info_16x16_8bit(int tile_index,int layer,uint16_t *v
 }
 
 
-static INLINE void metro_vram_w(offs_t offset,uint16_t data,uint16_t mem_mask,int layer,uint16_t *vram)
+static INLINE void metro_vram_w(uint32_t offset,uint16_t data,uint16_t mem_mask,int layer,uint16_t *vram)
 {
 	uint16_t olddata = vram[offset];
 	uint16_t newdata = COMBINE_DATA(&vram[offset]);

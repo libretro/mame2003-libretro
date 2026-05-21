@@ -240,7 +240,7 @@ WRITE16_HANDLER( fromanc4_paletteram_1_w )
 }
 
 
-static INLINE void fromanc2_dispvram_w(offs_t offset, uint16_t data, uint16_t mem_mask, int vram, int layer)
+static INLINE void fromanc2_dispvram_w(uint32_t offset, uint16_t data, uint16_t mem_mask, int vram, int layer)
 {
 	layer += (offset < 0x1000) ? 0 : 1;
 
@@ -326,7 +326,7 @@ WRITE16_HANDLER( fromanc2_gfxbank_1_w )
 }
 
 
-static INLINE void fromancr_vram_w(offs_t offset, uint16_t data, uint16_t mem_mask, int layer)
+static INLINE void fromancr_vram_w(uint32_t offset, uint16_t data, uint16_t mem_mask, int layer)
 {
 	int vram = (offset < 0x1000) ? 0 : 1;
 
@@ -375,7 +375,7 @@ void fromancr_gfxbank_w(int data)
 }
 
 
-static INLINE void fromanc4_vram_w(offs_t offset, uint16_t data, uint16_t mem_mask, int layer)
+static INLINE void fromanc4_vram_w(uint32_t offset, uint16_t data, uint16_t mem_mask, int layer)
 {
 	int vram = (offset < 0x4000) ? 0 : 1;
 

@@ -190,7 +190,7 @@ VIDEO_START( atarigt )
  *
  *************************************/
 
-void atarigt_colorram_w(offs_t address, uint16_t data, uint16_t mem_mask)
+void atarigt_colorram_w(uint32_t address, uint16_t data, uint16_t mem_mask)
 {
 	uint16_t olddata;
 
@@ -214,7 +214,7 @@ void atarigt_colorram_w(offs_t address, uint16_t data, uint16_t mem_mask)
 }
 
 
-uint16_t atarigt_colorram_r(offs_t address)
+uint16_t atarigt_colorram_r(uint32_t address)
 {
 	address &= 0x7ffff;
 	return atarigt_colorram[address / 2];

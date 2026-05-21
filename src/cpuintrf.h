@@ -443,8 +443,8 @@ struct cpu_interface
 	mem_write_handler memory_write;
 	mem_read_handler internal_read;
 	mem_write_handler internal_write;
-	offs_t		pgm_memory_base;
-	void		(*set_op_base)(offs_t pc);
+	uint32_t		pgm_memory_base;
+	void		(*set_op_base)(uint32_t pc);
 	int			address_shift;
 	unsigned	address_bits;
 	unsigned	endianess;
@@ -511,7 +511,7 @@ unsigned activecpu_get_reg(int regnum);
 void activecpu_set_reg(int regnum, unsigned val);
 
 /* return the PC, corrected to a byte offset, on the active CPU */
-offs_t activecpu_get_pc_byte(void);
+uint32_t activecpu_get_pc_byte(void);
 
 /* update the banking on the active CPU */
 void activecpu_set_op_base(unsigned val);
@@ -588,10 +588,10 @@ int cpunum_execute(int cpunum, int cycles);
 void cpunum_reset(int cpunum, void *param, int (*irqack)(int));
 
 /* read a byte from another CPU's memory space */
-uint8_t cpunum_read_byte(int cpunum, offs_t address);
+uint8_t cpunum_read_byte(int cpunum, uint32_t address);
 
 /* write a byte from another CPU's memory space */
-void cpunum_write_byte(int cpunum, offs_t address, uint8_t data);
+void cpunum_write_byte(int cpunum, uint32_t address, uint8_t data);
 
 /* return a pointer to the saved context of a given CPU, or NULL if the
    context is active (and contained within the CPU core */
@@ -610,7 +610,7 @@ unsigned cpunum_get_reg(int cpunum, int regnum);
 void cpunum_set_reg(int cpunum, int regnum, unsigned val);
 
 /* return the PC, corrected to a byte offset, on a given CPU */
-offs_t cpunum_get_pc_byte(int cpunum);
+uint32_t cpunum_get_pc_byte(int cpunum);
 
 /* update the banking on a given CPU */
 void cpunum_set_op_base(int cpunum, unsigned val);

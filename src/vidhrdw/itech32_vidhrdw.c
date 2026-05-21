@@ -155,7 +155,7 @@ static void scanline_interrupt(int param);
 
 #define ADJUSTED_HEIGHT(x) ((((x) >> 1) & 0x100) | ((x) & 0xff))
 
-static INLINE offs_t compute_safe_address(int x, int y)
+static INLINE uint32_t compute_safe_address(int x, int y)
 {
 	return ((y & vram_ymask) * 512) + (x & vram_xmask);
 }
@@ -992,7 +992,7 @@ WRITE16_HANDLER( itech32_video_w )
 		case 0x04/2:	/* VIDEO_TRANSFER */
 			if (VIDEO_COMMAND == 3 && xfer_ycount)
 			{
-				offs_t addr = compute_safe_address(xfer_xcur, xfer_ycur);
+				uint32_t addr = compute_safe_address(xfer_xcur, xfer_ycur);
 				if (enable_latch[0])
 				{
 					VIDEO_TRANSFER = videoplane[0][addr];

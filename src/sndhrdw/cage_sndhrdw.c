@@ -150,7 +150,7 @@ static WRITE32_HANDLER( speedup_w );
  *
  *************************************/
 
-void cage_init(int boot_region, offs_t speedup)
+void cage_init(int boot_region, uint32_t speedup)
 {
 	cage_irqhandler = NULL;
 

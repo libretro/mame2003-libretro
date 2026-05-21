@@ -2161,7 +2161,7 @@ static WRITE_HANDLER( peripheral_w )
  *
  *************************************/
 
-void leland_i86_optimize_address(offs_t offset)
+void leland_i86_optimize_address(uint32_t offset)
 {
 	if (offset)
 		active_mask = memory_region(REGION_CPU3) + offset;

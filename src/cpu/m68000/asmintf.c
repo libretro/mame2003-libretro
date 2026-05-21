@@ -196,19 +196,19 @@ void a68k_state_register(const char *type)
 
 #ifdef A68K0
 
-static uint32_t readlong_a24_d16(offs_t address)
+static uint32_t readlong_a24_d16(uint32_t address)
 {
 	uint32_t result = cpu_readmem24bew_word(address) << 16;
 	return result | cpu_readmem24bew_word(address + 2);
 }
 
-static void writelong_a24_d16(offs_t address, uint32_t data)
+static void writelong_a24_d16(uint32_t address, uint32_t data)
 {
 	cpu_writemem24bew_word(address, data >> 16);
 	cpu_writemem24bew_word(address + 2, data);
 }
 
-static void changepc_a24_d16(offs_t pc)
+static void changepc_a24_d16(uint32_t pc)
 {
 	change_pc24bew(pc);
 }
@@ -240,7 +240,7 @@ static const struct m68k_memory_interface interface_a24_d16 =
 #ifdef A68K2
 
 /* potentially misaligned 16-bit reads with a 32-bit data bus (and 24-bit address bus) */
-static uint16_t readword_a24_d32(offs_t address)
+static uint16_t readword_a24_d32(uint32_t address)
 {
 	uint16_t result;
 
@@ -251,7 +251,7 @@ static uint16_t readword_a24_d32(offs_t address)
 }
 
 /* potentially misaligned 16-bit writes with a 32-bit data bus (and 24-bit address bus) */
-static void writeword_a24_d32(offs_t address, uint16_t data)
+static void writeword_a24_d32(uint32_t address, uint16_t data)
 {
 	if (!(address & 1))
 	{
@@ -263,7 +263,7 @@ static void writeword_a24_d32(offs_t address, uint16_t data)
 }
 
 /* potentially misaligned 32-bit reads with a 32-bit data bus (and 24-bit address bus) */
-static uint32_t readlong_a24_d32(offs_t address)
+static uint32_t readlong_a24_d32(uint32_t address)
 {
 	uint32_t result;
 
@@ -280,7 +280,7 @@ static uint32_t readlong_a24_d32(offs_t address)
 }
 
 /* potentially misaligned 32-bit writes with a 32-bit data bus (and 24-bit address bus) */
-static void writelong_a24_d32(offs_t address, uint32_t data)
+static void writelong_a24_d32(uint32_t address, uint32_t data)
 {
 	if (!(address & 3))
 	{
@@ -298,7 +298,7 @@ static void writelong_a24_d32(offs_t address, uint32_t data)
 	cpu_writemem24bedw(address + 3, data);
 }
 
-static void changepc_a24_d32(offs_t pc)
+static void changepc_a24_d32(uint32_t pc)
 {
 	change_pc24bedw(pc);
 }
@@ -327,7 +327,7 @@ static const struct m68k_memory_interface interface_a24_d32 =
  ****************************************************************************/
 
 /* potentially misaligned 16-bit reads with a 32-bit data bus (and 32-bit address bus) */
-static uint16_t readword_a32_d32(offs_t address)
+static uint16_t readword_a32_d32(uint32_t address)
 {
 	uint16_t result;
 
@@ -338,7 +338,7 @@ static uint16_t readword_a32_d32(offs_t address)
 }
 
 /* potentially misaligned 16-bit writes with a 32-bit data bus (and 32-bit address bus) */
-static void writeword_a32_d32(offs_t address, uint16_t data)
+static void writeword_a32_d32(uint32_t address, uint16_t data)
 {
 	if (!(address & 1))
 	{
@@ -350,7 +350,7 @@ static void writeword_a32_d32(offs_t address, uint16_t data)
 }
 
 /* potentially misaligned 32-bit reads with a 32-bit data bus (and 32-bit address bus) */
-static uint32_t readlong_a32_d32(offs_t address)
+static uint32_t readlong_a32_d32(uint32_t address)
 {
 	uint32_t result;
 
@@ -367,7 +367,7 @@ static uint32_t readlong_a32_d32(offs_t address)
 }
 
 /* potentially misaligned 32-bit writes with a 32-bit data bus (and 32-bit address bus) */
-static void writelong_a32_d32(offs_t address, uint32_t data)
+static void writelong_a32_d32(uint32_t address, uint32_t data)
 {
 	if (!(address & 3))
 	{
@@ -385,7 +385,7 @@ static void writelong_a32_d32(offs_t address, uint32_t data)
 	cpu_writemem32bedw(address + 3, data);
 }
 
-static void changepc_a32_d32(offs_t pc)
+static void changepc_a32_d32(uint32_t pc)
 {
 	change_pc32bedw(pc);
 }

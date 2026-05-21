@@ -34,7 +34,7 @@ static int i286_selector_okay(uint16_t selector)
 	}
 }
 
-static offs_t i286_selector_to_address(uint16_t selector)
+static uint32_t i286_selector_to_address(uint16_t selector)
 {
 	if (selector&4) {
 		return I.ldtr.base+(selector&~7);
@@ -165,7 +165,7 @@ static void PREFIX286(_0fpre)(void)
 	unsigned next = FETCHOP;
 	uint16_t ModRM;
 	uint16_t tmp;
-	offs_t addr;
+	uint32_t addr;
 
 	switch (next) {
 	case 0:

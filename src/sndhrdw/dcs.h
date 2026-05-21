@@ -10,7 +10,7 @@ MACHINE_DRIVER_EXTERN( dcs2_audio );
 MACHINE_DRIVER_EXTERN( dcs2_audio_2104 );
 
 void dcs_init(void);
-void dcs2_init(offs_t polling_offset);
+void dcs2_init(uint32_t polling_offset);
 void dcs_set_auto_ack(int state);
 
 void dcs_set_fifo_callbacks(uint16_t (*fifo_data_r)(void), uint16_t (*fifo_status_r)(void));

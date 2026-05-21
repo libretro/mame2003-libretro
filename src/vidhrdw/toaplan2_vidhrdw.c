@@ -574,7 +574,7 @@ VIDEO_START( batrider_0 )
 
 ***************************************************************************/
 
-void toaplan2_voffs_w(offs_t offset, uint16_t data, uint32_t mem_mask, int controller)
+void toaplan2_voffs_w(uint32_t offset, uint16_t data, uint32_t mem_mask, int controller)
 {
 	if (data >= 0x1c00)
 		logerror("Hmmm, unknown video controller %01x layer being selected (%08x)\n",controller,data);
@@ -738,10 +738,10 @@ WRITE16_HANDLER( batrider_objectbank_w )
 
 
 
-int toaplan2_videoram16_r(offs_t offset, int controller)
+int toaplan2_videoram16_r(uint32_t offset, int controller)
 {
 	static uint16_t video_data = 0;
-	static offs_t vram_offset;
+	static uint32_t vram_offset;
 
 
 	switch (toaplan2_voffs[controller] & 0xfc00)
@@ -784,10 +784,10 @@ READ16_HANDLER( toaplan2_1_videoram16_r )
 	return toaplan2_videoram16_r(offset, 1);
 }
 
-void toaplan2_videoram16_w(offs_t offset, uint16_t data, uint32_t mem_mask, int controller)
+void toaplan2_videoram16_w(uint32_t offset, uint16_t data, uint32_t mem_mask, int controller)
 {
 	uint16_t oldword = 0;
-	offs_t vram_offset;
+	uint32_t vram_offset;
 
 	switch (toaplan2_voffs[controller] & 0xfc00)
 	{
@@ -844,7 +844,7 @@ WRITE16_HANDLER( toaplan2_1_videoram16_w )
 }
 
 
-void toaplan2_scroll_reg_select_w(offs_t offset, uint16_t data, uint32_t mem_mask, int controller)
+void toaplan2_scroll_reg_select_w(uint32_t offset, uint16_t data, uint32_t mem_mask, int controller)
 {
 	if (ACCESSING_LSB)
 	{
@@ -869,7 +869,7 @@ WRITE16_HANDLER( toaplan2_1_scroll_reg_select_w )
 }
 
 
-void toaplan2_scroll_reg_data_w(offs_t offset, uint16_t data, uint32_t mem_mask, int controller)
+void toaplan2_scroll_reg_data_w(uint32_t offset, uint16_t data, uint32_t mem_mask, int controller)
 {
 	/************************************************************************/
 	/***** layer X and Y flips can be set independantly, so emulate it ******/
@@ -1127,7 +1127,7 @@ WRITE16_HANDLER( pipibibi_spriteram16_w )
 #ifdef MAME_DEBUG
 void toaplan2_log_vram(void)
 {
-	offs_t sprite_voffs, tile_voffs;
+	uint32_t sprite_voffs, tile_voffs;
 	int vid_controllers = 1;
 
 	if (spriteram16_now[1] && spriteram16_new[1]

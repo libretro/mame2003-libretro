@@ -81,16 +81,16 @@ struct bank_data
 {
 	uint8_t 				used;				/* is this bank used? */
 	uint8_t 				cpunum;				/* the CPU it is used for */
-	offs_t 				base;				/* the base offset */
-	offs_t				readoffset;			/* original base offset for reads */
-	offs_t				writeoffset;		/* original base offset for writes */
+	uint32_t 				base;				/* the base offset */
+	uint32_t				readoffset;			/* original base offset for reads */
+	uint32_t				writeoffset;		/* original base offset for writes */
 };
 
 struct handler_data
 {
 	void *				handler;			/* function pointer for handler */
-	offs_t				offset;				/* base offset for handler */
-	offs_t				top;				/* maximum offset for handler */
+	uint32_t				offset;				/* base offset for handler */
+	uint32_t				top;				/* maximum offset for handler */
 };
 
 struct table_data
@@ -107,7 +107,7 @@ struct memport_data
 	int					abits;				/* address bits */
 	int 				dbits;				/* data bits */
 	int					ebits;				/* effective address bits */
-	offs_t				mask;				/* address mask */
+	uint32_t				mask;				/* address mask */
 	struct table_data	read;				/* memory read lookup table */
 	struct table_data	write;				/* memory write lookup table */
 };
@@ -120,8 +120,8 @@ struct cpu_data
 
 	void *				op_ram;				/* dynamic RAM base pointer */
 	void *				op_rom;				/* dynamic ROM base pointer */
-	offs_t				op_mem_min;			/* dynamic ROM/RAM min */
-	offs_t				op_mem_max;			/* dynamic ROM/RAM max */
+	uint32_t				op_mem_min;			/* dynamic ROM/RAM min */
+	uint32_t				op_mem_max;			/* dynamic ROM/RAM max */
 	uint8_t		 		opcode_entry;		/* opcode base handler */
 
 	struct memport_data	mem;				/* memory tables */
@@ -144,8 +144,8 @@ static int					cur_context;					/* current CPU context */
 
 uint8_t *						OP_ROM;							/* opcode ROM base */
 uint8_t *						OP_RAM;							/* opcode RAM base */
-offs_t						OP_MEM_MIN;						/* opcode memory minimum */
-offs_t						OP_MEM_MAX;						/* opcode memory maximum */
+uint32_t						OP_MEM_MIN;						/* opcode memory minimum */
+uint32_t						OP_MEM_MAX;						/* opcode memory maximum */
 uint8_t		 				opcode_entry;					/* opcode readmem entry */
 
 uint8_t *						readmem_lookup;					/* memory read lookup table */
@@ -153,8 +153,8 @@ static uint8_t *				writemem_lookup;				/* memory write lookup table */
 static uint8_t *				readport_lookup;				/* port read lookup table */
 static uint8_t *				writeport_lookup;				/* port write lookup table */
 
-offs_t						mem_amask;						/* memory address mask */
-static offs_t				port_amask;						/* port address mask */
+uint32_t						mem_amask;						/* memory address mask */
+static uint32_t				port_amask;						/* port address mask */
 
 uint8_t *						cpu_bankbase[STATIC_COUNT];		/* array of bank bases */
 int ext_entries = 0;										/* number of entries ext_memory[] entries used */
@@ -184,7 +184,7 @@ static write8_handler 		wmemhandler8s[STATIC_COUNT];	/* copy of 8-bit static wri
 static struct cpu_data 		cpudata[MAX_CPU];				/* data gathered for each CPU */
 static struct bank_data 	bankdata[MAX_BANKS];			/* data gathered for each bank */
 
-offs_t encrypted_opcode_start[MAX_CPU],encrypted_opcode_end[MAX_CPU];
+uint32_t encrypted_opcode_start[MAX_CPU],encrypted_opcode_end[MAX_CPU];
 
 
 /*-------------------------------------------------
@@ -192,12 +192,12 @@ offs_t encrypted_opcode_start[MAX_CPU],encrypted_opcode_end[MAX_CPU];
 -------------------------------------------------*/
 
 static int CLIB_DECL fatalerror(const char *string, ...);
-static uint8_t get_handler_index(struct handler_data *table, void *handler, offs_t start);
+static uint8_t get_handler_index(struct handler_data *table, void *handler, uint32_t start);
 static uint8_t alloc_new_subtable(const struct memport_data *memport, struct table_data *tabledata, uint8_t previous_value);
-static void populate_table(struct memport_data *memport, int iswrite, offs_t start, offs_t stop, uint8_t handler);
-static void *assign_dynamic_bank(int cpunum, offs_t start);
-static void install_mem_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler);
-static void install_port_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler);
+static void populate_table(struct memport_data *memport, int iswrite, uint32_t start, uint32_t stop, uint8_t handler);
+static void *assign_dynamic_bank(int cpunum, uint32_t start);
+static void install_mem_handler(struct memport_data *memport, int iswrite, uint32_t start, uint32_t end, void *handler);
+static void install_port_handler(struct memport_data *memport, int iswrite, uint32_t start, uint32_t end, void *handler);
 static void set_static_handler(int idx,
 		read8_handler r8handler, read16_handler r16handler, read32_handler r32handler,
 		write8_handler w8handler, write16_handler w16handler, write32_handler w32handler);
@@ -317,19 +317,19 @@ void memory_set_opcode_base(int cpunum, void *base)
 	if (cur_context == cpunum)
 	{
 		OP_ROM = base;
-		OP_MEM_MIN = (offs_t) 0x00000000;
-		OP_MEM_MAX = (offs_t) 0x7fffffff;
+		OP_MEM_MIN = (uint32_t) 0x00000000;
+		OP_MEM_MAX = (uint32_t) 0x7fffffff;
 	}
 	else
 	{
 		cpudata[cpunum].op_rom = base;
-		cpudata[cpunum].op_mem_min = (offs_t) 0x00000000;
-		cpudata[cpunum].op_mem_max = (offs_t) 0x7fffffff;
+		cpudata[cpunum].op_mem_min = (uint32_t) 0x00000000;
+		cpudata[cpunum].op_mem_max = (uint32_t) 0x7fffffff;
 	}
 }
 
 
-void memory_set_encrypted_opcode_range(int cpunum,offs_t min_address,offs_t max_address)
+void memory_set_encrypted_opcode_range(int cpunum,uint32_t min_address,uint32_t max_address)
 {
 	encrypted_opcode_start[cpunum] = min_address;
 	encrypted_opcode_end[cpunum] = max_address;
@@ -388,7 +388,7 @@ void memory_set_unmap_value(uint32_t value)
 	handler for bank memory (8-bit only!)
 -------------------------------------------------*/
 
-void memory_set_bankhandler_r(int bank, offs_t offset, mem_read_handler handler)
+void memory_set_bankhandler_r(int bank, uint32_t offset, mem_read_handler handler)
 {
 	/* determine the new offset */
 	if (HANDLER_IS_RAM(handler) || HANDLER_IS_ROM(handler))
@@ -410,7 +410,7 @@ void memory_set_bankhandler_r(int bank, offs_t offset, mem_read_handler handler)
 	handler for bank memory (8-bit only!)
 -------------------------------------------------*/
 
-void memory_set_bankhandler_w(int bank, offs_t offset, mem_write_handler handler)
+void memory_set_bankhandler_w(int bank, uint32_t offset, mem_write_handler handler)
 {
 	/* determine the new offset */
 	if (HANDLER_IS_RAM(handler) || HANDLER_IS_ROM(handler) || HANDLER_IS_RAMROM(handler))
@@ -447,7 +447,7 @@ opbase_handler memory_set_opbase_handler(int cpunum, opbase_handler function)
 	read handler for 8-bit case
 -------------------------------------------------*/
 
-uint8_t *install_mem_read_handler(int cpunum, offs_t start, offs_t end, mem_read_handler handler)
+uint8_t *install_mem_read_handler(int cpunum, uint32_t start, uint32_t end, mem_read_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 8)
@@ -471,7 +471,7 @@ uint8_t *install_mem_read_handler(int cpunum, offs_t start, offs_t end, mem_read
 	read handler for 16-bit case
 -------------------------------------------------*/
 
-uint16_t *install_mem_read16_handler(int cpunum, offs_t start, offs_t end, mem_read16_handler handler)
+uint16_t *install_mem_read16_handler(int cpunum, uint32_t start, uint32_t end, mem_read16_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 16)
@@ -495,7 +495,7 @@ uint16_t *install_mem_read16_handler(int cpunum, offs_t start, offs_t end, mem_r
 	read handler for 32-bit case
 -------------------------------------------------*/
 
-uint32_t *install_mem_read32_handler(int cpunum, offs_t start, offs_t end, mem_read32_handler handler)
+uint32_t *install_mem_read32_handler(int cpunum, uint32_t start, uint32_t end, mem_read32_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 32)
@@ -519,7 +519,7 @@ uint32_t *install_mem_read32_handler(int cpunum, offs_t start, offs_t end, mem_r
 	read handler for 8-bit case
 -------------------------------------------------*/
 
-uint8_t *install_mem_write_handler(int cpunum, offs_t start, offs_t end, mem_write_handler handler)
+uint8_t *install_mem_write_handler(int cpunum, uint32_t start, uint32_t end, mem_write_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 8)
@@ -543,7 +543,7 @@ uint8_t *install_mem_write_handler(int cpunum, offs_t start, offs_t end, mem_wri
 	read handler for 16-bit case
 -------------------------------------------------*/
 
-uint16_t *install_mem_write16_handler(int cpunum, offs_t start, offs_t end, mem_write16_handler handler)
+uint16_t *install_mem_write16_handler(int cpunum, uint32_t start, uint32_t end, mem_write16_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 16)
@@ -567,7 +567,7 @@ uint16_t *install_mem_write16_handler(int cpunum, offs_t start, offs_t end, mem_
 	read handler for 32-bit case
 -------------------------------------------------*/
 
-uint32_t *install_mem_write32_handler(int cpunum, offs_t start, offs_t end, mem_write32_handler handler)
+uint32_t *install_mem_write32_handler(int cpunum, uint32_t start, uint32_t end, mem_write32_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 32)
@@ -591,7 +591,7 @@ uint32_t *install_mem_write32_handler(int cpunum, offs_t start, offs_t end, mem_
 	read handler for 8-bit case
 -------------------------------------------------*/
 
-void install_port_read_handler(int cpunum, offs_t start, offs_t end, port_read_handler handler)
+void install_port_read_handler(int cpunum, uint32_t start, uint32_t end, port_read_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 8)
@@ -614,7 +614,7 @@ void install_port_read_handler(int cpunum, offs_t start, offs_t end, port_read_h
 	read handler for 16-bit case
 -------------------------------------------------*/
 
-void install_port_read16_handler(int cpunum, offs_t start, offs_t end, port_read16_handler handler)
+void install_port_read16_handler(int cpunum, uint32_t start, uint32_t end, port_read16_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 16)
@@ -637,7 +637,7 @@ void install_port_read16_handler(int cpunum, offs_t start, offs_t end, port_read
 	read handler for 32-bit case
 -------------------------------------------------*/
 
-void install_port_read32_handler(int cpunum, offs_t start, offs_t end, port_read32_handler handler)
+void install_port_read32_handler(int cpunum, uint32_t start, uint32_t end, port_read32_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 32)
@@ -660,7 +660,7 @@ void install_port_read32_handler(int cpunum, offs_t start, offs_t end, port_read
 	read handler for 8-bit case
 -------------------------------------------------*/
 
-void install_port_write_handler(int cpunum, offs_t start, offs_t end, port_write_handler handler)
+void install_port_write_handler(int cpunum, uint32_t start, uint32_t end, port_write_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 8)
@@ -683,7 +683,7 @@ void install_port_write_handler(int cpunum, offs_t start, offs_t end, port_write
 	read handler for 16-bit case
 -------------------------------------------------*/
 
-void install_port_write16_handler(int cpunum, offs_t start, offs_t end, port_write16_handler handler)
+void install_port_write16_handler(int cpunum, uint32_t start, uint32_t end, port_write16_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 16)
@@ -706,7 +706,7 @@ void install_port_write16_handler(int cpunum, offs_t start, offs_t end, port_wri
 	read handler for 32-bit case
 -------------------------------------------------*/
 
-void install_port_write32_handler(int cpunum, offs_t start, offs_t end, port_write32_handler handler)
+void install_port_write32_handler(int cpunum, uint32_t start, uint32_t end, port_write32_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].port.dbits != 32)
@@ -746,7 +746,7 @@ int CLIB_DECL fatalerror(const char *string, ...)
 	and offset
 -------------------------------------------------*/
 
-void *memory_find_base(int cpunum, offs_t offset)
+void *memory_find_base(int cpunum, uint32_t offset)
 {
 	int ext_entry;
 	int region = REGION_CPU1 + cpunum;
@@ -773,7 +773,7 @@ void *memory_find_base(int cpunum, offs_t offset)
 	and offset
 -------------------------------------------------*/
 
-void *memory_get_read_ptr(int cpunum, offs_t offset)
+void *memory_get_read_ptr(int cpunum, uint32_t offset)
 {
 	struct memport_data *memport = &cpudata[cpunum].mem;
 	struct handler_data *handlist = (memport->dbits == 32) ? rmemhandler32 : (memport->dbits == 16) ? rmemhandler16 : rmemhandler8;
@@ -800,7 +800,7 @@ void *memory_get_read_ptr(int cpunum, offs_t offset)
 	and offset
 -------------------------------------------------*/
 
-void *memory_get_write_ptr(int cpunum, offs_t offset)
+void *memory_get_write_ptr(int cpunum, uint32_t offset)
 {
 	struct memport_data *memport = &cpudata[cpunum].mem;
 	struct handler_data *handlist = (memport->dbits == 32) ? wmemhandler32 : (memport->dbits == 16) ? wmemhandler16 : wmemhandler8;
@@ -826,7 +826,7 @@ void *memory_get_write_ptr(int cpunum, offs_t offset)
 	handler, or allocates a new one as necessary
 -------------------------------------------------*/
 
-uint8_t get_handler_index(struct handler_data *table, void *handler, offs_t start)
+uint8_t get_handler_index(struct handler_data *table, void *handler, uint32_t start)
 {
 	int i;
 
@@ -893,17 +893,17 @@ uint8_t alloc_new_subtable(const struct memport_data *memport, struct table_data
 	a range of addresses
 -------------------------------------------------*/
 
-void populate_table(struct memport_data *memport, int iswrite, offs_t start, offs_t stop, uint8_t handler)
+void populate_table(struct memport_data *memport, int iswrite, uint32_t start, uint32_t stop, uint8_t handler)
 {
 	struct table_data *tabledata = iswrite ? &memport->write : &memport->read;
 	int minbits = DATABITS_TO_SHIFT(memport->dbits);
 	int l1bits = LEVEL1_BITS(memport->ebits);
 	int l2bits = LEVEL2_BITS(memport->ebits);
-	offs_t l2mask = LEVEL2_MASK(memport->ebits);
-	offs_t l1start = start >> (l2bits + minbits);
-	offs_t l2start = (start >> minbits) & l2mask;
-	offs_t l1stop = stop >> (l2bits + minbits);
-	offs_t l2stop = (stop >> minbits) & l2mask;
+	uint32_t l2mask = LEVEL2_MASK(memport->ebits);
+	uint32_t l1start = start >> (l2bits + minbits);
+	uint32_t l2start = (start >> minbits) & l2mask;
+	uint32_t l1stop = stop >> (l2bits + minbits);
+	uint32_t l2stop = (stop >> minbits) & l2mask;
 	uint8_t subindex;
 
 	/* sanity check */
@@ -944,7 +944,7 @@ void populate_table(struct memport_data *memport, int iswrite, offs_t start, off
 
 		/* otherwise, fill until the end */
 		memset(&tabledata->table[(1 << l1bits) + (subindex << l2bits) + l2start], handler, (1 << l2bits) - l2start);
-		if (l1start != (offs_t)~0) l1start++;
+		if (l1start != (uint32_t)~0) l1start++;
 	}
 
 	/* handle the trailing edge if it's not on a block boundary */
@@ -976,7 +976,7 @@ void populate_table(struct memport_data *memport, int iswrite, offs_t start, off
 	matching bank
 -------------------------------------------------*/
 
-void *assign_dynamic_bank(int cpunum, offs_t start)
+void *assign_dynamic_bank(int cpunum, uint32_t start)
 {
 	int bank;
 
@@ -1006,7 +1006,7 @@ void *assign_dynamic_bank(int cpunum, offs_t start)
 	memory operatinos
 -------------------------------------------------*/
 
-void install_mem_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler)
+void install_mem_handler(struct memport_data *memport, int iswrite, uint32_t start, uint32_t end, void *handler)
 {
 	struct table_data *tabledata = iswrite ? &memport->write : &memport->read;
 	uint8_t idx;
@@ -1035,7 +1035,7 @@ void install_mem_handler(struct memport_data *memport, int iswrite, offs_t start
 	port operatinos
 -------------------------------------------------*/
 
-void install_port_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler)
+void install_port_handler(struct memport_data *memport, int iswrite, uint32_t start, uint32_t end, void *handler)
 {
 	struct table_data *tabledata = iswrite ? &memport->write : &memport->read;
 	uint8_t idx = get_handler_index(tabledata->handlers, handler, start);
@@ -1365,7 +1365,7 @@ static int allocate_memory(void)
 		{
 			const struct Memory_ReadAddress *mra = Machine->drv->cpu[cpunum].memory_read;
 			const struct Memory_WriteAddress *mwa = Machine->drv->cpu[cpunum].memory_write;
-			offs_t lowest = ~0, end, lastend;
+			uint32_t lowest = ~0, end, lastend;
 
 			/* find the base of the lowest memory region that extends past the end */
 			for (mra = Machine->drv->cpu[cpunum].memory_read; !IS_MEMPORT_END(mra); mra++)
@@ -1804,7 +1804,7 @@ void register_banks(void)
 -------------------------------------------------*/
 
 #define READBYTE8(name,abits,lookup,handlist,mask)										\
-uint8_t name(offs_t address)															\
+uint8_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1830,7 +1830,7 @@ uint8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE16BE(name,abits,lookup,handlist,mask)									\
-uint8_t name(offs_t address)															\
+uint8_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1857,7 +1857,7 @@ uint8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE16LE(name,abits,lookup,handlist,mask)									\
-uint8_t name(offs_t address)															\
+uint8_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1884,7 +1884,7 @@ uint8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE32BE(name,abits,lookup,handlist,mask)									\
-uint8_t name(offs_t address)															\
+uint8_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1911,7 +1911,7 @@ uint8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE32LE(name,abits,lookup,handlist,mask)									\
-uint8_t name(offs_t address)															\
+uint8_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1944,7 +1944,7 @@ uint8_t name(offs_t address)															\
 -------------------------------------------------*/
 
 #define READWORD16(name,abits,lookup,handlist,mask)										\
-uint16_t name(offs_t address)															\
+uint16_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1970,7 +1970,7 @@ uint16_t name(offs_t address)															\
 }																						\
 
 #define READWORD32BE(name,abits,lookup,handlist,mask)									\
-uint16_t name(offs_t address)															\
+uint16_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1997,7 +1997,7 @@ uint16_t name(offs_t address)															\
 }																						\
 
 #define READWORD32LE(name,abits,lookup,handlist,mask)									\
-uint16_t name(offs_t address)															\
+uint16_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -2030,7 +2030,7 @@ uint16_t name(offs_t address)															\
 -------------------------------------------------*/
 
 #define READLONG32(name,abits,lookup,handlist,mask)										\
-uint32_t name(offs_t address)															\
+uint32_t name(uint32_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -2061,7 +2061,7 @@ uint32_t name(offs_t address)															\
 -------------------------------------------------*/
 
 #define WRITEBYTE8(name,abits,lookup,handlist,mask)										\
-void name(offs_t address, uint8_t data)													\
+void name(uint32_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2086,7 +2086,7 @@ void name(offs_t address, uint8_t data)													\
 }																						\
 
 #define WRITEBYTE16BE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint8_t data)													\
+void name(uint32_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2112,7 +2112,7 @@ void name(offs_t address, uint8_t data)													\
 }																						\
 
 #define WRITEBYTE16LE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint8_t data)													\
+void name(uint32_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2138,7 +2138,7 @@ void name(offs_t address, uint8_t data)													\
 }																						\
 
 #define WRITEBYTE32BE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint8_t data)													\
+void name(uint32_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2164,7 +2164,7 @@ void name(offs_t address, uint8_t data)													\
 }																						\
 
 #define WRITEBYTE32LE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint8_t data)													\
+void name(uint32_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2196,7 +2196,7 @@ void name(offs_t address, uint8_t data)													\
 -------------------------------------------------*/
 
 #define WRITEWORD16(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint16_t data)												\
+void name(uint32_t address, uint16_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2221,7 +2221,7 @@ void name(offs_t address, uint16_t data)												\
 }																						\
 
 #define WRITEWORD32BE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint16_t data)												\
+void name(uint32_t address, uint16_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2247,7 +2247,7 @@ void name(offs_t address, uint16_t data)												\
 }																						\
 
 #define WRITEWORD32LE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint16_t data)												\
+void name(uint32_t address, uint16_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2279,7 +2279,7 @@ void name(offs_t address, uint16_t data)												\
 -------------------------------------------------*/
 
 #define WRITELONG32(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, uint32_t data)												\
+void name(uint32_t address, uint32_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2309,7 +2309,7 @@ void name(offs_t address, uint32_t data)												\
 -------------------------------------------------*/
 
 #define SETOPBASE(name,abits,minbits,table)												\
-void name(offs_t pc)																	\
+void name(uint32_t pc)																	\
 {																						\
 	uint8_t *base;																		\
 	uint8_t entry;																		\
@@ -2526,37 +2526,37 @@ GENERATE_PORT_HANDLERS_32BIT_LE(32)
 	safe opcode reading
 -------------------------------------------------*/
 
-uint8_t cpu_readop_safe(offs_t offset)
+uint8_t cpu_readop_safe(uint32_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_unsafe(offset);
 }
 
-uint16_t cpu_readop16_safe(offs_t offset)
+uint16_t cpu_readop16_safe(uint32_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop16_unsafe(offset);
 }
 
-uint32_t cpu_readop32_safe(offs_t offset)
+uint32_t cpu_readop32_safe(uint32_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop32_unsafe(offset);
 }
 
-uint8_t cpu_readop_arg_safe(offs_t offset)
+uint8_t cpu_readop_arg_safe(uint32_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_arg_unsafe(offset);
 }
 
-uint16_t cpu_readop_arg16_safe(offs_t offset)
+uint16_t cpu_readop_arg16_safe(uint32_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_arg16_unsafe(offset);
 }
 
-uint32_t cpu_readop_arg32_safe(offs_t offset)
+uint32_t cpu_readop_arg32_safe(uint32_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_arg32_unsafe(offset);
@@ -2602,7 +2602,7 @@ int port_address_bits_of_cpu(int cputype)
 	basic static handlers
 -------------------------------------------------*/
 
-static INLINE offs_t effective_offset(offs_t offset)
+static INLINE uint32_t effective_offset(uint32_t offset)
 {
 	int shift = activecpu_address_shift();
 	if (shift < 0)

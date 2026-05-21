@@ -108,7 +108,7 @@ void leland_i186_sound_init(void);
 
 READ_HANDLER( leland_i86_response_r );
 
-void leland_i86_optimize_address(offs_t offset);
+void leland_i86_optimize_address(uint32_t offset);
 
 WRITE_HANDLER( leland_i86_control_w );
 WRITE_HANDLER( leland_i86_command_lo_w );

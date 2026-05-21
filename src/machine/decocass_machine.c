@@ -28,8 +28,8 @@ static uint8_t crc16_msb;
 static uint8_t tape_crc16_lsb[256];
 static uint8_t tape_crc16_msb[256];
 
-static uint8_t (*decocass_dongle_r)(offs_t offset);
-static void (*decocass_dongle_w)(offs_t offset, uint8_t data);
+static uint8_t (*decocass_dongle_r)(uint32_t offset);
+static void (*decocass_dongle_w)(uint32_t offset, uint8_t data);
 
 static uint8_t decocass_reset;
 static uint8_t i8041_p1;
@@ -506,7 +506,7 @@ static void tape_update(void)
 }
 
 #ifdef MAME_DEBUG
-static void decocass_fno(offs_t offset, uint8_t data)
+static void decocass_fno(uint32_t offset, uint8_t data)
 {
 		/* 8041ENA/ and is this a FNO write (function number)? */
 		if (0 == (i8041_p2 & 0x01))
@@ -577,7 +577,7 @@ READ_HANDLER( decocass_type1_r )
 	}
 	else
 	{
-		offs_t promaddr;
+		uint32_t promaddr;
 		uint8_t save;
 		uint8_t *prom = memory_region(REGION_USER1);
 

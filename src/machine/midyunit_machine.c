@@ -85,9 +85,9 @@ static uint8_t	cmos_w_enable;
 static uint8_t	sound_type;
 
 /* speedup-related variables */
-       offs_t 	midyunit_speedup_pc;
-       offs_t 	midyunit_speedup_offset;
-       offs_t 	midyunit_speedup_spin[3];
+       uint32_t 	midyunit_speedup_pc;
+       uint32_t 	midyunit_speedup_offset;
+       uint32_t 	midyunit_speedup_spin[3];
        uint16_t *midyunit_speedup_base;
 
 /* hack-related variables */
@@ -405,7 +405,7 @@ static READ16_HANDLER( term2_speedup_r )
 	else
 	{
 		uint32_t value1 = midyunit_scratch_ram[TOWORD(0xaa040)];
-		offs_t pc = activecpu_get_pc();
+		uint32_t pc = activecpu_get_pc();
 
 		/* Suspend cpu if it's waiting for an interrupt */
 		if ((pc == 0xffcdc270 || pc == 0xffcdc0d0) && !value1)
@@ -694,7 +694,7 @@ static WRITE_HANDLER( cvsd_protection_w )
 
 static void init_generic(int bpp, int sound, int prot_start, int prot_end)
 {
-	offs_t gfx_chunk = midyunit_gfx_rom_size / 4;
+	uint32_t gfx_chunk = midyunit_gfx_rom_size / 4;
 	uint8_t d1, d2, d3, d4, d5, d6;
 	uint8_t *base;
 	int i;

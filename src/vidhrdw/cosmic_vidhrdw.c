@@ -26,7 +26,7 @@ WRITE_HANDLER( cosmic_color_register_w )
 
 static pen_t panic_map_color(uint8_t x, uint8_t y)
 {
-	offs_t offs;
+	uint32_t offs;
 	pen_t pen;
 
 
@@ -41,7 +41,7 @@ static pen_t panic_map_color(uint8_t x, uint8_t y)
 
 static pen_t cosmica_map_color(uint8_t x, uint8_t y)
 {
-	offs_t offs;
+	uint32_t offs;
 	pen_t pen;
 
 
@@ -56,7 +56,7 @@ static pen_t cosmica_map_color(uint8_t x, uint8_t y)
 
 static pen_t cosmicg_map_color(uint8_t x, uint8_t y)
 {
-	offs_t offs;
+	uint32_t offs;
 	pen_t pen;
 
 
@@ -70,7 +70,7 @@ static pen_t cosmicg_map_color(uint8_t x, uint8_t y)
 
 static pen_t magspot2_map_color(uint8_t x, uint8_t y)
 {
-	offs_t offs;
+	uint32_t offs;
 	pen_t pen;
 
 
@@ -259,7 +259,7 @@ WRITE_HANDLER( cosmic_background_enable_w )
 
 static void draw_bitmap(struct mame_bitmap *bitmap)
 {
-	offs_t offs;
+	uint32_t offs;
 
 
 	for (offs = 0; offs < videoram_size; offs++)
@@ -401,7 +401,7 @@ static void devzone_draw_grid(struct mame_bitmap *bitmap)
 	uint8_t y;
 	uint8_t *horz_PROM = memory_region(REGION_USER2);
 	uint8_t *vert_PROM = memory_region(REGION_USER3);
-	offs_t horz_addr = 0;
+	uint32_t horz_addr = 0;
 
 	uint8_t count = 0;
 	uint8_t horz_data = 0;
@@ -538,7 +538,7 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 				/* tree */
 				if (!hd_ & hc_ & !hb_)
 				{
-					offs_t offs = ((x >> 3) & 0x03) | ((y & 0x1f) << 2) |
+					uint32_t offs = ((x >> 3) & 0x03) | ((y & 0x1f) << 2) |
 					              (flip_screen ? 0x80 : 0);
 
 					uint8_t plane1 = PROM[offs         ] << (x & 0x07);
@@ -557,7 +557,7 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 				/* water */
 				if (hd_ & !hc_ & hb_ & !ha_)
 				{
-					offs_t offs = hd | (water << 1) | 0x0200;
+					uint32_t offs = hd | (water << 1) | 0x0200;
 
 					uint8_t plane1 = PROM[offs         ] << (x & 0x07);
 					uint8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);

@@ -868,7 +868,7 @@ READ16_HANDLER( pwrinst2_eeprom_r )
 	return ~8 + ((EEPROM_read_bit() & 1) ? 8 : 0);
 }
 
-static INLINE void vctrl_w(uint16_t *VCTRL, UNUSEDARG offs_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
+static INLINE void vctrl_w(uint16_t *VCTRL, UNUSEDARG uint32_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
 {
 	if ( offset == 4/2 )
 	{

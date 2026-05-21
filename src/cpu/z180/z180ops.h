@@ -45,7 +45,7 @@
  ***************************************************************/
 static INLINE void z180_mmu( void )
 {
-	offs_t addr, page, bb, cb;
+	uint32_t addr, page, bb, cb;
 	bb = IO_CBAR & 15;
 	cb = IO_CBAR >> 4;
 	for( page = 0; page < 16; page++ )
@@ -69,7 +69,7 @@ static INLINE void z180_mmu( void )
  * Read a byte from given memory location
  ***************************************************************/
 #define RM(addr)	cpu_readmem20(MMU_REMAP_ADDR(addr))
-uint8_t cpu_readmemz180(offs_t offset)
+uint8_t cpu_readmemz180(uint32_t offset)
 {
 	return RM(offset);
 }
@@ -78,7 +78,7 @@ uint8_t cpu_readmemz180(offs_t offset)
  * Write a byte to given memory location
  ***************************************************************/
 #define WM(addr,value) cpu_writemem20(MMU_REMAP_ADDR(addr),value)
-void cpu_writememz180(offs_t offset, uint8_t data)
+void cpu_writememz180(uint32_t offset, uint8_t data)
 {
 	WM(offset, data);
 }
@@ -86,7 +86,7 @@ void cpu_writememz180(offs_t offset, uint8_t data)
 /***************************************************************
  * Read a word from given memory location
  ***************************************************************/
-static INLINE void RM16( offs_t addr, PAIR *r )
+static INLINE void RM16( uint32_t addr, PAIR *r )
 {
 	r->b.l = RM(addr);
 	r->b.h = RM(addr+1);
@@ -95,7 +95,7 @@ static INLINE void RM16( offs_t addr, PAIR *r )
 /***************************************************************
  * Write a word to given memory location
  ***************************************************************/
-static INLINE void WM16( offs_t addr, PAIR *r )
+static INLINE void WM16( uint32_t addr, PAIR *r )
 {
 	WM(addr,r->b.l);
 	WM(addr+1,r->b.h);
@@ -108,7 +108,7 @@ static INLINE void WM16( offs_t addr, PAIR *r )
  ***************************************************************/
 static INLINE uint8_t ROP(void)
 {
-	offs_t addr = _PCD;
+	uint32_t addr = _PCD;
 	_PC++;
 	return cpu_readop(MMU_REMAP_ADDR(addr));
 }
@@ -121,14 +121,14 @@ static INLINE uint8_t ROP(void)
  ***************************************************************/
 static INLINE uint8_t ARG(void)
 {
-	offs_t addr = _PCD;
+	uint32_t addr = _PCD;
 	_PC++;
 	return cpu_readop_arg(MMU_REMAP_ADDR(addr));
 }
 
 static INLINE uint32_t ARG16(void)
 {
-	offs_t addr = _PCD;
+	uint32_t addr = _PCD;
 	_PC += 2;
 	return cpu_readop_arg(MMU_REMAP_ADDR(addr)) | (cpu_readop_arg(MMU_REMAP_ADDR(addr+1)) << 8);
 }

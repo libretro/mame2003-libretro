@@ -41,8 +41,8 @@ uint8_t atarigt_is_primrage;
 
 static uint32_t *	mo_command;
 
-static void (*protection_w)(offs_t offset, uint16_t data);
-static void (*protection_r)(offs_t offset, uint16_t *data);
+static void (*protection_w)(uint32_t offset, uint16_t data);
+static void (*protection_r)(uint32_t offset, uint16_t *data);
 
 static void cage_irq_callback(int reason);
 
@@ -271,14 +271,14 @@ static WRITE32_HANDLER( sound_data_w )
 
 #define ADDRSEQ_COUNT	4
 
-static offs_t protaddr[ADDRSEQ_COUNT];
+static uint32_t protaddr[ADDRSEQ_COUNT];
 static uint8_t protmode;
 static uint16_t protresult;
 static uint8_t protdata[0x800];
 
 static uint8_t ignore_writes = 0;
 
-static void tmek_update_mode(offs_t offset)
+static void tmek_update_mode(uint32_t offset)
 {
 	int i;
 
@@ -290,7 +290,7 @@ static void tmek_update_mode(offs_t offset)
 }
 
 
-static void tmek_protection_w(offs_t offset, uint16_t data)
+static void tmek_protection_w(uint32_t offset, uint16_t data)
 {
 #if LOG_PROTECTION
 	logerror("%06X:Protection W@%06X = %04X\n", activecpu_get_previouspc(), offset, data);
@@ -307,7 +307,7 @@ static void tmek_protection_w(offs_t offset, uint16_t data)
 	}
 }
 
-static void tmek_protection_r(offs_t offset, uint16_t *data)
+static void tmek_protection_r(uint32_t offset, uint16_t *data)
 {
 #if LOG_PROTECTION
 	logerror("%06X:Protection R@%06X\n", activecpu_get_previouspc(), offset);
@@ -338,7 +338,7 @@ static void tmek_protection_r(offs_t offset, uint16_t *data)
  *
  *************************************/
 
-static void primage_update_mode(offs_t offset)
+static void primage_update_mode(uint32_t offset)
 {
 	int i;
 
@@ -375,7 +375,7 @@ static void primage_update_mode(offs_t offset)
 
 
 
-static void primrage_protection_w(offs_t offset, uint16_t data)
+static void primrage_protection_w(uint32_t offset, uint16_t data)
 {
 #if LOG_PROTECTION
 {
@@ -446,7 +446,7 @@ static void primrage_protection_w(offs_t offset, uint16_t data)
 
 
 
-static void primrage_protection_r(offs_t offset, uint16_t *data)
+static void primrage_protection_r(uint32_t offset, uint16_t *data)
 {
 	/* track accesses */
 	primage_update_mode(offset);
@@ -563,7 +563,7 @@ static void primrage_protection_r(offs_t offset, uint16_t *data)
 
 static READ32_HANDLER( colorram_protection_r )
 {
-	offs_t address = 0xd80000 + offset * 4;
+	uint32_t address = 0xd80000 + offset * 4;
 	uint32_t result32 = 0;
 	uint16_t result;
 
@@ -586,7 +586,7 @@ static READ32_HANDLER( colorram_protection_r )
 
 static WRITE32_HANDLER( colorram_protection_w )
 {
-	offs_t address = 0xd80000 + offset * 4;
+	uint32_t address = 0xd80000 + offset * 4;
 
 	if ((mem_mask & 0xffff0000) != 0xffff0000)
 	{
@@ -1118,7 +1118,7 @@ ROM_END
 
 static WRITE32_HANDLER( tmek_pf_w )
 {
-	offs_t pc = activecpu_get_pc();
+	uint32_t pc = activecpu_get_pc();
 
 	/* protected version */
 	if (pc == 0x2EB3C || pc == 0x2EB48)
@@ -1152,7 +1152,7 @@ static DRIVER_INIT( tmek )
 }
 
 
-static void primrage_init_common(offs_t cage_speedup)
+static void primrage_init_common(uint32_t cage_speedup)
 {
 	atarigen_eeprom_default = NULL;
 	atarigt_is_primrage = 1;

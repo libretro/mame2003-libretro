@@ -683,12 +683,12 @@ static WRITE_HANDLER( unknown_w ) {
 }
 
 /* Main bankswitching routine */
-void namcos1_bankswitch(int cpu, offs_t offset, uint8_t data)
+void namcos1_bankswitch(int cpu, uint32_t offset, uint8_t data)
 {
 	static int chip = 0;
 	mem_read_handler handler_r;
 	mem_write_handler handler_w;
-	offs_t offs;
+	uint32_t offs;
 
 	if ( offset & 1 ) {
 		int bank = (cpu*8) + ( ( offset >> 9 ) & 0x07 );

@@ -1315,7 +1315,7 @@ void HandleRomTransfers( void )
 #endif
 }
 
-void nvsram( offs_t offset, uint16_t data )
+void nvsram( uint32_t offset, uint16_t data )
 {
   static int i = 0;
 

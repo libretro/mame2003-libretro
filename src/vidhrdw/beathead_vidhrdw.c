@@ -26,15 +26,15 @@ uint32_t *	beathead_palette_select;
  *
  *************************************/
 
-static offs_t				scanline_offset[240];
+static uint32_t				scanline_offset[240];
 static uint8_t				scanline_palette[240];
 
 static int					current_scanline;
 static uint32_t				finescroll;
-static offs_t				vram_latch_offset;
+static uint32_t				vram_latch_offset;
 
-static offs_t				hsyncram_offset;
-static offs_t				hsyncram_start;
+static uint32_t				hsyncram_offset;
+static uint32_t				hsyncram_start;
 static uint8_t *				hsyncram;
 
 
@@ -100,7 +100,7 @@ WRITE32_HANDLER( beathead_vram_latch_w )
 WRITE32_HANDLER( beathead_vram_copy_w )
 {
 	/* copy from VRAM to VRAM, for 1024 bytes */
-	offs_t dest_offset = (4 * offset) & 0x7ffff;
+	uint32_t dest_offset = (4 * offset) & 0x7ffff;
 	memcpy(&videoram32[dest_offset / 4], &videoram32[vram_latch_offset / 4], 0x400);
 }
 
@@ -221,7 +221,7 @@ VIDEO_UPDATE( beathead )
 	/* generate the final screen */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		offs_t src = scanline_offset[y] + cliprect->min_x;
+		uint32_t src = scanline_offset[y] + cliprect->min_x;
 		uint8_t scanline[336];
 
 		/* unswizzle the scanline first */

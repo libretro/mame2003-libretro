@@ -77,7 +77,7 @@ struct ioasic_state
 	uint16_t	fifo_in;
 	uint16_t	fifo_out;
 	uint16_t	fifo_bytes;
-	offs_t	fifo_force_buffer_empty_pc;
+	uint32_t	fifo_force_buffer_empty_pc;
 };
 
 
@@ -641,7 +641,7 @@ static uint16_t ioasic_fifo_status_r(void)
 	/* sure the FIFO clear bit is set */
 	if (ioasic.fifo_force_buffer_empty_pc && cpu_getactivecpu() == ioasic.dcs_cpu)
 	{
-		offs_t currpc = activecpu_get_pc();
+		uint32_t currpc = activecpu_get_pc();
 		if (currpc >= ioasic.fifo_force_buffer_empty_pc && currpc < ioasic.fifo_force_buffer_empty_pc + 0x10)
 		{
 			ioasic.fifo_force_buffer_empty_pc = 0;
@@ -902,7 +902,7 @@ WRITE32_HANDLER( midway_ioasic_w )
 READ32_HANDLER( midway_ide_asic_r )
 {
 	/* convert to standard IDE offsets */
-	offs_t ideoffs = 0x1f0/4 + (offset >> 2);
+	uint32_t ideoffs = 0x1f0/4 + (offset >> 2);
 	uint8_t shift = 8 * (offset & 3);
 	uint32_t result;
 
@@ -920,7 +920,7 @@ READ32_HANDLER( midway_ide_asic_r )
 WRITE32_HANDLER( midway_ide_asic_w )
 {
 	/* convert to standard IDE offsets */
-	offs_t ideoffs = 0x1f0/4 + (offset >> 2);
+	uint32_t ideoffs = 0x1f0/4 + (offset >> 2);
 	uint8_t shift = 8 * (offset & 3);
 
 	/* offset 0 is a special case */

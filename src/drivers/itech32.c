@@ -72,7 +72,7 @@ static size_t main_ram_size;
 static uint32_t *nvram;
 static size_t nvram_size;
 
-static offs_t itech020_prot_address;
+static uint32_t itech020_prot_address;
 
 static uint8_t *sound_speedup_data;
 static uint16_t sound_speedup_pc;
@@ -2305,7 +2305,7 @@ static void init_program_rom(void)
 }
 
 
-static void init_sound_speedup(offs_t offset, offs_t pc)
+static void init_sound_speedup(uint32_t offset, uint32_t pc)
 {
 	sound_speedup_data = install_mem_read_handler(1, offset, offset, sound_speedup_r);
 	sound_speedup_pc = pc;

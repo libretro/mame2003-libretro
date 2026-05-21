@@ -509,7 +509,7 @@ DRIVER_INIT( pcdboard )
 /* E Board games (Mike Tyson's Punchout) - BROKEN - FIX ME */
 
 /* callback for the ppu_latch */
-static void mapper9_latch( offs_t offset )
+static void mapper9_latch( uint32_t offset )
 {
 	if( (offset & 0x1ff0) == 0x0fd0 && MMC2_bank_latch[0] != 0xfd )
 	{

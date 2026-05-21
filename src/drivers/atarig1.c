@@ -844,7 +844,7 @@ ROM_END
  *
  *************************************/
 
-static void init_g1_common(offs_t slapstic_base, int slapstic, int is_pitfight)
+static void init_g1_common(uint32_t slapstic_base, int slapstic, int is_pitfight)
 {
 	atarigen_eeprom_default = NULL;
 	if (slapstic == -1)

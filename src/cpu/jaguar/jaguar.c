@@ -1626,7 +1626,7 @@ void xor_rn_rn(void)
 **	I/O HANDLING
 **#################################################################################################*/
 
-uint32_t jaguargpu_ctrl_r(int cpunum, offs_t offset)
+uint32_t jaguargpu_ctrl_r(int cpunum, uint32_t offset)
 {
 	uint32_t result;
 
@@ -1643,7 +1643,7 @@ uint32_t jaguargpu_ctrl_r(int cpunum, offs_t offset)
 }
 
 
-void jaguargpu_ctrl_w(int cpunum, offs_t offset, uint32_t data, uint32_t mem_mask)
+void jaguargpu_ctrl_w(int cpunum, uint32_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint32_t 			oldval, newval;
 
@@ -1738,7 +1738,7 @@ void jaguargpu_ctrl_w(int cpunum, offs_t offset, uint32_t data, uint32_t mem_mas
 **	I/O HANDLING
 **#################################################################################################*/
 
-uint32_t jaguardsp_ctrl_r(int cpunum, offs_t offset)
+uint32_t jaguardsp_ctrl_r(int cpunum, uint32_t offset)
 {
 	uint32_t result;
 
@@ -1756,7 +1756,7 @@ uint32_t jaguardsp_ctrl_r(int cpunum, offs_t offset)
 }
 
 
-void jaguardsp_ctrl_w(int cpunum, offs_t offset, uint32_t data, uint32_t mem_mask)
+void jaguardsp_ctrl_w(int cpunum, uint32_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint32_t 			oldval, newval;
 

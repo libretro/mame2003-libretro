@@ -770,7 +770,7 @@ static struct slapstic_data slapstic;
 
 
 #if LOG_SLAPSTIC
-	static void slapstic_log(offs_t offset);
+	static void slapstic_log(uint32_t offset);
 	static FILE *slapsticlog;
 #else
 	#define slapstic_log(o)
@@ -834,7 +834,7 @@ int slapstic_bank(void)
  *
  *************************************/
 
-static int alt2_kludge(offs_t offset)
+static int alt2_kludge(uint32_t offset)
 {
 	/* 68k case is fairly complex: we need to look for special triplets */
 	if (access_68k)
@@ -877,7 +877,7 @@ static int alt2_kludge(offs_t offset)
  *
  *************************************/
 
-int slapstic_tweak(offs_t offset)
+int slapstic_tweak(uint32_t offset)
 {
 	/* reset is universal */
 	if (offset == 0x0000)
@@ -1107,7 +1107,7 @@ int slapstic_tweak(offs_t offset)
  *************************************/
 
 #if LOG_SLAPSTIC
-static void slapstic_log(offs_t offset)
+static void slapstic_log(uint32_t offset)
 {
 	static double last_time;
 

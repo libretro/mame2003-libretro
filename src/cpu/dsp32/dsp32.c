@@ -237,7 +237,7 @@ static dsp32_regs dsp32;
 
 #else
 
-static INLINE uint16_t RWORD(offs_t addr)
+static INLINE uint16_t RWORD(uint32_t addr)
 {
 	uint16_t data;
 	if (addr & 1) fprintf(stderr, "Unaligned word read @ %06X, PC=%06X\n", addr, dsp32.PC);
@@ -245,7 +245,7 @@ static INLINE uint16_t RWORD(offs_t addr)
 	return data;
 }
 
-static INLINE uint32_t RLONG(offs_t addr)
+static INLINE uint32_t RLONG(uint32_t addr)
 {
 	uint32_t data;
 	if (addr & 3) fprintf(stderr, "Unaligned long read @ %06X, PC=%06X\n", addr, dsp32.PC);
@@ -253,13 +253,13 @@ static INLINE uint32_t RLONG(offs_t addr)
 	return data;
 }
 
-static INLINE void WWORD(offs_t addr, uint16_t data)
+static INLINE void WWORD(uint32_t addr, uint16_t data)
 {
 	if (addr & 1) fprintf(stderr, "Unaligned word write @ %06X, PC=%06X\n", addr, dsp32.PC);
 	cpu_writemem24ledw_word((addr), data);
 }
 
-static INLINE void WLONG(offs_t addr, uint32_t data)
+static INLINE void WLONG(uint32_t addr, uint32_t data)
 {
 	if (addr & 3) fprintf(stderr, "Unaligned long write @ %06X, PC=%06X\n", addr, dsp32.PC);
 	cpu_writemem24ledw_dword((addr), data);

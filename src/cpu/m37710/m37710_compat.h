@@ -119,7 +119,7 @@ extern void *m37710_get_token(void);
 #define CPU_RESET(name)       void cpu_reset_##name(legacy_cpu_device *device)
 #define CPU_EXIT(name)        void cpu_exit_##name(legacy_cpu_device *device)
 #define CPU_EXECUTE(name)     void cpu_execute_##name(legacy_cpu_device *device)
-#define CPU_DISASSEMBLE(name) int  cpu_disassemble_##name(legacy_cpu_device *device, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram, int options)
+#define CPU_DISASSEMBLE(name) int  cpu_disassemble_##name(legacy_cpu_device *device, char *buffer, uint32_t pc, const uint8_t *oprom, const uint8_t *opram, int options)
 
 /* ---- attotime -> double seconds ----------------------------------------- */
 /* The core only uses attotime to schedule its internal timers. mame2003 timers

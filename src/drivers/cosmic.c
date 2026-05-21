@@ -1469,7 +1469,7 @@ static DRIVER_INIT( cosmicg )
 {
 	/* Program ROMs have data pins connected different from normal */
 
-	offs_t offs;
+	uint32_t offs;
 
     for (offs =0; offs < memory_region_length(REGION_CPU1); offs++)
 	{

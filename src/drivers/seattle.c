@@ -348,7 +348,7 @@ static void timer_callback(int which)
 
 static int dma_fetch_next(int which)
 {
-	offs_t address = 0;
+	uint32_t address = 0;
 	uint32_t data;
 
 	/* no-op for unchained mode */
@@ -425,8 +425,8 @@ static void dma_finished_callback(int which)
 
 static void perform_dma(int which)
 {
-	offs_t srcaddr = galileo_regs[0x810/4 + which];
-	offs_t dstaddr = galileo_regs[0x820/4 + which];
+	uint32_t srcaddr = galileo_regs[0x810/4 + which];
+	uint32_t dstaddr = galileo_regs[0x820/4 + which];
 	uint32_t bytesleft = galileo_regs[0x800/4 + which] & 0xffff;
 	int srcinc, dstinc, i;
 

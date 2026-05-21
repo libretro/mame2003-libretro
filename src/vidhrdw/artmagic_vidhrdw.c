@@ -36,9 +36,9 @@ static double blitter_busy_until;
  *
  *************************************/
 
-static INLINE uint16_t *address_to_vram(offs_t *address)
+static INLINE uint16_t *address_to_vram(uint32_t *address)
 {
-	offs_t original = *address;
+	uint32_t original = *address;
 	*address = TOWORD(original & 0x001fffff);
 	if (original >= 0x00000000 && original < 0x001fffff)
 		return artmagic_vram0;
@@ -70,7 +70,7 @@ VIDEO_START( artmagic )
  *
  *************************************/
 
-void artmagic_to_shiftreg(offs_t address, uint16_t *data)
+void artmagic_to_shiftreg(uint32_t address, uint16_t *data)
 {
 	uint16_t *vram = address_to_vram(&address);
 	if (vram)
@@ -78,7 +78,7 @@ void artmagic_to_shiftreg(offs_t address, uint16_t *data)
 }
 
 
-void artmagic_from_shiftreg(offs_t address, uint16_t *data)
+void artmagic_from_shiftreg(uint32_t address, uint16_t *data)
 {
 	uint16_t *vram = address_to_vram(&address);
 	if (vram)

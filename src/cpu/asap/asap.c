@@ -282,13 +282,13 @@ static void (*conditiontable[16])(void) =
 #define UPDATEPC()		change_pc32ledw(asap.pc)
 
 
-static INLINE uint8_t READBYTE(offs_t address)
+static INLINE uint8_t READBYTE(uint32_t address)
 {
 	/* no alignment issues with bytes */
 	return cpu_readmem32ledw(address);
 }
 
-static INLINE uint16_t READWORD(offs_t address)
+static INLINE uint16_t READWORD(uint32_t address)
 {
 	/* aligned reads are easy */
 	if (!(address & 1))
@@ -298,7 +298,7 @@ static INLINE uint16_t READWORD(offs_t address)
 	return cpu_readmem32ledw_dword(address & ~3) >> (address & 3);
 }
 
-static INLINE uint32_t READLONG(offs_t address)
+static INLINE uint32_t READLONG(uint32_t address)
 {
 	/* aligned reads are easy */
 	if (!(address & 3))
@@ -308,13 +308,13 @@ static INLINE uint32_t READLONG(offs_t address)
 	return cpu_readmem32ledw_dword(address & ~3) >> (address & 3);
 }
 
-static INLINE void WRITEBYTE(offs_t address, uint8_t data)
+static INLINE void WRITEBYTE(uint32_t address, uint8_t data)
 {
 	/* no alignment issues with bytes */
 	cpu_writemem32ledw(address, data);
 }
 
-static INLINE void WRITEWORD(offs_t address, uint16_t data)
+static INLINE void WRITEWORD(uint32_t address, uint16_t data)
 {
 	/* aligned writes are easy */
 	if (!(address & 1))
@@ -333,7 +333,7 @@ static INLINE void WRITEWORD(offs_t address, uint16_t data)
 		cpu_writemem32ledw(address + 1, data);
 }
 
-static INLINE void WRITELONG(offs_t address, uint32_t data)
+static INLINE void WRITELONG(uint32_t address, uint32_t data)
 {
 	/* aligned writes are easy */
 	if (!(address & 3))

@@ -405,7 +405,7 @@ static READ16_HANDLER( jdredd_hack_r )
 
 static void init_tunit_generic(int sound)
 {
-	offs_t gfx_chunk = midyunit_gfx_rom_size / 4;
+	uint32_t gfx_chunk = midyunit_gfx_rom_size / 4;
 	uint8_t *base;
 	int i;
 

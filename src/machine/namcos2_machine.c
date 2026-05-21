@@ -383,9 +383,9 @@ uint16_t  namcos2_68k_master_C148[0x20];
 uint16_t  namcos2_68k_slave_C148[0x20];
 
 static uint16_t
-ReadC148( int cpu, offs_t offset )
+ReadC148( int cpu, uint32_t offset )
 {
-	offs_t addr = ((offset*2)+0x1c0000)&0x1fe000;
+	uint32_t addr = ((offset*2)+0x1c0000)&0x1fe000;
 	uint16_t *pC148Reg;
 	if( cpu == CPU_SLAVE )
 	{
@@ -424,9 +424,9 @@ ReadC148( int cpu, offs_t offset )
 }
 
 static void
-WriteC148( int cpu, offs_t offset, uint16_t data )
+WriteC148( int cpu, uint32_t offset, uint16_t data )
 {
-	offs_t addr = ((offset*2)+0x1c0000)&0x1fe000;
+	uint32_t addr = ((offset*2)+0x1c0000)&0x1fe000;
 	int altCPU;
 	uint16_t *pC148Reg;
 	if( cpu == CPU_SLAVE )

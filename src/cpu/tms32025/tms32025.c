@@ -198,8 +198,8 @@ static tms32025_Regs R;
 static PAIR  oldacc;
 static uint32_t memaccess;
 int    tms32025_icount;
-offs_t TMS32025_DATA_BANK[0x10];
-offs_t TMS32025_PRGM_BANK[0x10];
+uint32_t TMS32025_DATA_BANK[0x10];
+uint32_t TMS32025_PRGM_BANK[0x10];
 typedef void (*opcode_fn) (void);
 
 

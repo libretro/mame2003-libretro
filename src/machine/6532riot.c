@@ -87,7 +87,7 @@ static void r6532_write_portB(int n, uint8_t data)
 }
 
 
-static void r6532_write(int n, offs_t offset, uint8_t data)
+static void r6532_write(int n, uint32_t offset, uint8_t data)
 {
 	if (offset & 4)
 	{
@@ -176,7 +176,7 @@ static uint8_t r6532_read_flags(int n)
 }
 
 
-static uint8_t r6532_read(int n, offs_t offset)
+static uint8_t r6532_read(int n, uint32_t offset)
 {
 	uint8_t val = 0;
 

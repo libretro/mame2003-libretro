@@ -568,7 +568,7 @@ struct opcode_s {
 #define SKIP_NZ 	if (0 == (PSW & Z)) PSW |= SK
 #define SET_Z(n)	if (n) PSW &= ~Z; else PSW |= Z
 
-static uint8_t RP(offs_t port)
+static uint8_t RP(uint32_t port)
 {
 	uint8_t data = 0xff;
 	switch (port)
@@ -648,7 +648,7 @@ static uint8_t RP(offs_t port)
 	return data;
 }
 
-static void WP(offs_t port, uint8_t data)
+static void WP(uint32_t port, uint8_t data)
 {
 	switch (port)
 	{

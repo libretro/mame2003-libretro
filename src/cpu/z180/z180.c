@@ -77,7 +77,7 @@ typedef struct {
 /* 3B */	uint8_t	tmdr_latch; 		/* flag latched TMDR0H, TMDR1H values */
 /* 3C */	uint32_t	iol;				/* I/O line status bits */
 /* 40 */	uint8_t	io[64]; 			/* 64 internal 8 bit registers */
-/* 80 */	offs_t	mmu[16];			/* MMU address translation */
+/* 80 */	uint32_t	mmu[16];			/* MMU address translation */
 /* c0 */	uint8_t	tmdr[2];			/* latched TMDR0H and TMDR1H values */
 /* c2 */	uint8_t	irq_max;			/* number of daisy chain devices		*/
 /* c3 */	int8_t	request_irq;		/* daisy chain next request device		*/
@@ -752,8 +752,8 @@ static INLINE void BURNODD(int cycles, int opcodes, int cyclesum)
 	}
 }
 
-static uint8_t z180_readcontrol(offs_t port);
-static void z180_writecontrol(offs_t port, uint8_t data);
+static uint8_t z180_readcontrol(uint32_t port);
+static void z180_writecontrol(uint32_t port, uint8_t data);
 static void z180_dma0(void);
 static void z180_dma1(void);
 
@@ -768,7 +768,7 @@ static void z180_dma1(void);
 #include "z180ed.c"
 #include "z180op.c"
 
-static uint8_t z180_readcontrol(offs_t port)
+static uint8_t z180_readcontrol(uint32_t port)
 {
 	/* normal external readport */
 	uint8_t data = cpu_readport16(port);
@@ -1129,7 +1129,7 @@ static uint8_t z180_readcontrol(offs_t port)
 	return data;
 }
 
-static void z180_writecontrol(offs_t port, uint8_t data)
+static void z180_writecontrol(uint32_t port, uint8_t data)
 {
 	/* normal external write port */
 	cpu_writeport16(port, data);
@@ -1467,8 +1467,8 @@ static void z180_writecontrol(offs_t port, uint8_t data)
 
 static void z180_dma0(void)
 {
-	offs_t sar0 = 65536 * IO_SAR0B + 256 * IO_SAR0H + IO_SAR0L;
-	offs_t dar0 = 65536 * IO_DAR0B + 256 * IO_DAR0H + IO_DAR0L;
+	uint32_t sar0 = 65536 * IO_SAR0B + 256 * IO_SAR0H + IO_SAR0L;
+	uint32_t dar0 = 65536 * IO_DAR0B + 256 * IO_DAR0H + IO_DAR0L;
 	int bcr0 = 256 * IO_BCR0H + IO_BCR0L;
 	int count = (IO_DMODE & Z180_DMODE_MMOD) ? bcr0 : 1;
 
@@ -1596,8 +1596,8 @@ static void z180_dma0(void)
 
 static void z180_dma1(void)
 {
-	offs_t mar1 = 65536 * IO_MAR1B + 256 * IO_MAR1H + IO_MAR1L;
-	offs_t iar1 = 256 * IO_IAR1H + IO_IAR1L;
+	uint32_t mar1 = 65536 * IO_MAR1B + 256 * IO_MAR1H + IO_MAR1L;
+	uint32_t iar1 = 256 * IO_IAR1H + IO_IAR1L;
 	int bcr1 = 256 * IO_BCR1H + IO_BCR1L;
 
 	if ((Z180.iol & Z180_DREQ1) == 0)

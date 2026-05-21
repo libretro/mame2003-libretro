@@ -172,7 +172,7 @@ static uint16_t		prot_read_buf;		/* remembers what was returned */
 
 /* Ribbit! palette swizzling */
 static uint16_t *	ribbit_palette_select;	/* pointer to base of ROM we're interested in */
-static offs_t		swizzle_table_index;/* which kind of swizzling is active? */
+static uint32_t		swizzle_table_index;/* which kind of swizzling is active? */
 
 /* sound-related variables */
 static uint8_t		sound_banks;		/* number of sound banks */

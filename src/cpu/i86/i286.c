@@ -174,7 +174,7 @@ static void i286_urinit(void)
 	}
 }
 
-void i286_set_address_mask(offs_t mask)
+void i286_set_address_mask(uint32_t mask)
 {
 	I.amask=mask;
 }

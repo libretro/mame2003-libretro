@@ -657,7 +657,7 @@ WRITE16_HANDLER( toaplan1_tileram_offs_w )
 
 READ16_HANDLER( toaplan1_tileram16_r )
 {
-	offs_t vram_offset;
+	uint32_t vram_offset;
 	uint16_t video_data = 0;
 
 	switch (pf_voffs & 0xf000)	/* Locate Layer (PlayField) */
@@ -701,7 +701,7 @@ READ16_HANDLER( rallybik_tileram16_r )
 WRITE16_HANDLER( toaplan1_tileram16_w )
 {
 	uint16_t oldword = 0;
-	offs_t vram_offset;
+	uint32_t vram_offset;
 
 	switch (pf_voffs & 0xf000)	/* Locate Layer (PlayField) */
 	{
@@ -811,7 +811,7 @@ void toaplan1_log_vram(void)
 {
 	if ( keyboard_pressed(KEYCODE_M) )
 	{
-		offs_t sprite_voffs;
+		uint32_t sprite_voffs;
 		while (keyboard_pressed(KEYCODE_M)) ;
 		if (toaplan1_spritesizeram16)			/* FCU controller */
 		{
@@ -861,7 +861,7 @@ void toaplan1_log_vram(void)
 	{
 		uint16_t *size  = (uint16_t *)(toaplan1_spritesizeram16);
 		uint16_t *bsize = (uint16_t *)(toaplan1_buffered_spritesizeram16);
-		offs_t offs;
+		uint32_t offs;
 		while (keyboard_pressed(KEYCODE_SLASH)) ;
 		if (toaplan1_spritesizeram16)			/* FCU controller */
 		{
@@ -880,7 +880,7 @@ void toaplan1_log_vram(void)
 
 	if ( keyboard_pressed(KEYCODE_N) )
 	{
-		offs_t tile_voffs;
+		uint32_t tile_voffs;
 		int tchar[5], tattr[5];
 		while (keyboard_pressed(KEYCODE_N)) ;	/* BCU controller */
 		logerror("Scrolls    PF1-X  PF1-Y     PF2-X  PF2-Y     PF3-X  PF3-Y     PF4-X  PF4-Y\n");
@@ -1005,7 +1005,7 @@ void toaplan1_log_vram(void)
 static void mark_toaplan1_sprite_priority(void)
 {
 	int priority;
-	offs_t offs;
+	uint32_t offs;
 
 	for (priority = 0; priority < 16; priority++)
 		sprite_priority[priority] = 0;		/* Clear priorities used list */
@@ -1023,7 +1023,7 @@ static void mark_toaplan1_sprite_priority(void)
 static void mark_rallybik_sprite_priority(void)
 {
 	int priority;
-	offs_t offs;
+	uint32_t offs;
 
 	for (priority = 0; priority < 16; priority++)
 		sprite_priority[priority] = 0;		/* Clear priorities used list */
@@ -1049,7 +1049,7 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 	uint16_t *source = (uint16_t *)(buffered_spriteram16);
 	uint16_t *size   = (uint16_t *)(toaplan1_buffered_spritesizeram16);
 
-	offs_t offs;
+	uint32_t offs;
 
 	for (offs = 0; offs < (spriteram_size/2); offs += 4)
 	{

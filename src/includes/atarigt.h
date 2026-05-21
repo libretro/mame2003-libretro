@@ -13,8 +13,8 @@ extern uint8_t atarigt_is_primrage;
 
 extern uint16_t *atarigt_colorram;
 
-void atarigt_colorram_w(offs_t address, uint16_t data, uint16_t mem_mask);
-uint16_t atarigt_colorram_r(offs_t address);
+void atarigt_colorram_w(uint32_t address, uint16_t data, uint16_t mem_mask);
+uint16_t atarigt_colorram_r(uint32_t address);
 
 VIDEO_START( atarigt );
 VIDEO_UPDATE( atarigt );

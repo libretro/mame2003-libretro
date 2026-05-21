@@ -7,7 +7,7 @@
 
 
 static int sram_locked;
-static offs_t sram_protection_hack;
+static uint32_t sram_protection_hack;
 extern void *record;
 extern void *playback;
 

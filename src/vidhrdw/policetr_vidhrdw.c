@@ -63,7 +63,7 @@ VIDEO_START( policetr )
  *
  *************************************/
 
-static void render_display_list(offs_t offset)
+static void render_display_list(uint32_t offset)
 {
 	/* mask against the R3000 address space */
 	offset &= 0x1fffffff;

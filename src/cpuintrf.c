@@ -966,9 +966,9 @@ void activecpu_set_reg(int regnum, unsigned val)
  	Get/set PC
 --------------------------*/
 
-offs_t activecpu_get_pc_byte(void)
+uint32_t activecpu_get_pc_byte(void)
 {
-	offs_t base, pc;
+	uint32_t base, pc;
 	int shift;
 
 	VERIFY_ACTIVECPU(0, activecpu_get_pc_byte);
@@ -1151,7 +1151,7 @@ void cpunum_reset(int cpunum, void *param, int (*irqack)(int))
  	Read a byte
 --------------------------*/
 
-uint8_t cpunum_read_byte(int cpunum, offs_t address)
+uint8_t cpunum_read_byte(int cpunum, uint32_t address)
 {
 	int result;
 	VERIFY_CPUNUM(0, cpunum_read_byte);
@@ -1166,7 +1166,7 @@ uint8_t cpunum_read_byte(int cpunum, offs_t address)
  	Write a byte
 --------------------------*/
 
-void cpunum_write_byte(int cpunum, offs_t address, uint8_t data)
+void cpunum_write_byte(int cpunum, uint32_t address, uint8_t data)
 {
 	VERIFY_CPUNUM_VOID(cpunum_write_byte);
 	cpuintrf_push_context(cpunum);
@@ -1238,9 +1238,9 @@ void cpunum_set_reg(int cpunum, int regnum, unsigned val)
  	Get/set PC
 --------------------------*/
 
-offs_t cpunum_get_pc_byte(int cpunum)
+uint32_t cpunum_get_pc_byte(int cpunum)
 {
-	offs_t base, pc;
+	uint32_t base, pc;
 	int shift;
 
 	VERIFY_CPUNUM(0, cpunum_get_pc_byte);

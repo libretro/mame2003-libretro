@@ -435,7 +435,7 @@ static WRITE_HANDLER( polaris_videoram_w )
 			else
 			{
 				int bit;
-				offs_t offs;
+				uint32_t offs;
 
 				col = back_color;
 
@@ -508,7 +508,7 @@ static WRITE_HANDLER( phantom2_videoram_w )
 	int i,col;
 	uint8_t x,y,cloud_x;
 	uint8_t *cloud_region;
-	offs_t cloud_offs;
+	uint32_t cloud_offs;
 
 
 	videoram[offset] = data;

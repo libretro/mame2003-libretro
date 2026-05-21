@@ -287,7 +287,7 @@ static INLINE int blt_read(const uint8_t *ROM, const int offs)
 	return ROM[offs] ^ 0xff;
 }
 
-static INLINE void blt_write(const int tmap, const offs_t offs, const uint16_t data, const uint16_t mask)
+static INLINE void blt_write(const int tmap, const uint32_t offs, const uint16_t data, const uint16_t mask)
 {
 	switch( tmap )
 	{

@@ -52,7 +52,7 @@ struct tms34061_display
 	uint8_t *			latchram;					/* base of latch RAM */
 	uint8_t *			dirty;						/* pointer to array of dirty rows */
 	uint16_t *		regs;						/* pointer to array of registers */
-	offs_t			dispstart;					/* display start */
+	uint32_t			dispstart;					/* display start */
 };
 
 

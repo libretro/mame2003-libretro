@@ -3,22 +3,22 @@
 /****************************************************************/
 
 struct cpu_info {
-	uint8_t  (*mr8) (offs_t address);
-	void   (*mw8) (offs_t address, uint8_t  data);
-	uint16_t (*mr16)(offs_t address);
-	void   (*mw16)(offs_t address, uint16_t data);
-	uint32_t (*mr32)(offs_t address);
-	void   (*mw32)(offs_t address, uint32_t data);
-	uint8_t  (*pr8) (offs_t address);
-	void   (*pw8) (offs_t address, uint8_t  data);
-	uint16_t (*pr16)(offs_t address);
-	void   (*pw16)(offs_t address, uint16_t data);
-	uint32_t (*pr32)(offs_t address);
-	void   (*pw32)(offs_t address, uint32_t data);
-	uint8_t  (*or8) (offs_t address);
-	uint16_t (*or16)(offs_t address);
-	uint32_t (*or32)(offs_t address);
-	void   (*chpc)(offs_t newpc);
+	uint8_t  (*mr8) (uint32_t address);
+	void   (*mw8) (uint32_t address, uint8_t  data);
+	uint16_t (*mr16)(uint32_t address);
+	void   (*mw16)(uint32_t address, uint16_t data);
+	uint32_t (*mr32)(uint32_t address);
+	void   (*mw32)(uint32_t address, uint32_t data);
+	uint8_t  (*pr8) (uint32_t address);
+	void   (*pw8) (uint32_t address, uint8_t  data);
+	uint16_t (*pr16)(uint32_t address);
+	void   (*pw16)(uint32_t address, uint16_t data);
+	uint32_t (*pr32)(uint32_t address);
+	void   (*pw32)(uint32_t address, uint32_t data);
+	uint8_t  (*or8) (uint32_t address);
+	uint16_t (*or16)(uint32_t address);
+	uint32_t (*or32)(uint32_t address);
+	void   (*chpc)(uint32_t newpc);
 	uint32_t start_pc;
 };
 
@@ -31,7 +31,7 @@ struct cpu_info {
 #define MemRead8_16		cpu_readmem24lew
 #define MemWrite8_16	cpu_writemem24lew
 
-static uint16_t MemRead16_16(offs_t address)
+static uint16_t MemRead16_16(uint32_t address)
 {
 	if (!(address & 1))
 		return cpu_readmem24lew_word(address);
@@ -42,7 +42,7 @@ static uint16_t MemRead16_16(offs_t address)
 	}
 }
 
-static void MemWrite16_16(offs_t address, uint16_t data)
+static void MemWrite16_16(uint32_t address, uint16_t data)
 {
 	if (!(address & 1))
 		cpu_writemem24lew_word(address, data);
@@ -53,7 +53,7 @@ static void MemWrite16_16(offs_t address, uint16_t data)
 	}
 }
 
-static uint32_t MemRead32_16(offs_t address)
+static uint32_t MemRead32_16(uint32_t address)
 {
 	if (!(address & 1))
 	{
@@ -68,7 +68,7 @@ static uint32_t MemRead32_16(offs_t address)
 	}
 }
 
-static void MemWrite32_16(offs_t address, uint32_t data)
+static void MemWrite32_16(uint32_t address, uint32_t data)
 {
 	if (!(address & 1))
 	{
@@ -91,7 +91,7 @@ static void MemWrite32_16(offs_t address, uint32_t data)
 #define PortRead8_16		cpu_readport24lew
 #define PortWrite8_16		cpu_writeport24lew
 
-static uint16_t PortRead16_16(offs_t address)
+static uint16_t PortRead16_16(uint32_t address)
 {
 	if (!(address & 1))
 		return cpu_readport24lew_word(address);
@@ -102,7 +102,7 @@ static uint16_t PortRead16_16(offs_t address)
 	}
 }
 
-static void PortWrite16_16(offs_t address, uint16_t data)
+static void PortWrite16_16(uint32_t address, uint16_t data)
 {
 	if (!(address & 1))
 		cpu_writeport24lew_word(address, data);
@@ -113,7 +113,7 @@ static void PortWrite16_16(offs_t address, uint16_t data)
 	}
 }
 
-static uint32_t PortRead32_16(offs_t address)
+static uint32_t PortRead32_16(uint32_t address)
 {
 	if (!(address & 1))
 	{
@@ -128,7 +128,7 @@ static uint32_t PortRead32_16(offs_t address)
 	}
 }
 
-static void PortWrite32_16(offs_t address, uint32_t data)
+static void PortWrite32_16(uint32_t address, uint32_t data)
 {
 	if (!(address & 1))
 	{
@@ -149,23 +149,23 @@ static void PortWrite32_16(offs_t address, uint32_t data)
 /* Opcode accesses for 16-bit data bus, 24-bit address bus (V60) */
 /*****************************************************************/
 
-static uint8_t OpRead8_16(offs_t address)
+static uint8_t OpRead8_16(uint32_t address)
 {
 	return OP_ROM[BYTE_XOR_LE(address)];
 }
 
-static uint16_t OpRead16_16(offs_t address)
+static uint16_t OpRead16_16(uint32_t address)
 {
 	return OP_ROM[BYTE_XOR_LE(address)] | (OP_ROM[BYTE_XOR_LE(address+1)] << 8);
 }
 
-static uint32_t OpRead32_16(offs_t address)
+static uint32_t OpRead32_16(uint32_t address)
 {
 	return OP_ROM[BYTE_XOR_LE(address)] | (OP_ROM[BYTE_XOR_LE(address+1)] << 8) |
 			(OP_ROM[BYTE_XOR_LE(address+2)] << 16) | (OP_ROM[BYTE_XOR_LE(address+3)] << 24);
 }
 
-static void ChangePC_16(offs_t pc)
+static void ChangePC_16(uint32_t pc)
 {
 	change_pc24lew(pc);
 }
@@ -179,7 +179,7 @@ static void ChangePC_16(offs_t pc)
 #define MemRead8_32		cpu_readmem32ledw
 #define MemWrite8_32	cpu_writemem32ledw
 
-static uint16_t MemRead16_32(offs_t address)
+static uint16_t MemRead16_32(uint32_t address)
 {
 	if (!(address & 1))
 		return cpu_readmem32ledw_word(address);
@@ -190,7 +190,7 @@ static uint16_t MemRead16_32(offs_t address)
 	}
 }
 
-static void MemWrite16_32(offs_t address, uint16_t data)
+static void MemWrite16_32(uint32_t address, uint16_t data)
 {
 	if (!(address & 1))
 		cpu_writemem32ledw_word(address, data);
@@ -201,7 +201,7 @@ static void MemWrite16_32(offs_t address, uint16_t data)
 	}
 }
 
-static uint32_t MemRead32_32(offs_t address)
+static uint32_t MemRead32_32(uint32_t address)
 {
 	if (!(address & 3))
 		return cpu_readmem32ledw_dword(address);
@@ -218,7 +218,7 @@ static uint32_t MemRead32_32(offs_t address)
 	}
 }
 
-static void MemWrite32_32(offs_t address, uint32_t data)
+static void MemWrite32_32(uint32_t address, uint32_t data)
 {
 	if (!(address & 3))
 		cpu_writemem32ledw_dword(address, data);
@@ -244,7 +244,7 @@ static void MemWrite32_32(offs_t address, uint32_t data)
 #define PortRead8_32		cpu_readport32ledw
 #define PortWrite8_32		cpu_writeport32ledw
 
-static uint16_t PortRead16_32(offs_t address)
+static uint16_t PortRead16_32(uint32_t address)
 {
 	if (!(address & 1))
 	{
@@ -257,7 +257,7 @@ static uint16_t PortRead16_32(offs_t address)
 	}
 }
 
-static void PortWrite16_32(offs_t address, uint16_t data)
+static void PortWrite16_32(uint32_t address, uint16_t data)
 {
 	if (!(address & 1))
 	{
@@ -270,7 +270,7 @@ static void PortWrite16_32(offs_t address, uint16_t data)
 	}
 }
 
-static uint32_t PortRead32_32(offs_t address)
+static uint32_t PortRead32_32(uint32_t address)
 {
 	if (!(address & 3))
 		return cpu_readport32ledw_dword(address);
@@ -287,7 +287,7 @@ static uint32_t PortRead32_32(offs_t address)
 	}
 }
 
-static void PortWrite32_32(offs_t address, uint32_t data)
+static void PortWrite32_32(uint32_t address, uint32_t data)
 {
 	if (!(address & 3))
 		cpu_writeport32ledw_dword(address, data);
@@ -310,23 +310,23 @@ static void PortWrite32_32(offs_t address, uint32_t data)
 /* Opcode accesses for 32-bit data bus, 32-bit address bus (V60) */
 /*****************************************************************/
 
-static uint8_t OpRead8_32(offs_t address)
+static uint8_t OpRead8_32(uint32_t address)
 {
 	return OP_ROM[BYTE4_XOR_LE(address)];
 }
 
-static uint16_t OpRead16_32(offs_t address)
+static uint16_t OpRead16_32(uint32_t address)
 {
 	return OP_ROM[BYTE4_XOR_LE(address)] | (OP_ROM[BYTE4_XOR_LE(address+1)] << 8);
 }
 
-static uint32_t OpRead32_32(offs_t address)
+static uint32_t OpRead32_32(uint32_t address)
 {
 	return OP_ROM[BYTE4_XOR_LE(address)] | (OP_ROM[BYTE4_XOR_LE(address+1)] << 8) |
 			(OP_ROM[BYTE4_XOR_LE(address+2)] << 16) | (OP_ROM[BYTE4_XOR_LE(address+3)] << 24);
 }
 
-static void ChangePC_32(offs_t pc)
+static void ChangePC_32(uint32_t pc)
 {
 	change_pc32ledw(pc);
 }

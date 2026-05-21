@@ -122,8 +122,8 @@ extern int z180_icount; 			/* T-state count */
 #define Z180_INT_ASCI1	9			/* Internal ASCI channel 1 */
 
 /* MMU mapped memory lookup */
-extern uint8_t cpu_readmemz180(offs_t offset);
-extern void cpu_writememz180(offs_t offset, uint8_t data);
+extern uint8_t cpu_readmemz180(uint32_t offset);
+extern void cpu_writememz180(uint32_t offset, uint8_t data);
 extern void cpu_setOPbasez180(int pc);
 
 extern void z180_init(void);

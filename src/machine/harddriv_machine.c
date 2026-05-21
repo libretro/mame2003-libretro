@@ -59,14 +59,14 @@ uint16_t *hdgsp_protection;
 uint16_t *stmsp_sync[3];
 
 uint16_t *hdgsp_speedup_addr[2];
-offs_t hdgsp_speedup_pc;
+uint32_t hdgsp_speedup_pc;
 
 uint16_t *hdmsp_speedup_addr;
-offs_t hdmsp_speedup_pc;
+uint32_t hdmsp_speedup_pc;
 
 uint16_t *hdds3_speedup_addr;
-offs_t hdds3_speedup_pc;
-offs_t hdds3_transfer_pc;
+uint32_t hdds3_speedup_pc;
+uint32_t hdds3_transfer_pc;
 
 uint32_t *rddsp32_sync[2];
 
@@ -76,7 +76,7 @@ uint32_t adsp_speedup_count[4];
 
 
 /* from slapstic.c */
-int slapstic_tweak(offs_t offset);
+int slapstic_tweak(uint32_t offset);
 void slapstic_reset(void);
 
 
@@ -138,7 +138,7 @@ static uint8_t hdc68k_wheel_edge;
 static uint8_t hdc68k_shifter_state;
 
 static uint8_t st68k_sloop_bank = 0;
-static offs_t st68k_last_alt_sloop_offset;
+static uint32_t st68k_last_alt_sloop_offset;
 
 #define MAX_MSP_SYNC	16
 static uint32_t *dataptr[MAX_MSP_SYNC];
@@ -777,14 +777,14 @@ WRITE16_HANDLER( hdgsp_protection_w )
 static void stmsp_sync_update(int param)
 {
 	int which = param >> 28;
-	offs_t offset = (param >> 16) & 0xfff;
+	uint32_t offset = (param >> 16) & 0xfff;
 	uint16_t data = param;
 	stmsp_sync[which][offset] = data;
 	cpu_triggerint(hdcpu_msp);
 }
 
 
-static INLINE void stmsp_sync_w(int which, offs_t offset, uint16_t data, uint16_t mem_mask)
+static INLINE void stmsp_sync_w(int which, uint32_t offset, uint16_t data, uint16_t mem_mask)
 {
 	uint16_t newdata = stmsp_sync[which][offset];
 	COMBINE_DATA(&newdata);
@@ -1220,7 +1220,7 @@ READ16_HANDLER( hd68k_ds3_girq_state_r )
 
 READ16_HANDLER( hd68k_ds3_gdata_r )
 {
-	offs_t pc = activecpu_get_pc();
+	uint32_t pc = activecpu_get_pc();
 
 	ds3_gflag = 0;
 	update_ds3_irq();
@@ -1662,7 +1662,7 @@ READ16_HANDLER( rd68k_slapstic_r )
  *
  *************************************/
 
-static int st68k_sloop_tweak(offs_t offset)
+static int st68k_sloop_tweak(uint32_t offset)
 {
 	static int last_offset;
 
@@ -1727,7 +1727,7 @@ READ16_HANDLER( st68k_sloop_alt_r )
 }
 
 
-static int st68k_protosloop_tweak(offs_t offset)
+static int st68k_protosloop_tweak(uint32_t offset)
 {
 	static int last_offset;
 

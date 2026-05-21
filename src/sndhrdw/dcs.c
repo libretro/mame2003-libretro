@@ -437,7 +437,7 @@ void dcs_init(void)
 }
 
 
-void dcs2_init(offs_t polling_offset)
+void dcs2_init(uint32_t polling_offset)
 {
 	uint8_t *romsrc;
 	int page, i;

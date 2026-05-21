@@ -6,7 +6,7 @@
 
 #include "i86.h"
 
-void i286_set_address_mask(offs_t mask);
+void i286_set_address_mask(uint32_t mask);
 
 #undef GetMemB
 #undef GetMemW

@@ -436,7 +436,7 @@ static int _4in1_bank;
 WRITE_HANDLER( _4in1_bank_w )
 {
 	/* games are banked at 0x0000 - 0x3fff */
-	offs_t bankaddress;
+	uint32_t bankaddress;
 	uint8_t *RAM=memory_region(REGION_CPU1);
 
 	_4in1_bank = data & 0x03;
@@ -463,7 +463,7 @@ static int gmgalax_selected_game;
 static void gmgalax_select_game(int game)
 {
 	/* games are banked at 0x0000 - 0x3fff */
-	offs_t bankaddress;
+	uint32_t bankaddress;
 	uint8_t *RAM=memory_region(REGION_CPU1);
 
 	gmgalax_selected_game = game;
@@ -700,7 +700,7 @@ DRIVER_INIT( kingball )
 }
 
 
-static uint8_t decode_mooncrst(uint8_t data,offs_t addr)
+static uint8_t decode_mooncrst(uint8_t data,uint32_t addr)
 {
 	uint8_t res;
 
@@ -719,7 +719,7 @@ DRIVER_INIT( mooncrsu )
 
 DRIVER_INIT( mooncrst )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *rom = memory_region(REGION_CPU1);
 
 
@@ -736,9 +736,9 @@ DRIVER_INIT( mooncrgx )
 
 DRIVER_INIT( moonqsr )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *rom = memory_region(REGION_CPU1);
-	offs_t diff = memory_region_length(REGION_CPU1) / 2;
+	uint32_t diff = memory_region_length(REGION_CPU1) / 2;
 
 
 	memory_set_opcode_base(0,rom+diff);
@@ -796,7 +796,7 @@ Pin layout is such that links can replace the PAL if encryption is not used.
 		{ 1,4,1,4 }
 	};
 
-	offs_t i;
+	uint32_t i;
 	uint8_t *rom = memory_region(REGION_CPU1);
 
 
@@ -830,7 +830,7 @@ DRIVER_INIT( azurian )
 
 DRIVER_INIT( 4in1 )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/* Decrypt Program Roms */
@@ -953,7 +953,7 @@ DRIVER_INIT( mariner )
 
 DRIVER_INIT( frogger )
 {
-	offs_t A;
+	uint32_t A;
 	uint8_t *ROM;
 
 
@@ -973,7 +973,7 @@ DRIVER_INIT( frogger )
 
 DRIVER_INIT( froggers )
 {
-	offs_t A;
+	uint32_t A;
 	uint8_t *ROM;
 
 
@@ -987,7 +987,7 @@ DRIVER_INIT( froggers )
 
 DRIVER_INIT( devilfsh )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM;
 
 
@@ -1004,12 +1004,12 @@ DRIVER_INIT( devilfsh )
 	RAM = memory_region(REGION_CPU1);
 	for (i = 0; i < 0x10000; i += 16)
 	{
-		offs_t j;
+		uint32_t j;
 		uint8_t swapbuffer[16];
 
 		for (j = 0; j < 16; j++)
 		{
-			offs_t new = BITSWAP8(j,7,6,5,4,2,0,3,1);
+			uint32_t new = BITSWAP8(j,7,6,5,4,2,0,3,1);
 
 			swapbuffer[j] = RAM[i + new];
 		}
@@ -1129,7 +1129,7 @@ static int bit(int i,int n)
 
 DRIVER_INIT( anteater )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM;
 	uint8_t *scratch;
 
@@ -1168,7 +1168,7 @@ DRIVER_INIT( anteater )
 
 DRIVER_INIT( rescue )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM;
 	uint8_t *scratch;
 
@@ -1207,7 +1207,7 @@ DRIVER_INIT( rescue )
 
 DRIVER_INIT( minefld )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM;
 	uint8_t *scratch;
 
@@ -1246,7 +1246,7 @@ DRIVER_INIT( minefld )
 
 DRIVER_INIT( losttomb )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM;
 	uint8_t *scratch;
 
@@ -1285,7 +1285,7 @@ DRIVER_INIT( losttomb )
 
 DRIVER_INIT( superbon )
 {
-	offs_t i;
+	uint32_t i;
 	uint8_t *RAM;
 
 
@@ -1319,7 +1319,7 @@ DRIVER_INIT( superbon )
 
 DRIVER_INIT( hustler )
 {
-	offs_t A;
+	uint32_t A;
 
 
 	init_scramble_ppi();
@@ -1361,7 +1361,7 @@ DRIVER_INIT( hustler )
 
 DRIVER_INIT( billiard )
 {
-	offs_t A;
+	uint32_t A;
 
 
 	init_scramble_ppi();

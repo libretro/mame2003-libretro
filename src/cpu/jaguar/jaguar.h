@@ -118,8 +118,8 @@ extern void jaguargpu_set_irq_callback(int (*callback)(int irqline));
 extern const char *jaguargpu_info(void *context, int regnum);
 extern unsigned jaguargpu_dasm(char *buffer, unsigned pc);
 
-extern void jaguargpu_ctrl_w(int cpunum, offs_t offset, uint32_t data, uint32_t mem_mask);
-extern uint32_t jaguargpu_ctrl_r(int cpunum, offs_t offset);
+extern void jaguargpu_ctrl_w(int cpunum, uint32_t offset, uint32_t data, uint32_t mem_mask);
+extern uint32_t jaguargpu_ctrl_r(int cpunum, uint32_t offset);
 
 
 /*###################################################################################################
@@ -139,8 +139,8 @@ extern void jaguardsp_set_irq_callback(int (*callback)(int irqline));
 extern const char *jaguardsp_info(void *context, int regnum);
 extern unsigned jaguardsp_dasm(char *buffer, unsigned pc);
 
-extern void jaguardsp_ctrl_w(int cpunum, offs_t offset, uint32_t data, uint32_t mem_mask);
-extern uint32_t jaguardsp_ctrl_r(int cpunum, offs_t offset);
+extern void jaguardsp_ctrl_w(int cpunum, uint32_t offset, uint32_t data, uint32_t mem_mask);
+extern uint32_t jaguardsp_ctrl_r(int cpunum, uint32_t offset);
 
 
 #endif /* _JAGUAR_H */

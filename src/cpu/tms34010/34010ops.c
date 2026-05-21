@@ -2007,9 +2007,9 @@ static void addxyi_b(void)
 
 static void blmove(void)
 {
-	offs_t src = BREG(BINDEX(0));
-	offs_t dst = BREG(BINDEX(2));
-	offs_t bits = BREG(BINDEX(7));
+	uint32_t src = BREG(BINDEX(0));
+	uint32_t dst = BREG(BINDEX(2));
+	uint32_t bits = BREG(BINDEX(7));
 
 	if (!state.is_34020) { unimpl(); return; }
 

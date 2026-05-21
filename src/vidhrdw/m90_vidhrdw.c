@@ -145,7 +145,7 @@ WRITE_HANDLER( m90_video_control_w )
 }
 
 
-static void markdirty(struct tilemap *tilemap,int page,offs_t offset)
+static void markdirty(struct tilemap *tilemap,int page,uint32_t offset)
 {
 	offset -= page * 0x4000;
 

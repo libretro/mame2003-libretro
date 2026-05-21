@@ -29,14 +29,14 @@ extern uint16_t *hdgsp_protection;
 extern uint16_t *stmsp_sync[3];
 
 extern uint16_t *hdgsp_speedup_addr[2];
-extern offs_t hdgsp_speedup_pc;
+extern uint32_t hdgsp_speedup_pc;
 
 extern uint16_t *hdmsp_speedup_addr;
-extern offs_t hdmsp_speedup_pc;
+extern uint32_t hdmsp_speedup_pc;
 
 extern uint16_t *hdds3_speedup_addr;
-extern offs_t hdds3_speedup_pc;
-extern offs_t hdds3_transfer_pc;
+extern uint32_t hdds3_speedup_pc;
+extern uint32_t hdds3_transfer_pc;
 
 extern uint32_t *rddsp32_sync[2];
 

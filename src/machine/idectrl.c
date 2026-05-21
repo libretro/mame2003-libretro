@@ -128,8 +128,8 @@ struct ide_state
 	uint8_t	dma_cpu;
 	uint8_t	dma_address_xor;
 	uint8_t	dma_last_buffer;
-	offs_t	dma_address;
-	offs_t	dma_descriptor;
+	uint32_t	dma_address;
+	uint32_t	dma_descriptor;
 	uint32_t	dma_bytes_left;
 	
 	uint8_t	bus_master_command;
@@ -189,8 +189,8 @@ static void read_sector_done(int which);
 static void read_first_sector(struct ide_state *ide);
 static void read_next_sector(struct ide_state *ide);
 
-static uint32_t ide_controller_read(struct ide_state *ide, offs_t offset, int size);
-static void ide_controller_write(struct ide_state *ide, offs_t offset, int size, uint32_t data);
+static uint32_t ide_controller_read(struct ide_state *ide, uint32_t offset, int size);
+static void ide_controller_write(struct ide_state *ide, uint32_t offset, int size, uint32_t data);
 
 
 
@@ -417,7 +417,7 @@ static void reset_callback(int param)
  *
  *************************************/
 
-static INLINE int convert_to_offset_and_size32(offs_t *offset, uint32_t mem_mask)
+static INLINE int convert_to_offset_and_size32(uint32_t *offset, uint32_t mem_mask)
 {
 	int size = 4;
 
@@ -446,7 +446,7 @@ static INLINE int convert_to_offset_and_size32(offs_t *offset, uint32_t mem_mask
 	return size;
 }
 
-static INLINE int convert_to_offset_and_size16(offs_t *offset, uint32_t mem_mask)
+static INLINE int convert_to_offset_and_size16(uint32_t *offset, uint32_t mem_mask)
 {
 	int size = 2;
 
@@ -1256,7 +1256,7 @@ void handle_command(struct ide_state *ide, uint8_t command)
  *
  *************************************/
 
-static uint32_t ide_controller_read(struct ide_state *ide, offs_t offset, int size)
+static uint32_t ide_controller_read(struct ide_state *ide, uint32_t offset, int size)
 {
 	uint32_t result = 0;
 
@@ -1364,7 +1364,7 @@ static uint32_t ide_controller_read(struct ide_state *ide, offs_t offset, int si
  *
  *************************************/
 
-static void ide_controller_write(struct ide_state *ide, offs_t offset, int size, uint32_t data)
+static void ide_controller_write(struct ide_state *ide, uint32_t offset, int size, uint32_t data)
 {
 	/* logit */
 	if (offset != IDE_ADDR_DATA)
@@ -1511,7 +1511,7 @@ static void ide_controller_write(struct ide_state *ide, offs_t offset, int size,
  *
  *************************************/
 
-static uint32_t ide_bus_master_read(struct ide_state *ide, offs_t offset, int size)
+static uint32_t ide_bus_master_read(struct ide_state *ide, uint32_t offset, int size)
 {
 	LOG(("%08X:ide_bus_master_read(%d, %d)\n", activecpu_get_previouspc(), offset, size));
 
@@ -1538,7 +1538,7 @@ static uint32_t ide_bus_master_read(struct ide_state *ide, offs_t offset, int si
  *
  *************************************/
 
-static void ide_bus_master_write(struct ide_state *ide, offs_t offset, int size, uint32_t data)
+static void ide_bus_master_write(struct ide_state *ide, uint32_t offset, int size, uint32_t data)
 {
 	LOG(("%08X:ide_bus_master_write(%d, %d, %08X)\n", activecpu_get_previouspc(), offset, size, data));
 

@@ -185,7 +185,7 @@ READ_HANDLER( mhavoc_gamma_r )
 
 WRITE_HANDLER( mhavoc_ram_banksel_w )
 {
-	static const offs_t bank[2] = { 0x20200, 0x20800 };
+	static const uint32_t bank[2] = { 0x20200, 0x20800 };
 
 	data &= 0x01;
 	cpu_setbank(1, &ram_base[bank[data]]);
@@ -195,7 +195,7 @@ WRITE_HANDLER( mhavoc_ram_banksel_w )
 
 WRITE_HANDLER( mhavoc_rom_banksel_w )
 {
-	static const offs_t bank[4] = { 0x10000, 0x12000, 0x14000, 0x16000 };
+	static const uint32_t bank[4] = { 0x10000, 0x12000, 0x14000, 0x16000 };
 
 	data &= 0x03;
 	cpu_setbank(2, &ram_base[bank[data]]);

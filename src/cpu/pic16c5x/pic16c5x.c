@@ -248,7 +248,7 @@ static INLINE void PUSH_STACK(uint16_t data)
 }
 
 
-static INLINE uint8_t GET_REGFILE(offs_t addr)	/* Read from internal memory */
+static INLINE uint8_t GET_REGFILE(uint32_t addr)	/* Read from internal memory */
 {
 	uint8_t data;
 
@@ -290,7 +290,7 @@ static INLINE uint8_t GET_REGFILE(offs_t addr)	/* Read from internal memory */
 	return data;
 }
 
-static INLINE void STORE_REGFILE(offs_t addr, uint8_t data)	/* Write to internal memory */
+static INLINE void STORE_REGFILE(uint32_t addr, uint8_t data)	/* Write to internal memory */
 {
 	if ((picmodel == 0x16C57) || (picmodel == 0x16C58))
 	{
@@ -327,7 +327,7 @@ static INLINE void STORE_REGFILE(offs_t addr, uint8_t data)	/* Write to internal
 }
 
 
-static INLINE void STORE_RESULT(offs_t addr, uint8_t data)
+static INLINE void STORE_RESULT(uint32_t addr, uint8_t data)
 {
 	if (R.opcode.b.l & 0x20)
 	{

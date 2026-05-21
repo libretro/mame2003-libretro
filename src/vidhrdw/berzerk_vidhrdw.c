@@ -59,7 +59,7 @@ static INLINE void copy_byte(uint8_t x, uint8_t y, uint8_t data, uint8_t col)
 
 WRITE_HANDLER( berzerk_videoram_w )
 {
-	offs_t coloroffset;
+	uint32_t coloroffset;
 	uint8_t x, y;
 
 

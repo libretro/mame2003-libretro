@@ -306,7 +306,7 @@ static READ16_HANDLER( ddenlovr_gfxrom_r )
 	return rongrong_gfxrom_r(offset);
 }
 
-static void blitter_w(int blitter, offs_t offset,uint8_t data,int irq_vector)
+static void blitter_w(int blitter, uint32_t offset,uint8_t data,int irq_vector)
 {
 	static int dynax_blit_reg[2];
 

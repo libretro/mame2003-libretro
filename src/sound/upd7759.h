@@ -23,7 +23,7 @@ struct UPD7759_interface
 int UPD7759_sh_start (const struct MachineSound *msound);
 void UPD7759_sh_stop (void);
 
-void UPD7759_set_bank_base(int which, offs_t base);
+void UPD7759_set_bank_base(int which, uint32_t base);
 
 void UPD7759_reset_w (int num, uint8_t data);
 

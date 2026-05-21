@@ -171,14 +171,14 @@
 /* memory access function table */
 typedef struct
 {
-	uint8_t		(*readbyte)(offs_t);
-	uint16_t	(*readword)(offs_t);
-	uint32_t	(*readlong)(offs_t);
-	uint64_t		(*readdouble)(offs_t);
-	void		(*writebyte)(offs_t, uint8_t);
-	void		(*writeword)(offs_t, uint16_t);
-	void		(*writelong)(offs_t, uint32_t);
-	void		(*writedouble)(offs_t, uint64_t);
+	uint8_t		(*readbyte)(uint32_t);
+	uint16_t	(*readword)(uint32_t);
+	uint32_t	(*readlong)(uint32_t);
+	uint64_t		(*readdouble)(uint32_t);
+	void		(*writebyte)(uint32_t, uint8_t);
+	void		(*writeword)(uint32_t, uint16_t);
+	void		(*writelong)(uint32_t, uint32_t);
+	void		(*writedouble)(uint32_t, uint64_t);
 } memory_handlers;
 
 
@@ -253,11 +253,11 @@ static void ldr_le(uint32_t op);
 static void sdl_le(uint32_t op);
 static void sdr_le(uint32_t op);
 
-static uint64_t readmem32bedw_double(offs_t offset);
-static uint64_t readmem32ledw_double(offs_t offset);
+static uint64_t readmem32bedw_double(uint32_t offset);
+static uint64_t readmem32ledw_double(uint32_t offset);
 
-static void writemem32bedw_double(offs_t offset, uint64_t data);
-static void writemem32ledw_double(offs_t offset, uint64_t data);
+static void writemem32bedw_double(uint32_t offset, uint64_t data);
+static void writemem32ledw_double(uint32_t offset, uint64_t data);
 
 static uint8_t fcc_shift[8] = { 23, 25, 26, 27, 28, 29, 30, 31 };
 
@@ -1995,25 +1995,25 @@ unsigned mips3_dasm(char *buffer, unsigned pc)
 **	DOUBLEWORD READS/WRITES
 **#################################################################################################*/
 
-static uint64_t readmem32bedw_double(offs_t offset)
+static uint64_t readmem32bedw_double(uint32_t offset)
 {
 	uint64_t result = (uint64_t)cpu_readmem32bedw_dword(offset) << 32;
 	return result | cpu_readmem32bedw_dword(offset + 4);
 }
 
-static uint64_t readmem32ledw_double(offs_t offset)
+static uint64_t readmem32ledw_double(uint32_t offset)
 {
 	uint64_t result = cpu_readmem32ledw_dword(offset);
 	return result | ((uint64_t)cpu_readmem32ledw_dword(offset + 4) << 32);
 }
 
-static void writemem32bedw_double(offs_t offset, uint64_t data)
+static void writemem32bedw_double(uint32_t offset, uint64_t data)
 {
 	cpu_writemem32bedw_dword(offset, data >> 32);
 	cpu_writemem32bedw_dword(offset + 4, data);
 }
 
-static void writemem32ledw_double(offs_t offset, uint64_t data)
+static void writemem32ledw_double(uint32_t offset, uint64_t data)
 {
 	cpu_writemem32ledw_dword(offset, data);
 	cpu_writemem32ledw_dword(offset + 4, data >> 32);
@@ -2027,7 +2027,7 @@ static void writemem32ledw_double(offs_t offset, uint64_t data)
 
 static void lwl_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint32_t temp = RLONG(offs & ~3);
 	if (RTREG)
 	{
@@ -2042,7 +2042,7 @@ static void lwl_be(uint32_t op)
 
 static void lwr_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint32_t temp = RLONG(offs & ~3);
 	if (RTREG)
 	{
@@ -2057,7 +2057,7 @@ static void lwr_be(uint32_t op)
 
 static void ldl_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint64_t temp = RDOUBLE(offs & ~7);
 	if (RTREG)
 	{
@@ -2073,7 +2073,7 @@ static void ldl_be(uint32_t op)
 
 static void ldr_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint64_t temp = RDOUBLE(offs & ~7);
 	if (RTREG)
 	{
@@ -2089,7 +2089,7 @@ static void ldr_be(uint32_t op)
 
 static void swl_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if (!(offs & 3)) WLONG(offs, RTVAL32);
 	else
 	{
@@ -2102,7 +2102,7 @@ static void swl_be(uint32_t op)
 
 static void swr_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if ((offs & 3) == 3) WLONG(offs & ~3, RTVAL32);
 	else
 	{
@@ -2114,7 +2114,7 @@ static void swr_be(uint32_t op)
 
 static void sdl_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if (!(offs & 7)) WDOUBLE(offs, RTVAL64);
 	else
 	{
@@ -2127,7 +2127,7 @@ static void sdl_be(uint32_t op)
 
 static void sdr_be(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if ((offs & 7) == 7) WDOUBLE(offs & ~7, RTVAL64);
 	else
 	{
@@ -2142,7 +2142,7 @@ static void sdr_be(uint32_t op)
 
 static void lwl_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint32_t temp = RLONG(offs & ~3);
 	if (RTREG)
 	{
@@ -2157,7 +2157,7 @@ static void lwl_le(uint32_t op)
 
 static void lwr_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint32_t temp = RLONG(offs & ~3);
 	if (RTREG)
 	{
@@ -2172,7 +2172,7 @@ static void lwr_le(uint32_t op)
 
 static void ldl_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint64_t temp = RDOUBLE(offs & ~7);
 	if (RTREG)
 	{
@@ -2188,7 +2188,7 @@ static void ldl_le(uint32_t op)
 
 static void ldr_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	uint64_t temp = RDOUBLE(offs & ~7);
 	if (RTREG)
 	{
@@ -2204,7 +2204,7 @@ static void ldr_le(uint32_t op)
 
 static void swl_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if ((offs & 3) == 3) WLONG(offs & ~3, RTVAL32);
 	else
 	{
@@ -2216,7 +2216,7 @@ static void swl_le(uint32_t op)
 
 static void swr_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if (!(offs & 3)) WLONG(offs, RTVAL32);
 	else
 	{
@@ -2228,7 +2228,7 @@ static void swr_le(uint32_t op)
 
 static void sdl_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if ((offs & 7) == 7) WDOUBLE(offs & ~7, RTVAL64);
 	else
 	{
@@ -2241,7 +2241,7 @@ static void sdl_le(uint32_t op)
 
 static void sdr_le(uint32_t op)
 {
-	offs_t offs = SIMMVAL + RSVAL32;
+	uint32_t offs = SIMMVAL + RSVAL32;
 	if (!(offs & 7)) WDOUBLE(offs, RTVAL64);
 	else
 	{

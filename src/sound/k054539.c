@@ -509,7 +509,7 @@ static void K054539_stop_chip(int chip)
 	free(K054539_chips.chip[chip].ram);
 }
 
-static void K054539_w(int chip, offs_t offset, uint8_t data) //*
+static void K054539_w(int chip, uint32_t offset, uint8_t data) //*
 {
 #if 0
 	int voice, reg;
@@ -644,7 +644,7 @@ static void reset_zones(void)
 	}
 }
 
-static uint8_t K054539_r(int chip, offs_t offset)
+static uint8_t K054539_r(int chip, uint32_t offset)
 {
 	switch(offset) {
 	case 0x22d:

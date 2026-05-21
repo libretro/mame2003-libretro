@@ -150,14 +150,14 @@ WRITE_HANDLER( itech8_palette_w )
  *
  *************************************/
 
-static INLINE void draw_byte(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	tms_state.vram[addr] = val & mask;
 	tms_state.latchram[addr] = latch;
 }
 
 
-static INLINE void draw_byte_trans4(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_trans4(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (!val)
 		return;
@@ -183,7 +183,7 @@ static INLINE void draw_byte_trans4(offs_t addr, uint8_t val, uint8_t mask, uint
 }
 
 
-static INLINE void draw_byte_trans8(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_trans8(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (val) draw_byte(addr, val, mask, latch);
 }
@@ -196,7 +196,7 @@ static INLINE void draw_byte_trans8(offs_t addr, uint8_t val, uint8_t mask, uint
  *
  *************************************/
 
-static INLINE void draw_byte_shift(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_shift(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	tms_state.vram[addr] = (tms_state.vram[addr] & 0xf0) | ((val & mask) >> 4);
 	tms_state.latchram[addr] = (tms_state.latchram[addr] & 0xf0) | (latch >> 4);
@@ -205,7 +205,7 @@ static INLINE void draw_byte_shift(offs_t addr, uint8_t val, uint8_t mask, uint8
 }
 
 
-static INLINE void draw_byte_shift_trans4(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_shift_trans4(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (!val)
 		return;
@@ -223,7 +223,7 @@ static INLINE void draw_byte_shift_trans4(offs_t addr, uint8_t val, uint8_t mask
 }
 
 
-static INLINE void draw_byte_shift_trans8(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_shift_trans8(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (val) draw_byte_shift(addr, val, mask, latch);
 }
@@ -236,28 +236,28 @@ static INLINE void draw_byte_shift_trans8(offs_t addr, uint8_t val, uint8_t mask
  *
  *************************************/
 
-static INLINE void draw_byte_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_xflip(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte(addr, val, mask, latch);
 }
 
 
-static INLINE void draw_byte_trans4_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_trans4_xflip(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte_trans4(addr, val, mask, latch);
 }
 
 
-static INLINE void draw_byte_shift_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_shift_xflip(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte_shift(addr, val, mask, latch);
 }
 
 
-static INLINE void draw_byte_shift_trans4_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
+static INLINE void draw_byte_shift_trans4_xflip(uint32_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte_shift_trans4(addr, val, mask, latch);
@@ -275,7 +275,7 @@ static INLINE void draw_byte_shift_trans4_xflip(offs_t addr, uint8_t val, uint8_
 static void NAME(void)																		\
 {																							\
 	uint8_t *src = &grom_base[((*itech8_grom_bank << 16) | (BLITTER_ADDRHI << 8) | BLITTER_ADDRLO) % grom_size];\
-	offs_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);\
+	uint32_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);\
 	int ydir = (BLITTER_FLAGS & BLITFLAG_YFLIP) ? -1 : 1;									\
 	int xdir = (BLITTER_FLAGS & BLITFLAG_XFLIP) ? -1 : 1;									\
 	int color = tms34061_latch_r(0);														\
@@ -355,7 +355,7 @@ static void NAME(void)																		\
 static void NAME(void)																		\
 {																							\
 	uint8_t *src = &grom_base[((*itech8_grom_bank << 16) | (BLITTER_ADDRHI << 8) | BLITTER_ADDRLO) % grom_size];\
-	offs_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);\
+	uint32_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);\
 	int ydir = (BLITTER_FLAGS & BLITFLAG_YFLIP) ? -1 : 1;									\
 	int xdir = (BLITTER_FLAGS & BLITFLAG_XFLIP) ? -1 : 1;									\
 	int count = 0, val = -1, innercount;													\

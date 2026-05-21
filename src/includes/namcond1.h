@@ -15,7 +15,7 @@
 #define GFX_8X8_8BIT    4
 #define GFX_16X16_8BIT  5
 
-extern void nvsram( offs_t offset, uint16_t data );
+extern void nvsram( uint32_t offset, uint16_t data );
 
 /* MACHINE */
 extern int namcond1_gfxbank;
