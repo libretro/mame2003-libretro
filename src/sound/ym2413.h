@@ -4,15 +4,18 @@
 /* select output bits size of output : 8 or 16 */
 #define SAMPLE_BITS 16
 
-/* compiler dependence */
+/* Fall back to exact-width stdint types only if the canonical osd_cpu.h has
+   not already been included. Do NOT redefine its OSD_CPU_H guard here: doing
+   so would suppress the real header (and its PAIR/endianness definitions) if
+   this file were ever included first. */
 #ifndef OSD_CPU_H
-#define OSD_CPU_H
-typedef unsigned char	UINT8;   /* unsigned  8bit */
-typedef unsigned short	UINT16;  /* unsigned 16bit */
-typedef unsigned int	UINT32;  /* unsigned 32bit */
-typedef signed char		INT8;    /* signed  8bit   */
-typedef signed short	INT16;   /* signed 16bit   */
-typedef signed int		INT32;   /* signed 32bit   */
+#include <stdint.h>
+typedef uint8_t  UINT8;
+typedef uint16_t UINT16;
+typedef uint32_t UINT32;
+typedef int8_t   INT8;
+typedef int16_t  INT16;
+typedef int32_t  INT32;
 #endif
 
 #if (SAMPLE_BITS==16)
