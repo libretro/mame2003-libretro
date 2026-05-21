@@ -643,6 +643,16 @@ VIDEO_STOP( psx )
 {
 }
 
+/* Set to 0 by a driver that composites on top of the game bitmap after the
+   GPU readout (e.g. a light-gun game drawing crosshairs), so the readout uses
+   the bitmap path and the overlay survives. 1 = direct framebuffer allowed. */
+static int psx_direct_fb_ok = 1;
+
+void psx_enable_direct_fb( int enable )
+{
+	psx_direct_fb_ok = enable;
+}
+
 VIDEO_UPDATE( psx )
 {
 	UINT32 n_x;
@@ -732,6 +742,35 @@ VIDEO_UPDATE( psx )
 		else
 		{
 			n_x = m_n_displaystartx;
+		}
+
+		/* Fast path: paint RGB565 straight into the frontend framebuffer,
+		   skipping the game bitmap and the conversion pass. The bitmap path
+		   stores the raw 15bpp VRAM value as the pen; the palette is a fixed
+		   RGB555->RGB565 decode that never changes, so the fast path engages
+		   every frame. Falls back to the bitmap path when the output is not
+		   RGB565, a flip/rotate/artwork/UI overlay is in the path, or a driver
+		   has disabled it to composite on top of the bitmap. */
+		{
+			unsigned palents;
+			unsigned fb_pitch;
+			const uint16_t *pal = psx_direct_fb_ok ? mame2003_direct_rgb565_palette( &palents ) : NULL;
+			UINT16 *fb = pal ? (UINT16 *)mame2003_direct_rgb565_begin( &fb_pitch ) : NULL;
+			(void)palents;
+
+			if( fb )
+			{
+				for( n_y = 0; n_y < m_n_screenheight; n_y++ )
+				{
+					const uint16_t *src = m_p_p_vram[ n_y + m_n_displaystarty ] + n_x;
+					UINT16 *dst = (UINT16 *)( (UINT8 *)fb + n_y * fb_pitch );
+					int length = m_n_screenwidth;
+
+					while( length-- )
+						*dst++ = pal[ *src++ ];
+				}
+				return;
+			}
 		}
 
 		for( n_y = 0; n_y < m_n_screenheight; n_y++ )

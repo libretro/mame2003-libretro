@@ -225,7 +225,11 @@ static READ32_HANDLER( pcmram_r )
 
 static VIDEO_UPDATE( konamigq )
 {
+	/* the crosshairs are composited into the game bitmap after the GPU
+	   readout, so force the readout down the bitmap path for this frame */
+	psx_enable_direct_fb( 0 );
 	video_update_psx( bitmap, cliprect );
+	psx_enable_direct_fb( 1 );
 
 	draw_crosshair( bitmap, GUNX( 5 ), GUNY( 6 ), cliprect );
 	draw_crosshair( bitmap, GUNX( 7 ), GUNY( 8 ), cliprect );
