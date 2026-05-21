@@ -40,6 +40,10 @@ uint16_t *video_palette_565;
 unsigned video_palette_565_entries;
 uint16_t *video_buffer;
 
+/* -1 = not yet probed, 0 = frontend has no software framebuffer (stop asking),
+   1 = supported. Reset on each display (re)create. */
+int sw_framebuffer_supported = -1;
+
 /* Possible pixel conversions (see corresponding function far below) */
 enum
 {
@@ -235,6 +239,9 @@ int osd_create_display(
 {
    memcpy(&video_config, params, sizeof(video_config));
 
+   /* Re-probe software-framebuffer support (the video driver may have changed). */
+   sw_framebuffer_supported = -1;
+
    mame2003_video_init_orientation();
    mame2003_video_init_conversion(rgb_components);
 
@@ -267,29 +274,6 @@ void osd_close_display(void)
    video_palette_565_entries = 0;
 }
 
-static INLINE void pix_convert_pass8888(uint32_t *from, uint32_t *to)
-{
-   *to = *from;
-}
-
-static INLINE void pix_convert_1555to565(uint16_t *from, uint16_t *to)
-{
-   /* 0RGB1555 -> RGB565: shift red+green up one bit, keep blue. The green
-      LSB is left zero (imperceptible) in exchange for a single shift. */
-   const uint16_t p = *from;
-   *to = (uint16_t)(((p & 0x7FE0) << 1) | (p & 0x001F));
-}
-
-static INLINE void pix_convert_passpal(uint16_t *from, uint32_t *to)
-{
-   *to = video_palette[*from];
-}
-
-static INLINE void pix_convert_palto565(uint16_t *from, uint16_t *to)
-{
-   *to = video_palette_565[*from];
-}
-
 /* Rebuild the RGB565 palette lookup from the game's adjusted palette. Called
    only when the palette actually changes, moving the XRGB8888->RGB565
    conversion off the per-pixel path and onto the (much rarer) palette update. */
@@ -316,95 +300,117 @@ static void rebuild_palette_565(const rgb_t *pal, unsigned entries)
    }
 }
 
+/* Convert (and optionally flip/rotate) the visible area of the game bitmap
+   into out_base, whose scanline stride is out_pitch bytes. The per-pixel work
+   is written inline so each loop is a simple, vectorizable kernel, and the
+   common no-transform case collapses to a flat loop (or memcpy) when the
+   source region and destination are both tightly packed. */
 static void frame_convert(struct mame_display *display, void *out_base, unsigned out_pitch)
 {
-   int x, y;
+   const struct rectangle va = display->game_visible_area;
+   const int x0 = va.min_x, y0 = va.min_y, x1 = va.max_x, y1 = va.max_y;
+   const int w  = x1 - x0 + 1, h = y1 - y0 + 1;
+   const int in_pitch = display->game_bitmap->rowpixels; /* source pixels/row */
+   const int out_px   = (int)(out_pitch / (unsigned)video_stride_out); /* dest pixels/row */
+   const int flip_x = video_flip_x, flip_y = video_flip_y;
+   const void *base = display->game_bitmap->base;
+   int x, y, i;
 
-   bool flip_x = video_flip_x;
-   bool flip_y = video_flip_y;
-
-   struct rectangle visible_area = display->game_visible_area;
-   int x0 = visible_area.min_x, y0 = visible_area.min_y;
-   int x1 = visible_area.max_x, y1 = visible_area.max_y;
-   int w = x1 - x0 + 1, h = y1 - y0 + 1;
-
-   signed pitch = display->game_bitmap->rowpixels;
-   char *input = (char*)display->game_bitmap->base;
-   char *output = (char*)out_base;
-
-   /* Pixel conversion loop macro for best possible inlining, w/o XY swap */
-   #define CONVERT_NOSWAP(CONVERT_FUNC, TYPE_IN, TYPE_OUT, FLIP_X, FLIP_Y)\
-      {\
-         signed skip;\
-         signed out_skip;\
-         TYPE_IN *in = (TYPE_IN*)input;\
-         TYPE_OUT *out = (TYPE_OUT*)output;\
-         \
-         /* Swaps are handled by iterating over input backwards */\
-         in += (!FLIP_X ? x0 : x1) + (!FLIP_Y ? y0 * pitch : y1 * pitch);\
-         /* After each line, reset the pointer to start, then to next line */\
-         skip = (!FLIP_X ? -w : w) + (!FLIP_Y ? pitch : -pitch);\
-         /* Advance the output to the next scanline (out_pitch may differ from\
-            the row width, e.g. a frontend framebuffer with padding) */\
-         out_skip = (signed)(out_pitch / sizeof(TYPE_OUT)) - w;\
-         \
-         for (y = 0; y < h; y++)\
-         {\
-            if (!FLIP_X)\
-               for (x = 0; x < w; x++)\
-                  CONVERT_FUNC(in++, out++);\
-            else\
-               for (x = 0; x < w; x++)\
-                  CONVERT_FUNC(in--, out++);\
-            in += skip;\
-            out += out_skip;\
-         }\
+   /* XY swap: transposed output. Rare - only when the frontend cannot rotate. */
+   if (video_swap_xy)
+   {
+      switch (video_conversion_type)
+      {
+         case VCT_PASS8888: {
+            const uint32_t *in = (const uint32_t*)base; uint32_t *o = (uint32_t*)out_base;
+            for (x = flip_y?x1:x0; flip_y?x>=x0:x<=x1; x += flip_y?-1:1) {
+               for (y = flip_x?y1:y0; flip_x?y>=y0:y<=y1; y += flip_x?-1:1) *o++ = in[y*in_pitch + x];
+               o += out_px - h; }
+         } break;
+         case VCT_1555TO565: {
+            const uint16_t *in = (const uint16_t*)base; uint16_t *o = (uint16_t*)out_base;
+            for (x = flip_y?x1:x0; flip_y?x>=x0:x<=x1; x += flip_y?-1:1) {
+               for (y = flip_x?y1:y0; flip_x?y>=y0:y<=y1; y += flip_x?-1:1) { uint16_t p = in[y*in_pitch + x]; *o++ = (uint16_t)(((p&0x7FE0)<<1)|(p&0x1F)); }
+               o += out_px - h; }
+         } break;
+         case VCT_PASSPAL: {
+            const uint16_t *in = (const uint16_t*)base; uint32_t *o = (uint32_t*)out_base;
+            for (x = flip_y?x1:x0; flip_y?x>=x0:x<=x1; x += flip_y?-1:1) {
+               for (y = flip_x?y1:y0; flip_x?y>=y0:y<=y1; y += flip_x?-1:1) *o++ = video_palette[in[y*in_pitch + x]];
+               o += out_px - h; }
+         } break;
+         case VCT_PALTO565: {
+            const uint16_t *in = (const uint16_t*)base; uint16_t *o = (uint16_t*)out_base;
+            for (x = flip_y?x1:x0; flip_y?x>=x0:x<=x1; x += flip_y?-1:1) {
+               for (y = flip_x?y1:y0; flip_x?y>=y0:y<=y1; y += flip_x?-1:1) *o++ = video_palette_565[in[y*in_pitch + x]];
+               o += out_px - h; }
+         } break;
       }
+      return;
+   }
 
-   /* A much less optimized pixel conversion loop macro, with XY swap */
-   #define CONVERT_SWAP(CONVERT_FUNC, TYPE_IN, TYPE_OUT, FLIP_X, FLIP_Y)\
-      {\
-         TYPE_IN *in = (TYPE_IN*)input;\
-         TYPE_OUT *out = (TYPE_OUT*)output;\
-         \
-         for (x = FLIP_Y ? x1 : x0; FLIP_Y ? x >= x0 : x <= x1; x += FLIP_Y ? -1 : 1)\
-            for (y = FLIP_X ? y1 : y0; FLIP_X ? y >= y0 : y <= y1; y += FLIP_X ? -1 : 1)\
-               CONVERT_FUNC(&in[y * pitch + x], out++);\
+   /* No transform and both sides tightly packed: one flat loop (best
+      vectorization), and a pure copy becomes a memcpy. */
+   if (!flip_x && !flip_y && x0 == 0 && w == in_pitch && out_px == w)
+   {
+      const int n = w * h;
+      switch (video_conversion_type)
+      {
+         case VCT_PASS8888: {
+            const uint32_t *in = (const uint32_t*)base + (size_t)y0*in_pitch;
+            memcpy(out_base, in, (size_t)n * sizeof(uint32_t));
+         } break;
+         case VCT_1555TO565: {
+            const uint16_t *in = (const uint16_t*)base + (size_t)y0*in_pitch; uint16_t *o = (uint16_t*)out_base;
+            for (i = 0; i < n; i++) { uint16_t p = in[i]; o[i] = (uint16_t)(((p&0x7FE0)<<1)|(p&0x1F)); }
+         } break;
+         case VCT_PASSPAL: {
+            const uint16_t *in = (const uint16_t*)base + (size_t)y0*in_pitch; uint32_t *o = (uint32_t*)out_base;
+            for (i = 0; i < n; i++) o[i] = video_palette[in[i]];
+         } break;
+         case VCT_PALTO565: {
+            const uint16_t *in = (const uint16_t*)base + (size_t)y0*in_pitch; uint16_t *o = (uint16_t*)out_base;
+            for (i = 0; i < n; i++) o[i] = video_palette_565[in[i]];
+         } break;
       }
+      return;
+   }
 
-   /* Do a conversion accounting for XY flips */
-   #define CONVERT_CHOOSE(CONVERT_MACRO, CONVERT_FUNC, TYPE_IN, TYPE_OUT)\
-      {\
-         if (!flip_x && !flip_y)\
-            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, false, false)\
-         else if (!flip_x && flip_y)\
-            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, false, true)\
-         else if (flip_x && !flip_y)\
-            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, true, false)\
-         else if (flip_x && flip_y)\
-            CONVERT_MACRO(CONVERT_FUNC, TYPE_IN, TYPE_OUT, true, true);\
-      }
-
-   /* Do a conversion accounting for XY swap */
-   #define CONVERT(CONVERT_FUNC, TYPE_IN, TYPE_OUT)\
-      if (!video_swap_xy)\
-         CONVERT_CHOOSE(CONVERT_NOSWAP, CONVERT_FUNC, TYPE_IN, TYPE_OUT)\
-      else\
-         CONVERT_CHOOSE(CONVERT_SWAP, CONVERT_FUNC, TYPE_IN, TYPE_OUT)
-
+   /* General no-swap path: one tight inner loop per row, flips fold into the
+      row selection (flip_y) and column direction (flip_x). */
    switch (video_conversion_type)
    {
       case VCT_PASS8888:
-         CONVERT(pix_convert_pass8888, uint32_t, uint32_t);
+         for (y = 0; y < h; y++) {
+            const uint32_t *ir = (const uint32_t*)base + (size_t)(flip_y?(y1-y):(y0+y))*in_pitch;
+            uint32_t *o = (uint32_t*)out_base + (size_t)y*out_px;
+            if (!flip_x) for (x = 0; x < w; x++) o[x] = ir[x0+x];
+            else         for (x = 0; x < w; x++) o[x] = ir[x1-x];
+         }
          break;
       case VCT_1555TO565:
-         CONVERT(pix_convert_1555to565, uint16_t, uint16_t);
+         for (y = 0; y < h; y++) {
+            const uint16_t *ir = (const uint16_t*)base + (size_t)(flip_y?(y1-y):(y0+y))*in_pitch;
+            uint16_t *o = (uint16_t*)out_base + (size_t)y*out_px;
+            if (!flip_x) for (x = 0; x < w; x++) { uint16_t p = ir[x0+x]; o[x] = (uint16_t)(((p&0x7FE0)<<1)|(p&0x1F)); }
+            else         for (x = 0; x < w; x++) { uint16_t p = ir[x1-x]; o[x] = (uint16_t)(((p&0x7FE0)<<1)|(p&0x1F)); }
+         }
          break;
       case VCT_PASSPAL:
-         CONVERT(pix_convert_passpal, uint16_t, uint32_t);
+         for (y = 0; y < h; y++) {
+            const uint16_t *ir = (const uint16_t*)base + (size_t)(flip_y?(y1-y):(y0+y))*in_pitch;
+            uint32_t *o = (uint32_t*)out_base + (size_t)y*out_px;
+            if (!flip_x) for (x = 0; x < w; x++) o[x] = video_palette[ir[x0+x]];
+            else         for (x = 0; x < w; x++) o[x] = video_palette[ir[x1-x]];
+         }
          break;
       case VCT_PALTO565:
-         CONVERT(pix_convert_palto565, uint16_t, uint16_t);
+         for (y = 0; y < h; y++) {
+            const uint16_t *ir = (const uint16_t*)base + (size_t)(flip_y?(y1-y):(y0+y))*in_pitch;
+            uint16_t *o = (uint16_t*)out_base + (size_t)y*out_px;
+            if (!flip_x) for (x = 0; x < w; x++) o[x] = video_palette_565[ir[x0+x]];
+            else         for (x = 0; x < w; x++) o[x] = video_palette_565[ir[x1-x]];
+         }
          break;
    }
 }
@@ -420,13 +426,21 @@ static bool get_current_sw_framebuffer(unsigned w, unsigned h, struct retro_fram
       (video_stride_out == 4) ? RETRO_PIXEL_FORMAT_XRGB8888
                               : RETRO_PIXEL_FORMAT_RGB565;
 
+   if (sw_framebuffer_supported == 0)
+      return false;
+
    memset(fb, 0, sizeof(*fb));
    fb->width        = w;
    fb->height       = h;
    fb->access_flags = RETRO_MEMORY_ACCESS_WRITE;
 
    if (!environ_cb(RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER, fb))
+   {
+      /* Unsupported by this frontend/video driver; don't probe every frame. */
+      sw_framebuffer_supported = 0;
       return false;
+   }
+   sw_framebuffer_supported = 1;
    if (!fb->data)
       return false;
    /* The frontend may hand back a format different from the one we set; only
