@@ -1596,10 +1596,21 @@ ROM_START( xevi3dg )
 	ROM_LOAD( "xv31wave.8k",  0x0000000, 0x400000, CRC(14f25ddd) SHA1(4981cf1017432ff85b768ec88c36f535df30b783) )
 ROM_END
 
-GAMEX( 1994, tekken,    0,        coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken (TE4/VER.C)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
+/* Namco C76 (M37710) sound-MCU BIOS, shared by the System 11 sets that run the
+   C76. Declared as a BIOS root: mame's ROM loader searches up the parent chain,
+   so c76.bin can live in its own namcoc76.zip instead of every game zip. The
+   per-game c76.bin entries stay OPTIONAL, so a set still loads if the BIOS zip
+   is absent. */
+ROM_START( namcoc76 )
+	ROM_REGION( 0x004000, REGION_CPU2, 0 )
+	ROM_LOAD( "c76.bin", 0x000000, 0x004000, CRC(399faac7) SHA1(ceb184ef0486caf715dd997101999785f67a40b8) )
+ROM_END
+
+GAMEX( 1995, namcoc76,  0,        coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Namco C76 BIOS", NOT_A_DRIVER )
+GAMEX( 1994, tekken,    namcoc76, coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken (TE4/VER.C)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
 GAMEX( 1994, tekkena,   tekken,   coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken (TE2/VER.B)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
 GAMEX( 1994, tekkenb,   tekken,   coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken (TE1/VER.B)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
-GAMEX( 1995, tekken2,   0,        coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken 2 Ver.B (TES3/VER.B)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
+GAMEX( 1995, tekken2,   namcoc76, coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken 2 Ver.B (TES3/VER.B)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
 GAMEX( 1995, tekken2a,  tekken2,  coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken 2 Ver.B (TES2/VER.B)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
 GAMEX( 1995, tekken2b,  tekken2,  coh100_tekken, tekken,   namcos11, ROT0, "Namco", "Tekken 2 (TES2/VER.A)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )
 GAMEX( 1996, souledge,  0,        coh110_danceyes, souledge, namcos11, ROT0, "Namco", "Soul Edge Ver. II (SO4/VER.C)", GAME_IMPERFECT_GRAPHICS | GAME_NO_SOUND )

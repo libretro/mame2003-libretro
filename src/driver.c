@@ -2364,6 +2364,7 @@ V-V                           TP-027
 	DRIVER( beastrzb )	/* Beastorizer (bootleg)*/
 
 	/* Namco System 11 */
+	DRIVER( namcoc76 )	/* Namco C76 BIOS (shared M37710 sound MCU) */
 	DRIVER( tekken )	/* Tekken (TE4/VER.C) */
 	DRIVER( tekkena )	/* Tekken (TE2/VER.B) */
 	DRIVER( tekkenb )	/* Tekken (TE1/VER.B) */
