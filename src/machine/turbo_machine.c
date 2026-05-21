@@ -10,32 +10,32 @@
 #include "artwork.h"
 
 /* globals */
-UINT8 turbo_opa, turbo_opb, turbo_opc;
-UINT8 turbo_ipa, turbo_ipb, turbo_ipc;
-UINT8 turbo_fbpla, turbo_fbcol;
+uint8_t turbo_opa, turbo_opb, turbo_opc;
+uint8_t turbo_ipa, turbo_ipb, turbo_ipc;
+uint8_t turbo_fbpla, turbo_fbcol;
 
-UINT8 subroc3d_col, subroc3d_ply, subroc3d_chofs;
+uint8_t subroc3d_col, subroc3d_ply, subroc3d_chofs;
 
-UINT8 buckrog_fchg, buckrog_mov, buckrog_obch;
+uint8_t buckrog_fchg, buckrog_mov, buckrog_obch;
 
 /* local data */
-static UINT8 segment_address, segment_increment;
-static UINT8 osel, bsel;
-static UINT8 port_8279;
+static uint8_t segment_address, segment_increment;
+static uint8_t osel, bsel;
+static uint8_t port_8279;
 
-static UINT8 turbo_accel;
-static UINT8 turbo_speed;
+static uint8_t turbo_accel;
+static uint8_t turbo_speed;
 
-static UINT8 buckrog_status;
-static UINT8 buckrog_command;
-static UINT8 buckrog_hit;
-static UINT8 buckrog_myship;
+static uint8_t buckrog_status;
+static uint8_t buckrog_command;
+static uint8_t buckrog_hit;
+static uint8_t buckrog_myship;
 
-static UINT8 subroc3d_volume;
-static UINT8 subroc3d_select;
+static uint8_t subroc3d_volume;
+static uint8_t subroc3d_select;
 
-static UINT8 old_segment_data[32];
-static UINT8 new_segment_data[32];
+static uint8_t old_segment_data[32];
+static uint8_t new_segment_data[32];
 
 static int segment_init;
 
@@ -255,7 +255,7 @@ static WRITE_HANDLER( subroc3d_sound_A_w )
 
 static WRITE_HANDLER( subroc3d_sound_B_w )
 {
-	static UINT8 last = 0;
+	static uint8_t last = 0;
 
 	int volume = 16 * (15 - subroc3d_volume);
 
@@ -274,7 +274,7 @@ static WRITE_HANDLER( subroc3d_sound_B_w )
 
 static WRITE_HANDLER( subroc3d_sound_C_w )
 {
-	static UINT8 last = 0;
+	static uint8_t last = 0;
 
 	if ((data & 0x01) && !(last & 0x01))
 		sample_start(4, (data & 0x02) ? 6 : 5, 0);
@@ -609,7 +609,7 @@ void turbo_rom_decode(void)
  *
  */
 
-	static const UINT8 xortable[][32]=
+	static const uint8_t xortable[][32]=
 	{
 		/* Table 0 */
 		/* 0x0000-0x3ff */
@@ -670,9 +670,9 @@ void turbo_rom_decode(void)
 		2,1,2,1	 /* 0x5000-0x5fff */
 	};
 
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int offs, i, j;
-	UINT8 src;
+	uint8_t src;
 
 	for (offs = 0x0000; offs < 0x6000; offs++)
 	{

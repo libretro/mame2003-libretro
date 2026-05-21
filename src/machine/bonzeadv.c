@@ -17,20 +17,20 @@
 static int current_round = 0;
 static int current_bank = 0;
 
-static UINT8 cval[26];
-static UINT8 cc_port;
+static uint8_t cval[26];
+static uint8_t cc_port;
 
 struct cchip_mapping
 {
-	UINT16 xmin;
-	UINT16 xmax;
-	UINT16 ymin;
-	UINT16 ymax;
+	uint16_t xmin;
+	uint16_t xmax;
+	uint16_t ymin;
+	uint16_t ymax;
 	unsigned char index;
 };
 
 
-static UINT16 CLEV[][13] =
+static uint16_t CLEV[][13] =
 {
 /*	  map start       player start    player y-range  player x-range  map y-range     map x-range     time   */
 	{ 0x0000, 0x0018, 0x0020, 0x0030, 0x0028, 0x00D0, 0x0050, 0x0090, 0x0000, 0x0118, 0x0000, 0x0C90, 0x3800 },
@@ -46,7 +46,7 @@ static UINT16 CLEV[][13] =
 	{ 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x6000 }
 };
 
-static UINT16 CPOS[][4] =
+static uint16_t CPOS[][4] =
 {
 /*    map start       player start   */
 	{ 0x0000, 0x0018, 0x0020, 0x00A8 },
@@ -217,7 +217,7 @@ static void WriteLevelData(void)
 
 	for (i = 0; i < 13; i++)
 	{
-		UINT16 v = CLEV[current_round][i];
+		uint16_t v = CLEV[current_round][i];
 
 		cval[2 * i + 0] = v & 0xff;
 		cval[2 * i + 1] = v >> 8;
@@ -240,7 +240,7 @@ static void WriteRestartPos(void)
 
 			for (i = 0; i < 4; i++)
 			{
-				UINT16 v = CPOS[CMAP[n].index][i];
+				uint16_t v = CPOS[CMAP[n].index][i];
 
 				cval[2 * i + 0] = v & 0xff;
 				cval[2 * i + 1] = v >> 8;

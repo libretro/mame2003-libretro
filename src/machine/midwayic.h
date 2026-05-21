@@ -8,18 +8,18 @@
 /* 1st generation Midway serial PIC */
 void midway_serial_pic_init(int upper);
 void midway_serial_pic_reset_w(int state);
-UINT8 midway_serial_pic_status_r(void);
-UINT8 midway_serial_pic_r(void);
-void midway_serial_pic_w(UINT8 data);
+uint8_t midway_serial_pic_status_r(void);
+uint8_t midway_serial_pic_r(void);
+void midway_serial_pic_w(uint8_t data);
 
 
 /* 2nd generation Midway serial/NVRAM/RTC PIC */
 void midway_serial_pic2_init(int upper, int yearoffs);
-void midway_serial_pic2_set_default_nvram(const UINT8 *nvram);
+void midway_serial_pic2_set_default_nvram(const uint8_t *nvram);
 void midway_serial_pic2_reset_w(int state);
-UINT8 midway_serial_pic2_status_r(void);
-UINT8 midway_serial_pic2_r(void);
-void midway_serial_pic2_w(UINT8 data);
+uint8_t midway_serial_pic2_status_r(void);
+uint8_t midway_serial_pic2_r(void);
+void midway_serial_pic2_w(uint8_t data);
 NVRAM_HANDLER( midway_serial_pic2 );
 
 

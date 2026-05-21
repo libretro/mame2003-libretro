@@ -476,8 +476,8 @@ static void decrypt(unsigned char *r0, unsigned char *r1,
 static void neogeo_gfx_decrypt(int extra_xor)
 {
 	int rom_size;
-	UINT8 *buf;
-	UINT8 *rom;
+	uint8_t *buf;
+	uint8_t *rom;
 	int rpos;
 
 	rom_size = memory_region_length(REGION_GFX3);
@@ -534,8 +534,8 @@ static void neogeo_gfx_decrypt(int extra_xor)
 	{
 		int i;
 		int tx_size = memory_region_length(REGION_GFX1);
-		UINT8 *src = memory_region(REGION_GFX3)+rom_size-tx_size;
-		UINT8 *dst = memory_region(REGION_GFX1);
+		uint8_t *src = memory_region(REGION_GFX3)+rom_size-tx_size;
+		uint8_t *dst = memory_region(REGION_GFX1);
 
 		for (i = 0;i < tx_size;i++)
 			dst[i] = src[(i & ~0x1f) + ((i & 7) << 2) + ((~i & 8) >> 2) + ((i & 0x10) >> 4)];

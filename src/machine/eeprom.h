@@ -26,8 +26,8 @@ void EEPROM_set_clock_line(int state);
 void EEPROM_load(mame_file *file);
 void EEPROM_save(mame_file *file);
 
-void EEPROM_set_data(UINT8 *data, int length);
-UINT8 * EEPROM_get_data_pointer(int * length);
+void EEPROM_set_data(uint8_t *data, int length);
+uint8_t * EEPROM_get_data_pointer(int * length);
 
 /* 93C46 */
 extern struct EEPROM_interface eeprom_interface_93C46;

@@ -15,14 +15,14 @@
 
 
 /* Globals */
-UINT8 *qix_sharedram;
-UINT8 *qix_68705_port_out;
-UINT8 *qix_68705_ddr;
+uint8_t *qix_sharedram;
+uint8_t *qix_68705_port_out;
+uint8_t *qix_68705_ddr;
 
 
 /* Local variables */
-static UINT8 qix_68705_port_in[3];
-static UINT8 qix_coinctrl;
+static uint8_t qix_68705_port_in[3];
+static uint8_t qix_coinctrl;
 
 
 /* Prototypes */
@@ -303,7 +303,7 @@ WRITE_HANDLER( qix_sharedram_w )
 
 WRITE_HANDLER( zoo_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(REGION_CPU2);
+	uint8_t *RAM = memory_region(REGION_CPU2);
 
 	if (data & 0x04)
 		cpu_setbank(1, &RAM[0x10000]);
@@ -472,27 +472,27 @@ static WRITE_HANDLER( qixmcu_coinctrl_w )
 
 READ_HANDLER( qix_68705_portA_r )
 {
-	UINT8 ddr = qix_68705_ddr[0];
-	UINT8 out = qix_68705_port_out[0];
-	UINT8 in = qix_68705_port_in[0];
+	uint8_t ddr = qix_68705_ddr[0];
+	uint8_t out = qix_68705_port_out[0];
+	uint8_t in = qix_68705_port_in[0];
 	return (out & ddr) | (in & ~ddr);
 }
 
 
 READ_HANDLER( qix_68705_portB_r )
 {
-	UINT8 ddr = qix_68705_ddr[1];
-	UINT8 out = qix_68705_port_out[1];
-	UINT8 in = (readinputport(1) & 0x0f) | ((readinputport(1) & 0x80) >> 3);
+	uint8_t ddr = qix_68705_ddr[1];
+	uint8_t out = qix_68705_port_out[1];
+	uint8_t in = (readinputport(1) & 0x0f) | ((readinputport(1) & 0x80) >> 3);
 	return (out & ddr) | (in & ~ddr);
 }
 
 
 READ_HANDLER( qix_68705_portC_r )
 {
-	UINT8 ddr = qix_68705_ddr[2];
-	UINT8 out = qix_68705_port_out[2];
-	UINT8 in = (~qix_coinctrl & 0x08) | ((readinputport(1) & 0x70) >> 4);
+	uint8_t ddr = qix_68705_ddr[2];
+	uint8_t out = qix_68705_port_out[2];
+	uint8_t in = (~qix_coinctrl & 0x08) | ((readinputport(1) & 0x70) >> 4);
 	return (out & ddr) | (in & ~ddr);
 }
 

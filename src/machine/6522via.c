@@ -33,34 +33,34 @@ struct via6522
 {
 	const struct via6522_interface *intf;
 
-	UINT8 in_a;
-	UINT8 in_ca1;
-	UINT8 in_ca2;
-	UINT8 out_a;
-	UINT8 out_ca2;
-	UINT8 ddr_a;
+	uint8_t in_a;
+	uint8_t in_ca1;
+	uint8_t in_ca2;
+	uint8_t out_a;
+	uint8_t out_ca2;
+	uint8_t ddr_a;
 
-	UINT8 in_b;
-	UINT8 in_cb1;
-	UINT8 in_cb2;
-	UINT8 out_b;
-	UINT8 out_cb2;
-	UINT8 ddr_b;
+	uint8_t in_b;
+	uint8_t in_cb1;
+	uint8_t in_cb2;
+	uint8_t out_b;
+	uint8_t out_cb2;
+	uint8_t ddr_b;
 
-	UINT8 t1cl;
-	UINT8 t1ch;
-	UINT8 t1ll;
-	UINT8 t1lh;
-	UINT8 t2cl;
-	UINT8 t2ch;
-	UINT8 t2ll;
-	UINT8 t2lh;
+	uint8_t t1cl;
+	uint8_t t1ch;
+	uint8_t t1ll;
+	uint8_t t1lh;
+	uint8_t t2cl;
+	uint8_t t2ch;
+	uint8_t t2ll;
+	uint8_t t2lh;
 
-	UINT8 sr;
-	UINT8 pcr;
-	UINT8 acr;
-	UINT8 ier;
-	UINT8 ifr;
+	uint8_t sr;
+	uint8_t pcr;
+	uint8_t acr;
+	uint8_t ier;
+	uint8_t ifr;
 
 	mame_timer *t1;
 	double time1;
@@ -236,7 +236,7 @@ static void via_t1_timeout (int which)
     }
 	if (v->ddr_b)
 	{
-		UINT8 write_data = v->out_b & v->ddr_b;
+		uint8_t write_data = v->out_b & v->ddr_b;
 
 		if (v->intf->out_b_func)
 			v->intf->out_b_func(0, write_data);
@@ -508,7 +508,7 @@ void via_write(int which, int offset, int data)
 
 		if (v->ddr_b)
 		{
-			UINT8 write_data = v->out_b & v->ddr_b;
+			uint8_t write_data = v->out_b & v->ddr_b;
 
 			if (v->intf->out_b_func)
 				v->intf->out_b_func(0, write_data);
@@ -541,7 +541,7 @@ void via_write(int which, int offset, int data)
 
 		if (v->ddr_a)
 		{
-			UINT8 write_data = v->out_a & v->ddr_a;
+			uint8_t write_data = v->out_a & v->ddr_a;
 
 			if (v->intf->out_a_func)
 				v->intf->out_a_func(0, write_data);
@@ -575,7 +575,7 @@ void via_write(int which, int offset, int data)
 
 		if (v->ddr_a)
 		{
-			UINT8 write_data = v->out_a & v->ddr_a;
+			uint8_t write_data = v->out_a & v->ddr_a;
 
 			if (v->intf->out_a_func)
 				v->intf->out_a_func(0, write_data);
@@ -593,7 +593,7 @@ void via_write(int which, int offset, int data)
 
 			//if (v->ddr_b)
 			{
-				UINT8 write_data = v->out_b & v->ddr_b;
+				uint8_t write_data = v->out_b & v->ddr_b;
 
 				if (v->intf->out_b_func)
 					v->intf->out_b_func(0, write_data);
@@ -611,7 +611,7 @@ void via_write(int which, int offset, int data)
 
 			//if (v->ddr_a)
 			{
-				UINT8 write_data = v->out_a & v->ddr_a;
+				uint8_t write_data = v->out_a & v->ddr_a;
 
 				if (v->intf->out_a_func)
 					v->intf->out_a_func(0, write_data);
@@ -643,7 +643,7 @@ void via_write(int which, int offset, int data)
 
 			//if (v->ddr_b)
 			{
-				UINT8 write_data = v->out_b & v->ddr_b;
+				uint8_t write_data = v->out_b & v->ddr_b;
 
 				if (v->intf->out_b_func)
 					v->intf->out_b_func(0, write_data);
@@ -740,7 +740,7 @@ logerror("6522VIA chip %d: PCR = %02X.  PC: %08X\n", which, data, activecpu_get_
 
 			//if (v->ddr_b)
 			{
-				UINT8 write_data = v->out_b & v->ddr_b;
+				uint8_t write_data = v->out_b & v->ddr_b;
 
 				if (v->intf->out_b_func)
 					v->intf->out_b_func(0, write_data);

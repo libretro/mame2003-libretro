@@ -16,7 +16,7 @@ int vsnes_do_vrom_bank;
 
 /* Locals */
 static int input_latch[4];
-static UINT8 *remapped_colortable;
+static uint8_t *remapped_colortable;
 
 static int sound_fix=0;
 /*************************************
@@ -27,7 +27,7 @@ static int sound_fix=0;
 
 /* RP2C04-001 */
 /* check 0x08 */
-static UINT8 rp2c04001_colortable[] =
+static uint8_t rp2c04001_colortable[] =
 {
 	0x35, 0xff, 0x16, 0x22, 0x1c, 0xff, 0xff, 0x15, /* 0x00 - 0x07 */
 	0x20, 0x00, 0x27, 0x05, 0x04, 0x27, 0x08, 0x30, /* 0x08 - 0x0f */
@@ -40,7 +40,7 @@ static UINT8 rp2c04001_colortable[] =
 };
 
 /* RP2C04-002 */
-static UINT8 rp2c04002_colortable[] =
+static uint8_t rp2c04002_colortable[] =
 {
 	0xff, 0x27, 0x18, 0xff, 0x3a, 0x25, 0xff, 0x31, /* 0x00 - 0x07 */
 	0x16, 0x13, 0x38, 0x34, 0x20, 0x23, 0xff, 0x0b, /* 0x08 - 0x0f */
@@ -54,7 +54,7 @@ static UINT8 rp2c04002_colortable[] =
 
 /* RP2C04-003 */
 /* check 0x0f, 0x2e */
-static UINT8 rp2c04003_colortable[] =
+static uint8_t rp2c04003_colortable[] =
 {
 	0xff, 0xff, 0xff, 0x10, 0x1a, 0x30, 0x31, 0x09, /* 0x00 - 0x07 */
 	0x01, 0x0f, 0x36, 0x08, 0x15, 0xff, 0xff, 0xf0, /* 0x08 - 0x0f */
@@ -68,7 +68,7 @@ static UINT8 rp2c04003_colortable[] =
 
 /* RP2C05-004 */
 /* check 0x03 0x1d, 0x38, 0x3b*/
-static UINT8 rp2c05004_colortable[] =
+static uint8_t rp2c05004_colortable[] =
 {
 	0x18, 0xff, 0x1c, 0x89, 0xff, 0xff, 0x01, 0x17, /* 0x00 - 0x07 */
 	0x10, 0x0f, 0x2a, 0xff, 0x36, 0x37, 0x1a, 0xff, /* 0x08 - 0x0f */
@@ -351,7 +351,7 @@ static WRITE_HANDLER( gun_in0_w )
 		{
 			int x = readinputport( 4 );
 			int y = readinputport( 5 );
-			UINT32 pix, color_base;
+			uint32_t pix, color_base;
 			pen_t *pens = Machine->pens;
 
 			/* get the pixel at the gun position */
@@ -811,7 +811,7 @@ static void mapper4_set_prg (void)
 
 static void mapper4_set_chr (void)
 {
-	UINT8 chr_page = (MMC3_cmd & 0x80) >> 5;
+	uint8_t chr_page = (MMC3_cmd & 0x80) >> 5;
 	ppu2c03b_set_videorom_bank(0, chr_page ^ 0, 2, MMC3_chr[0], 1);
 	ppu2c03b_set_videorom_bank(0, chr_page ^ 2, 2, MMC3_chr[1], 1);
 	ppu2c03b_set_videorom_bank(0, chr_page ^ 4, 1, MMC3_chr[2], 1);
@@ -842,7 +842,7 @@ static void mapper4_irq ( int num, int scanline, int vblank, int blanked )
 
 static WRITE_HANDLER( mapper4_w )
 {
-	static UINT8 last_bank = 0xff;
+	static uint8_t last_bank = 0xff;
 
 	switch (offset & 0x7001)
 	{
@@ -862,7 +862,7 @@ static WRITE_HANDLER( mapper4_w )
 
 		case 0x0001: /* $8001 */
 		{
-			UINT8 cmd = MMC3_cmd & 0x07;
+			uint8_t cmd = MMC3_cmd & 0x07;
 			switch (cmd)
 			{
 				case 0: case 1:
@@ -1067,7 +1067,7 @@ DRIVER_INIT( supxevs )
 static READ_HANDLER( tko_security_r )
 {
 	static int security_counter;
-	static UINT8 security_data[] = {
+	static uint8_t security_data[] = {
 		0xff, 0xbf, 0xb7, 0x97, 0x97, 0x17, 0x57, 0x4f,
 		0x6f, 0x6b, 0xeb, 0xa9, 0xb1, 0x90, 0x94, 0x14,
 		0x56, 0x4e, 0x6f, 0x6b, 0xeb, 0xa9, 0xb1, 0x90,

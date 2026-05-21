@@ -1,7 +1,7 @@
 #include "driver.h"
 
-extern UINT8 grchamp_videoreg0;
-extern UINT8 grchamp_vreg1[0x10];
+extern uint8_t grchamp_videoreg0;
+extern uint8_t grchamp_vreg1[0x10];
 int grchamp_cpu_irq_enable[2];
 
 static int comm_latch;

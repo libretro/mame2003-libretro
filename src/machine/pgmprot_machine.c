@@ -4,10 +4,10 @@ extern data16_t *pgm_mainram;
 
 /*** ASIC 3 (oriental legends protection) ****************************************/
 
-static UINT8 asic3_reg, asic3_latch[3], asic3_x, asic3_y, asic3_z, asic3_h1, asic3_h2;
-static UINT16 asic3_hold;
+static uint8_t asic3_reg, asic3_latch[3], asic3_x, asic3_y, asic3_z, asic3_h1, asic3_h2;
+static uint16_t asic3_hold;
 
-static UINT32 bt(UINT32 v, int bit)
+static uint32_t bt(uint32_t v, int bit)
 {
 	return (v & (1<<bit)) != 0;
 }

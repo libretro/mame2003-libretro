@@ -11,15 +11,15 @@
 
 
 /* interrupt states */
-static UINT8 z80_irq_enabled = 0, z8002_1_nvi_enabled = 0, z8002_2_nvi_enabled = 0;
+static uint8_t z80_irq_enabled = 0, z8002_1_nvi_enabled = 0, z8002_2_nvi_enabled = 0;
 
 /* ADC states */
-static UINT8 adc_input = 0;
+static uint8_t adc_input = 0;
 
 /* protection states */
-static INT16 ic25_last_result;
-static UINT8 ic25_last_signed;
-static UINT8 ic25_last_unsigned;
+static int16_t ic25_last_result;
+static uint8_t ic25_last_signed;
+static uint8_t ic25_last_unsigned;
 
 /* 4-bit MCU state */
 static struct polepos_mcu_def
@@ -186,7 +186,7 @@ READ16_HANDLER( polepos2_ic25_r )
 	{
 		ic25_last_unsigned = offset & 0xff;
 		result = (ic25_last_result >> 8) & 0xff;
-		ic25_last_result = (INT8)ic25_last_signed * (UINT8)ic25_last_unsigned;
+		ic25_last_result = (int8_t)ic25_last_signed * (uint8_t)ic25_last_unsigned;
 	}
 
 	logerror("%04X: read IC25 @ %04X = %02X\n", activecpu_get_pc(), offset, result);

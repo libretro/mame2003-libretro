@@ -109,47 +109,47 @@
 
 struct ide_state
 {
-	UINT8	adapter_control;
-	UINT8	status;
-	UINT8	error;
-	UINT8	command;
-	UINT8	interrupt_pending;
-	UINT8	precomp_offset;
+	uint8_t	adapter_control;
+	uint8_t	status;
+	uint8_t	error;
+	uint8_t	command;
+	uint8_t	interrupt_pending;
+	uint8_t	precomp_offset;
 
-	UINT8	buffer[IDE_DISK_SECTOR_SIZE];
-	UINT8	features[IDE_DISK_SECTOR_SIZE];
-	UINT16	buffer_offset;
-	UINT16	sector_count;
+	uint8_t	buffer[IDE_DISK_SECTOR_SIZE];
+	uint8_t	features[IDE_DISK_SECTOR_SIZE];
+	uint16_t	buffer_offset;
+	uint16_t	sector_count;
 
-	UINT16	block_count;
-	UINT16	sectors_until_int;
+	uint16_t	block_count;
+	uint16_t	sectors_until_int;
 	
-	UINT8	dma_active;
-	UINT8	dma_cpu;
-	UINT8	dma_address_xor;
-	UINT8	dma_last_buffer;
+	uint8_t	dma_active;
+	uint8_t	dma_cpu;
+	uint8_t	dma_address_xor;
+	uint8_t	dma_last_buffer;
 	offs_t	dma_address;
 	offs_t	dma_descriptor;
-	UINT32	dma_bytes_left;
+	uint32_t	dma_bytes_left;
 	
-	UINT8	bus_master_command;
-	UINT8	bus_master_status;
-	UINT32	bus_master_descriptor;
+	uint8_t	bus_master_command;
+	uint8_t	bus_master_status;
+	uint32_t	bus_master_descriptor;
 
-	UINT16	cur_cylinder;
-	UINT8	cur_sector;
-	UINT8	cur_head;
-	UINT8	cur_head_reg;
+	uint16_t	cur_cylinder;
+	uint8_t	cur_sector;
+	uint8_t	cur_head;
+	uint8_t	cur_head_reg;
 
-	UINT32	cur_lba;
+	uint32_t	cur_lba;
 
-	UINT16	num_cylinders;
-	UINT8	num_sectors;
-	UINT8	num_heads;
+	uint16_t	num_cylinders;
+	uint8_t	num_sectors;
+	uint8_t	num_heads;
 
-	UINT8	config_unknown;
-	UINT8	config_register[IDE_CONFIG_REGISTERS];
-	UINT8	config_register_num;
+	uint8_t	config_unknown;
+	uint8_t	config_register[IDE_CONFIG_REGISTERS];
+	uint8_t	config_register_num;
 
 	struct ide_interface *intf;
 	struct hard_disk_file *	disk;
@@ -158,8 +158,8 @@ struct ide_state
 
 	int	master_password_enable;
 	int	user_password_enable;
-	UINT8 *	master_password;
-	UINT8 *	user_password;
+	uint8_t *	master_password;
+	uint8_t *	user_password;
 };
 
 
@@ -189,8 +189,8 @@ static void read_sector_done(int which);
 static void read_first_sector(struct ide_state *ide);
 static void read_next_sector(struct ide_state *ide);
 
-static UINT32 ide_controller_read(struct ide_state *ide, offs_t offset, int size);
-static void ide_controller_write(struct ide_state *ide, offs_t offset, int size, UINT32 data);
+static uint32_t ide_controller_read(struct ide_state *ide, offs_t offset, int size);
+static void ide_controller_write(struct ide_state *ide, offs_t offset, int size, uint32_t data);
 
 
 
@@ -378,14 +378,14 @@ void ide_controller_reset(int which)
 }
 
 
-UINT8 *ide_get_features(int which)
+uint8_t *ide_get_features(int which)
 {
 	struct ide_state *ide = &idestate[which];
 	return ide->features;
 }
 
 
-void ide_set_master_password(int which, UINT8 *password)
+void ide_set_master_password(int which, uint8_t *password)
 {
 	struct ide_state *ide = &idestate[which];
 
@@ -394,7 +394,7 @@ void ide_set_master_password(int which, UINT8 *password)
 }
 
 
-void ide_set_user_password(int which, UINT8 *password)
+void ide_set_user_password(int which, uint8_t *password)
 {
 	struct ide_state *ide = &idestate[which];
 
@@ -468,7 +468,7 @@ static INLINE int convert_to_offset_and_size16(offs_t *offset, data32_t mem_mask
  *
  *************************************/
 
-static INLINE UINT32 lba_address(struct ide_state *ide)
+static INLINE uint32_t lba_address(struct ide_state *ide)
 {
 	/* LBA direct? */
 	if (ide->cur_head_reg & 0x40)
@@ -530,7 +530,7 @@ static INLINE void next_sector(struct ide_state *ide)
  *
  *************************************/
 
-static void swap_strncpy(UINT8 *dst, const char *src, int field_size_in_words)
+static void swap_strncpy(uint8_t *dst, const char *src, int field_size_in_words)
 {
 	int i;
 
@@ -769,7 +769,7 @@ static void continue_read(struct ide_state *ide)
 static void write_buffer_to_dma(struct ide_state *ide)
 {
 	int bytesleft = IDE_DISK_SECTOR_SIZE;
-	UINT8 *data = ide->buffer;
+	uint8_t *data = ide->buffer;
 
 //	LOG(("Writing sector to %08X\n", ide->dma_address));
 
@@ -955,7 +955,7 @@ static void continue_write(struct ide_state *ide)
 static void read_buffer_from_dma(struct ide_state *ide)
 {
 	int bytesleft = IDE_DISK_SECTOR_SIZE;
-	UINT8 *data = ide->buffer;
+	uint8_t *data = ide->buffer;
 
 //	LOG(("Reading sector from %08X\n", ide->dma_address));
 
@@ -1072,7 +1072,7 @@ static void write_sector_done(int which)
  *
  *************************************/
 
-void handle_command(struct ide_state *ide, UINT8 command)
+void handle_command(struct ide_state *ide, uint8_t command)
 {
 	/* implicitly clear interrupts here */
 	clear_interrupt(ide);
@@ -1256,9 +1256,9 @@ void handle_command(struct ide_state *ide, UINT8 command)
  *
  *************************************/
 
-static UINT32 ide_controller_read(struct ide_state *ide, offs_t offset, int size)
+static uint32_t ide_controller_read(struct ide_state *ide, offs_t offset, int size)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	/* logit */
 	if (offset != IDE_ADDR_DATA && offset != IDE_ADDR_STATUS_COMMAND && offset != IDE_ADDR_STATUS_CONTROL)
@@ -1364,7 +1364,7 @@ static UINT32 ide_controller_read(struct ide_state *ide, offs_t offset, int size
  *
  *************************************/
 
-static void ide_controller_write(struct ide_state *ide, offs_t offset, int size, UINT32 data)
+static void ide_controller_write(struct ide_state *ide, offs_t offset, int size, uint32_t data)
 {
 	/* logit */
 	if (offset != IDE_ADDR_DATA)
@@ -1511,7 +1511,7 @@ static void ide_controller_write(struct ide_state *ide, offs_t offset, int size,
  *
  *************************************/
 
-static UINT32 ide_bus_master_read(struct ide_state *ide, offs_t offset, int size)
+static uint32_t ide_bus_master_read(struct ide_state *ide, offs_t offset, int size)
 {
 	LOG(("%08X:ide_bus_master_read(%d, %d)\n", activecpu_get_previouspc(), offset, size));
 
@@ -1538,15 +1538,15 @@ static UINT32 ide_bus_master_read(struct ide_state *ide, offs_t offset, int size
  *
  *************************************/
 
-static void ide_bus_master_write(struct ide_state *ide, offs_t offset, int size, UINT32 data)
+static void ide_bus_master_write(struct ide_state *ide, offs_t offset, int size, uint32_t data)
 {
 	LOG(("%08X:ide_bus_master_write(%d, %d, %08X)\n", activecpu_get_previouspc(), offset, size, data));
 
 	/* command register */
 	if (offset == 0)
 	{
-		UINT8 old = ide->bus_master_command;
-		UINT8 val = data & 0xff;
+		uint8_t old = ide->bus_master_command;
+		uint8_t val = data & 0xff;
 		
 		/* save the read/write bit and the start/stop bit */
 		ide->bus_master_command = (old & 0xf6) | (val & 0x09);
@@ -1579,8 +1579,8 @@ static void ide_bus_master_write(struct ide_state *ide, offs_t offset, int size,
 	/* status register */
 	if (offset <= 2 && offset + size > 2)
 	{
-		UINT8 old = ide->bus_master_status;
-		UINT8 val = data >> (8 * (2 - offset));
+		uint8_t old = ide->bus_master_status;
+		uint8_t val = data >> (8 * (2 - offset));
 		
 		/* save the DMA capable bits */
 		ide->bus_master_status = (old & 0x9f) | (val & 0x60);

@@ -34,7 +34,7 @@
 
 
 /* Local variables */
-static UINT8 control_num = kPitch;
+static uint8_t control_num = kPitch;
 
 static int MPA; /* PROM address counter */
 static int BIC; /* Block index counter  */
@@ -44,9 +44,9 @@ static int div_result;
 static int divisor, dividend;
 
 /* Store decoded PROM elements */
-static UINT8 PROM_STR[1024]; /* Storage for instruction strobe only */
-static UINT8 PROM_MAS[1024]; /* Storage for direct address only */
-static UINT8 PROM_AM[1024]; /* Storage for address mode select only */
+static uint8_t PROM_STR[1024]; /* Storage for instruction strobe only */
+static uint8_t PROM_MAS[1024]; /* Storage for direct address only */
+static uint8_t PROM_AM[1024]; /* Storage for address mode select only */
 
 
 /* Local function prototypes */
@@ -174,7 +174,7 @@ WRITE_HANDLER( starwars_adc_select_w )
 
 void swmathbox_init(void)
 {
-	UINT8 *src = memory_region(REGION_PROMS);
+	uint8_t *src = memory_region(REGION_PROMS);
 	int cnt, val;
 
 	for (cnt = 0; cnt < 1024; cnt++)
@@ -218,7 +218,7 @@ void run_mbox(void)
 {
 	static short ACC, A, B, C;
 
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int RAMWORD = 0;
 	int MA_byte;
 	int tmp;

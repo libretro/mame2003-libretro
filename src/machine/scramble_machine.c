@@ -114,7 +114,7 @@ MACHINE_INIT( sfx )
 
 MACHINE_INIT( explorer )
 {
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	RAM[0x47ff] = 0; /* If not set, it doesn't reset after the 1st time */
 
 	machine_init_scramble();
@@ -498,7 +498,7 @@ static void cavelon_banksw(void)
 
 	static int cavelon_bank;
 
-	UINT8 *ROM = memory_region(REGION_CPU1);
+	uint8_t *ROM = memory_region(REGION_CPU1);
 
 	if (cavelon_bank)
 	{
@@ -784,7 +784,7 @@ Encryption PAL 16L8 on cardridge
 Pin layout is such that links can replace the PAL if encryption is not used.
 
 */
-	static const UINT8 xortable[8][4] =
+	static const uint8_t xortable[8][4] =
 	{
 		{ 6,0,6,0 },
 		{ 5,1,5,1 },
@@ -802,7 +802,7 @@ Pin layout is such that links can replace the PAL if encryption is not used.
 
 	for (i = 0; i < memory_region_length(REGION_CPU1); i++)
 	{
-		UINT8 data_xor;
+		uint8_t data_xor;
 		int line = i & 0x07;
 
 		data_xor = (BIT(rom[i],xortable[line][0]) << xortable[line][1]) |
@@ -842,7 +842,7 @@ DRIVER_INIT( 4in1 )
 
 DRIVER_INIT( mshuttle )
 {
-	static const UINT8 convtable[8][16] =
+	static const uint8_t convtable[8][16] =
 	{
 		/* -1 marks spots which are unused and therefore unknown */
 		{ 0x40,0x41,0x44,0x15,0x05,0x51,0x54,0x55,0x50,0x00,0x01,0x04,  -1,0x10,0x11,0x14 },
@@ -954,7 +954,7 @@ DRIVER_INIT( mariner )
 DRIVER_INIT( frogger )
 {
 	offs_t A;
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 
 	init_scramble_ppi();
@@ -974,7 +974,7 @@ DRIVER_INIT( frogger )
 DRIVER_INIT( froggers )
 {
 	offs_t A;
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 
 	init_scramble_ppi();
@@ -988,7 +988,7 @@ DRIVER_INIT( froggers )
 DRIVER_INIT( devilfsh )
 {
 	offs_t i;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 
 	init_scramble_ppi();
@@ -1005,7 +1005,7 @@ DRIVER_INIT( devilfsh )
 	for (i = 0; i < 0x10000; i += 16)
 	{
 		offs_t j;
-		UINT8 swapbuffer[16];
+		uint8_t swapbuffer[16];
 
 		for (j = 0; j < 16; j++)
 		{
@@ -1070,7 +1070,7 @@ DRIVER_INIT( darkplnt )
 
 DRIVER_INIT( mimonkey )
 {
-	static const UINT8 xortable[16][16] = 
+	static const uint8_t xortable[16][16] = 
 	{
 		{ 0x03,0x03,0x05,0x07,0x85,0x00,0x85,0x85,0x80,0x80,0x06,0x03,0x03,0x00,0x00,0x81 },
 		{ 0x83,0x87,0x03,0x87,0x06,0x00,0x06,0x04,0x02,0x00,0x84,0x84,0x04,0x00,0x01,0x83 },
@@ -1130,8 +1130,8 @@ static int bit(int i,int n)
 DRIVER_INIT( anteater )
 {
 	offs_t i;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	init_scobra();
@@ -1169,8 +1169,8 @@ DRIVER_INIT( anteater )
 DRIVER_INIT( rescue )
 {
 	offs_t i;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	init_scobra();
@@ -1208,8 +1208,8 @@ DRIVER_INIT( rescue )
 DRIVER_INIT( minefld )
 {
 	offs_t i;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	init_scobra();
@@ -1247,8 +1247,8 @@ DRIVER_INIT( minefld )
 DRIVER_INIT( losttomb )
 {
 	offs_t i;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	init_scramble();
@@ -1286,7 +1286,7 @@ DRIVER_INIT( losttomb )
 DRIVER_INIT( superbon )
 {
 	offs_t i;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 
 	init_scramble();
@@ -1327,10 +1327,10 @@ DRIVER_INIT( hustler )
 
 	for (A = 0;A < 0x4000;A++)
 	{
-		UINT8 xormask;
+		uint8_t xormask;
 		int bits[8];
 		int i;
-		UINT8 *rom = memory_region(REGION_CPU1);
+		uint8_t *rom = memory_region(REGION_CPU1);
 
 
 		for (i = 0;i < 8;i++)
@@ -1351,7 +1351,7 @@ DRIVER_INIT( hustler )
 
 	/* the first ROM of the second CPU has data lines D0 and D1 swapped. Decode it. */
 	{
-		UINT8 *rom = memory_region(REGION_CPU2);
+		uint8_t *rom = memory_region(REGION_CPU2);
 
 
 		for (A = 0;A < 0x0800;A++)
@@ -1369,10 +1369,10 @@ DRIVER_INIT( billiard )
 
 	for (A = 0;A < 0x4000;A++)
 	{
-		UINT8 xormask;
+		uint8_t xormask;
 		int bits[8];
 		int i;
-		UINT8 *rom = memory_region(REGION_CPU1);
+		uint8_t *rom = memory_region(REGION_CPU1);
 
 
 		for (i = 0;i < 8;i++)
@@ -1395,7 +1395,7 @@ DRIVER_INIT( billiard )
 
 	/* the first ROM of the second CPU has data lines D0 and D1 swapped. Decode it. */
 	{
-		UINT8 *rom = memory_region(REGION_CPU2);
+		uint8_t *rom = memory_region(REGION_CPU2);
 
 
 		for (A = 0;A < 0x0800;A++)

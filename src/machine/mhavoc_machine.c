@@ -9,22 +9,22 @@
 #include "cpu/m6502/m6502.h"
 #include "mhavoc.h"
 
-static UINT8 alpha_data;
-static UINT8 alpha_rcvd;
-static UINT8 alpha_xmtd;
+static uint8_t alpha_data;
+static uint8_t alpha_rcvd;
+static uint8_t alpha_xmtd;
 
-static UINT8 gamma_data;
-static UINT8 gamma_rcvd;
-static UINT8 gamma_xmtd;
+static uint8_t gamma_data;
+static uint8_t gamma_rcvd;
+static uint8_t gamma_xmtd;
 
-static UINT8 player_1;
+static uint8_t player_1;
 
-static UINT8 alpha_irq_clock;
-static UINT8 alpha_irq_clock_enable;
-static UINT8 gamma_irq_clock;
+static uint8_t alpha_irq_clock;
+static uint8_t alpha_irq_clock_enable;
+static uint8_t gamma_irq_clock;
 
-static UINT8 *ram_base;
-static UINT8 has_gamma_cpu;
+static uint8_t *ram_base;
+static uint8_t has_gamma_cpu;
 
 
 

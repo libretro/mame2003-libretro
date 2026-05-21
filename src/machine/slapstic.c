@@ -758,13 +758,13 @@ static struct slapstic_data *slapstic_table[] =
  *************************************/
 
 static enum state_type state;
-static INT8 current_bank;
+static int8_t current_bank;
 static int access_68k;
 
-static INT8 alt_bank;
-static INT8 bit_bank;
-static INT8 add_bank;
-static UINT8 bit_xor;
+static int8_t alt_bank;
+static int8_t bit_bank;
+static int8_t add_bank;
+static uint8_t bit_xor;
 
 static struct slapstic_data slapstic;
 
@@ -839,18 +839,18 @@ static int alt2_kludge(offs_t offset)
 	/* 68k case is fairly complex: we need to look for special triplets */
 	if (access_68k)
 	{
-		UINT32 pc = activecpu_get_previouspc();
+		uint32_t pc = activecpu_get_previouspc();
 
 		/* first verify that the prefetched PC matches the first alternate */
 		if (MATCHES_MASK_VALUE((pc + 2) >> 1, slapstic.alt1))
 		{
 			/* now look for a move.w (An),(An) or cmpm.w (An)+,(An)+ */
-			UINT16 opcode = cpu_readop16(pc & 0xffffff);
+			uint16_t opcode = cpu_readop16(pc & 0xffffff);
 			if ((opcode & 0xf1f8) == 0x3090 || (opcode & 0xf1f8) == 0xb148)
 			{
 				/* fetch the value of the register for the second operand, and see */
 				/* if it matches the third alternate */
-				UINT32 regval = activecpu_get_reg(M68K_A0 + ((opcode >> 9) & 7)) >> 1;
+				uint32_t regval = activecpu_get_reg(M68K_A0 + ((opcode >> 9) & 7)) >> 1;
 				if (MATCHES_MASK_VALUE(regval, slapstic.alt3))
 				{
 					alt_bank = (regval >> slapstic.altshift) & 3;

@@ -131,7 +131,7 @@ WRITE_HANDLER( beezer_bankswitch_w )
 	}
 	else
 	{
-		const UINT8 *rom = memory_region(REGION_CPU1) + 0x10000;
+		const uint8_t *rom = memory_region(REGION_CPU1) + 0x10000;
 		install_mem_read_handler(0, 0xc000, 0xcfff, MRA_BANK1);
 		install_mem_write_handler(0, 0xc000, 0xcfff, MWA_BANK1);
 		cpu_setbank(1, rom + (data & 0x07) * 0x2000 + ((data & 0x08) ? 0x1000: 0));

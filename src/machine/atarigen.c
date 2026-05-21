@@ -27,16 +27,16 @@
 	GLOBAL VARIABLES
 ##########################################################################*/
 
-UINT8 				atarigen_scanline_int_state;
-UINT8 				atarigen_sound_int_state;
-UINT8 				atarigen_video_int_state;
+uint8_t 				atarigen_scanline_int_state;
+uint8_t 				atarigen_sound_int_state;
+uint8_t 				atarigen_video_int_state;
 
 const data16_t *	atarigen_eeprom_default;
 data16_t *			atarigen_eeprom;
 size_t 				atarigen_eeprom_size;
 
-UINT8 				atarigen_cpu_to_sound_ready;
-UINT8 				atarigen_sound_to_cpu_ready;
+uint8_t 				atarigen_cpu_to_sound_ready;
+uint8_t 				atarigen_sound_to_cpu_ready;
 
 data16_t *			atarigen_playfield;
 data16_t *			atarigen_playfield2;
@@ -67,21 +67,21 @@ struct atarivc_state_desc atarivc_state;
 static atarigen_int_callback update_int_callback;
 static void *		scanline_interrupt_timer;
 
-static UINT8 		eeprom_unlocked;
+static uint8_t 		eeprom_unlocked;
 
-static UINT8 		atarigen_slapstic_num;
+static uint8_t 		atarigen_slapstic_num;
 static data16_t *	atarigen_slapstic;
 static int			atarigen_slapstic_bank;
 static void *		atarigen_slapstic_bank0;
 
-static UINT8 		sound_cpu_num;
-static UINT8 		atarigen_cpu_to_sound;
-static UINT8 		atarigen_sound_to_cpu;
-static UINT8 		timed_int;
-static UINT8 		ym2151_int;
+static uint8_t 		sound_cpu_num;
+static uint8_t 		atarigen_cpu_to_sound;
+static uint8_t 		atarigen_sound_to_cpu;
+static uint8_t 		timed_int;
+static uint8_t 		ym2151_int;
 
-static UINT8 *		speed_a, *speed_b;
-static UINT32 		speed_pc;
+static uint8_t *		speed_a, *speed_b;
+static uint32_t 		speed_pc;
 
 static atarigen_scanline_callback scanline_callback;
 static int 			scanlines_per_callback;
@@ -90,7 +90,7 @@ static int 			last_scanline;
 
 static int 			actual_vc_latch0;
 static int 			actual_vc_latch1;
-static UINT8		atarivc_playfields;
+static uint8_t		atarivc_playfields;
 
 static int			playfield_latch;
 static int			playfield2_latch;
@@ -413,7 +413,7 @@ void decompress_eeprom_word(const data16_t *data)
 
 void decompress_eeprom_byte(const data16_t *data)
 {
-	UINT8 *dest = (UINT8 *)atarigen_eeprom;
+	uint8_t *dest = (uint8_t *)atarigen_eeprom;
 	data16_t value;
 
 	while ((value = *data++) != 0)
@@ -791,7 +791,7 @@ static void delayed_6502_sound_w(int param)
 
 void atarigen_init_6502_speedup(int cpunum, int compare_pc1, int compare_pc2)
 {
-	UINT8 *memory = memory_region(REGION_CPU1+cpunum);
+	uint8_t *memory = memory_region(REGION_CPU1+cpunum);
 	int address_low, address_high;
 
 	/* determine the pointer to the first speed check location */
@@ -1494,8 +1494,8 @@ static void unhalt_cpu(int param)
 
 void atarigen_swap_mem(void *ptr1, void *ptr2, int bytes)
 {
-	UINT8 *p1 = ptr1;
-	UINT8 *p2 = ptr2;
+	uint8_t *p1 = ptr1;
+	uint8_t *p2 = ptr2;
 	while (bytes--)
 	{
 		int temp = *p1;
@@ -1519,14 +1519,14 @@ void atarigen_blend_gfx(int gfx0, int gfx1, int mask0, int mask1)
 	/* loop over elements */
 	for (c = 0; c < gx0->total_elements; c++)
 	{
-		UINT8 *c0base = gx0->gfxdata + gx0->char_modulo * c;
-		UINT8 *c1base = gx1->gfxdata + gx1->char_modulo * c;
-		UINT32 usage = 0;
+		uint8_t *c0base = gx0->gfxdata + gx0->char_modulo * c;
+		uint8_t *c1base = gx1->gfxdata + gx1->char_modulo * c;
+		uint32_t usage = 0;
 
 		/* loop over height */
 		for (y = 0; y < gx0->height; y++)
 		{
-			UINT8 *c0 = c0base, *c1 = c1base;
+			uint8_t *c0 = c0base, *c1 = c1base;
 
 			for (x = 0; x < gx0->width; x++, c0++, c1++)
 			{

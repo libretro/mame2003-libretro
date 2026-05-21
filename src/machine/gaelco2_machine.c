@@ -21,10 +21,10 @@ void gaelco2_ROM16_split(int src_reg, int dst_reg, int start, int length, int de
 	int i;
 
 	/* get a pointer to the source data */
-	UINT8 *src = (UINT8 *)memory_region(src_reg);
+	uint8_t *src = (uint8_t *)memory_region(src_reg);
 
 	/* get a pointer to the destination data */
-	UINT8 *dst = (UINT8 *)memory_region(dst_reg);
+	uint8_t *dst = (uint8_t *)memory_region(dst_reg);
 
 	/* fill destination areas with the proper data */
 	for (i = 0; i < length/2; i++){

@@ -31,7 +31,7 @@ void sys16_patch_code2( int offset, int data ){
 	patch_codeX(offset,data,2);
 }
 void sys16_patch_z80code( int offset, int data ){
-	UINT8 *RAM = memory_region(REGION_CPU2);
+	uint8_t *RAM = memory_region(REGION_CPU2);
 	RAM[offset] = data;
 }
 

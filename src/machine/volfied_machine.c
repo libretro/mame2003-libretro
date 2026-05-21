@@ -12,7 +12,7 @@ static int current_bank = 0;
 static int current_data = 0;
 static int current_flag = 0;
 
-static UINT8 cc_port = 0;
+static uint8_t cc_port = 0;
 
 
 /*************************************

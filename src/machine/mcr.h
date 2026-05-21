@@ -12,7 +12,7 @@
 #include "machine/6821pia.h"
 
 
-extern INT16 spyhunt_scrollx, spyhunt_scrolly;
+extern int16_t spyhunt_scrollx, spyhunt_scrolly;
 extern double mcr68_timing_factor;
 
 
@@ -20,7 +20,7 @@ extern double mcr68_timing_factor;
 /************ Generic MCR routines ***************/
 
 extern Z80_DaisyChain mcr_daisy_chain[];
-extern UINT8 mcr_cocktail_flip;
+extern uint8_t mcr_cocktail_flip;
 
 MACHINE_INIT( mcr );
 MACHINE_INIT( mcr68 );

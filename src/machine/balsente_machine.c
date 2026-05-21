@@ -24,10 +24,10 @@ static void clock_counter_0_ff(int param);
 static void update_grudge_steering(void);
 
 /* global data */
-UINT8 balsente_shooter;
-UINT8 balsente_shooter_x;
-UINT8 balsente_shooter_y;
-UINT8 balsente_adc_shift;
+uint8_t balsente_shooter;
+uint8_t balsente_shooter_x;
+uint8_t balsente_shooter_y;
+uint8_t balsente_adc_shift;
 data16_t *shrike_shared;
 
 
@@ -35,60 +35,60 @@ data16_t *shrike_shared;
 struct counter_state
 {
 	void *timer;
-	UINT8 timer_active;
-	INT32 initial;
-	INT32 count;
-	UINT8 gate;
-	UINT8 out;
-	UINT8 mode;
-	UINT8 readbyte;
-	UINT8 writebyte;
+	uint8_t timer_active;
+	int32_t initial;
+	int32_t count;
+	uint8_t gate;
+	uint8_t out;
+	uint8_t mode;
+	uint8_t readbyte;
+	uint8_t writebyte;
 };
 
 static struct counter_state counter[3];
 
 /* manually clocked counter 0 states */
-static UINT8 counter_control;
-static UINT8 counter_0_ff;
+static uint8_t counter_control;
+static uint8_t counter_0_ff;
 static void *counter_0_timer;
-static UINT8 counter_0_timer_active;
+static uint8_t counter_0_timer_active;
 
 /* random number generator states */
-static UINT8 *poly17 = NULL;
-static UINT8 *rand17 = NULL;
+static uint8_t *poly17 = NULL;
+static uint8_t *rand17 = NULL;
 
 /* ADC I/O states */
-static INT8 analog_input_data[4];
-static UINT8 adc_value;
+static int8_t analog_input_data[4];
+static uint8_t adc_value;
 
 /* CEM3394 DAC control states */
-static UINT16 dac_value;
-static UINT8 dac_register;
-static UINT8 chip_select;
+static uint16_t dac_value;
+static uint8_t dac_register;
+static uint8_t chip_select;
 
 /* main CPU 6850 states */
-static UINT8 m6850_status;
-static UINT8 m6850_control;
-static UINT8 m6850_input;
-static UINT8 m6850_output;
-static UINT8 m6850_data_ready;
+static uint8_t m6850_status;
+static uint8_t m6850_control;
+static uint8_t m6850_input;
+static uint8_t m6850_output;
+static uint8_t m6850_data_ready;
 
 /* sound CPU 6850 states */
-static UINT8 m6850_sound_status;
-static UINT8 m6850_sound_control;
-static UINT8 m6850_sound_input;
-static UINT8 m6850_sound_output;
+static uint8_t m6850_sound_status;
+static uint8_t m6850_sound_control;
+static uint8_t m6850_sound_input;
+static uint8_t m6850_sound_output;
 
 /* noise generator states */
-static UINT32 noise_position[6];
+static uint32_t noise_position[6];
 
 /* game-specific states */
-static UINT8 nstocker_bits;
-static UINT8 spiker_expand_color;
-static UINT8 spiker_expand_bgcolor;
-static UINT8 spiker_expand_bits;
-static UINT8 grudge_steering_result;
-static UINT8 grudge_last_steering[3];
+static uint8_t nstocker_bits;
+static uint8_t spiker_expand_color;
+static uint8_t spiker_expand_bgcolor;
+static uint8_t spiker_expand_bits;
+static uint8_t grudge_steering_result;
+static uint8_t grudge_last_steering[3];
 
 
 
@@ -125,7 +125,7 @@ static void interrupt_timer(int param)
 	/* if we're a shooter, we do a little more work */
 	if (balsente_shooter)
 	{
-		UINT8 tempx, tempy;
+		uint8_t tempx, tempy;
 
 		/* we latch the beam values on the first interrupt after VBLANK */
 		if (param == 64 && balsente_shooter)
@@ -205,8 +205,8 @@ MACHINE_INIT( balsente )
 
 static void poly17_init(void)
 {
-	UINT32 i, x = 0;
-	UINT8 *p, *r;
+	uint32_t i, x = 0;
+	uint8_t *p, *r;
 
 	/* allocate memory */
 	p = poly17 = auto_malloc(POLY17_SIZE + 1);
@@ -232,8 +232,8 @@ void balsente_noise_gen(int chip, int count, short *buffer)
 	if (Machine->sample_rate)
 	{
 		/* noise generator runs at 100kHz */
-		UINT32 step = (100000 << 14) / Machine->sample_rate;
-		UINT32 noise_counter = noise_position[chip];
+		uint32_t step = (100000 << 14) / Machine->sample_rate;
+		uint32_t noise_counter = noise_position[chip];
 
 		/* try to use the poly17 if we can */
 		if (poly17)
@@ -359,7 +359,7 @@ WRITE_HANDLER( balsente_misc_output_w )
 
 static void m6850_update_io(void)
 {
-	UINT8 new_state;
+	uint8_t new_state;
 
 	/* sound -> main CPU communications */
 	if (!(m6850_sound_status & 0x02))
@@ -946,7 +946,7 @@ READ_HANDLER( balsente_counter_state_r )
 
 WRITE_HANDLER( balsente_counter_control_w )
 {
-	UINT8 diff_counter_control = counter_control ^ data;
+	uint8_t diff_counter_control = counter_control ^ data;
 
 	/* set the new global value */
 	counter_control = data;
@@ -998,7 +998,7 @@ WRITE_HANDLER( balsente_counter_control_w )
 
 WRITE_HANDLER( balsente_chip_select_w )
 {
-	static const UINT8 register_map[8] =
+	static const uint8_t register_map[8] =
 	{
 		CEM3394_VCO_FREQUENCY,
 		CEM3394_FINAL_GAIN,
@@ -1067,7 +1067,7 @@ WRITE_HANDLER( balsente_dac_data_w )
 	/* if there are open channels, force the values in */
 	if ((chip_select & 0x3f) != 0x3f)
 	{
-		UINT8 temp = chip_select;
+		uint8_t temp = chip_select;
 		balsente_chip_select_w(0, 0x3f);
 		balsente_chip_select_w(0, temp);
 	}
@@ -1111,7 +1111,7 @@ WRITE_HANDLER( spiker_expand_w )
 
 READ_HANDLER( spiker_expand_r )
 {
-	UINT8 left, right;
+	uint8_t left, right;
 
 	/* first rotate each nibble */
 	spiker_expand_bits = ((spiker_expand_bits << 1) & 0xee) | ((spiker_expand_bits >> 3) & 0x11);
@@ -1130,8 +1130,8 @@ READ_HANDLER( spiker_expand_r )
 
 static void update_grudge_steering(void)
 {
-	UINT8 wheel[3];
-	INT8 diff[3];
+	uint8_t wheel[3];
+	int8_t diff[3];
 
 	/* read the current steering values */
 	wheel[0] = readinputport(4);

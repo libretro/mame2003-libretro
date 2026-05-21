@@ -17,10 +17,10 @@ struct ide_interface
 int ide_controller_init(int which, struct ide_interface *intf);
 int ide_controller_init_custom(int which, struct ide_interface *intf, struct chd_file *diskhandle);
 void ide_controller_reset(int which);
-UINT8 *ide_get_features(int which);
+uint8_t *ide_get_features(int which);
 
-void ide_set_master_password(int which, UINT8 *password);
-void ide_set_user_password(int which, UINT8 *password);
+void ide_set_master_password(int which, uint8_t *password);
+void ide_set_user_password(int which, uint8_t *password);
 
 READ32_HANDLER( ide_controller32_0_r );
 WRITE32_HANDLER( ide_controller32_0_w );

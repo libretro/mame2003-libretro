@@ -100,5 +100,5 @@ void konamigx_objdma(void);
 READ16_HANDLER ( K055550_word_r );
 WRITE16_HANDLER( K055550_word_w );
 WRITE16_HANDLER( K053990_martchmp_word_w );
-void konamigx_esc_alert(UINT32 *srcbase, int srcoffs, int count, int mode);
+void konamigx_esc_alert(uint32_t *srcbase, int srcoffs, int count, int mode);
 #endif

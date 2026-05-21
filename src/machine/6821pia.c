@@ -27,30 +27,30 @@
 struct pia6821
 {
 	const struct pia6821_interface *intf;
-	UINT8 addr;
+	uint8_t addr;
 
-	UINT8 in_a;
-	UINT8 in_ca1;
-	UINT8 in_ca2;
-	UINT8 out_a;
-	UINT8 out_ca2;
-	UINT8 ddr_a;
-	UINT8 ctl_a;
-	UINT8 irq_a1;
-	UINT8 irq_a2;
-	UINT8 irq_a_state;
+	uint8_t in_a;
+	uint8_t in_ca1;
+	uint8_t in_ca2;
+	uint8_t out_a;
+	uint8_t out_ca2;
+	uint8_t ddr_a;
+	uint8_t ctl_a;
+	uint8_t irq_a1;
+	uint8_t irq_a2;
+	uint8_t irq_a_state;
 
-	UINT8 in_b;
-	UINT8 in_cb1;
-	UINT8 in_cb2;
-	UINT8 out_b;
-	UINT8 out_cb2;
-	UINT8 ddr_b;
-	UINT8 ctl_b;
-	UINT8 irq_b1;
-	UINT8 irq_b2;
-	UINT8 irq_b_state;
-	UINT8 in_set; // which input ports are set
+	uint8_t in_b;
+	uint8_t in_cb1;
+	uint8_t in_cb2;
+	uint8_t out_b;
+	uint8_t out_cb2;
+	uint8_t ddr_b;
+	uint8_t ctl_b;
+	uint8_t irq_b1;
+	uint8_t irq_b2;
+	uint8_t irq_b_state;
+	uint8_t in_set; // which input ports are set
 };
 
 
@@ -89,7 +89,7 @@ struct pia6821
 
 static struct pia6821 pia[MAX_PIA];
 
-static const UINT8 swizzle_address[4] = { 0, 2, 1, 3 };
+static const uint8_t swizzle_address[4] = { 0, 2, 1, 3 };
 
 
 

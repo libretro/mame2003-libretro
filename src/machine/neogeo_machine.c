@@ -23,7 +23,7 @@ int mcd_number=0;
 int memcard_status=0;		/* 1=Inserted 0=No card */
 int memcard_number=0;		/* 000...999, -1=None */
 int memcard_manager=0;		/* 0=Normal boot 1=Call memcard manager */
-UINT8 *neogeo_memcard;		/* Pointer to 2kb RAM zone */
+uint8_t *neogeo_memcard;		/* Pointer to 2kb RAM zone */
 
 data8_t *neogeo_game_vectors;
 
@@ -113,7 +113,7 @@ DRIVER_INIT( neogeo )
 	for (tileno = 0;tileno < numtiles;tileno++)
 	{
 		unsigned char swap[128];
-		UINT8 *gfxdata;
+		uint8_t *gfxdata;
 		int x,y;
 		unsigned int pen;
 
@@ -123,7 +123,7 @@ DRIVER_INIT( neogeo )
 
 		for (y = 0;y < 16;y++)
 		{
-			UINT32 dw;
+			uint32_t dw;
 
 			dw = 0;
 			for (x = 0;x < 8;x++)

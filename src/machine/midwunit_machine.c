@@ -41,19 +41,19 @@
 
 
 /* code-related variables */
-       UINT8 *	midwunit_decode_memory;
+       uint8_t *	midwunit_decode_memory;
 
 /* CMOS-related variables */
-static UINT8	cmos_write_enable;
+static uint8_t	cmos_write_enable;
 
 /* I/O-related variables */
 static data16_t	iodata[8];
-static UINT8	ioshuffle[16];
-static UINT8	midxunit_analog_port;
+static uint8_t	ioshuffle[16];
+static uint8_t	midxunit_analog_port;
 
 /* UART-related variables */
-static UINT8	uart[8];
-static UINT8	security_bits;
+static uint8_t	uart[8];
+static uint8_t	security_bits;
 
 /* prototype */
 static READ16_HANDLER( midwunit_sound_state_r );
@@ -377,7 +377,7 @@ WRITE16_HANDLER( midxunit_uart_w )
 
 static void init_wunit_generic(void)
 {
-	UINT8 *base;
+	uint8_t *base;
 	int i, j;
 
 	/* set up code ROMs */
@@ -414,7 +414,7 @@ static void init_wunit_generic(void)
 
 /********************** Mortal Kombat 3 **********************/
 
-static UINT16 *umk3_palette;
+static uint16_t *umk3_palette;
 
 static WRITE16_HANDLER( umk3_palette_hack_w )
 {
@@ -612,7 +612,7 @@ DRIVER_INIT( rmpgwt )
 
 DRIVER_INIT( revx )
 {
-	UINT8 *base;
+	uint8_t *base;
 	int i, j;
 
 	/* common init */

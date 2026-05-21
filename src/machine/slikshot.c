@@ -71,15 +71,15 @@
 #include "cpu/z80/z80.h"
 #include "itech8.h"
 
-static UINT8 z80_ctrl;
-static UINT8 z80_port_val;
-static UINT8 z80_clear_to_send;
+static uint8_t z80_ctrl;
+static uint8_t z80_port_val;
+static uint8_t z80_clear_to_send;
 
-static UINT16 nextsensor0, nextsensor1, nextsensor2, nextsensor3;
-static UINT16 sensor0, sensor1, sensor2, sensor3;
+static uint16_t nextsensor0, nextsensor1, nextsensor2, nextsensor3;
+static uint16_t sensor0, sensor1, sensor2, sensor3;
 
-static UINT8 curvx, curvy = 1, curx;
-static UINT8 lastshoot;
+static uint8_t curvx, curvy = 1, curx;
+static uint8_t lastshoot;
 
 
 
@@ -94,8 +94,8 @@ static UINT8 lastshoot;
  *************************************/
 
 #if 0
-static void sensors_to_words(UINT16 sens0, UINT16 sens1, UINT16 sens2, UINT16 sens3,
-							UINT16 *word1, UINT16 *word2, UINT16 *word3, UINT8 *beams)
+static void sensors_to_words(uint16_t sens0, uint16_t sens1, uint16_t sens2, uint16_t sens3,
+							uint16_t *word1, uint16_t *word2, uint16_t *word3, uint8_t *beams)
 {
 	/* word 1 contains the difference between the larger of sensors 2 & 3 and the smaller */
 	*word1 = (sens3 > sens2) ? (sens3 - sens2) : (sens2 - sens3);
@@ -132,11 +132,11 @@ static void sensors_to_words(UINT16 sens0, UINT16 sens1, UINT16 sens2, UINT16 se
  *************************************/
 
 #if 0
-static void words_to_inters(UINT16 word1, UINT16 word2, UINT16 word3, UINT8 beams,
-							UINT16 *inter1, UINT16 *inter2, UINT16 *inter3)
+static void words_to_inters(uint16_t word1, uint16_t word2, uint16_t word3, uint8_t beams,
+							uint16_t *inter1, uint16_t *inter2, uint16_t *inter3)
 {
 	/* word 2 is scaled up by 0x1.6553 */
-	UINT16 word2mod = ((UINT64)word2 * 0x16553) >> 16;
+	uint16_t word2mod = ((uint64_t)word2 * 0x16553) >> 16;
 
 	/* intermediate values 1 and 2 are determined based on the beams bits */
 	switch (beams)
@@ -178,34 +178,34 @@ static void words_to_inters(UINT16 word1, UINT16 word2, UINT16 word3, UINT8 beam
  *
  *************************************/
 
-static void inters_to_vels(UINT16 inter1, UINT16 inter2, UINT16 inter3, UINT8 beams,
-							UINT8 *xres, UINT8 *vxres, UINT8 *vyres)
+static void inters_to_vels(uint16_t inter1, uint16_t inter2, uint16_t inter3, uint8_t beams,
+							uint8_t *xres, uint8_t *vxres, uint8_t *vyres)
 {
-	UINT32 _27d8, _27c2;
-	UINT32 vx, vy, _283a, _283e;
-	UINT8 vxsgn;
-	UINT16 xoffs = 0x0016;
-	UINT8 xscale = 0xe6;
-	UINT16 x;
+	uint32_t _27d8, _27c2;
+	uint32_t vx, vy, _283a, _283e;
+	uint8_t vxsgn;
+	uint16_t xoffs = 0x0016;
+	uint8_t xscale = 0xe6;
+	uint16_t x;
 
 	/* compute Vy */
 	vy = inter1 ? (0x31c28 / inter1) : 0;
 
 	/* compute Vx */
 	_283a = inter2 ? (0x30f2e / inter2) : 0;
-	_27d8 = ((UINT64)vy * 0xfbd3) >> 16;
+	_27d8 = ((uint64_t)vy * 0xfbd3) >> 16;
 	_27c2 = _283a - _27d8;
 	vxsgn = 0;
-	if ((INT32)_27c2 < 0)
+	if ((int32_t)_27c2 < 0)
 	{
 		vxsgn = 1;
 		_27c2 = _27d8 - _283a;
 	}
-	vx = ((UINT64)_27c2 * 0x58f8c) >> 16;
+	vx = ((uint64_t)_27c2 * 0x58f8c) >> 16;
 
 	/* compute X */
-	_27d8 = ((UINT64)(inter3 << 16) * _283a) >> 16;
-	_283e = ((UINT64)_27d8 * 0x4a574b) >> 16;
+	_27d8 = ((uint64_t)(inter3 << 16) * _283a) >> 16;
+	_283e = ((uint64_t)_27d8 * 0x4a574b) >> 16;
 
 	/* adjust X based on the low bit of the beams */
 	if (beams & 1)
@@ -251,24 +251,24 @@ static void inters_to_vels(UINT16 inter1, UINT16 inter2, UINT16 inter3, UINT8 be
  *
  *************************************/
 
-static void vels_to_inters(UINT8 x, UINT8 vx, UINT8 vy,
-							UINT16 *inter1, UINT16 *inter2, UINT16 *inter3, UINT8 *beams)
+static void vels_to_inters(uint8_t x, uint8_t vx, uint8_t vy,
+							uint16_t *inter1, uint16_t *inter2, uint16_t *inter3, uint8_t *beams)
 {
-	UINT32 _27d8;
-	UINT16 xoffs = 0x0016;
-	UINT8 xscale = 0xe6;
-	UINT8 x1, vx1, vy1;
-	UINT8 x2, vx2, vy2;
-	UINT8 diff1, diff2;
-	UINT16 inter2a;
+	uint32_t _27d8;
+	uint16_t xoffs = 0x0016;
+	uint8_t xscale = 0xe6;
+	uint8_t x1, vx1, vy1;
+	uint8_t x2, vx2, vy2;
+	uint8_t diff1, diff2;
+	uint16_t inter2a;
 
 	/* inter1 comes from Vy */
 	*inter1 = vy ? 0x31c28 / vy : 0;
 
 	/* inter2 can be derived from Vx and Vy */
-	_27d8 = ((UINT64)vy * 0xfbd3) >> 16;
-	*inter2 = 0x30f2e / (_27d8 + ((abs((INT8)vx) << 16) / 0x58f8c));
-	inter2a = 0x30f2e / (_27d8 - ((abs((INT8)vx) << 16) / 0x58f8c));
+	_27d8 = ((uint64_t)vy * 0xfbd3) >> 16;
+	*inter2 = 0x30f2e / (_27d8 + ((abs((int8_t)vx) << 16) / 0x58f8c));
+	inter2a = 0x30f2e / (_27d8 - ((abs((int8_t)vx) << 16) / 0x58f8c));
 
 	/* compute it back both ways and pick the closer */
 	inters_to_vels(*inter1, *inter2, 0, 0, &x1, &vx1, &vy1);
@@ -282,12 +282,12 @@ static void vels_to_inters(UINT8 x, UINT8 vx, UINT8 vy,
 	if (((x << 8) / xscale) + xoffs >= 0x7a)
 	{
 		*beams = 1;
-		*inter3 = (((((((UINT64)(((x << 8) / xscale) + xoffs - 0x7a)) << 16) << 16) / 0x4a574b) << 16) / (0x30f2e / *inter2)) >> 16;
+		*inter3 = (((((((uint64_t)(((x << 8) / xscale) + xoffs - 0x7a)) << 16) << 16) / 0x4a574b) << 16) / (0x30f2e / *inter2)) >> 16;
 	}
 	else
 	{
 		*beams = 0;
-		*inter3 = (((((((UINT64)(((x << 8) / xscale) + xoffs - 0x7a) * -1) << 16) << 16) / 0x4a574b) << 16) / (0x30f2e / *inter2)) >> 16;
+		*inter3 = (((((((uint64_t)(((x << 8) / xscale) + xoffs - 0x7a) * -1) << 16) << 16) / 0x4a574b) << 16) / (0x30f2e / *inter2)) >> 16;
 	}
 }
 
@@ -304,10 +304,10 @@ static void vels_to_inters(UINT8 x, UINT8 vx, UINT8 vy,
  *
  *************************************/
 
-static void inters_to_words(UINT16 inter1, UINT16 inter2, UINT16 inter3, UINT8 *beams,
-							UINT16 *word1, UINT16 *word2, UINT16 *word3)
+static void inters_to_words(uint16_t inter1, uint16_t inter2, uint16_t inter3, uint8_t *beams,
+							uint16_t *word1, uint16_t *word2, uint16_t *word3)
 {
-	UINT16 word2mod;
+	uint16_t word2mod;
 
 	/* intermediate value 3 is always equal to the third word */
 	*word3 = inter3;
@@ -326,11 +326,11 @@ static void inters_to_words(UINT16 inter1, UINT16 inter2, UINT16 inter3, UINT8 *
 
 			/* compute the other values from that */
 			*word1 = inter2 - word2mod;
-			*word2 = ((UINT64)word2mod << 16) / 0x16553;
+			*word2 = ((uint64_t)word2mod << 16) / 0x16553;
 		}
 		else
 			logerror("inters_to_words: unable to convert %04x %04x %04x %02x\n",
-					(UINT32)inter1, (UINT32)inter2, (UINT32)inter3, (UINT32)*beams);
+					(uint32_t)inter1, (uint32_t)inter2, (uint32_t)inter3, (uint32_t)*beams);
 	}
 
 	/* handle the case where low bit of beams is 0 */
@@ -346,11 +346,11 @@ static void inters_to_words(UINT16 inter1, UINT16 inter2, UINT16 inter3, UINT8 *
 
 			/* compute the other values from that */
 			*word1 = inter1 - word2mod;
-			*word2 = ((UINT64)word2mod << 16) / 0x16553;
+			*word2 = ((uint64_t)word2mod << 16) / 0x16553;
 		}
 		else
 			logerror("inters_to_words: unable to convert %04x %04x %04x %02x\n",
-					(UINT32)inter1, (UINT32)inter2, (UINT32)inter3, (UINT32)*beams);
+					(uint32_t)inter1, (uint32_t)inter2, (uint32_t)inter3, (uint32_t)*beams);
 	}
 }
 
@@ -366,8 +366,8 @@ static void inters_to_words(UINT16 inter1, UINT16 inter2, UINT16 inter3, UINT8 *
  *
  *************************************/
 
-static void words_to_sensors(UINT16 word1, UINT16 word2, UINT16 word3, UINT8 beams,
-							UINT16 *sens0, UINT16 *sens1, UINT16 *sens2, UINT16 *sens3)
+static void words_to_sensors(uint16_t word1, uint16_t word2, uint16_t word3, uint8_t beams,
+							uint16_t *sens0, uint16_t *sens1, uint16_t *sens2, uint16_t *sens3)
 {
 	/* if bit 0 of the beams is set, sensor 1 fired first; otherwise sensor 0 fired */
 	if (beams & 1)
@@ -392,9 +392,9 @@ static void words_to_sensors(UINT16 word1, UINT16 word2, UINT16 word3, UINT8 bea
 
 static void compute_sensors(void)
 {
-	UINT16 inter1, inter2, inter3;
-	UINT16 word1, word2, word3;
-	UINT8 beams;
+	uint16_t inter1, inter2, inter3;
+	uint16_t word1, word2, word3;
+	uint8_t beams;
 
 	/* skip if we're not ready */
 	if (sensor0 != 0 || sensor1 != 0 || sensor2 != 0 || sensor3 != 0)
@@ -492,7 +492,7 @@ READ_HANDLER( slikshot_z80_control_r )
 
 WRITE_HANDLER( slikshot_z80_control_w )
 {
-	UINT8 delta = z80_ctrl ^ data;
+	uint8_t delta = z80_ctrl ^ data;
 	z80_ctrl = data;
 
 	/* reset the Z80 on bit 4 changing */
@@ -541,9 +541,9 @@ WRITE_HANDLER( slikshot_z80_control_w )
 
 void slikshot_extra_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect)
 {
-	INT8 vx = (INT8)readinputport(3);
-	INT8 vy = (INT8)readinputport(4);
-	UINT8 xpos = readinputport(5);
+	int8_t vx = (int8_t)readinputport(3);
+	int8_t vy = (int8_t)readinputport(4);
+	uint8_t xpos = readinputport(5);
 	int xstart, ystart, xend, yend;
 	int dx, dy, absdx, absdy;
 	int count, i;
@@ -569,8 +569,8 @@ void slikshot_extra_draw(struct mame_bitmap *bitmap, const struct rectangle *cli
 	/* draw a crosshair (rotated) */
 	xstart = (((int)curx - 0x60) * 0x100 / 0xd0) + 144;
 	ystart = 256 - 48;
-	xend = xstart + (INT8)curvx;
-	yend = ystart - (INT8)curvy;
+	xend = xstart + (int8_t)curvx;
+	yend = ystart - (int8_t)curvy;
 
 	/* compute line params */
 	dx = xend - xstart;
@@ -603,9 +603,9 @@ void slikshot_extra_draw(struct mame_bitmap *bitmap, const struct rectangle *cli
 			py >= cliprect->min_y && py <= cliprect->max_y)
 		{
 			if (bitmap->depth == 8)
-				((UINT8 *)bitmap->line[py])[px] = Machine->pens[256];
+				((uint8_t *)bitmap->line[py])[px] = Machine->pens[256];
 			else
-				((UINT16 *)bitmap->line[py])[px] = Machine->pens[256];
+				((uint16_t *)bitmap->line[py])[px] = Machine->pens[256];
 		}
 		xstart += dx;
 		ystart += dy;
@@ -627,9 +627,9 @@ void slikshot_extra_draw(struct mame_bitmap *bitmap, const struct rectangle *cli
 
 int main(int argc, char *argv[])
 {
-	UINT16 word1, word2, word3;
-	UINT16 inter1, inter2, inter3;
-	UINT8 beams, x, vx, vy;
+	uint16_t word1, word2, word3;
+	uint16_t inter1, inter2, inter3;
+	uint8_t beams, x, vx, vy;
 
 	if (argc == 5)
 	{
@@ -648,18 +648,18 @@ int main(int argc, char *argv[])
 
 		sensors_to_words(sens0, sens1, sens2, sens3, &word1, &word2, &word3, &beams);
 		printf("word1 = %04x  word2 = %04x  word3 = %04x  beams = %d\n",
-				(UINT32)word1, (UINT32)word2, (UINT32)word3, (UINT32)beams);
+				(uint32_t)word1, (uint32_t)word2, (uint32_t)word3, (uint32_t)beams);
 
 		words_to_inters(word1, word2, word3, beams, &inter1, &inter2, &inter3);
-		printf("inter1 = %04x  inter2 = %04x  inter3 = %04x\n", (UINT32)inter1, (UINT32)inter2, (UINT32)inter3);
+		printf("inter1 = %04x  inter2 = %04x  inter3 = %04x\n", (uint32_t)inter1, (uint32_t)inter2, (uint32_t)inter3);
 
 		inters_to_vels(inter1, inter2, inter3, beams, &x, &vx, &vy);
-		printf("x = %02x  vx = %02x  vy = %02x\n", (UINT32)x, (UINT32)vx, (UINT32)vy);
+		printf("x = %02x  vx = %02x  vy = %02x\n", (uint32_t)x, (uint32_t)vx, (uint32_t)vy);
 	}
 	else if (argc == 4)
 	{
 		unsigned int xin, vxin, vyin;
-		UINT16 sens0, sens1, sens2, sens3;
+		uint16_t sens0, sens1, sens2, sens3;
 
 		sscanf(argv[1], "%x", &xin);
 		sscanf(argv[2], "%x", &vxin);
@@ -667,14 +667,14 @@ int main(int argc, char *argv[])
 		x = xin;
 		vx = vxin;
 		vy = vyin;
-		printf("x = %02x  vx = %02x  vy = %02x\n", (UINT32)x, (UINT32)vx, (UINT32)vy);
+		printf("x = %02x  vx = %02x  vy = %02x\n", (uint32_t)x, (uint32_t)vx, (uint32_t)vy);
 
 		vels_to_inters(x, vx, vy, &inter1, &inter2, &inter3, &beams);
-		printf("inter1 = %04x  inter2 = %04x  inter3 = %04x  beams = %d\n", (UINT32)inter1, (UINT32)inter2, (UINT32)inter3, (UINT32)beams);
+		printf("inter1 = %04x  inter2 = %04x  inter3 = %04x  beams = %d\n", (uint32_t)inter1, (uint32_t)inter2, (uint32_t)inter3, (uint32_t)beams);
 
 		inters_to_words(inter1, inter2, inter3, &beams, &word1, &word2, &word3);
 		printf("word1 = %04x  word2 = %04x  word3 = %04x  beams = %d\n",
-				(UINT32)word1, (UINT32)word2, (UINT32)word3, (UINT32)beams);
+				(uint32_t)word1, (uint32_t)word2, (uint32_t)word3, (uint32_t)beams);
 
 		words_to_sensors(word1, word2, word3, beams, &sens0, &sens1, &sens2, &sens3);
 		printf("sensors: %04x %04x %04x %04x\n", sens0, sens1, sens2, sens3);

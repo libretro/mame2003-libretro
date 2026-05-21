@@ -190,7 +190,7 @@ WRITE16_HANDLER( tms57002_data_word_w )
 	#define GX_ZBUFSIZE  0x2a0000
 #endif
 
-static UINT8 *gx_objzbuf, *gx_shdzbuf;
+static uint8_t *gx_objzbuf, *gx_shdzbuf;
 
 
 // Localized K053936/ROZ+
@@ -247,7 +247,7 @@ void K053936GP_set_cliprect(int chip, int minx, int maxx, int miny, int maxy)
 
 static INLINE void K053936GP_copyroz32clip( struct mame_bitmap *dst_bitmap, struct mame_bitmap *src_bitmap,
 		const struct rectangle *dst_cliprect, const struct rectangle *src_cliprect,
-		UINT32 _startx,UINT32 _starty,int _incxx,int _incxy,int _incyx,int _incyy,
+		uint32_t _startx,uint32_t _starty,int _incxx,int _incxy,int _incyx,int _incyy,
 		int tilebpp, int blend, int clip )
 {
 	static int colormask[8]={1,3,7,0xf,0x1f,0x3f,0x7f,0xff};
@@ -256,13 +256,13 @@ static INLINE void K053936GP_copyroz32clip( struct mame_bitmap *dst_bitmap, stru
 	register int eax, ebx, edx, ecx;
 	int src_pitch, incxy, incxx;
 	int src_minx, src_maxx, src_miny, src_maxy, cmask, ebp;
-	UINT16 *src_base;
-	UINT32 *pal_base;
-	const UINT8  *esi, *edi;
-	UINT32 *dst_ptr;
+	uint16_t *src_base;
+	uint32_t *pal_base;
+	const uint8_t  *esi, *edi;
+	uint32_t *dst_ptr;
 
 	int tx, dst_pitch;
-	UINT32 *dst_base;
+	uint32_t *dst_base;
 	int starty, incyy, startx, incyx, ty, sx, sy;
 
 	incxy = _incxy; incxx = _incxx; incyy = _incyy; incyx = _incyx;
@@ -291,7 +291,7 @@ static INLINE void K053936GP_copyroz32clip( struct mame_bitmap *dst_bitmap, stru
 
 	// adjust entry points and other loop constants
 	dst_pitch = dst_bitmap->rowpixels;
-	dst_base = (UINT32*)dst_bitmap->base + sy * dst_pitch + sx + tx;
+	dst_base = (uint32_t*)dst_bitmap->base + sy * dst_pitch + sx + tx;
 	ecx = tx = -tx;
 
 	tilebpp = (tilebpp-1) & 7;
@@ -407,7 +407,7 @@ static void K053936GP_zoom_draw(int chip, data16_t *ctrl, data16_t *linectrl,
 	data16_t *lineaddr;
 
 	struct rectangle my_clip;
-	UINT32 startx, starty;
+	uint32_t startx, starty;
 	int incxx, incxy, incyx, incyy, y, maxy, clip;
 
 	src_bitmap = tilemap_get_pixmap(tilemap);
@@ -426,10 +426,10 @@ static void K053936GP_zoom_draw(int chip, data16_t *ctrl, data16_t *linectrl,
 			lineaddr = linectrl + ( ((y - K053936_offset[chip][1]) & 0x1ff) << 2);
 			my_clip.min_y = my_clip.max_y = y;
 
-			startx = (INT16)(lineaddr[0] + ctrl[0x00]) << 8;
-			starty = (INT16)(lineaddr[1] + ctrl[0x01]) << 8;
-			incxx  = (INT16)(lineaddr[2]);
-			incxy  = (INT16)(lineaddr[3]);
+			startx = (int16_t)(lineaddr[0] + ctrl[0x00]) << 8;
+			starty = (int16_t)(lineaddr[1] + ctrl[0x01]) << 8;
+			incxx  = (int16_t)(lineaddr[2]);
+			incxy  = (int16_t)(lineaddr[3]);
 
 			if (ctrl[0x06] & 0x8000) incxx <<= 8;
 			if (ctrl[0x06] & 0x0080) incxy <<= 8;
@@ -445,12 +445,12 @@ static void K053936GP_zoom_draw(int chip, data16_t *ctrl, data16_t *linectrl,
 	}
 	else    /* "simple" mode */
 	{
-		startx = (INT16)(ctrl[0x00]) << 8;
-		starty = (INT16)(ctrl[0x01]) << 8;
-		incyx  = (INT16)(ctrl[0x02]);
-		incyy  = (INT16)(ctrl[0x03]);
-		incxx  = (INT16)(ctrl[0x04]);
-		incxy  = (INT16)(ctrl[0x05]);
+		startx = (int16_t)(ctrl[0x00]) << 8;
+		starty = (int16_t)(ctrl[0x01]) << 8;
+		incyx  = (int16_t)(ctrl[0x02]);
+		incyy  = (int16_t)(ctrl[0x03]);
+		incxx  = (int16_t)(ctrl[0x04]);
+		incxy  = (int16_t)(ctrl[0x05]);
 
 		if (ctrl[0x06] & 0x4000) { incyx <<= 8; incyy <<= 8; }
 		if (ctrl[0x06] & 0x0040) { incxx <<= 8; incxy <<= 8; }
@@ -507,22 +507,22 @@ static INLINE void zdrawgfxzoom32GP( struct mame_bitmap *bitmap, const struct Gf
 #define FPENT  0
 
 	// inner loop
-	UINT8  *src_ptr;
+	uint8_t  *src_ptr;
 	int src_x;
 	register int eax, ebx, edx, ecx;
 	int src_fx, src_fdx;
 	int shdpen, ebp;
-	UINT8  z8, db0, p8, db1;
-	UINT8  *ozbuf_ptr;
-	UINT8  *szbuf_ptr;
-	UINT32 *pal_base;
-	UINT32 *shd_base;
-	UINT32 *dst_ptr;
-	const UINT8  *esi, *edi;
+	uint8_t  z8, db0, p8, db1;
+	uint8_t  *ozbuf_ptr;
+	uint8_t  *szbuf_ptr;
+	uint32_t *pal_base;
+	uint32_t *shd_base;
+	uint32_t *dst_ptr;
+	const uint8_t  *esi, *edi;
 
 	// outter loop
 	int src_fby, src_fdy, src_fbx;
-	UINT8 *src_base;
+	uint8_t *src_base;
 	int dst_w, dst_h;
 
 	// one-time
@@ -567,7 +567,7 @@ static INLINE void zdrawgfxzoom32GP( struct mame_bitmap *bitmap, const struct Gf
 	src_base  = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 	pal_base  = gfx->colortable + (color % gfx->total_colors) * granularity;
-	shd_base  = (UINT32 *)palette_shadow_table;
+	shd_base  = (uint32_t *)palette_shadow_table;
 
 	dst_ptr   = bitmap->base;
 	dst_pitch = GX_BMPPW;
@@ -625,8 +625,8 @@ static INLINE void zdrawgfxzoom32GP( struct mame_bitmap *bitmap, const struct Gf
 
 	// adjust insertion points and pre-entry constants
 	eax = (dst_y - dst_miny) * GX_ZBUFW + (dst_x - dst_minx) + dst_w;
-	db0 = z8 = (UINT8)zcode;
-	db1 = p8 = (UINT8)pri;
+	db0 = z8 = (uint8_t)zcode;
+	db1 = p8 = (uint8_t)pri;
 	ozbuf_ptr += eax;
 	szbuf_ptr += eax << 1;
 	dst_ptr += dst_y * dst_pitch + dst_x + dst_w;
@@ -1156,7 +1156,7 @@ int K055555GX_decode_osmixcolor(int layer, int *color) // (see p.63, p.49-50 and
 
 static void gx_wipezbuf(int noshadow)
 {
-	UINT8  *zptr;
+	uint8_t  *zptr;
 	int w, h;
 	register int ecx;
 
@@ -1232,7 +1232,7 @@ int konamigx_mixer_init(int objdma)
 	gx_objdma = 0;
 	gx_primode = 0;
 
-	gx_objzbuf = (UINT8 *)priority_bitmap->base;
+	gx_objzbuf = (uint8_t *)priority_bitmap->base;
 	if (!(gx_shdzbuf = auto_malloc(GX_ZBUFSIZE))) return(1);
 	if (!(gx_objpool = auto_malloc(sizeof(struct GX_OBJ) * (GX_MAX_OBJECTS)))) return(1);
 
@@ -1864,7 +1864,7 @@ void konamigx_mixer(struct mame_bitmap *bitmap, const struct rectangle *cliprect
 /***************************************************************************/
 
 // K055550/K053990 protection chips, perform simple memset() and other game logic operations
-static UINT16 prot_data[0x20];
+static uint16_t prot_data[0x20];
 
 READ16_HANDLER( K055550_word_r )
 {
@@ -1873,7 +1873,7 @@ READ16_HANDLER( K055550_word_r )
 
 WRITE16_HANDLER( K055550_word_w )
 {
-	UINT32 adr, bsize, count, i, lim;
+	uint32_t adr, bsize, count, i, lim;
 	int src, tgt, srcend, tgtend, skip, cx1, sx1, wx1, cy1, sy1, wy1, cz1, sz1, wz1, c2, s2, w2;
 	int dx, dy, angle;
 
@@ -2081,11 +2081,11 @@ WRITE16_HANDLER( K053990_martchmp_word_w )
 	}
 }
 
-void konamigx_esc_alert(UINT32 *srcbase, int srcoffs, int count, int mode) // (WARNING: assumed big endianess)
+void konamigx_esc_alert(uint32_t *srcbase, int srcoffs, int count, int mode) // (WARNING: assumed big endianess)
 {
 
 // hand-filled but should be close
-static UINT8 ztable[7][8] =
+static uint8_t ztable[7][8] =
 {
 	{5,4,3,2,1,7,6,0},
 	{4,3,2,1,0,7,6,5},
@@ -2096,7 +2096,7 @@ static UINT8 ztable[7][8] =
 	{5,4,3,2,1,7,6,0}
 };
 
-static UINT8 ptable[7][8] =
+static uint8_t ptable[7][8] =
 {
 	{0x00,0x00,0x00,0x10,0x20,0x00,0x00,0x30},
 	{0x20,0x20,0x20,0x20,0x20,0x00,0x20,0x20},
@@ -2107,10 +2107,10 @@ static UINT8 ptable[7][8] =
 	{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x10}
 };
 
-	INT32 data1, data2, i, j, vpos, hpos, voffs, hoffs, vcorr, hcorr, vmask, hmask, magicid;
-	UINT32 *src, *srcend, *obj, *objend;
-	UINT16 *dst;
-	UINT8  *zcode, *pcode;
+	int32_t data1, data2, i, j, vpos, hpos, voffs, hoffs, vcorr, hcorr, vmask, hmask, magicid;
+	uint32_t *src, *srcend, *obj, *objend;
+	uint16_t *dst;
+	uint8_t  *zcode, *pcode;
 
 	if (!count || !srcbase) return;
 

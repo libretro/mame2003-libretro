@@ -21,12 +21,12 @@ static int tape_present;
 static int tape_blocks;
 static int tape_length;
 static int tape_bot_eot;
-static UINT8 crc16_lsb;
-static UINT8 crc16_msb;
+static uint8_t crc16_lsb;
+static uint8_t crc16_msb;
 
 /* pre-calculated crc16 of the tape blocks */
-static UINT8 tape_crc16_lsb[256];
-static UINT8 tape_crc16_msb[256];
+static uint8_t tape_crc16_lsb[256];
+static uint8_t tape_crc16_msb[256];
 
 static data8_t (*decocass_dongle_r)(offs_t offset);
 static void (*decocass_dongle_w)(offs_t offset, data8_t data);
@@ -47,8 +47,8 @@ static data8_t i8041_p2;
 #define MAP5(m) ((m>>20)&15)
 #define MAP6(m) ((m>>24)&15)
 #define MAP7(m) ((m>>28)&15)
-static UINT32 type1_inmap;
-static UINT32 type1_outmap;
+static uint32_t type1_inmap;
+static uint32_t type1_outmap;
 
 /* dongle type #2: status of the latches */
 static int type2_d2_latch;	/* latched 8041-STATUS D2 value */
@@ -292,12 +292,12 @@ static const char *dirnm(int speed)
 }
 #endif
 
-static void tape_crc16(UINT8 data)
+static void tape_crc16(uint8_t data)
 {
-	UINT8 c0, c1;
-	UINT8 old_lsb = crc16_lsb;
-	UINT8 old_msb = crc16_msb;
-	UINT8 feedback;
+	uint8_t c0, c1;
+	uint8_t old_lsb = crc16_lsb;
+	uint8_t old_msb = crc16_msb;
+	uint8_t feedback;
 
 	feedback = ((data >> 7) ^ crc16_msb) & 1;
 
@@ -579,7 +579,7 @@ READ_HANDLER( decocass_type1_r )
 	{
 		offs_t promaddr;
 		data8_t save;
-		UINT8 *prom = memory_region(REGION_USER1);
+		uint8_t *prom = memory_region(REGION_USER1);
 
 		if (firsttime)
 		{
@@ -1230,7 +1230,7 @@ READ_HANDLER( decocass_type4_r )
 	{
 		if (type4_latch)
 		{
-			UINT8 *prom = memory_region(REGION_USER1);
+			uint8_t *prom = memory_region(REGION_USER1);
 
 			data = prom[type4_ctrs];
 			LOG(3,("%9.7f 6502-PC: %04x decocass_type5_r(%02x): $%02x '%c' <- PROM[%04x]\n", timer_get_time(), activecpu_get_previouspc(), offset, data, (data >= 32) ? data : '.', type4_ctrs));
@@ -1450,7 +1450,7 @@ static void decocass_state_save_postload(void)
 
 void decocass_init_common(void)
 {
-	UINT8 *image = memory_region(REGION_USER2);
+	uint8_t *image = memory_region(REGION_USER2);
 	int i, offs;
 
 	tape_dir = 0;

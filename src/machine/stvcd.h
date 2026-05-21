@@ -1,10 +1,10 @@
 void cdb_build_ftree(void);
 void cdb_build_toc(void);
 void iso_reset(void);
-void CD_com_update(UINT32 count);
-UINT32 cdb_find_track(UINT32 fad);
-UINT32 cdb_find_file(UINT32 fad);
-void cdb_inject_file_info(UINT32 fid, UINT8 * dst);
+void CD_com_update(uint32_t count);
+uint32_t cdb_find_track(uint32_t fad);
+uint32_t cdb_find_file(uint32_t fad);
+void cdb_inject_file_info(uint32_t fid, uint8_t * dst);
 
 
 #define CDB_SEND_REPORT()								\
@@ -28,27 +28,27 @@ void cdb_inject_file_info(UINT32 fid, UINT8 * dst);
 
 #define CDB_FLAG_CDROM		0x80		// on CDROM area (else CDDA, <SEEK> or <SCAN>)
 
-extern UINT8 	CD_cr_first;
-extern UINT8 	CD_cr_writing;
-extern UINT16	CR1;
-extern UINT16	CR2;
-extern UINT16	CR3;
-extern UINT16	CR4;
-extern UINT16	CD_hirq;
-extern UINT16 	CD_hirq_i;
-extern UINT16  CD_mask;
-extern UINT8	CD_status;
-extern UINT32	CD_fad;
-extern UINT8	CD_track;
-extern UINT8	CD_control;
-extern UINT8	CD_index;
+extern uint8_t 	CD_cr_first;
+extern uint8_t 	CD_cr_writing;
+extern uint16_t	CR1;
+extern uint16_t	CR2;
+extern uint16_t	CR3;
+extern uint16_t	CR4;
+extern uint16_t	CD_hirq;
+extern uint16_t 	CD_hirq_i;
+extern uint16_t  CD_mask;
+extern uint8_t	CD_status;
+extern uint32_t	CD_fad;
+extern uint8_t	CD_track;
+extern uint8_t	CD_control;
+extern uint8_t	CD_index;
 
-extern UINT32 fn;
+extern uint32_t fn;
 
-extern INT32	CD_com;				// last command being processed
-extern INT32	CD_com_play;			// last play command
-extern UINT8	CD_stat;				// drive status
-extern UINT8	CD_flag;				// 0x00 = CD-DA or <SEEK> or <SCAN> 0x80 = CD-ROM
+extern int32_t	CD_com;				// last command being processed
+extern int32_t	CD_com_play;			// last play command
+extern uint8_t	CD_stat;				// drive status
+extern uint8_t	CD_flag;				// 0x00 = CD-DA or <SEEK> or <SCAN> 0x80 = CD-ROM
 
 #define CDB_SECT_NUM	200		// 200 sectors can be contained in the cd buffer
 #define CDB_SEL_NUM	24		// 24 selectors (buffer partitions / filters) available
@@ -56,51 +56,51 @@ extern UINT8	CD_flag;				// 0x00 = CD-DA or <SEEK> or <SCAN> 0x80 = CD-ROM
 
 typedef struct filt_t {
 
-	UINT8		true_cond;		// true connection
-	UINT8		false_cond;		// false connection
-	UINT8		mode;		// filter mode
-	UINT32		fad;		// range start fad
-	UINT32		range;		// range length in fads
-	UINT8		chan;		// channel
-	UINT8		fid;		// file id
-	UINT8		sub_val;	// subheader value
-	UINT8		sub_mask;	// subheader mask
-	UINT8		cod_val;	// code value
-	UINT8		cod_mask;	// code mask
+	uint8_t		true_cond;		// true connection
+	uint8_t		false_cond;		// false connection
+	uint8_t		mode;		// filter mode
+	uint32_t		fad;		// range start fad
+	uint32_t		range;		// range length in fads
+	uint8_t		chan;		// channel
+	uint8_t		fid;		// file id
+	uint8_t		sub_val;	// subheader value
+	uint8_t		sub_mask;	// subheader mask
+	uint8_t		cod_val;	// code value
+	uint8_t		cod_mask;	// code mask
 
 } filt_t;
 
 
 typedef struct track_t {
 
-	UINT32		ctrl;		// track control
-	UINT32		idx;		// track index
-	UINT32		fad;		// track fad
-	UINT32		min;		// track time, minute
-	UINT32		sec;		// track time, second
-	UINT32		fra;		// track time, frame
-	UINT32		num;		// track number (just here for speed)
+	uint32_t		ctrl;		// track control
+	uint32_t		idx;		// track index
+	uint32_t		fad;		// track fad
+	uint32_t		min;		// track time, minute
+	uint32_t		sec;		// track time, second
+	uint32_t		fra;		// track time, frame
+	uint32_t		num;		// track number (just here for speed)
 
 } track_t;
 
 
 typedef struct sect_t {
 
-	UINT8		dummy1[2048];	// for MSCDEX
-	UINT8		data[2352];	// sector data
-	UINT8		dummy2[2048];	// for MSCDEX
-	UINT32		size;		// used space in bytes
-	UINT32		fad;		// sector fad
-	UINT8		fid;		// file id
-	UINT8		chan;		// channel
-	UINT8		sub;		// submode info
-	UINT8		cod;		// code info
+	uint8_t		dummy1[2048];	// for MSCDEX
+	uint8_t		data[2352];	// sector data
+	uint8_t		dummy2[2048];	// for MSCDEX
+	uint32_t		size;		// used space in bytes
+	uint32_t		fad;		// sector fad
+	uint8_t		fid;		// file id
+	uint8_t		chan;		// channel
+	uint8_t		sub;		// submode info
+	uint8_t		cod;		// code info
 
 } sect_t;
 
 typedef struct part_t {
 
-	UINT32		size;				// partition size in bytes (also points to the last used sector)
+	uint32_t		size;				// partition size in bytes (also points to the last used sector)
 	sect_t	* sect[CDB_SECT_NUM];	// sector info pointers
 
 } part_t;
@@ -117,12 +117,12 @@ typedef struct toc_t {
 
 typedef struct file_t {
 
-	UINT32		fad;		// file data fad
-	UINT32		size;		// file data size in bytes
-	UINT8		attr;		// file attributes
-	UINT8		unit;		// interleave unit
-	UINT8		gap;		// interleave gap
-	UINT8		name_len;	// file name length
+	uint32_t		fad;		// file data fad
+	uint32_t		size;		// file data size in bytes
+	uint8_t		attr;		// file attributes
+	uint8_t		unit;		// interleave unit
+	uint8_t		gap;		// interleave gap
+	uint8_t		name_len;	// file name length
 	char		name[33];	// file name
 
 } file_t;
@@ -131,44 +131,44 @@ typedef struct file_t {
 
 
 
-extern UINT32	CD_last_part;			// last buffer partition accessed
+extern uint32_t	CD_last_part;			// last buffer partition accessed
 extern filt_t	CD_filt[CDB_SEL_NUM];		// filters
 
-extern UINT32	CD_play_fad;			// play start address
-extern UINT32	CD_play_range;			// play range
-extern UINT32	CD_seek_target;			// seek target address
-extern UINT8	CD_scan_dir;			// scan direction
-extern UINT32	CD_search_pn;			// search result, partition number
-extern UINT32	CD_search_sp;			// search result, sector position
-extern UINT32	CD_search_fad;			// search result, fad
-extern UINT32	CD_file_scope_first;
-extern UINT32	CD_file_scope_last;
+extern uint32_t	CD_play_fad;			// play start address
+extern uint32_t	CD_play_range;			// play range
+extern uint32_t	CD_seek_target;			// seek target address
+extern uint8_t	CD_scan_dir;			// scan direction
+extern uint32_t	CD_search_pn;			// search result, partition number
+extern uint32_t	CD_search_sp;			// search result, sector position
+extern uint32_t	CD_search_fad;			// search result, fad
+extern uint32_t	CD_file_scope_first;
+extern uint32_t	CD_file_scope_last;
 
 
-extern UINT32	CD_data_pn;			// data transfer partition number
-extern UINT32	CD_data_sp;			// data transfer sector position
-extern UINT32	CD_data_sn;			// data transfer sector number
-extern UINT32	CD_data_count;			// data transfer current byte count
-extern UINT32	CD_data_delete;			// data must be deleted upon read
-extern UINT32	CD_data_size;			// data transfer size in bytes
+extern uint32_t	CD_data_pn;			// data transfer partition number
+extern uint32_t	CD_data_sp;			// data transfer sector position
+extern uint32_t	CD_data_sn;			// data transfer sector number
+extern uint32_t	CD_data_count;			// data transfer current byte count
+extern uint32_t	CD_data_delete;			// data must be deleted upon read
+extern uint32_t	CD_data_size;			// data transfer size in bytes
 
 extern char * 	CD_info_ptr;			// info transfer buffer pointer
-extern UINT32	CD_info_count;			// info transfer byte count
-extern UINT32	CD_info_size;			// info transfer total byte count
+extern uint32_t	CD_info_count;			// info transfer byte count
+extern uint32_t	CD_info_size;			// info transfer total byte count
 
-extern UINT32	CD_trans_type;			// 0 = DATA, 1 = INFO   //maybe signed int
+extern uint32_t	CD_trans_type;			// 0 = DATA, 1 = INFO   //maybe signed int
 
-extern UINT32	CD_actual_size;			// used by "calcactualsize" and "getactualsize"
+extern uint32_t	CD_actual_size;			// used by "calcactualsize" and "getactualsize"
 
 ////////////////////////////////////////////////////////////////
 
 extern sect_t	CD_sect[CDB_SECT_NUM];	// sector buffer
 extern part_t	CD_part[CDB_SEL_NUM];	// buffer partitions
 extern filt_t	CD_filt[CDB_SEL_NUM];	// filters
-extern UINT32	CD_free_space;		// free space in sector units
+extern uint32_t	CD_free_space;		// free space in sector units
 
-extern UINT8	CD_filt_num;		// cdrom drive connector
-extern UINT8	CD_mpeg_filt_num;	// mpeg connector
+extern uint8_t	CD_filt_num;		// cdrom drive connector
+extern uint8_t	CD_mpeg_filt_num;	// mpeg connector
 
 ////////////////////////////////////////////////////////////////
 
@@ -216,11 +216,11 @@ extern UINT8	CD_mpeg_filt_num;	// mpeg connector
 //***********
 
 
-extern UINT32	CD_cur_fad;			// current pickup position info
-extern UINT32	CD_cur_track;			//
-extern UINT32	CD_cur_ctrl;			//
-extern UINT32	CD_cur_idx;			//
-extern UINT32	CD_cur_fid;			//
+extern uint32_t	CD_cur_fad;			// current pickup position info
+extern uint32_t	CD_cur_track;			//
+extern uint32_t	CD_cur_ctrl;			//
+extern uint32_t	CD_cur_idx;			//
+extern uint32_t	CD_cur_fid;			//
 
 
 
@@ -231,21 +231,21 @@ extern char CD_sat_subq[5 * 2];			// current subcode q
 extern char CD_sat_subrw[12 * 2];		// current subcode r~w
 extern toc_t	CD_toc;			// disc toc
 extern file_t	CD_file[CDB_FID_NUM];	// file table (directory table)
-extern UINT32	CD_file_num;		// total file infos stored
+extern uint32_t	CD_file_num;		// total file infos stored
 extern char	CD_sat_toc[408];	// current cdrom toc
 
 
-extern UINT8	CD_init_flag;
-extern UINT8	CD_flag;			// 0x00 = CD-DA or <SEEK> or <SCAN> 0x80 = CD-ROM
-extern UINT32	CD_repeat;			// repeat frequency
-extern UINT32	CD_standby;			// standby wait
-extern UINT32	CD_repeat_max;			// max repeat frequency
-extern UINT8	CD_ecc;
-extern UINT32	CD_drive_speed;			// 0 = noop, 1 = 1x, 2 = 2x
+extern uint8_t	CD_init_flag;
+extern uint8_t	CD_flag;			// 0x00 = CD-DA or <SEEK> or <SCAN> 0x80 = CD-ROM
+extern uint32_t	CD_repeat;			// repeat frequency
+extern uint32_t	CD_standby;			// standby wait
+extern uint32_t	CD_repeat_max;			// max repeat frequency
+extern uint8_t	CD_ecc;
+extern uint32_t	CD_drive_speed;			// 0 = noop, 1 = 1x, 2 = 2x
 
 
-extern UINT8			cdda_buff[8192];		// CD-DA buffer for SCSP communication
-extern UINT32		cdda_pos;
+extern uint8_t			cdda_buff[8192];		// CD-DA buffer for SCSP communication
+extern uint32_t		cdda_pos;
 
 
 

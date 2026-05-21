@@ -25,23 +25,23 @@ static INLINE void verboselog( int n_level, const char *s_fmt, ... )
 	}
 }
 
-static UINT8 *m_p_n_ram;
+static uint8_t *m_p_n_ram;
 static size_t m_n_ramsize;
 
-static INLINE UINT8 psxreadbyte( UINT32 n_address )
+static INLINE uint8_t psxreadbyte( uint32_t n_address )
 {
 	return m_p_n_ram[ BYTE_XOR_LE( n_address ) ];
 }
 
-static INLINE UINT16 psxreadword( UINT32 n_address )
+static INLINE uint16_t psxreadword( uint32_t n_address )
 {
-	return *( (UINT16 *)&m_p_n_ram[ WORD_XOR_LE( n_address ) ] );
+	return *( (uint16_t *)&m_p_n_ram[ WORD_XOR_LE( n_address ) ] );
 }
 
 /* IRQ */
 
-static UINT32 m_n_irqdata;
-static UINT32 m_n_irqmask;
+static uint32_t m_n_irqdata;
+static uint32_t m_n_irqmask;
 
 static void psx_irq_update( void )
 {
@@ -96,7 +96,7 @@ READ32_HANDLER( psx_irq_r )
 	return 0;
 }
 
-void psx_irq_set( UINT32 data )
+void psx_irq_set( uint32_t data )
 {
 	m_n_irqdata |= data;
 	psx_irq_update();
@@ -104,17 +104,17 @@ void psx_irq_set( UINT32 data )
 
 /* DMA */
 
-static UINT32 m_p_n_dmabase[ 7 ];
-static UINT32 m_p_n_dmablockcontrol[ 7 ];
-static UINT32 m_p_n_dmachannelcontrol[ 7 ];
+static uint32_t m_p_n_dmabase[ 7 ];
+static uint32_t m_p_n_dmablockcontrol[ 7 ];
+static uint32_t m_p_n_dmachannelcontrol[ 7 ];
 static void *m_p_timer_dma[ 7 ];
 static psx_dma_read_handler m_p_fn_dma_read[ 7 ];
 static psx_dma_write_handler m_p_fn_dma_write[ 7 ];
-static UINT32 m_p_n_dma_lastscanline[ 7 ];
-static UINT32 m_n_dpcp;
-static UINT32 m_n_dicr;
+static uint32_t m_p_n_dma_lastscanline[ 7 ];
+static uint32_t m_n_dpcp;
+static uint32_t m_n_dicr;
 
-static void dma_timer( int n_channel, UINT32 n_scanline )
+static void dma_timer( int n_channel, uint32_t n_scanline )
 {
 	if( n_scanline != 0xffffffff )
 	{
@@ -175,9 +175,9 @@ WRITE32_HANDLER( psx_dma_w )
 			m_p_n_dmachannelcontrol[ n_channel ] = data;
 			if( ( m_p_n_dmachannelcontrol[ n_channel ] & ( 1L << 0x18 ) ) != 0 && ( m_n_dpcp & ( 1 << ( 3 + ( n_channel * 4 ) ) ) ) != 0 )
 			{
-				INT32 n_size;
-				UINT32 n_address;
-				UINT32 n_nextaddress;
+				int32_t n_size;
+				uint32_t n_address;
+				uint32_t n_nextaddress;
 
 				n_address = ( m_p_n_dmabase[ n_channel ] & m_n_ramsize );
 				n_size = m_p_n_dmablockcontrol[ n_channel ];
@@ -221,14 +221,14 @@ WRITE32_HANDLER( psx_dma_w )
 					n_channel == 2 &&
 					m_p_fn_dma_write[ n_channel ] != NULL )
 				{
-					UINT32 n_segments = 0;
+					uint32_t n_segments = 0;
 
 					verboselog( 1, "dma %d write linked list %08x\n",
 						n_channel, m_p_n_dmabase[ n_channel ] );
 					do
 					{
 						n_address &= m_n_ramsize;
-						n_nextaddress = *( (UINT32 *)&m_p_n_ram[ n_address ] );
+						n_nextaddress = *( (uint32_t *)&m_p_n_ram[ n_address ] );
 						m_p_fn_dma_write[ n_channel ]( n_address + 4, n_nextaddress >> 24 );
 						n_address = ( n_nextaddress & 0xffffff );
 
@@ -253,11 +253,11 @@ WRITE32_HANDLER( psx_dma_w )
 						while( n_size > 0 )
 						{
 							n_nextaddress = ( n_address - 4 ) & 0xffffff;
-							*( (UINT32 *)&m_p_n_ram[ n_address ] ) = n_nextaddress;
+							*( (uint32_t *)&m_p_n_ram[ n_address ] ) = n_nextaddress;
 							n_address = n_nextaddress;
 							n_size--;
 						}
-						*( (UINT32 *)&m_p_n_ram[ n_address ] ) = 0xffffff;
+						*( (uint32_t *)&m_p_n_ram[ n_address ] ) = 0xffffff;
 					}
 					dma_finished( n_channel );
 				}
@@ -615,22 +615,22 @@ void psx_sio_install_write_handler( int n_port, psx_sio_write_handler p_f_write 
 #define	DCTSIZE ( 8 )
 #define	DCTSIZE2 ( DCTSIZE * DCTSIZE )
 
-static INT32 m_p_n_mdec_quantize_y[ DCTSIZE2 ];
-static INT32 m_p_n_mdec_quantize_uv[ DCTSIZE2 ];
-static INT32 m_p_n_mdec_cos[ DCTSIZE2 ];
-static INT32 m_p_n_mdec_cos_precalc[ DCTSIZE2 * DCTSIZE2 ];
+static int32_t m_p_n_mdec_quantize_y[ DCTSIZE2 ];
+static int32_t m_p_n_mdec_quantize_uv[ DCTSIZE2 ];
+static int32_t m_p_n_mdec_cos[ DCTSIZE2 ];
+static int32_t m_p_n_mdec_cos_precalc[ DCTSIZE2 * DCTSIZE2 ];
 
-static UINT32 m_n_mdec0_command;
-static UINT32 m_n_mdec0_address;
-static UINT32 m_n_mdec0_size;
-static UINT32 m_n_mdec1_command;
-static UINT32 m_n_mdec1_status;
+static uint32_t m_n_mdec0_command;
+static uint32_t m_n_mdec0_address;
+static uint32_t m_n_mdec0_size;
+static uint32_t m_n_mdec1_command;
+static uint32_t m_n_mdec1_status;
 
-static UINT16 m_p_n_mdec_r15[ 256 * 3 ];
-static UINT16 m_p_n_mdec_g15[ 256 * 3 ];
-static UINT16 m_p_n_mdec_b15[ 256 * 3 ];
+static uint16_t m_p_n_mdec_r15[ 256 * 3 ];
+static uint16_t m_p_n_mdec_g15[ 256 * 3 ];
+static uint16_t m_p_n_mdec_b15[ 256 * 3 ];
 
-static UINT32 m_p_n_mdec_zigzag[ DCTSIZE2 ] =
+static uint32_t m_p_n_mdec_zigzag[ DCTSIZE2 ] =
 {
 	 0,  1,  8, 16,  9,  2,  3, 10,
 	17, 24, 32, 25, 18, 11,  4,  5,
@@ -642,17 +642,17 @@ static UINT32 m_p_n_mdec_zigzag[ DCTSIZE2 ] =
 	53, 60, 61, 54, 47, 55, 62, 63
 };
 
-static INT32 m_p_n_mdec_unpacked[ DCTSIZE2 * 6 * 2 ];
+static int32_t m_p_n_mdec_unpacked[ DCTSIZE2 * 6 * 2 ];
 
 #define MDEC_COS_PRECALC_BITS ( 21 )
 
 static void mdec_cos_precalc( void )
 {
-	UINT32 n_x;
-	UINT32 n_y;
-	UINT32 n_u;
-	UINT32 n_v;
-	INT32 *p_n_precalc;
+	uint32_t n_x;
+	uint32_t n_y;
+	uint32_t n_u;
+	uint32_t n_v;
+	int32_t *p_n_precalc;
 
 	p_n_precalc = m_p_n_mdec_cos_precalc;
 
@@ -673,13 +673,13 @@ static void mdec_cos_precalc( void )
 	}
 }
 
-static void mdec_idct( INT32 *p_n_src, INT32 *p_n_dst )
+static void mdec_idct( int32_t *p_n_src, int32_t *p_n_dst )
 {
-	UINT32 n_yx;
-	UINT32 n_vu;
-	INT32 p_n_z[ 8 ];
-	INT32 *p_n_data;
-	INT32 *p_n_precalc;
+	uint32_t n_yx;
+	uint32_t n_vu;
+	int32_t p_n_z[ 8 ];
+	int32_t *p_n_data;
+	int32_t *p_n_precalc;
 
 	p_n_precalc = m_p_n_mdec_cos_precalc;
 
@@ -708,25 +708,25 @@ static void mdec_idct( INT32 *p_n_src, INT32 *p_n_dst )
 	}
 }
 
-static INLINE UINT16 mdec_unpack_run( UINT16 n_packed )
+static INLINE uint16_t mdec_unpack_run( uint16_t n_packed )
 {
 	return n_packed >> 10;
 }
 
-static INLINE INT32 mdec_unpack_val( UINT16 n_packed )
+static INLINE int32_t mdec_unpack_val( uint16_t n_packed )
 {
-	return ( ( (INT32)n_packed ) << 22 ) >> 22;
+	return ( ( (int32_t)n_packed ) << 22 ) >> 22;
 }
 
-static UINT32 mdec_unpack( UINT32 n_address )
+static uint32_t mdec_unpack( uint32_t n_address )
 {
-	UINT8 n_z;
-	INT32 n_qscale;
-	UINT16 n_packed;
-	UINT32 n_block;
-	INT32 *p_n_block;
-	INT32 p_n_unpacked[ 64 ];
-	INT32 *p_n_q;
+	uint8_t n_z;
+	int32_t n_qscale;
+	uint16_t n_packed;
+	uint32_t n_block;
+	int32_t *p_n_block;
+	int32_t p_n_unpacked[ 64 ];
+	int32_t *p_n_q;
 
 	p_n_q = m_p_n_mdec_quantize_uv;
 	p_n_block = m_p_n_mdec_unpacked;
@@ -769,61 +769,61 @@ static UINT32 mdec_unpack( UINT32 n_address )
 	return n_address;
 }
 
-static INLINE INT32 mdec_cr_to_r( INT32 n_cr )
+static INLINE int32_t mdec_cr_to_r( int32_t n_cr )
 {
 	return ( 1435 * n_cr ) >> 10;
 }
 
-static INLINE INT32 mdec_cr_to_g( INT32 n_cr )
+static INLINE int32_t mdec_cr_to_g( int32_t n_cr )
 {
 	return ( -731 * n_cr ) >> 10;
 }
 
-static INLINE INT32 mdec_cb_to_g( INT32 n_cb )
+static INLINE int32_t mdec_cb_to_g( int32_t n_cb )
 {
 	return ( -351 * n_cb ) >> 10;
 }
 
-static INLINE INT32 mdec_cb_to_b( INT32 n_cb )
+static INLINE int32_t mdec_cb_to_b( int32_t n_cb )
 {
 	return ( 1814 * n_cb ) >> 10;
 }
 
-static INLINE UINT16 mdec_clamp_r15( INT32 n_r )
+static INLINE uint16_t mdec_clamp_r15( int32_t n_r )
 {
 	return m_p_n_mdec_r15[ n_r + 128 + 256 ];
 }
 
-static INLINE UINT16 mdec_clamp_g15( INT32 n_g )
+static INLINE uint16_t mdec_clamp_g15( int32_t n_g )
 {
 	return m_p_n_mdec_g15[ n_g + 128 + 256 ];
 }
 
-static INLINE UINT16 mdec_clamp_b15( INT32 n_b )
+static INLINE uint16_t mdec_clamp_b15( int32_t n_b )
 {
 	return m_p_n_mdec_b15[ n_b + 128 + 256 ];
 }
 
-static INLINE UINT32 mdec_makergb15( INT32 n_r, INT32 n_g, INT32 n_b, INT32 *p_n_y )
+static INLINE uint32_t mdec_makergb15( int32_t n_r, int32_t n_g, int32_t n_b, int32_t *p_n_y )
 {
 	return mdec_clamp_r15( p_n_y[ BYTE_XOR_LE( 0 ) ] + n_r ) | mdec_clamp_g15( p_n_y[ BYTE_XOR_LE( 0 ) ] + n_g ) | mdec_clamp_b15( p_n_y[ BYTE_XOR_LE( 0 ) ] + n_b ) |
 		( mdec_clamp_r15( p_n_y[ BYTE_XOR_LE( 1 ) ] + n_r ) | mdec_clamp_g15( p_n_y[ BYTE_XOR_LE( 1 ) ] + n_g ) | mdec_clamp_b15( p_n_y[ BYTE_XOR_LE( 1 ) ] + n_b ) ) << 16;
 }
 
-static void mdec_yuv2_to_rgb15( UINT32 n_address )
+static void mdec_yuv2_to_rgb15( uint32_t n_address )
 {
-	INT32 n_r;
-	INT32 n_g;
-	INT32 n_b;
-	INT32 n_cb;
-	INT32 n_cr;
-	INT32 *p_n_cb;
-	INT32 *p_n_cr;
-	INT32 *p_n_y;
-	UINT32 n_x;
-	UINT32 n_y;
-	UINT32 n_z;
-	UINT32 n_stp;
+	int32_t n_r;
+	int32_t n_g;
+	int32_t n_b;
+	int32_t n_cb;
+	int32_t n_cr;
+	int32_t *p_n_cb;
+	int32_t *p_n_cr;
+	int32_t *p_n_y;
+	uint32_t n_x;
+	uint32_t n_y;
+	uint32_t n_z;
+	uint32_t n_stp;
 
 	if( ( m_n_mdec0_command & ( 1L << 25 ) ) != 0 )
 	{
@@ -850,8 +850,8 @@ static void mdec_yuv2_to_rgb15( UINT32 n_address )
 				n_g = mdec_cr_to_g( n_cr ) + mdec_cb_to_g( n_cb );
 				n_b = mdec_cb_to_b( n_cb );
 
-				*( (UINT32 *)&m_p_n_ram[ n_address ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y ) | n_stp;
-				*( (UINT32 *)&m_p_n_ram[ n_address + 32 ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y + 8 ) | n_stp;
+				*( (uint32_t *)&m_p_n_ram[ n_address ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y ) | n_stp;
+				*( (uint32_t *)&m_p_n_ram[ n_address + 32 ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y + 8 ) | n_stp;
 
 				n_cr = *( p_n_cr + 4 );
 				n_cb = *( p_n_cb + 4 );
@@ -859,8 +859,8 @@ static void mdec_yuv2_to_rgb15( UINT32 n_address )
 				n_g = mdec_cr_to_g( n_cr ) + mdec_cb_to_g( n_cb );
 				n_b = mdec_cb_to_b( n_cb );
 
-				*( (UINT32 *)&m_p_n_ram[ n_address + 16 ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y + DCTSIZE2 ) | n_stp;
-				*( (UINT32 *)&m_p_n_ram[ n_address + 48 ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y + DCTSIZE2 + 8 ) | n_stp;
+				*( (uint32_t *)&m_p_n_ram[ n_address + 16 ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y + DCTSIZE2 ) | n_stp;
+				*( (uint32_t *)&m_p_n_ram[ n_address + 48 ] ) = mdec_makergb15( n_r, n_g, n_b, p_n_y + DCTSIZE2 + 8 ) | n_stp;
 
 				p_n_cr++;
 				p_n_cb++;
@@ -876,7 +876,7 @@ static void mdec_yuv2_to_rgb15( UINT32 n_address )
 	}
 }
 
-static void mdec0_write( UINT32 n_address, INT32 n_size )
+static void mdec0_write( uint32_t n_address, int32_t n_size )
 {
 	int n_index;
 
@@ -900,7 +900,7 @@ static void mdec0_write( UINT32 n_address, INT32 n_size )
 		verboselog( 1, "mdec cosine table %08x %08x %08x\n", m_n_mdec0_command, n_address, n_size );
 		for( n_index = 0; n_index < DCTSIZE2; n_index++ )
 		{
-			m_p_n_mdec_cos[ n_index ] = (INT16)psxreadword( n_address + ( n_index * 2 ) );
+			m_p_n_mdec_cos[ n_index ] = (int16_t)psxreadword( n_address + ( n_index * 2 ) );
 		}
 		mdec_cos_precalc();
 		break;
@@ -910,7 +910,7 @@ static void mdec0_write( UINT32 n_address, INT32 n_size )
 	}
 }
 
-static void mdec1_read( UINT32 n_address, INT32 n_size )
+static void mdec1_read( uint32_t n_address, int32_t n_size )
 {
 	if( ( m_n_mdec0_command & ( 1L << 29 ) ) != 0 )
 	{
@@ -956,14 +956,14 @@ READ32_HANDLER( psx_mdec_r )
 	return 0;
 }
 
-static void gpu_read( UINT32 n_address, INT32 n_size )
+static void gpu_read( uint32_t n_address, int32_t n_size )
 {
-	psx_gpu_read( (UINT32 *)&m_p_n_ram[ n_address ], n_size );
+	psx_gpu_read( (uint32_t *)&m_p_n_ram[ n_address ], n_size );
 }
 
-static void gpu_write( UINT32 n_address, INT32 n_size )
+static void gpu_write( uint32_t n_address, int32_t n_size )
 {
-	psx_gpu_write( (UINT32 *)&m_p_n_ram[ n_address ], n_size );
+	psx_gpu_write( (uint32_t *)&m_p_n_ram[ n_address ], n_size );
 }
 
 void psx_machine_init( void )

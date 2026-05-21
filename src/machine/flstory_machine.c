@@ -141,7 +141,7 @@ READ_HANDLER( flstory_mcu_status_r )
 WRITE_HANDLER( onna34ro_mcu_w )
 {
 	data8_t *RAM = memory_region(REGION_CPU1);
-	UINT16 score_adr = RAM[0xe29e]*0x100 + RAM[0xe29d];
+	uint16_t score_adr = RAM[0xe29e]*0x100 + RAM[0xe29d];
 
 	switch (data)
 	{

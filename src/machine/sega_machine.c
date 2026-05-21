@@ -15,11 +15,11 @@
 #include "sega.h"
 #include "segar.h"
 
-UINT8 *sega_mem;
+uint8_t *sega_mem;
 
-static UINT8 mult1;
-static UINT16 result;
-static UINT8 ioSwitch; /* determines whether we're reading the spinner or the buttons */
+static uint8_t mult1;
+static uint16_t result;
+static uint8_t ioSwitch; /* determines whether we're reading the spinner or the buttons */
 
 WRITE_HANDLER( sega_w )
 {

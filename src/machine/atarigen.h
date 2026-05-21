@@ -55,16 +55,16 @@ struct atarivc_state_desc
 	GLOBALS
 ##########################################################################*/
 
-extern UINT8			atarigen_scanline_int_state;
-extern UINT8			atarigen_sound_int_state;
-extern UINT8			atarigen_video_int_state;
+extern uint8_t			atarigen_scanline_int_state;
+extern uint8_t			atarigen_sound_int_state;
+extern uint8_t			atarigen_video_int_state;
 
 extern const data16_t *	atarigen_eeprom_default;
 extern data16_t *		atarigen_eeprom;
 extern size_t 			atarigen_eeprom_size;
 
-extern UINT8			atarigen_cpu_to_sound_ready;
-extern UINT8			atarigen_sound_to_cpu_ready;
+extern uint8_t			atarigen_cpu_to_sound_ready;
+extern uint8_t			atarigen_sound_to_cpu_ready;
 
 extern data16_t *		atarigen_playfield;
 extern data16_t *		atarigen_playfield2;

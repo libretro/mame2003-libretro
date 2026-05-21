@@ -15,9 +15,9 @@
 
 /* Perform basic machine initialisation */
 
-static UINT8 namcond1_h8_irq5_enabled;
-static UINT8 coin_state;
-static UINT8 coin_count[4];
+static uint8_t namcond1_h8_irq5_enabled;
+static uint8_t coin_state;
+static uint8_t coin_count[4];
 int namcond1_gfxbank;
 
 MACHINE_INIT( namcond1 )
@@ -52,11 +52,11 @@ data16_t *namcond1_shared_ram;
 
 READ16_HANDLER( namcond1_shared_ram_r )
 {
-    static UINT8 plyr1 = 0, plyr2 = 0;
+    static uint8_t plyr1 = 0, plyr2 = 0;
 
     data16_t data;
-	UINT8 poll_coins;
-    UINT8   current, pressed;
+	uint8_t poll_coins;
+    uint8_t   current, pressed;
 
     // the H8 IRQ5 does polling of inputs and writes to shared RAM
     if( !namcond1_h8_irq5_enabled )

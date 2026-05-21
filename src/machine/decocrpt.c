@@ -44,13 +44,13 @@ Sotsugyo Shousho		1995
 #include "driver.h"
 #include "decocrpt.h"
 
-static const UINT16 xor_masks[16] =
+static const uint16_t xor_masks[16] =
 {
 	0xd556,0x73cb,0x2963,0x4b9a,0xb3bc,0xbc73,0xcbc9,0xaeb5,
 	0x1e6d,0xd5b5,0xe676,0x5cc5,0x395a,0xdaae,0x2629,0xe59e,
 };
 
-static const UINT8 swap_patterns[8][16] =
+static const uint8_t swap_patterns[8][16] =
 {
 	{ 0xf,0x8,0x9,0xc,0xa,0xd,0xb,0xe, 0x2,0x7,0x4,0x3,0x1,0x5,0x6,0x0 },
 	{ 0xc,0xa,0xb,0x9,0x8,0xf,0xe,0xd, 0x6,0x0,0x3,0x5,0x7,0x4,0x2,0x1 },
@@ -62,7 +62,7 @@ static const UINT8 swap_patterns[8][16] =
 	{ 0x9,0x8,0xe,0xa,0xf,0xb,0xd,0xc, 0x6,0x0,0x5,0x2,0x4,0x1,0x3,0x7 },
 };
 
-static const UINT8 deco56_xor_table[0x800] =
+static const uint8_t deco56_xor_table[0x800] =
 {
 	 0, 1, 2, 3, 4, 5, 5, 6, 7, 8, 9,10, 7,11,11, 9,11, 3, 7,10,12,13, 3,14, 0, 0, 9, 0,15, 3, 4,14,
 	 6, 3,14,14, 3,12, 3,13, 9, 5,13, 3, 8, 2, 7,14, 2, 5, 1, 2, 3, 4,14,11, 8, 0, 6, 7,10, 3, 4, 7,
@@ -130,7 +130,7 @@ static const UINT8 deco56_xor_table[0x800] =
 	11, 6, 3, 0, 5,11,14,14,14, 4,13, 6,11, 6, 4,12,15, 2, 4, 1, 1, 5, 1,15, 7, 0, 5, 0, 0, 0,12, 1,
 };
 
-static const UINT16 deco56_address_table[0x800] =
+static const uint16_t deco56_address_table[0x800] =
 {
 	0x527,0x1a1,0x2f6,0x523,0x297,0x005,0x141,0x3b4,0x539,0x794,0x6dd,0x498,0x59b,0x119,0x5db,0x631,
 	0x2f1,0x565,0x409,0x158,0x2d6,0x16e,0x571,0x0b9,0x543,0x52b,0x668,0x0c0,0x5fd,0x216,0x5ea,0x24e,
@@ -262,7 +262,7 @@ static const UINT16 deco56_address_table[0x800] =
 	0x625,0x4bc,0x335,0x42b,0x5d8,0x07d,0x03f,0x089,0x7e9,0x07c,0x1cf,0x024,0x188,0x53b,0x2bf,0x726,
 };
 
-static const UINT8 deco56_swap_table[0x800] =
+static const uint8_t deco56_swap_table[0x800] =
 {
 	4,0,7,2,0,0,7,2,0,1,6,3,2,2,2,2,0,5,6,3,7,0,0,5,1,1,1,7,1,0,0,0,
 	2,5,6,6,2,0,4,1,5,0,1,7,4,7,0,4,6,2,1,5,3,1,2,4,6,4,2,0,4,3,3,7,
@@ -330,7 +330,7 @@ static const UINT8 deco56_swap_table[0x800] =
 	6,5,6,0,1,1,6,0,6,1,7,2,4,5,6,5,0,4,0,3,2,3,7,7,0,3,5,0,4,1,1,1,
 };
 
-static const UINT8 deco74_xor_table[0x800] =
+static const uint8_t deco74_xor_table[0x800] =
 {
 	13,13, 0,10, 8,15,12, 0,10, 8,13,15,12, 3,15, 2,11, 1, 8,10,13, 4,10,12,11, 2, 0, 3, 0,11, 8,11,
 	 5,14,11, 2, 5, 3, 8,11, 8,13,14, 4, 3,13,11,10,14, 6, 9,11,11, 8, 0,15, 2, 4, 5, 7,15, 8,13,11,
@@ -398,7 +398,7 @@ static const UINT8 deco74_xor_table[0x800] =
 	 7, 7,12, 5, 3,14, 1, 5, 1,10, 6, 7, 9, 8,15, 7,13,11, 4, 5, 4,10,14,14,12, 1,13,14,15,14,15,10,
 };
 
-static const UINT16 deco74_address_table[0x800] =
+static const uint16_t deco74_address_table[0x800] =
 {
 	0x526,0x684,0x15f,0x1ad,0x736,0x341,0x4c3,0x23c,0x3eb,0x01f,0x18e,0x375,0x029,0x227,0x707,0x506,
 	0x5ce,0x0dc,0x5dc,0x5fd,0x15c,0x013,0x7b9,0x3c1,0x77d,0x1eb,0x53d,0x4a9,0x66e,0x0a9,0x4e2,0x361,
@@ -530,7 +530,7 @@ static const UINT16 deco74_address_table[0x800] =
 	0x174,0x060,0x674,0x6ec,0x7bb,0x288,0x6ee,0x737,0x34c,0x617,0x4bc,0x5d5,0x78c,0x465,0x126,0x626,
 };
 
-static const UINT8 deco74_swap_table[0x800] =
+static const uint8_t deco74_swap_table[0x800] =
 {
 	2,7,5,7,1,1,4,4,7,5,6,7,7,3,4,3,0,2,1,3,0,4,7,7,2,5,3,1,4,4,6,7,
 	6,7,4,5,1,3,0,3,7,2,5,0,1,5,2,1,4,0,6,1,1,2,4,2,1,0,6,5,2,6,4,6,
@@ -598,7 +598,7 @@ static const UINT8 deco74_swap_table[0x800] =
 	4,7,2,2,1,3,4,4,1,7,0,2,5,4,7,3,7,6,1,5,6,0,7,4,1,1,5,2,2,6,7,2,
 };
 
-static void deco_decrypt(int mem_region,const UINT8 *xor_table,const UINT16 *address_table,const UINT8 *swap_table,int remap_only)
+static void deco_decrypt(int mem_region,const uint8_t *xor_table,const uint16_t *address_table,const uint8_t *swap_table,int remap_only)
 {
 	data16_t *rom = (data16_t *)memory_region(mem_region);
 	int len = memory_region_length(mem_region)/2;
@@ -656,7 +656,7 @@ static void deco_decrypt(int mem_region,const UINT8 *xor_table,const UINT16 *add
 #endif
 }
 
-static void decrypt(UINT32 *src, UINT32 *dst, int length)
+static void decrypt(uint32_t *src, uint32_t *dst, int length)
 {
 	int a;
 
@@ -745,13 +745,13 @@ static void decrypt(UINT32 *src, UINT32 *dst, int length)
 
 
 
-static UINT16 decrypt2(UINT16 data, int address, int select_xor)
+static uint16_t decrypt2(uint16_t data, int address, int select_xor)
 {
-	static const UINT16 xors[16] =
+	static const uint16_t xors[16] =
 	{
 		0xb52c,0x2458,0x139a,0xc998,0xce8e,0x5144,0x0429,0xaad4,0xa331,0x3645,0x69a3,0xac64,0x1a53,0x5083,0x4dea,0xd237
 	};
-	static const UINT8 bitswaps[16][16] =
+	static const uint8_t bitswaps[16][16] =
 	{
 		{ 12,8,13,11,14,10,15,9, 3,2,1,0,4,5,6,7 }, { 10,11,14,12,15,13,8,9, 6,7,5,3,0,4,2,1 },
 		{ 14,13,15,9,8,12,11,10, 7,4,1,5,6,0,3,2 }, { 15,14,8,9,10,11,13,12, 1,2,7,3,4,6,0,5 },
@@ -763,7 +763,7 @@ static UINT16 decrypt2(UINT16 data, int address, int select_xor)
 		{ 13,8,12,14,11,15,10,9, 7,6,5,4,3,2,1,0 }, { 15,14,13,12,11,10,9,8, 0,6,7,4,3,2,1,5 }
 	};
 	int j, xorval;
-	const UINT8 *bs;
+	const uint8_t *bs;
 
 	/* calculate bitswap to use*/
 	j = ((address ^ select_xor) & 0xf0) >> 4;
@@ -785,10 +785,10 @@ static UINT16 decrypt2(UINT16 data, int address, int select_xor)
 void deco102_decrypt_cpu(int address_xor, int data_select_xor, int opcode_select_xor)
 {
 	int i;
-	UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 	int size = memory_region_length(REGION_CPU1);
-	UINT16 *opcodes = auto_malloc(size);
-	UINT16 *buf = (UINT16 *)malloc(size);
+	uint16_t *opcodes = auto_malloc(size);
+	uint16_t *buf = (uint16_t *)malloc(size);
 
 		memcpy(buf, rom, size);
 	    memory_set_opcode_base(0,opcodes);
@@ -828,9 +828,9 @@ void deco102_decrypt_cpu(int address_xor, int data_select_xor, int opcode_select
 
 void deco156_decrypt(void)
 {
-	UINT32 *rom = (UINT32 *)memory_region(REGION_CPU1);
+	uint32_t *rom = (uint32_t *)memory_region(REGION_CPU1);
 	int length = memory_region_length(REGION_CPU1);
-	UINT32 *buf = (UINT32*)malloc(length);
+	uint32_t *buf = (uint32_t*)malloc(length);
 
 		memcpy(buf, rom, length);
 		decrypt(buf, rom, length);

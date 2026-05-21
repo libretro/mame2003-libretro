@@ -216,7 +216,7 @@ READ_HANDLER( pc10_in1_r )
 		int trigger = readinputport( 3 );
 		int x = readinputport( 5 );
 		int y = readinputport( 6 );
-		UINT32 pix, color_base;
+		uint32_t pix, color_base;
 		pen_t *pens = Machine->pens;
 
 		/* no sprite hit (yet) */
@@ -679,7 +679,7 @@ static WRITE_HANDLER( gboard_rom_switch_w )
 
 		case 0x0001:
 			{
-				UINT8 cmd = gboard_command & 0x07;
+				uint8_t cmd = gboard_command & 0x07;
 				int page = ( gboard_command & 0x80 ) >> 5;
 				int bank;
 

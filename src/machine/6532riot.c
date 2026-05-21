@@ -12,34 +12,34 @@ struct R6532
 {
 	struct R6532interface intf;
 
-	UINT8 DRA;
-	UINT8 DRB;
-	UINT8 DDRA;
-	UINT8 DDRB;
+	uint8_t DRA;
+	uint8_t DRB;
+	uint8_t DDRA;
+	uint8_t DDRB;
 
 	int shift;
 	int cleared;
 
-	UINT32 target;
+	uint32_t target;
 };
 
 
 static struct R6532* r6532[2];
 
 
-static UINT8 r6532_combineA(int n, UINT8 val)
+static uint8_t r6532_combineA(int n, uint8_t val)
 {
 	return (r6532[n]->DDRA & r6532[n]->DRA) | (~r6532[n]->DDRA & val);
 }
 
 
-static UINT8 r6532_combineB(int n, UINT8 val)
+static uint8_t r6532_combineB(int n, uint8_t val)
 {
 	return (r6532[n]->DDRB & r6532[n]->DRB) | (~r6532[n]->DDRB & val);
 }
 
 
-static UINT8 r6532_read_portA(int n)
+static uint8_t r6532_read_portA(int n)
 {
 	if (r6532[n]->intf.portA_r != NULL)
 	{
@@ -52,7 +52,7 @@ static UINT8 r6532_read_portA(int n)
 }
 
 
-static UINT8 r6532_read_portB(int n)
+static uint8_t r6532_read_portB(int n)
 {
 	if (r6532[n]->intf.portB_r != NULL)
 	{
@@ -65,7 +65,7 @@ static UINT8 r6532_read_portB(int n)
 }
 
 
-static void r6532_write_portA(int n, UINT8 data)
+static void r6532_write_portA(int n, uint8_t data)
 {
 	r6532[n]->DRA = data;
 
@@ -76,7 +76,7 @@ static void r6532_write_portA(int n, UINT8 data)
 }
 
 
-static void r6532_write_portB(int n, UINT8 data)
+static void r6532_write_portB(int n, uint8_t data)
 {
 	r6532[n]->DRB = data;
 
@@ -87,7 +87,7 @@ static void r6532_write_portB(int n, UINT8 data)
 }
 
 
-static void r6532_write(int n, offs_t offset, UINT8 data)
+static void r6532_write(int n, offs_t offset, uint8_t data)
 {
 	if (offset & 4)
 	{
@@ -141,7 +141,7 @@ static void r6532_write(int n, offs_t offset, UINT8 data)
 }
 
 
-static UINT8 r6532_read_timer(int n, int enable)
+static uint8_t r6532_read_timer(int n, int enable)
 {
 	int count = r6532[n]->target - activecpu_gettotalcycles();
 
@@ -161,7 +161,7 @@ static UINT8 r6532_read_timer(int n, int enable)
 }
 
 
-static UINT8 r6532_read_flags(int n)
+static uint8_t r6532_read_flags(int n)
 {
 	int count = r6532[n]->target - activecpu_gettotalcycles();
 
@@ -176,9 +176,9 @@ static UINT8 r6532_read_flags(int n)
 }
 
 
-static UINT8 r6532_read(int n, offs_t offset)
+static uint8_t r6532_read(int n, offs_t offset)
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	switch (offset & 7)
 	{

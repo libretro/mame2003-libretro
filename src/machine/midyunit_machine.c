@@ -32,7 +32,7 @@ struct protection_data
 static const struct protection_data *prot_data;
 static data16_t prot_result;
 static data16_t prot_sequence[3];
-static UINT8 prot_index;
+static uint8_t prot_index;
 
 
 /* speedup installation macros */
@@ -74,15 +74,15 @@ static UINT8 prot_index;
        data16_t *midyunit_scratch_ram;
 
 /* input-related variables */
-static UINT8	term2_analog_select;
+static uint8_t	term2_analog_select;
 
 /* CMOS-related variables */
        data16_t *midyunit_cmos_ram;
-       UINT32 	midyunit_cmos_page;
-static UINT8	cmos_w_enable;
+       uint32_t 	midyunit_cmos_page;
+static uint8_t	cmos_w_enable;
 
 /* sound-related variables */
-static UINT8	sound_type;
+static uint8_t	sound_type;
 
 /* speedup-related variables */
        offs_t 	midyunit_speedup_pc;
@@ -269,8 +269,8 @@ static WRITE16_HANDLER( term2la1_hack_w )
  *************************************/
 
 #ifdef MSB_FIRST
-	#define ADDR_XOR_LE(a)  ((UINT8*)((UINT32)(a) ^ 1))
-	#define BIG_DWORD_LE(x) (((UINT32)(x) >> 16) + ((x) << 16))
+	#define ADDR_XOR_LE(a)  ((uint8_t*)((uint32_t)(a) ^ 1))
+	#define BIG_DWORD_LE(x) (((uint32_t)(x) >> 16) + ((x) << 16))
 #else
 	#define ADDR_XOR_LE(a)  (a)
 	#define BIG_DWORD_LE(x) (x)
@@ -278,42 +278,42 @@ static WRITE16_HANDLER( term2la1_hack_w )
 
 
 #ifndef ALIGN_SHORTS
-	#define READ_U16(a)    (*(INT16 *)a)
-	#define WRITE_U16(a,x) (*(INT16 *)a = (x))
+	#define READ_U16(a)    (*(int16_t *)a)
+	#define WRITE_U16(a,x) (*(int16_t *)a = (x))
 #else
 	#ifdef MSB_FIRST  
-		#define READ_U16(a)    ((INT16)((*(UINT8 *)a << 8) | *((UINT8 *)a+1)))
-		#define WRITE_U16(a,x) do { *(UINT8 *)a = (x>>8); *((UINT8 *)a+1) = x; } while (0)
+		#define READ_U16(a)    ((int16_t)((*(uint8_t *)a << 8) | *((uint8_t *)a+1)))
+		#define WRITE_U16(a,x) do { *(uint8_t *)a = (x>>8); *((uint8_t *)a+1) = x; } while (0)
 	#else /* unaligned read and write macros, cpg */
-		#define READ_U16(a)    ((INT16)(*(UINT8 *)a | (*((UINT8 *)a+1) << 8)))
-		#define WRITE_U16(a,x) do { *(UINT8 *)a = x; *((UINT8 *)a+1) = (x>>8); } while (0)
+		#define READ_U16(a)    ((int16_t)(*(uint8_t *)a | (*((uint8_t *)a+1) << 8)))
+		#define WRITE_U16(a,x) do { *(uint8_t *)a = x; *((uint8_t *)a+1) = (x>>8); } while (0)
 	#endif
 #endif
 
 #ifndef ALIGN_INTS
-	#define READ_U32(a)    (*(INT32 *)a)
-	#define WRITE_U32(a,x) (*(INT32 *)a = (x))
+	#define READ_U32(a)    (*(int32_t *)a)
+	#define WRITE_U32(a,x) (*(int32_t *)a = (x))
 #else
 	#ifdef MSB_FIRST
-		#define READ_U32(a) ((INT32)((*(UINT8 *)a << 24) | (*((UINT8 *)a+1) << 16) \
-							| (*((UINT8 *)a+2) << 8) | *((UINT8 *)a+3)))
-		#define WRITE_U32(a,x) do { *(UINT8 *)a = (x>>24); *((UINT8 *)a+1) = (x>>16); \
-							*((UINT8 *)a+2) = (x>>8); *((UINT8 *)a+3) = x; } while (0)
+		#define READ_U32(a) ((int32_t)((*(uint8_t *)a << 24) | (*((uint8_t *)a+1) << 16) \
+							| (*((uint8_t *)a+2) << 8) | *((uint8_t *)a+3)))
+		#define WRITE_U32(a,x) do { *(uint8_t *)a = (x>>24); *((uint8_t *)a+1) = (x>>16); \
+							*((uint8_t *)a+2) = (x>>8); *((uint8_t *)a+3) = x; } while (0)
 	#else  /* unaligned read and write macros, cpg */
-		#define READ_U32(a) ((INT32)(*(UINT8 *)a | (*((UINT8 *)a+1) << 8) \
-							| (*((UINT8 *)a+2) << 16) | (*((UINT8 *)a+3) << 24)))
-		#define WRITE_U32(a,x) do { *(UINT8 *)a = x; *((UINT8 *)a+1) = (x>>8); \
-							*((UINT8 *)a+2) = (x>>16); *((UINT8 *)a+3) = (x>>24); } while (0)
+		#define READ_U32(a) ((int32_t)(*(uint8_t *)a | (*((uint8_t *)a+1) << 8) \
+							| (*((uint8_t *)a+2) << 16) | (*((uint8_t *)a+3) << 24)))
+		#define WRITE_U32(a,x) do { *(uint8_t *)a = x; *((uint8_t *)a+1) = (x>>8); \
+							*((uint8_t *)a+2) = (x>>16); *((uint8_t *)a+3) = (x>>24); } while (0)
 	#endif
 #endif
 
 #define SCRATCH_RAM(offs)		&midyunit_scratch_ram[((offs) & 0x3fffff) >> 4]
 
-#define READ_INT8(REG)			(*(INT8 *)ADDR_XOR_LE(SCRATCH_RAM(REG)))
+#define READ_INT8(REG)			(*(int8_t *)ADDR_XOR_LE(SCRATCH_RAM(REG)))
 #define READ_INT16(REG)			READ_U16(SCRATCH_RAM(REG))
 #define READ_INT32(REG)			BIG_DWORD_LE(READ_U32(SCRATCH_RAM(REG)))
 
-#define WRITE_INT8(REG,DATA)	(*(INT8 *)ADDR_XOR_LE(SCRATCH_RAM(REG)) = (DATA))
+#define WRITE_INT8(REG,DATA)	(*(int8_t *)ADDR_XOR_LE(SCRATCH_RAM(REG)) = (DATA))
 #define WRITE_INT16(REG,DATA)	WRITE_U16(SCRATCH_RAM(REG), DATA)
 #define WRITE_INT32(REG,DATA)	WRITE_U32(SCRATCH_RAM(REG), BIG_DWORD_LE(DATA))
 
@@ -322,15 +322,15 @@ static WRITE16_HANDLER( term2la1_hack_w )
 /* General speed up loop body */
 #define DO_SPEEDUP_LOOP(X, LOC, OFFS1, OFFS2, A8SIZE, A7SIZE)	\
 {																\
-	UINT32 a0 = LOC;											\
-	UINT32 a2;													\
-	UINT32 a4 = 0;                               				\
-	 INT32 a1 = 0x80000000;										\
-	 INT32 a5 = 0x80000000;										\
+	uint32_t a0 = LOC;											\
+	uint32_t a2;													\
+	uint32_t a4 = 0;                               				\
+	 int32_t a1 = 0x80000000;										\
+	 int32_t a5 = 0x80000000;										\
 	while ((a2 = READ_INT32(a0)) != 0 && tms34010_ICount > 0)	\
 	{															\
-		INT32 a8 = READ_##A8SIZE(a2 + OFFS1);					\
-		INT32 a7 = READ_##A7SIZE(a2 + OFFS2);					\
+		int32_t a8 = READ_##A8SIZE(a2 + OFFS1);					\
+		int32_t a7 = READ_##A7SIZE(a2 + OFFS2);					\
 																\
 		if (a8 > a1)											\
 		{														\
@@ -376,23 +376,23 @@ static WRITE16_HANDLER( term2la1_hack_w )
  *************************************/
 
 #define T2_FFC08C40																\
-	a5x = (INT32)(READ_INT8(a1+0x2d0));				/* MOVB   *A1(2D0h),A5  */  \
+	a5x = (int32_t)(READ_INT8(a1+0x2d0));				/* MOVB   *A1(2D0h),A5  */  \
 	WRITE_INT8(a1+0x2d0, a2 & 0xff);				/* MOVB   A2,*A1(2D0h)  */  \
 	a3x = 0xf0;										/* MOVI   F0h,A3		*/	\
-	a5x = (UINT32)a5x * (UINT32)a3x;				/* MPYU   A3,A5			*/	\
+	a5x = (uint32_t)a5x * (uint32_t)a3x;				/* MPYU   A3,A5			*/	\
 	a5x += 0x1008000;								/* ADDI   1008000h,A5	*/  \
-	a3x = (UINT32)a2  * (UINT32)a3x;				/* MPYU   A2,A3			*/	\
+	a3x = (uint32_t)a2  * (uint32_t)a3x;				/* MPYU   A2,A3			*/	\
 	a3x += 0x1008000;								/* ADDI   1008000h,A3	*/  \
-	a7x = (INT32)(READ_INT16(a1+0x190));			/* MOVE   *A1(190h),A7,0*/	\
-	a6x = (INT32)(READ_INT16(a5x+0x50));			/* MOVE   *A5(50h),A6,0 */	\
+	a7x = (int32_t)(READ_INT16(a1+0x190));			/* MOVE   *A1(190h),A7,0*/	\
+	a6x = (int32_t)(READ_INT16(a5x+0x50));			/* MOVE   *A5(50h),A6,0 */	\
 	a7x -= a6x;										/* SUB    A6,A7			*/  \
-	a6x = (INT32)(READ_INT16(a3x+0x50));			/* MOVE   *A3(50h),A6,0 */	\
+	a6x = (int32_t)(READ_INT16(a3x+0x50));			/* MOVE   *A3(50h),A6,0 */	\
 	a7x += a6x;										/* ADD    A6,A7			*/  \
 	WRITE_INT16(a1+0x190, a7x & 0xffff);			/* MOVE   A7,*A1(190h),0*/	\
 	a5x = READ_INT32(a5x+0xa0);						/* MOVE   *A5(A0h),A5,1 */	\
 	a3x = READ_INT32(a3x+0xa0);						/* MOVE   *A3(A0h),A3,1 */	\
 	a6x = READ_INT32(a1+0x140);						/* MOVE   *A1(140h),A6,1*/	\
-	a6xa7x = (INT64)a6x * a3x / a5x;				/* MPYS   A3,A6			*/  \
+	a6xa7x = (int64_t)a6x * a3x / a5x;				/* MPYS   A3,A6			*/  \
 													/* DIVS   A5,A6			*/  \
 	WRITE_INT32(a1+0x140, a6xa7x & 0xffffffff);		/* MOVE   A6,*A1(140h),1*/
 
@@ -404,18 +404,18 @@ static READ16_HANDLER( term2_speedup_r )
 	}
 	else
 	{
-		UINT32 value1 = midyunit_scratch_ram[TOWORD(0xaa040)];
+		uint32_t value1 = midyunit_scratch_ram[TOWORD(0xaa040)];
 		offs_t pc = activecpu_get_pc();
 
 		/* Suspend cpu if it's waiting for an interrupt */
 		if ((pc == 0xffcdc270 || pc == 0xffcdc0d0) && !value1)
 		{
-			INT32 a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a14,b0,b1,b2;
-			INT32 a3x,a5x,a6x,a7x;
-			INT64 a6xa7x;
+			int32_t a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a14,b0,b1,b2;
+			int32_t a3x,a5x,a6x,a7x;
+			int64_t a6xa7x;
 
 			b1 = 0;			 									/* CLR    B1 */
-			b2 = (INT32)(READ_INT16(0x100F640));				/* MOVE   @100F640h,B2,0 */
+			b2 = (int32_t)(READ_INT16(0x100F640));				/* MOVE   @100F640h,B2,0 */
 			if (!b2)											/* JREQ   FFC029F0h */
 			{
 				cpu_spinuntil_int();
@@ -435,7 +435,7 @@ static READ16_HANDLER( term2_speedup_r )
 				if (b1 < b2)									/* JRLT   FFC07800h */
 				{
 					/* FFC07800 */
-					a4 = (INT32)(READ_INT16(a10+0xc0));			/* MOVE   *A10(C0h),A4,0 */
+					a4 = (int32_t)(READ_INT16(a10+0xc0));			/* MOVE   *A10(C0h),A4,0 */
 					a4 <<= 16;									/* SLL    10h,A4 */
 				}
 				else
@@ -453,7 +453,7 @@ static READ16_HANDLER( term2_speedup_r )
 			t2_FFC078C0:
 				a8  = READ_INT32(a1+0x1c0);						/* MOVE   *A1(1C0h),A8,1 */
 				a7  = READ_INT32(a1+0x1a0);						/* MOVE   *A1(1A0h),A7,1 */
-				a14 = (INT32)(READ_INT16(a1+0x220));			/* MOVE   *A1(220h),A14,0 */
+				a14 = (int32_t)(READ_INT16(a1+0x220));			/* MOVE   *A1(220h),A14,0 */
 				if (a14 & 0x6000)								/* BTST   Eh,A14 */
 				{												/* JRNE   FFC07C50h */
 					goto t2_FFC07C50;							/* BTST   Dh,A14 */
@@ -575,7 +575,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_16bit )
 	/* suspend cpu if it's waiting for an interrupt */
 	if (activecpu_get_pc() == midyunit_speedup_pc && !value)
 	{
-		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], INT16, INT16);
+		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], int16_t, int16_t);
 	}
 	return value;
 }
@@ -591,7 +591,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_16bit )
 
 READ16_HANDLER( midyunit_generic_speedup_1_mixedbits )
 {
-	UINT16 value = midyunit_speedup_base[offset];
+	uint16_t value = midyunit_speedup_base[offset];
 
 	/* just return if this isn't the offset we're looking for */
 	if (offset != midyunit_speedup_offset)
@@ -600,7 +600,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_mixedbits )
 	/* suspend cpu if it's waiting for an interrupt */
 	if (activecpu_get_pc() == midyunit_speedup_pc && !value)
 	{
-		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], INT16, INT32);
+		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], int16_t, int32_t);
 	}
 	return value;
 }
@@ -616,7 +616,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_mixedbits )
 
 READ16_HANDLER( midyunit_generic_speedup_1_32bit )
 {
-	UINT16 value = midyunit_speedup_base[offset];
+	uint16_t value = midyunit_speedup_base[offset];
 
 	/* just return if this isn't the offset we're looking for */
 	if (offset != midyunit_speedup_offset)
@@ -625,7 +625,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_32bit )
 	/* suspend cpu if it's waiting for an interrupt */
 	if (activecpu_get_pc() == midyunit_speedup_pc && !value)
 	{
-		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], INT32, INT32);
+		DO_SPEEDUP_LOOP_1(midyunit_speedup_spin[0], midyunit_speedup_spin[1], midyunit_speedup_spin[2], int32_t, int32_t);
 	}
 	return value;
 }
@@ -640,7 +640,7 @@ READ16_HANDLER( midyunit_generic_speedup_1_32bit )
 
 #define DO_SPEEDUP_LOOP_3(LOC1, LOC2, LOC3)					\
 															\
-	UINT32 temp1,temp2,temp3;								\
+	uint32_t temp1,temp2,temp3;								\
 															\
 	while (tms34010_ICount > 0) 							\
 	{														\
@@ -652,14 +652,14 @@ READ16_HANDLER( midyunit_generic_speedup_1_32bit )
 			cpu_spinuntil_int();							\
 			break;											\
 		}													\
-		DO_SPEEDUP_LOOP(A, LOC1, 0xc0, 0xa0, INT32, INT32);	\
-		DO_SPEEDUP_LOOP(B, LOC2, 0xc0, 0xa0, INT32, INT32);	\
-		DO_SPEEDUP_LOOP(C, LOC3, 0xc0, 0xa0, INT32, INT32);	\
+		DO_SPEEDUP_LOOP(A, LOC1, 0xc0, 0xa0, int32_t, int32_t);	\
+		DO_SPEEDUP_LOOP(B, LOC2, 0xc0, 0xa0, int32_t, int32_t);	\
+		DO_SPEEDUP_LOOP(C, LOC3, 0xc0, 0xa0, int32_t, int32_t);	\
 	}
 
 READ16_HANDLER( midyunit_generic_speedup_3 )
 {
-	UINT16 value = midyunit_speedup_base[offset];
+	uint16_t value = midyunit_speedup_base[offset];
 
 	/* just return if this isn't the offset we're looking for */
 	if (offset != midyunit_speedup_offset)
@@ -681,7 +681,7 @@ READ16_HANDLER( midyunit_generic_speedup_3 )
  *
  *************************************/
 
-static UINT8 *cvsd_protection_base;
+static uint8_t *cvsd_protection_base;
 static WRITE_HANDLER( cvsd_protection_w )
 {
 	/* because the entire CVSD ROM is banked, we have to make sure that writes */
@@ -695,8 +695,8 @@ static WRITE_HANDLER( cvsd_protection_w )
 static void init_generic(int bpp, int sound, int prot_start, int prot_end)
 {
 	offs_t gfx_chunk = midyunit_gfx_rom_size / 4;
-	UINT8 d1, d2, d3, d4, d5, d6;
-	UINT8 *base;
+	uint8_t d1, d2, d3, d4, d5, d6;
+	uint8_t *base;
 	int i;
 
 	/* set up code ROMs */
@@ -794,7 +794,7 @@ DRIVER_INIT( narc )
 
 DRIVER_INIT( narc3 )
 {
-	UINT32 bank, offset;
+	uint32_t bank, offset;
 
 	/* common init */
 	init_generic(8, SOUND_NARC, 0xcdff, 0xce29);

@@ -36,17 +36,17 @@
  *************************************/
 
 /* externally accessible */
-INT8 hdcpu_main;
-INT8 hdcpu_gsp;
-INT8 hdcpu_msp;
-INT8 hdcpu_adsp;
-INT8 hdcpu_sound;
-INT8 hdcpu_sounddsp;
-INT8 hdcpu_jsa;
-INT8 hdcpu_dsp32;
+int8_t hdcpu_main;
+int8_t hdcpu_gsp;
+int8_t hdcpu_msp;
+int8_t hdcpu_adsp;
+int8_t hdcpu_sound;
+int8_t hdcpu_sounddsp;
+int8_t hdcpu_jsa;
+int8_t hdcpu_dsp32;
 
-UINT8 hd34010_host_access;
-UINT8 hddsk_pio_access;
+uint8_t hd34010_host_access;
+uint8_t hddsk_pio_access;
 
 data16_t *hdmsp_ram;
 data16_t *hddsk_ram;
@@ -70,9 +70,9 @@ offs_t hdds3_transfer_pc;
 
 data32_t *rddsp32_sync[2];
 
-UINT32 gsp_speedup_count[4];
-UINT32 msp_speedup_count[4];
-UINT32 adsp_speedup_count[4];
+uint32_t gsp_speedup_count[4];
+uint32_t msp_speedup_count[4];
+uint32_t adsp_speedup_count[4];
 
 
 /* from slapstic.c */
@@ -81,7 +81,7 @@ void slapstic_reset(void);
 
 
 /* from vidhrdw */
-extern UINT8 *hdgsp_vram;
+extern uint8_t *hdgsp_vram;
 
 
 
@@ -91,53 +91,53 @@ extern UINT8 *hdgsp_vram;
  *
  *************************************/
 
-static UINT8 irq_state;
-static UINT8 gsp_irq_state;
-static UINT8 msp_irq_state;
-static UINT8 adsp_irq_state;
-static UINT8 duart_irq_state;
+static uint8_t irq_state;
+static uint8_t gsp_irq_state;
+static uint8_t msp_irq_state;
+static uint8_t adsp_irq_state;
+static uint8_t duart_irq_state;
 
-static UINT8 duart_read_data[16];
-static UINT8 duart_write_data[16];
-static UINT8 duart_output_port;
+static uint8_t duart_read_data[16];
+static uint8_t duart_write_data[16];
+static uint8_t duart_output_port;
 static void *duart_timer;
 
-static UINT8 last_gsp_shiftreg;
+static uint8_t last_gsp_shiftreg;
 
-static UINT8 m68k_zp1, m68k_zp2;
-static UINT8 m68k_adsp_buffer_bank;
+static uint8_t m68k_zp1, m68k_zp2;
+static uint8_t m68k_adsp_buffer_bank;
 
-static UINT8 adsp_halt, adsp_br;
-static UINT8 adsp_xflag;
+static uint8_t adsp_halt, adsp_br;
+static uint8_t adsp_xflag;
 
-static UINT16 adsp_sim_address;
-static UINT16 adsp_som_address;
-static UINT32 adsp_eprom_base;
+static uint16_t adsp_sim_address;
+static uint16_t adsp_som_address;
+static uint32_t adsp_eprom_base;
 
 static data16_t *sim_memory;
 static data16_t *som_memory;
-static UINT32 sim_memory_size;
+static uint32_t sim_memory_size;
 static data16_t *adsp_data_memory;
 static data32_t *adsp_pgm_memory;
 static data16_t *adsp_pgm_memory_word;
 
-static UINT8 ds3_gcmd, ds3_gflag, ds3_g68irqs, ds3_gfirqs, ds3_g68flag, ds3_send, ds3_reset;
-static UINT16 ds3_gdata, ds3_g68data;
-static UINT32 ds3_sim_address;
+static uint8_t ds3_gcmd, ds3_gflag, ds3_g68irqs, ds3_gfirqs, ds3_g68flag, ds3_send, ds3_reset;
+static uint16_t ds3_gdata, ds3_g68data;
+static uint32_t ds3_sim_address;
 
-static UINT16 adc_control;
-static UINT8 adc8_select;
-static UINT8 adc8_data;
-static UINT8 adc12_select;
-static UINT8 adc12_byte;
-static UINT16 adc12_data;
+static uint16_t adc_control;
+static uint8_t adc8_select;
+static uint8_t adc8_data;
+static uint8_t adc12_select;
+static uint8_t adc12_byte;
+static uint16_t adc12_data;
 
-static UINT16 hdc68k_last_wheel;
-static UINT16 hdc68k_last_port1;
-static UINT8 hdc68k_wheel_edge;
-static UINT8 hdc68k_shifter_state;
+static uint16_t hdc68k_last_wheel;
+static uint16_t hdc68k_last_port1;
+static uint8_t hdc68k_wheel_edge;
+static uint8_t hdc68k_shifter_state;
 
-static UINT8 st68k_sloop_bank = 0;
+static uint8_t st68k_sloop_bank = 0;
 static offs_t st68k_last_alt_sloop_offset;
 
 #define MAX_MSP_SYNC	16
@@ -201,7 +201,7 @@ MACHINE_INIT( harddriv )
 	sim_memory_size = memory_region_length(REGION_USER1) / 2;
 	adsp_data_memory = (data16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET);
 	adsp_pgm_memory = (data32_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_PGM_OFFSET);
-	adsp_pgm_memory_word = (data16_t *)((UINT8 *)adsp_pgm_memory + 1);
+	adsp_pgm_memory_word = (data16_t *)((uint8_t *)adsp_pgm_memory + 1);
 
 	last_gsp_shiftreg = 0;
 
@@ -413,7 +413,7 @@ READ16_HANDLER( hda68k_port1_r )
 READ16_HANDLER( hdc68k_wheel_r )
 {
 	/* grab the new wheel value and upconvert to 12 bits */
-	UINT16 new_wheel = readinputport(10) << 4;
+	uint16_t new_wheel = readinputport(10) << 4;
 
 	/* hack to display the wheel position */
 	if (keyboard_pressed(KEYCODE_LSHIFT))
@@ -734,7 +734,7 @@ WRITE16_HANDLER( hdgsp_io_w )
 	/* detect an enabling of the shift register and force yielding */
 	if (offset == REG_DPYCTL)
 	{
-		UINT8 new_shiftreg = (data >> 11) & 1;
+		uint8_t new_shiftreg = (data >> 11) & 1;
 		if (new_shiftreg != last_gsp_shiftreg)
 		{
 			last_gsp_shiftreg = new_shiftreg;
@@ -831,15 +831,15 @@ WRITE16_HANDLER( stmsp_sync2_w )
 
 READ16_HANDLER( hd68k_adsp_program_r )
 {
-	UINT32 word = adsp_pgm_memory[offset/2];
+	uint32_t word = adsp_pgm_memory[offset/2];
 	return (!(offset & 1)) ? (word >> 16) : (word & 0xffff);
 }
 
 
 WRITE16_HANDLER( hd68k_adsp_program_w )
 {
-	UINT32 *base = &adsp_pgm_memory[offset/2];
-	UINT32 oldword = *base;
+	uint32_t *base = &adsp_pgm_memory[offset/2];
+	uint32_t oldword = *base;
 	data16_t temp;
 
 	if (!(offset & 1))
@@ -923,10 +923,10 @@ static void deferred_adsp_bank_switch(int data)
 		if (!commands) commands = fopen("commands.log", "w");
 		if (commands)
 		{
-			INT16 *base = (INT16 *)&som_memory[data * 0x2000];
-			INT16 *end = base + (UINT16)*base++;
-			INT16 *current = base;
-			INT16 *table = base + (UINT16)*current++;
+			int16_t *base = (int16_t *)&som_memory[data * 0x2000];
+			int16_t *end = base + (uint16_t)*base++;
+			int16_t *current = base;
+			int16_t *table = base + (uint16_t)*current++;
 
 			fprintf(commands, "\n---------------\n");
 
@@ -940,15 +940,15 @@ static void deferred_adsp_bank_switch(int data)
 				fprintf(commands, "Cmd @ %04X = %04X  %d-%d @ %d\n", offset, c1, c2, c3, c4);
 				while (current < table)
 				{
-					UINT32 rslope, lslope;
-					rslope = (UINT16)*current++,
+					uint32_t rslope, lslope;
+					rslope = (uint16_t)*current++,
 					rslope |= *current++ << 16;
 					if (rslope == 0xffffffff)
 					{
 						fprintf(commands, "  (end)\n");
 						break;
 					}
-					lslope = (UINT16)*current++,
+					lslope = (uint16_t)*current++,
 					lslope |= *current++ << 16;
 					fprintf(commands, "  L=%08X R=%08X count=%d\n",
 							(int)lslope, (int)rslope, (int)*current++);
@@ -1403,17 +1403,17 @@ WRITE16_HANDLER( hdds3_control_w )
 
 READ16_HANDLER( hd68k_ds3_program_r )
 {
-	UINT32 *base = &adsp_pgm_memory[offset & 0x1fff];
-	UINT32 word = *base;
+	uint32_t *base = &adsp_pgm_memory[offset & 0x1fff];
+	uint32_t word = *base;
 	return (!(offset & 0x2000)) ? (word >> 8) : (word & 0xff);
 }
 
 
 WRITE16_HANDLER( hd68k_ds3_program_w )
 {
-	UINT32 *base = &adsp_pgm_memory[offset & 0x1fff];
-	UINT32 oldword = *base;
-	UINT16 temp;
+	uint32_t *base = &adsp_pgm_memory[offset & 0x1fff];
+	uint32_t oldword = *base;
+	uint16_t temp;
 
 	if (!(offset & 0x2000))
 	{
@@ -1443,7 +1443,7 @@ WRITE16_HANDLER( hd68k_ds3_program_w )
  *
  *************************************/
 
-void hddsk_update_pif(UINT32 pins)
+void hddsk_update_pif(uint32_t pins)
 {
 	atarigen_sound_int_state = ((pins & DSP32_OUTPUT_PIF) != 0);
 	hd68k_update_interrupts();
