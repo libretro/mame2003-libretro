@@ -723,9 +723,9 @@ static MEMORY_READ16_START( c76_readmem )
 	{ 0x001000, 0x001007, c76_inputs_r },    /* inputs */
 	{ 0x002000, 0x002fff, MRA16_NOP },       /* C352 (PCM not emulated yet) */
 	{ 0x004000, 0x00bfff, c76_shared_r },    /* shared RAM with main CPU */
-	{ 0x00c000, 0x00ffff, MRA16_BANK1 },     /* 16k internal BIOS */
-	{ 0x080000, 0x0fffff, MRA16_BANK2 },     /* SPROG */
-	{ 0x200000, 0x2fffff, MRA16_BANK3 },     /* SPROG mirror */
+	{ 0x00c000, 0x00ffff, MRA16_BANK15 },    /* 16k internal BIOS */
+	{ 0x080000, 0x0fffff, MRA16_BANK16 },    /* SPROG */
+	{ 0x200000, 0x2fffff, MRA16_BANK17 },    /* SPROG mirror */
 MEMORY_END
 
 static MEMORY_WRITE16_START( c76_writemem )
@@ -781,9 +781,11 @@ MACHINE_INIT( namcos11_c76 )
 {
 	UINT8 *rom = memory_region( REGION_CPU2 );
 
-	cpu_setbank( 1, rom + 0x040000 );  /* BIOS  -> 0x00c000 */
-	cpu_setbank( 2, rom + 0x000000 );  /* SPROG -> 0x080000 */
-	cpu_setbank( 3, rom + 0x000000 );  /* SPROG -> 0x200000 */
+	/* Banks 1-14 are owned by the main CPU (scratchpad/BIOS/RAM/ROM windows);
+	   mame2003 banks are global, so the C76 must use its own free banks. */
+	cpu_setbank( 15, rom + 0x040000 ); /* BIOS  -> 0x00c000 */
+	cpu_setbank( 16, rom + 0x000000 ); /* SPROG -> 0x080000 */
+	cpu_setbank( 17, rom + 0x000000 ); /* SPROG -> 0x200000 */
 
 	machine_init_namcos11();
 }
