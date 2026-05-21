@@ -79,30 +79,30 @@
 
 struct map_entry
 {
-	UINT64					offset;			/* offset within the file of the data */
-	UINT32					crc;			/* 32-bit CRC of the data */
-	UINT16					length;			/* length of the data */
-	UINT16					flags;			/* misc flags */
+	uint64_t					offset;			/* offset within the file of the data */
+	uint32_t					crc;			/* 32-bit CRC of the data */
+	uint16_t					length;			/* length of the data */
+	uint16_t					flags;			/* misc flags */
 };
 
 struct crcmap_entry
 {
-	UINT32					hunknum;		/* hunk number */
+	uint32_t					hunknum;		/* hunk number */
 	struct crcmap_entry *	next;			/* next entry in list */
 };
 
 struct metadata_entry
 {
-	UINT64					offset;			/* offset within the file of the header */
-	UINT64					next;			/* offset within the file of the next header */
-	UINT64					prev;			/* offset within the file of the previous header */
-	UINT32					length;			/* length of the metadata */
-	UINT32					metatag;		/* metadata tag */
+	uint64_t					offset;			/* offset within the file of the header */
+	uint64_t					next;			/* offset within the file of the next header */
+	uint64_t					prev;			/* offset within the file of the previous header */
+	uint32_t					length;			/* length of the metadata */
+	uint32_t					metatag;		/* metadata tag */
 };
 
 struct chd_file
 {
-	UINT32					cookie;			/* cookie, should equal COOKIE_VALUE */
+	uint32_t					cookie;			/* cookie, should equal COOKIE_VALUE */
 	struct chd_file *		next;			/* pointer to next file in the global list */
 
 	struct chd_interface_file *file;		/* handle to the open file */
@@ -112,27 +112,27 @@ struct chd_file
 
 	struct map_entry *		map;			/* array of map entries */
 
-	UINT8 *					cache;			/* hunk cache pointer */
-	UINT32					cachehunk;		/* index of currently cached hunk */
+	uint8_t *					cache;			/* hunk cache pointer */
+	uint32_t					cachehunk;		/* index of currently cached hunk */
 
-	UINT8 *					compare;		/* hunk compare pointer */
-	UINT32					comparehunk;	/* index of current compare data */
+	uint8_t *					compare;		/* hunk compare pointer */
+	uint32_t					comparehunk;	/* index of current compare data */
 
-	UINT8 *					compressed;		/* pointer to buffer for compressed data */
+	uint8_t *					compressed;		/* pointer to buffer for compressed data */
 	void *					codecdata;		/* opaque pointer to codec data */
 
 	struct crcmap_entry *	crcmap;			/* CRC map entries */
 	struct crcmap_entry *	crcfree;		/* free list CRC entries */
 	struct crcmap_entry **	crctable;		/* table of CRC entries */
 
-	UINT32					maxhunk;		/* maximum hunk accessed */
+	uint32_t					maxhunk;		/* maximum hunk accessed */
 };
 
 struct zlib_codec_data
 {
 	z_stream				inflater;
 	z_stream				deflater;
-	UINT32 *				allocptr[MAX_ZLIB_ALLOCS];
+	uint32_t *				allocptr[MAX_ZLIB_ALLOCS];
 };
 
 
@@ -147,8 +147,8 @@ static struct chd_interface interface;
 static struct chd_file *first_file;
 static int last_error;
 
-static const UINT8 nullmd5[CHD_MD5_BYTES] = { 0 };
-static const UINT8 nullsha1[CHD_SHA1_BYTES] = { 0 };
+static const uint8_t nullmd5[CHD_MD5_BYTES] = { 0 };
+static const uint8_t nullsha1[CHD_SHA1_BYTES] = { 0 };
 
 
 
@@ -159,25 +159,25 @@ static const UINT8 nullsha1[CHD_SHA1_BYTES] = { 0 };
  *************************************/
 
 static int validate_header(const struct chd_header *header);
-static int read_hunk_into_memory(struct chd_file *chd, UINT32 hunknum, UINT8 *dest);
-static int read_hunk_into_cache(struct chd_file *chd, UINT32 hunknum);
-static int write_hunk_from_memory(struct chd_file *chd, UINT32 hunknum, const UINT8 *src);
+static int read_hunk_into_memory(struct chd_file *chd, uint32_t hunknum, uint8_t *dest);
+static int read_hunk_into_cache(struct chd_file *chd, uint32_t hunknum);
+static int write_hunk_from_memory(struct chd_file *chd, uint32_t hunknum, const uint8_t *src);
 static int read_header(struct chd_interface_file *file, struct chd_header *header);
 static int write_header(struct chd_interface_file *file, const struct chd_header *header);
 static int read_hunk_map(struct chd_file *chd);
 static void init_crcmap(struct chd_file *chd, int prepopulate);
-static void add_to_crcmap(struct chd_file *chd, UINT32 hunknum);
-static UINT32 find_matching_hunk(struct chd_file *chd, UINT32 hunknum, UINT32 crc, const UINT8 *rawdata);
-static int find_metadata_entry(struct chd_file *chd, UINT32 metatag, UINT32 metaindex, struct metadata_entry *metaentry);
+static void add_to_crcmap(struct chd_file *chd, uint32_t hunknum);
+static uint32_t find_matching_hunk(struct chd_file *chd, uint32_t hunknum, uint32_t crc, const uint8_t *rawdata);
+static int find_metadata_entry(struct chd_file *chd, uint32_t metatag, uint32_t metaindex, struct metadata_entry *metaentry);
 
 static int init_codec(struct chd_file *chd);
 static void free_codec(struct chd_file *chd);
 
 static struct chd_interface_file *multi_open(const char *filename, const char *mode);
 static void multi_close(struct chd_interface_file *file);
-static UINT32 multi_read(struct chd_interface_file *file, UINT64 offset, UINT32 count, void *buffer);
-static UINT32 multi_write(struct chd_interface_file *file, UINT64 offset, UINT32 count, const void *buffer);
-static UINT64 multi_length(struct chd_interface_file *file);
+static uint32_t multi_read(struct chd_interface_file *file, uint64_t offset, uint32_t count, void *buffer);
+static uint32_t multi_write(struct chd_interface_file *file, uint64_t offset, uint32_t count, const void *buffer);
+static uint64_t multi_length(struct chd_interface_file *file);
 
 
 
@@ -187,13 +187,13 @@ static UINT64 multi_length(struct chd_interface_file *file);
  *
  *************************************/
 
-static INLINE UINT64 get_bigendian_uint64(const UINT8 *base)
+static INLINE uint64_t get_bigendian_uint64(const uint8_t *base)
 {
-	return ((UINT64)base[0] << 56) | ((UINT64)base[1] << 48) | ((UINT64)base[2] << 40) | ((UINT64)base[3] << 32) |
-			((UINT64)base[4] << 24) | ((UINT64)base[5] << 16) | ((UINT64)base[6] << 8) | (UINT64)base[7];
+	return ((uint64_t)base[0] << 56) | ((uint64_t)base[1] << 48) | ((uint64_t)base[2] << 40) | ((uint64_t)base[3] << 32) |
+			((uint64_t)base[4] << 24) | ((uint64_t)base[5] << 16) | ((uint64_t)base[6] << 8) | (uint64_t)base[7];
 }
 
-static INLINE void put_bigendian_uint64(UINT8 *base, UINT64 value)
+static INLINE void put_bigendian_uint64(uint8_t *base, uint64_t value)
 {
 	base[0] = value >> 56;
 	base[1] = value >> 48;
@@ -205,12 +205,12 @@ static INLINE void put_bigendian_uint64(UINT8 *base, UINT64 value)
 	base[7] = value;
 }
 
-static INLINE UINT32 get_bigendian_uint32(const UINT8 *base)
+static INLINE uint32_t get_bigendian_uint32(const uint8_t *base)
 {
 	return (base[0] << 24) | (base[1] << 16) | (base[2] << 8) | base[3];
 }
 
-static INLINE void put_bigendian_uint32(UINT8 *base, UINT32 value)
+static INLINE void put_bigendian_uint32(uint8_t *base, uint32_t value)
 {
 	base[0] = value >> 24;
 	base[1] = value >> 16;
@@ -218,18 +218,18 @@ static INLINE void put_bigendian_uint32(UINT8 *base, UINT32 value)
 	base[3] = value;
 }
 
-static INLINE UINT16 get_bigendian_uint16(const UINT8 *base)
+static INLINE uint16_t get_bigendian_uint16(const uint8_t *base)
 {
 	return (base[0] << 8) | base[1];
 }
 
-static INLINE void put_bigendian_uint16(UINT8 *base, UINT16 value)
+static INLINE void put_bigendian_uint16(uint8_t *base, uint16_t value)
 {
 	base[0] = value >> 8;
 	base[1] = value;
 }
 
-static INLINE void extract_map_entry(const UINT8 *base, struct map_entry *entry)
+static INLINE void extract_map_entry(const uint8_t *base, struct map_entry *entry)
 {
 	entry->offset = get_bigendian_uint64(&base[0]);
 	entry->crc = get_bigendian_uint32(&base[8]);
@@ -237,7 +237,7 @@ static INLINE void extract_map_entry(const UINT8 *base, struct map_entry *entry)
 	entry->flags = get_bigendian_uint16(&base[14]);
 }
 
-static INLINE void assemble_map_entry(UINT8 *base, struct map_entry *entry)
+static INLINE void assemble_map_entry(uint8_t *base, struct map_entry *entry)
 {
 	put_bigendian_uint64(&base[0], entry->offset);
 	put_bigendian_uint32(&base[8], entry->crc);
@@ -245,7 +245,7 @@ static INLINE void assemble_map_entry(UINT8 *base, struct map_entry *entry)
 	put_bigendian_uint16(&base[14], entry->flags);
 }
 
-static INLINE void extract_old_map_entry(const UINT8 *base, struct map_entry *entry, UINT32 hunkbytes)
+static INLINE void extract_old_map_entry(const uint8_t *base, struct map_entry *entry, uint32_t hunkbytes)
 {
 	entry->offset = get_bigendian_uint64(&base[0]);
 	entry->crc = 0;
@@ -254,9 +254,9 @@ static INLINE void extract_old_map_entry(const UINT8 *base, struct map_entry *en
 	entry->offset = (entry->offset << 20) >> 20;
 }
 
-static INLINE void assemble_old_map_entry(UINT8 *base, struct map_entry *entry)
+static INLINE void assemble_old_map_entry(uint8_t *base, struct map_entry *entry)
 {
-	UINT64 data = entry->offset | ((UINT64)entry->length << 44);
+	uint64_t data = entry->offset | ((uint64_t)entry->length << 44);
 	put_bigendian_uint64(&base[0], data);
 }
 
@@ -297,14 +297,14 @@ void chd_save_interface(struct chd_interface *interface_save)
  *
  *************************************/
 
-int chd_create(const char *filename, UINT64 logicalbytes, UINT32 hunkbytes, UINT32 compression, struct chd_file *parent)
+int chd_create(const char *filename, uint64_t logicalbytes, uint32_t hunkbytes, uint32_t compression, struct chd_file *parent)
 {
-	UINT8 blank_map_entries[MAP_STACK_ENTRIES * MAP_ENTRY_SIZE];
+	uint8_t blank_map_entries[MAP_STACK_ENTRIES * MAP_ENTRY_SIZE];
 	int fullchunks, remainder, count;
 	struct chd_interface_file *file = NULL;
 	struct map_entry mapentry;
 	struct chd_header header;
-	UINT64 fileoffset;
+	uint64_t fileoffset;
 	int i, j, err;
 
 	last_error = CHDERR_NONE;
@@ -438,8 +438,8 @@ int chd_create(const char *filename, UINT64 logicalbytes, UINT32 hunkbytes, UINT
 	/* if we have a parent, clone the metadata */
 	if (parent)
 	{
-		UINT8 metadata[CHD_MAX_METADATA_SIZE];
-		UINT32 metatag, metasize, metaindex;
+		uint8_t metadata[CHD_MAX_METADATA_SIZE];
+		uint32_t metatag, metasize, metaindex;
 
 		/* open the new CHD */
 		struct chd_file *newchd = chd_open(filename, 1, parent);
@@ -678,10 +678,10 @@ void chd_close_all(void)
  *
  *************************************/
 
-UINT32 chd_get_metadata(struct chd_file *chd, UINT32 *metatag, UINT32 metaindex, void *outputbuf, UINT32 outputlen)
+uint32_t chd_get_metadata(struct chd_file *chd, uint32_t *metatag, uint32_t metaindex, void *outputbuf, uint32_t outputlen)
 {
 	struct metadata_entry metaentry;
-	UINT32 count;
+	uint32_t count;
 
 	/* if we didn't find it, just return */
 	last_error = find_metadata_entry(chd, *metatag, metaindex, &metaentry);
@@ -730,11 +730,11 @@ UINT32 chd_get_metadata(struct chd_file *chd, UINT32 *metatag, UINT32 metaindex,
  *
  *************************************/
 
-int chd_set_metadata(struct chd_file *chd, UINT32 metatag, UINT32 metaindex, const void *inputbuf, UINT32 inputlen)
+int chd_set_metadata(struct chd_file *chd, uint32_t metatag, uint32_t metaindex, const void *inputbuf, uint32_t inputlen)
 {
-	UINT8 raw_meta_header[METADATA_HEADER_SIZE];
+	uint8_t raw_meta_header[METADATA_HEADER_SIZE];
 	struct metadata_entry metaentry;
-	UINT32 count;
+	uint32_t count;
 
 	/* if the disk is an old version, punt */
 	if (chd->header.version < 3)
@@ -833,7 +833,7 @@ int chd_set_metadata(struct chd_file *chd, UINT32 metatag, UINT32 metaindex, con
  *
  *************************************/
 
-UINT32 chd_read(struct chd_file *chd, UINT32 hunknum, UINT32 hunkcount, void *buffer)
+uint32_t chd_read(struct chd_file *chd, uint32_t hunknum, uint32_t hunkcount, void *buffer)
 {
 	int err;
 
@@ -842,9 +842,9 @@ UINT32 chd_read(struct chd_file *chd, UINT32 hunknum, UINT32 hunkcount, void *bu
 	/* for now, just break down multihunk reads into single hunks */
 	if (hunkcount > 1)
 	{
-		UINT32 total = 0;
+		uint32_t total = 0;
 		while (hunkcount-- && last_error == CHDERR_NONE)
-			total += chd_read(chd, hunknum++, 1, (UINT8 *)buffer + total * chd->header.hunkbytes);
+			total += chd_read(chd, hunknum++, 1, (uint8_t *)buffer + total * chd->header.hunkbytes);
 		return total;
 	}
 
@@ -884,7 +884,7 @@ cleanup:
  *
  *************************************/
 
-UINT32 chd_write(struct chd_file *chd, UINT32 hunknum, UINT32 hunkcount, const void *buffer)
+uint32_t chd_write(struct chd_file *chd, uint32_t hunknum, uint32_t hunkcount, const void *buffer)
 {
 	int err;
 
@@ -893,9 +893,9 @@ UINT32 chd_write(struct chd_file *chd, UINT32 hunknum, UINT32 hunkcount, const v
 	/* for now, just break down multihunk writes into single hunks */
 	if (hunkcount > 1)
 	{
-		UINT32 total = 0;
+		uint32_t total = 0;
 		while (hunkcount-- && last_error == CHDERR_NONE)
-			total += chd_write(chd, hunknum++, 1, (const UINT8 *)buffer + total * chd->header.hunkbytes);
+			total += chd_write(chd, hunknum++, 1, (const uint8_t *)buffer + total * chd->header.hunkbytes);
 		return total;
 	}
 
@@ -1030,10 +1030,10 @@ cleanup:
  *
  *************************************/
 
-int chd_compress(struct chd_file *chd, const char *rawfile, UINT32 offset, void (*progress)(const char *, ...))
+int chd_compress(struct chd_file *chd, const char *rawfile, uint32_t offset, void (*progress)(const char *, ...))
 {
 	struct chd_interface_file *sourcefile = NULL;
-	UINT64 sourceoffset = 0;
+	uint64_t sourceoffset = 0;
 	MD5_CTX md5;
 	struct sha1_ctx sha;
 	clock_t lastupdate;
@@ -1072,8 +1072,8 @@ int chd_compress(struct chd_file *chd, const char *rawfile, UINT32 offset, void 
 	for (hunknum = 0; hunknum < chd->header.totalhunks; hunknum++)
 	{
 		clock_t curtime = clock();
-		UINT32 bytestochecksum;
-		UINT32 bytesread;
+		uint32_t bytestochecksum;
+		uint32_t bytesread;
 
 		/* read the data */
 		bytesread = multi_read(sourcefile, sourceoffset + offset, chd->header.hunkbytes, chd->cache);
@@ -1083,7 +1083,7 @@ int chd_compress(struct chd_file *chd, const char *rawfile, UINT32 offset, void 
 		/* progress */
 		if (curtime - lastupdate > CLOCKS_PER_SEC / 2)
 		{
-			UINT64 sourcepos = (UINT64)hunknum * chd->header.hunkbytes;
+			uint64_t sourcepos = (uint64_t)hunknum * chd->header.hunkbytes;
 			if (progress && sourcepos)
 				(*progress)("Compressing hunk %d/%d... (ratio=%d%%)  \r", hunknum, chd->header.totalhunks, 100 - multi_length(chd->file) * 100 / sourcepos);
 			lastupdate = curtime;
@@ -1132,7 +1132,7 @@ int chd_compress(struct chd_file *chd, const char *rawfile, UINT32 offset, void 
 	/* final progress update */
 	if (progress)
 	{
-		UINT64 sourcepos = (UINT64)hunknum * chd->header.hunkbytes;
+		uint64_t sourcepos = (uint64_t)hunknum * chd->header.hunkbytes;
 		if (sourcepos)
 			(*progress)("Compression complete ... final ratio = %d%%            \n", 100 - multi_length(chd->file) * 100 / sourcepos);
 	}
@@ -1155,11 +1155,11 @@ cleanup:
  *
  *************************************/
 
-int chd_verify(struct chd_file *chd, void (*progress)(const char *, ...), UINT8 actualmd5[CHD_MD5_BYTES], UINT8 actualsha1[CHD_SHA1_BYTES])
+int chd_verify(struct chd_file *chd, void (*progress)(const char *, ...), uint8_t actualmd5[CHD_MD5_BYTES], uint8_t actualsha1[CHD_SHA1_BYTES])
 {
 	MD5_CTX md5;
 	struct sha1_ctx sha;
-	UINT64 sourceoffset = 0;
+	uint64_t sourceoffset = 0;
 	int err, hunknum = 0;
 	clock_t lastupdate;
 
@@ -1184,7 +1184,7 @@ int chd_verify(struct chd_file *chd, void (*progress)(const char *, ...), UINT8 
 	for (hunknum = 0; hunknum < chd->header.totalhunks; hunknum++)
 	{
 		clock_t curtime = clock();
-		UINT32 bytestochecksum;
+		uint32_t bytestochecksum;
 
 		/* progress */
 		if (curtime - lastupdate > CLOCKS_PER_SEC / 2)
@@ -1296,10 +1296,10 @@ static int validate_header(const struct chd_header *header)
  *
  *************************************/
 
-static int read_hunk_into_memory(struct chd_file *chd, UINT32 hunknum, UINT8 *dest)
+static int read_hunk_into_memory(struct chd_file *chd, uint32_t hunknum, uint8_t *dest)
 {
 	struct map_entry *entry = &chd->map[hunknum];
-	UINT32 bytes;
+	uint32_t bytes;
 	int err;
 
 	/* switch off the entry type */
@@ -1376,7 +1376,7 @@ static int read_hunk_into_memory(struct chd_file *chd, UINT32 hunknum, UINT8 *de
 }
 
 
-static int read_hunk_into_cache(struct chd_file *chd, UINT32 hunknum)
+static int read_hunk_into_cache(struct chd_file *chd, uint32_t hunknum)
 {
 	int err;
 
@@ -1403,13 +1403,13 @@ static int read_hunk_into_cache(struct chd_file *chd, UINT32 hunknum)
  *
  *************************************/
 
-static int write_hunk_from_memory(struct chd_file *chd, UINT32 hunknum, const UINT8 *src)
+static int write_hunk_from_memory(struct chd_file *chd, uint32_t hunknum, const uint8_t *src)
 {
 	struct map_entry *entry = &chd->map[hunknum];
 	struct map_entry newentry;
-	UINT8 fileentry[MAP_ENTRY_SIZE];
+	uint8_t fileentry[MAP_ENTRY_SIZE];
 	const void *data = src;
-	UINT32 bytes, match;
+	uint32_t bytes, match;
 
 	/* first compute the CRC */
 	newentry.crc = crc32(0, &src[0], chd->header.hunkbytes);
@@ -1527,8 +1527,8 @@ write_entry:
 
 static int read_header(struct chd_interface_file *file, struct chd_header *header)
 {
-	UINT8 rawheader[CHD_MAX_HEADER_SIZE];
-	UINT32 count;
+	uint8_t rawheader[CHD_MAX_HEADER_SIZE];
+	uint32_t count;
 
 	/* punt if NULL */
 	if (!header)
@@ -1581,7 +1581,7 @@ static int read_header(struct chd_interface_file *file, struct chd_header *heade
 		header->obsolete_cylinders = get_bigendian_uint32(&rawheader[32]);
 		header->obsolete_heads     = get_bigendian_uint32(&rawheader[36]);
 		header->obsolete_sectors   = get_bigendian_uint32(&rawheader[40]);
-		header->logicalbytes = (UINT64)header->obsolete_cylinders * (UINT64)header->obsolete_heads * (UINT64)header->obsolete_sectors * (UINT64)seclen;
+		header->logicalbytes = (uint64_t)header->obsolete_cylinders * (uint64_t)header->obsolete_heads * (uint64_t)header->obsolete_sectors * (uint64_t)seclen;
 		header->hunkbytes = seclen * header->obsolete_hunksize;
 		header->metaoffset = 0;
 	}
@@ -1611,8 +1611,8 @@ static int read_header(struct chd_interface_file *file, struct chd_header *heade
 
 static int write_header(struct chd_interface_file *file, const struct chd_header *header)
 {
-	UINT8 rawheader[CHD_MAX_HEADER_SIZE];
-	UINT32 count;
+	uint8_t rawheader[CHD_MAX_HEADER_SIZE];
+	uint32_t count;
 
 	/* punt if NULL */
 	if (!header)
@@ -1665,11 +1665,11 @@ static int write_header(struct chd_interface_file *file, const struct chd_header
 
 static int read_hunk_map(struct chd_file *chd)
 {
-	UINT32 entrysize = (chd->header.version < 3) ? OLD_MAP_ENTRY_SIZE : MAP_ENTRY_SIZE;
-	UINT8 raw_map_entries[MAP_STACK_ENTRIES * MAP_ENTRY_SIZE];
-	UINT8 cookie[MAP_ENTRY_SIZE];
-	UINT64 fileoffset;
-	UINT32 count;
+	uint32_t entrysize = (chd->header.version < 3) ? OLD_MAP_ENTRY_SIZE : MAP_ENTRY_SIZE;
+	uint8_t raw_map_entries[MAP_STACK_ENTRIES * MAP_ENTRY_SIZE];
+	uint8_t cookie[MAP_ENTRY_SIZE];
+	uint64_t fileoffset;
+	uint32_t count;
 	int i, err;
 
 	/* first allocate memory */
@@ -1783,9 +1783,9 @@ static void init_crcmap(struct chd_file *chd, int prepopulate)
  *
  *************************************/
 
-static void add_to_crcmap(struct chd_file *chd, UINT32 hunknum)
+static void add_to_crcmap(struct chd_file *chd, uint32_t hunknum)
 {
-	UINT32 hash = chd->map[hunknum].crc % CRCMAP_HASH_SIZE;
+	uint32_t hash = chd->map[hunknum].crc % CRCMAP_HASH_SIZE;
 	struct crcmap_entry *crcmap;
 
 	/* pull a free entry off the list */
@@ -1806,7 +1806,7 @@ static void add_to_crcmap(struct chd_file *chd, UINT32 hunknum)
  *
  *************************************/
 
-static int is_really_matching_hunk(struct chd_file *chd, UINT32 hunknum, const UINT8 *rawdata)
+static int is_really_matching_hunk(struct chd_file *chd, uint32_t hunknum, const uint8_t *rawdata)
 {
 	/* we have a potential match -- better be sure */
 	/* read the hunk from disk and compare byte-for-byte */
@@ -1827,9 +1827,9 @@ static int is_really_matching_hunk(struct chd_file *chd, UINT32 hunknum, const U
  *
  *************************************/
 
-static UINT32 find_matching_hunk(struct chd_file *chd, UINT32 hunknum, UINT32 crc, const UINT8 *rawdata)
+static uint32_t find_matching_hunk(struct chd_file *chd, uint32_t hunknum, uint32_t crc, const uint8_t *rawdata)
 {
-	UINT32 lasthunk = (hunknum < chd->header.totalhunks) ? hunknum : chd->header.totalhunks;
+	uint32_t lasthunk = (hunknum < chd->header.totalhunks) ? hunknum : chd->header.totalhunks;
 	int curhunk;
 
 	/* if we have a CRC map, use that */
@@ -1866,7 +1866,7 @@ static UINT32 find_matching_hunk(struct chd_file *chd, UINT32 hunknum, UINT32 cr
  *
  *************************************/
 
-static int find_metadata_entry(struct chd_file *chd, UINT32 metatag, UINT32 metaindex, struct metadata_entry *metaentry)
+static int find_metadata_entry(struct chd_file *chd, uint32_t metatag, uint32_t metaindex, struct metadata_entry *metaentry)
 {
 	/* start at the beginning */
 	metaentry->offset = chd->header.metaoffset;
@@ -1875,8 +1875,8 @@ static int find_metadata_entry(struct chd_file *chd, UINT32 metatag, UINT32 meta
 	/* loop until we run out of options */
 	while (metaentry->offset != 0)
 	{
-		UINT8	raw_meta_header[METADATA_HEADER_SIZE];
-		UINT32	count;
+		uint8_t	raw_meta_header[METADATA_HEADER_SIZE];
+		uint32_t	count;
 
 		/* read the raw header */
 		count = multi_read(chd->file, metaentry->offset, sizeof(raw_meta_header), raw_meta_header);
@@ -1918,7 +1918,7 @@ static int find_metadata_entry(struct chd_file *chd, UINT32 metatag, UINT32 meta
 static voidpf fast_alloc(voidpf opaque, uInt items, uInt size)
 {
 	struct zlib_codec_data *data = opaque;
-	UINT32 *ptr;
+	uint32_t *ptr;
 	int i;
 
 	/* compute the size, rounding to the nearest 1k */
@@ -1937,7 +1937,7 @@ static voidpf fast_alloc(voidpf opaque, uInt items, uInt size)
 	}
 
 	/* alloc a new one */
-	ptr = malloc(size + sizeof(UINT32));
+	ptr = malloc(size + sizeof(uint32_t));
 	if (!ptr)
 		return NULL;
 
@@ -1958,7 +1958,7 @@ static voidpf fast_alloc(voidpf opaque, uInt items, uInt size)
 static void fast_free(voidpf opaque, voidpf address)
 {
 	struct zlib_codec_data *data = opaque;
-	UINT32 *ptr = (UINT32 *)address - 1;
+	uint32_t *ptr = (uint32_t *)address - 1;
 	int i;
 
 	/* find the hunk */
@@ -2099,17 +2099,17 @@ static void multi_close(struct chd_interface_file *file)
 	(*interface.close)(file);
 }
 
-static UINT32 multi_read(struct chd_interface_file *file, UINT64 offset, UINT32 count, void *buffer)
+static uint32_t multi_read(struct chd_interface_file *file, uint64_t offset, uint32_t count, void *buffer)
 {
 	return (*interface.read)(file, offset, count, buffer);
 }
 
-static UINT32 multi_write(struct chd_interface_file *file, UINT64 offset, UINT32 count, const void *buffer)
+static uint32_t multi_write(struct chd_interface_file *file, uint64_t offset, uint32_t count, const void *buffer)
 {
 	return (*interface.write)(file, offset, count, buffer);
 }
 
-static UINT64 multi_length(struct chd_interface_file *file)
+static uint64_t multi_length(struct chd_interface_file *file)
 {
 	return (*interface.length)(file);
 }

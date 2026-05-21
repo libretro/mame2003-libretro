@@ -19,51 +19,51 @@
 	V1 header:
 
 	[  0] char   tag[8];		// 'MComprHD'
-	[  8] UINT32 length;		// length of header (including tag and length fields)
-	[ 12] UINT32 version;		// drive format version
-	[ 16] UINT32 flags;			// flags (see below)
-	[ 20] UINT32 compression;	// compression type
-	[ 24] UINT32 hunksize;		// 512-byte sectors per hunk
-	[ 28] UINT32 totalhunks;	// total # of hunks represented
-	[ 32] UINT32 cylinders;		// number of cylinders on hard disk
-	[ 36] UINT32 heads;			// number of heads on hard disk
-	[ 40] UINT32 sectors;		// number of sectors on hard disk
-	[ 44] UINT8  md5[16];		// MD5 checksum of raw data
-	[ 60] UINT8  parentmd5[16];	// MD5 checksum of parent file
+	[  8] uint32_t length;		// length of header (including tag and length fields)
+	[ 12] uint32_t version;		// drive format version
+	[ 16] uint32_t flags;			// flags (see below)
+	[ 20] uint32_t compression;	// compression type
+	[ 24] uint32_t hunksize;		// 512-byte sectors per hunk
+	[ 28] uint32_t totalhunks;	// total # of hunks represented
+	[ 32] uint32_t cylinders;		// number of cylinders on hard disk
+	[ 36] uint32_t heads;			// number of heads on hard disk
+	[ 40] uint32_t sectors;		// number of sectors on hard disk
+	[ 44] uint8_t  md5[16];		// MD5 checksum of raw data
+	[ 60] uint8_t  parentmd5[16];	// MD5 checksum of parent file
 	[ 76] (V1 header length)
 
 	V2 header:
 
 	[  0] char   tag[8];		// 'MComprHD'
-	[  8] UINT32 length;		// length of header (including tag and length fields)
-	[ 12] UINT32 version;		// drive format version
-	[ 16] UINT32 flags;			// flags (see below)
-	[ 20] UINT32 compression;	// compression type
-	[ 24] UINT32 hunksize;		// seclen-byte sectors per hunk
-	[ 28] UINT32 totalhunks;	// total # of hunks represented
-	[ 32] UINT32 cylinders;		// number of cylinders on hard disk
-	[ 36] UINT32 heads;			// number of heads on hard disk
-	[ 40] UINT32 sectors;		// number of sectors on hard disk
-	[ 44] UINT8  md5[16];		// MD5 checksum of raw data
-	[ 60] UINT8  parentmd5[16];	// MD5 checksum of parent file
-	[ 76] UINT32 seclen;		// number of bytes per sector
+	[  8] uint32_t length;		// length of header (including tag and length fields)
+	[ 12] uint32_t version;		// drive format version
+	[ 16] uint32_t flags;			// flags (see below)
+	[ 20] uint32_t compression;	// compression type
+	[ 24] uint32_t hunksize;		// seclen-byte sectors per hunk
+	[ 28] uint32_t totalhunks;	// total # of hunks represented
+	[ 32] uint32_t cylinders;		// number of cylinders on hard disk
+	[ 36] uint32_t heads;			// number of heads on hard disk
+	[ 40] uint32_t sectors;		// number of sectors on hard disk
+	[ 44] uint8_t  md5[16];		// MD5 checksum of raw data
+	[ 60] uint8_t  parentmd5[16];	// MD5 checksum of parent file
+	[ 76] uint32_t seclen;		// number of bytes per sector
 	[ 80] (V2 header length)
 
 	V3 header:
 
 	[  0] char   tag[8];		// 'MComprHD'
-	[  8] UINT32 length;		// length of header (including tag and length fields)
-	[ 12] UINT32 version;		// drive format version
-	[ 16] UINT32 flags;			// flags (see below)
-	[ 20] UINT32 compression;	// compression type
-	[ 24] UINT32 totalhunks;	// total # of hunks represented
-	[ 28] UINT64 logicalbytes;	// logical size of the data (in bytes)
-	[ 36] UINT64 metaoffset;	// offset to the first blob of metadata
-	[ 44] UINT8  md5[16];		// MD5 checksum of raw data
-	[ 60] UINT8  parentmd5[16];	// MD5 checksum of parent file
-	[ 76] UINT32 hunkbytes;		// number of bytes per hunk
-	[ 80] UINT8  sha1[20];		// SHA1 checksum of raw data
-	[100] UINT8  parentsha1[20];// SHA1 checksum of parent file
+	[  8] uint32_t length;		// length of header (including tag and length fields)
+	[ 12] uint32_t version;		// drive format version
+	[ 16] uint32_t flags;			// flags (see below)
+	[ 20] uint32_t compression;	// compression type
+	[ 24] uint32_t totalhunks;	// total # of hunks represented
+	[ 28] uint64_t logicalbytes;	// logical size of the data (in bytes)
+	[ 36] uint64_t metaoffset;	// offset to the first blob of metadata
+	[ 44] uint8_t  md5[16];		// MD5 checksum of raw data
+	[ 60] uint8_t  parentmd5[16];	// MD5 checksum of parent file
+	[ 76] uint32_t hunkbytes;		// number of bytes per hunk
+	[ 80] uint8_t  sha1[20];		// SHA1 checksum of raw data
+	[100] uint8_t  parentsha1[20];// SHA1 checksum of parent file
 	[120] (V3 header length)
 
 	Flags:
@@ -98,7 +98,7 @@
 
 #define CHD_MAX_METADATA_SIZE		4096
 #define CHDMETATAG_WILDCARD			0
-#define CHD_METAINDEX_APPEND		((UINT32)-1)
+#define CHD_METAINDEX_APPEND		((uint32_t)-1)
 
 #define HARD_DISK_STANDARD_METADATA	0x47444444
 #define HARD_DISK_METADATA_FORMAT	"CYLS:%d,HEADS:%d,SECS:%d,BPS:%d"
@@ -140,23 +140,23 @@ enum
 
 struct chd_header
 {
-	UINT32	length;						/* length of header data */
-	UINT32	version;					/* drive format version */
-	UINT32	flags;						/* flags field */
-	UINT32	compression;				/* compression type */
-	UINT32	hunkbytes;					/* number of bytes per hunk */
-	UINT32	totalhunks;					/* total # of hunks represented */
-	UINT64	logicalbytes;				/* logical size of the data */
-	UINT64	metaoffset;					/* offset in file of first metadata */
-	UINT8	md5[CHD_MD5_BYTES];			/* MD5 checksum of raw data */
-	UINT8	parentmd5[CHD_MD5_BYTES];	/* MD5 checksum of parent file */
-	UINT8	sha1[CHD_SHA1_BYTES];		/* SHA1 checksum of raw data */
-	UINT8	parentsha1[CHD_SHA1_BYTES];	/* SHA1 checksum of parent file */
+	uint32_t	length;						/* length of header data */
+	uint32_t	version;					/* drive format version */
+	uint32_t	flags;						/* flags field */
+	uint32_t	compression;				/* compression type */
+	uint32_t	hunkbytes;					/* number of bytes per hunk */
+	uint32_t	totalhunks;					/* total # of hunks represented */
+	uint64_t	logicalbytes;				/* logical size of the data */
+	uint64_t	metaoffset;					/* offset in file of first metadata */
+	uint8_t	md5[CHD_MD5_BYTES];			/* MD5 checksum of raw data */
+	uint8_t	parentmd5[CHD_MD5_BYTES];	/* MD5 checksum of parent file */
+	uint8_t	sha1[CHD_SHA1_BYTES];		/* SHA1 checksum of raw data */
+	uint8_t	parentsha1[CHD_SHA1_BYTES];	/* SHA1 checksum of parent file */
 
-	UINT32	obsolete_cylinders;			/* obsolete field -- do not use! */
-	UINT32	obsolete_sectors;			/* obsolete field -- do not use! */
-	UINT32	obsolete_heads;				/* obsolete field -- do not use! */
-	UINT32	obsolete_hunksize;			/* obsolete field -- do not use! */
+	uint32_t	obsolete_cylinders;			/* obsolete field -- do not use! */
+	uint32_t	obsolete_sectors;			/* obsolete field -- do not use! */
+	uint32_t	obsolete_heads;				/* obsolete field -- do not use! */
+	uint32_t	obsolete_hunksize;			/* obsolete field -- do not use! */
 };
 
 
@@ -167,9 +167,9 @@ struct chd_interface
 {
 	struct chd_interface_file *(*open)(const char *filename, const char *mode);
 	void (*close)(struct chd_interface_file *file);
-	UINT32 (*read)(struct chd_interface_file *file, UINT64 offset, UINT32 count, void *buffer);
-	UINT32 (*write)(struct chd_interface_file *file, UINT64 offset, UINT32 count, const void *buffer);
-	UINT64 (*length)(struct chd_interface_file *file);
+	uint32_t (*read)(struct chd_interface_file *file, uint64_t offset, uint32_t count, void *buffer);
+	uint32_t (*write)(struct chd_interface_file *file, uint64_t offset, uint32_t count, const void *buffer);
+	uint64_t (*length)(struct chd_interface_file *file);
 };
 
 
@@ -183,22 +183,22 @@ struct chd_interface
 void chd_set_interface(struct chd_interface *interface);
 void chd_save_interface(struct chd_interface *interface_save);
 
-int chd_create(const char *filename, UINT64 logicalbytes, UINT32 hunkbytes, UINT32 compression, struct chd_file *parent);
+int chd_create(const char *filename, uint64_t logicalbytes, uint32_t hunkbytes, uint32_t compression, struct chd_file *parent);
 struct chd_file *chd_open(const char *filename, int writeable, struct chd_file *parent);
 void chd_close(struct chd_file *chd);
 void chd_close_all(void);
 
-UINT32 chd_get_metadata(struct chd_file *chd, UINT32 *metatag, UINT32 metaindex, void *outputbuf, UINT32 outputlen);
-int chd_set_metadata(struct chd_file *chd, UINT32 metatag, UINT32 metaindex, const void *inputbuf, UINT32 inputlen);
+uint32_t chd_get_metadata(struct chd_file *chd, uint32_t *metatag, uint32_t metaindex, void *outputbuf, uint32_t outputlen);
+int chd_set_metadata(struct chd_file *chd, uint32_t metatag, uint32_t metaindex, const void *inputbuf, uint32_t inputlen);
 
-UINT32 chd_read(struct chd_file *chd, UINT32 hunknum, UINT32 hunkcount, void *buffer);
-UINT32 chd_write(struct chd_file *chd, UINT32 hunknum, UINT32 hunkcount, const void *buffer);
+uint32_t chd_read(struct chd_file *chd, uint32_t hunknum, uint32_t hunkcount, void *buffer);
+uint32_t chd_write(struct chd_file *chd, uint32_t hunknum, uint32_t hunkcount, const void *buffer);
 
 int chd_get_last_error(void);
 const struct chd_header *chd_get_header(struct chd_file *chd);
 int chd_set_header(const char *filename, const struct chd_header *header);
 
-int chd_compress(struct chd_file *chd, const char *rawfile, UINT32 offset, void (*progress)(const char *, ...));
-int chd_verify(struct chd_file *chd, void (*progress)(const char *, ...), UINT8 actualmd5[CHD_MD5_BYTES], UINT8 actualsha1[CHD_SHA1_BYTES]);
+int chd_compress(struct chd_file *chd, const char *rawfile, uint32_t offset, void (*progress)(const char *, ...));
+int chd_verify(struct chd_file *chd, void (*progress)(const char *, ...), uint8_t actualmd5[CHD_MD5_BYTES], uint8_t actualsha1[CHD_SHA1_BYTES]);
 
 #endif /* CHD_H */
