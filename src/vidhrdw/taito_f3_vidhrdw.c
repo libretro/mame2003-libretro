@@ -180,7 +180,6 @@ Line ram memory map:
 #include "state.h"
 
 #define DARIUSG_KLUDGE
-#define DEBUG_F3 0
 
 static struct tilemap *pf1_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static struct tilemap *pixel_layer;
@@ -201,9 +200,6 @@ data32_t *f3_vram,*f3_line_ram;
 data32_t *f3_pf_data,*f3_pivot_ram;
 
 extern int f3_game;
-#if DEBUG_F3
-static int sprite_pri_word;
-#endif	//DEBUG_F3
 static int scroll_dirty,skip_this_frame;
 
 /* Game specific data, some of this can be
@@ -268,12 +264,6 @@ struct tempsprite
 static struct tempsprite *spritelist;
 
 static int alpha_disable=0;
-#if DEBUG_F3
-static char deb_buf[10][80];
-static int deb_enable=0;
-static int deb_tileflag=0;
-static int deb_tile_code=0;
-#endif	//DEBUG_F3
 
 static const struct tempsprite *sprite_end;
 static void get_sprite_info(const data32_t *spriteram32_ptr);
@@ -332,131 +322,6 @@ static int twidth_mask=0x1f,twidth_mask_bit=5;
 static UINT8 *tile_opaque_sp;
 static UINT8 *tile_opaque_pf;
 
-
-/******************************************************************************/
-
-#if DEBUG_F3
-static void print_debug_info(int t0, int t1, int t2, int t3, int c0, int c1, int c2, int c3)
-{
-	struct mame_bitmap *bitmap = Machine->scrbitmap;
-	int j,trueorientation,l[16];
-	char buf[64];
-
-	trueorientation = Machine->orientation;
-	Machine->orientation = ROT0;
-
-	sprintf(buf,"%04X %04X %04X %04X",f3_control_0[0]>>22,(f3_control_0[0]&0xffff)>>6,f3_control_0[1]>>22,(f3_control_0[1]&0xffff)>>6);
-	for (j = 0;j< 16+3;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,40,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"%04X %04X %04X %04X",f3_control_0[2]>>23,(f3_control_0[2]&0xffff)>>7,f3_control_0[3]>>23,(f3_control_0[3]&0xffff)>>7);
-	for (j = 0;j< 16+3;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,48,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"%04X %04X %04X %04X",f3_control_1[0]>>16,f3_control_1[0]&0xffff,f3_control_1[1]>>16,f3_control_1[1]&0xffff);
-	for (j = 0;j< 16+3;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,58,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"%04X %04X %04X %04X",f3_control_1[2]>>16,f3_control_1[2]&0xffff,f3_control_1[3]>>16,f3_control_1[3]&0xffff);
-	for (j = 0;j< 16+3;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,66,0,TRANSPARENCY_NONE,0);
-
-	sprintf(buf,"%04X %04X %04X %04X %04X %04X %04X %04X",spriteram32_buffered[0]>>16,spriteram32_buffered[0]&0xffff,spriteram32_buffered[1]>>16,spriteram32_buffered[1]&0xffff,spriteram32_buffered[2]>>16,spriteram32_buffered[2]&0xffff,spriteram32_buffered[3]>>16,spriteram32_buffered[3]&0xffff);
-	for (j = 0;j< 32+7;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,76,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"%04X %04X %04X %04X %04X %04X %04X %04X",spriteram32_buffered[4]>>16,spriteram32_buffered[4]&0xffff,spriteram32_buffered[5]>>16,spriteram32_buffered[5]&0xffff,spriteram32_buffered[6]>>16,spriteram32_buffered[6]&0xffff,spriteram32_buffered[7]>>16,spriteram32_buffered[7]&0xffff);
-	for (j = 0;j< 32+7;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,84,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"%04X %04X %04X %04X %04X %04X %04X %04X",spriteram32_buffered[8]>>16,spriteram32_buffered[8]&0xffff,spriteram32_buffered[9]>>16,spriteram32_buffered[9]&0xffff,spriteram32_buffered[10]>>16,spriteram32_buffered[10]&0xffff,spriteram32_buffered[11]>>16,spriteram32_buffered[11]&0xffff);
-	for (j = 0;j< 32+7;j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,92,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x0040]&0xffff;
-	l[1]=f3_line_ram[0x00c0]&0xffff;
-	l[2]=f3_line_ram[0x0140]&0xffff;
-	l[3]=f3_line_ram[0x01c0]&0xffff;
-	sprintf(buf,"Ctr1: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*13,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x0240]&0xffff;
-	l[1]=f3_line_ram[0x02c0]&0xffff;
-	l[2]=f3_line_ram[0x0340]&0xffff;
-	l[3]=f3_line_ram[0x03c0]&0xffff;
-	sprintf(buf,"Ctr2: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*14,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x2c60]&0xffff;
-	l[1]=f3_line_ram[0x2ce0]&0xffff;
-	l[2]=f3_line_ram[0x2d60]&0xffff;
-	l[3]=f3_line_ram[0x2de0]&0xffff;
-	sprintf(buf,"Pri : %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*15,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x2060]&0xffff;
-	l[1]=f3_line_ram[0x20e0]&0xffff;
-	l[2]=f3_line_ram[0x2160]&0xffff;
-	l[3]=f3_line_ram[0x21e0]&0xffff;
-	sprintf(buf,"Zoom: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*16,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x2860]&0xffff;
-	l[1]=f3_line_ram[0x28e0]&0xffff;
-	l[2]=f3_line_ram[0x2960]&0xffff;
-	l[3]=f3_line_ram[0x29e0]&0xffff;
-	sprintf(buf,"Line: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*17,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x1c60]&0xffff;
-	l[1]=f3_line_ram[0x1ce0]&0xffff;
-	l[2]=f3_line_ram[0x1d60]&0xffff;
-	l[3]=f3_line_ram[0x1de0]&0xffff;
-	sprintf(buf,"Sprt: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*18,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x1860]&0xffff;
-	l[1]=f3_line_ram[0x18e0]&0xffff;
-	l[2]=f3_line_ram[0x1960]&0xffff;
-	l[3]=f3_line_ram[0x19e0]&0xffff;
-	sprintf(buf,"Pivt: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*19,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x1060]&0xffff;
-	l[1]=f3_line_ram[0x10e0]&0xffff;
-	l[2]=f3_line_ram[0x1160]&0xffff;
-	l[3]=f3_line_ram[0x11e0]&0xffff;
-	sprintf(buf,"Colm: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*20,0,TRANSPARENCY_NONE,0);
-
-	l[0]=f3_line_ram[0x1460]&0xffff;
-	l[1]=f3_line_ram[0x14e0]&0xffff;
-	l[2]=f3_line_ram[0x1560]&0xffff;
-	l[3]=f3_line_ram[0x15e0]&0xffff;
-	sprintf(buf,"5000: %04x %04x %04x %04x",l[0],l[1],l[2],l[3]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*21,0,TRANSPARENCY_NONE,0);
-
-	sprintf(buf,"SPri: %04x",sprite_pri_word);
-	for (j = 0;j < 10; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*23,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"TPri: %04x %04x %04x %04x",t0,t1,t2,t3);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*24,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"Cstm: %04x %04x %04x %04x",c0,c1,c2,c3);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*25,0,TRANSPARENCY_NONE,0);
-	sprintf(buf,"6000: %08x %08x %08x",f3_line_ram[0x1800],f3_line_ram[0x1890],f3_line_ram[0x1910]);
-	for (j = 0;j < 16+9; j++)
-		drawgfx(bitmap,Machine->uifont,buf[j],0,0,0,60+6*j,8*27,0,TRANSPARENCY_NONE,0);
-
-	Machine->orientation = trueorientation;
-}
-#endif	//DEBUG_F3
-
 /******************************************************************************/
 
 static INLINE void get_tile_info(int tile_index, data32_t *gfx_base)
@@ -464,22 +329,6 @@ static INLINE void get_tile_info(int tile_index, data32_t *gfx_base)
 	data32_t tile=gfx_base[tile_index];
 	UINT8 abtype=(tile>>(16+9))&0x1f;
 
-#if DEBUG_F3
-//if((tile&0xffff)>Machine->gfx[1]->total_elements) printf("tile code:%04x\n",tile&0xffff);
-	if(deb_tileflag)
-	{
-		int c=tile&0xffff;
-		if(abtype==deb_tile_code) c=0;
-
-		SET_TILE_INFO(
-				1,
-				c,
-				(tile>>16)&0x1ff,
-				TILE_FLIPYX( tile >> 30 ))
-		tile_info.priority = abtype&1;		/* alpha blending type? */
-	}
-	else
-#endif	//DEBUG_F3
 	{
 		SET_TILE_INFO(
 				1,
@@ -559,50 +408,6 @@ VIDEO_EOF( f3 )
 
 VIDEO_STOP( f3 )
 {
-#if DEBUG_F3
-#define FWRITE32(pRAM,len,file)	\
-{								\
-	int i;						\
-	for(i=0;i<len;i++)			\
-	{							\
-		unsigned char c;		\
-		UINT32 d=*pRAM;			\
-		c=(d&0xff000000)>>24;	\
-		fwrite(&c,1, 1 ,file);	\
-		d<<=8;					\
-		c=(d&0xff000000)>>24;	\
-		fwrite(&c,1, 1 ,file);	\
-		d<<=8;					\
-		c=(d&0xff000000)>>24;	\
-		fwrite(&c,1, 1 ,file);	\
-		d<<=8;					\
-		c=(d&0xff000000)>>24;	\
-		fwrite(&c,1, 1 ,file);	\
-		pRAM++;					\
-	}							\
-}
-
-	if (deb_enable) {
-		FILE *fp;
-
-		fp=fopen("line.dmp","wb");
-		if (fp) {
-			FWRITE32(f3_line_ram,0x10000/4,fp);
-			fclose(fp);
-		}
-		fp=fopen("sprite.dmp","wb");
-		if (fp) {
-			FWRITE32(spriteram32,0x10000/4,fp);
-			fclose(fp);
-		}
-		fp=fopen("vram.dmp","wb");
-		if (fp) {
-			FWRITE32(f3_pf_data,0xc000/4,fp);
-			fclose(fp);
-		}
-	}
-#undef FWRITE32
-#endif	//DEBUG_F3
 }
 
 VIDEO_START( f3 )
@@ -722,9 +527,6 @@ VIDEO_START( f3 )
 	{
 		const struct GfxElement *sprite_gfx = Machine->gfx[2];
 		int c;
-#if DEBUG_F3
-		int deb_count_opa=0,deb_count_tra=0,deb_tra_code=-1;
-#endif	//DEBUG_F3
 
 		for (c = 0;c < sprite_gfx->total_elements;c++)
 		{
@@ -742,24 +544,13 @@ VIDEO_START( f3 )
 			}
 			if(chk_trans_or_opa==1) tile_opaque_sp[c]=1;
 			else					tile_opaque_sp[c]=0;
-#if DEBUG_F3
-			if     (chk_trans_or_opa==2){deb_count_tra++;deb_tra_code=c;}
-			else if(chk_trans_or_opa==1) deb_count_opa++;
-#endif	//DEBUG_F3
 		}
-#if DEBUG_F3
-		printf("tile_opaque_sp: t=%d o=%d total=%d tra_code=%d\n",deb_count_tra,deb_count_opa,
-		sprite_gfx->total_elements,deb_tra_code);
-#endif	//DEBUG_F3
 	}
 
 
 	{
 		const struct GfxElement *pf_gfx = Machine->gfx[1];
 		int c;
-#if DEBUG_F3
-		int deb_count_opa=0,deb_count_tra=0,deb_tra_code=-1;
-#endif	//DEBUG_F3
 
 		for (c = 0;c < pf_gfx->total_elements;c++)
 		{
@@ -776,15 +567,7 @@ VIDEO_START( f3 )
 				dp += pf_gfx->line_modulo;
 			}
 			tile_opaque_pf[c]=chk_trans_or_opa;
-#if DEBUG_F3
-			if     (chk_trans_or_opa==2){deb_count_tra++;deb_tra_code=c;}
-			else if(chk_trans_or_opa==1) deb_count_opa++;
-#endif	//DEBUG_F3
 		}
-#if DEBUG_F3
-		printf("tile_opaque_pf: t=%d o=%d total=%d tra_code=%d\n",deb_count_tra,deb_count_opa,
-		pf_gfx->total_elements,deb_tra_code);
-#endif	//DEBUG_F3
 	}
 
 	return 0;
@@ -929,14 +712,6 @@ WRITE32_HANDLER( f3_palette_24bit_w )
 }
 
 /******************************************************************************/
-
-#if DEBUG_F3
-static int deb_alpha_level_a=0;
-static int deb_alpha_level_b=0;
-static int deb_alp_mode=0;
-static int deb_loop=0;
-static int deb_alpha_cnt=0;
-#endif	//DEBUG_F3
 
 static UINT8 add_sat[256][256];
 
@@ -1982,22 +1757,6 @@ static void f3_tilemap_draw(struct mame_bitmap *bitmap,
 	INT16 draw_line_num[256];
 
 	UINT32 rot=0;
-#if DEBUG_F3
-	int enable[4]={~0,~0,~0,~0};
-
-	if(deb_enable)
-	{
-		if (keyboard_pressed(KEYCODE_Z)) enable[0]=0;
-		if (keyboard_pressed(KEYCODE_X)) enable[1]=0;
-		if (keyboard_pressed(KEYCODE_C)) enable[2]=0;
-		if (keyboard_pressed(KEYCODE_V)) enable[3]=0;
-
-		if (keyboard_pressed(KEYCODE_A)) sprite_pri_usage &= ~(1<<3);
-		if (keyboard_pressed(KEYCODE_S)) sprite_pri_usage &= ~(1<<2);
-		if (keyboard_pressed(KEYCODE_D)) sprite_pri_usage &= ~(1<<1);
-		if (keyboard_pressed(KEYCODE_F)) sprite_pri_usage &= ~(1<<0);
-	}
-#endif	//DEBUG_F3
 
 	if (flipscreen)
 	{
@@ -2010,13 +1769,6 @@ static void f3_tilemap_draw(struct mame_bitmap *bitmap,
 		ys=24;
 		ye=256;
 	}
-//	ys=0;
-//	ye=256;
-
-#if DEBUG_F3
-deb_loop=0;
-deb_alpha_cnt=0;
-#endif	//DEBUG_F3
 
 	y_start=ys;
 	y_end=ye;
@@ -2096,11 +1848,6 @@ deb_alpha_cnt=0;
 			if(y_start<0) break;
 			continue;
 		}
-
-#if DEBUG_F3
-deb_loop++;
-#endif	//DEBUG_F3
-
 
 		/* alpha blend */
 		alpha_mode_flag[0]=alpha_mode[0]&~3;
@@ -2315,9 +2062,6 @@ deb_loop++;
 				layer_tmp[i]=i + (pri_sl1<<2);
 
 				if(!alpha_mode[i]
-#if DEBUG_F3
-					|| !enable[i]
-#endif	//DEBUG_F3
 					/*|| !(pri[i]&0x2000)*/)
 				{
 					layer_tmp[i]|=0x40;
@@ -2410,25 +2154,12 @@ deb_loop++;
 			}
 			else
 			{
-#if DEBUG_F3
-				if(!alpha_mode[pos]) usrintf_showmessage("layer priority error");
-#endif	//DEBUG_F3
 				if(alpha) dpix_lp[i]=dpix_n[1];
 				else	  dpix_lp[i]=dpix_n[0];
 			}
 		}
 		if(sprite[4]&sprite_alpha_check) alpha=1;
 		else if(!alpha) sprite[4]|=0x100;
-
-#if DEBUG_F3
-		if(alpha) deb_alpha_cnt++;
-		if(deb_enable)
-			sprintf(deb_buf[8],"spr:%3x %3x %3x %3x %3x",sprite[0],
-														sprite[1],
-														sprite[2],
-														sprite[3],
-														sprite[4]);
-#endif	//DEBUG_F3
 
 		f3_drawscanlines(bitmap,46,320,draw_line_num,line_t,sprite,rot,count_skip_layer);
 		if(y_start<0) break;
@@ -2885,7 +2616,7 @@ static void get_sprite_info(const data32_t *spriteram32_ptr)
 {
 	const int min_x=Machine->visible_area.min_x,max_x=Machine->visible_area.max_x;
 	const int min_y=Machine->visible_area.min_y,max_y=Machine->visible_area.max_y;
-	int offs,spritecont,flipx,flipy,old_x,old_y,color,x,y;
+	int offs,spritecont,flipx,flipy,color,x,y;
 	int sprite,global_x=0,global_y=0,subglobal_x=0,subglobal_y=0;
 	int block_x=0, block_y=0;
 	int last_color=0,last_x=0,last_y=0,block_zoom_x=0,block_zoom_y=0;
@@ -2900,7 +2631,6 @@ static void get_sprite_info(const data32_t *spriteram32_ptr)
 
 	color=0;
     flipx=flipy=0;
-    old_y=old_x=0;
     y=x=0;
 
 	sprite_top=0x1000;
@@ -3186,9 +2916,6 @@ VIDEO_UPDATE( f3 )
 	struct rectangle tempclip;
 	unsigned int sy_fix[4],sx_fix[4];
 	int tile;
-#if DEBUG_F3
-	static int deb_sc_x=0,deb_sc_y=0;
-#endif	//DEBUG_F3
 	struct mame_bitmap *priority_bitmap_bak;
 
 	skip_this_frame=0;
@@ -3219,17 +2946,6 @@ VIDEO_UPDATE( f3 )
 		sx_fix[2]-=((f3_control_0[1]&0x003f0000)>> 6)+0x0400-0x10000;
 		sx_fix[3]-=((f3_control_0[1]&0x0000003f)<<10)+0x0400-0x10000;
 
-#if DEBUG_F3
-		sy_fix[0]+=deb_sc_y;
-		sy_fix[1]+=deb_sc_y;
-		sy_fix[2]+=deb_sc_y;
-		sy_fix[3]+=deb_sc_y;
-		sx_fix[0]+=deb_sc_x;
-		sx_fix[1]+=deb_sc_x;
-		sx_fix[2]+=deb_sc_x;
-		sx_fix[3]+=deb_sc_x;
-#endif	//DEBUG_F3
-
 		if (flipscreen)
 		{
 			sy_fix[0]= 0x3000000-sy_fix[0];
@@ -3249,16 +2965,10 @@ VIDEO_UPDATE( f3 )
 
 
 	fillbitmap(pri_alp_bitmap,0,cliprect);
-#if DEBUG_F3
-if (deb_enable) fillbitmap(bitmap,255,cliprect);
-#endif	//DEBUG_F3
 
 	/* Pixel layer */
 	tempclip = pixel_layer_clip;
 	sect_rect(&tempclip,cliprect);
-#if DEBUG_F3
-if (!deb_enable || !keyboard_pressed(KEYCODE_N))
-#endif	//DEBUG_F3
 {
 	priority_bitmap_bak=priority_bitmap;
 	priority_bitmap=pri_alp_bitmap;
@@ -3273,24 +2983,9 @@ if (!deb_enable || !keyboard_pressed(KEYCODE_N))
 		get_sprite_info(spriteram32);
 	}
 
-#if DEBUG_F3
-if (!deb_enable || !keyboard_pressed(KEYCODE_B))
-#endif	//DEBUG_F3
 {
 	f3_drawsprites(bitmap,cliprect);
 }
-
-#if DEBUG_F3
-deb_tileflag=0;
-if (deb_enable && keyboard_pressed(KEYCODE_G))
-{
-	deb_tileflag=1;
-	tilemap_mark_all_tiles_dirty( pf1_tilemap );
-	tilemap_mark_all_tiles_dirty( pf2_tilemap );
-	tilemap_mark_all_tiles_dirty( pf3_tilemap );
-	tilemap_mark_all_tiles_dirty( pf4_tilemap );
-}
-#endif	//DEBUG_F3
 
 	/* Playfield */
 	get_line_ram_info(pf1_tilemap,sx_fix[0],sy_fix[0],0,f3_pf_data_1);
@@ -3302,207 +2997,5 @@ if (deb_enable && keyboard_pressed(KEYCODE_G))
 
 
 	/* vram layer */
-#if DEBUG_F3
-if (!deb_enable || !keyboard_pressed(KEYCODE_M))
-#endif	//DEBUG_F3
 	f3_draw_vram_layer(bitmap,cliprect);
-
-
-#if DEBUG_F3
-	if (0 && keyboard_pressed(KEYCODE_O))
-		print_debug_info(0,0,0,0,0,0,0,0);
-#endif	//DEBUG_F3
-
-
-	if (!keyboard_pressed(KEYCODE_LSHIFT) && keyboard_pressed_memory(KEYCODE_F1))
-	{
-		alpha_disable=!alpha_disable;
-		if(alpha_disable)
-			usrintf_showmessage("alpha blending:off");
-		else usrintf_showmessage("alpha blending:on");
-	}
-
-#if DEBUG_F3
-	{/******************************************************************************/
-		static int debdisp = 0;
-		static int cz_pos=0,cz_line=24;
-
-		if (keyboard_pressed(KEYCODE_LSHIFT) && keyboard_pressed_memory(KEYCODE_F1))
-		{
-			deb_enable=!deb_enable;
-			if(!deb_enable)
-			{
-				debdisp = 0;
-				usrintf_showmessage("debug mode:off");
-			}
-			else usrintf_showmessage("debug mode:on");
-
-		}
-
-		if (deb_enable && keyboard_pressed_memory(KEYCODE_Q))
-		{
-			debdisp++;
-			if(debdisp==4) debdisp = 0;
-		}
-
-		if(debdisp)
-		{
-			int sft;
-			if (keyboard_pressed(KEYCODE_K))	cz_line--;
-			if (keyboard_pressed(KEYCODE_L))	cz_line++;
-			if (keyboard_pressed_memory(KEYCODE_I))	cz_line--;
-			if (keyboard_pressed_memory(KEYCODE_O))	cz_line++;
-			cz_line=cz_line & 0xff;
-			sft=16*~(cz_line & 1);
-
-			if(debdisp==2)
-			{
-				sprintf(deb_buf[0],"LINE:%3d Z:%04x R:%04x C:%04x",cz_line,
-									(f3_line_ram[(0x0800+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0x0c00+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0x0000+cz_line*2)/4]>>sft)&0xffff
-						);
-
-				for(cz_pos=0;cz_pos<4;cz_pos++)
-					sprintf(deb_buf[1+cz_pos],"Layer:%2d z:%04x r:%04x c:%04x",cz_pos,
-									(f3_line_ram[(0x8000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0xa000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0x4000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff
-							);
-			}
-			else if(debdisp==3)
-			{
-				int deb_sx[4],deb_sx_fix[4];
-				int deb_sy[4],deb_sy_fix[4];
-
-				deb_sx[0]=(f3_control_0[0]&0xffc00000)>>22;
-				deb_sx[1]=(f3_control_0[0]&0x0000ffc0)>>6;
-				deb_sx[2]=(f3_control_0[1]&0xffc00000)>>22;
-				deb_sx[3]=(f3_control_0[1]&0x0000ffc0)>>6;
-
-				deb_sx_fix[0]=(f3_control_0[0]&0x003f0000)>>14;
-				deb_sx_fix[1]=(f3_control_0[0]&0x0000003f)<<2;
-				deb_sx_fix[2]=(f3_control_0[1]&0x003f0000)>>14;
-				deb_sx_fix[3]=(f3_control_0[1]&0x0000003f)<<2;
-
-				deb_sy[0]=(f3_control_0[2]&0xffff0000)>>23;
-				deb_sy[1]=(f3_control_0[2]&0x0000ffff)>>7;
-				deb_sy[2]=(f3_control_0[3]&0xffff0000)>>23;
-				deb_sy[3]=(f3_control_0[3]&0x0000ffff)>>7;
-
-				deb_sy_fix[0]=(f3_control_0[2]&0x007f0000)>>15;
-				deb_sy_fix[1]=(f3_control_0[2]&0x0000007f)<<1;
-				deb_sy_fix[2]=(f3_control_0[3]&0x007f0000)>>15;
-				deb_sy_fix[3]=(f3_control_0[3]&0x0000007f)<<1;
-
-				for(cz_pos=0;cz_pos<4;cz_pos++)
-					sprintf(deb_buf[1+cz_pos],"Layer:%2d x:%03x.%02x y:%03x.%02x",cz_pos,
-									deb_sx[cz_pos],deb_sx_fix[cz_pos],
-									deb_sy[cz_pos],deb_sy_fix[cz_pos]
-							);
-			}
-			else if(debdisp==1)
-			{
-				sprintf(deb_buf[0],"LINE:%3d S:%04x T:%04x A:%04x ?:%04x",cz_line,
-									(f3_line_ram[(0x0600+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0x0e00+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0x0400+cz_line*2)/4]>>sft)&0xffff,
-									(f3_line_ram[(0x0200+cz_line*2)/4]>>sft)&0xffff
-						);
-
-				for(cz_pos=0;cz_pos<4;cz_pos++)
-					sprintf(deb_buf[1+cz_pos],"Layer:%2d s:%04x t:%04x a:%04x ?:%04x",cz_pos,
-										(f3_line_ram[(0x7000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff,
-										(f3_line_ram[(0xb000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff,
-										(f3_line_ram[(0x6000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff,
-										(f3_line_ram[(0x5000+cz_pos*256*2+cz_line*2)/4]>>sft)&0xffff
-							);
-			}
-
-			if(1)
-			{
-				if (keyboard_pressed_memory(KEYCODE_0_PAD))	deb_sc_x-=0x0400;
-				if (keyboard_pressed_memory(KEYCODE_DEL_PAD))	deb_sc_x+=0x0400;
-				if (keyboard_pressed_memory(KEYCODE_1_PAD))	deb_sc_x-=0x10000;
-				if (keyboard_pressed_memory(KEYCODE_2_PAD))	deb_sc_x+=0x10000;
-
-				if (keyboard_pressed_memory(KEYCODE_4_PAD))	deb_sc_y-=0x0200;
-				if (keyboard_pressed_memory(KEYCODE_5_PAD))	deb_sc_y+=0x0200;
-				if (keyboard_pressed_memory(KEYCODE_7_PAD))	deb_sc_y-=0x10000;
-				if (keyboard_pressed_memory(KEYCODE_8_PAD))	deb_sc_y+=0x10000;
-				sprintf(deb_buf[5],"sc offset x:%8x y:%8x",deb_sc_x,deb_sc_y);
-
-				sprintf(deb_buf[6],"flip:%d alp/loop:%2d/%2d",!(!flipscreen),deb_alpha_cnt,deb_loop);
-
-				if (keyboard_pressed_memory(KEYCODE_H))	deb_tile_code--;
-				if (keyboard_pressed_memory(KEYCODE_J))	deb_tile_code++;
-				deb_tile_code&=0x1f;
-				sprintf(deb_buf[7],"tile code flg:%02x",deb_tile_code);
-			}
-			else
-			{
-				if (keyboard_pressed(KEYCODE_0_PAD))	deb_alpha_level_a-=1;
-				if (keyboard_pressed(KEYCODE_DEL_PAD))	deb_alpha_level_a+=1;
-				if (keyboard_pressed_memory(KEYCODE_1_PAD))	deb_alpha_level_a-=1;
-				if (keyboard_pressed_memory(KEYCODE_2_PAD))	deb_alpha_level_a+=1;
-
-				if (keyboard_pressed(KEYCODE_4_PAD))	deb_alpha_level_b-=1;
-				if (keyboard_pressed(KEYCODE_5_PAD))	deb_alpha_level_b+=1;
-				if (keyboard_pressed_memory(KEYCODE_7_PAD))	deb_alpha_level_b-=1;
-				if (keyboard_pressed_memory(KEYCODE_8_PAD))	deb_alpha_level_b+=1;
-
-				deb_alpha_level_a &= 0xff;
-				deb_alpha_level_b &= 0xff;
-
-				if (keyboard_pressed_memory(KEYCODE_6_PAD)) deb_alp_mode++;
-				if (deb_alp_mode>2 ) deb_alp_mode=0;
-
-				sprintf(deb_buf[5],"mode:%d alpha_a:%2x alpha_b:%2x",
-									deb_alp_mode,deb_alpha_level_a,deb_alpha_level_b );
-
-				{
-					int al_s,al_d;
-					int deb_alpha_level_s0,deb_alpha_level_d0;
-					int deb_alpha_level_s1,deb_alpha_level_d1;
-
-					int a=(f3_line_ram[(0x6000+1*256*2+cz_line*2)/4]>>sft)&0xffff;
-					int b=(a>>8)&0xf;
-//					int c=(a>>4)&0xf;
-					int d=(a>>0)&0xf;
-					a>>=12;
-
-					/* b000 */
-					al_s = ( (15-d)*256) / 8;
-					al_d = ( (15-b)*256) / 8;
-					if(al_s>255) al_s = 255;
-					if(al_d>255) al_d = 255;
-					deb_alpha_level_s0 = al_s;
-					deb_alpha_level_d0 = al_d;
-
-					/* 7000 */
-					if(a==11 || a>=b)	al_s = ((15-b)*256) / 8;
-					else 				al_s = ((15-a)*256) / 8;
-					if(al_s>255) al_s = 255;
-					al_d = 255-al_s;
-					deb_alpha_level_s1 = al_s;
-					deb_alpha_level_d1 = al_d;
-
-					sprintf(deb_buf[6],"alpb src:%4d dst:%4d",deb_alpha_level_s0,deb_alpha_level_d0);
-					sprintf(deb_buf[7],"alp7 src:%4d dst:%4d",deb_alpha_level_s1,deb_alpha_level_d1);
-				}
-			}
-
-			ui_text(bitmap,deb_buf[0],0,Machine->uifontheight*0);
-			ui_text(bitmap,deb_buf[1],0,Machine->uifontheight*1);
-			ui_text(bitmap,deb_buf[2],0,Machine->uifontheight*2);
-			ui_text(bitmap,deb_buf[3],0,Machine->uifontheight*3);
-			ui_text(bitmap,deb_buf[4],0,Machine->uifontheight*4);
-			ui_text(bitmap,deb_buf[5],0,Machine->uifontheight*5);
-			ui_text(bitmap,deb_buf[6],0,Machine->uifontheight*6);
-			ui_text(bitmap,deb_buf[7],0,Machine->uifontheight*7);
-			ui_text(bitmap,deb_buf[8],0,Machine->uifontheight*8);
-			memset(deb_buf, 0x00, sizeof(deb_buf));
-		}
-	}
-#endif	//DEBUG_F3
 }

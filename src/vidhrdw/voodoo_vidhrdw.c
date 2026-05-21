@@ -505,8 +505,6 @@ static void swap_buffers(void)
 	frontbuf = backbuf;
 	backbuf = temp;
 	
-	logerror("---- swapbuffers\n");
-
 	if (pending_fastfill)
 	{
 		UINT32 temp_zaColor = voodoo_regs[zaColor];
@@ -527,8 +525,6 @@ static void vblank_callback(int scanline)
 {
 	vblank_count++;
 	
-	logerror("---- vblank\n");
-
 	/* any pending swapbuffers */
 	if (swaps_pending && vblank_count > vblanks_before_swap)
 	{
@@ -897,7 +893,6 @@ static void fastfill(void)
 	if (fbz_depth_write)
 	{
 		UINT16 color = voodoo_regs[zaColor];
-		logerror("FASTFILL depth = %04X\n", color);
 
 		/* loop over y */
 		for (y = sy; y < ey; y++)
@@ -1246,7 +1241,6 @@ static int compute_expected_depth(void)
 			return 2 + ((command >> 3) & 0x7ffff);
 		
 		default:
-			printf("UNKNOWN PACKET TYPE %d\n", command & 7);
 			return 1;
 	}
 	return 1;
@@ -1286,7 +1280,6 @@ static UINT32 execute_cmdfifo(void)
 					return target;
 				
 				default:
-					logerror("  INVALID JUMP COMMAND\n");
 					break;
 			}
 			break;
@@ -1411,7 +1404,6 @@ static UINT32 execute_cmdfifo(void)
 			break;
 		
 		default:
-			fprintf(stderr, "PACKET TYPE %d\n", command & 7);
 			break;
 	}
 
@@ -1936,7 +1928,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 			break;
 	
 		case swapbufferCMD:
-//printf("%08X:swapbuffer %02X\n", activecpu_get_pc(), data);
 			/* immediate? */
 			if (!(data & 1))
 				swap_buffers();
@@ -2341,7 +2332,6 @@ WRITE32_HANDLER( voodoo_regs_w )
 		}
 		
 		case bltCommand:
-			fprintf(stderr, "WARNING: blt command %08X\n", data);
 			break;
 	}
 }
@@ -2442,7 +2432,6 @@ static void lfbwrite_0(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x] = data;
 	if (ACCESSING_MSW32)
 		buffer[y * FRAMEBUF_WIDTH + x + 1] = data >> 16;
-//	logerror("%06X:LFB write mode 0 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_1(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2456,7 +2445,6 @@ static void lfbwrite_1(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x] = ((data << 1) & 0xffe0) | (data & 0x001f);
 	if (ACCESSING_MSW32)
 		buffer[y * FRAMEBUF_WIDTH + x + 1] = ((data >> 15) & 0xffe0) | ((data >> 16) & 0x001f);
-//	logerror("%06X:LFB write mode 1 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_2(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2470,12 +2458,10 @@ static void lfbwrite_2(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x] = ((data << 1) & 0xffe0) | (data & 0x001f);
 	if (ACCESSING_MSW32)
 		buffer[y * FRAMEBUF_WIDTH + x + 1] = ((data >> 15) & 0xffe0) | ((data >> 16) & 0x001f);
-//	logerror("%06X:LFB write mode 2 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_3(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode 3 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_4(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2486,7 +2472,6 @@ static void lfbwrite_4(offs_t offset, data32_t data, data32_t mem_mask)
 	if (lfb_flipy)
 		y = inverted_yorigin - y;
 	buffer[y * FRAMEBUF_WIDTH + x] = (((data >> 19) & 0x1f) << 11) | (((data >> 10) & 0x3f) << 5) | (((data >> 3) & 0x1f) << 0);
-//	logerror("%06X:LFB write mode 4 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_5(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2497,37 +2482,30 @@ static void lfbwrite_5(offs_t offset, data32_t data, data32_t mem_mask)
 	if (lfb_flipy)
 		y = inverted_yorigin - y;
 	buffer[y * FRAMEBUF_WIDTH + x] = (((data >> 19) & 0x1f) << 11) | (((data >> 10) & 0x3f) << 5) | (((data >> 3) & 0x1f) << 0);
-//	logerror("%06X:LFB write mode 5 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_6(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode 6 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_7(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode 7 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_8(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode 8 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_9(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode 9 @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_a(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode a @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_b(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	logerror("%06X:Unimplementd LFB write mode b @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_c(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2541,7 +2519,6 @@ static void lfbwrite_c(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x] = data;
 	if (ACCESSING_MSW32)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = data >> 16;
-//	logerror("%06X:LFB write mode c @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_d(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2555,7 +2532,6 @@ static void lfbwrite_d(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x] = ((data << 1) & 0xffc0) | (data & 0x001f);
 	if (ACCESSING_MSW32)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = data >> 16;
-//	logerror("%06X:LFB write mode d @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_e(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2569,7 +2545,6 @@ static void lfbwrite_e(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x] = ((data << 1) & 0xffc0) | (data & 0x001f);
 	if (ACCESSING_MSW32)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = data >> 16;
-//	logerror("%06X:LFB write mode e @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void lfbwrite_f(offs_t offset, data32_t data, data32_t mem_mask)
@@ -2582,7 +2557,6 @@ static void lfbwrite_f(offs_t offset, data32_t data, data32_t mem_mask)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = ((data << 1) & 0xffe0) | (data & 0x001f);
 	if (ACCESSING_MSW32)
 		depthbuf[y * FRAMEBUF_WIDTH + x + 1] = ((data >> 15) & 0xffe0) | ((data >> 16) & 0x001f);
-//	logerror("%06X:LFB write mode f @ %08X = %08X & %08X\n", activecpu_get_pc(), offset, data, ~mem_mask);
 }
 
 static void (*lfbwrite[16])(offs_t offset, data32_t data, data32_t mem_mask) =
@@ -2628,7 +2602,6 @@ READ32_HANDLER( voodoo_framebuf_r )
 		y = inverted_yorigin - y;
 	result = buffer[y * FRAMEBUF_WIDTH + x] | (buffer[y * FRAMEBUF_WIDTH + x + 1] << 16);
 
-	logerror("%06X:voodoo_framebuf_r[%06X] = %08X & %08X\n", activecpu_get_pc(), offset, result, ~mem_mask);
 	return result;
 } 
 
@@ -2652,11 +2625,7 @@ WRITE32_HANDLER( voodoo_textureram_w )
 	int theight = trex_height[trex];
 
 	if (trex >= tmus)
-	{
-		if (trex != 3)
-			printf("TMU %d write\n", trex);
 		return;
-	}
 	
 //	if (lod < trex_lodmin[trex] || lod > trex_lodmax[trex])
 //		return;
@@ -2667,8 +2636,6 @@ WRITE32_HANDLER( voodoo_textureram_w )
 	if (voodoo_regs[trex_base + tLOD] & 0x04000000)
 		data = (data >> 16) | (data << 16);
 
-if (s == 0 && t == 0)	
-	logerror("%06X:voodoo_textureram_w[%d,%06X,%d,%02X,%02X]", activecpu_get_pc(), trex, tbaseaddr & texram_mask, lod >> 2, s, t);
 	while (lod != 0)
 	{
 		lod -= 4;
@@ -2695,8 +2662,6 @@ if (s == 0 && t == 0)
 			tbaseaddr += t * twidth + ((s << 1) & 0xfc);
 		else
 			tbaseaddr += t * twidth + (s & 0xfc);
-if (s == 0 && t == 0)	
-	logerror(" -> %06X = %08X\n", tbaseaddr, data);
 		dest[BYTE4_XOR_LE(tbaseaddr + 0)] = (data >> 0) & 0xff;
 		dest[BYTE4_XOR_LE(tbaseaddr + 1)] = (data >> 8) & 0xff;
 		dest[BYTE4_XOR_LE(tbaseaddr + 2)] = (data >> 16) & 0xff;
@@ -2707,8 +2672,6 @@ if (s == 0 && t == 0)
 		UINT16 *dest = (UINT16 *)textureram[trex];
 		tbaseaddr /= 2;
 		tbaseaddr += t * twidth + s;
-if (s == 0 && t == 0)	
-	logerror(" -> %06X = %08X\n", tbaseaddr*2, data);
 		dest[BYTE_XOR_LE(tbaseaddr + 0)] = (data >> 0) & 0xffff;
 		dest[BYTE_XOR_LE(tbaseaddr + 1)] = (data >> 16) & 0xffff;
 	}
