@@ -668,7 +668,7 @@ MACHINE_INIT( namcos11 )
 
 static MACHINE_DRIVER_START( coh100 )
 	/* basic machine hardware */
-	MDRV_CPU_ADD( PSXCPU, 33868800 / 2 ) /* 33MHz ?? */
+	MDRV_CPU_ADD( PSXCPU, 33868800 ) /* 33.8688MHz (PSX R3000A) */
 	MDRV_CPU_MEMORY( namcos11_readmem, namcos11_writemem )
 	MDRV_CPU_VBLANK_INT( namcos11_vblank, 1 )
 
@@ -700,7 +700,7 @@ MACHINE_DRIVER_END
 
 static MACHINE_DRIVER_START( coh100_tekken )
 	/* basic machine hardware */
-	MDRV_CPU_ADD( PSXCPU, 33868800 / 2 ) /* 33MHz ?? */
+	MDRV_CPU_ADD( PSXCPU, 33868800 ) /* 33.8688MHz (PSX R3000A) */
 	MDRV_CPU_MEMORY( namcos11_readmem, namcos11_writemem )
 	MDRV_CPU_VBLANK_INT( namcos11_vblank, 1 )
 
@@ -732,7 +732,7 @@ MACHINE_DRIVER_END
 
 static MACHINE_DRIVER_START( coh100_danceyes )
 	/* basic machine hardware */
-	MDRV_CPU_ADD( PSXCPU, 33868800 / 2 ) /* 33MHz ?? */
+	MDRV_CPU_ADD( PSXCPU, 33868800 ) /* 33.8688MHz (PSX R3000A) */
 	MDRV_CPU_MEMORY( namcos11_readmem, namcos11_writemem )
 	MDRV_CPU_VBLANK_INT( namcos11_vblank, 1 )
 
@@ -764,7 +764,7 @@ MACHINE_DRIVER_END
 
 static MACHINE_DRIVER_START( coh100_primglex )
 	/* basic machine hardware */
-	MDRV_CPU_ADD( PSXCPU, 33868800 / 2 ) /* 33MHz ?? */
+	MDRV_CPU_ADD( PSXCPU, 33868800 ) /* 33.8688MHz (PSX R3000A) */
 	MDRV_CPU_MEMORY( namcos11_readmem, namcos11_writemem )
 	MDRV_CPU_VBLANK_INT( namcos11_vblank, 1 )
 
