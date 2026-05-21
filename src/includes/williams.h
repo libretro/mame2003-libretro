@@ -36,14 +36,14 @@ extern struct pia6821_interface tshoot_snd_pia_intf;
 extern struct pia6821_interface joust2_pia_1_intf;
 
 /* banking variables */
-extern UINT8 *williams_bank_base;
-extern UINT8 *defender_bank_base;
-extern const UINT32 *defender_bank_list;
-extern UINT8 williams2_bank;
+extern uint8_t *williams_bank_base;
+extern uint8_t *defender_bank_base;
+extern const uint32_t *defender_bank_list;
+extern uint8_t williams2_bank;
 
 /* switches controlled by $c900 */
-extern UINT16 sinistar_clip;
-extern UINT8 williams_cocktail;
+extern uint16_t sinistar_clip;
+extern uint8_t williams_cocktail;
 
 /* initialization */
 MACHINE_INIT( defender );
@@ -62,37 +62,37 @@ WRITE_HANDLER( williams2_bank_select_w );
 WRITE_HANDLER( williams2_7segment_w );
 
 /* Mayday protection */
-extern UINT8 *mayday_protection;
+extern uint8_t *mayday_protection;
 READ_HANDLER( mayday_protection_r );
 
 
 /*----------- defined in vidhrdw/wmsyunit.c -----------*/
 
-extern UINT8 *williams_videoram;
-extern UINT8 *williams2_paletteram;
+extern uint8_t *williams_videoram;
+extern uint8_t *williams2_paletteram;
 
 /* blitter variables */
-extern UINT8 *williams_blitterram;
-extern UINT8 williams_blitter_xor;
-extern UINT8 williams_blitter_remap;
-extern UINT8 williams_blitter_clip;
+extern uint8_t *williams_blitterram;
+extern uint8_t williams_blitter_xor;
+extern uint8_t williams_blitter_remap;
+extern uint8_t williams_blitter_clip;
 
 /* tilemap variables */
-extern UINT8 williams2_tilemap_mask;
-extern const UINT8 *williams2_row_to_palette;
-extern UINT8 williams2_M7_flip;
-extern INT8  williams2_videoshift;
-extern UINT8 williams2_special_bg_color;
+extern uint8_t williams2_tilemap_mask;
+extern const uint8_t *williams2_row_to_palette;
+extern uint8_t williams2_M7_flip;
+extern int8_t  williams2_videoshift;
+extern uint8_t williams2_special_bg_color;
 
 /* later-Williams video control variables */
-extern UINT8 *williams2_blit_inhibit;
-extern UINT8 *williams2_xscroll_low;
-extern UINT8 *williams2_xscroll_high;
+extern uint8_t *williams2_blit_inhibit;
+extern uint8_t *williams2_xscroll_low;
+extern uint8_t *williams2_xscroll_high;
 
 /* Blaster extra variables */
-extern UINT8 *blaster_color_zero_flags;
-extern UINT8 *blaster_color_zero_table;
-extern UINT8 *blaster_video_bits;
+extern uint8_t *blaster_color_zero_flags;
+extern uint8_t *blaster_color_zero_table;
+extern uint8_t *blaster_video_bits;
 
 
 WRITE_HANDLER( defender_videoram_w );

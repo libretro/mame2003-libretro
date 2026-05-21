@@ -81,9 +81,9 @@ extern "C" {
 
 struct mame_display;		/* declared elsewhere */
 
-typedef UINT32 pen_t;
-typedef UINT32 rgb_t;
-typedef UINT16 rgb15_t;
+typedef uint32_t pen_t;
+typedef uint32_t rgb_t;
+typedef uint16_t rgb15_t;
 
 
 
@@ -116,8 +116,8 @@ typedef UINT16 rgb15_t;
 	GLOBAL VARIABLES
 -------------------------------------------------*/
 
-extern UINT32 direct_rgb_components[3];
-extern UINT16 *palette_shadow_table;
+extern uint32_t direct_rgb_components[3];
+extern uint16_t *palette_shadow_table;
 
 extern data8_t *paletteram;
 extern data8_t *paletteram_2;	/* use when palette RAM is split in two parts */
@@ -137,9 +137,9 @@ int palette_get_total_colors_with_ui(void);
 
 void palette_update_display(struct mame_display *display);
 
-void palette_set_color(pen_t pen, UINT8 r, UINT8 g, UINT8 b);
-void palette_get_color(pen_t pen, UINT8 *r, UINT8 *g, UINT8 *b);
-void palette_set_colors(pen_t color_base, const UINT8 *colors, int color_count);
+void palette_set_color(pen_t pen, uint8_t r, uint8_t g, uint8_t b);
+void palette_get_color(pen_t pen, uint8_t *r, uint8_t *g, uint8_t *b);
+void palette_set_colors(pen_t color_base, const uint8_t *colors, int color_count);
 
 void palette_set_brightness(pen_t pen, double bright);
 void palette_set_shadow_factor(double factor);
@@ -249,8 +249,8 @@ WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBRGBx_word_w );
 
 ******************************************************************************/
 
-void palette_init_black_and_white(UINT16 *colortable, const UINT8 *color_prom);
-void palette_init_RRRR_GGGG_BBBB(UINT16 *colortable, const UINT8 *color_prom);
+void palette_init_black_and_white(uint16_t *colortable, const uint8_t *color_prom);
+void palette_init_RRRR_GGGG_BBBB(uint16_t *colortable, const uint8_t *color_prom);
 
 
 
@@ -273,7 +273,7 @@ static INLINE rgb15_t rgb_to_rgb15(rgb_t rgb)
     rgb_clamp - clamp an RGB component to 0-255
 -------------------------------------------------*/
 
-static INLINE UINT8 rgb_clamp(INT32 value)
+static INLINE uint8_t rgb_clamp(int32_t value)
 {
 	if (value < 0)
 		return 0;
@@ -287,7 +287,7 @@ static INLINE UINT8 rgb_clamp(INT32 value)
     pal1bit - convert a 1-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal1bit(UINT8 bits)
+static INLINE uint8_t pal1bit(uint8_t bits)
 {
 	return (bits & 1) ? 0xff : 0x00;
 }
@@ -297,7 +297,7 @@ static INLINE UINT8 pal1bit(UINT8 bits)
     pal2bit - convert a 2-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal2bit(UINT8 bits)
+static INLINE uint8_t pal2bit(uint8_t bits)
 {
 	bits &= 3;
 	return (bits << 6) | (bits << 4) | (bits << 2) | bits;
@@ -308,7 +308,7 @@ static INLINE UINT8 pal2bit(UINT8 bits)
     pal3bit - convert a 3-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal3bit(UINT8 bits)
+static INLINE uint8_t pal3bit(uint8_t bits)
 {
 	bits &= 7;
 	return (bits << 5) | (bits << 2) | (bits >> 1);
@@ -319,7 +319,7 @@ static INLINE UINT8 pal3bit(UINT8 bits)
     pal4bit - convert a 4-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal4bit(UINT8 bits)
+static INLINE uint8_t pal4bit(uint8_t bits)
 {
 	bits &= 0xf;
 	return (bits << 4) | bits;
@@ -330,7 +330,7 @@ static INLINE UINT8 pal4bit(UINT8 bits)
     pal5bit - convert a 5-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal5bit(UINT8 bits)
+static INLINE uint8_t pal5bit(uint8_t bits)
 {
 	bits &= 0x1f;
 	return (bits << 3) | (bits >> 2);
@@ -341,7 +341,7 @@ static INLINE UINT8 pal5bit(UINT8 bits)
     pal6bit - convert a 6-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal6bit(UINT8 bits)
+static INLINE uint8_t pal6bit(uint8_t bits)
 {
 	bits &= 0x3f;
 	return (bits << 2) | (bits >> 4);
@@ -352,7 +352,7 @@ static INLINE UINT8 pal6bit(UINT8 bits)
     pal7bit - convert a 7-bit value to 8 bits
 -------------------------------------------------*/
 
-static INLINE UINT8 pal7bit(UINT8 bits)
+static INLINE uint8_t pal7bit(uint8_t bits)
 {
 	bits &= 0x7f;
 	return (bits << 1) | (bits >> 6);

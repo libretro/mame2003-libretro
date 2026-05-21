@@ -221,7 +221,7 @@ struct osd_create_params
 
   Returns 0 on success.
 */
-int osd_create_display(const struct osd_create_params *params, UINT32 *rgb_components);
+int osd_create_display(const struct osd_create_params *params, uint32_t *rgb_components);
 void osd_close_display(void);
 
 
@@ -287,7 +287,7 @@ extern void mame_pause(bool pause);
   adjustment is necessary to avoid drifting over time.
 */
 int osd_start_audio_stream(int stereo);
-int osd_update_audio_stream(INT16 *buffer);
+int osd_update_audio_stream(int16_t *buffer);
 void osd_update_silent_stream(void);
 void osd_stop_audio_stream(void);
 
@@ -388,7 +388,7 @@ void osd_customize_inputport_defaults(struct ipd *defaults);
 
 ******************************************************************************/
 
-typedef INT64 cycles_t;
+typedef int64_t cycles_t;
 
 /* return the current number of cycles, or some other high-resolution timer */
 cycles_t osd_cycles(void);

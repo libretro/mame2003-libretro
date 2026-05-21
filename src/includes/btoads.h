@@ -35,5 +35,5 @@ WRITE16_HANDLER( btoads_vram_fg_draw_w );
 READ16_HANDLER( btoads_vram_fg_display_r );
 READ16_HANDLER( btoads_vram_fg_draw_r );
 
-void btoads_to_shiftreg(UINT32 address, UINT16 *shiftreg);
-void btoads_from_shiftreg(UINT32 address, UINT16 *shiftreg);
+void btoads_to_shiftreg(uint32_t address, uint16_t *shiftreg);
+void btoads_from_shiftreg(uint32_t address, uint16_t *shiftreg);

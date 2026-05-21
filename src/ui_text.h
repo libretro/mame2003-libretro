@@ -179,8 +179,8 @@ struct lang_struct
 {
 	int version;
 	int multibyte;			/* UNUSED: 1 if this is a multibyte font/language */
-	UINT8 *fontdata;		/* pointer to the raw font data to be decoded */
-	UINT16 fontglyphs;		/* total number of glyps in the external font - 1 */
+	uint8_t *fontdata;		/* pointer to the raw font data to be decoded */
+	uint16_t fontglyphs;		/* total number of glyps in the external font - 1 */
 	char langname[255];
 	char fontname[255];
 	char author[255];

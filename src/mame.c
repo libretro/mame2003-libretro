@@ -154,10 +154,10 @@ struct GameOptions options;
 
 /* the active video display */
 static struct mame_display current_display;
-static UINT8 visible_area_changed;
+static uint8_t visible_area_changed;
 
 /* video updating */
-static UINT8 full_refresh_pending;
+static uint8_t full_refresh_pending;
 static int last_partial_scanline;
 
 /* speed computation */
@@ -186,9 +186,9 @@ static int game_loaded;
 
 static struct chd_interface_file *mame_chd_open(const char *filename, const char *mode);
 static void mame_chd_close(struct chd_interface_file *file);
-static UINT32 mame_chd_read(struct chd_interface_file *file, UINT64 offset, UINT32 count, void *buffer);
-static UINT32 mame_chd_write(struct chd_interface_file *file, UINT64 offset, UINT32 count, const void *buffer);
-static UINT64 mame_chd_length(struct chd_interface_file *file);
+static uint32_t mame_chd_read(struct chd_interface_file *file, uint64_t offset, uint32_t count, void *buffer);
+static uint32_t mame_chd_write(struct chd_interface_file *file, uint64_t offset, uint32_t count, const void *buffer);
+static uint64_t mame_chd_length(struct chd_interface_file *file);
 
 static struct chd_interface mame_chd_interface =
 {
@@ -970,7 +970,7 @@ static int decode_graphics(const struct GfxDecodeInfo *gfxdecodeinfo)
 	for (i = 0; i < MAX_GFX_ELEMENTS && gfxdecodeinfo[i].memory_region != -1; i++)
 	{
 		int region_length = 8 * memory_region_length(gfxdecodeinfo[i].memory_region);
-		UINT8 *region_base = memory_region(gfxdecodeinfo[i].memory_region);
+		uint8_t *region_base = memory_region(gfxdecodeinfo[i].memory_region);
 		struct GfxLayout glcopy;
 		int j;
 
@@ -1579,7 +1579,7 @@ void mame_chd_close(struct chd_interface_file *file)
 	from a hard disk image
 -------------------------------------------------*/
 
-UINT32 mame_chd_read(struct chd_interface_file *file, UINT64 offset, UINT32 count, void *buffer)
+uint32_t mame_chd_read(struct chd_interface_file *file, uint64_t offset, uint32_t count, void *buffer)
 {
 	mame_fseek((mame_file *)file, offset, SEEK_SET);
 	return mame_fread((mame_file *)file, buffer, count);
@@ -1592,7 +1592,7 @@ UINT32 mame_chd_read(struct chd_interface_file *file, UINT64 offset, UINT32 coun
 	to a hard disk image
 -------------------------------------------------*/
 
-UINT32 mame_chd_write(struct chd_interface_file *file, UINT64 offset, UINT32 count, const void *buffer)
+uint32_t mame_chd_write(struct chd_interface_file *file, uint64_t offset, uint32_t count, const void *buffer)
 {
 	mame_fseek((mame_file *)file, offset, SEEK_SET);
 	return mame_fwrite((mame_file *)file, buffer, count);
@@ -1604,7 +1604,7 @@ UINT32 mame_chd_write(struct chd_interface_file *file, UINT64 offset, UINT32 cou
 	the length a hard disk image
 -------------------------------------------------*/
 
-UINT64 mame_chd_length(struct chd_interface_file *file)
+uint64_t mame_chd_length(struct chd_interface_file *file)
 {
 	return mame_fsize((mame_file *)file);
 }
@@ -1622,22 +1622,22 @@ UINT64 mame_chd_length(struct chd_interface_file *file)
 static int validitychecks(void)
 {
 	int i,j,cpu;
-	UINT8 a,b;
+	uint8_t a,b;
 	int error = 0;
 
 
 	a = 0xff;
 	b = a + 1;
-	if (b > a)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT8 must be 8 bits\n"); error = 1; }
+	if (b > a)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "uint8_t must be 8 bits\n"); error = 1; }
 
-	if (sizeof(INT8)   != 1)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT8 must be 8 bits\n"); error = 1; }
-	if (sizeof(UINT8)  != 1)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT8 must be 8 bits\n"); error = 1; }
-	if (sizeof(INT16)  != 2)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT16 must be 16 bits\n"); error = 1; }
-	if (sizeof(UINT16) != 2)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT16 must be 16 bits\n"); error = 1; }
-	if (sizeof(INT32)  != 4)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT32 must be 32 bits\n"); error = 1; }
-	if (sizeof(UINT32) != 4)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT32 must be 32 bits\n"); error = 1; }
-	if (sizeof(INT64)  != 8)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "INT64 must be 64 bits\n"); error = 1; }
-	if (sizeof(UINT64) != 8)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "UINT64 must be 64 bits\n"); error = 1; }
+	if (sizeof(int8_t)   != 1)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "int8_t must be 8 bits\n"); error = 1; }
+	if (sizeof(uint8_t)  != 1)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "uint8_t must be 8 bits\n"); error = 1; }
+	if (sizeof(int16_t)  != 2)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "int16_t must be 16 bits\n"); error = 1; }
+	if (sizeof(uint16_t) != 2)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "uint16_t must be 16 bits\n"); error = 1; }
+	if (sizeof(int32_t)  != 4)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "int32_t must be 32 bits\n"); error = 1; }
+	if (sizeof(uint32_t) != 4)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "uint32_t must be 32 bits\n"); error = 1; }
+	if (sizeof(int64_t)  != 8)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "int64_t must be 64 bits\n"); error = 1; }
+	if (sizeof(uint64_t) != 8)	{ log_cb(RETRO_LOG_ERROR, LOGPRE "uint64_t must be 64 bits\n"); error = 1; }
 
 	for (i = 0;drivers[i];i++)
 	{

@@ -16,13 +16,13 @@
 #define SERIAL_TYPE_ENCRYPT		3
 #define SERIAL_TYPE_ENCRYPT_XOR	4
 
-extern UINT8 leland_dac_control;
+extern uint8_t leland_dac_control;
 extern void (*leland_update_master_bank)(void);
 
 READ_HANDLER( cerberus_dial_1_r );
 READ_HANDLER( cerberus_dial_2_r );
 
-extern UINT8 *alleymas_kludge_mem;
+extern uint8_t *alleymas_kludge_mem;
 WRITE_HANDLER( alleymas_joystick_kludge );
 
 READ_HANDLER( dangerz_input_y_r );
@@ -59,8 +59,8 @@ void viper_bankswitch(void);
 void offroad_bankswitch(void);
 void ataxx_bankswitch(void);
 
-void leland_init_eeprom(UINT8 default_val, const UINT16 *data, UINT8 serial_offset, UINT8 serial_type);
-void ataxx_init_eeprom(UINT8 default_val, const UINT16 *data, UINT8 serial_offset);
+void leland_init_eeprom(uint8_t default_val, const uint16_t *data, uint8_t serial_offset, uint8_t serial_type);
+void ataxx_init_eeprom(uint8_t default_val, const uint16_t *data, uint8_t serial_offset);
 
 READ_HANDLER( ataxx_eeprom_r );
 WRITE_HANDLER( ataxx_eeprom_w );
@@ -99,7 +99,7 @@ void leland_rotate_memory(int cpunum);
 
 int leland_sh_start(const struct MachineSound *msound);
 void leland_sh_stop(void);
-void leland_dac_update(int dacnum, UINT8 sample);
+void leland_dac_update(int dacnum, uint8_t sample);
 
 int leland_i186_sh_start(const struct MachineSound *msound);
 int redline_i186_sh_start(const struct MachineSound *msound);
@@ -127,8 +127,8 @@ extern const struct IO_WritePort ataxx_i86_writeport[];
 
 /*----------- defined in vidhrdw/leland.c -----------*/
 
-extern UINT8 *ataxx_qram;
-extern UINT8 leland_last_scanline_int;
+extern uint8_t *ataxx_qram;
+extern uint8_t leland_last_scanline_int;
 
 VIDEO_START( leland );
 VIDEO_START( ataxx );

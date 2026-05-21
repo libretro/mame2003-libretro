@@ -124,7 +124,7 @@ struct cpuinfo
 
 	int 	iloops; 				/* number of interrupts remaining this frame */
 
-	UINT64 	totalcycles;			/* total CPU cycles executed */
+	uint64_t 	totalcycles;			/* total CPU cycles executed */
 	double	localtime;				/* local time, relative to the timer system's global time */
 	double	clockscale;				/* current active clock scale factor */
 	
@@ -152,7 +152,7 @@ static int time_to_quit;
 
 static int vblank;
 static int current_frame;
-static INT32 watchdog_counter;
+static int32_t watchdog_counter;
 
 static int cycles_running;
 static int cycles_stolen;
@@ -613,7 +613,7 @@ static void cpu_timeslice(void)
 				/* account for these cycles */
 				cpu[cpunum].totalcycles += ran;
 				cpu[cpunum].localtime += TIME_IN_CYCLES(ran, cpunum);
-				log_cb(RETRO_LOG_DEBUG, LOGPRE "         %d ran, %d total, time = %.9f\n", ran, (INT32)cpu[cpunum].totalcycles, cpu[cpunum].localtime);
+				log_cb(RETRO_LOG_DEBUG, LOGPRE "         %d ran, %d total, time = %.9f\n", ran, (int32_t)cpu[cpunum].totalcycles, cpu[cpunum].localtime);
 				
 				/* if the new local CPU time is less than our target, move the target up */
 				if (cpu[cpunum].localtime < target && cpu[cpunum].localtime > 0)
@@ -637,7 +637,7 @@ static void cpu_timeslice(void)
 
 			cpu[cpunum].totalcycles += cycles_running;
 			cpu[cpunum].localtime += TIME_IN_CYCLES(cycles_running, cpunum);
-			log_cb(RETRO_LOG_DEBUG, LOGPRE "         %d skipped, %d total, time = %.9f\n", cycles_running, (INT32)cpu[cpunum].totalcycles, cpu[cpunum].localtime);
+			log_cb(RETRO_LOG_DEBUG, LOGPRE "         %d skipped, %d total, time = %.9f\n", cycles_running, (int32_t)cpu[cpunum].totalcycles, cpu[cpunum].localtime);
 		}
 		
 		/* update the suspend state */
@@ -887,13 +887,13 @@ int cycles_left_to_run(void)
 
 --------------------------------------------------------------*/
 
-UINT32 activecpu_gettotalcycles(void)
+uint32_t activecpu_gettotalcycles(void)
 {
 	VERIFY_EXECUTINGCPU(0, cpu_gettotalcycles);
 	return cpu[activecpu].totalcycles + cycles_currently_ran();
 }
 
-UINT32 cpu_gettotalcycles(int cpunum)
+uint32_t cpu_gettotalcycles(int cpunum)
 {
 	VERIFY_CPUNUM(0, cpu_gettotalcycles);
 	if (cpunum == cpu_getexecutingcpu())
@@ -903,13 +903,13 @@ UINT32 cpu_gettotalcycles(int cpunum)
 }
 
 
-UINT64 activecpu_gettotalcycles64(void)
+uint64_t activecpu_gettotalcycles64(void)
 {
 	VERIFY_EXECUTINGCPU(0, cpu_gettotalcycles);
 	return cpu[activecpu].totalcycles + cycles_currently_ran();
 }
 
-UINT64 cpu_gettotalcycles64(int cpunum)
+uint64_t cpu_gettotalcycles64(int cpunum)
 {
 	VERIFY_CPUNUM(0, cpu_gettotalcycles);
 	if (cpunum == cpu_getexecutingcpu())

@@ -10,9 +10,9 @@ extern data16_t *system24temp_sys16_shared_ram;
 READ16_HANDLER( system24temp_sys16_shared_ram_r );
 WRITE16_HANDLER( system24temp_sys16_shared_ram_w );
 
-void system24temp_sys16_io_set_callbacks(UINT8 (*io_r)(int port),
-							void  (*io_w)(int port, UINT8 data),
-							void  (*cnt_w)(UINT8 data),
+void system24temp_sys16_io_set_callbacks(uint8_t (*io_r)(int port),
+							void  (*io_w)(int port, uint8_t data),
+							void  (*cnt_w)(uint8_t data),
 							READ16_HANDLER ((*iod_r)),
 							WRITE16_HANDLER((*iod_w)));
 READ16_HANDLER ( system24temp_sys16_io_r );
@@ -20,9 +20,9 @@ WRITE16_HANDLER( system24temp_sys16_io_w );
 READ32_HANDLER ( system24temp_sys16_io_dword_r );
 WRITE32_HANDLER( system24temp_sys16_io_dword_w );
 
-void system24temp_sys16_io_2_set_callbacks(UINT8 (*io_r)(int port),
-							  void  (*io_w)(int port, UINT8 data),
-							  void  (*cnt_w)(UINT8 data),
+void system24temp_sys16_io_2_set_callbacks(uint8_t (*io_r)(int port),
+							  void  (*io_w)(int port, uint8_t data),
+							  void  (*cnt_w)(uint8_t data),
 							  READ16_HANDLER ((*iod_r)),
 							  WRITE16_HANDLER((*iod_w)));
 READ16_HANDLER ( system24temp_sys16_io_2_r );

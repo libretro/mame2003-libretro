@@ -346,87 +346,87 @@ extern DEVICE_LOAD(snes_cart);
 #endif
 
 extern INTERRUPT_GEN(snes_scanline_interrupt);
-extern void snes_gdma( UINT8 channels );
+extern void snes_gdma( uint8_t channels );
 extern void snes_hdma_init(void);
 extern void snes_hdma(void);
-extern void snes_refresh_scanline( UINT16 curline );
+extern void snes_refresh_scanline( uint16_t curline );
 
 /* (PPU) Video related */
-extern UINT8  *snes_vram;			/* Video RAM (Should be 16-bit, but it's easier this way) */
-extern UINT16 *snes_cgram;			/* Colour RAM */
-extern UINT16 *snes_oam;			/* Object Attribute Memory */
-extern UINT8  *snes_ram;			/* Main memory */
+extern uint8_t  *snes_vram;			/* Video RAM (Should be 16-bit, but it's easier this way) */
+extern uint16_t *snes_cgram;			/* Colour RAM */
+extern uint16_t *snes_oam;			/* Object Attribute Memory */
+extern uint8_t  *snes_ram;			/* Main memory */
 extern VIDEO_UPDATE( snes );
 struct SNES_PPU_STRUCT
 {
 	struct
 	{
-		UINT8 blend;
-		UINT32 data;
-		UINT32 map;
-		UINT8 map_size;
-		UINT8 tile_size;
+		uint8_t blend;
+		uint32_t data;
+		uint32_t map;
+		uint8_t map_size;
+		uint8_t tile_size;
 		struct
 		{
-			UINT16 horizontal;
-			UINT16 vertical;
-			UINT16 tile_horz;
-			UINT8 shift_horz;
-			UINT16 tile_vert;
-			UINT16 shift_vert;
+			uint16_t horizontal;
+			uint16_t vertical;
+			uint16_t tile_horz;
+			uint8_t shift_horz;
+			uint16_t tile_vert;
+			uint16_t shift_vert;
 		} offset;
 	} layer[5];
 	struct
 	{
-		UINT8 address_low;
-		UINT8 address_high;
-		UINT16 address;
-		UINT16 high_priority;
-		UINT8 size[2];
-		UINT32 name_select;
+		uint8_t address_low;
+		uint8_t address_high;
+		uint16_t address;
+		uint16_t high_priority;
+		uint8_t size[2];
+		uint32_t name_select;
 	} oam;
 	struct
 	{
-		UINT16 horizontal[4];
-		UINT16 vertical[4];
+		uint16_t horizontal[4];
+		uint16_t vertical[4];
 	} bgd_offset;
 	struct
 	{
-		UINT16 latch_horz;
-		UINT16 latch_vert;
-		UINT16 current_horz;
-		UINT16 current_vert;
-		UINT8 last_visible_line;
-		UINT8 interlace_count;
+		uint16_t latch_horz;
+		uint16_t latch_vert;
+		uint16_t current_horz;
+		uint16_t current_vert;
+		uint8_t last_visible_line;
+		uint8_t interlace_count;
 	} beam;
 	struct
 	{
-		INT16 matrix_a;
-		INT16 matrix_b;
-		INT16 matrix_c;
-		INT16 matrix_d;
-		INT16 origin_x;
-		INT16 origin_y;
+		int16_t matrix_a;
+		int16_t matrix_b;
+		int16_t matrix_c;
+		int16_t matrix_d;
+		int16_t origin_x;
+		int16_t origin_y;
 	} mode7;
-	UINT8 clipmasks[6][SNES_SCR_WIDTH + 8];
-	UINT8 update_windows;
-	UINT8 update_palette;
-	UINT8 update_offsets;
-	UINT8 mode;
+	uint8_t clipmasks[6][SNES_SCR_WIDTH + 8];
+	uint8_t update_windows;
+	uint8_t update_palette;
+	uint8_t update_offsets;
+	uint8_t mode;
 };
 extern struct SNES_PPU_STRUCT snes_ppu;
 
 /* (APU) Sound related */
-extern UINT8 *spc_ram;			/* SPC main memory */
-extern UINT8 spc_port_in[4];	/* SPC input ports */
-extern UINT8 spc_port_out[4];	/* SPC output ports */
-extern UINT8 spc_usefakeapu;	/* Fake the APU behaviour */
+extern uint8_t *spc_ram;			/* SPC main memory */
+extern uint8_t spc_port_in[4];	/* SPC input ports */
+extern uint8_t spc_port_out[4];	/* SPC output ports */
+extern uint8_t spc_usefakeapu;	/* Fake the APU behaviour */
 extern READ_HANDLER( spc_io_r );
 extern WRITE_HANDLER( spc_io_w );
 extern READ_HANDLER( spc_bank_r );
 extern WRITE_HANDLER( spc_bank_w );
 extern int snes_sh_start( const struct MachineSound *driver );
-extern void snes_sh_update( int param, INT16 **buffer, int length );
+extern void snes_sh_update( int param, int16_t **buffer, int length );
 /* Fake APU functions for when sound is disabled */
 extern READ_HANDLER( fakespc_port_r );
 extern WRITE_HANDLER( fakespc_port_w );

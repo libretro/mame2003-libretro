@@ -6,7 +6,7 @@
 
 /*----------- defined in vidhrdw/atarigt.c -----------*/
 
-extern UINT8 atarigt_is_primrage;
+extern uint8_t atarigt_is_primrage;
 
 
 /*----------- defined in vidhrdw/atarigt.c -----------*/

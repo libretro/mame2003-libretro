@@ -68,8 +68,8 @@ struct malloc_info
 ***************************************************************************/
 typedef struct _flac_reader
 {
-	UINT8* rawdata;
-	INT16* write_data;
+	uint8_t* rawdata;
+	int16_t* write_data;
 	int position;
 	int length;
 	int decoded_size;
@@ -224,8 +224,8 @@ void showdisclaimer(void)   /* MAURY_BEGIN: dichiarazione */
 static struct GameSample *read_wav_sample(mame_file *f, const char *gamename, const char *filename, int filetype, int b_data)
 {
 	unsigned long offset = 0;
-	UINT32 length, rate, filesize, temp32;
-	UINT16 bits, temp16;
+	uint32_t length, rate, filesize, temp32;
+	uint16_t bits, temp16;
 	char buf[32];
 	struct GameSample *result;
 	int f_type = 0;
@@ -436,7 +436,7 @@ static struct GameSample *read_wav_sample(mame_file *f, const char *gamename, co
 		flac_file.write_position = 0;
 
 		if (b_data == 1) {
-			flac_file.write_data = (INT16 *)result->data;
+			flac_file.write_data = (int16_t *)result->data;
 
 			if (FLAC__stream_decoder_process_until_end_of_stream (decoder) != FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM) {
 				free(flac_file.rawdata);
@@ -650,7 +650,7 @@ size_t memory_region_length(int num)
 	region
 -------------------------------------------------*/
 
-int new_memory_region(int num, size_t length, UINT32 flags)
+int new_memory_region(int num, size_t length, uint32_t flags)
 {
     int i;
 
@@ -1208,7 +1208,7 @@ static int count_roms(const struct RomModule *romp)
 	random data
 -------------------------------------------------*/
 
-static void fill_random(UINT8 *base, UINT32 length)
+static void fill_random(uint8_t *base, uint32_t length)
 {
 	while (length--)
 		*base++ = rand();
@@ -1298,9 +1298,9 @@ static void dump_wrong_and_correct_checksums(struct rom_load_data* romdata, cons
 	and hash signatures of a file
 -------------------------------------------------*/
 
-static void verify_length_and_hash(struct rom_load_data *romdata, const char *name, UINT32 explength, const char* hash)
+static void verify_length_and_hash(struct rom_load_data *romdata, const char *name, uint32_t explength, const char* hash)
 {
-	UINT32 actlength;
+	uint32_t actlength;
 	const char* acthash;
 
 	/* we've already complained if there is no file */
@@ -1394,7 +1394,7 @@ static void region_post_process(struct rom_load_data *romdata, const struct RomM
 	int type = ROMREGION_GETTYPE(regiondata);
 	int datawidth = ROMREGION_GETWIDTH(regiondata) / 8;
 	int littleendian = ROMREGION_ISLITTLEENDIAN(regiondata);
-	UINT8 *base;
+	uint8_t *base;
 	int i, j;
 
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "+ datawidth=%d little=%d\n", datawidth, littleendian);
@@ -1429,7 +1429,7 @@ static void region_post_process(struct rom_load_data *romdata, const struct RomM
 		log_cb(RETRO_LOG_DEBUG, LOGPRE "+ Byte swapping region\n");
 		for (i = 0, base = romdata->regionbase; i < romdata->regionlength; i += datawidth)
 		{
-			UINT8 temp[8];
+			uint8_t temp[8];
 			memcpy(temp, base, datawidth);
 			for (j = datawidth - 1; j >= 0; j--)
 				*base++ = temp[j];
@@ -1467,7 +1467,7 @@ static int open_rom_file(struct rom_load_data *romdata, const struct RomModule *
 	random data for a NULL file
 -------------------------------------------------*/
 
-static int rom_fread(struct rom_load_data *romdata, UINT8 *buffer, int length)
+static int rom_fread(struct rom_load_data *romdata, uint8_t *buffer, int length)
 {
 	/* files just pass through */
 	if (romdata->file)
@@ -1495,7 +1495,7 @@ static int read_rom_data(struct rom_load_data *romdata, const struct RomModule *
 	int skip = ROM_GETSKIPCOUNT(romp);
 	int reversed = ROM_ISREVERSED(romp);
 	int numgroups = (numbytes + groupsize - 1) / groupsize;
-	UINT8 *base = romdata->regionbase + ROM_GETOFFSET(romp);
+	uint8_t *base = romdata->regionbase + ROM_GETOFFSET(romp);
 	int i;
 
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "Loading ROM data: offs=%X len=%X mask=%02X group=%d skip=%d reverse=%d\n", ROM_GETOFFSET(romp), numbytes, datamask, groupsize, skip, reversed);
@@ -1531,7 +1531,7 @@ static int read_rom_data(struct rom_load_data *romdata, const struct RomModule *
 	{
 		int evengroupcount = (sizeof(romdata->tempbuf) / groupsize) * groupsize;
 		int bytesleft = (numbytes > evengroupcount) ? evengroupcount : numbytes;
-		UINT8 *bufptr = romdata->tempbuf;
+		uint8_t *bufptr = romdata->tempbuf;
 
 		/* read as much as we can */
 		log_cb(RETRO_LOG_DEBUG, LOGPRE "  Reading %X bytes into buffer\n", bytesleft);
@@ -1606,8 +1606,8 @@ static int read_rom_data(struct rom_load_data *romdata, const struct RomModule *
 
 static int fill_rom_data(struct rom_load_data *romdata, const struct RomModule *romp)
 {
-	UINT32 numbytes = ROM_GETLENGTH(romp);
-	UINT8 *base = romdata->regionbase + ROM_GETOFFSET(romp);
+	uint32_t numbytes = ROM_GETLENGTH(romp);
+	uint8_t *base = romdata->regionbase + ROM_GETOFFSET(romp);
 
 	/* make sure we fill within the region space */
 	if (ROM_GETOFFSET(romp) + numbytes > romdata->regionlength)
@@ -1624,7 +1624,7 @@ static int fill_rom_data(struct rom_load_data *romdata, const struct RomModule *
 	}
 
 	/* fill the data (filling value is stored in place of the hashdata) */
-	memset(base, (UINT32)ROM_GETHASHDATA(romp) & 0xff, numbytes);
+	memset(base, (uint32_t)ROM_GETHASHDATA(romp) & 0xff, numbytes);
 	return 1;
 }
 
@@ -1635,11 +1635,11 @@ static int fill_rom_data(struct rom_load_data *romdata, const struct RomModule *
 
 static int copy_rom_data(struct rom_load_data *romdata, const struct RomModule *romp)
 {
-	UINT8 *base = romdata->regionbase + ROM_GETOFFSET(romp);
+	uint8_t *base = romdata->regionbase + ROM_GETOFFSET(romp);
 	int srcregion = ROM_GETFLAGS(romp) >> 24;
-	UINT32 numbytes = ROM_GETLENGTH(romp);
-	UINT32 srcoffs = (UINT32)ROM_GETHASHDATA(romp);  /* srcoffset in place of hashdata */
-	UINT8 *srcbase;
+	uint32_t numbytes = ROM_GETLENGTH(romp);
+	uint32_t srcoffs = (uint32_t)ROM_GETHASHDATA(romp);  /* srcoffset in place of hashdata */
+	uint8_t *srcbase;
 
 	/* make sure we copy within the region space */
 	if (ROM_GETOFFSET(romp) + numbytes > romdata->regionlength)
@@ -1683,7 +1683,7 @@ static int copy_rom_data(struct rom_load_data *romdata, const struct RomModule *
 
 static int process_rom_entries(struct rom_load_data *romdata, const struct RomModule *romp)
 {
-	UINT32 lastflags = 0;
+	uint32_t lastflags = 0;
 	const struct RomModule *fallback_romp = romp;
 
 	/* loop until we hit the end of this region */

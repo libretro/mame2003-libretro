@@ -6,7 +6,7 @@
 
 /*----------- defined in vidhrdw/gauntlet.c -----------*/
 
-extern UINT8 vindctr2_screen_refresh;
+extern uint8_t vindctr2_screen_refresh;
 
 WRITE16_HANDLER( gauntlet_xscroll_w );
 WRITE16_HANDLER( gauntlet_yscroll_w );

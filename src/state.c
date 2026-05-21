@@ -91,12 +91,12 @@ static unsigned char *ss_dump_array;
 static unsigned int ss_dump_size;
 
 
-static UINT32 ss_get_signature(void)
+static uint32_t ss_get_signature(void)
 {
 	ss_module *m;
 	unsigned int size = 0, pos = 0;
 	char *info;
-	UINT32 signature;
+	uint32_t signature;
 
 	/* Pass 1 : compute size*/
 
@@ -239,37 +239,37 @@ static ss_entry *ss_register_entry(const char *module, int instance, const char 
 }
 
 void state_save_register_UINT8 (const char *module, int instance,
-								const char *name, UINT8 *val, unsigned size)
+								const char *name, uint8_t *val, unsigned size)
 {
 	ss_register_entry(module, instance, name, SS_UINT8, val, size);
 }
 
 void state_save_register_INT8  (const char *module, int instance,
-								const char *name, INT8 *val, unsigned size)
+								const char *name, int8_t *val, unsigned size)
 {
 	ss_register_entry(module, instance, name, SS_INT8, val, size);
 }
 
 void state_save_register_UINT16(const char *module, int instance,
-								const char *name, UINT16 *val, unsigned size)
+								const char *name, uint16_t *val, unsigned size)
 {
 	ss_register_entry(module, instance, name, SS_UINT16, val, size);
 }
 
 void state_save_register_INT16 (const char *module, int instance,
-								const char *name, INT16 *val, unsigned size)
+								const char *name, int16_t *val, unsigned size)
 {
 	ss_register_entry(module, instance, name, SS_INT16, val, size);
 }
 
 void state_save_register_UINT32(const char *module, int instance,
-								const char *name, UINT32 *val, unsigned size)
+								const char *name, uint32_t *val, unsigned size)
 {
 	ss_register_entry(module, instance, name, SS_UINT32, val, size);
 }
 
 void state_save_register_INT32 (const char *module, int instance,
-								const char *name, INT32 *val, unsigned size)
+								const char *name, int32_t *val, unsigned size)
 {
 	ss_register_entry(module, instance, name, SS_INT32, val, size);
 }
@@ -484,7 +484,7 @@ int state_save_save_continue(void)
 
 void state_save_save_finish(void)
 {
-	UINT32 signature;
+	uint32_t signature;
 	unsigned char flags = 0;
 
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "Finishing save\n");
@@ -523,7 +523,7 @@ int state_save_load_begin(void *array, size_t size)
 {
 	ss_module *m;
 	unsigned int offset = 0;
-	UINT32 signature, file_sig;
+	uint32_t signature, file_sig;
 
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "Beginning load\n");
 

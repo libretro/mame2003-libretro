@@ -44,14 +44,14 @@
 struct _mame_file
 {
 #ifdef DEBUG_COOKIE
-	UINT32 debug_cookie;
+	uint32_t debug_cookie;
 #endif
 	FILE *file;
-	UINT8 *data;
-	UINT64 offset;
-	UINT64 length;
-	UINT8 eof;
-	UINT8 type;
+	uint8_t *data;
+	uint64_t offset;
+	uint64_t length;
+	uint8_t eof;
+	uint8_t type;
 	char hash[HASH_BUF_SIZE];
 };
 
@@ -61,8 +61,8 @@ struct _mame_file
 	PROTOTYPES
 ***************************************************************************/
 
-static mame_file *generic_fopen(int pathtype, const char *gamename, const char *filename, const char* hash, UINT32 flags);
-static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **p, UINT64 *size, char* hash);
+static mame_file *generic_fopen(int pathtype, const char *gamename, const char *filename, const char* hash, uint32_t flags);
+static int checksum_file(int pathtype, int pathindex, const char *file, uint8_t **p, uint64_t *size, char* hash);
 
 
 /***************************************************************************
@@ -409,7 +409,7 @@ int mame_faccess(const char *filename, int filetype)
 	mame_fread
 ***************************************************************************/
 
-UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length)
+uint32_t mame_fread(mame_file *file, void *buffer, uint32_t length)
 {
 	/* switch off the file type */
 	switch (file->type)
@@ -442,7 +442,7 @@ UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length)
 	mame_fwrite
 ***************************************************************************/
 
-UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length)
+uint32_t mame_fwrite(mame_file *file, const void *buffer, uint32_t length)
 {
 	/* check against null pointer */
 	if (!file)
@@ -464,7 +464,7 @@ UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length)
 	mame_fseek
 ***************************************************************************/
 
-int mame_fseek(mame_file *file, INT64 offset, int whence)
+int mame_fseek(mame_file *file, int64_t offset, int whence)
 {
 	int err = 0;
 
@@ -526,7 +526,7 @@ int mame_fchecksum(const char *gamename, const char *filename, unsigned int *len
 	mame_fsize
 ***************************************************************************/
 
-UINT64 mame_fsize(mame_file *file)
+uint64_t mame_fsize(mame_file *file)
 {
 	/* switch off the file type */
 	switch (file->type)
@@ -705,7 +705,7 @@ int mame_feof(mame_file *file)
 	mame_ftell
 ***************************************************************************/
 
-UINT64 mame_ftell(mame_file *file)
+uint64_t mame_ftell(mame_file *file)
 {
 	/* switch off the file type */
 	switch (file->type)
@@ -727,10 +727,10 @@ UINT64 mame_ftell(mame_file *file)
 	mame_fread_swap
 ***************************************************************************/
 
-UINT32 mame_fread_swap(mame_file *file, void *buffer, UINT32 length)
+uint32_t mame_fread_swap(mame_file *file, void *buffer, uint32_t length)
 {
-	UINT8 *buf;
-	UINT8 temp;
+	uint8_t *buf;
+	uint8_t temp;
 	int res, i;
 
 	/* standard read first */
@@ -754,14 +754,14 @@ UINT32 mame_fread_swap(mame_file *file, void *buffer, UINT32 length)
 	mame_fwrite_swap
 ***************************************************************************/
 
-UINT32 mame_fwrite_swap(mame_file *file, const void *buffer, UINT32 length)
+uint32_t mame_fwrite_swap(mame_file *file, const void *buffer, uint32_t length)
 {
-	UINT8 *buf;
-	UINT8 temp;
+	uint8_t *buf;
+	uint8_t temp;
 	int res, i;
 
 	/* swap the data first */
-	buf = (UINT8 *)buffer;
+	buf = (uint8_t *)buffer;
 	for (i = 0; i + 1 < length; i += 2)
 	{
 		temp = buf[i];
@@ -893,7 +893,7 @@ const char *get_extension_for_filetype(int filetype)
 	generic_fopen
 ***************************************************************************/
 
-static mame_file *generic_fopen(int pathtype, const char *gamename, const char *filename, const char* hash, UINT32 flags)
+static mame_file *generic_fopen(int pathtype, const char *gamename, const char *filename, const char* hash, uint32_t flags)
 {
 	static const char *access_modes[] = { "rb", "rb", "wb", "r+b" };
 	const char *extension = get_extension_for_filetype(pathtype);
@@ -981,7 +981,7 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 			/* if the ZIP file exists, proceed */
 			if (osd_get_path_info(pathtype, pathindex, name) == PATH_IS_FILE)
 			{
-				UINT32 ziplength;
+				uint32_t ziplength;
 
 				/* if the file was able to be extracted from the ZIP, continue */
 				compose_path(tempname, NULL, filename, extension);
@@ -989,8 +989,8 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 				/* verify-only case */
 				if (flags & FILEFLAG_VERIFY_ONLY)
 				{
-					UINT8 crcs[4];
-					UINT32 crc = 0;
+					uint8_t crcs[4];
+					uint32_t crc = 0;
 
 					/* Since this is a .ZIP file, we extract the CRC from the expected hash
 					   (if any), so that we can load by CRC if needed. We must check that
@@ -1012,10 +1012,10 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 						file.length = ziplength;
 						file.type = UNLOADED_ZIPPED_FILE;
 
-						crcs[0] = (UINT8)(crc >> 24);
-						crcs[1] = (UINT8)(crc >> 16);
-						crcs[2] = (UINT8)(crc >> 8);
-						crcs[3] = (UINT8)(crc >> 0);
+						crcs[0] = (uint8_t)(crc >> 24);
+						crcs[1] = (uint8_t)(crc >> 16);
+						crcs[2] = (uint8_t)(crc >> 8);
+						crcs[3] = (uint8_t)(crc >> 0);
 						hash_data_insert_binary_checksum(file.hash, HASH_CRC, crcs);
 						break;
 					}
@@ -1090,10 +1090,10 @@ static mame_file *generic_fopen(int pathtype, const char *gamename, const char *
 	checksum_file
 ***************************************************************************/
 
-static int checksum_file(int pathtype, int pathindex, const char *file, UINT8 **p, UINT64 *size, char* hash)
+static int checksum_file(int pathtype, int pathindex, const char *file, uint8_t **p, uint64_t *size, char* hash)
 {
-	UINT64 length;
-	UINT8 *data;
+	uint64_t length;
+	uint8_t *data;
 	FILE *f;
 	unsigned int functions;
 

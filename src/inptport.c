@@ -1587,12 +1587,12 @@ const char *generic_ctrl_label(int input)
 /***************************************************************************/
 /* Generic IO */
 
-static int readint(mame_file *f,UINT32 *num)
+static int readint(mame_file *f,uint32_t *num)
 {
 	unsigned i;
 
 	*num = 0;
-	for (i = 0;i < sizeof(UINT32);i++)
+	for (i = 0;i < sizeof(uint32_t);i++)
 	{
 		unsigned char c;
 
@@ -1606,28 +1606,28 @@ static int readint(mame_file *f,UINT32 *num)
 	return 0;
 }
 
-static void writeint(mame_file *f,UINT32 num)
+static void writeint(mame_file *f,uint32_t num)
 {
 	unsigned i;
 
-	for (i = 0;i < sizeof(UINT32);i++)
+	for (i = 0;i < sizeof(uint32_t);i++)
 	{
 		unsigned char c;
 
 
-		c = (num >> 8 * (sizeof(UINT32)-1)) & 0xff;
+		c = (num >> 8 * (sizeof(uint32_t)-1)) & 0xff;
 		mame_fwrite(f,&c,1);
 		num <<= 8;
 	}
 }
 
-static int readword(mame_file *f,UINT16 *num)
+static int readword(mame_file *f,uint16_t *num)
 {
 	unsigned i;
 	int res;
 
 	res = 0;
-	for (i = 0;i < sizeof(UINT16);i++)
+	for (i = 0;i < sizeof(uint16_t);i++)
 	{
 		unsigned char c;
 
@@ -1642,16 +1642,16 @@ static int readword(mame_file *f,UINT16 *num)
 	return 0;
 }
 
-static void writeword(mame_file *f,UINT16 num)
+static void writeword(mame_file *f,uint16_t num)
 {
 	unsigned i;
 
-	for (i = 0;i < sizeof(UINT16);i++)
+	for (i = 0;i < sizeof(uint16_t);i++)
 	{
 		unsigned char c;
 
 
-		c = (num >> 8 * (sizeof(UINT16)-1)) & 0xff;
+		c = (num >> 8 * (sizeof(uint16_t)-1)) & 0xff;
 		mame_fwrite(f,&c,1);
 		num <<= 8;
 	}

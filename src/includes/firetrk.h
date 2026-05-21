@@ -29,8 +29,8 @@ extern WRITE_HANDLER( firetrk_car_rot_w );
 extern void firetrk_set_flash(int flag);
 extern void firetrk_set_blink(int flag);
 
-extern UINT8* firetrk_alpha_num_ram;
-extern UINT8* firetrk_playfield_ram;
+extern uint8_t* firetrk_alpha_num_ram;
+extern uint8_t* firetrk_playfield_ram;
 
 extern int firetrk_crash[2];
 extern int firetrk_skid[2];

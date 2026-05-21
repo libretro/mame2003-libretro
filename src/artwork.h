@@ -70,7 +70,7 @@ struct artwork_callbacks
 
 struct overlay_piece
 {
-	UINT8 type;
+	uint8_t type;
 	rgb_t color;
 	float left, top, right, bottom;
 };
@@ -83,9 +83,9 @@ struct overlay_piece
 
 ***************************************************************************/
 
-int artwork_create_display(struct osd_create_params *params, UINT32 *rgb_components, const struct artwork_callbacks *callbacks);
+int artwork_create_display(struct osd_create_params *params, uint32_t *rgb_components, const struct artwork_callbacks *callbacks);
 void artwork_update_video_and_audio(struct mame_display *display);
-void artwork_override_screenshot_params(struct mame_bitmap **bitmap, struct rectangle *rect, UINT32 *rgb_components);
+void artwork_override_screenshot_params(struct mame_bitmap **bitmap, struct rectangle *rect, uint32_t *rgb_components);
 
 struct mame_bitmap *artwork_get_ui_bitmap(void);
 

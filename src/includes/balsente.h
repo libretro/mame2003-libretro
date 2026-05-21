@@ -11,10 +11,10 @@
 
 /*----------- defined in machine/balsente.c -----------*/
 
-extern UINT8 balsente_shooter;
-extern UINT8 balsente_shooter_x;
-extern UINT8 balsente_shooter_y;
-extern UINT8 balsente_adc_shift;
+extern uint8_t balsente_shooter;
+extern uint8_t balsente_shooter_x;
+extern uint8_t balsente_shooter_y;
+extern uint8_t balsente_adc_shift;
 extern data16_t *shrike_shared;
 
 MACHINE_INIT( balsente );

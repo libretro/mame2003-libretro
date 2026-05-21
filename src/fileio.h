@@ -86,10 +86,10 @@ int osd_create_directory(const char *dir);
 int mame_faccess(const char *filename, int filetype);
 mame_file *mame_fopen(const char *gamename, const char *filename, int filetype, int openforwrite);
 mame_file *mame_fopen_rom(const char *gamename, const char *filename, const char* exphash);
-UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length);
-UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length);
-UINT32 mame_fread_swap(mame_file *file, void *buffer, UINT32 length);
-UINT32 mame_fwrite_swap(mame_file *file, const void *buffer, UINT32 length);
+uint32_t mame_fread(mame_file *file, void *buffer, uint32_t length);
+uint32_t mame_fwrite(mame_file *file, const void *buffer, uint32_t length);
+uint32_t mame_fread_swap(mame_file *file, void *buffer, uint32_t length);
+uint32_t mame_fwrite_swap(mame_file *file, const void *buffer, uint32_t length);
 #ifdef MSB_FIRST
 #define mame_fread_msbfirst mame_fread
 #define mame_fwrite_msbfirst mame_fwrite
@@ -102,16 +102,16 @@ UINT32 mame_fwrite_swap(mame_file *file, const void *buffer, UINT32 length);
 #define mame_fread_lsbfirst mame_fread
 #define mame_fwrite_lsbfirst mame_fwrite
 #endif
-int mame_fseek(mame_file *file, INT64 offset, int whence);
+int mame_fseek(mame_file *file, int64_t offset, int whence);
 void mame_fclose(mame_file *file);
 int mame_fchecksum(const char *gamename, const char *filename, unsigned int *length, char* hash);
-UINT64 mame_fsize(mame_file *file);
+uint64_t mame_fsize(mame_file *file);
 const char *mame_fhash(mame_file *file);
 int mame_fgetc(mame_file *file);
 int mame_ungetc(int c, mame_file *file);
 char *mame_fgets(char *s, int n, mame_file *file);
 int mame_feof(mame_file *file);
-UINT64 mame_ftell(mame_file *file);
+uint64_t mame_ftell(mame_file *file);
 
 int mame_fputs(mame_file *f, const char *s);
 int mame_vfprintf(mame_file *f, const char *fmt, va_list va);

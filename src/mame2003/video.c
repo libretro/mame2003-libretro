@@ -191,7 +191,7 @@ void mame2003_video_init_orientation(void)
 }
 
 /* Init video format conversion settings */
-void mame2003_video_init_conversion(UINT32 *rgb_components)
+void mame2003_video_init_conversion(uint32_t *rgb_components)
 {
    unsigned color_mode;
 
@@ -257,14 +257,14 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
 /* Do a soft reinit to process new video output parameters */
 void mame2003_video_reinit(void)
 {
-   UINT32 rgb_components[3];
+   uint32_t rgb_components[3];
    struct osd_create_params old_params = video_config;
    osd_close_display();
    osd_create_display(&old_params, &rgb_components[0]);
 }
 
 int osd_create_display(
-   const struct osd_create_params *params, UINT32 *rgb_components)
+   const struct osd_create_params *params, uint32_t *rgb_components)
 {
    memcpy(&video_config, params, sizeof(video_config));
 
@@ -564,7 +564,7 @@ const int frameskip_table[12][12] =
      { 0,1,1,1,1,1,0,1,1,1,1,1 },
      { 0,1,1,1,1,1,1,1,1,1,1,1 } };
 
-UINT8 frameskip_counter = 0;
+uint8_t frameskip_counter = 0;
 
 int osd_skip_this_frame(void)
 {

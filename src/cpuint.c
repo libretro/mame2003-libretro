@@ -50,16 +50,16 @@
  *************************************/
 
 /* current states for each CPU */
-static UINT8 interrupt_enable[MAX_CPU];
-static INT32 interrupt_vector[MAX_CPU][MAX_IRQ_LINES];
+static uint8_t interrupt_enable[MAX_CPU];
+static int32_t interrupt_vector[MAX_CPU][MAX_IRQ_LINES];
 
 /* deferred states written in callbacks */
-static UINT8 irq_line_state[MAX_CPU][MAX_IRQ_LINES];
-static INT32 irq_line_vector[MAX_CPU][MAX_IRQ_LINES];
+static uint8_t irq_line_state[MAX_CPU][MAX_IRQ_LINES];
+static int32_t irq_line_vector[MAX_CPU][MAX_IRQ_LINES];
 
 /* ick, interrupt event queues */
 #define MAX_IRQ_EVENTS		256
-static INT32 irq_event_queue[MAX_CPU][MAX_IRQ_EVENTS];
+static int32_t irq_event_queue[MAX_CPU][MAX_IRQ_EVENTS];
 static int irq_event_index[MAX_CPU];
 
 
@@ -255,7 +255,7 @@ static void cpu_empty_event_queue(int cpunum)
 	/* loop over all events */
 	for (i = 0; i < irq_event_index[cpunum]; i++)
 	{
-		INT32 irq_event = irq_event_queue[cpunum][i];
+		int32_t irq_event = irq_event_queue[cpunum][i];
 		int state = irq_event & 0xff;
 		int irqline = (irq_event >> 8) & 0xff;
 		int vector = irq_event >> 16;
@@ -309,7 +309,7 @@ void cpu_set_irq_line(int cpunum, int irqline, int state)
 
 void cpu_set_irq_line_and_vector(int cpunum, int irqline, int state, int vector)
 {
-	INT32 irq_event = (state & 0xff) | ((irqline & 0xff) << 8) | (vector << 16);
+	int32_t irq_event = (state & 0xff) | ((irqline & 0xff) << 8) | (vector << 16);
 	int event_index = irq_event_index[cpunum]++;
 
 	/*LOG(("cpu_set_irq_line(%d,%d,%d,%02x)\n", cpunum, irqline, state, vector));*/

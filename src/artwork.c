@@ -358,8 +358,8 @@ struct artwork_piece
 	struct artwork_piece *	next;
 
 	/* raw data from the .art file */
-	UINT8					layer;
-	UINT8					has_alpha;
+	uint8_t					layer;
+	uint8_t					has_alpha;
 	int						priority;
 	float					alpha;
 	float					brightness;
@@ -375,8 +375,8 @@ struct artwork_piece
 	struct mame_bitmap *	rawbitmap;
 	struct mame_bitmap *	prebitmap;
 	struct mame_bitmap *	yrgbbitmap;
-	UINT32 *				scanlinehint;
-	UINT8					blendflags;
+	uint32_t *				scanlinehint;
+	uint8_t					blendflags;
 
 	/* derived/dynamic data */
 	int						intersects_game;
@@ -392,9 +392,9 @@ struct artwork_piece
 
 ***************************************************************************/
 
-static UINT8 rshift, gshift, bshift, ashift;
-static UINT32 nonalpha_mask;
-static UINT32 transparent_color;
+static uint8_t rshift, gshift, bshift, ashift;
+static uint32_t nonalpha_mask;
+static uint32_t transparent_color;
 
 static struct artwork_piece *artwork_list;
 static int num_underlays, num_overlays, num_bezels;
@@ -406,13 +406,13 @@ static struct rectangle gamerect, screenrect;
 static int gamescale;
 
 static struct mame_bitmap *uioverlay;
-static UINT32 *uioverlayhint;
+static uint32_t *uioverlayhint;
 static struct rectangle uibounds, last_uibounds;
 
-static UINT32 *palette_lookup;
+static uint32_t *palette_lookup;
 
 static int original_attributes;
-static UINT8 global_artwork_enable;
+static uint8_t global_artwork_enable;
 
 static const struct overlay_piece *overlay_list;
 
@@ -426,7 +426,7 @@ static const struct overlay_piece *overlay_list;
 
 static int artwork_prep(void);
 static int artwork_load(const struct GameDriver *gamename, int width, int height, const struct artwork_callbacks *callbacks);
-static int compute_rgb_components(int depth, UINT32 rgb_components[3], UINT32 rgb32_components[3]);
+static int compute_rgb_components(int depth, uint32_t rgb_components[3], uint32_t rgb32_components[3]);
 static int load_bitmap(const char *gamename, struct artwork_piece *piece);
 static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, const struct png_info *original);
 static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight);
@@ -440,13 +440,13 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
 static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
 static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, const rgb_t *palette, struct mame_display *display);
-static void render_ui_overlay(struct mame_bitmap *bitmap, UINT32 *dirty, const rgb_t *palette, struct mame_display *display);
-static void erase_rect(struct mame_bitmap *bitmap, const struct rectangle *bounds, UINT32 color);
-static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds, const UINT32 *hintlist);
+static void render_ui_overlay(struct mame_bitmap *bitmap, uint32_t *dirty, const rgb_t *palette, struct mame_display *display);
+static void erase_rect(struct mame_bitmap *bitmap, const struct rectangle *bounds, uint32_t color);
+static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds, const uint32_t *hintlist);
 static void add_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds);
-static void cmy_blend_intersecting_rect(struct mame_bitmap *dstbitmap, struct mame_bitmap *dstyrgbbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, struct mame_bitmap *srcyrgbbitmap, const struct rectangle *srcbounds, UINT8 blendflags);
+static void cmy_blend_intersecting_rect(struct mame_bitmap *dstbitmap, struct mame_bitmap *dstyrgbbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, struct mame_bitmap *srcyrgbbitmap, const struct rectangle *srcbounds, uint8_t blendflags);
 static int generate_overlay(const struct overlay_piece *list, int width, int height);
-static void add_range_to_hint(UINT32 *hintbase, int scanline, int startx, int endx);
+static void add_range_to_hint(uint32_t *hintbase, int scanline, int startx, int endx);
 
 
 
@@ -478,7 +478,7 @@ static INLINE void union_rect(struct rectangle *dst, const struct rectangle *src
 	brightness for an RGB pixel
 -------------------------------------------------*/
 
-static INLINE UINT8 compute_brightness(rgb_t rgb)
+static INLINE uint8_t compute_brightness(rgb_t rgb)
 {
 	return (RGB_RED(rgb) * 222 + RGB_GREEN(rgb) * 707 + RGB_BLUE(rgb) * 71) / 1000;
 }
@@ -490,7 +490,7 @@ static INLINE UINT8 compute_brightness(rgb_t rgb)
 	pixel
 -------------------------------------------------*/
 
-static INLINE UINT32 compute_pre_pixel(UINT8 a, UINT8 r, UINT8 g, UINT8 b)
+static INLINE uint32_t compute_pre_pixel(uint8_t a, uint8_t r, uint8_t g, uint8_t b)
 {
 	/* premultiply the RGB components with the pixel's alpha */
 	r = (r * a) / 0xff;
@@ -508,7 +508,7 @@ static INLINE UINT32 compute_pre_pixel(UINT8 a, UINT8 r, UINT8 g, UINT8 b)
 	compute_yrgb_pixel - compute a YRGB pixel
 -------------------------------------------------*/
 
-static INLINE UINT32 compute_yrgb_pixel(UINT8 a, UINT8 r, UINT8 g, UINT8 b)
+static INLINE uint32_t compute_yrgb_pixel(uint8_t a, uint8_t r, uint8_t g, uint8_t b)
 {
 	/* compute the premultiplied brightness */
 	int bright = (r * 222 + g * 707 + b * 71) / 1000;
@@ -525,10 +525,10 @@ static INLINE UINT32 compute_yrgb_pixel(UINT8 a, UINT8 r, UINT8 g, UINT8 b)
 	each component to the max
 -------------------------------------------------*/
 
-static INLINE UINT32 add_and_clamp(UINT32 game, UINT32 underpix)
+static INLINE uint32_t add_and_clamp(uint32_t game, uint32_t underpix)
 {
-	UINT32 temp1 = game + underpix;
-	UINT32 temp2 = game ^ underpix ^ temp1;
+	uint32_t temp1 = game + underpix;
+	uint32_t temp2 = game ^ underpix ^ temp1;
 
 	/* handle overflow (carry out of top component */
 	if (temp1 < game)
@@ -563,7 +563,7 @@ static INLINE UINT32 add_and_clamp(UINT32 game, UINT32 underpix)
 	blend_over - blend two pixels with overlay
 -------------------------------------------------*/
 
-static INLINE UINT32 blend_over(UINT32 game, UINT32 pre, UINT32 yrgb)
+static INLINE uint32_t blend_over(uint32_t game, uint32_t pre, uint32_t yrgb)
 {
 	/* case 1: no game pixels; just return the premultiplied pixel */
 	if ((game & nonalpha_mask) == 0)
@@ -572,8 +572,8 @@ static INLINE UINT32 blend_over(UINT32 game, UINT32 pre, UINT32 yrgb)
 	/* case 2: apply the effect */
 	else
 	{
-		UINT8 bright = RGB_GREEN(game);
-		UINT8 r, g, b;
+		uint8_t bright = RGB_GREEN(game);
+		uint8_t r, g, b;
 
 		yrgb -= pre;
 		r = (RGB_RED(yrgb) * bright) / 256;
@@ -596,13 +596,13 @@ static INLINE UINT32 blend_over(UINT32 game, UINT32 pre, UINT32 yrgb)
 	to osd_create_display
 -------------------------------------------------*/
 
-int artwork_create_display(struct osd_create_params *params, UINT32 *rgb_components, const struct artwork_callbacks *callbacks)
+int artwork_create_display(struct osd_create_params *params, uint32_t *rgb_components, const struct artwork_callbacks *callbacks)
 {
 	int original_width = params->width;
 	int original_height = params->height;
 	int original_depth = params->depth;
 	double min_x, min_y, max_x, max_y;
-	UINT32 rgb32_components[3];
+	uint32_t rgb32_components[3];
 	struct artwork_piece *piece;
 
 	/* reset UI */
@@ -920,7 +920,7 @@ void artwork_update_video_and_audio(struct mame_display *display)
 	certain parameters when saving a screenshot
 -------------------------------------------------*/
 
-void artwork_override_screenshot_params(struct mame_bitmap **bitmap, struct rectangle *rect, UINT32 *rgb_components)
+void artwork_override_screenshot_params(struct mame_bitmap **bitmap, struct rectangle *rect, uint32_t *rgb_components)
 {
 	if ((*bitmap == Machine->scrbitmap || *bitmap == uioverlay) && artwork_system_active())
 	{
@@ -1140,14 +1140,14 @@ static int update_layers(void)
 	bitmap
 -------------------------------------------------*/
 
-static void erase_rect(struct mame_bitmap *bitmap, const struct rectangle *bounds, UINT32 color)
+static void erase_rect(struct mame_bitmap *bitmap, const struct rectangle *bounds, uint32_t color)
 {
 	int x, y;
 
 	/* loop over rows */
 	for (y = bounds->min_y; y <= bounds->max_y; y++)
 	{
-		UINT32 *dest = (UINT32 *)bitmap->base + y * bitmap->rowpixels;
+		uint32_t *dest = (uint32_t *)bitmap->base + y * bitmap->rowpixels;
 		for (x = bounds->min_x; x <= bounds->max_x; x++)
 			dest[x] = color;
 	}
@@ -1160,10 +1160,10 @@ static void erase_rect(struct mame_bitmap *bitmap, const struct rectangle *bound
 	artwork piece into a bitmap
 -------------------------------------------------*/
 
-static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds, const UINT32 *hintlist)
+static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const struct rectangle *dstbounds, struct mame_bitmap *srcbitmap, const struct rectangle *srcbounds, const uint32_t *hintlist)
 {
 	struct rectangle sect = *srcbounds;
-	UINT32 dummy_range[2];
+	uint32_t dummy_range[2];
 	int lclip, rclip;
 	int x, y, h;
 
@@ -1185,9 +1185,9 @@ static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const s
 	/* loop over rows */
 	for (y = sect.min_y; y <= sect.max_y; y++)
 	{
-		UINT32 *src = (UINT32 *)srcbitmap->base + (y - srcbounds->min_y) * srcbitmap->rowpixels;
-		UINT32 *dest = (UINT32 *)dstbitmap->base + y * dstbitmap->rowpixels + srcbounds->min_x;
-		const UINT32 *hint = hintlist ? &hintlist[y * MAX_HINTS_PER_SCANLINE] : &dummy_range[0];
+		uint32_t *src = (uint32_t *)srcbitmap->base + (y - srcbounds->min_y) * srcbitmap->rowpixels;
+		uint32_t *dest = (uint32_t *)dstbitmap->base + y * dstbitmap->rowpixels + srcbounds->min_x;
+		const uint32_t *hint = hintlist ? &hintlist[y * MAX_HINTS_PER_SCANLINE] : &dummy_range[0];
 
 		/* loop over hints */
 		for (h = 0; h < MAX_HINTS_PER_SCANLINE && hint[h] != 0; h++)
@@ -1210,8 +1210,8 @@ static void alpha_blend_intersecting_rect(struct mame_bitmap *dstbitmap, const s
 			{
 				/* we don't bother optimizing for transparent here because we hope that the */
 				/* hints have removed most of the need */
-				UINT32 pix = src[x];
-				UINT32 dpix = dest[x];
+				uint32_t pix = src[x];
+				uint32_t dpix = dest[x];
 				int alpha = (pix >> ashift) & 0xff;
 
 				/* alpha is inverted, so alpha 0 means fully opaque */
@@ -1254,13 +1254,13 @@ static void add_intersecting_rect(struct mame_bitmap *dstbitmap, const struct re
 	/* loop over rows */
 	for (y = sect.min_y; y <= sect.max_y; y++)
 	{
-		UINT32 *src = (UINT32 *)srcbitmap->base + (y - srcbounds->min_y) * srcbitmap->rowpixels + (sect.min_x - srcbounds->min_x);
-		UINT32 *dest = (UINT32 *)dstbitmap->base + y * dstbitmap->rowpixels + sect.min_x;
+		uint32_t *src = (uint32_t *)srcbitmap->base + (y - srcbounds->min_y) * srcbitmap->rowpixels + (sect.min_x - srcbounds->min_x);
+		uint32_t *dest = (uint32_t *)dstbitmap->base + y * dstbitmap->rowpixels + sect.min_x;
 
 		/* loop over columns */
 		for (x = 0; x < width; x++)
 		{
-			UINT32 pix = src[x];
+			uint32_t pix = src[x];
 
 			/* just add and clamp */
 			if (pix != transparent_color)
@@ -1279,7 +1279,7 @@ static void add_intersecting_rect(struct mame_bitmap *dstbitmap, const struct re
 static void cmy_blend_intersecting_rect(
 	struct mame_bitmap *dstprebitmap, struct mame_bitmap *dstyrgbbitmap, const struct rectangle *dstbounds,
 	struct mame_bitmap *srcprebitmap, struct mame_bitmap *srcyrgbbitmap, const struct rectangle *srcbounds,
-	UINT8 blendflags)
+	uint8_t blendflags)
 {
 	struct rectangle sect = *srcbounds;
 	int x, y, width;
@@ -1291,18 +1291,18 @@ static void cmy_blend_intersecting_rect(
 	/* loop over rows */
 	for (y = sect.min_y; y <= sect.max_y; y++)
 	{
-		UINT32 *srcpre = (UINT32 *)srcprebitmap->base + (y - srcbounds->min_y) * srcprebitmap->rowpixels + (sect.min_x - srcbounds->min_x);
-		UINT32 *srcyrgb = (UINT32 *)srcyrgbbitmap->base + (y - srcbounds->min_y) * srcyrgbbitmap->rowpixels + (sect.min_x - srcbounds->min_x);
-		UINT32 *destpre = (UINT32 *)dstprebitmap->base + y * dstprebitmap->rowpixels + sect.min_x;
-		UINT32 *destyrgb = (UINT32 *)dstyrgbbitmap->base + y * dstyrgbbitmap->rowpixels + sect.min_x;
+		uint32_t *srcpre = (uint32_t *)srcprebitmap->base + (y - srcbounds->min_y) * srcprebitmap->rowpixels + (sect.min_x - srcbounds->min_x);
+		uint32_t *srcyrgb = (uint32_t *)srcyrgbbitmap->base + (y - srcbounds->min_y) * srcyrgbbitmap->rowpixels + (sect.min_x - srcbounds->min_x);
+		uint32_t *destpre = (uint32_t *)dstprebitmap->base + y * dstprebitmap->rowpixels + sect.min_x;
+		uint32_t *destyrgb = (uint32_t *)dstyrgbbitmap->base + y * dstyrgbbitmap->rowpixels + sect.min_x;
 
 		/* loop over columns */
 		for (x = 0; x < width; x++)
 		{
-			UINT32 spre = srcpre[x];
-			UINT32 dpre = destpre[x];
-			UINT32 syrgb = srcyrgb[x];
-			UINT32 dyrgb = destyrgb[x];
+			uint32_t spre = srcpre[x];
+			uint32_t dpre = destpre[x];
+			uint32_t syrgb = srcyrgb[x];
+			uint32_t dyrgb = destyrgb[x];
 
 			/* handle "non-blending" mode */
 			if (blendflags & OVERLAY_FLAG_NOBLEND)
@@ -1387,7 +1387,7 @@ static void update_palette_lookup(struct mame_display *display)
 	/* loop over dirty colors in batches of 32 */
 	for (i = 0; i < display->game_palette_entries; i += 32)
 	{
-		UINT32 dirtyflags = display->game_palette_dirty[i / 32];
+		uint32_t dirtyflags = display->game_palette_dirty[i / 32];
 		if (dirtyflags)
 		{
 			display->game_palette_dirty[i / 32] = 0;
@@ -1429,8 +1429,8 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 	/* compute common parameters */
 	width = Machine->absolute_visible_area.max_x - Machine->absolute_visible_area.min_x + 1;
 	height = Machine->absolute_visible_area.max_y - Machine->absolute_visible_area.min_y + 1;
-	srcbase = (UINT8 *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
-	dstbase = (UINT8 *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(UINT32);
+	srcbase = (uint8_t *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
+	dstbase = (uint8_t *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(uint32_t);
 
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
@@ -1473,8 +1473,8 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = palette[*src++];
 			}
@@ -1485,8 +1485,8 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = *src++;
 			}
@@ -1501,11 +1501,11 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = palette[*src++];
+					uint32_t val = palette[*src++];
 					dst[0] = val;
 					dst[1] = val;
 					dst[dstrowpixels] = val;
@@ -1520,11 +1520,11 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const rgb_t *palette,
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = *src++;
+					uint32_t val = *src++;
 					dst[0] = val;
 					dst[1] = val;
 					dst[dstrowpixels] = val;
@@ -1554,9 +1554,9 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t 
 	/* compute common parameters */
 	width = Machine->absolute_visible_area.max_x - Machine->absolute_visible_area.min_x + 1;
 	height = Machine->absolute_visible_area.max_y - Machine->absolute_visible_area.min_y + 1;
-	srcbase = (UINT8 *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
-	dstbase = (UINT8 *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(UINT32);
-	undbase = (UINT8 *)underlay->base + gamerect.min_y * underlay->rowbytes + gamerect.min_x * sizeof(UINT32);
+	srcbase = (uint8_t *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
+	dstbase = (uint8_t *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(uint32_t);
+	undbase = (uint8_t *)underlay->base + gamerect.min_y * underlay->rowbytes + gamerect.min_x * sizeof(uint32_t);
 
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
@@ -1599,9 +1599,9 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t 
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = add_and_clamp(palette[*src++], *und++);
 			}
@@ -1612,9 +1612,9 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t 
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = add_and_clamp(*src++, *und++);
 			}
@@ -1629,12 +1629,12 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t 
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * 2 * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = palette[*src++];
+					uint32_t val = palette[*src++];
 					dst[0] = add_and_clamp(val, und[0]);
 					dst[1] = add_and_clamp(val, und[1]);
 					dst[dstrowpixels] = add_and_clamp(val, und[dstrowpixels]);
@@ -1650,12 +1650,12 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const rgb_t 
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * 2 * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = *src++;
+					uint32_t val = *src++;
 					dst[0] = add_and_clamp(val, und[0]);
 					dst[1] = add_and_clamp(val, und[1]);
 					dst[dstrowpixels] = add_and_clamp(val, und[dstrowpixels]);
@@ -1686,10 +1686,10 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *
 	/* compute common parameters */
 	width = Machine->absolute_visible_area.max_x - Machine->absolute_visible_area.min_x + 1;
 	height = Machine->absolute_visible_area.max_y - Machine->absolute_visible_area.min_y + 1;
-	srcbase = (UINT8 *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
-	dstbase = (UINT8 *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(UINT32);
-	overbase = (UINT8 *)overlay->base + gamerect.min_y * overlay->rowbytes + gamerect.min_x * sizeof(UINT32);
-	overyrgbbase = (UINT8 *)overlay_yrgb->base + gamerect.min_y * overlay_yrgb->rowbytes + gamerect.min_x * sizeof(UINT32);
+	srcbase = (uint8_t *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
+	dstbase = (uint8_t *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(uint32_t);
+	overbase = (uint8_t *)overlay->base + gamerect.min_y * overlay->rowbytes + gamerect.min_x * sizeof(uint32_t);
+	overyrgbbase = (uint8_t *)overlay_yrgb->base + gamerect.min_y * overlay_yrgb->rowbytes + gamerect.min_x * sizeof(uint32_t);
 
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
@@ -1732,10 +1732,10 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = blend_over(palette[*src++], *over++, *overyrgb++);
 			}
@@ -1746,10 +1746,10 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = blend_over(*src++, *over++, *overyrgb++);
 			}
@@ -1764,13 +1764,13 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * 2 * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * 2 * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * 2 * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = palette[*src++];
+					uint32_t val = palette[*src++];
 					dst[0] = blend_over(val, over[0], overyrgb[0]);
 					dst[1] = blend_over(val, over[1], overyrgb[1]);
 					dst[dstrowpixels] = blend_over(val, over[dstrowpixels], overyrgb[dstrowpixels]);
@@ -1787,13 +1787,13 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const rgb_t *
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * 2 * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * 2 * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * 2 * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = *src++;
+					uint32_t val = *src++;
 					dst[0] = blend_over(val, over[0], overyrgb[0]);
 					dst[1] = blend_over(val, over[1], overyrgb[1]);
 					dst[dstrowpixels] = blend_over(val, over[dstrowpixels], overyrgb[dstrowpixels]);
@@ -1826,11 +1826,11 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 	/* compute common parameters */
 	width = Machine->absolute_visible_area.max_x - Machine->absolute_visible_area.min_x + 1;
 	height = Machine->absolute_visible_area.max_y - Machine->absolute_visible_area.min_y + 1;
-	srcbase = (UINT8 *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
-	dstbase = (UINT8 *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(UINT32);
-	undbase = (UINT8 *)underlay->base + gamerect.min_y * underlay->rowbytes + gamerect.min_x * sizeof(UINT32);
-	overbase = (UINT8 *)overlay->base + gamerect.min_y * overlay->rowbytes + gamerect.min_x * sizeof(UINT32);
-	overyrgbbase = (UINT8 *)overlay_yrgb->base + gamerect.min_y * overlay_yrgb->rowbytes + gamerect.min_x * sizeof(UINT32);
+	srcbase = (uint8_t *)bitmap->base + Machine->absolute_visible_area.min_y * bitmap->rowbytes;
+	dstbase = (uint8_t *)final->base + gamerect.min_y * final->rowbytes + gamerect.min_x * sizeof(uint32_t);
+	undbase = (uint8_t *)underlay->base + gamerect.min_y * underlay->rowbytes + gamerect.min_x * sizeof(uint32_t);
+	overbase = (uint8_t *)overlay->base + gamerect.min_y * overlay->rowbytes + gamerect.min_x * sizeof(uint32_t);
+	overyrgbbase = (uint8_t *)overlay_yrgb->base + gamerect.min_y * overlay_yrgb->rowbytes + gamerect.min_x * sizeof(uint32_t);
 
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
@@ -1873,11 +1873,11 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = add_and_clamp(blend_over(palette[*src++], *over++, *overyrgb++), *und++);
 			}
@@ -1888,11 +1888,11 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * dstrowpixels;
 				for (x = 0; x < width; x++)
 					*dst++ = add_and_clamp(blend_over(*src++, *over++, *overyrgb++), *und++);
 			}
@@ -1907,14 +1907,14 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * 2 * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * 2 * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * 2 * dstrowpixels;
+				uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * 2 * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * 2 * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = palette[*src++];
+					uint32_t val = palette[*src++];
 					dst[0] = add_and_clamp(blend_over(val, over[0], overyrgb[0]), und[0]);
 					dst[1] = add_and_clamp(blend_over(val, over[1], overyrgb[1]), und[1]);
 					dst[dstrowpixels] = add_and_clamp(blend_over(val, over[dstrowpixels], overyrgb[dstrowpixels]), und[dstrowpixels]);
@@ -1932,14 +1932,14 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 		{
 			for (y = 0; y < height; y++)
 			{
-				UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
-				UINT32 *dst = (UINT32 *)dstbase + y * 2 * dstrowpixels;
-				UINT32 *und = (UINT32 *)undbase + y * 2 * dstrowpixels;
-				UINT32 *over = (UINT32 *)overbase + y * 2 * dstrowpixels;
-				UINT32 *overyrgb = (UINT32 *)overyrgbbase + y * 2 * dstrowpixels;
+				uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels + Machine->absolute_visible_area.min_x;
+				uint32_t *dst = (uint32_t *)dstbase + y * 2 * dstrowpixels;
+				uint32_t *und = (uint32_t *)undbase + y * 2 * dstrowpixels;
+				uint32_t *over = (uint32_t *)overbase + y * 2 * dstrowpixels;
+				uint32_t *overyrgb = (uint32_t *)overyrgbbase + y * 2 * dstrowpixels;
 				for (x = 0; x < width; x++)
 				{
-					UINT32 val = *src++;
+					uint32_t val = *src++;
 					dst[0] = add_and_clamp(blend_over(val, over[0], overyrgb[0]), und[0]);
 					dst[1] = add_and_clamp(blend_over(val, over[1], overyrgb[1]), und[1]);
 					dst[dstrowpixels] = add_and_clamp(blend_over(val, over[dstrowpixels], overyrgb[dstrowpixels]), und[dstrowpixels]);
@@ -1960,7 +1960,7 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 	render_ui_overlay - render the UI overlay
 -------------------------------------------------*/
 
-static void render_ui_overlay(struct mame_bitmap *bitmap, UINT32 *dirty, const rgb_t *palette, struct mame_display *display)
+static void render_ui_overlay(struct mame_bitmap *bitmap, uint32_t *dirty, const rgb_t *palette, struct mame_display *display)
 {
 	int srcrowpixels = bitmap->rowpixels;
 	int dstrowpixels = final->rowpixels;
@@ -1979,9 +1979,9 @@ static void render_ui_overlay(struct mame_bitmap *bitmap, UINT32 *dirty, const r
 	{
 		for (y = 0; y < height; y++)
 		{
-			UINT16 *src = (UINT16 *)srcbase + y * srcrowpixels;
-			UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-			UINT32 *hint = &dirty[y * MAX_HINTS_PER_SCANLINE];
+			uint16_t *src = (uint16_t *)srcbase + y * srcrowpixels;
+			uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+			uint32_t *hint = &dirty[y * MAX_HINTS_PER_SCANLINE];
 			for (h = 0; h < MAX_HINTS_PER_SCANLINE && hint[h] != 0; h++)
 			{
 				int start = hint[h] >> 16;
@@ -2006,9 +2006,9 @@ static void render_ui_overlay(struct mame_bitmap *bitmap, UINT32 *dirty, const r
 	{
 		for (y = 0; y < height; y++)
 		{
-			UINT32 *src = (UINT32 *)srcbase + y * srcrowpixels;
-			UINT32 *dst = (UINT32 *)dstbase + y * dstrowpixels;
-			UINT32 *hint = &dirty[y * MAX_HINTS_PER_SCANLINE];
+			uint32_t *src = (uint32_t *)srcbase + y * srcrowpixels;
+			uint32_t *dst = (uint32_t *)dstbase + y * dstrowpixels;
+			uint32_t *hint = &dirty[y * MAX_HINTS_PER_SCANLINE];
 			for (h = 0; h < MAX_HINTS_PER_SCANLINE && hint[h] != 0; h++)
 			{
 				int start = hint[h] >> 16;
@@ -2195,7 +2195,7 @@ static int open_and_read_png(const char *gamename, const char *filename, struct 
 static int load_bitmap(const char *gamename, struct artwork_piece *piece)
 {
 	struct png_info png;
-	UINT8 *src;
+	uint8_t *src;
 	int x, y;
 
 	/* if we already have a bitmap, don't bother trying to read a file */
@@ -2224,7 +2224,7 @@ static int load_bitmap(const char *gamename, struct artwork_piece *piece)
 			for (x = 0; x < png.width; x++, src++)
 			{
 				/* determine alpha */
-				UINT8 alpha = (*src < png.num_trans) ? png.trans[*src] : 0xff;
+				uint8_t alpha = (*src < png.num_trans) ? png.trans[*src] : 0xff;
 				if (alpha != 0xff)
 					piece->has_alpha = 1;
 
@@ -2282,7 +2282,7 @@ static int load_bitmap(const char *gamename, struct artwork_piece *piece)
 static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, const struct png_info *original)
 {
 	struct png_info png;
-	UINT8 *src;
+	uint8_t *src;
 	int x, y;
 
 	/* if no file, we succeeded */
@@ -2315,7 +2315,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 			for (x = 0; x < png.width; x++, src++)
 			{
 				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
-				UINT8 alpha = compute_brightness(MAKE_RGB(png.palette[*src * 3], png.palette[*src * 3 + 1], png.palette[*src * 3 + 2]));
+				uint8_t alpha = compute_brightness(MAKE_RGB(png.palette[*src * 3], png.palette[*src * 3 + 1], png.palette[*src * 3 + 2]));
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(alpha, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}
 
@@ -2345,7 +2345,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 			for (x = 0; x < png.width; x++, src += 3)
 			{
 				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
-				UINT8 alpha = compute_brightness(MAKE_RGB(src[0], src[1], src[2]));
+				uint8_t alpha = compute_brightness(MAKE_RGB(src[0], src[1], src[2]));
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(alpha, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}
 	}
@@ -2359,7 +2359,7 @@ static int load_alpha_bitmap(const char *gamename, struct artwork_piece *piece, 
 			for (x = 0; x < png.width; x++, src += 4)
 			{
 				rgb_t pixel = read_pixel(piece->rawbitmap, x, y);
-				UINT8 alpha = compute_brightness(MAKE_RGB(src[0], src[1], src[2]));
+				uint8_t alpha = compute_brightness(MAKE_RGB(src[0], src[1], src[2]));
 				plot_pixel(piece->rawbitmap, x, y, MAKE_ARGB(alpha, RGB_RED(pixel), RGB_GREEN(pixel), RGB_BLUE(pixel)));
 			}
 	}
@@ -2412,9 +2412,9 @@ static int artwork_prep(void)
 
 static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight)
 {
-	UINT32 global_brightness, global_alpha;
-	UINT64 sumscale;
-	UINT32 dx, dy;
+	uint32_t global_brightness, global_alpha;
+	uint64_t sumscale;
+	uint32_t dx, dy;
 	int x, y;
 
 	/* skip if no bitmap */
@@ -2438,7 +2438,7 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 	/* compute parameters for scaling */
 	dx = (piece->rawbitmap->width << 12) / newwidth;
 	dy = (piece->rawbitmap->height << 12) / newheight;
-	sumscale = (UINT64)dx * (UINT64)dy;
+	sumscale = (uint64_t)dx * (uint64_t)dy;
 
 	/* loop over the target vertically */
 	for (y = 0; y < newheight; y++)
@@ -2446,27 +2446,27 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 		int prevstate = 0, statex = 0;
 		int newstate;
 
-		UINT32 starty = y * dy;
+		uint32_t starty = y * dy;
 
 		/* loop over the target horizontally */
 		for (x = 0; x < newwidth; x++)
 		{
-			UINT32 startx = x * dx;
-			UINT32 a, r, g, b;
+			uint32_t startx = x * dx;
+			uint32_t a, r, g, b;
 
 			/* if the source is higher res than the target, use full averaging */
 			if (dx > 0x1000 || dy > 0x1000)
 			{
-				UINT64 sumr = 0, sumg = 0, sumb = 0, suma = 0;
-				UINT32 xchunk, ychunk;
-				UINT32 curx, cury;
+				uint64_t sumr = 0, sumg = 0, sumb = 0, suma = 0;
+				uint32_t xchunk, ychunk;
+				uint32_t curx, cury;
 
-				UINT32 yremaining = dy;
+				uint32_t yremaining = dy;
 
 				/* accumulate all source pixels that contribute to this pixel */
 				for (cury = starty; yremaining; cury += ychunk)
 				{
-					UINT32 xremaining = dx;
+					uint32_t xremaining = dx;
 
 					/* determine the Y contribution, clamping to the amount remaining */
 					ychunk = 0x1000 - (cury & 0xfff);
@@ -2477,8 +2477,8 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 					/* loop over all source pixels in the X direction */
 					for (curx = startx; xremaining; curx += xchunk)
 					{
-						UINT32 factor;
-						UINT32 pix;
+						uint32_t factor;
+						uint32_t pix;
 
 						/* determine the X contribution, clamping to the amount remaining */
 						xchunk = 0x1000 - (curx & 0xfff);
@@ -2490,7 +2490,7 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 						factor = xchunk * ychunk;
 
 						/* fetch the source pixel */
-						pix = ((UINT32 *)piece->rawbitmap->line[cury >> 12])[curx >> 12];
+						pix = ((uint32_t *)piece->rawbitmap->line[cury >> 12])[curx >> 12];
 
 						/* accumulate the RGBA values */
 						sumr += factor * RGB_RED(pix);
@@ -2510,11 +2510,11 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 			/* otherwise, use bilinear filtering to scale up */
 			else
 			{
-				UINT32 pix0, pix1, pix2, pix3;
-				UINT32 sumr, sumg, sumb, suma;
-				UINT32 nextx, nexty;
-				UINT32 curx, cury;
-				UINT32 factor;
+				uint32_t pix0, pix1, pix2, pix3;
+				uint32_t sumr, sumg, sumb, suma;
+				uint32_t nextx, nexty;
+				uint32_t curx, cury;
+				uint32_t factor;
 
 				/* adjust start to the center */
 				curx = startx + dx / 2 - 0x800;
@@ -2525,14 +2525,14 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 				nexty = cury + 0x1000;
 
 				/* clamp start */
-				if ((INT32)curx < 0) curx += 0x1000;
-				if ((INT32)cury < 0) cury += 0x1000;
+				if ((int32_t)curx < 0) curx += 0x1000;
+				if ((int32_t)cury < 0) cury += 0x1000;
 
 				/* fetch the four relevant pixels */
-				pix0 = ((UINT32 *)piece->rawbitmap->line[cury >> 12])[curx >> 12];
-				pix1 = ((UINT32 *)piece->rawbitmap->line[cury >> 12])[nextx >> 12];
-				pix2 = ((UINT32 *)piece->rawbitmap->line[nexty >> 12])[curx >> 12];
-				pix3 = ((UINT32 *)piece->rawbitmap->line[nexty >> 12])[nextx >> 12];
+				pix0 = ((uint32_t *)piece->rawbitmap->line[cury >> 12])[curx >> 12];
+				pix1 = ((uint32_t *)piece->rawbitmap->line[cury >> 12])[nextx >> 12];
+				pix2 = ((uint32_t *)piece->rawbitmap->line[nexty >> 12])[curx >> 12];
+				pix3 = ((uint32_t *)piece->rawbitmap->line[nexty >> 12])[nextx >> 12];
 
 				/* compute the x/y scaling factors */
 				curx &= 0xfff;
@@ -2580,8 +2580,8 @@ static int scale_bitmap(struct artwork_piece *piece, int newwidth, int newheight
 			b = (b * global_brightness) >> 16;
 
 			/* store to both bitmaps */
-			*((UINT32 *)piece->prebitmap->base + y * piece->prebitmap->rowpixels + x) = compute_pre_pixel(a,r,g,b);
-			*((UINT32 *)piece->yrgbbitmap->base + y * piece->yrgbbitmap->rowpixels + x) = compute_yrgb_pixel(a,r,g,b);
+			*((uint32_t *)piece->prebitmap->base + y * piece->prebitmap->rowpixels + x) = compute_pre_pixel(a,r,g,b);
+			*((uint32_t *)piece->yrgbbitmap->base + y * piece->yrgbbitmap->rowpixels + x) = compute_yrgb_pixel(a,r,g,b);
 
 			/* look for state changes */
 			newstate = (a != 0);
@@ -2617,7 +2617,7 @@ return 1;
 
 static void trim_bitmap(struct artwork_piece *piece)
 {
-	UINT32 *hintbase = piece->scanlinehint;
+	uint32_t *hintbase = piece->scanlinehint;
 	int top, bottom, left, right;
 	int x, y, height, width;
 
@@ -2646,7 +2646,7 @@ static void trim_bitmap(struct artwork_piece *piece)
 	right = 0;
 	for (y = top; y <= bottom; y++)
 	{
-		const UINT32 *hintdata = &hintbase[y * MAX_HINTS_PER_SCANLINE];
+		const uint32_t *hintdata = &hintbase[y * MAX_HINTS_PER_SCANLINE];
 
 		/* check the minimum against the left */
 		if (hintdata[0] && (hintdata[0] >> 16) < left)
@@ -2669,20 +2669,20 @@ static void trim_bitmap(struct artwork_piece *piece)
 	/* now shift the bitmap data */
 	for (y = top; y <= bottom; y++)
 	{
-		UINT32 *hintsrc = &hintbase[y * MAX_HINTS_PER_SCANLINE];
-		UINT32 *hintdst = &hintbase[(y - top) * MAX_HINTS_PER_SCANLINE];
-		UINT32 *dst1 = (UINT32 *)piece->prebitmap->base + (y - top) * piece->prebitmap->rowpixels;
-		UINT32 *dst2 = (UINT32 *)piece->yrgbbitmap->base + (y - top) * piece->yrgbbitmap->rowpixels;
-		UINT32 *src1 = (UINT32 *)piece->prebitmap->base + y * piece->prebitmap->rowpixels + left;
-		UINT32 *src2 = (UINT32 *)piece->yrgbbitmap->base + y * piece->yrgbbitmap->rowpixels + left;
+		uint32_t *hintsrc = &hintbase[y * MAX_HINTS_PER_SCANLINE];
+		uint32_t *hintdst = &hintbase[(y - top) * MAX_HINTS_PER_SCANLINE];
+		uint32_t *dst1 = (uint32_t *)piece->prebitmap->base + (y - top) * piece->prebitmap->rowpixels;
+		uint32_t *dst2 = (uint32_t *)piece->yrgbbitmap->base + (y - top) * piece->yrgbbitmap->rowpixels;
+		uint32_t *src1 = (uint32_t *)piece->prebitmap->base + y * piece->prebitmap->rowpixels + left;
+		uint32_t *src2 = (uint32_t *)piece->yrgbbitmap->base + y * piece->yrgbbitmap->rowpixels + left;
 
-		memmove(dst1, src1, (right - left + 1) * sizeof(UINT32));
-		memmove(dst2, src2, (right - left + 1) * sizeof(UINT32));
+		memmove(dst1, src1, (right - left + 1) * sizeof(uint32_t));
+		memmove(dst2, src2, (right - left + 1) * sizeof(uint32_t));
 
 		/* adjust the hints */
 		for (x = 0; x < MAX_HINTS_PER_SCANLINE; x++)
 		{
-			UINT32 data = hintsrc[x];
+			uint32_t data = hintsrc[x];
 			if (data)
 				data -= (left << 16) | left;
 			hintdst[x] = data;
@@ -2912,7 +2912,7 @@ static int generate_rect_piece(struct artwork_piece *piece, const struct overlay
 	overlay piece
 -------------------------------------------------*/
 
-static void render_disk(struct mame_bitmap *bitmap, int r, UINT32 color)
+static void render_disk(struct mame_bitmap *bitmap, int r, uint32_t color)
 {
 	int xc = bitmap->width / 2, yc = bitmap->height / 2;
 	int x = 0, twox = 0;
@@ -3202,9 +3202,9 @@ static int parse_art_file(mame_file *file)
 	components
 -------------------------------------------------*/
 
-static int compute_rgb_components(int depth, UINT32 rgb_components[3], UINT32 rgb32_components[3])
+static int compute_rgb_components(int depth, uint32_t rgb_components[3], uint32_t rgb32_components[3])
 {
-	UINT32 temp;
+	uint32_t temp;
 	int r, g, b;
 
 	/* first convert the RGB components we got back into shifts */
@@ -3269,7 +3269,7 @@ static int compute_rgb_components(int depth, UINT32 rgb_components[3], UINT32 rg
 	hint record for the specified scanline
 -------------------------------------------------*/
 
-static void add_range_to_hint(UINT32 *hintbase, int scanline, int startx, int endx)
+static void add_range_to_hint(uint32_t *hintbase, int scanline, int startx, int endx)
 {
 	int closestdiff = 100000, closestindex = -1;
 	int i;
@@ -3280,7 +3280,7 @@ static void add_range_to_hint(UINT32 *hintbase, int scanline, int startx, int en
 	/* first, look for an intersection */
 	for (i = 0; i < MAX_HINTS_PER_SCANLINE; i++)
 	{
-		UINT32 hint = hintbase[i];
+		uint32_t hint = hintbase[i];
 		int hintstart = hint >> 16;
 		int hintend = hint & 0xffff;
 		int diff;
@@ -3313,7 +3313,7 @@ static void add_range_to_hint(UINT32 *hintbase, int scanline, int startx, int en
 	/* okay, we didn't find an intersection; do we have room to add? */
 	if (i < MAX_HINTS_PER_SCANLINE)
 	{
-		UINT32 newhint = (startx << 16) | endx;
+		uint32_t newhint = (startx << 16) | endx;
 
 		/* if there's nothing there yet, just assign to the first entry */
 		if (i == 0)
@@ -3338,7 +3338,7 @@ static void add_range_to_hint(UINT32 *hintbase, int scanline, int startx, int en
 intersect:
 	/* intersect with the closest entry */
 	{
-		UINT32 hint = hintbase[closestindex];
+		uint32_t hint = hintbase[closestindex];
 		int hintstart = hint >> 16;
 		int hintend = hint & 0xffff;
 

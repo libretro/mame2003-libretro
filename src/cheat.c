@@ -657,19 +657,19 @@ enum
 
 struct CheatAction
 {
-	UINT32	type;
-	UINT32	address;
-	UINT32	data;
-	UINT32	extendData;
-	UINT32	originalDataField;
+	uint32_t	type;
+	uint32_t	address;
+	uint32_t	data;
+	uint32_t	extendData;
+	uint32_t	originalDataField;
 
-	INT32	frameTimer;
-	UINT32	lastValue;
+	int32_t	frameTimer;
+	uint32_t	lastValue;
 
-	UINT32	flags;
+	uint32_t	flags;
 
-	UINT8	** cachedPointer;
-	UINT32	cachedOffset;
+	uint8_t	** cachedPointer;
+	uint32_t	cachedOffset;
 
 	char	* optionalName;
 };
@@ -681,12 +681,12 @@ struct CheatEntry
 	char			* name;
 	char			* comment;
 
-	INT32			actionListLength;
+	int32_t			actionListLength;
 	CheatAction		* actionList;
 
 	int				activationKey;
 
-	UINT32			flags;
+	uint32_t			flags;
 	int				selection;
 };
 
@@ -694,20 +694,20 @@ typedef struct CheatEntry	CheatEntry;
 
 struct WatchInfo
 {
-	UINT32			address;
-	UINT8			cpu;
-	UINT8			numElements;
-	UINT8			elementBytes;
-	UINT8			labelType;
-	UINT8			displayType;
-	UINT8			skip;
-	UINT8			elementsPerLine;
-	INT8			addValue;
-	INT8			addressShift;
-	INT8			dataShift;
-	UINT32			xor;
+	uint32_t			address;
+	uint8_t			cpu;
+	uint8_t			numElements;
+	uint8_t			elementBytes;
+	uint8_t			labelType;
+	uint8_t			displayType;
+	uint8_t			skip;
+	uint8_t			elementsPerLine;
+	int8_t			addValue;
+	int8_t			addressShift;
+	int8_t			dataShift;
+	uint32_t			xor;
 
-	UINT16			x, y;
+	uint16_t			x, y;
 
 	CheatEntry *	linkedCheat;
 
@@ -718,74 +718,74 @@ typedef struct WatchInfo	WatchInfo;
 
 struct SearchRegion
 {
-	UINT32	address;
-	UINT32	length;
+	uint32_t	address;
+	uint32_t	length;
 
-	UINT8	targetType;
-	UINT8	targetIdx;
+	uint8_t	targetType;
+	uint8_t	targetIdx;
 
-	UINT8	flags;
+	uint8_t	flags;
 
-	UINT8	* cachedPointer;
+	uint8_t	* cachedPointer;
 	const struct Memory_WriteAddress
 			* writeHandler;
 
-	UINT8	* first;
-	UINT8	* last;
+	uint8_t	* first;
+	uint8_t	* last;
 
-	UINT8	* status;
+	uint8_t	* status;
 
-	UINT8	* backupLast;
-	UINT8	* backupStatus;
+	uint8_t	* backupLast;
+	uint8_t	* backupStatus;
 
 	/* 12345678 - 12345678 BANK31 */
 	char	name[32];
 
-	UINT32	numResults;
-	UINT32	oldNumResults;
+	uint32_t	numResults;
+	uint32_t	oldNumResults;
 };
 
 typedef struct SearchRegion	SearchRegion;
 
 struct OldSearchOptions
 {
-	UINT8	energy;
-	UINT8	status;
-	UINT8	slow;
-	UINT32	value;
-	UINT32	delta;
+	uint8_t	energy;
+	uint8_t	status;
+	uint8_t	slow;
+	uint32_t	value;
+	uint32_t	delta;
 };
 
 typedef struct OldSearchOptions	OldSearchOptions;
 
 struct SearchInfo
 {
-	INT32				regionListLength;
+	int32_t				regionListLength;
 	SearchRegion		* regionList;
 
 	char				* name;
 
-	INT8				bytes;	/* 0 = 1, 1 = 2, 2 = 4, 3 = bit */
-	UINT8				swap;
-	UINT8				sign;
-	INT8				lhs;
-	INT8				rhs;
-	INT8				comparison;
+	int8_t				bytes;	/* 0 = 1, 1 = 2, 2 = 4, 3 = bit */
+	uint8_t				swap;
+	uint8_t				sign;
+	int8_t				lhs;
+	int8_t				rhs;
+	int8_t				comparison;
 
-	UINT8				targetType;	/* cpu/region */
-	UINT8				targetIdx;	/* cpu or region index */
+	uint8_t				targetType;	/* cpu/region */
+	uint8_t				targetIdx;	/* cpu or region index */
 
-	UINT32				value;
+	uint32_t				value;
 
-	UINT8				searchSpeed;
+	uint8_t				searchSpeed;
 
-	UINT32				numResults;
-	UINT32				oldNumResults;
+	uint32_t				numResults;
+	uint32_t				oldNumResults;
 
-	INT32				currentRegionIdx;
-	INT32				currentResultsPage;
+	int32_t				currentRegionIdx;
+	int32_t				currentResultsPage;
 
-	UINT8				backupValid;
+	uint8_t				backupValid;
 
 	OldSearchOptions	oldOptions;
 };
@@ -794,13 +794,13 @@ typedef struct SearchInfo	SearchInfo;
 
 struct CPUInfo
 {
-	UINT8	type;
-	UINT8	dataBits;
-	UINT8	addressBits;
-	UINT8	addressCharsNeeded;
-	UINT32	addressMask;
-	UINT8	endianness;
-	UINT8	addressShift;
+	uint8_t	type;
+	uint8_t	dataBits;
+	uint8_t	addressBits;
+	uint8_t	addressCharsNeeded;
+	uint32_t	addressMask;
+	uint8_t	endianness;
+	uint8_t	addressShift;
 };
 
 typedef struct CPUInfo	CPUInfo;
@@ -816,19 +816,19 @@ struct MenuStringList
 
 	char	* buf;				/* string storage*/
 
-	UINT32	length;				/* number of menu items supported*/
-	UINT32	numStrings;			/* number of strings supported*/
-	UINT32	mainStringLength;	/* max length of main string*/
-	UINT32	subStringLength;	/* max length of sub string*/
+	uint32_t	length;				/* number of menu items supported*/
+	uint32_t	numStrings;			/* number of strings supported*/
+	uint32_t	mainStringLength;	/* max length of main string*/
+	uint32_t	subStringLength;	/* max length of sub string*/
 };
 
 typedef struct MenuStringList	MenuStringList;
 
 struct MenuItemInfoStruct
 {
-	UINT32	subcheat;
-	UINT32	fieldType;
-	UINT32	extraData;
+	uint32_t	subcheat;
+	uint32_t	fieldType;
+	uint32_t	extraData;
 };
 
 typedef struct MenuItemInfoStruct	MenuItemInfoStruct;
@@ -836,14 +836,14 @@ typedef struct MenuItemInfoStruct	MenuItemInfoStruct;
 /**** Local Globals **********************************************************/
 
 static CheatEntry			* cheatList = NULL;
-static INT32				cheatListLength = 0;
+static int32_t				cheatListLength = 0;
 
 static WatchInfo			* watchList = NULL;
-static INT32				watchListLength = 0;
+static int32_t				watchListLength = 0;
 
 static SearchInfo			* searchList = NULL;
-static INT32				searchListLength = 0;
-static INT32				currentSearchIdx = 0;
+static int32_t				searchListLength = 0;
+static int32_t				currentSearchIdx = 0;
 
 static CPUInfo				cpuInfoList[MAX_CPU];
 static CPUInfo				regionInfoList[kRegionListLength];
@@ -858,7 +858,7 @@ static int					fullMenuPageHeight = 0;
 static MenuStringList		menuStrings;
 
 static MenuItemInfoStruct	* menuItemInfo;
-static INT32				menuItemInfoLength = 0;
+static int32_t				menuItemInfoLength = 0;
 
 static int					useClassicSearchBox = 1;
 static int					dontPrintNewLabels = 0;
@@ -946,7 +946,7 @@ static const int	kSearchByteDecDigitsTable[] =
 	1
 };
 
-static const UINT32 kSearchByteMaskTable[] =
+static const uint32_t kSearchByteMaskTable[] =
 {
 	0x000000FF,
 	0x0000FFFF,
@@ -954,7 +954,7 @@ static const UINT32 kSearchByteMaskTable[] =
 	0x00000001
 };
 
-static const UINT32	kSearchByteSignBitTable[] =
+static const uint32_t	kSearchByteSignBitTable[] =
 {
 	0x00000080,
 	0x00008000,
@@ -962,7 +962,7 @@ static const UINT32	kSearchByteSignBitTable[] =
 	0x00000000
 };
 
-static const UINT32 kSearchByteUnsignedMaskTable[] =
+static const uint32_t kSearchByteUnsignedMaskTable[] =
 {
 	0x0000007F,
 	0x00007FFF,
@@ -970,7 +970,7 @@ static const UINT32 kSearchByteUnsignedMaskTable[] =
 	0x00000001
 };
 
-static const UINT32	kCheatSizeMaskTable[] =
+static const uint32_t	kCheatSizeMaskTable[] =
 {
 	0x000000FF,
 	0x0000FFFF,
@@ -978,7 +978,7 @@ static const UINT32	kCheatSizeMaskTable[] =
 	0xFFFFFFFF
 };
 
-static const UINT32	kCheatSizeDigitsTable[] =
+static const uint32_t	kCheatSizeDigitsTable[] =
 {
 	2,
 	4,
@@ -1046,7 +1046,7 @@ static const int kOldStatusComparisonTable[] =
 	kSearchComparison_NotEqual
 };
 
-static const UINT32 kPrefillValueTable[] =
+static const uint32_t kPrefillValueTable[] =
 {
 	0x00,
 	0xFF,
@@ -1080,20 +1080,20 @@ static int		ReadHexInput(void);
 
 static char *	DoDynamicEditTextField(char * buf);
 static void		DoStaticEditTextField(char * buf, int size);
-static UINT32	DoEditHexField(UINT32 data);
-static UINT32	DoEditHexFieldSigned(UINT32 data, UINT32 mask);
-static INT32	DoEditDecField(INT32 data, INT32 min, INT32 max);
+static uint32_t	DoEditHexField(uint32_t data);
+static uint32_t	DoEditHexFieldSigned(uint32_t data, uint32_t mask);
+static int32_t	DoEditDecField(int32_t data, int32_t min, int32_t max);
 
-static UINT32	DoShift(UINT32 input, INT8 shift);
-static UINT32	BCDToDecimal(UINT32 value);
-static UINT32	DecimalToBCD(UINT32 value);
+static uint32_t	DoShift(uint32_t input, int8_t shift);
+static uint32_t	BCDToDecimal(uint32_t value);
+static uint32_t	DecimalToBCD(uint32_t value);
 
 static void		RebuildStringTables(void);
-static void		RequestStrings(UINT32 length, UINT32 numStrings, UINT32 mainStringLength, UINT32 subStringLength);
+static void		RequestStrings(uint32_t length, uint32_t numStrings, uint32_t mainStringLength, uint32_t subStringLength);
 static void		InitStringTable(void);
 static void		FreeStringTable(void);
 
-static INT32	UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, CheatEntry * entry);
+static int32_t	UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, CheatEntry * entry);
 static int		EnableDisableCheatMenu(struct mame_bitmap * bitmap, int selection, int firstTime);
 static int		EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int selection);
 static int		DoSearchMenuClassic(struct mame_bitmap * bitmap, int selection, int startNew);
@@ -1102,47 +1102,47 @@ static int		AddEditCheatMenu(struct mame_bitmap * bitmap, int selection);
 static int		ViewSearchResults(struct mame_bitmap * bitmap, int selection, int firstTime);
 static int		ChooseWatch(struct mame_bitmap * bitmap, int selection);
 static int		EditWatch(struct mame_bitmap * bitmap, WatchInfo * entry, int selection);
-static INT32	DisplayHelp(struct mame_bitmap * bitmap, int selection);
+static int32_t	DisplayHelp(struct mame_bitmap * bitmap, int selection);
 static int		SelectOptions(struct mame_bitmap * bitmap, int selection);
 static int		SelectSearchRegions(struct mame_bitmap * bitmap, int selection, SearchInfo * search);
 static int		SelectSearch(struct mame_bitmap * bitmap, int selection);
 
 static char *	CreateStringCopy(char * buf);
 
-static void		ResizeCheatList(UINT32 newLength);
-static void		ResizeCheatListNoDispose(UINT32 newLength);
-static void		AddCheatBefore(UINT32 idx);
-static void		DeleteCheatAt(UINT32 idx);
+static void		ResizeCheatList(uint32_t newLength);
+static void		ResizeCheatListNoDispose(uint32_t newLength);
+static void		AddCheatBefore(uint32_t idx);
+static void		DeleteCheatAt(uint32_t idx);
 static void		DisposeCheat(CheatEntry * entry);
 static CheatEntry *	GetNewCheat(void);
 
-static void		ResizeCheatActionList(CheatEntry * entry, UINT32 newLength);
-static void		ResizeCheatActionListNoDispose(CheatEntry * entry, UINT32 newLength);
-static void		AddActionBefore(CheatEntry * entry, UINT32 idx);
-static void		DeleteActionAt(CheatEntry * entry, UINT32 idx);
+static void		ResizeCheatActionList(CheatEntry * entry, uint32_t newLength);
+static void		ResizeCheatActionListNoDispose(CheatEntry * entry, uint32_t newLength);
+static void		AddActionBefore(CheatEntry * entry, uint32_t idx);
+static void		DeleteActionAt(CheatEntry * entry, uint32_t idx);
 static void		DisposeAction(CheatAction * action);
 
-static void		InitWatch(WatchInfo * info, UINT32 idx);
-static void		ResizeWatchList(UINT32 newLength);
-static void		ResizeWatchListNoDispose(UINT32 newLength);
-static void		AddWatchBefore(UINT32 idx);
-static void		DeleteWatchAt(UINT32 idx);
+static void		InitWatch(WatchInfo * info, uint32_t idx);
+static void		ResizeWatchList(uint32_t newLength);
+static void		ResizeWatchListNoDispose(uint32_t newLength);
+static void		AddWatchBefore(uint32_t idx);
+static void		DeleteWatchAt(uint32_t idx);
 static void		DisposeWatch(WatchInfo * watch);
 static WatchInfo *	GetUnusedWatch(void);
 static void		AddCheatFromWatch(WatchInfo * watch);
 static void		SetupCheatFromWatchAsWatch(CheatEntry * entry, WatchInfo * watch);
 
-static void		ResizeSearchList(UINT32 newLength);
-static void		ResizeSearchListNoDispose(UINT32 newLength);
-static void		AddSearchBefore(UINT32 idx);
-static void		DeleteSearchAt(UINT32 idx);
+static void		ResizeSearchList(uint32_t newLength);
+static void		ResizeSearchListNoDispose(uint32_t newLength);
+static void		AddSearchBefore(uint32_t idx);
+static void		DeleteSearchAt(uint32_t idx);
 static void		InitSearch(SearchInfo * info);
 static void		DisposeSearchRegions(SearchInfo * info);
-static void		DisposeSearch(UINT32 idx);
+static void		DisposeSearch(uint32_t idx);
 static SearchInfo *	GetCurrentSearch(void);
 
-static void		FillBufferFromRegion(SearchRegion * region, UINT8 * buf);
-static UINT32	ReadRegionData(SearchRegion * region, UINT32 offset, UINT8 size, UINT8 swap);
+static void		FillBufferFromRegion(SearchRegion * region, uint8_t * buf);
+static uint32_t	ReadRegionData(SearchRegion * region, uint32_t offset, uint8_t size, uint8_t swap);
 static void		BackupSearch(SearchInfo * info);
 static void		RestoreSearchBackup(SearchInfo * info);
 static void		BackupRegion(SearchRegion * region);
@@ -1153,29 +1153,29 @@ static void		BuildSearchRegions(SearchInfo * info);
 
 static int		ConvertOldCode(int code, int cpu, int * data, int * extendData);
 static int		MatchCommandCheatLine(char * buf);
-static void		HandleLocalCommandCheat(UINT32 type, UINT32 address, UINT32 data, UINT32 extendData, char * name, char * description);
+static void		HandleLocalCommandCheat(uint32_t type, uint32_t address, uint32_t data, uint32_t extendData, char * name, char * description);
 
 static void		LoadCheatDatabase(void);
 static void		DisposeCheatDatabase(void);
 
 static void		SaveCheat(CheatEntry * entry);
 static void		DoAutoSaveCheats(void);
-static void		AddCheatFromResult(SearchInfo * search, SearchRegion * region, UINT32 address);
+static void		AddCheatFromResult(SearchInfo * search, SearchRegion * region, uint32_t address);
 static void		AddCheatFromFirstResult(SearchInfo * search);
-static void		AddWatchFromResult(SearchInfo * search, SearchRegion * region, UINT32 address);
+static void		AddWatchFromResult(SearchInfo * search, SearchRegion * region, uint32_t address);
 
-static UINT32	SearchSignExtend(SearchInfo * search, UINT32 value);
-static UINT32	ReadSearchOperand(UINT8 type, SearchInfo * search, SearchRegion * region, UINT32 address);
-static UINT32	ReadSearchOperandBit(UINT8 type, SearchInfo * search, SearchRegion * region, UINT32 address);
-static UINT8	DoSearchComparison(SearchInfo * search, UINT32 lhs, UINT32 rhs);
-static UINT32	DoSearchComparisonBit(SearchInfo * search, UINT32 lhs, UINT32 rhs);
-/*static UINT8	IsRegionOffsetValid(SearchInfo * search, SearchRegion * region, UINT32 offset);*/
+static uint32_t	SearchSignExtend(SearchInfo * search, uint32_t value);
+static uint32_t	ReadSearchOperand(uint8_t type, SearchInfo * search, SearchRegion * region, uint32_t address);
+static uint32_t	ReadSearchOperandBit(uint8_t type, SearchInfo * search, SearchRegion * region, uint32_t address);
+static uint8_t	DoSearchComparison(SearchInfo * search, uint32_t lhs, uint32_t rhs);
+static uint32_t	DoSearchComparisonBit(SearchInfo * search, uint32_t lhs, uint32_t rhs);
+/*static uint8_t	IsRegionOffsetValid(SearchInfo * search, SearchRegion * region, uint32_t offset);*/
 
 #define IsRegionOffsetValid	IsRegionOffsetValidBit
 
-static UINT8	IsRegionOffsetValidBit(SearchInfo * search, SearchRegion * region, UINT32 offset);
-static void		InvalidateRegionOffset(SearchInfo * search, SearchRegion * region, UINT32 offset);
-static void		InvalidateRegionOffsetBit(SearchInfo * search, SearchRegion * region, UINT32 offset, UINT32 invalidate);
+static uint8_t	IsRegionOffsetValidBit(SearchInfo * search, SearchRegion * region, uint32_t offset);
+static void		InvalidateRegionOffset(SearchInfo * search, SearchRegion * region, uint32_t offset);
+static void		InvalidateRegionOffsetBit(SearchInfo * search, SearchRegion * region, uint32_t offset, uint32_t invalidate);
 static void		InvalidateEntireRegion(SearchInfo * search, SearchRegion * region);
 
 static void		InitializeNewSearch(SearchInfo * search);
@@ -1183,25 +1183,25 @@ static void		UpdateSearch(SearchInfo * search);
 
 static void		DoSearch(SearchInfo * search);
 
-static UINT8 **	LookupHandlerMemory(UINT8 cpu, UINT32 address, UINT32 * outRelativeAddress);
+static uint8_t **	LookupHandlerMemory(uint8_t cpu, uint32_t address, uint32_t * outRelativeAddress);
 
-static UINT32	DoCPURead(UINT8 cpu, UINT32 address, UINT8 bytes, UINT8 swap);
-static UINT32	DoMemoryRead(UINT8 * buf, UINT32 address, UINT8 bytes, UINT8 swap, CPUInfo * info);
-static void		DoCPUWrite(UINT32 data, UINT8 cpu, UINT32 address, UINT8 bytes, UINT8 swap);
-static void		DoMemoryWrite(UINT32 data, UINT8 * buf, UINT32 address, UINT8 bytes, UINT8 swap, CPUInfo * info);
+static uint32_t	DoCPURead(uint8_t cpu, uint32_t address, uint8_t bytes, uint8_t swap);
+static uint32_t	DoMemoryRead(uint8_t * buf, uint32_t address, uint8_t bytes, uint8_t swap, CPUInfo * info);
+static void		DoCPUWrite(uint32_t data, uint8_t cpu, uint32_t address, uint8_t bytes, uint8_t swap);
+static void		DoMemoryWrite(uint32_t data, uint8_t * buf, uint32_t address, uint8_t bytes, uint8_t swap, CPUInfo * info);
 
-static UINT8	CPUNeedsSwap(UINT8 cpu);
-static UINT8	RegionNeedsSwap(UINT8 region);
+static uint8_t	CPUNeedsSwap(uint8_t cpu);
+static uint8_t	RegionNeedsSwap(uint8_t region);
 
-static CPUInfo *	GetCPUInfo(UINT8 cpu);
-static CPUInfo *	GetRegionCPUInfo(UINT8 region);
+static CPUInfo *	GetCPUInfo(uint8_t cpu);
+static CPUInfo *	GetRegionCPUInfo(uint8_t region);
 
-static UINT32	SwapAddress(UINT32 address, UINT8 dataSize, CPUInfo * info);
+static uint32_t	SwapAddress(uint32_t address, uint8_t dataSize, CPUInfo * info);
 
-static UINT32	ReadData(CheatAction * action);
-static void		WriteData(CheatAction * action, UINT32 data);
+static uint32_t	ReadData(CheatAction * action);
+static void		WriteData(CheatAction * action, uint32_t data);
 
-static void		WatchCheatEntry(CheatEntry * entry, UINT8 associate);
+static void		WatchCheatEntry(CheatEntry * entry, uint8_t associate);
 static void		AddActionWatch(CheatAction * action, CheatEntry * entry);
 static void		RemoveAssociatedWatches(CheatEntry * entry);
 
@@ -1215,9 +1215,9 @@ static void		DoCheatAction(CheatAction * action);
 static void		DoCheatEntry(CheatEntry * entry);
 
 static void		UpdateAllCheatInfo(void);
-static void		UpdateCheatInfo(CheatEntry * entry, UINT8 isLoadTime);
+static void		UpdateCheatInfo(CheatEntry * entry, uint8_t isLoadTime);
 
-static int		IsAddressInRange(CheatAction * action, UINT32 length);
+static int		IsAddressInRange(CheatAction * action, uint32_t length);
 
 static void		BuildCPUInfoList(void);
 
@@ -1528,7 +1528,7 @@ static char * DoDynamicEditTextField(char * buf)
 	{
 		if(buf)
 		{
-			UINT32	length = strlen(buf);
+			uint32_t	length = strlen(buf);
 
 			if(length > 0)
 			{
@@ -1551,7 +1551,7 @@ static char * DoDynamicEditTextField(char * buf)
 	{
 		if(buf)
 		{
-			UINT32	length = strlen(buf);
+			uint32_t	length = strlen(buf);
 
 			buf = realloc(buf, length + 2);
 
@@ -1573,7 +1573,7 @@ static char * DoDynamicEditTextField(char * buf)
 static void DoStaticEditTextField(char * buf, int size)
 {
 	char	code = osd_readkey_unicode(0) & 0xFF;
-	UINT32	length;
+	uint32_t	length;
 
 	if(!buf)
 		return;
@@ -1597,9 +1597,9 @@ static void DoStaticEditTextField(char * buf, int size)
 	}
 }
 
-static UINT32 DoEditHexField(UINT32 data)
+static uint32_t DoEditHexField(uint32_t data)
 {
-	INT8	key;
+	int8_t	key;
 
 	key = ReadHexInput();
 
@@ -1612,10 +1612,10 @@ static UINT32 DoEditHexField(UINT32 data)
 	return data;
 }
 
-static UINT32 DoEditHexFieldSigned(UINT32 data, UINT32 mask)
+static uint32_t DoEditHexFieldSigned(uint32_t data, uint32_t mask)
 {
-	INT8	key;
-	UINT32	isNegative = data & mask;
+	int8_t	key;
+	uint32_t	isNegative = data & mask;
 
 	if(isNegative)
 		data |= mask;
@@ -1641,7 +1641,7 @@ static UINT32 DoEditHexFieldSigned(UINT32 data, UINT32 mask)
 	return data;
 }
 
-static INT32 DoEditDecField(INT32 data, INT32 min, INT32 max)
+static int32_t DoEditDecField(int32_t data, int32_t min, int32_t max)
 {
 	char	code = osd_readkey_unicode(0) & 0xFF;
 
@@ -1780,9 +1780,9 @@ int cheat_menu(struct mame_bitmap * bitmap, int selection)
 	};
 
 	const char		* menu_item[kMenu_Max + 1];
-	INT32			sel;
-	UINT8			total;
-	static INT32	submenu_choice = 0;
+	int32_t			sel;
+	uint8_t			total;
+	static int32_t	submenu_choice = 0;
 	static int		firstEntry = 0;
 
 	cheatEngineWasActive = 1;
@@ -1923,7 +1923,7 @@ int cheat_menu(struct mame_bitmap * bitmap, int selection)
 	return sel + 1;
 }
 
-static UINT32 DoShift(UINT32 input, INT8 shift)
+static uint32_t DoShift(uint32_t input, int8_t shift)
 {
 	if(shift > 0)
 		return input >> shift;
@@ -1931,10 +1931,10 @@ static UINT32 DoShift(UINT32 input, INT8 shift)
 		return input << -shift;
 }
 
-static UINT32 BCDToDecimal(UINT32 value)
+static uint32_t BCDToDecimal(uint32_t value)
 {
-	UINT32	accumulator = 0;
-	UINT32	multiplier = 1;
+	uint32_t	accumulator = 0;
+	uint32_t	multiplier = 1;
 	int		i;
 
 	for(i = 0; i < 8; i++)
@@ -1948,15 +1948,15 @@ static UINT32 BCDToDecimal(UINT32 value)
 	return accumulator;
 }
 
-static UINT32 DecimalToBCD(UINT32 value)
+static uint32_t DecimalToBCD(uint32_t value)
 {
-	UINT32	accumulator = 0;
-	UINT32	divisor = 10;
+	uint32_t	accumulator = 0;
+	uint32_t	divisor = 10;
 	int		i;
 
 	for(i = 0; i < 8; i++)
 	{
-		UINT32	temp;
+		uint32_t	temp;
 
 		temp = value % divisor;
 		value -= temp;
@@ -1972,7 +1972,7 @@ static UINT32 DecimalToBCD(UINT32 value)
 
 static void RebuildStringTables(void)
 {
-	UINT32	storageNeeded, i;
+	uint32_t	storageNeeded, i;
 	char	* traverse;
 
 	storageNeeded =				(menuStrings.mainStringLength + menuStrings.subStringLength) * menuStrings.numStrings;
@@ -2024,9 +2024,9 @@ static void RebuildStringTables(void)
 	}
 }
 
-static void RequestStrings(UINT32 length, UINT32 numStrings, UINT32 mainStringLength, UINT32 subStringLength)
+static void RequestStrings(uint32_t length, uint32_t numStrings, uint32_t mainStringLength, uint32_t subStringLength)
 {
-	UINT8	changed = 0;
+	uint8_t	changed = 0;
 
 	if(menuStrings.length < length)
 	{
@@ -2079,12 +2079,12 @@ static void FreeStringTable(void)
 	memset(&menuStrings, 0, sizeof(MenuStringList));
 }
 
-static INT32 UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, CheatEntry * entry)
+static int32_t UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, CheatEntry * entry)
 {
 	char					buf[2048];
 	int						sel;
 	CheatAction				* action;
-	static INT32			value = -1;
+	static int32_t			value = -1;
 	static int				firstTime = 1;
 	int						delta = 0;
 	int						displayValue;
@@ -2098,8 +2098,8 @@ static INT32 UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, Che
 	/* if we're just entering, save the value*/
 	if(firstTime)
 	{
-		UINT32	min = EXTRACT_FIELD(action->type, UserSelectMinimum);
-		UINT32	max = action->originalDataField + min;
+		uint32_t	min = EXTRACT_FIELD(action->type, UserSelectMinimum);
+		uint32_t	max = action->originalDataField + min;
 
 		value = ReadData(action);
 
@@ -2241,8 +2241,8 @@ static INT32 UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, Che
 	/* ### this is a really bad way to do this*/
 	if(delta || forceUpdate)
 	{
-		INT32	min = EXTRACT_FIELD(action->type, UserSelectMinimum);
-		INT32	max = action->originalDataField + min;
+		int32_t	min = EXTRACT_FIELD(action->type, UserSelectMinimum);
+		int32_t	max = action->originalDataField + min;
 
 		if(TEST_FIELD(action->type, UserSelectBCD))
 		{
@@ -2270,7 +2270,7 @@ static INT32 UserSelectValueMenu(struct mame_bitmap * bitmap, int selection, Che
 	return sel + 1;
 }
 
-static INT32 CommentMenu(struct mame_bitmap * bitmap, int selection, CheatEntry * entry)
+static int32_t CommentMenu(struct mame_bitmap * bitmap, int selection, CheatEntry * entry)
 {
 	char	buf[2048];
 	int		sel;
@@ -2318,14 +2318,14 @@ static INT32 CommentMenu(struct mame_bitmap * bitmap, int selection, CheatEntry 
 
 static int EnableDisableCheatMenu(struct mame_bitmap * bitmap, int selection, int firstTime)
 {
-	INT32			sel;
-	static INT32	submenu_choice = 0;
-	static INT32	submenu_id = 0;
+	int32_t			sel;
+	static int32_t	submenu_choice = 0;
+	static int32_t	submenu_id = 0;
 	const char		** menu_item;
 	const char		** menu_subitem;
 	char			* flagBuf;
-	INT32			i;
-	INT32			total = 0;
+	int32_t			i;
+	int32_t			total = 0;
 	CheatEntry		* entry;
 
 	RequestStrings(cheatListLength + 5, 0, 0, 0);
@@ -2970,7 +2970,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 		kType_Max
 	};
 
-	INT32				sel;
+	int32_t				sel;
 	const char			** menuItem;
 	const char			** menuSubItem;
 	char				* flagBuf;
@@ -2981,15 +2981,15 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 	char				** watchSkipBuf;		/* FF*/
 	char				** watchPerLineBuf;		/* FF*/
 	char				** watchAddValueBuf;	/* FF*/
-	INT32				i;
-	INT32				total = 0;
+	int32_t				i;
+	int32_t				total = 0;
 	MenuItemInfoStruct	* info = NULL;
 	CheatAction			* action = NULL;
-	UINT8				isSelect = 0;
-	static UINT8		editActive = 0;
-	UINT32				increment = 1;
-	UINT8				dirty = 0;
-	static INT32		currentNameTemplate = 0;
+	uint8_t				isSelect = 0;
+	static uint8_t		editActive = 0;
+	uint32_t				increment = 1;
+	uint8_t				dirty = 0;
+	static int32_t		currentNameTemplate = 0;
 
 	if(!entry)
 		return 0;
@@ -3022,15 +3022,15 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 	{
 		CheatAction	* traverse = &entry->actionList[i];
 
-		UINT32		type =					EXTRACT_FIELD(traverse->type, Type);
-		UINT32		typeParameter =			EXTRACT_FIELD(traverse->type, TypeParameter);
-		UINT32		operation =				EXTRACT_FIELD(traverse->type, Operation) |
+		uint32_t		type =					EXTRACT_FIELD(traverse->type, Type);
+		uint32_t		typeParameter =			EXTRACT_FIELD(traverse->type, TypeParameter);
+		uint32_t		operation =				EXTRACT_FIELD(traverse->type, Operation) |
 											EXTRACT_FIELD(traverse->type, OperationExtend) << 2;
-		UINT32		operationParameter =	EXTRACT_FIELD(traverse->type, OperationParameter);
-		UINT32		locationType =			EXTRACT_FIELD(traverse->type, LocationType);
-		UINT32		locationParameter =		EXTRACT_FIELD(traverse->type, LocationParameter);
+		uint32_t		operationParameter =	EXTRACT_FIELD(traverse->type, OperationParameter);
+		uint32_t		locationType =			EXTRACT_FIELD(traverse->type, LocationType);
+		uint32_t		locationParameter =		EXTRACT_FIELD(traverse->type, LocationParameter);
 
-		UINT8		wasCommentOrSelect =	0;
+		uint8_t		wasCommentOrSelect =	0;
 
 		if(isSelect)
 		{
@@ -3241,7 +3241,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 					/* do watch add value field*/
 
 					{
-						INT8	temp = (traverse->data >> 24) & 0xFF;
+						int8_t	temp = (traverse->data >> 24) & 0xFF;
 
 						if(temp < 0)
 							sprintf(watchAddValueBuf[i], "-%.2X", -temp);
@@ -3405,8 +3405,8 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			if((operation != kOperation_None) || (type == kType_Watch))
 			{
-				UINT32	userSelect =		TEST_FIELD(traverse->type, UserSelectEnable);
-				UINT32	bytesUsed =			EXTRACT_FIELD(traverse->type, BytesUsed);
+				uint32_t	userSelect =		TEST_FIELD(traverse->type, UserSelectEnable);
+				uint32_t	bytesUsed =			EXTRACT_FIELD(traverse->type, BytesUsed);
 
 				if(type != kType_Watch)
 				{
@@ -3728,13 +3728,13 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_Type:
 			{
-				UINT8	handled = 0;
+				uint8_t	handled = 0;
 
 				CLEAR_MASK_FIELD(action->type, OperationExtend);
 
 				if(EXTRACT_FIELD(action->type, LocationType) == kLocation_Custom)
 				{
-					UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+					uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 					if(locationParameter == kCustomLocation_Comment)
 					{
@@ -3758,7 +3758,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 				if(!handled)
 				{
-					UINT32	type = EXTRACT_FIELD(action->type, Type);
+					uint32_t	type = EXTRACT_FIELD(action->type, Type);
 
 					if(type == kType_NormalOrDelay)
 					{
@@ -3785,7 +3785,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 			case kType_Delay:
 			case kType_IgnoreDecrementBy:
 			{
-				UINT32	delay = (EXTRACT_FIELD(action->type, TypeParameter) - 1) & 7;
+				uint32_t	delay = (EXTRACT_FIELD(action->type, TypeParameter) - 1) & 7;
 
 				SET_FIELD(action->type, TypeParameter, delay);
 			}
@@ -3813,7 +3813,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_WatchFormat:
 			{
-				UINT32	typeParameter = EXTRACT_FIELD(action->type, TypeParameter);
+				uint32_t	typeParameter = EXTRACT_FIELD(action->type, TypeParameter);
 
 				typeParameter = (typeParameter & 0xFFFFFFFC) | ((typeParameter - 0x00000001) & 0x0000003);
 				SET_FIELD(action->type, TypeParameter, typeParameter);
@@ -3826,7 +3826,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_Operation:
 			{
-				UINT32	operation = (EXTRACT_FIELD(action->type, Operation) - 1) & 7;
+				uint32_t	operation = (EXTRACT_FIELD(action->type, Operation) - 1) & 7;
 
 				CLEAR_MASK_FIELD(action->type, OperationExtend);
 				SET_FIELD(action->type, Operation, operation);
@@ -3889,7 +3889,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_ByteLength:
 			{
-				UINT32	length = (EXTRACT_FIELD(action->type, BytesUsed) - 1) & 3;
+				uint32_t	length = (EXTRACT_FIELD(action->type, BytesUsed) - 1) & 3;
 
 				SET_FIELD(action->type, BytesUsed, length);
 			}
@@ -3901,8 +3901,8 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_LocationType:
 			{
-				UINT32	locationType = EXTRACT_FIELD(action->type, LocationType);
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationType = EXTRACT_FIELD(action->type, LocationType);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				if(locationType == kLocation_Standard)
 				{
@@ -3931,7 +3931,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 			case kType_CPU:
 			case kType_Region:
 			{
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				locationParameter = (locationParameter - 1) & 31;
 
@@ -3941,7 +3941,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_PackedCPU:
 			{
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				locationParameter = ((locationParameter - 0x04) & 0x1C) | (locationParameter & 0x03);
 
@@ -3951,7 +3951,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_PackedSize:
 			{
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				locationParameter = ((locationParameter - 0x01) & 0x03) | (locationParameter & 0x1C);
 
@@ -4003,13 +4003,13 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_Type:
 			{
-				UINT8	handled = 0;
+				uint8_t	handled = 0;
 
 				CLEAR_MASK_FIELD(action->type, OperationExtend);
 
 				if(EXTRACT_FIELD(action->type, LocationType) == kLocation_Custom)
 				{
-					UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+					uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 					if(locationParameter == kCustomLocation_Comment)
 					{
@@ -4031,7 +4031,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 				if(!handled)
 				{
-					UINT32	type = EXTRACT_FIELD(action->type, Type);
+					uint32_t	type = EXTRACT_FIELD(action->type, Type);
 
 					if(type == kType_Watch)
 					{
@@ -4064,7 +4064,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 			case kType_Delay:
 			case kType_IgnoreDecrementBy:
 			{
-				UINT32	delay = (EXTRACT_FIELD(action->type, TypeParameter) + 1) & 7;
+				uint32_t	delay = (EXTRACT_FIELD(action->type, TypeParameter) + 1) & 7;
 
 				SET_FIELD(action->type, TypeParameter, delay);
 			}
@@ -4092,7 +4092,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_WatchFormat:
 			{
-				UINT32	typeParameter = EXTRACT_FIELD(action->type, TypeParameter);
+				uint32_t	typeParameter = EXTRACT_FIELD(action->type, TypeParameter);
 
 				typeParameter = (typeParameter & 0xFFFFFFFC) | ((typeParameter + 0x00000001) & 0x0000003);
 				SET_FIELD(action->type, TypeParameter, typeParameter);
@@ -4105,7 +4105,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_Operation:
 			{
-				UINT32	operation = (EXTRACT_FIELD(action->type, Operation) + 1) & 7;
+				uint32_t	operation = (EXTRACT_FIELD(action->type, Operation) + 1) & 7;
 
 				CLEAR_MASK_FIELD(action->type, OperationExtend);
 				SET_FIELD(action->type, Operation, operation);
@@ -4168,7 +4168,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_ByteLength:
 			{
-				UINT32	length = (EXTRACT_FIELD(action->type, BytesUsed) + 1) & 3;
+				uint32_t	length = (EXTRACT_FIELD(action->type, BytesUsed) + 1) & 3;
 
 				SET_FIELD(action->type, BytesUsed, length);
 			}
@@ -4180,8 +4180,8 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_LocationType:
 			{
-				UINT32	locationType = EXTRACT_FIELD(action->type, LocationType);
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationType = EXTRACT_FIELD(action->type, LocationType);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				if(locationType == kLocation_IndirectIndexed)
 				{
@@ -4210,7 +4210,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 			case kType_CPU:
 			case kType_Region:
 			{
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				locationParameter = (locationParameter + 1) & 31;
 
@@ -4220,7 +4220,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_PackedCPU:
 			{
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				locationParameter = ((locationParameter + 0x04) & 0x1C) | (locationParameter & 0x03);
 
@@ -4230,7 +4230,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_PackedSize:
 			{
-				UINT32	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
+				uint32_t	locationParameter = EXTRACT_FIELD(action->type, LocationParameter);
 
 				locationParameter = ((locationParameter + 0x01) & 0x03) | (locationParameter & 0x1C);
 
@@ -4360,7 +4360,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_WatchSize:
 			{
-				UINT32	temp = (action->originalDataField >> 0) & 0xFF;
+				uint32_t	temp = (action->originalDataField >> 0) & 0xFF;
 
 				temp++;
 				temp = DoEditHexField(temp) & 0xFF;
@@ -4373,7 +4373,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_WatchSkip:
 			{
-				UINT32	temp = (action->originalDataField >> 8) & 0xFF;
+				uint32_t	temp = (action->originalDataField >> 8) & 0xFF;
 
 				temp = DoEditHexField(temp) & 0xFF;
 
@@ -4384,7 +4384,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_WatchPerLine:
 			{
-				UINT32	temp = (action->originalDataField >> 16) & 0xFF;
+				uint32_t	temp = (action->originalDataField >> 16) & 0xFF;
 
 				temp = DoEditHexField(temp) & 0xFF;
 
@@ -4395,7 +4395,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_WatchAddValue:
 			{
-				UINT32	temp = (action->originalDataField >> 24) & 0xFF;
+				uint32_t	temp = (action->originalDataField >> 24) & 0xFF;
 
 				temp = DoEditHexFieldSigned(temp, 0xFFFFFF80) & 0xFF;
 
@@ -4416,7 +4416,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_RangeMinimum:
 			{
-				UINT32	temp;
+				uint32_t	temp;
 
 				temp = (action->extendData >> 8) & 0xFF;
 
@@ -4428,7 +4428,7 @@ static int EditCheatMenu(struct mame_bitmap * bitmap, CheatEntry * entry, int se
 
 			case kType_RangeMaximum:
 			{
-				UINT32	temp;
+				uint32_t	temp;
 
 				temp = action->extendData & 0xFF;
 
@@ -4539,22 +4539,22 @@ static int DoSearchMenuClassic(struct mame_bitmap * bitmap, int selection, int s
 		kMenu_Max
 	};
 
-	INT32			sel = selection - 1;
+	int32_t			sel = selection - 1;
 	const char		* menu_item[kMenu_Max + 2] = { 0 };
 	const char		* menu_subitem[kMenu_Max + 2] = { 0 };
 	/*char			flagBuf[kMenu_Max + 2] = { 0 };*/
 	char			valueBuffer[60];
 	char			valueSignedBuffer[60];
 	char			cpuBuffer[20];
-	INT32			total = kMenu_Max;
+	int32_t			total = kMenu_Max;
 	static int		lastPos = 0;
 
 	SearchInfo		* search = GetCurrentSearch();
 
-	/*static UINT8	editActive = 0;*/
-	UINT32			increment = 1;
-	UINT8			doSearch = 0;
-	UINT8			willHaveResults = 0;
+	/*static uint8_t	editActive = 0;*/
+	uint32_t			increment = 1;
+	uint8_t			doSearch = 0;
+	uint8_t			willHaveResults = 0;
 
 	sel = lastPos;
 
@@ -4564,7 +4564,7 @@ static int DoSearchMenuClassic(struct mame_bitmap * bitmap, int selection, int s
 
 	if(search->sign && (search->oldOptions.value & kSearchByteSignBitTable[search->bytes]))
 	{
-		UINT32	tempValue;
+		uint32_t	tempValue;
 
 		tempValue = ~search->oldOptions.value + 1;
 		tempValue &= kSearchByteUnsignedMaskTable[search->bytes];
@@ -4601,7 +4601,7 @@ static int DoSearchMenuClassic(struct mame_bitmap * bitmap, int selection, int s
 	{
 		if(search->oldOptions.delta & kSearchByteSignBitTable[search->bytes])
 		{
-			UINT32	tempValue;
+			uint32_t	tempValue;
 
 			tempValue = ~search->oldOptions.delta + 1;
 			tempValue &= kSearchByteUnsignedMaskTable[search->bytes];
@@ -4872,17 +4872,17 @@ static int DoSearchMenu(struct mame_bitmap * bitmap, int selection, int startNew
 		kMenu_Max
 	};
 
-	INT32			sel = selection - 1;
-	static INT32	submenuChoice = 0;
+	int32_t			sel = selection - 1;
+	static int32_t	submenuChoice = 0;
 	const char		* menu_item[kMenu_Max + 2] =	{ 0 };
 	const char		* menu_subitem[kMenu_Max + 2] =	{ 0 };
 	char			flagBuf[kMenu_Max + 2] = { 0 };
 	char			valueBuffer[20];
 	char			cpuBuffer[20];
 	SearchInfo		* search = GetCurrentSearch();
-	INT32			total = 0;
-	UINT32			increment = 1;
-	static UINT8	editActive = 0;
+	int32_t			total = 0;
+	uint32_t			increment = 1;
+	static uint8_t	editActive = 0;
 	static int		lastSel = 0;
 
 	sel = lastSel;
@@ -4890,7 +4890,7 @@ static int DoSearchMenu(struct mame_bitmap * bitmap, int selection, int startNew
 	if(	(search->sign || search->comparison == kSearchComparison_IncreasedBy) &&
 		(search->value & kSearchByteSignBitTable[search->bytes]))
 	{
-		UINT32	tempValue;
+		uint32_t	tempValue;
 
 		tempValue = ~search->value + 1;
 		tempValue &= kSearchByteUnsignedMaskTable[search->bytes];
@@ -5227,12 +5227,12 @@ static int DoSearchMenu(struct mame_bitmap * bitmap, int selection, int startNew
 
 static int AddEditCheatMenu(struct mame_bitmap * bitmap, int selection)
 {
-	INT32			sel;
-	static INT32	submenuChoice = 0;
-	static INT32	submenuCheat = 0;
+	int32_t			sel;
+	static int32_t	submenuChoice = 0;
+	static int32_t	submenuCheat = 0;
 	const char		** menu_item;
-	INT32			i;
-	INT32			total = 0;
+	int32_t			i;
+	int32_t			total = 0;
 	CheatEntry		* entry;
 
 	sel = selection - 1;
@@ -5374,23 +5374,23 @@ static int ViewSearchResults(struct mame_bitmap * bitmap, int selection, int fir
 		kMaxResultsPerPage = 100
 	};
 
-	INT32			sel;
+	int32_t			sel;
 	const char		** menu_item;
 	char			** buf;
 	char			* header;
-	INT32			total = 0;
+	int32_t			total = 0;
 	SearchInfo		* search = GetCurrentSearch();
 	SearchRegion	* region;
-	INT32			numPages;
-	INT32			resultsPerPage;
-	INT32			i;
-	UINT32			traverse;
-	UINT8			hadResults = 0;
-	INT32			numToSkip;
-	UINT32			resultsFound = 0;
-	UINT32			selectedAddress = 0;
-	UINT32			selectedOffset = 0;
-	UINT8			selectedAddressGood = 0;
+	int32_t			numPages;
+	int32_t			resultsPerPage;
+	int32_t			i;
+	uint32_t			traverse;
+	uint8_t			hadResults = 0;
+	int32_t			numToSkip;
+	uint32_t			resultsFound = 0;
+	uint32_t			selectedAddress = 0;
+	uint32_t			selectedOffset = 0;
+	uint8_t			selectedAddressGood = 0;
 	int				goToNextPage = 0;
 	int				goToPrevPage = 0;
 
@@ -5609,7 +5609,7 @@ static int ViewSearchResults(struct mame_bitmap * bitmap, int selection, int fir
 
 			{
 				SearchRegion	* newRegion = &search->regionList[search->currentRegionIdx];
-				UINT32			nextNumPages = (newRegion->numResults / kSearchByteIncrementTable[search->bytes] + resultsPerPage - 1) / resultsPerPage;
+				uint32_t			nextNumPages = (newRegion->numResults / kSearchByteIncrementTable[search->bytes] + resultsPerPage - 1) / resultsPerPage;
 
 				if(nextNumPages <= 0)
 					nextNumPages = 1;
@@ -5679,13 +5679,13 @@ static int ViewSearchResults(struct mame_bitmap * bitmap, int selection, int fir
 
 static int ChooseWatch(struct mame_bitmap * bitmap, int selection)
 {
-	INT32			sel;
-	static INT32	submenuChoice = 0;
-	static INT32	submenuWatch = 0;
+	int32_t			sel;
+	static int32_t	submenuChoice = 0;
+	static int32_t	submenuWatch = 0;
 	WatchInfo		* watch;
 	const char		** menuItem;
 	char			** buf;
-	INT32			total = 0;
+	int32_t			total = 0;
 	int				i;
 
 	RequestStrings(watchListLength + 2, watchListLength, 30, 0);
@@ -5881,14 +5881,14 @@ static int EditWatch(struct mame_bitmap * bitmap, WatchInfo * entry, int selecti
 		"32 Bit"
 	};
 
-	INT32			sel;
+	int32_t			sel;
 	const char		** menuItem;
 	const char		** menuSubItem;
 	char			** buf;
 	char			* flagBuf;
-	INT32			total = 0;
-	UINT32			increment = 1;
-	static UINT8	editActive = 0;
+	int32_t			total = 0;
+	uint32_t			increment = 1;
+	static uint8_t	editActive = 0;
 
 	if(!entry)
 		return 0;
@@ -6353,11 +6353,11 @@ static int SelectSearchRegions(struct mame_bitmap * bitmap, int selection, Searc
 		"All Memory"
 	};
 
-	INT32			sel;
+	int32_t			sel;
 	const char		** menuItem;
 	const char		** menuSubItem;
-	INT32			i;
-	INT32			total = 0;
+	int32_t			i;
+	int32_t			total = 0;
 	SearchRegion	* region;
 
 	if(!search)
@@ -6496,11 +6496,11 @@ static int SelectSearchRegions(struct mame_bitmap * bitmap, int selection, Searc
 
 static int SelectSearch(struct mame_bitmap * bitmap, int selection)
 {
-	INT32			sel;
+	int32_t			sel;
 	const char		** menuItem;
 	char			** buf;
-	INT32			i;
-	INT32			total = 0;
+	int32_t			i;
+	int32_t			total = 0;
 
 	sel = selection - 1;
 
@@ -6615,7 +6615,7 @@ static int SelectSearch(struct mame_bitmap * bitmap, int selection)
 	return sel + 1;
 }
 
-static INT32 DisplayHelp(struct mame_bitmap * bitmap, int selection)
+static int32_t DisplayHelp(struct mame_bitmap * bitmap, int selection)
 {
 	char	buf[2048];
 	int		sel;
@@ -6669,8 +6669,8 @@ static int SelectOptions(struct mame_bitmap * bitmap, int selection)
 		kMenu_Max
 	};
 
-	INT32			sel;
-	static INT32	submenuChoice = 0;
+	int32_t			sel;
+	static int32_t	submenuChoice = 0;
 	const char		* menuItem[kMenu_Max + 1];
 	const char		* menuSubItem[kMenu_Max + 1];
 	int				total = 0;
@@ -6862,10 +6862,10 @@ void DoCheat(struct mame_bitmap * bitmap)
 	}
 }
 
-UINT32 PrintBinary(char * buf, UINT32 data, UINT32 mask)
+uint32_t PrintBinary(char * buf, uint32_t data, uint32_t mask)
 {
-	UINT32	traverse = 0x80000000;
-	UINT32	written = 0;
+	uint32_t	traverse = 0x80000000;
+	uint32_t	written = 0;
 
 	while(traverse)
 	{
@@ -6883,7 +6883,7 @@ UINT32 PrintBinary(char * buf, UINT32 data, UINT32 mask)
 	return written;
 }
 
-UINT32 PrintASCII(char * buf, UINT32 data, UINT8 size)
+uint32_t PrintASCII(char * buf, uint32_t data, uint8_t size)
 {
 	switch(size)
 	{
@@ -6928,7 +6928,7 @@ void DisplayWatches(struct mame_bitmap * bitmap)
 		int			j;
 		WatchInfo	* info = &watchList[i];
 		char		buf[1024];
-		UINT32		address = info->address;
+		uint32_t		address = info->address;
 		int			xOffset = 0, yOffset = 0;
 		int			numChars;
 		int			lineElements = 0;
@@ -6954,7 +6954,7 @@ void DisplayWatches(struct mame_bitmap * bitmap)
 
 			for(j = 0; j < info->numElements; j++)
 			{
-				UINT32	data;
+				uint32_t	data;
 
 				data = (DoCPURead(info->cpu, address, kSearchByteIncrementTable[info->elementBytes], CPUNeedsSwap(info->cpu)) + info->addValue) & kSearchByteMaskTable[info->elementBytes];
 				data = DoShift(data, info->dataShift);
@@ -7016,7 +7016,7 @@ static char * CreateStringCopy(char * buf)
 
 	if(buf)
 	{
-		UINT32	length = strlen(buf) + 1;
+		uint32_t	length = strlen(buf) + 1;
 
 		temp = malloc(length);
 
@@ -7029,7 +7029,7 @@ static char * CreateStringCopy(char * buf)
 	return temp;
 }
 
-static void ResizeCheatList(UINT32 newLength)
+static void ResizeCheatList(uint32_t newLength)
 {
 	if(newLength != cheatListLength)
 	{
@@ -7068,7 +7068,7 @@ static void ResizeCheatList(UINT32 newLength)
 	}
 }
 
-static void ResizeCheatListNoDispose(UINT32 newLength)
+static void ResizeCheatListNoDispose(uint32_t newLength)
 {
 	if(newLength != cheatListLength)
 	{
@@ -7099,7 +7099,7 @@ static void ResizeCheatListNoDispose(UINT32 newLength)
 	}
 }
 
-static void AddCheatBefore(UINT32 idx)
+static void AddCheatBefore(uint32_t idx)
 {
 	ResizeCheatList(cheatListLength + 1);
 
@@ -7115,7 +7115,7 @@ static void AddCheatBefore(UINT32 idx)
 	ResizeCheatActionList(&cheatList[idx], 1);
 }
 
-static void DeleteCheatAt(UINT32 idx)
+static void DeleteCheatAt(uint32_t idx)
 {
 	if(idx >= cheatListLength)
 		return;
@@ -7159,7 +7159,7 @@ static CheatEntry *	GetNewCheat(void)
 	return &cheatList[cheatListLength - 1];
 }
 
-static void ResizeCheatActionList(CheatEntry * entry, UINT32 newLength)
+static void ResizeCheatActionList(CheatEntry * entry, uint32_t newLength)
 {
 	if(newLength != entry->actionListLength)
 	{
@@ -7191,7 +7191,7 @@ static void ResizeCheatActionList(CheatEntry * entry, UINT32 newLength)
 	}
 }
 
-static void ResizeCheatActionListNoDispose(CheatEntry * entry, UINT32 newLength)
+static void ResizeCheatActionListNoDispose(CheatEntry * entry, uint32_t newLength)
 {
 	if(newLength != entry->actionListLength)
 	{
@@ -7215,7 +7215,7 @@ static void ResizeCheatActionListNoDispose(CheatEntry * entry, UINT32 newLength)
 	}
 }
 
-static void AddActionBefore(CheatEntry * entry, UINT32 idx)
+static void AddActionBefore(CheatEntry * entry, uint32_t idx)
 {
 	ResizeCheatActionList(entry, entry->actionListLength + 1);
 
@@ -7228,7 +7228,7 @@ static void AddActionBefore(CheatEntry * entry, UINT32 idx)
 	memset(&entry->actionList[idx], 0, sizeof(CheatAction));
 }
 
-static void DeleteActionAt(CheatEntry * entry, UINT32 idx)
+static void DeleteActionAt(CheatEntry * entry, uint32_t idx)
 {
 	if(idx >= entry->actionListLength)
 		return;
@@ -7253,7 +7253,7 @@ static void DisposeAction(CheatAction * action)
 	}
 }
 
-static void InitWatch(WatchInfo * info, UINT32 idx)
+static void InitWatch(WatchInfo * info, uint32_t idx)
 {
 	if(idx > 0)
 		info->y = watchList[idx - 1].y + uirotcharheight;
@@ -7261,7 +7261,7 @@ static void InitWatch(WatchInfo * info, UINT32 idx)
 		info->y = 0;
 }
 
-static void ResizeWatchList(UINT32 newLength)
+static void ResizeWatchList(uint32_t newLength)
 {
 	if(newLength != watchListLength)
 	{
@@ -7300,7 +7300,7 @@ static void ResizeWatchList(UINT32 newLength)
 	}
 }
 
-static void ResizeWatchListNoDispose(UINT32 newLength)
+static void ResizeWatchListNoDispose(uint32_t newLength)
 {
 	if(newLength != watchListLength)
 	{
@@ -7331,7 +7331,7 @@ static void ResizeWatchListNoDispose(UINT32 newLength)
 	}
 }
 
-static void AddWatchBefore(UINT32 idx)
+static void AddWatchBefore(uint32_t idx)
 {
 	ResizeWatchList(watchListLength + 1);
 
@@ -7346,7 +7346,7 @@ static void AddWatchBefore(UINT32 idx)
 	InitWatch(&watchList[idx], idx);
 }
 
-static void DeleteWatchAt(UINT32 idx)
+static void DeleteWatchAt(uint32_t idx)
 {
 	if(idx >= watchListLength)
 		return;
@@ -7405,7 +7405,7 @@ static void AddCheatFromWatch(WatchInfo * watch)
 		CheatAction	* action = &entry->actionList[0];
 		char		tempString[1024];
 		int			tempStringLength;
-		UINT32		data = DoCPURead(watch->cpu, watch->address, kSearchByteIncrementTable[watch->elementBytes], 0);
+		uint32_t		data = DoCPURead(watch->cpu, watch->address, kSearchByteIncrementTable[watch->elementBytes], 0);
 
 		tempStringLength = sprintf(tempString, "%.8X (%d) = %.*X", watch->address, watch->cpu, kSearchByteDigitsTable[watch->elementBytes], data);
 
@@ -7463,7 +7463,7 @@ static void SetupCheatFromWatchAsWatch(CheatEntry * entry, WatchInfo * watch)
 	}
 }
 
-static void ResizeSearchList(UINT32 newLength)
+static void ResizeSearchList(uint32_t newLength)
 {
 	if(newLength != searchListLength)
 	{
@@ -7502,7 +7502,7 @@ static void ResizeSearchList(UINT32 newLength)
 	}
 }
 
-static void ResizeSearchListNoDispose(UINT32 newLength)
+static void ResizeSearchListNoDispose(uint32_t newLength)
 {
 	if(newLength != searchListLength)
 	{
@@ -7526,7 +7526,7 @@ static void ResizeSearchListNoDispose(UINT32 newLength)
 	}
 }
 
-static void AddSearchBefore(UINT32 idx)
+static void AddSearchBefore(uint32_t idx)
 {
 	ResizeSearchListNoDispose(searchListLength + 1);
 
@@ -7540,7 +7540,7 @@ static void AddSearchBefore(UINT32 idx)
 	InitSearch(&searchList[idx]);
 }
 
-static void DeleteSearchAt(UINT32 idx)
+static void DeleteSearchAt(uint32_t idx)
 {
 	if(idx >= searchListLength)
 		return;
@@ -7588,7 +7588,7 @@ static void DisposeSearchRegions(SearchInfo * info)
 	info->regionListLength = 0;
 }
 
-static void DisposeSearch(UINT32 idx)
+static void DisposeSearch(uint32_t idx)
 {
 	SearchInfo	* info;
 
@@ -7613,9 +7613,9 @@ static SearchInfo *	GetCurrentSearch(void)
 	return &searchList[currentSearchIdx];
 }
 
-static void FillBufferFromRegion(SearchRegion * region, UINT8 * buf)
+static void FillBufferFromRegion(SearchRegion * region, uint8_t * buf)
 {
-	UINT32	offset;
+	uint32_t	offset;
 
 	/* ### optimize if needed*/
 
@@ -7625,9 +7625,9 @@ static void FillBufferFromRegion(SearchRegion * region, UINT8 * buf)
 	}
 }
 
-static UINT32 ReadRegionData(SearchRegion * region, UINT32 offset, UINT8 size, UINT8 swap)
+static uint32_t ReadRegionData(SearchRegion * region, uint32_t offset, uint8_t size, uint8_t swap)
 {
-	UINT32	address = region->address + offset;
+	uint32_t	address = region->address + offset;
 
 	switch(region->targetType)
 	{
@@ -7689,7 +7689,7 @@ static void RestoreRegionBackup(SearchRegion * region)
 	}
 }
 
-static UINT8 DefaultEnableRegion(SearchRegion * region, SearchInfo * info)
+static uint8_t DefaultEnableRegion(SearchRegion * region, SearchInfo * info)
 {
 	mem_write_handler	handler = region->writeHandler->handler;
 	FPTR				handlerAddress = (FPTR)handler;
@@ -7905,7 +7905,7 @@ static void BuildSearchRegions(SearchInfo * info)
 		{
 			if(info->searchSpeed == kSearchSpeed_AllMemory)
 			{
-				UINT32			length = cpuInfoList[info->targetIdx].addressMask + 1;
+				uint32_t			length = cpuInfoList[info->targetIdx].addressMask + 1;
 				SearchRegion	* region;
 
 				info->regionList = calloc(sizeof(SearchRegion), 1);
@@ -7958,7 +7958,7 @@ static void BuildSearchRegions(SearchInfo * info)
 				{
 					if(!IS_MEMPORT_MARKER(mwa))
 					{
-						UINT32	length = (mwa->end - mwa->start) + 1;
+						uint32_t	length = (mwa->end - mwa->start) + 1;
 
 						traverse->address = mwa->start;
 						traverse->length = length;
@@ -8010,8 +8010,8 @@ static int ConvertOldCode(int code, int cpu, int * data, int * extendData)
 	struct ConversionTable
 	{
 		int		oldCode;
-		UINT32	newCode;
-		UINT8	customField;
+		uint32_t	newCode;
+		uint8_t	customField;
 	};
 
 	struct ConversionTable	kConversionTable[] =
@@ -8082,8 +8082,8 @@ static int ConvertOldCode(int code, int cpu, int * data, int * extendData)
 	};
 
 	struct ConversionTable	* traverse = kConversionTable;
-	UINT32					newCode;
-	UINT8					linkCheat = 0;
+	uint32_t					newCode;
+	uint8_t					linkCheat = 0;
 
 	/* convert link cheats*/
 	if((code >= 500) && (code <= 699))
@@ -8184,7 +8184,7 @@ static int MatchCommandCheatLine(char * buf)
 	return 0;
 }
 
-static void HandleLocalCommandCheat(UINT32 type, UINT32 address, UINT32 data, UINT32 extendData, char * name, char * description)
+static void HandleLocalCommandCheat(uint32_t type, uint32_t address, uint32_t data, uint32_t extendData, char * name, char * description)
 {
 	switch(EXTRACT_FIELD(type, LocationType))
 	{
@@ -8464,7 +8464,7 @@ static void DisposeCheatDatabase(void)
 static void SaveCheat(CheatEntry * entry)
 {
 	mame_file * theFile;
-	UINT32	i;
+	uint32_t	i;
 	char	buf[4096];
 
 	if(!entry || !entry->actionList)
@@ -8481,7 +8481,7 @@ static void SaveCheat(CheatEntry * entry)
 	{
 		CheatAction	* action = &entry->actionList[i];
 		char		* name = entry->name;
-		UINT32		type = action->type;
+		uint32_t		type = action->type;
 		char		* bufTraverse = buf;
 		int			addressLength = 8;
 
@@ -8556,7 +8556,7 @@ static void DoAutoSaveCheats(void)
 	}
 }
 
-static void AddCheatFromResult(SearchInfo * search, SearchRegion * region, UINT32 address)
+static void AddCheatFromResult(SearchInfo * search, SearchRegion * region, uint32_t address)
 {
 	if(region->targetType == kRegionType_CPU)
 	{
@@ -8564,7 +8564,7 @@ static void AddCheatFromResult(SearchInfo * search, SearchRegion * region, UINT3
 		CheatAction	* action = &entry->actionList[0];
 		char		tempString[1024];
 		int			tempStringLength;
-		UINT32		data = ReadSearchOperand(kSearchOperand_First, search, region, address);
+		uint32_t		data = ReadSearchOperand(kSearchOperand_First, search, region, address);
 
 		tempStringLength = sprintf(tempString, "%.8X (%d) = %.*X", address, region->targetIdx, kSearchByteDigitsTable[search->bytes], data);
 
@@ -8592,11 +8592,11 @@ static void AddCheatFromFirstResult(SearchInfo * search)
 
 		if(region->numResults)
 		{
-			UINT32	traverse;
+			uint32_t	traverse;
 
 			for(traverse = 0; traverse < region->length; traverse++)
 			{
-				UINT32	address = region->address + traverse;
+				uint32_t	address = region->address + traverse;
 
 				if(IsRegionOffsetValid(search, region, traverse))
 				{
@@ -8609,7 +8609,7 @@ static void AddCheatFromFirstResult(SearchInfo * search)
 	}
 }
 
-static void AddWatchFromResult(SearchInfo * search, SearchRegion * region, UINT32 address)
+static void AddWatchFromResult(SearchInfo * search, SearchRegion * region, uint32_t address)
 {
 	if(region->targetType == kRegionType_CPU)
 	{
@@ -8631,7 +8631,7 @@ static void AddWatchFromResult(SearchInfo * search, SearchRegion * region, UINT3
 	}
 }
 
-static UINT32 SearchSignExtend(SearchInfo * search, UINT32 value)
+static uint32_t SearchSignExtend(SearchInfo * search, uint32_t value)
 {
 	if(search->sign)
 	{
@@ -8644,9 +8644,9 @@ static UINT32 SearchSignExtend(SearchInfo * search, UINT32 value)
 	return value;
 }
 
-static UINT32 ReadSearchOperand(UINT8 type, SearchInfo * search, SearchRegion * region, UINT32 address)
+static uint32_t ReadSearchOperand(uint8_t type, SearchInfo * search, SearchRegion * region, uint32_t address)
 {
-	UINT32	value = 0;
+	uint32_t	value = 0;
 
 	switch(type)
 	{
@@ -8672,9 +8672,9 @@ static UINT32 ReadSearchOperand(UINT8 type, SearchInfo * search, SearchRegion * 
 	return value;
 }
 
-static UINT32 ReadSearchOperandBit(UINT8 type, SearchInfo * search, SearchRegion * region, UINT32 address)
+static uint32_t ReadSearchOperandBit(uint8_t type, SearchInfo * search, SearchRegion * region, uint32_t address)
 {
-	UINT32	value = 0;
+	uint32_t	value = 0;
 
 	switch(type)
 	{
@@ -8703,13 +8703,13 @@ static UINT32 ReadSearchOperandBit(UINT8 type, SearchInfo * search, SearchRegion
 	return value;
 }
 
-static UINT8 DoSearchComparison(SearchInfo * search, UINT32 lhs, UINT32 rhs)
+static uint8_t DoSearchComparison(SearchInfo * search, uint32_t lhs, uint32_t rhs)
 {
-	INT32	svalue;
+	int32_t	svalue;
 
 	if(search->sign)
 	{
-		INT32	slhs, srhs;
+		int32_t	slhs, srhs;
 
 		slhs = lhs;
 		srhs = rhs;
@@ -8782,7 +8782,7 @@ static UINT8 DoSearchComparison(SearchInfo * search, UINT32 lhs, UINT32 rhs)
 	return 0;
 }
 
-static UINT32 DoSearchComparisonBit(SearchInfo * search, UINT32 lhs, UINT32 rhs)
+static uint32_t DoSearchComparisonBit(SearchInfo * search, uint32_t lhs, uint32_t rhs)
 {
 	switch(search->comparison)
 	{
@@ -8803,20 +8803,20 @@ static UINT32 DoSearchComparisonBit(SearchInfo * search, UINT32 lhs, UINT32 rhs)
 }
 
 /*
-static UINT8 IsRegionOffsetValid(SearchInfo * search, SearchRegion * region, UINT32 offset)
+static uint8_t IsRegionOffsetValid(SearchInfo * search, SearchRegion * region, uint32_t offset)
 {
 	switch(kSearchByteIncrementTable[search->bytes])
 	{
 		case 1:
-			return *((UINT8  *)&region->status[offset]) == 0xFF;
+			return *((uint8_t  *)&region->status[offset]) == 0xFF;
 			break;
 
 		case 2:
-			return *((UINT16 *)&region->status[offset]) == 0xFFFF;
+			return *((uint16_t *)&region->status[offset]) == 0xFFFF;
 			break;
 
 		case 4:
-			return *((UINT32 *)&region->status[offset]) == 0xFFFFFFFF;
+			return *((uint32_t *)&region->status[offset]) == 0xFFFFFFFF;
 			break;
 	}
 
@@ -8824,58 +8824,58 @@ static UINT8 IsRegionOffsetValid(SearchInfo * search, SearchRegion * region, UIN
 }
 */
 
-static UINT8 IsRegionOffsetValidBit(SearchInfo * search, SearchRegion * region, UINT32 offset)
+static uint8_t IsRegionOffsetValidBit(SearchInfo * search, SearchRegion * region, uint32_t offset)
 {
 	switch(kSearchByteIncrementTable[search->bytes])
 	{
 		case 1:
-			return *((UINT8  *)&region->status[offset]) != 0;
+			return *((uint8_t  *)&region->status[offset]) != 0;
 			break;
 
 		case 2:
-			return *((UINT16 *)&region->status[offset]) != 0;
+			return *((uint16_t *)&region->status[offset]) != 0;
 			break;
 
 		case 4:
-			return *((UINT32 *)&region->status[offset]) != 0;
+			return *((uint32_t *)&region->status[offset]) != 0;
 			break;
 	}
 
 	return 0;
 }
 
-static void InvalidateRegionOffset(SearchInfo * search, SearchRegion * region, UINT32 offset)
+static void InvalidateRegionOffset(SearchInfo * search, SearchRegion * region, uint32_t offset)
 {
 	switch(kSearchByteIncrementTable[search->bytes])
 	{
 		case 1:
-			*((UINT8  *)&region->status[offset]) = 0;
+			*((uint8_t  *)&region->status[offset]) = 0;
 			break;
 
 		case 2:
-			*((UINT16 *)&region->status[offset]) = 0;
+			*((uint16_t *)&region->status[offset]) = 0;
 			break;
 
 		case 4:
-			*((UINT32 *)&region->status[offset]) = 0;
+			*((uint32_t *)&region->status[offset]) = 0;
 			break;
 	}
 }
 
-static void InvalidateRegionOffsetBit(SearchInfo * search, SearchRegion * region, UINT32 offset, UINT32 invalidate)
+static void InvalidateRegionOffsetBit(SearchInfo * search, SearchRegion * region, uint32_t offset, uint32_t invalidate)
 {
 	switch(kSearchByteIncrementTable[search->bytes])
 	{
 		case 1:
-			*((UINT8  *)&region->status[offset]) &= ~invalidate;
+			*((uint8_t  *)&region->status[offset]) &= ~invalidate;
 			break;
 
 		case 2:
-			*((UINT16 *)&region->status[offset]) &= ~invalidate;
+			*((uint16_t *)&region->status[offset]) &= ~invalidate;
 			break;
 
 		case 4:
-			*((UINT32 *)&region->status[offset]) &= ~invalidate;
+			*((uint32_t *)&region->status[offset]) &= ~invalidate;
 			break;
 	}
 }
@@ -8937,8 +8937,8 @@ static void DoSearch(SearchInfo * search)
 		for(i = 0; i < search->regionListLength; i++)
 		{
 			SearchRegion	* region = &search->regionList[i];
-			UINT32			lastAddress = region->length - kSearchByteIncrementTable[search->bytes] + 1;
-			UINT32			increment = kSearchByteIncrementTable[search->bytes];
+			uint32_t			lastAddress = region->length - kSearchByteIncrementTable[search->bytes] + 1;
+			uint32_t			increment = kSearchByteIncrementTable[search->bytes];
 
 			region->numResults = 0;
 
@@ -8950,14 +8950,14 @@ static void DoSearch(SearchInfo * search)
 
 			for(j = 0; j < lastAddress; j += increment)
 			{
-				UINT32	address;
-				UINT32	lhs, rhs;
+				uint32_t	address;
+				uint32_t	lhs, rhs;
 
 				address = region->address + j;
 
 				if(IsRegionOffsetValidBit(search, region, j))
 				{
-					UINT32	validBits;
+					uint32_t	validBits;
 
 					lhs = ReadSearchOperandBit(search->lhs, search, region, address);
 					rhs = ReadSearchOperandBit(search->rhs, search, region, address);
@@ -8980,8 +8980,8 @@ static void DoSearch(SearchInfo * search)
 		for(i = 0; i < search->regionListLength; i++)
 		{
 			SearchRegion	* region = &search->regionList[i];
-			UINT32			lastAddress = region->length - kSearchByteIncrementTable[search->bytes] + 1;
-			UINT32			increment = kSearchByteIncrementTable[search->bytes];
+			uint32_t			lastAddress = region->length - kSearchByteIncrementTable[search->bytes] + 1;
+			uint32_t			increment = kSearchByteIncrementTable[search->bytes];
 
 			region->numResults = 0;
 
@@ -8993,8 +8993,8 @@ static void DoSearch(SearchInfo * search)
 
 			for(j = 0; j < lastAddress; j += increment)
 			{
-				UINT32	address;
-				UINT32	lhs, rhs;
+				uint32_t	address;
+				uint32_t	lhs, rhs;
 
 				address = region->address + j;
 
@@ -9018,7 +9018,7 @@ static void DoSearch(SearchInfo * search)
 	}
 }
 
-static UINT8 ** LookupHandlerMemory(UINT8 cpu, UINT32 address, UINT32 * outRelativeAddress)
+static uint8_t ** LookupHandlerMemory(uint8_t cpu, uint32_t address, uint32_t * outRelativeAddress)
 {
 	const struct Memory_WriteAddress	* mwa = Machine->drv->cpu[cpu].memory_write;
 
@@ -9042,7 +9042,7 @@ static UINT8 ** LookupHandlerMemory(UINT8 cpu, UINT32 address, UINT32 * outRelat
 	return NULL;
 }
 
-static UINT32 DoCPURead(UINT8 cpu, UINT32 address, UINT8 bytes, UINT8 swap)
+static uint32_t DoCPURead(uint8_t cpu, uint32_t address, uint8_t bytes, uint8_t swap)
 {
 	switch(bytes)
 	{
@@ -9098,9 +9098,9 @@ static UINT32 DoCPURead(UINT8 cpu, UINT32 address, UINT8 bytes, UINT8 swap)
 	return 0;
 }
 
-static UINT32 DoMemoryRead(UINT8 * buf, UINT32 address, UINT8 bytes, UINT8 swap, CPUInfo * info)
+static uint32_t DoMemoryRead(uint8_t * buf, uint32_t address, uint8_t bytes, uint8_t swap, CPUInfo * info)
 {
-	UINT32	data = 0;
+	uint32_t	data = 0;
 
 	if(!info)
 	{
@@ -9111,7 +9111,7 @@ static UINT32 DoMemoryRead(UINT8 * buf, UINT32 address, UINT8 bytes, UINT8 swap,
 				break;
 
 			case 2:
-				data = *((UINT16 *)&buf[address]);
+				data = *((uint16_t *)&buf[address]);
 
 				if(swap)
 				{
@@ -9121,7 +9121,7 @@ static UINT32 DoMemoryRead(UINT8 * buf, UINT32 address, UINT8 bytes, UINT8 swap,
 				break;
 
 			case 4:
-				data = *((UINT32 *)&buf[address]);
+				data = *((uint32_t *)&buf[address]);
 
 				if(swap)
 				{
@@ -9144,14 +9144,14 @@ generic:
 
 	if(swap)
 	{
-		UINT32	i;
+		uint32_t	i;
 
 		for(i = 0; i < bytes; i++)
 			data |= buf[SwapAddress(address + i, bytes, info)] << (i * 8);
 	}
 	else
 	{
-		UINT32	i;
+		uint32_t	i;
 
 		for(i = 0; i < bytes; i++)
 			data |= buf[SwapAddress(address + i, bytes, info)] << ((bytes - i - 1) * 8);
@@ -9160,7 +9160,7 @@ generic:
 	return data;
 }
 
-static void DoCPUWrite(UINT32 data, UINT8 cpu, UINT32 address, UINT8 bytes, UINT8 swap)
+static void DoCPUWrite(uint32_t data, uint8_t cpu, uint32_t address, uint8_t bytes, uint8_t swap)
 {
 	switch(bytes)
 	{
@@ -9219,7 +9219,7 @@ static void DoCPUWrite(UINT32 data, UINT8 cpu, UINT32 address, UINT8 bytes, UINT
 	}
 }
 
-static void DoMemoryWrite(UINT32 data, UINT8 * buf, UINT32 address, UINT8 bytes, UINT8 swap, CPUInfo * info)
+static void DoMemoryWrite(uint32_t data, uint8_t * buf, uint32_t address, uint8_t bytes, uint8_t swap, CPUInfo * info)
 {
 	if(!info)
 	{
@@ -9236,7 +9236,7 @@ static void DoMemoryWrite(UINT32 data, UINT8 * buf, UINT32 address, UINT8 bytes,
 							((data << 8) & 0xFF00);
 				}
 
-				*((UINT16 *)&buf[address]) = data;
+				*((uint16_t *)&buf[address]) = data;
 				break;
 
 			case 4:
@@ -9248,7 +9248,7 @@ static void DoMemoryWrite(UINT32 data, UINT8 * buf, UINT32 address, UINT8 bytes,
 							((data << 24) & 0xFF000000);
 				}
 
-				*((UINT32 *)&buf[address]) = data;
+				*((uint32_t *)&buf[address]) = data;
 				break;
 
 			default:
@@ -9263,26 +9263,26 @@ generic:
 
 	if(swap)
 	{
-		UINT32	i;
+		uint32_t	i;
 
 		for(i = 0; i < bytes; i++)
 			buf[SwapAddress(address + i, bytes, info)] = data >> (i * 8);
 	}
 	else
 	{
-		UINT32	i;
+		uint32_t	i;
 
 		for(i = 0; i < bytes; i++)
 			buf[SwapAddress(address + i, bytes, info)] = data >> ((bytes - i - 1) * 8);
 	}
 }
 
-static UINT8 CPUNeedsSwap(UINT8 cpu)
+static uint8_t CPUNeedsSwap(uint8_t cpu)
 {
 	return cpuInfoList[cpu].endianness ^ 1;
 }
 
-static UINT8 RegionNeedsSwap(UINT8 region)
+static uint8_t RegionNeedsSwap(uint8_t region)
 {
 	CPUInfo	* temp = GetRegionCPUInfo(region);
 
@@ -9292,12 +9292,12 @@ static UINT8 RegionNeedsSwap(UINT8 region)
 	return 0;
 }
 
-static CPUInfo * GetCPUInfo(UINT8 cpu)
+static CPUInfo * GetCPUInfo(uint8_t cpu)
 {
 	return &cpuInfoList[cpu];
 }
 
-static CPUInfo * GetRegionCPUInfo(UINT8 region)
+static CPUInfo * GetRegionCPUInfo(uint8_t region)
 {
 	if(	(region >= REGION_INVALID) &&
 		(region < REGION_MAX))
@@ -9306,7 +9306,7 @@ static CPUInfo * GetRegionCPUInfo(UINT8 region)
 	return NULL;
 }
 
-static UINT32 SwapAddress(UINT32 address, UINT8 dataSize, CPUInfo * info)
+static uint32_t SwapAddress(uint32_t address, uint8_t dataSize, CPUInfo * info)
 {
 	switch(info->dataBits)
 	{
@@ -9326,11 +9326,11 @@ static UINT32 SwapAddress(UINT32 address, UINT8 dataSize, CPUInfo * info)
 	return address;
 }
 
-static UINT32 ReadData(CheatAction * action)
+static uint32_t ReadData(CheatAction * action)
 {
-	UINT8	parameter = EXTRACT_FIELD(action->type, LocationParameter);
-	UINT8	bytes = EXTRACT_FIELD(action->type, BytesUsed) + 1;
-	UINT8	swapBytes = EXTRACT_FIELD(action->type, Endianness);
+	uint8_t	parameter = EXTRACT_FIELD(action->type, LocationParameter);
+	uint8_t	bytes = EXTRACT_FIELD(action->type, BytesUsed) + 1;
+	uint8_t	swapBytes = EXTRACT_FIELD(action->type, Endianness);
 
 	switch(EXTRACT_FIELD(action->type, LocationType))
 	{
@@ -9343,7 +9343,7 @@ static UINT32 ReadData(CheatAction * action)
 		case kLocation_MemoryRegion:
 		{
 			int		region = REGION_CPU1 + parameter;
-			UINT8	* buf = memory_region(region);
+			uint8_t	* buf = memory_region(region);
 
 			if(buf)
 			{
@@ -9357,8 +9357,8 @@ static UINT32 ReadData(CheatAction * action)
 
 		case kLocation_HandlerMemory:
 		{
-			UINT32	relativeAddress;
-			UINT8	** buf;
+			uint32_t	relativeAddress;
+			uint8_t	** buf;
 
 			if(!action->cachedPointer)
 			{
@@ -9377,10 +9377,10 @@ static UINT32 ReadData(CheatAction * action)
 
 		case kLocation_IndirectIndexed:
 		{
-			UINT32	address;
-			INT32	offset = action->extendData;
-			UINT8	cpu = (parameter >> 2) & 0x7;
-			UINT8	addressBytes = (parameter & 0x3) + 1;
+			uint32_t	address;
+			int32_t	offset = action->extendData;
+			uint8_t	cpu = (parameter >> 2) & 0x7;
+			uint8_t	addressBytes = (parameter & 0x3) + 1;
 			CPUInfo	* info = GetCPUInfo(cpu);
 
 			address = DoCPURead(cpu, action->address, addressBytes, CPUNeedsSwap(parameter) ^ swapBytes);
@@ -9402,7 +9402,7 @@ static UINT32 ReadData(CheatAction * action)
 				case kCustomLocation_EEPROM:
 				{
 					int		length;
-					UINT8	* buf;
+					uint8_t	* buf;
 
 					buf = EEPROM_get_data_pointer(&length);
 
@@ -9421,11 +9421,11 @@ static UINT32 ReadData(CheatAction * action)
 	return 0;
 }
 
-static void WriteData(CheatAction * action, UINT32 data)
+static void WriteData(CheatAction * action, uint32_t data)
 {
-	UINT8	parameter = EXTRACT_FIELD(action->type, LocationParameter);
-	UINT8	bytes = EXTRACT_FIELD(action->type, BytesUsed) + 1;
-	UINT8	swapBytes = EXTRACT_FIELD(action->type, Endianness);
+	uint8_t	parameter = EXTRACT_FIELD(action->type, LocationParameter);
+	uint8_t	bytes = EXTRACT_FIELD(action->type, BytesUsed) + 1;
+	uint8_t	swapBytes = EXTRACT_FIELD(action->type, Endianness);
 
 	switch(EXTRACT_FIELD(action->type, LocationType))
 	{
@@ -9438,7 +9438,7 @@ static void WriteData(CheatAction * action, UINT32 data)
 		case kLocation_MemoryRegion:
 		{
 			int		region = REGION_CPU1 + parameter;
-			UINT8	* buf = memory_region(region);
+			uint8_t	* buf = memory_region(region);
 
 			if(buf)
 			{
@@ -9452,8 +9452,8 @@ static void WriteData(CheatAction * action, UINT32 data)
 
 		case kLocation_HandlerMemory:
 		{
-			UINT32	relativeAddress;
-			UINT8	** buf;
+			uint32_t	relativeAddress;
+			uint8_t	** buf;
 
 			if(!action->cachedPointer)
 			{
@@ -9472,10 +9472,10 @@ static void WriteData(CheatAction * action, UINT32 data)
 
 		case kLocation_IndirectIndexed:
 		{
-			UINT32	address;
-			INT32	offset = action->extendData;
-			UINT8	cpu = (parameter >> 2) & 0x7;
-			UINT8	addressBytes = (parameter & 0x3) + 1;
+			uint32_t	address;
+			int32_t	offset = action->extendData;
+			uint8_t	cpu = (parameter >> 2) & 0x7;
+			uint8_t	addressBytes = (parameter & 0x3) + 1;
 			CPUInfo	* info = GetCPUInfo(cpu);
 
 			address = DoCPURead(cpu, action->address, addressBytes, CPUNeedsSwap(cpu) ^ swapBytes);
@@ -9497,7 +9497,7 @@ static void WriteData(CheatAction * action, UINT32 data)
 				case kCustomLocation_EEPROM:
 				{
 					int		length;
-					UINT8	* buf;
+					uint8_t	* buf;
 
 					buf = EEPROM_get_data_pointer(&length);
 
@@ -9514,9 +9514,9 @@ static void WriteData(CheatAction * action, UINT32 data)
 	}
 }
 
-static void WatchCheatEntry(CheatEntry * entry, UINT8 associate)
+static void WatchCheatEntry(CheatEntry * entry, uint8_t associate)
 {
-	UINT32		i;
+	uint32_t		i;
 	CheatEntry	* associateEntry = NULL;
 
 	if(!associate)
@@ -9549,7 +9549,7 @@ static void AddActionWatch(CheatAction * action, CheatEntry * entry)
 
 		if(EXTRACT_FIELD(action->type, Type) == kType_Watch)
 		{
-			UINT32	typeParameter = EXTRACT_FIELD(action->type, TypeParameter);
+			uint32_t	typeParameter = EXTRACT_FIELD(action->type, TypeParameter);
 
 			info->numElements = (action->data & 0xFF) + 1;
 
@@ -9659,14 +9659,14 @@ static void TempDeactivateCheat(CheatEntry * entry)
 
 static void DoCheatOperation(CheatAction * action)
 {
-	UINT8	operation =	EXTRACT_FIELD(action->type, Operation) |
+	uint8_t	operation =	EXTRACT_FIELD(action->type, Operation) |
 						(EXTRACT_FIELD(action->type, OperationExtend) << 2);
 
 	switch(operation)
 	{
 		case kOperation_WriteMask:
 		{
-			UINT32	temp;
+			uint32_t	temp;
 
 			if(action->flags & kActionFlag_IgnoreMask)
 			{
@@ -9685,7 +9685,7 @@ static void DoCheatOperation(CheatAction * action)
 
 		case kOperation_AddSubtract:
 		{
-			INT32	temp, bound;
+			int32_t	temp, bound;
 
 			if(action->flags & kActionFlag_IgnoreMask)
 				return;
@@ -9718,7 +9718,7 @@ static void DoCheatOperation(CheatAction * action)
 
 		case kOperation_ForceRange:
 		{
-			UINT32	temp;
+			uint32_t	temp;
 
 			if(action->flags & kActionFlag_IgnoreMask)
 				return;
@@ -9737,7 +9737,7 @@ static void DoCheatOperation(CheatAction * action)
 
 		case kOperation_SetOrClearBits:
 		{
-			UINT32	temp;
+			uint32_t	temp;
 
 			temp = ReadData(action);
 
@@ -9768,7 +9768,7 @@ static void DoCheatOperation(CheatAction * action)
 
 static void DoCheatAction(CheatAction * action)
 {
-	UINT8	parameter = EXTRACT_FIELD(action->type, TypeParameter);
+	uint8_t	parameter = EXTRACT_FIELD(action->type, TypeParameter);
 
 	if(action->flags & kActionFlag_OperationDone)
 		return;
@@ -9776,7 +9776,7 @@ static void DoCheatAction(CheatAction * action)
 	if(	TEST_FIELD(action->type, Prefill) &&
 		(!(action->flags & kActionFlag_PrefillDone)))
 	{
-		UINT32	prefillValue = kPrefillValueTable[EXTRACT_FIELD(action->type, Prefill)];
+		uint32_t	prefillValue = kPrefillValueTable[EXTRACT_FIELD(action->type, Prefill)];
 
 		if(!(action->flags & kActionFlag_PrefillWritten))
 		{
@@ -9841,7 +9841,7 @@ static void DoCheatAction(CheatAction * action)
 			}
 			else
 			{
-				UINT8	currentValue = ReadData(action);
+				uint8_t	currentValue = ReadData(action);
 
 				if(currentValue != action->lastValue)
 				{
@@ -9857,7 +9857,7 @@ static void DoCheatAction(CheatAction * action)
 
 		case kType_IgnoreIfDecrementing:
 		{
-			UINT8	currentValue = ReadData(action);
+			uint8_t	currentValue = ReadData(action);
 
 			if(currentValue != (action->lastValue - parameter))
 			{
@@ -9978,7 +9978,7 @@ static void DoCheatEntry(CheatEntry * entry)
 
 		/* if all actions are done, deactivate the cheat*/
 		{
-			UINT8	done = 1;
+			uint8_t	done = 1;
 
 			for(i = 0; (i < entry->actionListLength) && done; i++)
 				if(!(entry->actionList[i].flags & kActionFlag_OperationDone))
@@ -10002,7 +10002,7 @@ static void UpdateAllCheatInfo(void)
 	}
 }
 
-static void UpdateCheatInfo(CheatEntry * entry, UINT8 isLoadTime)
+static void UpdateCheatInfo(CheatEntry * entry, uint8_t isLoadTime)
 {
 	int		isOneShot =	1;
 	int		isNull =	1;
@@ -10019,9 +10019,9 @@ static void UpdateCheatInfo(CheatEntry * entry, UINT8 isLoadTime)
 	{
 		CheatAction	* action =		&entry->actionList[i];
 		/*int			isActionNull =	0;*/
-		/*UINT32		size;*/
-		UINT32		operation;
-		UINT32		actionFlags = action->flags & kActionFlag_PersistentMask;
+		/*uint32_t		size;*/
+		uint32_t		operation;
+		uint32_t		actionFlags = action->flags & kActionFlag_PersistentMask;
 
 		/*size = EXTRACT_FIELD(action->type, BytesUsed);*/
 		operation = EXTRACT_FIELD(action->type, Operation) | EXTRACT_FIELD(action->type, OperationExtend) << 2;
@@ -10074,9 +10074,9 @@ static void UpdateCheatInfo(CheatEntry * entry, UINT8 isLoadTime)
 		entry->flags &= ~kCheatFlag_Dirty;
 }
 
-static int IsAddressInRange(CheatAction * action, UINT32 length)
+static int IsAddressInRange(CheatAction * action, uint32_t length)
 {
-	UINT8	bytes = EXTRACT_FIELD(action->type, BytesUsed) + 1;
+	uint8_t	bytes = EXTRACT_FIELD(action->type, BytesUsed) + 1;
 
 	return ((action->address + bytes) <= length);
 }
@@ -10095,14 +10095,14 @@ static void BuildCPUInfoList(void)
 		{
 			if(ROMENTRY_ISREGION(traverse))
 			{
-				UINT8	regionType = ROMREGION_GETTYPE(traverse);
+				uint8_t	regionType = ROMREGION_GETTYPE(traverse);
 
 				/* non-cpu region?*/
 				if(	(regionType >= REGION_GFX1) &&
 					(regionType <= REGION_USER8))
 				{
 					CPUInfo	* info = &regionInfoList[regionType - REGION_INVALID];
-					UINT32	length = memory_region_length(regionType);
+					uint32_t	length = memory_region_length(regionType);
 					int		bitState = 0;
 
 					info->type = regionType;
@@ -10114,7 +10114,7 @@ static void BuildCPUInfoList(void)
 					/* build address mask*/
 					for(i = 0; i < 32; i++)
 					{
-						UINT32	mask = 1 << (31 - i);
+						uint32_t	mask = 1 << (31 - i);
 
 						if(bitState)
 						{

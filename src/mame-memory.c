@@ -79,8 +79,8 @@
 
 struct bank_data
 {
-	UINT8 				used;				/* is this bank used? */
-	UINT8 				cpunum;				/* the CPU it is used for */
+	uint8_t 				used;				/* is this bank used? */
+	uint8_t 				cpunum;				/* the CPU it is used for */
 	offs_t 				base;				/* the base offset */
 	offs_t				readoffset;			/* original base offset for reads */
 	offs_t				writeoffset;		/* original base offset for writes */
@@ -95,9 +95,9 @@ struct handler_data
 
 struct table_data
 {
-	UINT8 *				table;				/* pointer to base of table */
-	UINT8 				subtable_count;		/* number of subtables used */
-	UINT8 				subtable_alloc;		/* number of subtables allocated */
+	uint8_t *				table;				/* pointer to base of table */
+	uint8_t 				subtable_count;		/* number of subtables used */
+	uint8_t 				subtable_alloc;		/* number of subtables allocated */
 	struct handler_data *handlers;			/* pointer to which set of handlers */
 };
 
@@ -122,7 +122,7 @@ struct cpu_data
 	void *				op_rom;				/* dynamic ROM base pointer */
 	offs_t				op_mem_min;			/* dynamic ROM/RAM min */
 	offs_t				op_mem_max;			/* dynamic ROM/RAM max */
-	UINT8		 		opcode_entry;		/* opcode base handler */
+	uint8_t		 		opcode_entry;		/* opcode base handler */
 
 	struct memport_data	mem;				/* memory tables */
 	struct memport_data	port;				/* port tables */
@@ -142,21 +142,21 @@ struct memory_address_table
 
 static int					cur_context;					/* current CPU context */
 
-UINT8 *						OP_ROM;							/* opcode ROM base */
-UINT8 *						OP_RAM;							/* opcode RAM base */
+uint8_t *						OP_ROM;							/* opcode ROM base */
+uint8_t *						OP_RAM;							/* opcode RAM base */
 offs_t						OP_MEM_MIN;						/* opcode memory minimum */
 offs_t						OP_MEM_MAX;						/* opcode memory maximum */
-UINT8		 				opcode_entry;					/* opcode readmem entry */
+uint8_t		 				opcode_entry;					/* opcode readmem entry */
 
-UINT8 *						readmem_lookup;					/* memory read lookup table */
-static UINT8 *				writemem_lookup;				/* memory write lookup table */
-static UINT8 *				readport_lookup;				/* port read lookup table */
-static UINT8 *				writeport_lookup;				/* port write lookup table */
+uint8_t *						readmem_lookup;					/* memory read lookup table */
+static uint8_t *				writemem_lookup;				/* memory write lookup table */
+static uint8_t *				readport_lookup;				/* port read lookup table */
+static uint8_t *				writeport_lookup;				/* port write lookup table */
 
 offs_t						mem_amask;						/* memory address mask */
 static offs_t				port_amask;						/* port address mask */
 
-UINT8 *						cpu_bankbase[STATIC_COUNT];		/* array of bank bases */
+uint8_t *						cpu_bankbase[STATIC_COUNT];		/* array of bank bases */
 int ext_entries = 0;										/* number of entries ext_memory[] entries used */
 struct ExtMemory			ext_memory[MAX_EXT_MEMORY];		/* externally-allocated memory */
 
@@ -192,9 +192,9 @@ offs_t encrypted_opcode_start[MAX_CPU],encrypted_opcode_end[MAX_CPU];
 -------------------------------------------------*/
 
 static int CLIB_DECL fatalerror(const char *string, ...);
-static UINT8 get_handler_index(struct handler_data *table, void *handler, offs_t start);
-static UINT8 alloc_new_subtable(const struct memport_data *memport, struct table_data *tabledata, UINT8 previous_value);
-static void populate_table(struct memport_data *memport, int iswrite, offs_t start, offs_t stop, UINT8 handler);
+static uint8_t get_handler_index(struct handler_data *table, void *handler, offs_t start);
+static uint8_t alloc_new_subtable(const struct memport_data *memport, struct table_data *tabledata, uint8_t previous_value);
+static void populate_table(struct memport_data *memport, int iswrite, offs_t start, offs_t stop, uint8_t handler);
 static void *assign_dynamic_bank(int cpunum, offs_t start);
 static void install_mem_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler);
 static void install_port_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler);
@@ -758,12 +758,12 @@ void *memory_find_base(int cpunum, offs_t offset)
 	{
 		if (ext->region == region && ext->start <= offset && ext->end >= offset)
 		{
-			return (void *)((UINT8 *)ext->data + (offset - ext->start));
+			return (void *)((uint8_t *)ext->data + (offset - ext->start));
 		}
 		ext++;
 	}
 
-	return (UINT8 *)cpudata[cpunum].rambase + offset;
+	return (uint8_t *)cpudata[cpunum].rambase + offset;
 }
 
 
@@ -777,8 +777,8 @@ void *memory_get_read_ptr(int cpunum, offs_t offset)
 {
 	struct memport_data *memport = &cpudata[cpunum].mem;
 	struct handler_data *handlist = (memport->dbits == 32) ? rmemhandler32 : (memport->dbits == 16) ? rmemhandler16 : rmemhandler8;
-	UINT8 minbits = memport->abits - memport->ebits;
-	UINT8 entry;
+	uint8_t minbits = memport->abits - memport->ebits;
+	uint8_t entry;
 
 	/* perform the lookup */
 	offset &= memport->mask;
@@ -804,8 +804,8 @@ void *memory_get_write_ptr(int cpunum, offs_t offset)
 {
 	struct memport_data *memport = &cpudata[cpunum].mem;
 	struct handler_data *handlist = (memport->dbits == 32) ? wmemhandler32 : (memport->dbits == 16) ? wmemhandler16 : wmemhandler8;
-	UINT8 minbits = memport->abits - memport->ebits;
-	UINT8 entry;
+	uint8_t minbits = memport->abits - memport->ebits;
+	uint8_t entry;
 
 	/* perform the lookup */
 	offset &= memport->mask;
@@ -826,7 +826,7 @@ void *memory_get_write_ptr(int cpunum, offs_t offset)
 	handler, or allocates a new one as necessary
 -------------------------------------------------*/
 
-UINT8 get_handler_index(struct handler_data *table, void *handler, offs_t start)
+uint8_t get_handler_index(struct handler_data *table, void *handler, offs_t start)
 {
 	int i;
 
@@ -854,7 +854,7 @@ UINT8 get_handler_index(struct handler_data *table, void *handler, offs_t start)
 	for a new subtable
 -------------------------------------------------*/
 
-UINT8 alloc_new_subtable(const struct memport_data *memport, struct table_data *tabledata, UINT8 previous_value)
+uint8_t alloc_new_subtable(const struct memport_data *memport, struct table_data *tabledata, uint8_t previous_value)
 {
 	int l1bits = LEVEL1_BITS(memport->ebits);
 	int l2bits = LEVEL2_BITS(memport->ebits);
@@ -893,7 +893,7 @@ UINT8 alloc_new_subtable(const struct memport_data *memport, struct table_data *
 	a range of addresses
 -------------------------------------------------*/
 
-void populate_table(struct memport_data *memport, int iswrite, offs_t start, offs_t stop, UINT8 handler)
+void populate_table(struct memport_data *memport, int iswrite, offs_t start, offs_t stop, uint8_t handler)
 {
 	struct table_data *tabledata = iswrite ? &memport->write : &memport->read;
 	int minbits = DATABITS_TO_SHIFT(memport->dbits);
@@ -904,7 +904,7 @@ void populate_table(struct memport_data *memport, int iswrite, offs_t start, off
 	offs_t l2start = (start >> minbits) & l2mask;
 	offs_t l1stop = stop >> (l2bits + minbits);
 	offs_t l2stop = (stop >> minbits) & l2mask;
-	UINT8 subindex;
+	uint8_t subindex;
 
 	/* sanity check */
 	if (start > stop)
@@ -1009,7 +1009,7 @@ void *assign_dynamic_bank(int cpunum, offs_t start)
 void install_mem_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler)
 {
 	struct table_data *tabledata = iswrite ? &memport->write : &memport->read;
-	UINT8 idx;
+	uint8_t idx;
 
 	/* translate ROM and RAMROM to RAM here for read cases */
 	if (!iswrite)
@@ -1038,7 +1038,7 @@ void install_mem_handler(struct memport_data *memport, int iswrite, offs_t start
 void install_port_handler(struct memport_data *memport, int iswrite, offs_t start, offs_t end, void *handler)
 {
 	struct table_data *tabledata = iswrite ? &memport->write : &memport->read;
-	UINT8 idx = get_handler_index(tabledata->handlers, handler, start);
+	uint8_t idx = get_handler_index(tabledata->handlers, handler, start);
 	populate_table(memport, iswrite, start, end, idx);
 }
 
@@ -1191,7 +1191,7 @@ static int verify_memory(void)
 	{
 		const struct Memory_ReadAddress *mra = Machine->drv->cpu[cpunum].memory_read;
 		const struct Memory_WriteAddress *mwa = Machine->drv->cpu[cpunum].memory_write;
-		UINT32 width;
+		uint32_t width;
 		int bank;
 
 		/* determine the desired width */
@@ -1271,7 +1271,7 @@ static int verify_ports(void)
 	{
 		const struct IO_ReadPort *mra = Machine->drv->cpu[cpunum].port_read;
 		const struct IO_WritePort *mwa = Machine->drv->cpu[cpunum].port_write;
-		UINT32 width;
+		uint32_t width;
 
 		/* determine the desired width */
 		switch (cpunum_databus_width(cpunum))
@@ -1538,8 +1538,8 @@ static int populate_ports(void)
 -------------------------------------------------*/
 typedef struct rg_map_entry {
 	struct rg_map_entry *next;
-	UINT32 start;
-	UINT32 end;
+	uint32_t start;
+	uint32_t end;
 	int flags;
 } rg_map_entry;
 
@@ -1555,7 +1555,7 @@ enum {
 	RG_WRITE_MASK = 0xff00
 };
 
-static void rg_add_entry(UINT32 start, UINT32 end, int mode)
+static void rg_add_entry(uint32_t start, uint32_t end, int mode)
 {
 	rg_map_entry **cur;
 	cur = &rg_map;
@@ -1633,7 +1633,7 @@ static void rg_map_clear(void)
 	rg_map = 0;
 }
 
-static void register_zone(int cpunum, UINT32 start, UINT32 end)
+static void register_zone(int cpunum, uint32_t start, uint32_t end)
 {
 	char name[256];
 	sprintf (name, "%08x-%08x", start, end);
@@ -1673,7 +1673,7 @@ void register_banks(void)
 
 		if (!IS_SPARSE(bits))
 		{
-			UINT32 size = memory_region_length(REGION_CPU1 + cpunum);
+			uint32_t size = memory_region_length(REGION_CPU1 + cpunum);
 			if (size > (1<<bits))
 				size = 1 << bits;
 			rg_add_entry(0, size-1, RG_SAVE_READ|RG_SAVE_WRITE);
@@ -1751,7 +1751,7 @@ void register_banks(void)
 
 		{
 			rg_map_entry *e = rg_map;
-			UINT32 start = 0, end = 0;
+			uint32_t start = 0, end = 0;
 			int active = 0;
 			while (e)
 			{
@@ -1790,10 +1790,10 @@ void register_banks(void)
 				state_save_register_UINT8 ("bank", i, "ram",           cpu_bankbase[i], banksize[i]);
 				break;
 			case 16:
-				state_save_register_UINT16("bank", i, "ram", (UINT16 *)cpu_bankbase[i], banksize[i]/2);
+				state_save_register_UINT16("bank", i, "ram", (uint16_t *)cpu_bankbase[i], banksize[i]/2);
 				break;
 			case 32:
-				state_save_register_UINT32("bank", i, "ram", (UINT32 *)cpu_bankbase[i], banksize[i]/4);
+				state_save_register_UINT32("bank", i, "ram", (uint32_t *)cpu_bankbase[i], banksize[i]/4);
 				break;
 			}
 
@@ -1806,7 +1806,7 @@ void register_banks(void)
 #define READBYTE8(name,abits,lookup,handlist,mask)										\
 data8_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1832,7 +1832,7 @@ data8_t name(offs_t address)															\
 #define READBYTE16BE(name,abits,lookup,handlist,mask)									\
 data8_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1859,7 +1859,7 @@ data8_t name(offs_t address)															\
 #define READBYTE16LE(name,abits,lookup,handlist,mask)									\
 data8_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1886,7 +1886,7 @@ data8_t name(offs_t address)															\
 #define READBYTE32BE(name,abits,lookup,handlist,mask)									\
 data8_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1913,7 +1913,7 @@ data8_t name(offs_t address)															\
 #define READBYTE32LE(name,abits,lookup,handlist,mask)									\
 data8_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1946,7 +1946,7 @@ data8_t name(offs_t address)															\
 #define READWORD16(name,abits,lookup,handlist,mask)										\
 data16_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1972,7 +1972,7 @@ data16_t name(offs_t address)															\
 #define READWORD32BE(name,abits,lookup,handlist,mask)									\
 data16_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -1999,7 +1999,7 @@ data16_t name(offs_t address)															\
 #define READWORD32LE(name,abits,lookup,handlist,mask)									\
 data16_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -2032,7 +2032,7 @@ data16_t name(offs_t address)															\
 #define READLONG32(name,abits,lookup,handlist,mask)										\
 data32_t name(offs_t address)															\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMREADSTART																		\
 																						\
 	/* perform lookup */																\
@@ -2063,7 +2063,7 @@ data32_t name(offs_t address)															\
 #define WRITEBYTE8(name,abits,lookup,handlist,mask)										\
 void name(offs_t address, data8_t data)													\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2088,7 +2088,7 @@ void name(offs_t address, data8_t data)													\
 #define WRITEBYTE16BE(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data8_t data)													\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2114,7 +2114,7 @@ void name(offs_t address, data8_t data)													\
 #define WRITEBYTE16LE(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data8_t data)													\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2140,7 +2140,7 @@ void name(offs_t address, data8_t data)													\
 #define WRITEBYTE32BE(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data8_t data)													\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2166,7 +2166,7 @@ void name(offs_t address, data8_t data)													\
 #define WRITEBYTE32LE(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data8_t data)													\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2198,7 +2198,7 @@ void name(offs_t address, data8_t data)													\
 #define WRITEWORD16(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data16_t data)												\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2223,7 +2223,7 @@ void name(offs_t address, data16_t data)												\
 #define WRITEWORD32BE(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data16_t data)												\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2249,7 +2249,7 @@ void name(offs_t address, data16_t data)												\
 #define WRITEWORD32LE(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data16_t data)												\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2281,7 +2281,7 @@ void name(offs_t address, data16_t data)												\
 #define WRITELONG32(name,abits,lookup,handlist,mask)									\
 void name(offs_t address, data32_t data)												\
 {																						\
-	UINT8 entry;																		\
+	uint8_t entry;																		\
 	MEMWRITESTART																		\
 																						\
 	/* perform lookup */																\
@@ -2311,8 +2311,8 @@ void name(offs_t address, data32_t data)												\
 #define SETOPBASE(name,abits,minbits,table)												\
 void name(offs_t pc)																	\
 {																						\
-	UINT8 *base;																		\
-	UINT8 entry;																		\
+	uint8_t *base;																		\
+	uint8_t entry;																		\
 																						\
 	/* allow overrides */																\
 	if (opbasefunc) 																	\
@@ -2858,7 +2858,7 @@ static void dump_map(FILE *file, const struct memport_data *memport, const struc
 
 	for (i = 0; i < l1count; i++)
 	{
-		UINT8 entry = table->table[i];
+		uint8_t entry = table->table[i];
 		if (entry != STATIC_UNMAP)
 		{
 			fprintf(file, "%05X  %08X-%08X    = %02X: ", i,
@@ -2867,7 +2867,7 @@ static void dump_map(FILE *file, const struct memport_data *memport, const struc
 			if (entry < STATIC_COUNT)
 				fprintf(file, "%s [offset=%08X]\n", strings[entry], table->handlers[entry].offset);
 			else if (entry < SUBTABLE_BASE)
-				fprintf(file, "handler(%08X) [offset=%08X]\n", (UINT32)table->handlers[entry].handler, table->handlers[entry].offset);
+				fprintf(file, "handler(%08X) [offset=%08X]\n", (uint32_t)table->handlers[entry].handler, table->handlers[entry].offset);
 			else
 			{
 				fprintf(file, "subtable %d\n", entry & SUBTABLE_MASK);
@@ -2875,7 +2875,7 @@ static void dump_map(FILE *file, const struct memport_data *memport, const struc
 
 				for (j = 0; j < l2count; j++)
 				{
-					UINT8 entry2 = table->table[(1 << l1bits) + (entry << l2bits) + j];
+					uint8_t entry2 = table->table[(1 << l1bits) + (entry << l2bits) + j];
 					if (entry2 != STATIC_UNMAP)
 					{
 						fprintf(file, "   %05X  %08X-%08X = %02X: ", j,
@@ -2884,7 +2884,7 @@ static void dump_map(FILE *file, const struct memport_data *memport, const struc
 						if (entry2 < STATIC_COUNT)
 							fprintf(file, "%s [offset=%08X]\n", strings[entry2], table->handlers[entry2].offset);
 						else if (entry2 < SUBTABLE_BASE)
-							fprintf(file, "handler(%08X) [offset=%08X]\n", (UINT32)table->handlers[entry2].handler, table->handlers[entry2].offset);
+							fprintf(file, "handler(%08X) [offset=%08X]\n", (uint32_t)table->handlers[entry2].handler, table->handlers[entry2].offset);
 						else
 							fprintf(file, "subtable %d???????????\n", entry2 & SUBTABLE_MASK);
 					}

@@ -6,11 +6,11 @@
 
 /*----------- defined in vidhrdw/segac2.c -----------*/
 
-extern UINT8		segac2_vdp_regs[];
+extern uint8_t		segac2_vdp_regs[];
 extern int			segac2_bg_palbase;
 extern int			segac2_sp_palbase;
 extern int			segac2_palbank;
-extern UINT16		scanbase;
+extern uint16_t		scanbase;
 
 VIDEO_START( puckpkmn );
 VIDEO_START( megatech );

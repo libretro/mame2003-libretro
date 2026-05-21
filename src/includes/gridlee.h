@@ -18,7 +18,7 @@ int gridlee_sh_start(const struct MachineSound *msound);
 /*----------- defined in vidhrdw/gridlee.c -----------*/
 
 /* video driver data & functions */
-extern UINT8 gridlee_cocktail_flip;
+extern uint8_t gridlee_cocktail_flip;
 
 PALETTE_INIT( gridlee );
 VIDEO_START( gridlee );

@@ -19,48 +19,48 @@
 /* PC and pointer pair */
 struct pc_ptr_pair
 {
-	UINT32		pc;
-	UINT8 *		target;
+	uint32_t		pc;
+	uint8_t *		target;
 };
 
 /* core interface structure for the drc common code */
 struct drccore
 {
-	UINT8 *		cache_base;				/* base pointer to the compiler cache */
-	UINT8 *		cache_top;				/* current top of cache */
-	UINT8 *		cache_danger;			/* high water mark for the end */
-	UINT8 *		cache_end;				/* end of cache memory */
+	uint8_t *		cache_base;				/* base pointer to the compiler cache */
+	uint8_t *		cache_top;				/* current top of cache */
+	uint8_t *		cache_danger;			/* high water mark for the end */
+	uint8_t *		cache_end;				/* end of cache memory */
 
 	void ***	lookup_l1;				/* level 1 lookup */
 	void **		lookup_l2_recompile;	/* level 2 lookup populated with recompile pointers */
-	UINT8		l1bits;					/* number of bits in level 1 lookup */
-	UINT8		l2bits;					/* number of bits in level 2 lookup */
-	UINT8		l1shift;				/* shift to go from PC to level 1 lookup */
-	UINT32		l2mask;					/* mask to go from PC to level 2 lookup */
-	UINT8		l2scale;				/* scale to get from masked PC value to final level 2 lookup */
+	uint8_t		l1bits;					/* number of bits in level 1 lookup */
+	uint8_t		l2bits;					/* number of bits in level 2 lookup */
+	uint8_t		l1shift;				/* shift to go from PC to level 1 lookup */
+	uint32_t		l2mask;					/* mask to go from PC to level 2 lookup */
+	uint8_t		l2scale;				/* scale to get from masked PC value to final level 2 lookup */
 
 	void 		(*entry_point)(void);	/* pointer to asm entry point */
 	void *		out_of_cycles;			/* pointer to out of cycles jump point */
 	void *		recompile;				/* pointer to recompile jump point */
 	void *		dispatch;				/* pointer to dispatch jump point */
 
-	UINT32 *	pcptr;					/* pointer to where the PC is stored */
-	UINT32 *	icountptr;				/* pointer to where the icount is stored */
-	UINT32 *	esiptr;					/* pointer to where the volatile data in ESI is stored */
+	uint32_t *	pcptr;					/* pointer to where the PC is stored */
+	uint32_t *	icountptr;				/* pointer to where the icount is stored */
+	uint32_t *	esiptr;					/* pointer to where the volatile data in ESI is stored */
 
-	UINT8		uses_fp;				/* true if we need the FP unit */
-	UINT8		uses_sse;				/* true if we need the SSE unit */
-	UINT16		fpcw_curr;				/* current FPU control word */
-	UINT32		mcrxr_curr;				/* current SSE control word */
-	UINT16		fpcw_save;				/* saved FPU control word */
-	UINT32		mcrxr_save;				/* saved SSE control word */
+	uint8_t		uses_fp;				/* true if we need the FP unit */
+	uint8_t		uses_sse;				/* true if we need the SSE unit */
+	uint16_t		fpcw_curr;				/* current FPU control word */
+	uint32_t		mcrxr_curr;				/* current SSE control word */
+	uint16_t		fpcw_save;				/* saved FPU control word */
+	uint32_t		mcrxr_save;				/* saved SSE control word */
 	
 	struct pc_ptr_pair *sequence_list;	/* PC/pointer sets for the current instruction sequence */
-	UINT32		sequence_count;			/* number of instructions in the current sequence */
-	UINT32		sequence_count_max;		/* max number of instructions in the current sequence */
+	uint32_t		sequence_count;			/* number of instructions in the current sequence */
+	uint32_t		sequence_count_max;		/* max number of instructions in the current sequence */
 	struct pc_ptr_pair *tentative_list;	/* PC/pointer sets for tentative branches */
-	UINT32		tentative_count;		/* number of tentative branches */
-	UINT32		tentative_count_max;	/* max number of tentative branches */
+	uint32_t		tentative_count;		/* number of tentative branches */
+	uint32_t		tentative_count_max;	/* max number of tentative branches */
 
 	void 		(*cb_reset)(struct drccore *drc);		/* callback when the cache is reset */
 	void 		(*cb_recompile)(struct drccore *drc);	/* callback when code needs to be recompiled */
@@ -70,16 +70,16 @@ struct drccore
 /* configuration structure for the drc common code */
 struct drcconfig
 {
-	UINT32		cache_size;				/* size of cache to allocate */
-	UINT32		max_instructions;		/* maximum instructions per sequence */
-	UINT8		address_bits;			/* number of live address bits in the PC */
-	UINT8		lsbs_to_ignore;			/* number of LSBs to ignore on the PC */
-	UINT8		uses_fp;				/* true if we need the FP unit */
-	UINT8		uses_sse;				/* true if we need the SSE unit */
+	uint32_t		cache_size;				/* size of cache to allocate */
+	uint32_t		max_instructions;		/* maximum instructions per sequence */
+	uint8_t		address_bits;			/* number of live address bits in the PC */
+	uint8_t		lsbs_to_ignore;			/* number of LSBs to ignore on the PC */
+	uint8_t		uses_fp;				/* true if we need the FP unit */
+	uint8_t		uses_sse;				/* true if we need the SSE unit */
 
-	UINT32 *	pcptr;					/* pointer to where the PC is stored */
-	UINT32 *	icountptr;				/* pointer to where the icount is stored */
-	UINT32 *	esiptr;					/* pointer to where the volatile data in ESI is stored */
+	uint32_t *	pcptr;					/* pointer to where the PC is stored */
+	uint32_t *	icountptr;				/* pointer to where the icount is stored */
+	uint32_t *	esiptr;					/* pointer to where the volatile data in ESI is stored */
 
 	void 		(*cb_reset)(struct drccore *drc);		/* callback when the cache is reset */
 	void 		(*cb_recompile)(struct drccore *drc);	/* callback when code needs to be recompiled */
@@ -89,8 +89,8 @@ struct drcconfig
 /* structure to hold link data to be filled in later */
 struct linkdata
 {
-	UINT8 		size;
-	UINT8 *		target;
+	uint8_t 		size;
+	uint8_t *		target;
 };
 
 
@@ -100,10 +100,10 @@ struct linkdata
 **#################################################################################################*/
 
 /* useful macros for accessing hi/lo portions of 64-bit values */
-#define LO(x)		(&(((UINT32 *)(x))[0]))
-#define HI(x)		(&(((UINT32 *)(x))[1]))
+#define LO(x)		(&(((uint32_t *)(x))[0]))
+#define HI(x)		(&(((uint32_t *)(x))[1]))
 
-extern const UINT8 scale_lookup[];
+extern const uint8_t scale_lookup[];
 
 
 /*###################################################################################################
@@ -194,9 +194,9 @@ extern const UINT8 scale_lookup[];
 **#################################################################################################*/
 
 /* lowest-level opcode emitters */
-#define OP1(x)		do { *drc->cache_top++ = (UINT8)(x); } while (0)
-#define OP2(x)		do { *(UINT16 *)drc->cache_top = (UINT16)(x); drc->cache_top += 2; } while (0)
-#define OP4(x)		do { *(UINT32 *)drc->cache_top = (UINT32)(x); drc->cache_top += 4; } while (0)
+#define OP1(x)		do { *drc->cache_top++ = (uint8_t)(x); } while (0)
+#define OP2(x)		do { *(uint16_t *)drc->cache_top = (uint16_t)(x); drc->cache_top += 2; } while (0)
+#define OP4(x)		do { *(uint32_t *)drc->cache_top = (uint32_t)(x); drc->cache_top += 4; } while (0)
 
 
 
@@ -215,22 +215,22 @@ do { OP1(0x05 | (((reg) & 7) << 3)); OP4(addr); } while (0)
 /* op  reg,[base+disp]*/
 #define MODRM_MBD(reg, base, disp) \
 do {														\
-	if ((UINT32)(disp) == 0 && (base) != REG_ESP && (base) != REG_EBP) \
+	if ((uint32_t)(disp) == 0 && (base) != REG_ESP && (base) != REG_EBP) \
 	{														\
 		OP1(0x00 | (((reg) & 7) << 3) | ((base) & 7));		\
 	}														\
-	else if ((INT8)(INT32)(disp) == (INT32)(disp))			\
+	else if ((int8_t)(int32_t)(disp) == (int32_t)(disp))			\
 	{														\
 		if ((base) == REG_ESP)								\
 		{													\
 			OP1(0x44 | (((reg) & 7) << 3));					\
 			OP1(0x24);										\
-			OP1((INT32)disp);								\
+			OP1((int32_t)disp);								\
 		}													\
 		else												\
 		{													\
 			OP1(0x40 | (((reg) & 7) << 3) | ((base) & 7));	\
-			OP1((INT32)disp);								\
+			OP1((int32_t)disp);								\
 		}													\
 	}														\
 	else													\
@@ -254,17 +254,17 @@ do {														\
 do {														\
 	if ((scale) == 1 && (base) == NO_BASE)					\
 		MODRM_MBD(reg,indx,disp);							\
-	else if ((UINT32)(disp) == 0 || (base) == NO_BASE)		\
+	else if ((uint32_t)(disp) == 0 || (base) == NO_BASE)		\
 	{														\
 		OP1(0x04 | (((reg) & 7) << 3));						\
 		OP1((scale_lookup[scale] << 6) | (((indx) & 7) << 3) | ((base) & 7));\
-		if ((UINT32)(disp) != 0) OP4(disp);					\
+		if ((uint32_t)(disp) != 0) OP4(disp);					\
 	}														\
-	else if ((INT8)(INT32)(disp) == (INT32)(disp))			\
+	else if ((int8_t)(int32_t)(disp) == (int32_t)(disp))			\
 	{														\
 		OP1(0x44 | (((reg) & 7) << 3));						\
 		OP1((scale_lookup[scale] << 6) | (((indx) & 7) << 3) | ((base) & 7));\
-		OP1((INT32)disp);									\
+		OP1((int32_t)disp);									\
 	}														\
 	else													\
 	{														\
@@ -437,7 +437,7 @@ do { _mov_r32_m32abs(reglo, LO(addr)); _mov_r32_m32abs(reghi, HI(addr)); } while
 do { _mov_m32abs_r32(LO(addr), reglo); _mov_m32abs_r32(HI(addr), reghi); } while (0)
 
 #define _mov_m64abs_imm32(addr, imm) \
-do { _mov_m32abs_imm(LO(addr), imm); _mov_m32abs_imm(HI(addr), ((INT32)(imm) >> 31)); } while (0)
+do { _mov_m32abs_imm(LO(addr), imm); _mov_m32abs_imm(HI(addr), ((int32_t)(imm) >> 31)); } while (0)
 
 
 
@@ -589,7 +589,7 @@ do { OP1(0x33); MODRM_MABS(dreg, addr); } while (0)
 
 #define _arith_r32_imm_common(reg, dreg, imm)		\
 do {												\
-	if ((INT8)(imm) == (INT32)(imm))				\
+	if ((int8_t)(imm) == (int32_t)(imm))				\
 	{												\
 		OP1(0x83); MODRM_REG(reg, dreg); OP1(imm);	\
 	}												\
@@ -634,7 +634,7 @@ do { OP1(0x23); MODRM_REG(dreg, sreg); } while (0)
 
 #define _arith_m32abs_imm_common(reg, addr, imm)	\
 do {												\
-	if ((INT8)(imm) == (INT32)(imm))				\
+	if ((int8_t)(imm) == (int32_t)(imm))				\
 	{												\
 		OP1(0x83); MODRM_MABS(reg, addr); OP1(imm);	\
 	}												\
@@ -675,7 +675,7 @@ do { OP1(0xf7); MODRM_MABS(0, addr); OP4(imm); } while (0)
 
 #define _arith_m32bd_imm_common(reg, base, disp, imm)	\
 do {												\
-	if ((INT8)(imm) == (INT32)(imm))				\
+	if ((int8_t)(imm) == (int32_t)(imm))				\
 	{												\
 		OP1(0x83); MODRM_MBD(reg, base, disp); OP1(imm);\
 	}												\
@@ -741,7 +741,7 @@ do { OP1(0xd3);	OP1(0xd8 | ((reg) & 7)); } while(0)
 #define _arith_m16abs_imm_common(reg, addr, imm)	\
 do {												\
 	OP1(0x66);										\
-	if ((INT8)(imm) == (INT16)(imm))				\
+	if ((int8_t)(imm) == (int16_t)(imm))				\
 	{												\
 		OP1(0x83); MODRM_MABS(reg, addr); OP1(imm);	\
 	}												\
@@ -953,14 +953,14 @@ do { OP1(0x0f); OP1(0x80 + (cond)); OP4(0x00); (link)->target = drc->cache_top; 
 
 #define _jcc(cond, target) 									\
 do {														\
-	INT32 delta = (UINT8 *)(target) - (drc->cache_top + 2);	\
-	if ((INT8)delta == (INT32)delta)						\
+	int32_t delta = (uint8_t *)(target) - (drc->cache_top + 2);	\
+	if ((int8_t)delta == (int32_t)delta)						\
 	{														\
 		OP1(0x70 + (cond));	OP1(delta);						\
 	}														\
 	else													\
 	{														\
-		delta = (UINT8 *)(target) - (drc->cache_top + 6);	\
+		delta = (uint8_t *)(target) - (drc->cache_top + 6);	\
 		OP1(0x0f); OP1(0x80 + (cond)); OP4(delta);			\
 	}														\
 } while (0)
@@ -974,12 +974,12 @@ do { OP1(0xeb); OP1(0x00); (link)->target = drc->cache_top; (link)->size = 1; } 
 do { OP1(0xe9); OP4(0x00); (link)->target = drc->cache_top; (link)->size = 4; } while (0)
 
 #define _jmp(target) \
-do { OP1(0xe9); OP4((UINT32)(target) - ((UINT32)drc->cache_top + 4)); } while (0)
+do { OP1(0xe9); OP4((uint32_t)(target) - ((uint32_t)drc->cache_top + 4)); } while (0)
 
 
 
 #define _call(target) \
-do { if (drc->uses_fp) OP1(0xe8); OP4((UINT32)(target) - ((UINT32)drc->cache_top + 4)); } while (0)
+do { if (drc->uses_fp) OP1(0xe8); OP4((uint32_t)(target) - ((uint32_t)drc->cache_top + 4)); } while (0)
 
 
 
@@ -996,15 +996,15 @@ do { OP1(0xff); MODRM_MBISD(4, base, indx, scale, disp); } while (0)
 
 #define _resolve_link(link)							\
 do {												\
-	INT32 delta = drc->cache_top - (link)->target;	\
+	int32_t delta = drc->cache_top - (link)->target;	\
 	if ((link)->size == 1)							\
 	{												\
-		if ((INT8)delta != delta)					\
+		if ((int8_t)delta != delta)					\
 			printf("Error: link out of range!\n");	\
 		(link)->target[-1] = delta;					\
 	}												\
 	else if ((link)->size == 4)						\
-		*(UINT32 *)&(link)->target[-4] = delta;		\
+		*(uint32_t *)&(link)->target[-4] = delta;		\
 	else											\
 		printf("Unsized link!\n");					\
 } while (0)
@@ -1115,29 +1115,29 @@ do { OP1(0x66); OP1(0x0f); OP1(0xef); MODRM_REG(r1, r2); } while (0)
 **#################################################################################################*/
 
 /* init/shutdown */
-struct drccore *drc_init(UINT8 cpunum, struct drcconfig *config);
+struct drccore *drc_init(uint8_t cpunum, struct drcconfig *config);
 void drc_cache_reset(struct drccore *drc);
 void drc_execute(struct drccore *drc);
 void drc_exit(struct drccore *drc);
 
 /* code management */
-void drc_begin_sequence(struct drccore *drc, UINT32 pc);
+void drc_begin_sequence(struct drccore *drc, uint32_t pc);
 void drc_end_sequence(struct drccore *drc);
-void drc_register_code_at_cache_top(struct drccore *drc, UINT32 pc);
-void *drc_get_code_at_pc(struct drccore *drc, UINT32 pc);
+void drc_register_code_at_cache_top(struct drccore *drc, uint32_t pc);
+void *drc_get_code_at_pc(struct drccore *drc, uint32_t pc);
 
 /* standard appendages */
 void drc_append_dispatcher(struct drccore *drc);
-void drc_append_fixed_dispatcher(struct drccore *drc, UINT32 newpc);
-void drc_append_tentative_fixed_dispatcher(struct drccore *drc, UINT32 newpc);
+void drc_append_fixed_dispatcher(struct drccore *drc, uint32_t newpc);
+void drc_append_tentative_fixed_dispatcher(struct drccore *drc, uint32_t newpc);
 void drc_append_call_debugger(struct drccore *drc);
-void drc_append_standard_epilogue(struct drccore *drc, INT32 cycles, INT32 pcdelta, int allow_exit);
+void drc_append_standard_epilogue(struct drccore *drc, int32_t cycles, int32_t pcdelta, int allow_exit);
 void drc_append_save_volatiles(struct drccore *drc);
 void drc_append_restore_volatiles(struct drccore *drc);
-void drc_append_save_call_restore(struct drccore *drc, void *target, UINT32 stackadj);
-void drc_append_verify_code(struct drccore *drc, void *code, UINT8 length);
-void drc_append_set_fp_rounding(struct drccore *drc, UINT8 regindex);
-void drc_append_set_temp_fp_rounding(struct drccore *drc, UINT8 rounding);
+void drc_append_save_call_restore(struct drccore *drc, void *target, uint32_t stackadj);
+void drc_append_verify_code(struct drccore *drc, void *code, uint8_t length);
+void drc_append_set_fp_rounding(struct drccore *drc, uint8_t regindex);
+void drc_append_set_temp_fp_rounding(struct drccore *drc, uint8_t rounding);
 void drc_append_restore_fp_rounding(struct drccore *drc);
 
 /* disassembling drc code */

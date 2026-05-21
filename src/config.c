@@ -57,12 +57,12 @@ static config_file *config_init(const char *name, int save);
 	readint
 ***************************************************************************/
 
-static int readint(mame_file *f, UINT32 *num)
+static int readint(mame_file *f, uint32_t *num)
 {
 	unsigned i;
 
 	*num = 0;
-	for (i = 0;i < sizeof(UINT32);i++)
+	for (i = 0;i < sizeof(uint32_t);i++)
 	{
 		unsigned char c;
 		*num <<= 8;
@@ -80,14 +80,14 @@ static int readint(mame_file *f, UINT32 *num)
 	writeint
 ***************************************************************************/
 
-static void writeint(mame_file *f, UINT32 num)
+static void writeint(mame_file *f, uint32_t num)
 {
 	unsigned i;
 
-	for (i = 0;i < sizeof(UINT32);i++)
+	for (i = 0;i < sizeof(uint32_t);i++)
 	{
 		unsigned char c;
-		c = (num >> 8 * (sizeof(UINT32)-1)) & 0xff;
+		c = (num >> 8 * (sizeof(uint32_t)-1)) & 0xff;
 		mame_fwrite(f,&c,1);
 		num <<= 8;
 	}
@@ -99,13 +99,13 @@ static void writeint(mame_file *f, UINT32 num)
 	readword
 ***************************************************************************/
 
-static int readword(mame_file *f,UINT16 *num)
+static int readword(mame_file *f,uint16_t *num)
 {
 	unsigned i;
 	int res;
 
 	res = 0;
-	for (i = 0;i < sizeof(UINT16);i++)
+	for (i = 0;i < sizeof(uint16_t);i++)
 	{
 		unsigned char c;
 		res <<= 8;
@@ -124,15 +124,15 @@ static int readword(mame_file *f,UINT16 *num)
 	writeword
 ***************************************************************************/
 
-static void writeword(mame_file *f,UINT16 num)
+static void writeword(mame_file *f,uint16_t num)
 {
 	unsigned i;
 
-	for (i = 0;i < sizeof(UINT16);i++)
+	for (i = 0;i < sizeof(uint16_t);i++)
 	{
 		unsigned char c;
 
-		c = (num >> 8 * (sizeof(UINT16)-1)) & 0xff;
+		c = (num >> 8 * (sizeof(uint16_t)-1)) & 0xff;
 		mame_fwrite(f,&c,1);
 		num <<= 8;
 	}
@@ -147,8 +147,8 @@ static void writeword(mame_file *f,UINT16 num)
 static int seq_read_ver_8(mame_file *f, InputSeq *seq)
 {
 	int j,len;
-	UINT32 i;
-	UINT16 w;
+	uint32_t i;
+	uint16_t w;
 
 	if (readword(f,&w) != 0)
 		return -1;
@@ -173,8 +173,8 @@ static int seq_read_ver_8(mame_file *f, InputSeq *seq)
 
 static int input_port_read_ver_8(mame_file *f, struct InputPort *in)
 {
-	UINT32 i;
-	UINT16 w;
+	uint32_t i;
+	uint16_t w;
 	if (readint(f,&i) != 0)
 		return -1;
 	in->type = i;
@@ -381,7 +381,7 @@ int config_read_ports(config_file *cfg, struct InputPort *input_ports_default, s
 
 int config_read_default_ports(config_file *cfg, struct ipd *input_ports_default)
 {
-	UINT32 type;
+	uint32_t type;
 	InputSeq def_seq;
 	InputSeq seq;
 	int i;

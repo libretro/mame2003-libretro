@@ -74,7 +74,7 @@ int uirotcharwidth, uirotcharheight;
 static int setup_selected;
 static int setup_via_menu = 0;
 
-UINT8 ui_dirty;
+uint8_t ui_dirty;
 
 /* show gfx */
 bool toggle_showgfx;
@@ -92,7 +92,7 @@ static int tilemap_ypos;
 
 ***************************************************************************/
 
-static const UINT8 uifontdata[] =
+static const uint8_t uifontdata[] =
 {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,	/* [ 0- 1] */
 	0x7c,0x80,0x98,0x90,0x80,0xbc,0x80,0x7c,0xf8,0x04,0x64,0x44,0x04,0xf4,0x04,0xf8,	/* [ 2- 3] tape pos 1 */
@@ -397,7 +397,7 @@ static void erase_screen(struct mame_bitmap *bitmap)
 struct GfxElement *builduifont(void)
 {
 	struct GfxLayout layout = uifontlayout;
-	UINT32 tempoffset[MAX_GFX_SIZE];
+	uint32_t tempoffset[MAX_GFX_SIZE];
 	struct GfxElement *font;
 	int temp, i;
 
@@ -1191,7 +1191,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 			{
 				/*if (changed) -- temporary */
 				{
-					UINT32 tilemap_width, tilemap_height;
+					uint32_t tilemap_width, tilemap_height;
 					tilemap_nb_size (bank, &tilemap_width, &tilemap_height);
 					while (tilemap_xpos < 0)
 						tilemap_xpos += tilemap_width;
@@ -1438,7 +1438,7 @@ static void showcharset(struct mame_bitmap *bitmap)
 
 
 
-static int switchmenu(struct mame_bitmap *bitmap, int selected, UINT32 switch_name, UINT32 switch_setting)
+static int switchmenu(struct mame_bitmap *bitmap, int selected, uint32_t switch_name, uint32_t switch_setting)
 {
 	const char *menu_item[128];
 	const char *menu_subitem[128];

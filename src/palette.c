@@ -32,8 +32,8 @@ enum
 	GLOBAL VARIABLES
 -------------------------------------------------*/
 
-UINT32 direct_rgb_components[3];
-UINT16 *palette_shadow_table;
+uint32_t direct_rgb_components[3];
+uint16_t *palette_shadow_table;
 
 data8_t *paletteram;
 data8_t *paletteram_2;	/* use when palette RAM is split in two parts */
@@ -49,20 +49,20 @@ data32_t *paletteram32;
 
 static rgb_t *game_palette;			/* RGB palette as set by the driver */
 static rgb_t *adjusted_palette;		/* actual RGB palette after brightness/gamma adjustments */
-static UINT32 *dirty_palette;
-static UINT16 *pen_brightness;
+static uint32_t *dirty_palette;
+static uint16_t *pen_brightness;
 
-static UINT8 adjusted_palette_dirty;
-static UINT8 debug_palette_dirty;
+static uint8_t adjusted_palette_dirty;
+static uint8_t debug_palette_dirty;
 
-static UINT16 shadow_factor, highlight_factor;
+static uint16_t shadow_factor, highlight_factor;
 static double global_brightness, global_brightness_adjust, global_gamma;
 
-static UINT8 colormode, highlight_method;
+static uint8_t colormode, highlight_method;
 static pen_t total_colors;
 static pen_t total_colors_with_ui;
 
-static UINT8 color_correct_table[(MAX_PEN_BRIGHTNESS * MAX_PEN_BRIGHTNESS) >> PEN_BRIGHTNESS_BITS];
+static uint8_t color_correct_table[(MAX_PEN_BRIGHTNESS * MAX_PEN_BRIGHTNESS) >> PEN_BRIGHTNESS_BITS];
 
 
 
@@ -82,7 +82,7 @@ static void internal_modify_pen(pen_t pen, rgb_t color, int pen_bright);
 	a 15-bit OSD-specified RGB value
 -------------------------------------------------*/
 
-static INLINE UINT16 rgb_to_direct15(rgb_t rgb)
+static INLINE uint16_t rgb_to_direct15(rgb_t rgb)
 {
 	return  (  RGB_RED(rgb) >> 3) * (direct_rgb_components[0] / 0x1f) +
 			(RGB_GREEN(rgb) >> 3) * (direct_rgb_components[1] / 0x1f) +
@@ -96,7 +96,7 @@ static INLINE UINT16 rgb_to_direct15(rgb_t rgb)
 	a 32-bit OSD-specified RGB value
 -------------------------------------------------*/
 
-static INLINE UINT32 rgb_to_direct32(rgb_t rgb)
+static INLINE uint32_t rgb_to_direct32(rgb_t rgb)
 {
 	return    RGB_RED(rgb) * (direct_rgb_components[0] / 0xff) +
 			RGB_GREEN(rgb) * (direct_rgb_components[1] / 0xff) +
@@ -254,7 +254,7 @@ int palette_start(void)
 -------------------------------------------------*/
 #define MAX_SHADOW_PRESETS 4
 
-static UINT32 *shadow_table_base[MAX_SHADOW_PRESETS];
+static uint32_t *shadow_table_base[MAX_SHADOW_PRESETS];
 
 
 static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, int db, int noclip, int style, int init)
@@ -266,7 +266,7 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 	static int oldRGB[MAX_SHADOW_PRESETS][3] = {{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1}};
 	static int oldclip;
 
-	UINT32 *table_ptr32;
+	uint32_t *table_ptr32;
 	int i, fl, ov, r, g, b, d32;
 
 	if (mode < 0 || mode >= MAX_SHADOW_PRESETS) return;
@@ -318,9 +318,9 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 					b = b>>FP & 0x001f;
 
 					if (d32)
-						table_ptr32[i] = (UINT32)(r<<9 | g<<6 | b<<3);
+						table_ptr32[i] = (uint32_t)(r<<9 | g<<6 | b<<3);
 					else
-						((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
+						((uint16_t*)table_ptr32)[i] = (uint16_t)(r | g | b);
 				}
 			}
 			else
@@ -340,9 +340,9 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 						if (b >= FMAX) b = 0x001f; else b = b>>(FP);
 
 						if (d32)
-							table_ptr32[i] = (UINT32)(r<<9 | g<<6 | b<<3);
+							table_ptr32[i] = (uint32_t)(r<<9 | g<<6 | b<<3);
 						else
-							((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
+							((uint16_t*)table_ptr32)[i] = (uint16_t)(r | g | b);
 					}
 				}
 				else if (highlight_method == 1)
@@ -367,9 +367,9 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 						if (b >= FMAX) b = 0x001f; else b = b>>(FP);
 
 						if (d32)
-							table_ptr32[i] = (UINT32)(r<<9 | g<<6 | b<<3);
+							table_ptr32[i] = (uint32_t)(r<<9 | g<<6 | b<<3);
 						else
-							((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
+							((uint16_t*)table_ptr32)[i] = (uint16_t)(r | g | b);
 					}
 				}
 				else
@@ -390,9 +390,9 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 						if (b > 0x001f) b = 0x001f;
 
 						if (d32)
-							table_ptr32[i] = (UINT32)(r<<9 | g<<6 | b<<3);
+							table_ptr32[i] = (uint32_t)(r<<9 | g<<6 | b<<3);
 						else
-							((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
+							((uint16_t*)table_ptr32)[i] = (uint16_t)(r | g | b);
 					}
 				} /* end of highlight_methods*/
 			} /* end of factor*/
@@ -433,9 +433,9 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 				b &= 0x001f;
 
 				if (d32)
-					table_ptr32[i] = (UINT32)(r<<9 | g<<6 | b<<3);
+					table_ptr32[i] = (uint32_t)(r<<9 | g<<6 | b<<3);
 				else
-					((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
+					((uint16_t*)table_ptr32)[i] = (uint16_t)(r | g | b);
 			}
 		}
 		else
@@ -451,9 +451,9 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 				if (b < 0) b = 0; else if (b > 0x001f) b = 0x001f;
 
 				if (d32)
-					table_ptr32[i] = (UINT32)(r<<9 | g<<6 | b<<3);
+					table_ptr32[i] = (uint32_t)(r<<9 | g<<6 | b<<3);
 				else
-					((UINT16*)table_ptr32)[i] = (UINT16)(r | g | b);
+					((uint16_t*)table_ptr32)[i] = (uint16_t)(r | g | b);
 			}
 		}
 	}
@@ -464,7 +464,7 @@ static void internal_set_shadow_preset(int mode, double factor, int dr, int dg, 
 
 void palette_set_shadow_mode(int mode)
 {
-	if (mode >= 0 && mode < MAX_SHADOW_PRESETS) palette_shadow_table = (UINT16*)shadow_table_base[mode];
+	if (mode >= 0 && mode < MAX_SHADOW_PRESETS) palette_shadow_table = (uint16_t*)shadow_table_base[mode];
 }
 
 
@@ -601,8 +601,8 @@ static int palette_alloc(void)
 	}
 #else
 	{
-		UINT16 *table_ptr16;
-		UINT32 *table_ptr32;
+		uint16_t *table_ptr16;
+		uint32_t *table_ptr32;
 		int c = Machine->drv->total_colors;
 		int cx2 = c << 1;
 
@@ -612,9 +612,9 @@ static int palette_alloc(void)
 		{
 			if (Machine->drv->video_attributes & VIDEO_HAS_SHADOWS)
 			{
-				if (!(table_ptr16 = auto_malloc(65536 * sizeof(UINT16)))) return 1;
+				if (!(table_ptr16 = auto_malloc(65536 * sizeof(uint16_t)))) return 1;
 
-				shadow_table_base[0] = shadow_table_base[2] = (UINT32*)table_ptr16;
+				shadow_table_base[0] = shadow_table_base[2] = (uint32_t*)table_ptr16;
 
 				for (i=0; i<c; i++) table_ptr16[i] = c + i;
 				for (i=c; i<65536; i++) table_ptr16[i] = i;
@@ -624,9 +624,9 @@ static int palette_alloc(void)
 
 			if (Machine->drv->video_attributes & VIDEO_HAS_HIGHLIGHTS)
 			{
-				if (!(table_ptr16 = auto_malloc(65536 * sizeof(UINT16)))) return 1;
+				if (!(table_ptr16 = auto_malloc(65536 * sizeof(uint16_t)))) return 1;
 
-				shadow_table_base[1] = shadow_table_base[3] = (UINT32*)table_ptr16;
+				shadow_table_base[1] = shadow_table_base[3] = (uint32_t*)table_ptr16;
 
 				for (i=0; i<c; i++) table_ptr16[i] = cx2 + i;
 				for (i=c; i<65536; i++) table_ptr16[i] = i;
@@ -638,7 +638,7 @@ static int palette_alloc(void)
 		{
 			if (Machine->drv->video_attributes & VIDEO_HAS_SHADOWS)
 			{
-				if (!(table_ptr32 = auto_malloc(65536 * sizeof(UINT32)))) return 1;
+				if (!(table_ptr32 = auto_malloc(65536 * sizeof(uint32_t)))) return 1;
 
 				shadow_table_base[0] = table_ptr32;
 				shadow_table_base[2] = table_ptr32 + 32768;
@@ -648,7 +648,7 @@ static int palette_alloc(void)
 
 			if (Machine->drv->video_attributes & VIDEO_HAS_HIGHLIGHTS)
 			{
-				if (!(table_ptr32 = auto_malloc(65536 * sizeof(UINT32)))) return 1;
+				if (!(table_ptr32 = auto_malloc(65536 * sizeof(uint32_t)))) return 1;
 
 				shadow_table_base[1] = table_ptr32;
 				shadow_table_base[3] = table_ptr32 + 32768;
@@ -656,7 +656,7 @@ static int palette_alloc(void)
 				internal_set_shadow_preset(1, PALETTE_DEFAULT_HIGHLIGHT_FACTOR32, 0, 0, 0, 0, 2, 1);
 			}
 		}
-		palette_shadow_table = (UINT16*)shadow_table_base[0];
+		palette_shadow_table = (uint16_t*)shadow_table_base[0];
 	}
 #endif
 
@@ -1017,7 +1017,7 @@ static void palette_reset(void)
 	entry
 -------------------------------------------------*/
 
-void palette_set_color(pen_t pen, UINT8 r, UINT8 g, UINT8 b)
+void palette_set_color(pen_t pen, uint8_t r, uint8_t g, uint8_t b)
 {
 	/* make sure we're in range */
 	if (pen >= total_colors)
@@ -1031,7 +1031,7 @@ void palette_set_color(pen_t pen, UINT8 r, UINT8 g, UINT8 b)
 }
 
 /* handy wrapper for palette_set_color */
-void palette_set_colors(pen_t color_base, const UINT8 *colors, int color_count)
+void palette_set_colors(pen_t color_base, const uint8_t *colors, int color_count)
 {
         while(color_count--)
         {
@@ -1045,7 +1045,7 @@ void palette_set_colors(pen_t color_base, const UINT8 *colors, int color_count)
 	entry
 -------------------------------------------------*/
 
-void palette_get_color(pen_t pen, UINT8 *r, UINT8 *g, UINT8 *b)
+void palette_get_color(pen_t pen, uint8_t *r, uint8_t *g, uint8_t *b)
 {
 	/* special case the black pen */
 	if (pen == get_black_pen())

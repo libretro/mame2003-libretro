@@ -15,7 +15,7 @@
 
 /*----------- defined in drivers/cojag.c -----------*/
 
-extern UINT8 cojag_is_r3000;
+extern uint8_t cojag_is_r3000;
 
 extern data32_t *jaguar_shared_ram;
 extern data32_t *jaguar_gpu_ram;
@@ -45,7 +45,7 @@ WRITE32_HANDLER( jaguar_serial_w );
 
 /*----------- defined in vidhrdw/jaguar.c -----------*/
 
-extern UINT8 cojag_draw_crosshair;
+extern uint8_t cojag_draw_crosshair;
 
 void jaguar_gpu_suspend(void);
 void jaguar_gpu_resume(void);

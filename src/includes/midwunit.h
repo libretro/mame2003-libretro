@@ -8,7 +8,7 @@
 
 /*----------- defined in machine/midwolfu.c -----------*/
 
-extern UINT8 *midwunit_decode_memory;
+extern uint8_t *midwunit_decode_memory;
 
 WRITE16_HANDLER( midwunit_cmos_enable_w );
 WRITE16_HANDLER( midwunit_cmos_w );

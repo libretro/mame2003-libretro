@@ -27,9 +27,9 @@
 
 
 /* convert_uint is here so we don't have to deal with byte-ordering issues */
-static UINT32 convert_from_network_order (UINT8 *v)
+static uint32_t convert_from_network_order (uint8_t *v)
 {
-	UINT32 i;
+	uint32_t i;
 
 	i = (v[0]<<24) | (v[1]<<16) | (v[2]<<8) | (v[3]);
 	return i;
@@ -38,10 +38,10 @@ static UINT32 convert_from_network_order (UINT8 *v)
 int png_unfilter(struct png_info *p)
 {
 	int i, j, bpp, filter;
-	INT32 prediction, pA, pB, pC, dA, dB, dC;
-	UINT8 *src, *dst;
+	int32_t prediction, pA, pB, pC, dA, dB, dC;
+	uint8_t *src, *dst;
 
-	if((p->image = (UINT8 *)malloc (p->height*p->rowbytes))==NULL)
+	if((p->image = (uint8_t *)malloc (p->height*p->rowbytes))==NULL)
 	{
 		log_cb(RETRO_LOG_INFO, LOGPRE "Out of memory\n");
 		free (p->fimage);
@@ -103,7 +103,7 @@ int png_unfilter(struct png_info *p)
 
 int png_verify_signature (mame_file *fp)
 {
-	INT8 signature[8];
+	int8_t signature[8];
 
 	if (mame_fread (fp, signature, 8) != 8)
 	{
@@ -125,7 +125,7 @@ int png_inflate_image (struct png_info *p)
 
 	fbuff_size = p->height * (p->rowbytes + 1);
 
-	if((p->fimage = (UINT8 *)malloc (fbuff_size))==NULL)
+	if((p->fimage = (uint8_t *)malloc (fbuff_size))==NULL)
 	{
 		log_cb(RETRO_LOG_INFO, LOGPRE "Out of memory\n");
 		free (p->zimage);
@@ -147,15 +147,15 @@ int png_read_file(mame_file *fp, struct png_info *p)
 	/* translates color_type to bytes per pixel */
 	const int samples[] = {1, 0, 3, 1, 2, 0, 4};
 
-	UINT32 chunk_length, chunk_type=0, chunk_crc, crc;
-	UINT8 *chunk_data, *temp;
-	UINT8 str_chunk_type[5], v[4];
+	uint32_t chunk_length, chunk_type=0, chunk_crc, crc;
+	uint8_t *chunk_data, *temp;
+	uint8_t str_chunk_type[5], v[4];
 
 	struct idat
 	{
 		struct idat *next;
 		int length;
-		UINT8 *data;
+		uint8_t *data;
 	} *ihead, *pidat;
 
 	if ((ihead = malloc (sizeof(struct idat))) == 0)
@@ -188,7 +188,7 @@ int png_read_file(mame_file *fp, struct png_info *p)
 
 		if (chunk_length)
 		{
-			if ((chunk_data = (UINT8 *)malloc(chunk_length+1))==NULL)
+			if ((chunk_data = (uint8_t *)malloc(chunk_length+1))==NULL)
 			{
 				log_cb(RETRO_LOG_INFO, LOGPRE "Out of memory\n");
 				return 0;
@@ -273,7 +273,7 @@ int png_read_file(mame_file *fp, struct png_info *p)
 
 		case PNG_CN_tIME:
 			{
-				UINT8 *t=chunk_data;
+				uint8_t *t=chunk_data;
 				logerror("Image last-modification time: %i/%i/%i (%i:%i:%i) GMT\n",
 					((short)(*t) << 8)+ (short)(*(t+1)), *(t+2), *(t+3), *(t+4), *(t+5), *(t+6));
 			}
@@ -314,7 +314,7 @@ int png_read_file(mame_file *fp, struct png_info *p)
 			break;
 		}
 	}
-	if ((p->zimage = (UINT8 *)malloc(p->zlength))==NULL)
+	if ((p->zimage = (uint8_t *)malloc(p->zlength))==NULL)
 	{
 		log_cb(RETRO_LOG_INFO, LOGPRE "Out of memory\n");
 		return 0;
@@ -346,9 +346,9 @@ int png_read_file(mame_file *fp, struct png_info *p)
 #if 0
 int png_read_info(mame_file *fp, struct png_info *p)
 {
-	UINT32 chunk_length, chunk_type=0, chunk_crc, crc;
-	UINT8 *chunk_data;
-	UINT8 str_chunk_type[5], v[4];
+	uint32_t chunk_length, chunk_type=0, chunk_crc, crc;
+	uint8_t *chunk_data;
+	uint8_t str_chunk_type[5], v[4];
 	int res = 0;
 
 	if (png_verify_signature(fp)==0)
@@ -370,7 +370,7 @@ int png_read_info(mame_file *fp, struct png_info *p)
 
 		if (chunk_length)
 		{
-			if ((chunk_data = (UINT8 *)malloc(chunk_length+1))==NULL)
+			if ((chunk_data = (uint8_t *)malloc(chunk_length+1))==NULL)
 			{
 				log_cb(RETRO_LOG_INFO, LOGPRE "Out of memory\n");
 				return 0;
@@ -458,11 +458,11 @@ int png_read_info(mame_file *fp, struct png_info *p)
 int png_expand_buffer_8bit (struct png_info *p)
 {
 	int i,j, k;
-	UINT8 *inp, *outp, *outbuf;
+	uint8_t *inp, *outp, *outbuf;
 
 	if (p->bit_depth < 8)
 	{
-		if ((outbuf = (UINT8 *)malloc(p->width*p->height))==NULL)
+		if ((outbuf = (uint8_t *)malloc(p->width*p->height))==NULL)
 		{
 			log_cb(RETRO_LOG_INFO, LOGPRE "Out of memory\n");
 			return 0;
@@ -495,7 +495,7 @@ int png_expand_buffer_8bit (struct png_info *p)
 void png_delete_unused_colors (struct png_info *p)
 {
 	int i, tab[256], pen=0, trns=0;
-	UINT8 ptemp[3*256], ttemp[256];
+	uint8_t ptemp[3*256], ttemp[256];
 
 	memset (tab, 0, 256*sizeof(int));
 	memcpy (ptemp, p->palette, 3*p->num_palette);

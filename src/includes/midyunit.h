@@ -17,7 +17,7 @@ extern data16_t *midyunit_code_rom;
 extern data16_t *midyunit_scratch_ram;
 
 extern data16_t *midyunit_cmos_ram;
-extern UINT32 	midyunit_cmos_page;
+extern uint32_t 	midyunit_cmos_page;
 
 extern offs_t 	midyunit_speedup_pc;
 extern offs_t 	midyunit_speedup_offset;
@@ -74,7 +74,7 @@ WRITE16_HANDLER( midyunit_sound_w );
 
 /*----------- defined in vidhrdw/midyunit.c -----------*/
 
-extern UINT8 *	midyunit_gfx_rom;
+extern uint8_t *	midyunit_gfx_rom;
 extern size_t	midyunit_gfx_rom_size;
 
 VIDEO_START( midyunit_4bit );
@@ -86,8 +86,8 @@ READ16_HANDLER( midyunit_gfxrom_r );
 WRITE16_HANDLER( midyunit_vram_w );
 READ16_HANDLER( midyunit_vram_r );
 
-void midyunit_to_shiftreg(UINT32 address, UINT16 *shiftreg);
-void midyunit_from_shiftreg(UINT32 address, UINT16 *shiftreg);
+void midyunit_to_shiftreg(uint32_t address, uint16_t *shiftreg);
+void midyunit_from_shiftreg(uint32_t address, uint16_t *shiftreg);
 
 WRITE16_HANDLER( midyunit_control_w );
 WRITE16_HANDLER( midyunit_paletteram_w );
@@ -95,7 +95,7 @@ WRITE16_HANDLER( midyunit_paletteram_w );
 READ16_HANDLER( midyunit_dma_r );
 WRITE16_HANDLER( midyunit_dma_w );
 
-void midyunit_display_addr_changed(UINT32 offs, int rowbytes, int scanline);
+void midyunit_display_addr_changed(uint32_t offs, int rowbytes, int scanline);
 void midyunit_display_interrupt(int scanline);
 
 WRITE16_HANDLER( midyunit_io_register_w );

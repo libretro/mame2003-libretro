@@ -22,7 +22,7 @@ READ_HANDLER( mtrap_voiceio_r );
 
 /*----------- defined in sndhrdw/targ.c -----------*/
 
-extern UINT8 targ_spec_flag;
+extern uint8_t targ_spec_flag;
 
 int targ_sh_start(const struct MachineSound *msound);
 void targ_sh_stop(void);
@@ -35,25 +35,25 @@ WRITE_HANDLER( targ_sh_w );
 #define PALETTE_LEN 8
 #define COLORTABLE_LEN 20
 
-extern UINT8 *exidy_characterram;
-extern UINT8 *exidy_sprite_no;
-extern UINT8 *exidy_sprite_enable;
-extern UINT8 *exidy_sprite1_xpos;
-extern UINT8 *exidy_sprite1_ypos;
-extern UINT8 *exidy_sprite2_xpos;
-extern UINT8 *exidy_sprite2_ypos;
-extern UINT8 *exidy_color_latch;
-extern UINT8 *exidy_palette;
-extern UINT16 *exidy_colortable;
+extern uint8_t *exidy_characterram;
+extern uint8_t *exidy_sprite_no;
+extern uint8_t *exidy_sprite_enable;
+extern uint8_t *exidy_sprite1_xpos;
+extern uint8_t *exidy_sprite1_ypos;
+extern uint8_t *exidy_sprite2_xpos;
+extern uint8_t *exidy_sprite2_ypos;
+extern uint8_t *exidy_color_latch;
+extern uint8_t *exidy_palette;
+extern uint16_t *exidy_colortable;
 
-extern UINT8 sidetrac_palette[];
-extern UINT8 targ_palette[];
-extern UINT8 spectar_palette[];
-extern UINT16 exidy_1bpp_colortable[];
-extern UINT16 exidy_2bpp_colortable[];
+extern uint8_t sidetrac_palette[];
+extern uint8_t targ_palette[];
+extern uint8_t spectar_palette[];
+extern uint16_t exidy_1bpp_colortable[];
+extern uint16_t exidy_2bpp_colortable[];
 
-extern UINT8 exidy_collision_mask;
-extern UINT8 exidy_collision_invert;
+extern uint8_t exidy_collision_mask;
+extern uint8_t exidy_collision_invert;
 
 PALETTE_INIT( exidy );
 VIDEO_START( exidy );

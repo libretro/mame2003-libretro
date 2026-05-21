@@ -643,7 +643,7 @@ const struct cpu_interface cpuintrf[] =
  *
  *************************************/
 
-UINT8 default_win_layout[] =
+uint8_t default_win_layout[] =
 {
 	 0, 0,80, 5,	/* register window (top rows) */
 	 0, 5,24,17,	/* disassembler window (left, middle columns) */
@@ -1039,14 +1039,14 @@ const char *activecpu_dump_state(void)
 	unsigned addr_width = (activecpu_address_bits() + 3) / 4;
 	char *dst = buffer;
 	const char *src;
-	const INT8 *regs;
+	const int8_t *regs;
 	int width;
 
 	VERIFY_ACTIVECPU("", activecpu_dump_state);
 
 	dst += sprintf(dst, "CPU #%d [%s]\n", activecpu, activecpu_name());
 	width = 0;
-	regs = (INT8 *)activecpu_reg_layout();
+	regs = (int8_t *)activecpu_reg_layout();
 	while (*regs)
 	{
 		if (*regs == -1)

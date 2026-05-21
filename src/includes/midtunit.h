@@ -33,7 +33,7 @@ WRITE16_HANDLER( midtunit_sound_w );
 
 /*----------- defined in vidhrdw/midtunit.c -----------*/
 
-extern UINT8 midtunit_gfx_rom_large;
+extern uint8_t midtunit_gfx_rom_large;
 
 VIDEO_START( midtunit );
 VIDEO_START( midwunit );
@@ -50,8 +50,8 @@ READ16_HANDLER( midtunit_vram_r );
 READ16_HANDLER( midtunit_vram_data_r );
 READ16_HANDLER( midtunit_vram_color_r );
 
-void midtunit_to_shiftreg(UINT32 address, UINT16 *shiftreg);
-void midtunit_from_shiftreg(UINT32 address, UINT16 *shiftreg);
+void midtunit_to_shiftreg(uint32_t address, uint16_t *shiftreg);
+void midtunit_from_shiftreg(uint32_t address, uint16_t *shiftreg);
 
 WRITE16_HANDLER( midtunit_control_w );
 WRITE16_HANDLER( midwunit_control_w );

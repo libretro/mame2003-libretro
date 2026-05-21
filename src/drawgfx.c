@@ -21,40 +21,40 @@ typedef pen_t (*read_pixel_proc)(struct mame_bitmap *bitmap,int x,int y);
 typedef void (*plot_box_proc)(struct mame_bitmap *bitmap,int x,int y,int width,int height,pen_t pen);
 
 
-UINT8 gfx_drawmode_table[256];
-UINT8 gfx_alpharange_table[256];
+uint8_t gfx_drawmode_table[256];
+uint8_t gfx_alpharange_table[256];
 
-static UINT8 is_raw[TRANSPARENCY_MODES];
+static uint8_t is_raw[TRANSPARENCY_MODES];
 
 
 #ifdef ALIGN_INTS /* GSL 980108 read/write nonaligned dword routine for ARM processor etc */
 
-static INLINE UINT32 read_dword(void *address)
+static INLINE uint32_t read_dword(void *address)
 {
 	if ((long)address & 3)
 	{
-  		return	(*((UINT8 *)address  ) << SHIFT0) +
-				(*((UINT8 *)address+1) << SHIFT1) +
-				(*((UINT8 *)address+2) << SHIFT2) +
-				(*((UINT8 *)address+3) << SHIFT3);
+  		return	(*((uint8_t *)address  ) << SHIFT0) +
+				(*((uint8_t *)address+1) << SHIFT1) +
+				(*((uint8_t *)address+2) << SHIFT2) +
+				(*((uint8_t *)address+3) << SHIFT3);
 	}
 	else
-		return *(UINT32 *)address;
+		return *(uint32_t *)address;
 }
 
 
-static INLINE void write_dword(void *address, UINT32 data)
+static INLINE void write_dword(void *address, uint32_t data)
 {
   	if ((long)address & 3)
 	{
-		*((UINT8 *)address)   = (data>>SHIFT0);
-		*((UINT8 *)address+1) = (data>>SHIFT1);
-		*((UINT8 *)address+2) = (data>>SHIFT2);
-		*((UINT8 *)address+3) = (data>>SHIFT3);
+		*((uint8_t *)address)   = (data>>SHIFT0);
+		*((uint8_t *)address+1) = (data>>SHIFT1);
+		*((uint8_t *)address+2) = (data>>SHIFT2);
+		*((uint8_t *)address+3) = (data>>SHIFT3);
 		return;
   	}
   	else
-		*(UINT32 *)address = data;
+		*(uint32_t *)address = data;
 }
 #else
 #define read_dword(address) *(int *)address
@@ -63,7 +63,7 @@ static INLINE void write_dword(void *address, UINT32 data)
 
 
 
-static INLINE int readbit(const UINT8 *src,int bitnum)
+static INLINE int readbit(const uint8_t *src,int bitnum)
 {
 	return src[bitnum / 8] & (0x80 >> (bitnum % 8));
 }
@@ -84,7 +84,7 @@ void alpha_init(void)
 static void calc_penusage(struct GfxElement *gfx,int num)
 {
 	int x,y;
-	UINT8 *dp;
+	uint8_t *dp;
 
 	if (!gfx->pen_usage) return;
 
@@ -118,13 +118,13 @@ static void calc_penusage(struct GfxElement *gfx,int num)
 	}
 }
 
-void decodechar(struct GfxElement *gfx,int num,const UINT8 *src,const struct GfxLayout *gl)
+void decodechar(struct GfxElement *gfx,int num,const uint8_t *src,const struct GfxLayout *gl)
 {
 	int plane,x,y;
 	int baseoffs;
-	const UINT32 *xoffset = gl->xoffset;
-	const UINT32 *yoffset = gl->yoffset;
-	UINT8 *dp = gfx->gfxdata + num * gfx->char_modulo;
+	const uint32_t *xoffset = gl->xoffset;
+	const uint32_t *yoffset = gl->yoffset;
+	uint8_t *dp = gfx->gfxdata + num * gfx->char_modulo;
 
 	memset(dp,0,gfx->char_modulo);
 
@@ -205,7 +205,7 @@ void decodechar(struct GfxElement *gfx,int num,const UINT8 *src,const struct Gfx
 }
 
 
-struct GfxElement *decodegfx(const UINT8 *src,const struct GfxLayout *gl)
+struct GfxElement *decodegfx(const uint8_t *src,const struct GfxLayout *gl)
 {
 	int c;
 	struct GfxElement *gfx;
@@ -233,7 +233,7 @@ struct GfxElement *decodegfx(const UINT8 *src,const struct GfxLayout *gl)
 		gfx->line_modulo = gl->yoffset[0] / 8;
 		gfx->char_modulo = gl->charincrement / 8;
 
-		gfx->gfxdata = (UINT8 *)src + gl->xoffset[0] / 8;
+		gfx->gfxdata = (uint8_t *)src + gl->xoffset[0] / 8;
 		gfx->flags |= GFX_DONT_FREE_GFXDATA;
 
 		for (c = 0;c < gfx->total_elements;c++)
@@ -251,7 +251,7 @@ struct GfxElement *decodegfx(const UINT8 *src,const struct GfxLayout *gl)
 			gfx->line_modulo = gfx->width;
 		gfx->char_modulo = gfx->line_modulo * gfx->height;
 
-		if ((gfx->gfxdata = malloc(gfx->total_elements * gfx->char_modulo * sizeof(UINT8))) == 0)
+		if ((gfx->gfxdata = malloc(gfx->total_elements * gfx->char_modulo * sizeof(uint8_t))) == 0)
 		{
 			free(gfx->pen_usage);
 			free(gfx);
@@ -281,13 +281,13 @@ void freegfx(struct GfxElement *gfx)
 
 
 static INLINE void blockmove_NtoN_transpen_noremap8(
-		const UINT8 *srcdata,int srcwidth,int srcheight,int srcmodulo,
-		UINT8 *dstdata,int dstmodulo,
+		const uint8_t *srcdata,int srcwidth,int srcheight,int srcmodulo,
+		uint8_t *dstdata,int dstmodulo,
 		int transpen)
 {
-	UINT8 *end;
+	uint8_t *end;
 	int trans4;
-	UINT32 *sd4;
+	uint32_t *sd4;
 
 	srcmodulo -= srcwidth;
 	dstmodulo -= srcwidth;
@@ -305,20 +305,20 @@ static INLINE void blockmove_NtoN_transpen_noremap8(
 			if (col != transpen) *dstdata = col;
 			dstdata++;
 		}
-		sd4 = (UINT32 *)srcdata;
+		sd4 = (uint32_t *)srcdata;
 		while (dstdata <= end - 4)
 		{
-			UINT32 col4;
+			uint32_t col4;
 
 			if ((col4 = *(sd4++)) != trans4)
 			{
-				UINT32 xod4;
+				uint32_t xod4;
 
 				xod4 = col4 ^ trans4;
 				if( (xod4&0x000000ff) && (xod4&0x0000ff00) &&
 					(xod4&0x00ff0000) && (xod4&0xff000000) )
 				{
-					write_dword((UINT32 *)dstdata,col4);
+					write_dword((uint32_t *)dstdata,col4);
 				}
 				else
 				{
@@ -330,7 +330,7 @@ static INLINE void blockmove_NtoN_transpen_noremap8(
 			}
 			dstdata += 4;
 		}
-		srcdata = (UINT8 *)sd4;
+		srcdata = (uint8_t *)sd4;
 		while (dstdata < end)
 		{
 			int col;
@@ -347,13 +347,13 @@ static INLINE void blockmove_NtoN_transpen_noremap8(
 }
 
 static INLINE void blockmove_NtoN_transpen_noremap_flipx8(
-		const UINT8 *srcdata,int srcwidth,int srcheight,int srcmodulo,
-		UINT8 *dstdata,int dstmodulo,
+		const uint8_t *srcdata,int srcwidth,int srcheight,int srcmodulo,
+		uint8_t *dstdata,int dstmodulo,
 		int transpen)
 {
-	UINT8 *end;
+	uint8_t *end;
 	int trans4;
-	UINT32 *sd4;
+	uint32_t *sd4;
 
 	srcmodulo += srcwidth;
 	dstmodulo -= srcwidth;
@@ -374,14 +374,14 @@ static INLINE void blockmove_NtoN_transpen_noremap_flipx8(
 			if (col != transpen) *dstdata = col;
 			dstdata++;
 		}
-		sd4 = (UINT32 *)srcdata;
+		sd4 = (uint32_t *)srcdata;
 		while (dstdata <= end - 4)
 		{
-			UINT32 col4;
+			uint32_t col4;
 
 			if ((col4 = *(sd4--)) != trans4)
 			{
-				UINT32 xod4;
+				uint32_t xod4;
 
 				xod4 = col4 ^ trans4;
 				if (xod4 & (0xff<<SHIFT0)) dstdata[3] = (col4>>SHIFT0);
@@ -391,7 +391,7 @@ static INLINE void blockmove_NtoN_transpen_noremap_flipx8(
 			}
 			dstdata += 4;
 		}
-		srcdata = (UINT8 *)sd4;
+		srcdata = (uint8_t *)sd4;
 		while (dstdata < end)
 		{
 			int col;
@@ -410,11 +410,11 @@ static INLINE void blockmove_NtoN_transpen_noremap_flipx8(
 
 
 static INLINE void blockmove_NtoN_transpen_noremap16(
-		const UINT16 *srcdata,int srcwidth,int srcheight,int srcmodulo,
-		UINT16 *dstdata,int dstmodulo,
+		const uint16_t *srcdata,int srcwidth,int srcheight,int srcmodulo,
+		uint16_t *dstdata,int dstmodulo,
 		int transpen)
 {
-	UINT16 *end;
+	uint16_t *end;
 
 	srcmodulo -= srcwidth;
 	dstmodulo -= srcwidth;
@@ -438,11 +438,11 @@ static INLINE void blockmove_NtoN_transpen_noremap16(
 }
 
 static INLINE void blockmove_NtoN_transpen_noremap_flipx16(
-		const UINT16 *srcdata,int srcwidth,int srcheight,int srcmodulo,
-		UINT16 *dstdata,int dstmodulo,
+		const uint16_t *srcdata,int srcwidth,int srcheight,int srcmodulo,
+		uint16_t *dstdata,int dstmodulo,
 		int transpen)
 {
-	UINT16 *end;
+	uint16_t *end;
 
 	srcmodulo += srcwidth;
 	dstmodulo -= srcwidth;
@@ -467,11 +467,11 @@ static INLINE void blockmove_NtoN_transpen_noremap_flipx16(
 }
 
 static INLINE void blockmove_NtoN_transpen_noremap32(
-		const UINT32 *srcdata,int srcwidth,int srcheight,int srcmodulo,
-		UINT32 *dstdata,int dstmodulo,
+		const uint32_t *srcdata,int srcwidth,int srcheight,int srcmodulo,
+		uint32_t *dstdata,int dstmodulo,
 		int transpen)
 {
-	UINT32 *end;
+	uint32_t *end;
 
 	srcmodulo -= srcwidth;
 	dstmodulo -= srcwidth;
@@ -495,11 +495,11 @@ static INLINE void blockmove_NtoN_transpen_noremap32(
 }
 
 static INLINE void blockmove_NtoN_transpen_noremap_flipx32(
-		const UINT32 *srcdata,int srcwidth,int srcheight,int srcmodulo,
-		UINT32 *dstdata,int dstmodulo,
+		const uint32_t *srcdata,int srcwidth,int srcheight,int srcmodulo,
+		uint32_t *dstdata,int dstmodulo,
 		int transpen)
 {
-	UINT32 *end;
+	uint32_t *end;
 
 	srcmodulo += srcwidth;
 	dstmodulo -= srcwidth;
@@ -530,7 +530,7 @@ int pdrawgfx_shadow_lowpri = 0;
 
 
 /* 8-bit version */
-#define DATA_TYPE UINT8
+#define DATA_TYPE uint8_t
 #define DEPTH 8
 
 #define DECLARE(function,args,body)
@@ -539,11 +539,11 @@ int pdrawgfx_shadow_lowpri = 0;
 #define HMODULO 1
 #define VMODULO dstmodulo
 #define COMMON_ARGS														\
-		const UINT8 *srcdata,int srcwidth,int srcheight,int srcmodulo,	\
+		const uint8_t *srcdata,int srcwidth,int srcheight,int srcmodulo,	\
 		int leftskip,int topskip,int flipx,int flipy,					\
 		DATA_TYPE *dstdata,int dstwidth,int dstheight,int dstmodulo
 
-#define COLOR_ARG unsigned int colorbase,UINT8 *pridata,UINT32 pmask
+#define COLOR_ARG unsigned int colorbase,uint8_t *pridata,uint32_t pmask
 #define INCREMENT_DST(n) {dstdata+=(n);pridata += (n);}
 #define LOOKUP(n) (colorbase + (n))
 #define SETPIXELCOLOR(dest,n) { if (((1 << (pridata[dest] & 0x1f)) & pmask) == 0) { if (pridata[dest] & 0x80) { dstdata[dest] = palette_shadow_table[n];} else { dstdata[dest] = (n);} } pridata[dest] = (pridata[dest] & 0x7f) | afterdrawmask; }
@@ -554,7 +554,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata,UINT8 *pridata,UINT32 pmask
+#define COLOR_ARG const pen_t *paldata,uint8_t *pridata,uint32_t pmask
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) { if (((1 << (pridata[dest] & 0x1f)) & pmask) == 0) { if (pridata[dest] & 0x80) { dstdata[dest] = palette_shadow_table[n];} else { dstdata[dest] = (n);} } pridata[dest] = (pridata[dest] & 0x7f) | afterdrawmask; }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_pri8 args body
@@ -621,7 +621,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef DATA_TYPE
 
 /* 16-bit version */
-#define DATA_TYPE UINT16
+#define DATA_TYPE uint16_t
 #define DEPTH 16
 #define alpha_blend_r alpha_blend_r16
 #define alpha_blend alpha_blend16
@@ -632,11 +632,11 @@ int pdrawgfx_shadow_lowpri = 0;
 #define HMODULO 1
 #define VMODULO dstmodulo
 #define COMMON_ARGS														\
-		const UINT8 *srcdata,int srcwidth,int srcheight,int srcmodulo,	\
+		const uint8_t *srcdata,int srcwidth,int srcheight,int srcmodulo,	\
 		int leftskip,int topskip,int flipx,int flipy,					\
 		DATA_TYPE *dstdata,int dstwidth,int dstheight,int dstmodulo
 
-#define COLOR_ARG unsigned int colorbase,UINT8 *pridata,UINT32 pmask
+#define COLOR_ARG unsigned int colorbase,uint8_t *pridata,uint32_t pmask
 #define INCREMENT_DST(n) {dstdata+=(n);pridata += (n);}
 #define LOOKUP(n) (colorbase + (n))
 #define SETPIXELCOLOR(dest,n) { if (((1 << (pridata[dest] & 0x1f)) & pmask) == 0) { if (pridata[dest] & 0x80) { dstdata[dest] = palette_shadow_table[n];} else { dstdata[dest] = (n);} } pridata[dest] = (pridata[dest] & 0x7f) | afterdrawmask; }
@@ -647,7 +647,7 @@ int pdrawgfx_shadow_lowpri = 0;
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata,UINT8 *pridata,UINT32 pmask
+#define COLOR_ARG const pen_t *paldata,uint8_t *pridata,uint32_t pmask
 #define LOOKUP(n) (paldata[n])
 #define SETPIXELCOLOR(dest,n) { if (((1 << (pridata[dest] & 0x1f)) & pmask) == 0) { if (pridata[dest] & 0x80) { dstdata[dest] = palette_shadow_table[n];} else { dstdata[dest] = (n);} } pridata[dest] = (pridata[dest] & 0x7f) | afterdrawmask; }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_pri16 args body
@@ -717,11 +717,11 @@ int pdrawgfx_shadow_lowpri = 0;
 
 /* 32-bit version */
 /** AAT032503: added limited 32-bit shadow and highlight support*/
-static INLINE UINT32 SHADOW32(UINT32 c) {
+static INLINE uint32_t SHADOW32(uint32_t c) {
 	c = (c>>9&0x7c00) | (c>>6&0x03e0) | (c>>3&0x001f);
-	return(((UINT32*)palette_shadow_table)[c]); }
+	return(((uint32_t*)palette_shadow_table)[c]); }
 
-#define DATA_TYPE UINT32
+#define DATA_TYPE uint32_t
 #define DEPTH 32
 #define alpha_blend_r alpha_blend_r32
 #define alpha_blend alpha_blend32
@@ -732,14 +732,14 @@ static INLINE UINT32 SHADOW32(UINT32 c) {
 #define HMODULO 1
 #define VMODULO dstmodulo
 #define COMMON_ARGS														\
-		const UINT8 *srcdata,int srcwidth,int srcheight,int srcmodulo,	\
+		const uint8_t *srcdata,int srcwidth,int srcheight,int srcmodulo,	\
 		int leftskip,int topskip,int flipx,int flipy,					\
 		DATA_TYPE *dstdata,int dstwidth,int dstheight,int dstmodulo
 
-#define COLOR_ARG unsigned int colorbase,UINT8 *pridata,UINT32 pmask
+#define COLOR_ARG unsigned int colorbase,uint8_t *pridata,uint32_t pmask
 #define INCREMENT_DST(n) {dstdata+=(n);pridata += (n);}
 #define LOOKUP(n) (colorbase + (n))
-#define SETPIXELCOLOR(dest,n) { UINT8 r8=pridata[dest]; if(!(1<<(r8&0x1f)&pmask)){ if(afterdrawmask){ r8&=0x7f; r8|=0x1f; dstdata[dest]=(n); pridata[dest]=r8; } else if(!(r8&0x80)){ dstdata[dest]=SHADOW32(n); pridata[dest]|=0x80; } } }
+#define SETPIXELCOLOR(dest,n) { uint8_t r8=pridata[dest]; if(!(1<<(r8&0x1f)&pmask)){ if(afterdrawmask){ r8&=0x7f; r8|=0x1f; dstdata[dest]=(n); pridata[dest]=r8; } else if(!(r8&0x80)){ dstdata[dest]=SHADOW32(n); pridata[dest]|=0x80; } } }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_raw_pri32 args body
 #include "drawgfx.c"
 #undef DECLARE_SWAP_RAW_PRI
@@ -747,9 +747,9 @@ static INLINE UINT32 SHADOW32(UINT32 c) {
 #undef LOOKUP
 #undef SETPIXELCOLOR
 
-#define COLOR_ARG const pen_t *paldata,UINT8 *pridata,UINT32 pmask
+#define COLOR_ARG const pen_t *paldata,uint8_t *pridata,uint32_t pmask
 #define LOOKUP(n) (paldata[n])
-#define SETPIXELCOLOR(dest,n) { UINT8 r8=pridata[dest]; if(!(1<<(r8&0x1f)&pmask)){ if(afterdrawmask){ r8&=0x7f; r8|=0x1f; dstdata[dest]=(n); pridata[dest]=r8; } else if(!(r8&0x80)){ dstdata[dest]=SHADOW32(n); pridata[dest]|=0x80; } } }
+#define SETPIXELCOLOR(dest,n) { uint8_t r8=pridata[dest]; if(!(1<<(r8&0x1f)&pmask)){ if(afterdrawmask){ r8&=0x7f; r8|=0x1f; dstdata[dest]=(n); pridata[dest]=r8; } else if(!(r8&0x80)){ dstdata[dest]=SHADOW32(n); pridata[dest]|=0x80; } } }
 #define DECLARE_SWAP_RAW_PRI(function,args,body) void function##_pri32 args body
 #include "drawgfx.c"
 #undef DECLARE_SWAP_RAW_PRI
@@ -840,7 +840,7 @@ static INLINE UINT32 SHADOW32(UINT32 c) {
 static INLINE void common_drawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,
-		struct mame_bitmap *pri_buffer,UINT32 pri_mask)
+		struct mame_bitmap *pri_buffer,uint32_t pri_mask)
 {
 	if (!gfx)
 	{
@@ -911,7 +911,7 @@ void drawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 
 void pdrawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
-		const struct rectangle *clip,int transparency,int transparent_color,UINT32 priority_mask)
+		const struct rectangle *clip,int transparency,int transparent_color,uint32_t priority_mask)
 {
 	profiler_mark(PROFILER_DRAWGFX);
 	common_drawgfx(dest,gfx,code,color,flipx,flipy,sx,sy,clip,transparency,transparent_color,priority_bitmap,priority_mask | (1<<31));
@@ -920,7 +920,7 @@ void pdrawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 
 void mdrawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
-		const struct rectangle *clip,int transparency,int transparent_color,UINT32 priority_mask)
+		const struct rectangle *clip,int transparency,int transparent_color,uint32_t priority_mask)
 {
 	profiler_mark(PROFILER_DRAWGFX);
 	common_drawgfx(dest,gfx,code,color,flipx,flipy,sx,sy,clip,transparency,transparent_color,priority_bitmap,priority_mask);
@@ -1235,12 +1235,12 @@ void copyscrollbitmap_remap(struct mame_bitmap *dest,struct mame_bitmap *src,
 
 
 /* notes:
-   - startx and starty MUST be UINT32 for calculations to work correctly
+   - startx and starty MUST be uint32_t for calculations to work correctly
    - srcbitmap->width and height are assumed to be a power of 2 to speed up wraparound
    */
 void copyrozbitmap(struct mame_bitmap *dest,struct mame_bitmap *src,
-		UINT32 startx,UINT32 starty,int incxx,int incxy,int incyx,int incyy,int wraparound,
-		const struct rectangle *clip,int transparency,int transparent_color,UINT32 priority)
+		uint32_t startx,uint32_t starty,int incxx,int incxy,int incyx,int incyy,int wraparound,
+		const struct rectangle *clip,int transparency,int transparent_color,uint32_t priority)
 {
 	profiler_mark(PROFILER_COPYBITMAP);
 
@@ -1298,18 +1298,18 @@ void fillbitmap(struct mame_bitmap *dest,pen_t pen,const struct rectangle *clip)
 		if (((pen >> 8) == (pen & 0xff)) && ((pen>>16) == (pen & 0xff)))
 		{
 			for (y = sy;y <= ey;y++)
-				memset(((UINT32 *)dest->line[y]) + sx,pen&0xff,(ex-sx+1)*4);
+				memset(((uint32_t *)dest->line[y]) + sx,pen&0xff,(ex-sx+1)*4);
 		}
 		else
 		{
-			UINT32 *sp = (UINT32 *)dest->line[sy];
+			uint32_t *sp = (uint32_t *)dest->line[sy];
 			int x;
 
 			for (x = sx;x <= ex;x++)
 				sp[x] = pen;
 			sp+=sx;
 			for (y = sy+1;y <= ey;y++)
-				memcpy(((UINT32 *)dest->line[y]) + sx,sp,(ex-sx+1)*4);
+				memcpy(((uint32_t *)dest->line[y]) + sx,sp,(ex-sx+1)*4);
 		}
 	}
 	else if (dest->depth == 15 || dest->depth == 16)
@@ -1317,24 +1317,24 @@ void fillbitmap(struct mame_bitmap *dest,pen_t pen,const struct rectangle *clip)
 		if ((pen >> 8) == (pen & 0xff))
 		{
 			for (y = sy;y <= ey;y++)
-				memset(((UINT16 *)dest->line[y]) + sx,pen&0xff,(ex-sx+1)*2);
+				memset(((uint16_t *)dest->line[y]) + sx,pen&0xff,(ex-sx+1)*2);
 		}
 		else
 		{
-			UINT16 *sp = (UINT16 *)dest->line[sy];
+			uint16_t *sp = (uint16_t *)dest->line[sy];
 			int x;
 
 			for (x = sx;x <= ex;x++)
 				sp[x] = pen;
 			sp+=sx;
 			for (y = sy+1;y <= ey;y++)
-				memcpy(((UINT16 *)dest->line[y]) + sx,sp,(ex-sx+1)*2);
+				memcpy(((uint16_t *)dest->line[y]) + sx,sp,(ex-sx+1)*2);
 		}
 	}
 	else
 	{
 		for (y = sy;y <= ey;y++)
-			memset(((UINT8 *)dest->line[y]) + sx,pen,ex-sx+1);
+			memset(((uint8_t *)dest->line[y]) + sx,pen,ex-sx+1);
 	}
 }
 
@@ -1343,12 +1343,12 @@ void fillbitmap(struct mame_bitmap *dest,pen_t pen,const struct rectangle *clip)
 static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,
-		int scalex, int scaley,struct mame_bitmap *pri_buffer,UINT32 pri_mask)
+		int scalex, int scaley,struct mame_bitmap *pri_buffer,uint32_t pri_mask)
 {
 	struct rectangle myclip;
 	int alphapen = 0;
 
-	UINT8 ah, al;
+	uint8_t ah, al;
 
 	al = (pdrawgfx_shadow_lowpri) ? 0 : 0x80;
 
@@ -1418,7 +1418,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 		if( gfx && gfx->colortable )
 		{
 			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
-			UINT8 *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
+			uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 			int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
@@ -1495,9 +1495,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1515,9 +1515,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1537,8 +1537,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1554,8 +1554,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1579,9 +1579,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1603,9 +1603,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1630,8 +1630,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1648,8 +1648,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT8 *dest = dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint8_t *dest = dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -1672,9 +1672,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1696,8 +1696,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1719,9 +1719,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1743,8 +1743,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1766,9 +1766,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1790,8 +1790,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1814,9 +1814,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1838,8 +1838,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1861,9 +1861,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1900,8 +1900,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1934,9 +1934,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -1973,8 +1973,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT8 *dest = dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint8_t *dest = dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2010,7 +2010,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 		if( gfx && gfx->colortable )
 		{
 			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
-			UINT8 *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
+			uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 			int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
@@ -2087,9 +2087,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2107,9 +2107,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2130,8 +2130,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2147,8 +2147,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2172,9 +2172,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2196,9 +2196,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-									UINT8 *pri = pri_buffer->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+									uint8_t *pri = pri_buffer->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2223,8 +2223,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2241,8 +2241,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								for( y=sy; y<ey; y++ )
 								{
-									UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-									UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+									uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+									uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 									int x, x_index = x_index_base;
 									for( x=sx; x<ex; x++ )
@@ -2265,9 +2265,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2289,8 +2289,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2312,9 +2312,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2336,8 +2336,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2359,9 +2359,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2383,8 +2383,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2407,9 +2407,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2431,8 +2431,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2454,9 +2454,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2494,8 +2494,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2528,9 +2528,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2568,8 +2568,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2602,9 +2602,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2631,8 +2631,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2660,9 +2660,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2684,8 +2684,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2708,9 +2708,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2737,8 +2737,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT16 *dest = (UINT16 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint16_t *dest = (uint16_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2767,7 +2767,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 		if( gfx && gfx->colortable )
 		{
 			const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)]; /* ASG 980209 */
-			UINT8 *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
+			uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 			int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
@@ -2842,9 +2842,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2862,8 +2862,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2884,9 +2884,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2908,8 +2908,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2931,9 +2931,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2955,8 +2955,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -2978,9 +2978,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3002,8 +3002,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3025,9 +3025,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3049,8 +3049,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3073,9 +3073,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3097,8 +3097,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3116,8 +3116,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 					/* case 4: TRANSPARENCY_PEN_TABLE */
 					if (transparency == TRANSPARENCY_PEN_TABLE)
 					{
-						UINT8 *source, *pri;
-						UINT32 *dest;
+						uint8_t *source, *pri;
+						uint32_t *dest;
 						int c, x, x_index;
 
 						if (pri_buffer)
@@ -3126,7 +3126,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								source = source_base + (y_index>>16) * gfx->line_modulo;
 								y_index += dy;
-								dest = (UINT32 *)dest_bmp->line[y];
+								dest = (uint32_t *)dest_bmp->line[y];
 								pri = pri_buffer->line[y];
 								x_index = x_index_base;
 
@@ -3168,7 +3168,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								source = source_base + (y_index>>16) * gfx->line_modulo;
 								y_index += dy;
-								dest = (UINT32 *)dest_bmp->line[y];
+								dest = (uint32_t *)dest_bmp->line[y];
 								x_index = x_index_base;
 
 								for( x=sx; x<ex; x++ )
@@ -3189,8 +3189,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 					/* case 4b: TRANSPARENCY_PEN_TABLE_RAW */
 					if (transparency == TRANSPARENCY_PEN_TABLE_RAW)
 					{
-						UINT8 *source, *pri;
-						UINT32 *dest;
+						uint8_t *source, *pri;
+						uint32_t *dest;
 						int c, x, x_index;
 
 						if (pri_buffer)
@@ -3199,7 +3199,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								source = source_base + (y_index>>16) * gfx->line_modulo;
 								y_index += dy;
-								dest = (UINT32 *)dest_bmp->line[y];
+								dest = (uint32_t *)dest_bmp->line[y];
 								pri = pri_buffer->line[y];
 								x_index = x_index_base;
 
@@ -3241,7 +3241,7 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 							{
 								source = source_base + (y_index>>16) * gfx->line_modulo;
 								y_index += dy;
-								dest = (UINT32 *)dest_bmp->line[y];
+								dest = (uint32_t *)dest_bmp->line[y];
 								x_index = x_index_base;
 
 								for( x=sx; x<ex; x++ )
@@ -3267,9 +3267,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3296,8 +3296,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3325,9 +3325,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3349,8 +3349,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3373,9 +3373,9 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3402,8 +3402,8 @@ static INLINE void common_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -3442,7 +3442,7 @@ void drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 void pdrawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,int scalex, int scaley,
-		UINT32 priority_mask)
+		uint32_t priority_mask)
 {
 	profiler_mark(PROFILER_DRAWGFX);
 	common_drawgfxzoom(dest_bmp,gfx,code,color,flipx,flipy,sx,sy,
@@ -3453,7 +3453,7 @@ void pdrawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 void mdrawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,int scalex, int scaley,
-		UINT32 priority_mask)
+		uint32_t priority_mask)
 {
 	profiler_mark(PROFILER_DRAWGFX);
 	common_drawgfxzoom(dest_bmp,gfx,code,color,flipx,flipy,sx,sy,
@@ -3467,17 +3467,17 @@ void plot_pixel2(struct mame_bitmap *bitmap1,struct mame_bitmap *bitmap2,int x,i
 	plot_pixel(bitmap2, x, y, pen);
 }
 
-static void pp_8(struct mame_bitmap *b,int x,int y,pen_t p)  { ((UINT8 *)b->line[y])[x] = p; }
-static void pp_16(struct mame_bitmap *b,int x,int y,pen_t p)  { ((UINT16 *)b->line[y])[x] = p; }
-static void pp_32(struct mame_bitmap *b,int x,int y,pen_t p)  { ((UINT32 *)b->line[y])[x] = p; }
+static void pp_8(struct mame_bitmap *b,int x,int y,pen_t p)  { ((uint8_t *)b->line[y])[x] = p; }
+static void pp_16(struct mame_bitmap *b,int x,int y,pen_t p)  { ((uint16_t *)b->line[y])[x] = p; }
+static void pp_32(struct mame_bitmap *b,int x,int y,pen_t p)  { ((uint32_t *)b->line[y])[x] = p; }
 
-static pen_t rp_8(struct mame_bitmap *b,int x,int y)  { return ((UINT8 *)b->line[y])[x]; }
-static pen_t rp_16(struct mame_bitmap *b,int x,int y)  { return ((UINT16 *)b->line[y])[x]; }
-static pen_t rp_32(struct mame_bitmap *b,int x,int y)  { return ((UINT32 *)b->line[y])[x]; }
+static pen_t rp_8(struct mame_bitmap *b,int x,int y)  { return ((uint8_t *)b->line[y])[x]; }
+static pen_t rp_16(struct mame_bitmap *b,int x,int y)  { return ((uint16_t *)b->line[y])[x]; }
+static pen_t rp_32(struct mame_bitmap *b,int x,int y)  { return ((uint32_t *)b->line[y])[x]; }
 
-static void pb_8(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((UINT8 *)b->line[y])[x] = p; x++; } y++; } }
-static void pb_16(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((UINT16 *)b->line[y])[x] = p; x++; } y++; } }
-static void pb_32(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((UINT32 *)b->line[y])[x] = p; x++; } y++; } }
+static void pb_8(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint8_t *)b->line[y])[x] = p; x++; } y++; } }
+static void pb_16(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint16_t *)b->line[y])[x] = p; x++; } y++; } }
+static void pb_32(struct mame_bitmap *b,int x,int y,int w,int h,pen_t p)  { int t=x; while(h-->0){ int c=w; x=t; while(c-->0){ ((uint32_t *)b->line[y])[x] = p; x++; } y++; } }
 
 
 void set_pixel_functions(struct mame_bitmap *bitmap)
@@ -3767,7 +3767,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transpen,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		trans4 = transpen * 0x01010101;
 
@@ -3782,15 +3782,15 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transpen,(COMMON_ARGS,
 				if (col != transpen) SETPIXELCOLOR(0,LOOKUP(col))
 				INCREMENT_DST(-HMODULO)
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata >= end + 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				INCREMENT_DST(-4*HMODULO)
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0)) SETPIXELCOLOR(4*HMODULO,LOOKUP((col4>>SHIFT0) & 0xff))
@@ -3799,7 +3799,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transpen,(COMMON_ARGS,
 					if (xod4 & (0xff<<SHIFT3)) SETPIXELCOLOR(1*HMODULO,LOOKUP((col4>>SHIFT3) & 0xff))
 				}
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata > end)
 			{
 				int col;
@@ -3818,7 +3818,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transpen,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		trans4 = transpen * 0x01010101;
 
@@ -3833,14 +3833,14 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transpen,(COMMON_ARGS,
 				if (col != transpen) SETPIXELCOLOR(0,LOOKUP(col))
 				INCREMENT_DST(HMODULO)
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata <= end - 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0)) SETPIXELCOLOR(0*HMODULO,LOOKUP((col4>>SHIFT0) & 0xff))
@@ -3850,7 +3850,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transpen,(COMMON_ARGS,
 				}
 				INCREMENT_DST(4*HMODULO)
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata < end)
 			{
 				int col;
@@ -3949,7 +3949,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transblend,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		trans4 = transpen * 0x01010101;
 
@@ -3964,15 +3964,15 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transblend,(COMMON_ARGS,
 				if (col != transpen) SETPIXELCOLOR(0,*dstdata | LOOKUP(col))
 				INCREMENT_DST(-HMODULO);
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata >= end + 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				INCREMENT_DST(-4*HMODULO);
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0)) SETPIXELCOLOR(4*HMODULO,dstdata[4*HMODULO] | LOOKUP((col4>>SHIFT0) & 0xff))
@@ -3981,7 +3981,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transblend,(COMMON_ARGS,
 					if (xod4 & (0xff<<SHIFT3)) SETPIXELCOLOR(1*HMODULO,dstdata[1*HMODULO] | LOOKUP((col4>>SHIFT3) & 0xff))
 				}
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata > end)
 			{
 				int col;
@@ -4000,7 +4000,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transblend,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		trans4 = transpen * 0x01010101;
 
@@ -4015,14 +4015,14 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transblend,(COMMON_ARGS,
 				if (col != transpen) SETPIXELCOLOR(0,*dstdata | LOOKUP(col))
 				INCREMENT_DST(HMODULO);
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata <= end - 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0)) SETPIXELCOLOR(0*HMODULO,dstdata[0*HMODULO] | LOOKUP((col4>>SHIFT0) & 0xff))
@@ -4032,7 +4032,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transblend,(COMMON_ARGS,
 				}
 				INCREMENT_DST(4*HMODULO);
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata < end)
 			{
 				int col;
@@ -4060,7 +4060,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 	if (flipx)
 	{
 		DATA_TYPE *end;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		while (dstheight)
 		{
@@ -4073,11 +4073,11 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 				if (PEN_IS_OPAQUE) SETPIXELCOLOR(0,LOOKUP(col))
 				INCREMENT_DST(-HMODULO)
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata >= end + 4*HMODULO)
 			{
 				int col;
-				UINT32 col4;
+				uint32_t col4;
 
 				INCREMENT_DST(-4*HMODULO)
 				col4 = *(sd4++);
@@ -4090,7 +4090,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 				col = (col4 >> SHIFT3) & 0xff;
 				if (PEN_IS_OPAQUE) SETPIXELCOLOR(1*HMODULO,LOOKUP(col))
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata > end)
 			{
 				int col;
@@ -4108,7 +4108,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 	else
 	{
 		DATA_TYPE *end;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		while (dstheight)
 		{
@@ -4121,11 +4121,11 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 				if (PEN_IS_OPAQUE) SETPIXELCOLOR(0,LOOKUP(col))
 				INCREMENT_DST(HMODULO)
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata <= end - 4*HMODULO)
 			{
 				int col;
-				UINT32 col4;
+				uint32_t col4;
 
 				col4 = *(sd4++);
 				col = (col4 >> SHIFT0) & 0xff;
@@ -4138,7 +4138,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 				if (PEN_IS_OPAQUE) SETPIXELCOLOR(3*HMODULO,LOOKUP(col))
 				INCREMENT_DST(4*HMODULO)
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata < end)
 			{
 				int col;
@@ -4156,7 +4156,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transmask,(COMMON_ARGS,
 })
 
 DECLARE_SWAP_RAW_PRI(blockmove_8toN_transcolor,(COMMON_ARGS,
-		COLOR_ARG,const UINT16 *colortable,int transcolor),
+		COLOR_ARG,const uint16_t *colortable,int transcolor),
 {
 	ADJUST_8
 
@@ -4201,7 +4201,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_transcolor,(COMMON_ARGS,
 })
 
 DECLARE_SWAP_RAW_PRI(blockmove_4toN_transcolor,(COMMON_ARGS,
-		COLOR_ARG,const UINT16 *colortable,int transcolor),
+		COLOR_ARG,const uint16_t *colortable,int transcolor),
 {
 	ADJUST_4
 
@@ -4437,8 +4437,8 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alphaone,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
-		UINT32 alphacolor = LOOKUP(alphapen);
+		uint32_t *sd4;
+		uint32_t alphacolor = LOOKUP(alphapen);
 
 		trans4 = transpen * 0x01010101;
 
@@ -4459,15 +4459,15 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alphaone,(COMMON_ARGS,
 				}
 				INCREMENT_DST(-HMODULO);
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata >= end + 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				INCREMENT_DST(-4*HMODULO);
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0))
@@ -4500,7 +4500,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alphaone,(COMMON_ARGS,
 					}
 				}
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata > end)
 			{
 				int col;
@@ -4525,8 +4525,8 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alphaone,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
-		UINT32 alphacolor = LOOKUP(alphapen);
+		uint32_t *sd4;
+		uint32_t alphacolor = LOOKUP(alphapen);
 
 		trans4 = transpen * 0x01010101;
 
@@ -4547,14 +4547,14 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alphaone,(COMMON_ARGS,
 				}
 				INCREMENT_DST(HMODULO);
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata <= end - 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0))
@@ -4588,7 +4588,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alphaone,(COMMON_ARGS,
 				}
 				INCREMENT_DST(4*HMODULO);
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata < end)
 			{
 				int col;
@@ -4620,7 +4620,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alpha,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		trans4 = transpen * 0x01010101;
 
@@ -4635,15 +4635,15 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alpha,(COMMON_ARGS,
 				if (col != transpen) SETPIXELCOLOR(0,alpha_blend(*dstdata, LOOKUP(col)));
 				INCREMENT_DST(-HMODULO);
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata >= end + 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				INCREMENT_DST(-4*HMODULO);
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0)) SETPIXELCOLOR(4*HMODULO,alpha_blend(dstdata[4*HMODULO], LOOKUP((col4>>SHIFT0) & 0xff)));
@@ -4652,7 +4652,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alpha,(COMMON_ARGS,
 					if (xod4 & (0xff<<SHIFT3)) SETPIXELCOLOR(1*HMODULO,alpha_blend(dstdata[1*HMODULO], LOOKUP((col4>>SHIFT3) & 0xff)));
 				}
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata > end)
 			{
 				int col;
@@ -4671,7 +4671,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alpha,(COMMON_ARGS,
 	{
 		DATA_TYPE *end;
 		int trans4;
-		UINT32 *sd4;
+		uint32_t *sd4;
 
 		trans4 = transpen * 0x01010101;
 
@@ -4686,14 +4686,14 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alpha,(COMMON_ARGS,
 				if (col != transpen) SETPIXELCOLOR(0,alpha_blend(*dstdata, LOOKUP(col)));
 				INCREMENT_DST(HMODULO);
 			}
-			sd4 = (UINT32 *)srcdata;
+			sd4 = (uint32_t *)srcdata;
 			while (dstdata <= end - 4*HMODULO)
 			{
-				UINT32 col4;
+				uint32_t col4;
 
 				if ((col4 = *(sd4++)) != trans4)
 				{
-					UINT32 xod4;
+					uint32_t xod4;
 
 					xod4 = col4 ^ trans4;
 					if (xod4 & (0xff<<SHIFT0)) SETPIXELCOLOR(0*HMODULO,alpha_blend(dstdata[0*HMODULO], LOOKUP((col4>>SHIFT0) & 0xff)));
@@ -4703,7 +4703,7 @@ DECLARE_SWAP_RAW_PRI(blockmove_8toN_alpha,(COMMON_ARGS,
 				}
 				INCREMENT_DST(4*HMODULO);
 			}
-			srcdata = (UINT8 *)sd4;
+			srcdata = (uint8_t *)sd4;
 			while (dstdata < end)
 			{
 				int col;
@@ -5071,7 +5071,7 @@ DECLARE(drawgfx_core,(
 		struct mame_bitmap *dest,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,
-		struct mame_bitmap *pri_buffer,UINT32 pri_mask),
+		struct mame_bitmap *pri_buffer,uint32_t pri_mask),
 {
 	int ox;
 	int oy;
@@ -5098,7 +5098,7 @@ DECLARE(drawgfx_core,(
 	if (sy > ey) return;
 
 	{
-		UINT8 *sd = gfx->gfxdata + code * gfx->char_modulo;		/* source data */
+		uint8_t *sd = gfx->gfxdata + code * gfx->char_modulo;		/* source data */
 		int sw = gfx->width;									/* source width */
 		int sh = gfx->height;									/* source height */
 		int sm = gfx->line_modulo;								/* source modulo */
@@ -5109,7 +5109,7 @@ DECLARE(drawgfx_core,(
 		int dh = ey-sy+1;										/* dest height */
 		int dm = ((DATA_TYPE *)dest->line[1])-((DATA_TYPE *)dest->line[0]);	/* dest modulo */
 		const pen_t *paldata = &gfx->colortable[gfx->color_granularity * color];
-		UINT8 *pribuf = (pri_buffer) ? ((UINT8 *)pri_buffer->line[sy]) + sx : NULL;
+		uint8_t *pribuf = (pri_buffer) ? ((uint8_t *)pri_buffer->line[sy]) + sx : NULL;
 
 		/* optimizations for 1:1 mapping */
 		if (Machine->drv->color_table_len == 0 &&
@@ -5377,11 +5377,11 @@ DECLARE(copybitmap_core,(
 })
 
 DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbitmap,
-		UINT32 startx,UINT32 starty,int incxx,int incxy,int incyx,int incyy,int wraparound,
-		const struct rectangle *clip,int transparency,int transparent_color,UINT32 priority),
+		uint32_t startx,uint32_t starty,int incxx,int incxy,int incyx,int incyy,int wraparound,
+		const struct rectangle *clip,int transparency,int transparent_color,uint32_t priority),
 {
-	UINT32 cx;
-	UINT32 cy;
+	uint32_t cx;
+	uint32_t cy;
 	int x;
 	int sx;
 	int sy;
@@ -5422,7 +5422,7 @@ DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbi
 			/* optimized loop for the not zoomed case */
 
 			/* startx is unsigned */
-			startx = ((INT32)startx) >> 16;
+			startx = ((int32_t)startx) >> 16;
 
 			if (startx >= srcbitmap->width)
 			{
@@ -5442,7 +5442,7 @@ DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbi
 						dest = ((DATA_TYPE *)bitmap->line[sy]) + sx;
 						if (priority)
 						{
-							UINT8 *pri = ((UINT8 *)priority_bitmap->line[sy]) + sx;
+							uint8_t *pri = ((uint8_t *)priority_bitmap->line[sy]) + sx;
 							DATA_TYPE *src = (DATA_TYPE *)srcbitmap->line[cy];
 
 							while (x <= ex && cx < srcbitmap->width)
@@ -5503,7 +5503,7 @@ DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbi
 						dest = ((DATA_TYPE *)bitmap->line[sy]) + sx;
 						if (priority)
 						{
-							UINT8 *pri = ((UINT8 *)priority_bitmap->line[sy]) + sx;
+							uint8_t *pri = ((uint8_t *)priority_bitmap->line[sy]) + sx;
 							DATA_TYPE *src = (DATA_TYPE *)srcbitmap->line[cy];
 
 							while (x <= ex && cx < widthshifted)
@@ -5558,7 +5558,7 @@ DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbi
 				dest = ((DATA_TYPE *)bitmap->line[sy]) + sx;
 				if (priority)
 				{
-					UINT8 *pri = ((UINT8 *)priority_bitmap->line[sy]) + sx;
+					uint8_t *pri = ((uint8_t *)priority_bitmap->line[sy]) + sx;
 
 					while (x <= ex)
 					{
@@ -5607,7 +5607,7 @@ DECLARE(copyrozbitmap_core,(struct mame_bitmap *bitmap,struct mame_bitmap *srcbi
 				dest = ((DATA_TYPE *)bitmap->line[sy]) + sx;
 				if (priority)
 				{
-					UINT8 *pri = ((UINT8 *)priority_bitmap->line[sy]) + sx;
+					uint8_t *pri = ((uint8_t *)priority_bitmap->line[sy]) + sx;
 
 					while (x <= ex)
 					{
@@ -5663,7 +5663,7 @@ DECLAREG(draw_scanline, (
 	if (bitmap->depth == 8)
 	{
 		int dy = bitmap->rowpixels;
-		UINT8 *dst = (UINT8 *)bitmap->base + y * dy + x;
+		uint8_t *dst = (uint8_t *)bitmap->base + y * dy + x;
 		int xadv = 1;
 
 		/* with pen lookups */
@@ -5678,7 +5678,7 @@ DECLAREG(draw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 						*dst = pens[spixel];
 					dst += xadv;
@@ -5697,7 +5697,7 @@ DECLAREG(draw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 						*dst = spixel;
 					dst += xadv;
@@ -5709,7 +5709,7 @@ DECLAREG(draw_scanline, (
 	else if(bitmap->depth == 15 || bitmap->depth == 16)
 	{
 		int dy = bitmap->rowpixels;
-		UINT16 *dst = (UINT16 *)bitmap->base + y * dy + x;
+		uint16_t *dst = (uint16_t *)bitmap->base + y * dy + x;
 		int xadv = 1;
 
 		/* with pen lookups */
@@ -5724,7 +5724,7 @@ DECLAREG(draw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 						*dst = pens[spixel];
 					dst += xadv;
@@ -5743,7 +5743,7 @@ DECLAREG(draw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 						*dst = spixel;
 					dst += xadv;
@@ -5755,7 +5755,7 @@ DECLAREG(draw_scanline, (
 	else
 	{
 		int dy = bitmap->rowpixels;
-		UINT32 *dst = (UINT32 *)bitmap->base + y * dy + x;
+		uint32_t *dst = (uint32_t *)bitmap->base + y * dy + x;
 		int xadv = 1;
 
 		/* with pen lookups */
@@ -5770,7 +5770,7 @@ DECLAREG(draw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 						*dst = pens[spixel];
 					dst += xadv;
@@ -5789,7 +5789,7 @@ DECLAREG(draw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 						*dst = spixel;
 					dst += xadv;
@@ -5807,8 +5807,8 @@ DECLAREG(pdraw_scanline, (
 	{
 		int dy = bitmap->rowpixels;
 		int dyp = priority_bitmap->rowpixels;
-		UINT8 *dsti = (UINT8 *)bitmap->base + y * dy + x;
-		UINT8 *dstp = (UINT8 *)priority_bitmap->base + y * dyp + x;
+		uint8_t *dsti = (uint8_t *)bitmap->base + y * dy + x;
+		uint8_t *dstp = (uint8_t *)priority_bitmap->base + y * dyp + x;
 		int xadv = 1;
 
 		/* with pen lookups */
@@ -5825,7 +5825,7 @@ DECLAREG(pdraw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = pens[spixel];
@@ -5850,7 +5850,7 @@ DECLAREG(pdraw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = spixel;
@@ -5867,8 +5867,8 @@ DECLAREG(pdraw_scanline, (
 	{
 		int dy = bitmap->rowpixels;
 		int dyp = priority_bitmap->rowpixels;
-		UINT16 *dsti = (UINT16 *)bitmap->base + y * dy + x;
-		UINT8 *dstp = (UINT8 *)priority_bitmap->base + y * dyp + x;
+		uint16_t *dsti = (uint16_t *)bitmap->base + y * dy + x;
+		uint8_t *dstp = (uint8_t *)priority_bitmap->base + y * dyp + x;
 		int xadv = 1;
 
 		/* with pen lookups */
@@ -5885,7 +5885,7 @@ DECLAREG(pdraw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = pens[spixel];
@@ -5910,7 +5910,7 @@ DECLAREG(pdraw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = spixel;
@@ -5927,8 +5927,8 @@ DECLAREG(pdraw_scanline, (
 	{
 		int dy = bitmap->rowpixels;
 		int dyp = priority_bitmap->rowpixels;
-		UINT32 *dsti = (UINT32 *)bitmap->base + y * dy + x;
-		UINT8 *dstp = (UINT8 *)priority_bitmap->base + y * dyp + x;
+		uint32_t *dsti = (uint32_t *)bitmap->base + y * dy + x;
+		uint8_t *dstp = (uint8_t *)priority_bitmap->base + y * dyp + x;
 		int xadv = 1;
 
 		/* with pen lookups */
@@ -5945,7 +5945,7 @@ DECLAREG(pdraw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = pens[spixel];
@@ -5970,7 +5970,7 @@ DECLAREG(pdraw_scanline, (
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = spixel;
@@ -5992,7 +5992,7 @@ DECLAREG(extract_scanline, (
 	if (bitmap->depth == 8)
 	{
 		int dy = bitmap->rowpixels;
-		UINT8 *src = (UINT8 *)bitmap->base + y * dy + x;
+		uint8_t *src = (uint8_t *)bitmap->base + y * dy + x;
 		int xadv = 1;
 
 		while (length--)
@@ -6006,7 +6006,7 @@ DECLAREG(extract_scanline, (
 	else if(bitmap->depth == 15 || bitmap->depth == 16)
 	{
 		int dy = bitmap->rowpixels;
-		UINT16 *src = (UINT16 *)bitmap->base + y * dy + x;
+		uint16_t *src = (uint16_t *)bitmap->base + y * dy + x;
 		int xadv = 1;
 
 		while (length--)
@@ -6020,7 +6020,7 @@ DECLAREG(extract_scanline, (
 	else
 	{
 		int dy = bitmap->rowpixels;
-		UINT32 *src = (UINT32 *)bitmap->base + y * dy + x;
+		uint32_t *src = (uint32_t *)bitmap->base + y * dy + x;
 		int xadv = 1;
 
 		while (length--)

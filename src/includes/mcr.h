@@ -10,11 +10,11 @@
 
 /*----------- defined in machine/mcr.c -----------*/
 
-extern INT16 spyhunt_scrollx, spyhunt_scrolly;
+extern int16_t spyhunt_scrollx, spyhunt_scrolly;
 extern double mcr68_timing_factor;
 
 extern Z80_DaisyChain mcr_daisy_chain[];
-extern UINT8 mcr_cocktail_flip;
+extern uint8_t mcr_cocktail_flip;
 
 extern struct GfxLayout mcr_bg_layout;
 extern struct GfxLayout mcr_sprite_layout;
@@ -38,8 +38,8 @@ READ16_HANDLER( mcr68_6840_lower_r );
 
 /*----------- defined in vidhrdw/mcr12.c -----------*/
 
-extern INT8 mcr12_sprite_xoffs;
-extern INT8 mcr12_sprite_xoffs_flip;
+extern int8_t mcr12_sprite_xoffs;
+extern int8_t mcr12_sprite_xoffs_flip;
 
 VIDEO_START( mcr1 );
 VIDEO_START( mcr2 );
@@ -57,11 +57,11 @@ VIDEO_UPDATE( journey );
 
 /*----------- defined in vidhrdw/mcr3.c -----------*/
 
-extern UINT8 spyhunt_sprite_color_mask;
-extern INT16 spyhunt_scrollx, spyhunt_scrolly;
-extern INT16 spyhunt_scroll_offset;
+extern uint8_t spyhunt_sprite_color_mask;
+extern int16_t spyhunt_scrollx, spyhunt_scrolly;
+extern int16_t spyhunt_scroll_offset;
 
-extern UINT8 *spyhunt_alpharam;
+extern uint8_t *spyhunt_alpharam;
 
 WRITE_HANDLER( mcr3_paletteram_w );
 WRITE_HANDLER( mcr3_videoram_w );
@@ -84,8 +84,8 @@ VIDEO_UPDATE( dotron );
 
 /*----------- defined in vidhrdw/mcr68.c -----------*/
 
-extern UINT8 mcr68_sprite_clip;
-extern INT8 mcr68_sprite_xoffset;
+extern uint8_t mcr68_sprite_clip;
+extern int8_t mcr68_sprite_xoffset;
 
 WRITE16_HANDLER( mcr68_paletteram_w );
 WRITE16_HANDLER( mcr68_videoram_w );

@@ -6,7 +6,7 @@
 
 /*----------- defined in vidhrdw/centiped.c -----------*/
 
-extern UINT8 centiped_flipscreen;
+extern uint8_t centiped_flipscreen;
 
 PALETTE_INIT( centiped );
 PALETTE_INIT( milliped );

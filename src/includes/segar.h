@@ -6,7 +6,7 @@
 
 /*----------- defined in machine/segar.c -----------*/
 
-extern UINT8 *segar_mem;
+extern uint8_t *segar_mem;
 extern void (*sega_decrypt)(int,unsigned int *);
 
 void sega_security(int chip);
@@ -44,10 +44,10 @@ extern const char *spaceod_sample_names[];
 
 /*----------- defined in vidhrdw/segar.c -----------*/
 
-extern UINT8 *segar_characterram;
-extern UINT8 *segar_characterram2;
-extern UINT8 *segar_mem_colortable;
-extern UINT8 *segar_mem_bcolortable;
+extern uint8_t *segar_characterram;
+extern uint8_t *segar_characterram2;
+extern uint8_t *segar_mem_colortable;
+extern uint8_t *segar_mem_bcolortable;
 
 WRITE_HANDLER( segar_characterram_w );
 WRITE_HANDLER( segar_characterram2_w );

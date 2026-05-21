@@ -15,9 +15,9 @@ WRITE16_HANDLER( asic65_data_w );
 
 /*----------- defined in vidhrdw/atarig42.c -----------*/
 
-extern UINT16 atarig42_playfield_base;
-extern UINT16 atarig42_motion_object_base;
-extern UINT16 atarig42_motion_object_mask;
+extern uint16_t atarig42_playfield_base;
+extern uint16_t atarig42_motion_object_base;
+extern uint16_t atarig42_motion_object_mask;
 
 VIDEO_START( atarig42 );
 VIDEO_UPDATE( atarig42 );

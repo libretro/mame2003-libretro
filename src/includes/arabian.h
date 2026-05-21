@@ -11,8 +11,8 @@
 
 /*----------- defined in vidhrdw/arabian.c -----------*/
 
-extern UINT8 arabian_video_control;
-extern UINT8 arabian_flip_screen;
+extern uint8_t arabian_video_control;
+extern uint8_t arabian_flip_screen;
 
 PALETTE_INIT( arabian );
 VIDEO_START( arabian );

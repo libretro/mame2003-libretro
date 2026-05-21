@@ -25,7 +25,7 @@
 
 #define NVRAM_HANDLER(name)		void nvram_handler_##name(mame_file *file, int read_or_write)
 
-#define PALETTE_INIT(name)		void palette_init_##name(UINT16 *colortable, const UINT8 *color_prom)
+#define PALETTE_INIT(name)		void palette_init_##name(uint16_t *colortable, const uint8_t *color_prom)
 
 #define VIDEO_START(name)		int video_start_##name(void)
 #define VIDEO_STOP(name)		void video_stop_##name(void)
@@ -290,27 +290,27 @@ struct InternalMachineDriver
 	struct MachineCPU cpu[MAX_CPU];
 	float frames_per_second;
 	int vblank_duration;
-	UINT32 cpu_slices_per_frame;
+	uint32_t cpu_slices_per_frame;
 
 	void (*machine_init)(void);
 	void (*machine_stop)(void);
 	void (*nvram_handler)(mame_file *file, int read_or_write);
 
-	UINT32 video_attributes;
-	UINT32 aspect_x, aspect_y;
+	uint32_t video_attributes;
+	uint32_t aspect_x, aspect_y;
 	int screen_width,screen_height;
 	struct rectangle default_visible_area;
 	struct GfxDecodeInfo *gfxdecodeinfo;
-	UINT32 total_colors;
-	UINT32 color_table_len;
+	uint32_t total_colors;
+	uint32_t color_table_len;
 
-	void (*init_palette)(UINT16 *colortable,const UINT8 *color_prom);
+	void (*init_palette)(uint16_t *colortable,const uint8_t *color_prom);
 	int (*video_start)(void);
 	void (*video_stop)(void);
 	void (*video_eof)(void);
 	void (*video_update)(struct mame_bitmap *bitmap,const struct rectangle *cliprect);
 
-	UINT32 sound_attributes;
+	uint32_t sound_attributes;
 	struct MachineSound sound[MAX_SOUND+1]; /* add one code is assuming its +1 in a lot of places and is causing overflows */
 };
 
@@ -411,7 +411,7 @@ struct GameDriver
                                       /* which is called every time the game is reset. */
   const struct RomModule *rom;
 
-  UINT32 flags;	/* orientation and other flags; see defines below */
+  uint32_t flags;	/* orientation and other flags; see defines below */
   
   const struct ControlInfo *ctrl_dat;
   const struct bin2cFILE *bootstrap;

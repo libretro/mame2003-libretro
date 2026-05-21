@@ -14,10 +14,10 @@ struct hard_disk_file;
 
 struct hard_disk_info
 {
-	UINT32			cylinders;
-	UINT32			heads;
-	UINT32			sectors;
-	UINT32			sectorbytes;
+	uint32_t			cylinders;
+	uint32_t			heads;
+	uint32_t			sectors;
+	uint32_t			sectorbytes;
 };
 
 
@@ -34,7 +34,7 @@ void hard_disk_close(struct hard_disk_file *file);
 struct chd_file *hard_disk_get_chd(struct hard_disk_file *file);
 struct hard_disk_info *hard_disk_get_info(struct hard_disk_file *file);
 
-UINT32 hard_disk_read(struct hard_disk_file *file, UINT32 lbasector, UINT32 numsectors, void *buffer);
-UINT32 hard_disk_write(struct hard_disk_file *file, UINT32 lbasector, UINT32 numsectors, const void *buffer);
+uint32_t hard_disk_read(struct hard_disk_file *file, uint32_t lbasector, uint32_t numsectors, void *buffer);
+uint32_t hard_disk_write(struct hard_disk_file *file, uint32_t lbasector, uint32_t numsectors, const void *buffer);
 
 #endif /* HARDDISK_H */

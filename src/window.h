@@ -58,36 +58,36 @@
 
 struct sWindow
 {
-	UINT8 filler;		/* Character */
-	UINT8 prio; 		/* This window's priority */
-	UINT32 x;			/* X Position (in characters) of our window */
-	UINT32 y;			/* Y Position (in characters) of our window */
-	UINT32 w;			/* X Size of our window (in characters) */
-	UINT32 h;			/* Y Size (lines) of our window (in character lengths) */
-	UINT32 cx;			/* Current cursor's X position */
-	UINT32 cy;			/* Current cursor's Y position */
-	UINT32 flags;		/* Window's attributes (below) */
-	UINT8 co_text;		/* Default color */
-	UINT8 co_frame; 	/* Frame color */
-	UINT8 co_title; 	/* Title color */
-	UINT8 saved_text;	/* Character under the cursor position */
-	UINT8 saved_attr;	/* Attribute under the cursor position */
+	uint8_t filler;		/* Character */
+	uint8_t prio; 		/* This window's priority */
+	uint32_t x;			/* X Position (in characters) of our window */
+	uint32_t y;			/* Y Position (in characters) of our window */
+	uint32_t w;			/* X Size of our window (in characters) */
+	uint32_t h;			/* Y Size (lines) of our window (in character lengths) */
+	uint32_t cx;			/* Current cursor's X position */
+	uint32_t cy;			/* Current cursor's Y position */
+	uint32_t flags;		/* Window's attributes (below) */
+	uint8_t co_text;		/* Default color */
+	uint8_t co_frame; 	/* Frame color */
+	uint8_t co_title; 	/* Title color */
+	uint8_t saved_text;	/* Character under the cursor position */
+	uint8_t saved_attr;	/* Attribute under the cursor position */
 
 	/* Stuff that needs to be saved off differently */
 
 	char	*title; /* Window title (if any) */
-	UINT8	*text;	/* Pointer to video data - characters */
-	UINT8	*attr;	/* Pointer to video data - attributes */
+	uint8_t	*text;	/* Pointer to video data - characters */
+	uint8_t	*attr;	/* Pointer to video data - attributes */
 
 	/* These are the callbacks when certain things happen. All fields have been
 	 * updated BEFORE the call. Return FALSE if the moves, resizes, closes,
 	 * refocus aren't accepted.
 	 */
 
-	UINT32 (*Resize)(UINT32 idx, struct sWindow *);
-	UINT32 (*Close)(UINT32 idx, struct sWindow *);
-	UINT32 (*Move)(UINT32 idx, struct sWindow *);
-	UINT32 (*Refocus)(UINT32 idx, struct sWindow *);  /* Bring it to the front */
+	uint32_t (*Resize)(uint32_t idx, struct sWindow *);
+	uint32_t (*Close)(uint32_t idx, struct sWindow *);
+	uint32_t (*Move)(uint32_t idx, struct sWindow *);
+	uint32_t (*Refocus)(uint32_t idx, struct sWindow *);  /* Bring it to the front */
 };
 
 /* These defines are for various aspects of the window */
@@ -138,40 +138,40 @@ struct sWindow
 
 /* Externs! */
 
-extern UINT32 screen_w;
-extern UINT32 screen_h;
+extern uint32_t screen_w;
+extern uint32_t screen_h;
 
-extern void win_erase_eol(UINT32 idx, UINT8 bChar);
-extern INT32 win_putc(UINT32 idx, UINT8 bChar);
-extern UINT32 win_open(UINT32 idx, struct sWindow *psWin);
-extern UINT32 win_init_engine(UINT32 w, UINT32 h);
-extern UINT32 win_is_initalized(UINT32 idx);
+extern void win_erase_eol(uint32_t idx, uint8_t bChar);
+extern int32_t win_putc(uint32_t idx, uint8_t bChar);
+extern uint32_t win_open(uint32_t idx, struct sWindow *psWin);
+extern uint32_t win_init_engine(uint32_t w, uint32_t h);
+extern uint32_t win_is_initalized(uint32_t idx);
 extern void win_exit_engine(void);
-extern void win_close(UINT32 idx);
-extern INT32 win_vprintf(UINT32 idx, const char *pszString, va_list arg);
-extern INT32 DECL_SPEC win_printf(UINT32 idx, const char *pszString, ...) ARGFMT;
-extern UINT32 DECL_SPEC win_set_title(UINT32 idx, const char *pszTitle, ... ) ARGFMT;
-extern UINT32 win_get_cx(UINT32 idx);
-extern UINT32 win_get_cy(UINT32 idx);
-extern UINT32 win_get_cx_abs(UINT32 idx);
-extern UINT32 win_get_cy_abs(UINT32 idx);
-extern UINT32 win_get_x_abs(UINT32 idx);
-extern UINT32 win_get_y_abs(UINT32 idx);
-extern UINT32 win_get_w(UINT32 idx);
-extern UINT32 win_get_h(UINT32 idx);
-extern void win_set_w(UINT32 idx, UINT32 w);
-extern void win_set_h(UINT32 idx, UINT32 w);
-extern void win_set_color(UINT32 idx, UINT32 color);
-extern void win_set_title_color(UINT32 idx, UINT32 color);
-extern void win_set_frame_color(UINT32 idx, UINT32 color);
-extern void win_set_curpos(UINT32 idx, UINT32 x, UINT32 y);
-extern void win_set_cursor(UINT32 idx, UINT32 dwCursorState);
-extern void win_hide(UINT32 idx);
-extern void win_show(UINT32 idx);
-extern void win_update(UINT32 idx);
-extern UINT8 win_get_prio(UINT32 idx);
-extern void win_set_prio(UINT32 idx, UINT8 prio);
-extern void win_move(UINT32 idx, UINT32 dwX, UINT32 dwY);
+extern void win_close(uint32_t idx);
+extern int32_t win_vprintf(uint32_t idx, const char *pszString, va_list arg);
+extern int32_t DECL_SPEC win_printf(uint32_t idx, const char *pszString, ...) ARGFMT;
+extern uint32_t DECL_SPEC win_set_title(uint32_t idx, const char *pszTitle, ... ) ARGFMT;
+extern uint32_t win_get_cx(uint32_t idx);
+extern uint32_t win_get_cy(uint32_t idx);
+extern uint32_t win_get_cx_abs(uint32_t idx);
+extern uint32_t win_get_cy_abs(uint32_t idx);
+extern uint32_t win_get_x_abs(uint32_t idx);
+extern uint32_t win_get_y_abs(uint32_t idx);
+extern uint32_t win_get_w(uint32_t idx);
+extern uint32_t win_get_h(uint32_t idx);
+extern void win_set_w(uint32_t idx, uint32_t w);
+extern void win_set_h(uint32_t idx, uint32_t w);
+extern void win_set_color(uint32_t idx, uint32_t color);
+extern void win_set_title_color(uint32_t idx, uint32_t color);
+extern void win_set_frame_color(uint32_t idx, uint32_t color);
+extern void win_set_curpos(uint32_t idx, uint32_t x, uint32_t y);
+extern void win_set_cursor(uint32_t idx, uint32_t dwCursorState);
+extern void win_hide(uint32_t idx);
+extern void win_show(uint32_t idx);
+extern void win_update(uint32_t idx);
+extern uint8_t win_get_prio(uint32_t idx);
+extern void win_set_prio(uint32_t idx, uint8_t prio);
+extern void win_move(uint32_t idx, uint32_t dwX, uint32_t dwY);
 extern void win_invalidate_video(void);
 
 #endif

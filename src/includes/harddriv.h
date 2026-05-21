@@ -6,17 +6,17 @@
 
 /*----------- defined in machine/harddriv.c -----------*/
 
-extern INT8 hdcpu_main;
-extern INT8 hdcpu_gsp;
-extern INT8 hdcpu_msp;
-extern INT8 hdcpu_adsp;
-extern INT8 hdcpu_sound;
-extern INT8 hdcpu_sounddsp;
-extern INT8 hdcpu_jsa;
-extern INT8 hdcpu_dsp32;
+extern int8_t hdcpu_main;
+extern int8_t hdcpu_gsp;
+extern int8_t hdcpu_msp;
+extern int8_t hdcpu_adsp;
+extern int8_t hdcpu_sound;
+extern int8_t hdcpu_sounddsp;
+extern int8_t hdcpu_jsa;
+extern int8_t hdcpu_dsp32;
 
-extern UINT8 hd34010_host_access;
-extern UINT8 hddsk_pio_access;
+extern uint8_t hd34010_host_access;
+extern uint8_t hddsk_pio_access;
 
 extern data16_t *hdmsp_ram;
 extern data16_t *hddsk_ram;
@@ -40,9 +40,9 @@ extern offs_t hdds3_transfer_pc;
 
 extern data32_t *rddsp32_sync[2];
 
-extern UINT32 gsp_speedup_count[4];
-extern UINT32 msp_speedup_count[4];
-extern UINT32 adsp_speedup_count[4];
+extern uint32_t gsp_speedup_count[4];
+extern uint32_t msp_speedup_count[4];
+extern uint32_t adsp_speedup_count[4];
 
 /* Driver/Multisync board */
 MACHINE_INIT( harddriv );
@@ -122,7 +122,7 @@ READ16_HANDLER( hd68k_ds3_program_r );
 WRITE16_HANDLER( hd68k_ds3_program_w );
 
 /* DSK board */
-void hddsk_update_pif(UINT32 pins);
+void hddsk_update_pif(uint32_t pins);
 WRITE16_HANDLER( hd68k_dsk_control_w );
 READ16_HANDLER( hd68k_dsk_ram_r );
 WRITE16_HANDLER( hd68k_dsk_ram_w );
@@ -209,8 +209,8 @@ READ16_HANDLER( hdsnddsp_compare_r );
 
 /*----------- defined in vidhrdw/harddriv.c -----------*/
 
-extern UINT8 hdgsp_multisync;
-extern UINT8 *hdgsp_vram;
+extern uint8_t hdgsp_multisync;
+extern uint8_t *hdgsp_vram;
 extern data16_t *hdgsp_control_lo;
 extern data16_t *hdgsp_control_hi;
 extern data16_t *hdgsp_paletteram_lo;
@@ -218,9 +218,9 @@ extern data16_t *hdgsp_paletteram_hi;
 extern size_t hdgsp_vram_size;
 
 VIDEO_START( harddriv );
-void hdgsp_write_to_shiftreg(UINT32 address, UINT16 *shiftreg);
-void hdgsp_read_from_shiftreg(UINT32 address, UINT16 *shiftreg);
-void hdgsp_display_update(UINT32 offs, int rowbytes, int scanline);
+void hdgsp_write_to_shiftreg(uint32_t address, uint16_t *shiftreg);
+void hdgsp_read_from_shiftreg(uint32_t address, uint16_t *shiftreg);
+void hdgsp_display_update(uint32_t offs, int rowbytes, int scanline);
 
 READ16_HANDLER( hdgsp_control_lo_r );
 WRITE16_HANDLER( hdgsp_control_lo_w );

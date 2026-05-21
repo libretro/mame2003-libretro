@@ -18,9 +18,9 @@ struct hard_disk_file
 {
 	struct chd_file *	chd;				/* CHD file */
 	struct hard_disk_info info;				/* hard disk info */
-	UINT32				hunksectors;		/* sectors per hunk */
-	UINT32				cachehunk;			/* which hunk is cached */
-	UINT8 *				cache;				/* cache of the current hunk */
+	uint32_t				hunksectors;		/* sectors per hunk */
+	uint32_t				cachehunk;			/* which hunk is cached */
+	uint8_t *				cache;				/* cache of the current hunk */
 };
 
 
@@ -36,8 +36,8 @@ struct hard_disk_file *hard_disk_open(struct chd_file *chd)
 	int cylinders, heads, sectors, sectorbytes;
 	struct hard_disk_file *file;
 	char metadata[256];
-	UINT32 metatag;
-	UINT32 count;
+	uint32_t metatag;
+	uint32_t count;
 
 	/* punt if no CHD */
 	if (!chd)
@@ -128,18 +128,18 @@ struct hard_disk_info *hard_disk_get_info(struct hard_disk_file *file)
  *
  *************************************/
 
-UINT32 hard_disk_read(struct hard_disk_file *file, UINT32 lbasector, UINT32 numsectors, void *buffer)
+uint32_t hard_disk_read(struct hard_disk_file *file, uint32_t lbasector, uint32_t numsectors, void *buffer)
 {
-	UINT32 hunknum = lbasector / file->hunksectors;
-	UINT32 sectoroffs = lbasector % file->hunksectors;
+	uint32_t hunknum = lbasector / file->hunksectors;
+	uint32_t sectoroffs = lbasector % file->hunksectors;
 
 	/* for now, just break down multisector reads into single sectors */
 	if (numsectors > 1)
 	{
-		UINT32 total = 0;
+		uint32_t total = 0;
 		while (numsectors--)
 		{
-			if (hard_disk_read(file, lbasector++, 1, (UINT8 *)buffer + total * file->info.sectorbytes))
+			if (hard_disk_read(file, lbasector++, 1, (uint8_t *)buffer + total * file->info.sectorbytes))
 				total++;
 			else
 				break;
@@ -168,18 +168,18 @@ UINT32 hard_disk_read(struct hard_disk_file *file, UINT32 lbasector, UINT32 nums
  *
  *************************************/
 
-UINT32 hard_disk_write(struct hard_disk_file *file, UINT32 lbasector, UINT32 numsectors, const void *buffer)
+uint32_t hard_disk_write(struct hard_disk_file *file, uint32_t lbasector, uint32_t numsectors, const void *buffer)
 {
-	UINT32 hunknum = lbasector / file->hunksectors;
-	UINT32 sectoroffs = lbasector % file->hunksectors;
+	uint32_t hunknum = lbasector / file->hunksectors;
+	uint32_t sectoroffs = lbasector % file->hunksectors;
 	
 	/* for now, just break down multisector writes into single sectors */
 	if (numsectors > 1)
 	{
-		UINT32 total = 0;
+		uint32_t total = 0;
 		while (numsectors--)
 		{
-			if (hard_disk_write(file, lbasector++, 1, (const UINT8 *)buffer + total * file->info.sectorbytes))
+			if (hard_disk_write(file, lbasector++, 1, (const uint8_t *)buffer + total * file->info.sectorbytes))
 				total++;
 			else
 				break;

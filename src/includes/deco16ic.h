@@ -24,17 +24,17 @@ void deco16_set_tilemap_colour_base(int tilemap, int base);
 void deco16_set_tilemap_colour_mask(int tilemap, int mask);
 void deco16_set_tilemap_transparency_mask(int tilemap, int mask);
 
-void deco16_tilemap_1_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, UINT32 priority);
-void deco16_tilemap_2_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, UINT32 priority);
-void deco16_tilemap_3_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, UINT32 priority);
-void deco16_tilemap_4_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, UINT32 priority);
+void deco16_tilemap_1_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, uint32_t priority);
+void deco16_tilemap_2_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, uint32_t priority);
+void deco16_tilemap_3_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, uint32_t priority);
+void deco16_tilemap_4_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, uint32_t priority);
 
-void deco16_tilemap_34_combine_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, UINT32 priority);
+void deco16_tilemap_34_combine_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int flags, uint32_t priority);
 
 void deco16_clear_sprite_priority_bitmap(void);
 void deco16_pdrawgfx(struct mame_bitmap *dest,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
-		const struct rectangle *clip,int transparency,int transparent_color,UINT32 pri_mask,UINT32 sprite_mask,UINT8 write_pri);
+		const struct rectangle *clip,int transparency,int transparent_color,uint32_t pri_mask,uint32_t sprite_mask,uint8_t write_pri);
 
 struct tilemap *deco16_get_tilemap(int pf, int size);
 

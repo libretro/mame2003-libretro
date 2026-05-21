@@ -9,7 +9,7 @@
 struct sys16_sprite_attributes {
 	int priority, flags;
 	int gfx, color;
-	UINT8 pitch;
+	uint8_t pitch;
 	int zoomx, zoomy;
 	int x,y, screen_height;	/* in screen coordinates */
 	int shadow_pen;
@@ -17,18 +17,18 @@ struct sys16_sprite_attributes {
 
 extern int (*sys16_spritesystem)(
 	struct sys16_sprite_attributes *sprite,
-	const UINT16 *source,
+	const uint16_t *source,
 	int bJustGetColor );
 
-extern int sys16_sprite_shinobi( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_passshot( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_quartet2( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_hangon( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_sharrier( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_outrun( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
-extern int sys16_sprite_aburner( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
+extern int sys16_sprite_shinobi( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_passshot( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_quartet2( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_hangon( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_sharrier( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_outrun( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
+extern int sys16_sprite_aburner( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
 
 #define TRANSPARENT_SHADOWS
 

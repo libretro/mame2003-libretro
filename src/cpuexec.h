@@ -198,12 +198,12 @@ int cycles_currently_ran(void);
 int cycles_left_to_run(void);
 
 /* Returns the total number of CPU cycles */
-UINT32 activecpu_gettotalcycles(void);
-UINT64 activecpu_gettotalcycles64(void);
+uint32_t activecpu_gettotalcycles(void);
+uint64_t activecpu_gettotalcycles64(void);
 
 /* Returns the total number of CPU cycles for a given CPU */
-UINT32 cpunum_gettotalcycles(int cpunum);
-UINT64 cpunum_gettotalcycles64(int cpunum);
+uint32_t cpunum_gettotalcycles(int cpunum);
+uint64_t cpunum_gettotalcycles64(int cpunum);
 
 /* Returns the number of CPU cycles before the next interrupt handler call */
 int activecpu_geticount(void);

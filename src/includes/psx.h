@@ -15,18 +15,18 @@ VIDEO_UPDATE( psx );
 VIDEO_STOP( psx );
 INTERRUPT_GEN( psx_vblank );
 extern void psx_gpu_reset( void );
-extern void psx_gpu_read( UINT32 *p_ram, INT32 n_size );
-extern void psx_gpu_write( UINT32 *p_ram, INT32 n_size );
+extern void psx_gpu_read( uint32_t *p_ram, int32_t n_size );
+extern void psx_gpu_write( uint32_t *p_ram, int32_t n_size );
 extern void psx_enable_direct_fb( int enable );
 READ32_HANDLER( psx_gpu_r );
 WRITE32_HANDLER( psx_gpu_w );
 
 /* machine */
-typedef void ( *psx_dma_read_handler )( UINT32, INT32 );
-typedef void ( *psx_dma_write_handler )( UINT32, INT32 );
+typedef void ( *psx_dma_read_handler )( uint32_t, int32_t );
+typedef void ( *psx_dma_write_handler )( uint32_t, int32_t );
 WRITE32_HANDLER( psx_irq_w );
 READ32_HANDLER( psx_irq_r );
-extern void psx_irq_set( UINT32 );
+extern void psx_irq_set( uint32_t );
 extern void psx_dma_install_read_handler( int, psx_dma_read_handler );
 extern void psx_dma_install_write_handler( int, psx_dma_read_handler );
 WRITE32_HANDLER( psx_dma_w );

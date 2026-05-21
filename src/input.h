@@ -139,7 +139,7 @@ int code_pressed(InputCode code);
 int code_pressed_memory(InputCode code);
 int code_pressed_memory_repeat(InputCode code, int speed);
 InputCode code_read_async(void);
-INT8 code_read_hex_async(void);
+int8_t code_read_hex_async(void);
 
 /* Wrappers for compatibility */
 #define keyboard_name                   code_name

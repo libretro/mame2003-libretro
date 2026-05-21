@@ -10,7 +10,7 @@ extern unsigned int neogeo_frame_counter;
 extern unsigned int neogeo_frame_counter_speed;
 extern int neogeo_has_trackball;
 
-void neogeo_set_cpu1_second_bank(UINT32 bankaddress);
+void neogeo_set_cpu1_second_bank(uint32_t bankaddress);
 void neogeo_init_cpu2_setbank(void);
 void neogeo_register_main_savestate(void);
 
@@ -24,7 +24,7 @@ extern int mcd_number;
 extern int memcard_status;
 extern int memcard_number;
 extern int memcard_manager;
-extern UINT8 *neogeo_memcard;
+extern uint8_t *neogeo_memcard;
 
 extern data8_t *neogeo_game_vectors;
 

@@ -6,7 +6,7 @@
 
 /*----------- defined in sndhrdw/cinemat.c -----------*/
 
-typedef void (*cinemat_sound_handler_proc)(UINT8, UINT8);
+typedef void (*cinemat_sound_handler_proc)(uint8_t, uint8_t);
 extern cinemat_sound_handler_proc cinemat_sound_handler;
 
 MACHINE_INIT( cinemat_sound );
@@ -22,15 +22,15 @@ extern struct Samplesinterface spacewar_samples_interface;
 extern struct Samplesinterface armora_samples_interface;
 extern struct Samplesinterface sundance_samples_interface;
 
-void starcas_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void warrior_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void armora_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void ripoff_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void solarq_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void spacewar_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void demon_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void armora_sound_w(UINT8 sound_val, UINT8 bits_changed);
-void sundance_sound_w(UINT8 sound_val, UINT8 bits_changed);
+void starcas_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void warrior_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void armora_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void ripoff_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void solarq_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void spacewar_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void demon_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void armora_sound_w(uint8_t sound_val, uint8_t bits_changed);
+void sundance_sound_w(uint8_t sound_val, uint8_t bits_changed);
 
 MACHINE_DRIVER_EXTERN( demon_sound );
 

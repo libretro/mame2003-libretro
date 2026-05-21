@@ -3,7 +3,7 @@
 #define NAMCOS22_SCREEN_WIDTH  640
 #define NAMCOS22_SCREEN_HEIGHT 480
 
-extern INT32 *namco_zbuffer;
+extern int32_t *namco_zbuffer;
 
 struct VerTex
 {
@@ -38,8 +38,8 @@ void namcos22_BlitTri(
 	struct mame_bitmap *pBitmap,
 	const struct VerTex v[3],
 	unsigned color,
-	INT32 bias,
-	INT32 flags,
+	int32_t bias,
+	int32_t flags,
 	const namcos22_camera * );
 
 void /*namcos21_*/BlitTriFlat(

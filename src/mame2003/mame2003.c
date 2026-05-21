@@ -446,7 +446,7 @@ void mame_pause(bool pause)
   }
 }
 
-extern UINT8 frameskip_counter;
+extern uint8_t frameskip_counter;
 
 void retro_run (void)
 {
@@ -753,7 +753,7 @@ int osd_start_audio_stream(int stereo)
 }
 
 
-int osd_update_audio_stream(INT16 *buffer)
+int osd_update_audio_stream(int16_t *buffer)
 {
 	int i,j;
 	if ( Machine->sample_rate !=0 && buffer)

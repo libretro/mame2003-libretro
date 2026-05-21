@@ -14,25 +14,25 @@ extern "C" {
  ***************************************************************************/
 
 struct zipent {
-	UINT32	cent_file_header_sig;
-	UINT8	version_made_by;
-	UINT8	host_os;
-	UINT8	version_needed_to_extract;
-	UINT8	os_needed_to_extract;
-	UINT16	general_purpose_bit_flag;
-	UINT16	compression_method;
-	UINT16	last_mod_file_time;
-	UINT16	last_mod_file_date;
-	UINT32	crc32;
-	UINT32	compressed_size;
-	UINT32	uncompressed_size;
-	UINT16	filename_length;
-	UINT16	extra_field_length;
-	UINT16	file_comment_length;
-	UINT16	disk_number_start;
-	UINT16	internal_file_attrib;
-	UINT32	external_file_attrib;
-	UINT32	offset_lcl_hdr_frm_frst_disk;
+	uint32_t	cent_file_header_sig;
+	uint8_t	version_made_by;
+	uint8_t	host_os;
+	uint8_t	version_needed_to_extract;
+	uint8_t	os_needed_to_extract;
+	uint16_t	general_purpose_bit_flag;
+	uint16_t	compression_method;
+	uint16_t	last_mod_file_time;
+	uint16_t	last_mod_file_date;
+	uint32_t	crc32;
+	uint32_t	compressed_size;
+	uint32_t	uncompressed_size;
+	uint16_t	filename_length;
+	uint16_t	extra_field_length;
+	uint16_t	file_comment_length;
+	uint16_t	disk_number_start;
+	uint16_t	internal_file_attrib;
+	uint32_t	external_file_attrib;
+	uint32_t	offset_lcl_hdr_frm_frst_disk;
 	char*   name; /* 0 terminated */
 };
 
@@ -52,14 +52,14 @@ typedef struct _ZIP {
 	struct zipent ent; /* buffer for readzip */
 
 	/* end_of_cent_dir */
-	UINT32	end_of_cent_dir_sig;
-	UINT16	number_of_this_disk;
-	UINT16	number_of_disk_start_cent_dir;
-	UINT16	total_entries_cent_dir_this_disk;
-	UINT16	total_entries_cent_dir;
-	UINT32	size_of_cent_dir;
-	UINT32	offset_to_start_of_cent_dir;
-	UINT16	zipfile_comment_length;
+	uint32_t	end_of_cent_dir_sig;
+	uint16_t	number_of_this_disk;
+	uint16_t	number_of_disk_start_cent_dir;
+	uint16_t	total_entries_cent_dir_this_disk;
+	uint16_t	total_entries_cent_dir;
+	uint32_t	size_of_cent_dir;
+	uint32_t	offset_to_start_of_cent_dir;
+	uint16_t	zipfile_comment_length;
 	char*	zipfile_comment; /* pointer in ecd */
 } ZIP;
 

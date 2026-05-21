@@ -50,7 +50,7 @@ const char *mameinfo_filename = NULL;
  ****************************************************************************/
 static mame_file *fp;                                       /* Our file pointer */
 static long dwFilePos;                                          /* file position */
-static UINT8 bToken[MAX_TOKEN_LENGTH];          /* Our current token */
+static uint8_t bToken[MAX_TOKEN_LENGTH];          /* Our current token */
 
 /* an array of driver name/drivers array index sorted by driver name
    for fast look up by name */
@@ -123,12 +123,12 @@ static int GetGameNameIndex(const char *name)
  *
  *      Returns token, or TOKEN_INVALID if at end of file
  ****************************************************************************/
-static UINT32 GetNextToken(UINT8 **ppszTokenText, long *pdwPosition)
+static uint32_t GetNextToken(uint8_t **ppszTokenText, long *pdwPosition)
 {
-        UINT32 dwLength;                                                /* Length of symbol */
+        uint32_t dwLength;                                                /* Length of symbol */
         long dwPos;                                                             /* Temporary position */
-        UINT8 *pbTokenPtr = bToken;                             /* Point to the beginning */
-        UINT8 bData;                                                    /* Temporary data byte */
+        uint8_t *pbTokenPtr = bToken;                             /* Point to the beginning */
+        uint8_t bData;                                                    /* Temporary data byte */
 
         while (1)
         {
@@ -321,7 +321,7 @@ static void ParseClose(void)
 /****************************************************************************
  *      ParseOpen - Open up file for reading
  ****************************************************************************/
-static UINT8 ParseOpen(const char *pszFilename)
+static uint8_t ParseOpen(const char *pszFilename)
 {
    /* Open file up in binary mode */
    fp = mame_fopen (NULL, pszFilename, FILETYPE_HISTORY, 0);
@@ -341,13 +341,13 @@ static UINT8 ParseOpen(const char *pszFilename)
 /****************************************************************************
  *      ParseSeek - Move the file position indicator
  ****************************************************************************/
-static UINT8 ParseSeek(long offset, int whence)
+static uint8_t ParseSeek(long offset, int whence)
 {
    int result = mame_fseek(fp, offset, whence);
 
    if (0 == result)
       dwFilePos = mame_ftell(fp);
-   return (UINT8)result;
+   return (uint8_t)result;
 }
 
 
@@ -418,7 +418,7 @@ static int index_datafile (struct tDatafileIndex **_index)
 {
         struct tDatafileIndex *idx;
         int count = 0;
-        UINT32 token = TOKEN_SYMBOL;
+        uint32_t token = TOKEN_SYMBOL;
 
         /* rewind file */
         if (ParseSeek (0L, SEEK_SET)) return 0;
@@ -433,18 +433,18 @@ static int index_datafile (struct tDatafileIndex **_index)
                 long tell;
                 char *s;
 
-                token = GetNextToken ((UINT8 **)&s, &tell);
+                token = GetNextToken ((uint8_t **)&s, &tell);
                 if (TOKEN_SYMBOL != token) continue;
 
                 /* DATAFILE_TAG_KEY identifies the driver */
                 if (!ci_strncmp (DATAFILE_TAG_KEY, s, strlen (DATAFILE_TAG_KEY)))
                 {
-                        token = GetNextToken ((UINT8 **)&s, &tell);
+                        token = GetNextToken ((uint8_t **)&s, &tell);
                         if (TOKEN_EQUALS == token)
                         {
                                 int done = 0;
 
-                                token = GetNextToken ((UINT8 **)&s, &tell);
+                                token = GetNextToken ((uint8_t **)&s, &tell);
                                 while (!done && TOKEN_SYMBOL == token)
                                 {
 									int game_index;
@@ -464,10 +464,10 @@ static int index_datafile (struct tDatafileIndex **_index)
 									}
 									if (!done)
 									{
-										token = GetNextToken ((UINT8 **)&s, &tell);
+										token = GetNextToken ((uint8_t **)&s, &tell);
 
 										if (TOKEN_COMMA == token)
-											token = GetNextToken ((UINT8 **)&s, &tell);
+											token = GetNextToken ((uint8_t **)&s, &tell);
 										else
 											done = 1; /* end of key field */
 									}
@@ -497,8 +497,8 @@ static int load_datafile_text (const struct GameDriver *drv, char *buffer, int b
 {
         int     offset = 0;
         int found = 0;
-        UINT32  token = TOKEN_SYMBOL;
-        UINT32  prev_token = TOKEN_SYMBOL;
+        uint32_t  token = TOKEN_SYMBOL;
+        uint32_t  prev_token = TOKEN_SYMBOL;
 
         *buffer = '\0';
 
@@ -522,7 +522,7 @@ static int load_datafile_text (const struct GameDriver *drv, char *buffer, int b
                 int len;
                 long tell;
 
-                token = GetNextToken ((UINT8 **)&s, &tell);
+                token = GetNextToken ((uint8_t **)&s, &tell);
                 if (TOKEN_INVALID == token) continue;
 
                 if (found)

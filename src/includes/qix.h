@@ -11,9 +11,9 @@
 
 /*----------- defined in machine/qix.c -----------*/
 
-extern UINT8 *qix_sharedram;
-extern UINT8 *qix_68705_port_out;
-extern UINT8 *qix_68705_ddr;
+extern uint8_t *qix_sharedram;
+extern uint8_t *qix_68705_port_out;
+extern uint8_t *qix_68705_ddr;
 
 MACHINE_INIT( qix );
 MACHINE_INIT( qixmcu );
@@ -48,8 +48,8 @@ WRITE_HANDLER( zookeep_pia_2_w );
 
 /*----------- defined in vidhrdw/qix.c -----------*/
 
-extern UINT8 *qix_videoaddress;
-extern UINT8 qix_cocktail_flip;
+extern uint8_t *qix_videoaddress;
+extern uint8_t qix_cocktail_flip;
 
 VIDEO_START( qix );
 VIDEO_UPDATE( qix );

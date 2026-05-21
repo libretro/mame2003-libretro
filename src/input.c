@@ -500,7 +500,7 @@ InputCode code_read_async(void)
 }
 
 /* returns the numerical value of a typed hex digit, or -1 if none */
-INT8 code_read_hex_async(void)
+int8_t code_read_hex_async(void)
 {
 	unsigned i;
 

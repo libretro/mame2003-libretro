@@ -76,10 +76,10 @@ extern "C" {
 ***************************************************************************/
 
 /* ----- typedefs for data and offset types ----- */
-typedef UINT8			data8_t;
-typedef UINT16			data16_t;
-typedef UINT32			data32_t;
-typedef UINT32			offs_t;
+typedef uint8_t			data8_t;
+typedef uint16_t			data16_t;
+typedef uint32_t			data32_t;
+typedef uint32_t			offs_t;
 
 /* ----- typedefs for the various common memory/port handlers ----- */
 typedef data8_t			(*read8_handler)  (UNUSEDARG offs_t offset);
@@ -110,8 +110,8 @@ typedef write32_handler	port_write32_handler;
 struct ExtMemory
 {
 	offs_t 			start, end;
-	UINT8			region;
-    UINT8 *			data;
+	uint8_t			region;
+    uint8_t *			data;
 };
 
 
@@ -850,13 +850,13 @@ void		install_port_write32_handler(int cpunum, offs_t start, offs_t end, port_wr
 
 ***************************************************************************/
 
-extern UINT8 			opcode_entry;		/* current entry for opcode fetching */
-extern UINT8 *			OP_ROM;				/* opcode ROM base */
-extern UINT8 *			OP_RAM;				/* opcode RAM base */
+extern uint8_t 			opcode_entry;		/* current entry for opcode fetching */
+extern uint8_t *			OP_ROM;				/* opcode ROM base */
+extern uint8_t *			OP_RAM;				/* opcode RAM base */
 extern offs_t			OP_MEM_MIN;			/* opcode memory minimum */
 extern offs_t			OP_MEM_MAX;			/* opcode memory maximum */
-extern UINT8 *			cpu_bankbase[];		/* array of bank bases */
-extern UINT8 *			readmem_lookup;		/* pointer to the readmem lookup table */
+extern uint8_t *			cpu_bankbase[];		/* array of bank bases */
+extern uint8_t *			readmem_lookup;		/* pointer to the readmem lookup table */
 extern offs_t			mem_amask;			/* memory address mask */
 extern struct ExtMemory	ext_memory[];		/* externally-allocated memory */
 
@@ -935,7 +935,7 @@ do {																					\
 do {																					\
 	if (bank >= STATIC_BANK1 && bank <= STATIC_BANKMAX)									\
 	{																					\
-		cpu_bankbase[bank] = (UINT8 *)(base);											\
+		cpu_bankbase[bank] = (uint8_t *)(base);											\
 		if (opcode_entry == bank && cpu_getactivecpu() >= 0)							\
 		{																				\
 			opcode_entry = 0xff;														\

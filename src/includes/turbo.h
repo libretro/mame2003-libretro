@@ -6,13 +6,13 @@
 
 /*----------- defined in machine/turbo.c -----------*/
 
-extern UINT8 turbo_opa, turbo_opb, turbo_opc;
-extern UINT8 turbo_ipa, turbo_ipb, turbo_ipc;
-extern UINT8 turbo_fbpla, turbo_fbcol;
+extern uint8_t turbo_opa, turbo_opb, turbo_opc;
+extern uint8_t turbo_ipa, turbo_ipb, turbo_ipc;
+extern uint8_t turbo_fbpla, turbo_fbcol;
 
-extern UINT8 subroc3d_col, subroc3d_ply, subroc3d_chofs;
+extern uint8_t subroc3d_col, subroc3d_ply, subroc3d_chofs;
 
-extern UINT8 buckrog_fchg, buckrog_mov, buckrog_obch;
+extern uint8_t buckrog_fchg, buckrog_mov, buckrog_obch;
 
 MACHINE_INIT( turbo );
 MACHINE_INIT( subroc3d );
@@ -37,8 +37,8 @@ READ_HANDLER( buckrog_port_3_r );
 
 /*----------- defined in vidhrdw/turbo.c -----------*/
 
-extern UINT8 *sega_sprite_position;
-extern UINT8 turbo_collision;
+extern uint8_t *sega_sprite_position;
+extern uint8_t turbo_collision;
 
 PALETTE_INIT( turbo );
 VIDEO_START( turbo );

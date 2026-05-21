@@ -9,17 +9,17 @@ void state_save_reset(void);
 
 /* Registering functions */
 void state_save_register_UINT8 (const char *module, int instance,
-								const char *name, UINT8 *val, unsigned size);
+								const char *name, uint8_t *val, unsigned size);
 void state_save_register_INT8  (const char *module, int instance,
-								const char *name, INT8 *val, unsigned size);
+								const char *name, int8_t *val, unsigned size);
 void state_save_register_UINT16(const char *module, int instance,
-								const char *name, UINT16 *val, unsigned size);
+								const char *name, uint16_t *val, unsigned size);
 void state_save_register_INT16 (const char *module, int instance,
-								const char *name, INT16 *val, unsigned size);
+								const char *name, int16_t *val, unsigned size);
 void state_save_register_UINT32(const char *module, int instance,
-								const char *name, UINT32 *val, unsigned size);
+								const char *name, uint32_t *val, unsigned size);
 void state_save_register_INT32 (const char *module, int instance,
-								const char *name, INT32 *val, unsigned size);
+								const char *name, int32_t *val, unsigned size);
 void state_save_register_double(const char *module, int instance,
 								const char *name, double *val, unsigned size);
 void state_save_register_float (const char *module, int instance,

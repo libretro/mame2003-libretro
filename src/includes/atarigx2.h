@@ -6,9 +6,9 @@
 
 /*----------- defined in vidhrdw/atarigx2.c -----------*/
 
-extern UINT16 atarigx2_playfield_base;
-extern UINT16 atarigx2_motion_object_base;
-extern UINT16 atarigx2_motion_object_mask;
+extern uint16_t atarigx2_playfield_base;
+extern uint16_t atarigx2_motion_object_base;
+extern uint16_t atarigx2_motion_object_mask;
 
 VIDEO_START( atarigx2 );
 VIDEO_UPDATE( atarigx2 );

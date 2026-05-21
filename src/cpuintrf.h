@@ -373,7 +373,7 @@ enum
 	 * the names from the enum a CPU core defines for it's registers,
 	 * to get or set the contents of the memory pointed to by a stack pointer.
 	 * You can specify the n'th element on the stack by (REG_SP_CONTENTS-n),
-	 * ie. lower negative values. The actual element size (UINT16 or UINT32)
+	 * ie. lower negative values. The actual element size (uint16_t or uint32_t)
 	 * depends on the CPU core. */
 	REG_SP_CONTENTS = -4
 };

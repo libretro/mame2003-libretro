@@ -16,9 +16,9 @@
 
 
 
-const UINT8 scale_lookup[] = { 0,0,1,0,2,0,0,0,3 };
+const uint8_t scale_lookup[] = { 0,0,1,0,2,0,0,0,3 };
 
-static UINT16 fp_control[4] = { 0x23f, 0x63f, 0xa3f, 0xe3f };
+static uint16_t fp_control[4] = { 0x23f, 0x63f, 0xa3f, 0xe3f };
 
 
 static void append_entry_point(struct drccore *drc);
@@ -38,7 +38,7 @@ static void log_dispatch(struct drccore *drc);
 	drc_init
 ------------------------------------------------------------------*/
 
-struct drccore *drc_init(UINT8 cpunum, struct drcconfig *config)
+struct drccore *drc_init(uint8_t cpunum, struct drcconfig *config)
 {
 	int address_bits = config->address_bits;
 	int effective_address_bits = address_bits - config->lsbs_to_ignore;
@@ -190,10 +190,10 @@ void drc_exit(struct drccore *drc)
 	drc_begin_sequence
 ------------------------------------------------------------------*/
 
-void drc_begin_sequence(struct drccore *drc, UINT32 pc)
+void drc_begin_sequence(struct drccore *drc, uint32_t pc)
 {
-	UINT32 l1index = pc >> drc->l1shift;
-	UINT32 l2index = ((pc & drc->l2mask) * drc->l2scale) / 4;
+	uint32_t l1index = pc >> drc->l1shift;
+	uint32_t l2index = ((pc & drc->l2mask) * drc->l2scale) / 4;
 
 	/* reset the sequence and tentative counts */
 	drc->sequence_count = 0;
@@ -212,7 +212,7 @@ void drc_begin_sequence(struct drccore *drc, UINT32 pc)
 	/* nuke any previous link to this instruction */
 	if (drc->lookup_l1[l1index][l2index] != drc->recompile)
 	{
-		UINT8 *cache_save = drc->cache_top;
+		uint8_t *cache_save = drc->cache_top;
 		drc->cache_top = drc->lookup_l1[l1index][l2index];
 		_jmp(drc->dispatch);
 		drc->cache_top = cache_save;
@@ -236,7 +236,7 @@ void drc_end_sequence(struct drccore *drc)
 		for (j = 0; j < drc->sequence_count; j++)
 			if (drc->tentative_list[i].pc == drc->sequence_list[j].pc)
 			{
-				UINT8 *cache_save = drc->cache_top;
+				uint8_t *cache_save = drc->cache_top;
 				drc->cache_top = drc->tentative_list[i].target;
 				_jmp(drc->sequence_list[j].target);
 				drc->cache_top = cache_save;
@@ -249,7 +249,7 @@ void drc_end_sequence(struct drccore *drc)
 	drc_register_code_at_cache_top
 ------------------------------------------------------------------*/
 
-void drc_register_code_at_cache_top(struct drccore *drc, UINT32 pc)
+void drc_register_code_at_cache_top(struct drccore *drc, uint32_t pc)
 {
 	struct pc_ptr_pair *pair = &drc->sequence_list[drc->sequence_count++];
 	if (drc->sequence_count > drc->sequence_count_max)
@@ -266,10 +266,10 @@ void drc_register_code_at_cache_top(struct drccore *drc, UINT32 pc)
 	drc_get_code_at_pc
 ------------------------------------------------------------------*/
 
-void *drc_get_code_at_pc(struct drccore *drc, UINT32 pc)
+void *drc_get_code_at_pc(struct drccore *drc, uint32_t pc)
 {
-	UINT32 l1index = pc >> drc->l1shift;
-	UINT32 l2index = ((pc & drc->l2mask) * drc->l2scale) / 4;
+	uint32_t l1index = pc >> drc->l1shift;
+	uint32_t l2index = ((pc & drc->l2mask) * drc->l2scale) / 4;
 	return (drc->lookup_l1[l1index][l2index] != drc->recompile) ? drc->lookup_l1[l1index][l2index] : NULL;
 }
 
@@ -278,21 +278,21 @@ void *drc_get_code_at_pc(struct drccore *drc, UINT32 pc)
 	drc_append_verify_code
 ------------------------------------------------------------------*/
 
-void drc_append_verify_code(struct drccore *drc, void *code, UINT8 length)
+void drc_append_verify_code(struct drccore *drc, void *code, uint8_t length)
 {
 	if (length >= 4)
 	{
-		_cmp_m32abs_imm(code, *(UINT32 *)code);						/* cmp	[pc],opcode*/
+		_cmp_m32abs_imm(code, *(uint32_t *)code);						/* cmp	[pc],opcode*/
 		_jcc(COND_NE, drc->recompile);								/* jne	recompile*/
 	}
 	else if (length >= 2)
 	{
-		_cmp_m16abs_imm(code, *(UINT16 *)code);						/* cmp	[pc],opcode*/
+		_cmp_m16abs_imm(code, *(uint16_t *)code);						/* cmp	[pc],opcode*/
 		_jcc(COND_NE, drc->recompile);								/* jne	recompile*/
 	}
 	else
 	{
-		_cmp_m8abs_imm(code, *(UINT8 *)code);						/* cmp	[pc],opcode*/
+		_cmp_m8abs_imm(code, *(uint8_t *)code);						/* cmp	[pc],opcode*/
 		_jcc(COND_NE, drc->recompile);								/* jne	recompile*/
 	}
 }
@@ -348,7 +348,7 @@ void drc_append_restore_volatiles(struct drccore *drc)
 	drc_append_save_call_restore
 ------------------------------------------------------------------*/
 
-void drc_append_save_call_restore(struct drccore *drc, void *target, UINT32 stackadj)
+void drc_append_save_call_restore(struct drccore *drc, void *target, uint32_t stackadj)
 {
 	drc_append_save_volatiles(drc);									/* save volatiles*/
 	_call(target);													/* call	target*/
@@ -362,7 +362,7 @@ void drc_append_save_call_restore(struct drccore *drc, void *target, UINT32 stac
 	drc_append_standard_epilogue
 ------------------------------------------------------------------*/
 
-void drc_append_standard_epilogue(struct drccore *drc, INT32 cycles, INT32 pcdelta, int allow_exit)
+void drc_append_standard_epilogue(struct drccore *drc, int32_t cycles, int32_t pcdelta, int allow_exit)
 {
 	if (cycles != 0)
 		_sub_r32_imm(REG_EBP, cycles);								/* sub	ebp,cycles*/
@@ -396,7 +396,7 @@ void drc_append_dispatcher(struct drccore *drc)
 	drc_append_fixed_dispatcher
 ------------------------------------------------------------------*/
 
-void drc_append_fixed_dispatcher(struct drccore *drc, UINT32 newpc)
+void drc_append_fixed_dispatcher(struct drccore *drc, uint32_t newpc)
 {
 	void **base = drc->lookup_l1[newpc >> drc->l1shift];
 	if (base == drc->lookup_l2_recompile)
@@ -405,7 +405,7 @@ void drc_append_fixed_dispatcher(struct drccore *drc, UINT32 newpc)
 		_jmp_m32bd(REG_EAX, (newpc & drc->l2mask) * drc->l2scale);		/* jmp	[eax+(newpc & l2mask)*l2scale]*/
 	}
 	else
-		_jmp_m32abs((UINT8 *)base + (newpc & drc->l2mask) * drc->l2scale);	/* jmp	[eax+(newpc & l2mask)*l2scale]*/
+		_jmp_m32abs((uint8_t *)base + (newpc & drc->l2mask) * drc->l2scale);	/* jmp	[eax+(newpc & l2mask)*l2scale]*/
 }
 
 
@@ -413,7 +413,7 @@ void drc_append_fixed_dispatcher(struct drccore *drc, UINT32 newpc)
 	drc_append_tentative_fixed_dispatcher
 ------------------------------------------------------------------*/
 
-void drc_append_tentative_fixed_dispatcher(struct drccore *drc, UINT32 newpc)
+void drc_append_tentative_fixed_dispatcher(struct drccore *drc, uint32_t newpc)
 {
 	struct pc_ptr_pair *pair = &drc->tentative_list[drc->tentative_count++];
 	if (drc->tentative_count > drc->tentative_count_max)
@@ -431,7 +431,7 @@ void drc_append_tentative_fixed_dispatcher(struct drccore *drc, UINT32 newpc)
 	drc_append_set_fp_rounding
 ------------------------------------------------------------------*/
 
-void drc_append_set_fp_rounding(struct drccore *drc, UINT8 regindex)
+void drc_append_set_fp_rounding(struct drccore *drc, uint8_t regindex)
 {
 	_fldcw_m16isd(regindex, 2, &fp_control[0]);						/* fldcw [fp_control + reg*2]*/
 	_fnstcw_m16abs(&drc->fpcw_curr);								/* fnstcw [fpcw_curr]*/
@@ -443,7 +443,7 @@ void drc_append_set_fp_rounding(struct drccore *drc, UINT8 regindex)
 	drc_append_set_temp_fp_rounding
 ------------------------------------------------------------------*/
 
-void drc_append_set_temp_fp_rounding(struct drccore *drc, UINT8 rounding)
+void drc_append_set_temp_fp_rounding(struct drccore *drc, uint8_t rounding)
 {
 	_fldcw_m16abs(&fp_control[rounding]);							/* fldcw [fp_control]*/
 }
@@ -478,8 +478,8 @@ void drc_dasm(FILE *f, unsigned pc, void *begin, void *end)
 	unsigned addr = (unsigned) begin;
 	unsigned addr_end = (unsigned) end;
 	unsigned offset;
-	UINT8 *saved_op_rom;
-	UINT8 *saved_op_ram;
+	uint8_t *saved_op_rom;
+	uint8_t *saved_op_ram;
 	size_t saved_op_mem_min;
 	size_t saved_op_mem_max;
 
@@ -496,7 +496,7 @@ void drc_dasm(FILE *f, unsigned pc, void *begin, void *end)
 		saved_op_ram		= OP_RAM;
 		saved_op_mem_min	= OP_MEM_MIN;
 		saved_op_mem_max	= OP_MEM_MAX;
-		OP_ROM = OP_RAM = (UINT8 *) 0;
+		OP_ROM = OP_RAM = (uint8_t *) 0;
 		OP_MEM_MIN = (size_t) 0;
 		OP_MEM_MAX = (size_t) -1;
 

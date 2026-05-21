@@ -27,7 +27,7 @@ struct mame_bitmap
 {
 	int width,height;	/* width and height of the bitmap */
 	int depth;			/* bits per pixel */
-	void **line;		/* pointers to the start of each line - can be UINT8 **, UINT16 ** or UINT32 ** */
+	void **line;		/* pointers to the start of each line - can be uint8_t **, uint16_t ** or uint32_t ** */
 
 	/* alternate way of accessing the pixels */
 	void *base;			/* pointer to pixel (0,0) (adjusted for padding) */
@@ -44,9 +44,9 @@ struct mame_bitmap
 struct RomModule
 {
 	const char *_name;	/* name of the file to load */
-	UINT32 _offset;		/* offset to load it to */
-	UINT32 _length;		/* length of the file */
-	UINT32 _flags;		/* flags */
+	uint32_t _offset;		/* offset to load it to */
+	uint32_t _length;		/* length of the file */
+	uint32_t _flags;		/* flags */
 	const char *_hashdata; /* hashing informations (checksums) */
 };
 
@@ -83,11 +83,11 @@ struct rom_load_data
 
 	void * file;				/* current file */
 
-	UINT8 *	regionbase;			/* base of current region */
-	UINT32 regionlength;			/* length of current region */
+	uint8_t *	regionbase;			/* base of current region */
+	uint32_t regionlength;			/* length of current region */
 
 	char errorbuf[4096];			/* accumulated errors */
-	UINT8 tempbuf[65536];			/* temporary buffer */
+	uint8_t tempbuf[65536];			/* temporary buffer */
 };
 
 
@@ -227,7 +227,7 @@ enum
 #define		ROMREGION_DATATYPEDISK	0x00010000
 
 /* ----- per-region macros ----- */
-#define ROMREGION_GETTYPE(r)		((UINT32)(r)->_hashdata)
+#define ROMREGION_GETTYPE(r)		((uint32_t)(r)->_hashdata)
 #define ROMREGION_GETLENGTH(r)		((r)->_length)
 #define ROMREGION_GETFLAGS(r)		((r)->_flags)
 #define ROMREGION_GETWIDTH(r)		(8 << (ROMREGION_GETFLAGS(r) & ROMREGION_WIDTHMASK))
@@ -399,12 +399,12 @@ struct GameSamples *readsamples(const char **samplenames,const char *name);
 
 /* return a pointer to the specified memory region - num can be either an absolute */
 /* number, or one of the REGION_XXX identifiers defined above */
-UINT8 *memory_region(int num);
+uint8_t *memory_region(int num);
 size_t memory_region_length(int num);
 
 /* allocate a new memory region - num can be either an absolute */
 /* number, or one of the REGION_XXX identifiers defined above */
-int new_memory_region(int num, size_t length, UINT32 flags);
+int new_memory_region(int num, size_t length, uint32_t flags);
 void free_memory_region(int num);
 
 /* common coin counter helpers */

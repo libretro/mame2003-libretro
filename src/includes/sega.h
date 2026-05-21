@@ -6,7 +6,7 @@
 
 /*----------- defined in machine/sega.c -----------*/
 
-extern UINT8 *sega_mem;
+extern uint8_t *sega_mem;
 extern void sega_security(int chip);
 
 WRITE_HANDLER( sega_w );

@@ -47,10 +47,10 @@ extern retro_environment_t environ_cb;
 
 struct RegionInfo
 {
-	UINT8 *		base;
+	uint8_t *		base;
 	size_t		length;
-	UINT32		type;
-	UINT32		flags;
+	uint32_t		type;
+	uint32_t		flags;
 };
 
 
@@ -86,7 +86,7 @@ struct RunningMachine
 	pen_t *					pens;
 
 	/* lookup table used to map gfx pen numbers to color numbers */
-	UINT16 *				game_colortable;
+	uint16_t *				game_colortable;
 
 	/* the above, already remapped through Machine->pens */
 	pen_t *					remapped_colortable;
@@ -299,25 +299,25 @@ struct GameOptions
 struct mame_display
 {
     /* bitfield indicating which states have changed */
-    UINT32					changed_flags;
+    uint32_t					changed_flags;
 
     /* game bitmap and display information */
     struct mame_bitmap *  game_bitmap;            /* points to game's bitmap */
     struct rectangle      game_bitmap_update;     /* bounds that need to be updated */
     const rgb_t *         game_palette;           /* points to game's adjusted palette */
-    UINT32                game_palette_entries;   /* number of palette entries in game's palette */
-    UINT32 *              game_palette_dirty;     /* points to game's dirty palette bitfield */
+    uint32_t                game_palette_entries;   /* number of palette entries in game's palette */
+    uint32_t *              game_palette_dirty;     /* points to game's dirty palette bitfield */
     struct rectangle      game_visible_area;      /* the game's visible area */
     void *                vector_dirty_pixels;    /* points to X,Y pairs of dirty vector pixels */
 
     /* debugger bitmap and display information */
     struct mame_bitmap *	debug_bitmap;           /* points to debugger's bitmap */
     const rgb_t *         debug_palette;          /* points to debugger's palette */
-    UINT32                debug_palette_entries;  /* number of palette entries in debugger's palette */
-    UINT8                 debug_focus;            /* set to 1 if debugger has focus */
+    uint32_t                debug_palette_entries;  /* number of palette entries in debugger's palette */
+    uint8_t                 debug_focus;            /* set to 1 if debugger has focus */
 
     /* other misc information */
-    UINT8                 led_state;              /* bitfield of current LED states */
+    uint8_t                 led_state;              /* bitfield of current LED states */
 };
 
 
