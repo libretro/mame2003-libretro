@@ -19,10 +19,10 @@ extern int debug_key_pressed;
 #define SPR_MASK_COLOR		(0xfe + 768)
 
 
-data8_t *tceptor_tile_ram;
-data8_t *tceptor_tile_attr;
-data8_t *tceptor_bg_ram;
-data16_t *tceptor_sprite_ram;
+uint8_t *tceptor_tile_ram;
+uint8_t *tceptor_tile_attr;
+uint8_t *tceptor_bg_ram;
+uint16_t *tceptor_sprite_ram;
 
 static int sprite16;
 static int sprite32;
@@ -279,7 +279,7 @@ static int decode_bg(int region)
 	};
 
 	int gfx_index = bg;
-	data8_t *src = memory_region(region) + 0x8000;
+	uint8_t *src = memory_region(region) + 0x8000;
 	unsigned char *buffer;
 	int len = 0x8000;
 	int i;
@@ -343,12 +343,12 @@ static int decode_sprite16(int region)
 		2*16*16
 	};
 
-	data8_t *src = memory_region(region);
+	uint8_t *src = memory_region(region);
 	int len = memory_region_length(region);
-	data8_t *dst;
+	uint8_t *dst;
 	int i, y;
 
-	dst = (data8_t *)malloc(len);
+	dst = (uint8_t *)malloc(len);
 	if (!src || !dst)
 		return 1;
 
@@ -401,14 +401,14 @@ static int decode_sprite32(int region)
 		2*32*32
 	};
 
-	data8_t *src = memory_region(region);
+	uint8_t *src = memory_region(region);
 	int len = memory_region_length(region);
 	int total = spr32_layout.total;
 	int size = spr32_layout.charincrement / 8;
-	data8_t *dst;
+	uint8_t *dst;
 	int i;
 
-	dst = (data8_t *)malloc(len);
+	dst = (uint8_t *)malloc(len);
 	if (!src || !dst)
 		return 1;
 
@@ -525,8 +525,8 @@ VIDEO_START( tceptor )
 
 static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int sprite_priority)
 {
-	data16_t *mem1 = &tceptor_sprite_ram[0x000/2];
-	data16_t *mem2 = &tceptor_sprite_ram[0x100/2];
+	uint16_t *mem1 = &tceptor_sprite_ram[0x000/2];
+	uint16_t *mem2 = &tceptor_sprite_ram[0x100/2];
 	int need_mask = 0;
 	int i;
 

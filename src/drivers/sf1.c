@@ -16,7 +16,7 @@ TODO:
 #include "cpu/m68000/m68000.h"
 
 
-extern data16_t *sf1_objectram,*sf1_videoram;
+extern uint16_t *sf1_objectram,*sf1_videoram;
 extern int sf1_deltaxb;
 extern int sf1_deltaxm;
 extern int sf1_active;

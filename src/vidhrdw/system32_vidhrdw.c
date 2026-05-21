@@ -26,15 +26,15 @@ int priloop;
 
 extern int multi32;
 
-extern data16_t *sys32_spriteram16;
-data8_t  *sys32_spriteram8; /* I maintain this to make drawing ram based sprites easier */
-extern data16_t *system32_mixerregs[2];		// mixer registers
-data16_t *sys32_videoram;
-data32_t *multi32_videoram;
-data8_t sys32_ramtile_dirty[0x1000];
-extern data16_t sys32_displayenable;
-extern data16_t sys32_tilebank_external;
-data16_t sys32_old_tilebank_external;
+extern uint16_t *sys32_spriteram16;
+uint8_t  *sys32_spriteram8; /* I maintain this to make drawing ram based sprites easier */
+extern uint16_t *system32_mixerregs[2];		// mixer registers
+uint16_t *sys32_videoram;
+uint32_t *multi32_videoram;
+uint8_t sys32_ramtile_dirty[0x1000];
+extern uint16_t sys32_displayenable;
+extern uint16_t sys32_tilebank_external;
+uint16_t sys32_old_tilebank_external;
 
 int sys32_tilebank_internal;
 int sys32_old_tilebank_internal;
@@ -51,9 +51,9 @@ int system32_allow_high_resolution;
 static int sys32_old_brightness[2][3];
 int sys32_brightness[2][3];
 
-data8_t system32_dirty_window[0x100];
-data8_t system32_windows[4][4];
-data8_t system32_old_windows[4][4];
+uint8_t system32_dirty_window[0x100];
+uint8_t system32_windows[4][4];
+uint8_t system32_old_windows[4][4];
 
 /* these are the various attributes a sprite can have, will decide which need to be global later, maybe put them in a struct */
 
@@ -89,11 +89,11 @@ static int sys32sprite_palette;
 static int sys32sprite_monitor_select; // multi32
 static int sys32sprite_priority;
 
-static data16_t *sys32sprite_table;
+static uint16_t *sys32sprite_table;
 
 static int spritenum; /* used to go through the sprite list */
 static int jump_x, jump_y; /* these are set during a jump command and sometimes used by the sprites afterwards */
-static data16_t *spritedata_source; /* a pointer into spriteram */
+static uint16_t *spritedata_source; /* a pointer into spriteram */
 
 #if !NEW_DRAWSPRITE
 static uint32_t sys32sprite_x_zoom;
@@ -122,7 +122,7 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 
 	static uint32_t idp_cache8[256];
 	static uint32_t idp_cache4[16];
-	static data16_t *idp_base, *idb_old=0;
+	static uint16_t *idp_base, *idb_old=0;
 	static int idi_old=-1;
 
 	// one-time
@@ -476,7 +476,7 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 
 // old drawsprite (working and proven)
 void system32_draw_sprite ( struct mame_bitmap *bitmap, const struct rectangle *cliprect ) {
-	data8_t *sprite_gfxdata = memory_region ( REGION_GFX2 );
+	uint8_t *sprite_gfxdata = memory_region ( REGION_GFX2 );
 	uint32_t xsrc,ysrc;
 	uint32_t xdst,ydst;
 	/* um .. probably a better way to do this */
@@ -1064,8 +1064,8 @@ void system32_draw_text_layer ( struct mame_bitmap *bitmap, const struct rectang
 	int monitor_select, monitor_offset;
 	struct GfxElement *gfx = Machine->gfx[1];
 	struct GfxLayout *gfxlayout = Machine->drv->gfxdecodeinfo[1].gfxlayout;
-	data8_t *txtile_gfxregion = memory_region(REGION_GFX3);
-	data16_t* tx_tilemapbase = sys32_videoram + ((0x10000+tmaddress*0x1000) /2);
+	uint8_t *txtile_gfxregion = memory_region(REGION_GFX3);
+	uint16_t* tx_tilemapbase = sys32_videoram + ((0x10000+tmaddress*0x1000) /2);
 
 	if (multi32)
 	{
@@ -1099,7 +1099,7 @@ void system32_draw_text_layer ( struct mame_bitmap *bitmap, const struct rectang
 			code += textbank * 0x200;
 
 			if (sys32_ramtile_dirty[code]) {
-				decodechar(gfx, code, (data8_t*)txtile_gfxregion, gfxlayout);
+				decodechar(gfx, code, (uint8_t*)txtile_gfxregion, gfxlayout);
 				sys32_ramtile_dirty[code] = 0;
 			}
 
@@ -1128,7 +1128,7 @@ READ16_HANDLER ( sys32_videoram_r ) {
 }
 
 WRITE16_HANDLER ( sys32_videoram_w ) {
-	data8_t *txtile_gfxregion = memory_region(REGION_GFX3);
+	uint8_t *txtile_gfxregion = memory_region(REGION_GFX3);
 
 	COMBINE_DATA(&sys32_videoram[offset]);
 

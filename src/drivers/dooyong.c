@@ -45,7 +45,7 @@ R-Shark, Super-X:
 
 extern unsigned char *lastday_txvideoram;
 extern unsigned char *lastday_bgscroll,*lastday_fgscroll,*bluehawk_fg2scroll;
-extern data16_t *rshark_scroll1,*rshark_scroll2,*rshark_scroll3,*rshark_scroll4;
+extern uint16_t *rshark_scroll1,*rshark_scroll2,*rshark_scroll3,*rshark_scroll4;
 
 WRITE_HANDLER( lastday_ctrl_w );
 WRITE_HANDLER( pollux_ctrl_w );

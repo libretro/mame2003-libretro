@@ -1,10 +1,10 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *taitob_scroll;
-data16_t *TC0180VCU_ram;
-data16_t *taitob_spriteram;
-data16_t *taitob_pixelram;
+uint16_t *taitob_scroll;
+uint16_t *TC0180VCU_ram;
+uint16_t *taitob_spriteram;
+uint16_t *taitob_pixelram;
 
 static struct tilemap *bg_tilemap, *fg_tilemap, *tx_tilemap;
 static int bg_rambank[2],fg_rambank[2],tx_rambank;
@@ -12,7 +12,7 @@ static int bg_rambank[2],fg_rambank[2],tx_rambank;
 /* framebuffer is a raw bitmap, remapped as a last step */
 static struct mame_bitmap *framebuffer[2],*pixel_bitmap;
 
-static data16_t pixel_scroll[2];
+static uint16_t pixel_scroll[2];
 static int pixel_init;
 
 static int framebuffer_page;
@@ -24,7 +24,7 @@ static int b_tx_color_base = 0;
 
 
 static uint8_t video_control = 0;
-static data16_t TC0180VCU_ctrl[0x10] = {0};
+static uint16_t TC0180VCU_ctrl[0x10] = {0};
 
 /* TC0180VCU control registers:
 * offset:
@@ -92,7 +92,7 @@ READ16_HANDLER( taitob_v_control_r )
 
 WRITE16_HANDLER( taitob_v_control_w )
 {
-	data16_t oldword = TC0180VCU_ctrl[offset];
+	uint16_t oldword = TC0180VCU_ctrl[offset];
 
 	COMBINE_DATA (&TC0180VCU_ctrl[offset]);
 
@@ -263,7 +263,7 @@ READ16_HANDLER( TC0180VCU_word_r )
 
 WRITE16_HANDLER( TC0180VCU_word_w )
 {
-  data16_t oldword = TC0180VCU_ram[offset];
+  uint16_t oldword = TC0180VCU_ram[offset];
   COMBINE_DATA(&TC0180VCU_ram[offset]);
 
   if (oldword != TC0180VCU_ram[offset])

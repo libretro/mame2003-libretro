@@ -1,6 +1,6 @@
-extern data16_t *f1gp_spr1vram,*f1gp_spr2vram,*f1gp_spr1cgram,*f1gp_spr2cgram;
-extern data16_t *f1gp_fgvideoram,*f1gp_rozvideoram;
-extern data16_t *f1gp2_sprcgram,*f1gp2_spritelist;
+extern uint16_t *f1gp_spr1vram,*f1gp_spr2vram,*f1gp_spr1cgram,*f1gp_spr2cgram;
+extern uint16_t *f1gp_fgvideoram,*f1gp_rozvideoram;
+extern uint16_t *f1gp2_sprcgram,*f1gp2_spritelist;
 extern size_t f1gp_spr1cgram_size,f1gp_spr2cgram_size;
 
 

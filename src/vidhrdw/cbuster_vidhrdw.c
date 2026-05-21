@@ -7,16 +7,16 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *twocrude_pf1_data,*twocrude_pf2_data,*twocrude_pf3_data,*twocrude_pf4_data;
+uint16_t *twocrude_pf1_data,*twocrude_pf2_data,*twocrude_pf3_data,*twocrude_pf4_data;
 
 static struct tilemap *pf1_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static int twocrude_pri,flipscreen;
 
-static data16_t twocrude_control_0[8];
-static data16_t twocrude_control_1[8];
+static uint16_t twocrude_control_0[8];
+static uint16_t twocrude_control_1[8];
 
-data16_t *twocrude_pf1_rowscroll,*twocrude_pf2_rowscroll;
-data16_t *twocrude_pf3_rowscroll,*twocrude_pf4_rowscroll;
+uint16_t *twocrude_pf1_rowscroll,*twocrude_pf2_rowscroll;
+uint16_t *twocrude_pf3_rowscroll,*twocrude_pf4_rowscroll;
 
 /* Function for all 16x16 1024 by 512 layers */
 static uint32_t back_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
@@ -25,7 +25,7 @@ static uint32_t back_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t n
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
 }
 
-static INLINE void get_back_tile_info(int tile_index,int gfx_bank,data16_t *gfx_base)
+static INLINE void get_back_tile_info(int tile_index,int gfx_bank,uint16_t *gfx_base)
 {
 	int tile,color;
 
@@ -113,7 +113,7 @@ void twocrude_pri_w(int pri)
 
 WRITE16_HANDLER( twocrude_pf1_data_w )
 {
-	data16_t oldword=twocrude_pf1_data[offset];
+	uint16_t oldword=twocrude_pf1_data[offset];
 	COMBINE_DATA(&twocrude_pf1_data[offset]);
 	if (oldword!=twocrude_pf1_data[offset])
 		tilemap_mark_tile_dirty(pf1_tilemap,offset);
@@ -121,7 +121,7 @@ WRITE16_HANDLER( twocrude_pf1_data_w )
 
 WRITE16_HANDLER( twocrude_pf2_data_w )
 {
-	data16_t oldword=twocrude_pf2_data[offset];
+	uint16_t oldword=twocrude_pf2_data[offset];
 	COMBINE_DATA(&twocrude_pf2_data[offset]);
 	if (oldword!=twocrude_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset);
@@ -129,7 +129,7 @@ WRITE16_HANDLER( twocrude_pf2_data_w )
 
 WRITE16_HANDLER( twocrude_pf3_data_w )
 {
-	data16_t oldword=twocrude_pf3_data[offset];
+	uint16_t oldword=twocrude_pf3_data[offset];
 	COMBINE_DATA(&twocrude_pf3_data[offset]);
 	if (oldword!=twocrude_pf3_data[offset])
 		tilemap_mark_tile_dirty(pf3_tilemap,offset);
@@ -137,7 +137,7 @@ WRITE16_HANDLER( twocrude_pf3_data_w )
 
 WRITE16_HANDLER( twocrude_pf4_data_w )
 {
-	data16_t oldword=twocrude_pf4_data[offset];
+	uint16_t oldword=twocrude_pf4_data[offset];
 	COMBINE_DATA(&twocrude_pf4_data[offset]);
 	if (oldword!=twocrude_pf4_data[offset])
 		tilemap_mark_tile_dirty(pf4_tilemap,offset);

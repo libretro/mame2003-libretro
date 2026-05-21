@@ -10,11 +10,11 @@
 #include "fastfred.h"
 
 
-data8_t *fastfred_videoram;
-data8_t *fastfred_spriteram;
+uint8_t *fastfred_videoram;
+uint8_t *fastfred_spriteram;
 size_t fastfred_spriteram_size;
-data8_t *fastfred_attributesram;
-data8_t *imago_fg_videoram;
+uint8_t *fastfred_attributesram;
+uint8_t *imago_fg_videoram;
 
 
 static struct rectangle spritevisiblearea =
@@ -29,8 +29,8 @@ static struct rectangle spritevisibleareaflipx =
         2*8, 30*8-1
 };
 
-static data16_t charbank;
-static data8_t colorbank;
+static uint16_t charbank;
+static uint8_t colorbank;
 static int flip_screen_x;
 static int flip_screen_y;
 int fastfred_hardware_type;
@@ -112,10 +112,10 @@ PALETTE_INIT( fastfred )
 
 static void get_tile_info(int tile_index)
 {
-	data8_t x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	data16_t code = charbank | fastfred_videoram[tile_index];
-	data8_t color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
+	uint16_t code = charbank | fastfred_videoram[tile_index];
+	uint8_t color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
 
 	SET_TILE_INFO(0, code, color, 0)
 }
@@ -183,7 +183,7 @@ WRITE_HANDLER( fastfred_attributes_w )
 
 WRITE_HANDLER( fastfred_charbank1_w )
 {
-	data16_t new_data = (charbank & 0x0200) | ((data & 0x01) << 8);
+	uint16_t new_data = (charbank & 0x0200) | ((data & 0x01) << 8);
 
 	if (new_data != charbank)
 	{
@@ -195,7 +195,7 @@ WRITE_HANDLER( fastfred_charbank1_w )
 
 WRITE_HANDLER( fastfred_charbank2_w )
 {
-	data16_t new_data = (charbank & 0x0100) | ((data & 0x01) << 9);
+	uint16_t new_data = (charbank & 0x0100) | ((data & 0x01) << 9);
 
 	if (new_data != charbank)
 	{
@@ -208,7 +208,7 @@ WRITE_HANDLER( fastfred_charbank2_w )
 
 WRITE_HANDLER( fastfred_colorbank1_w )
 {
-	data8_t new_data = (colorbank & 0x10) | ((data & 0x01) << 3);
+	uint8_t new_data = (colorbank & 0x10) | ((data & 0x01) << 3);
 
 	if (new_data != colorbank)
 	{
@@ -220,7 +220,7 @@ WRITE_HANDLER( fastfred_colorbank1_w )
 
 WRITE_HANDLER( fastfred_colorbank2_w )
 {
-	data8_t new_data = (colorbank & 0x08) | ((data & 0x01) << 4);
+	uint8_t new_data = (colorbank & 0x08) | ((data & 0x01) << 4);
 
 	if (new_data != colorbank)
 	{
@@ -345,10 +345,10 @@ VIDEO_UPDATE( fastfred )
 
 static void imago_get_tile_info_bg(int tile_index)
 {
-	data8_t x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	data16_t code = charbank * 0x100 + fastfred_videoram[tile_index];
-	data8_t color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
+	uint16_t code = charbank * 0x100 + fastfred_videoram[tile_index];
+	uint8_t color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
 
 	SET_TILE_INFO(0, code, color, 0)
 }

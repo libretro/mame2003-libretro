@@ -27,9 +27,9 @@
 
 
 /* local variables */
-static data32_t *rombase, *rambase1, *rambase2;
-static data32_t *kinst_control;
-static data32_t *kinst_speedup;
+static uint32_t *rombase, *rambase1, *rambase2;
+static uint32_t *kinst_control;
+static uint32_t *kinst_speedup;
 
 static const uint8_t *control_map;
 
@@ -127,7 +127,7 @@ static WRITE32_HANDLER( ide_controller_extra_w )
 
 static READ32_HANDLER( kinst_control_r )
 {
-	data32_t result;
+	uint32_t result;
 	uint32_t temp;
 
 	offset = control_map[offset / 2];
@@ -162,7 +162,7 @@ static READ32_HANDLER( kinst_control_r )
 
 static WRITE32_HANDLER( kinst_control_w )
 {
-	data32_t olddata;
+	uint32_t olddata;
 
 	offset = control_map[offset / 2];
 	olddata = kinst_control[offset];

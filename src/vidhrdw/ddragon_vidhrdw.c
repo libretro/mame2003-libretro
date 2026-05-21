@@ -170,13 +170,13 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 {
 	const struct GfxElement *gfx = Machine->gfx[1];
 
-	data8_t *src;
+	uint8_t *src;
 	int i;
 
 	if ( technos_video_hw == 1 ) {		/* China Gate Sprite RAM */
-		src = (data8_t *) (spriteram);
+		src = (uint8_t *) (spriteram);
 	} else {
-		src = (data8_t *) (&( ddragon_spriteram[0x800] ));
+		src = (uint8_t *) (&( ddragon_spriteram[0x800] ));
 	}
 
 	for( i = 0; i < ( 64 * 5 ); i += 5 ) {

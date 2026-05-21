@@ -31,9 +31,9 @@
 
 /* Variables that driver has access to: */
 
-data32_t *fuuki32_vram_0, *fuuki32_vram_1;
-data32_t *fuuki32_vram_2, *fuuki32_vram_3;
-data32_t *fuuki32_vregs,  *fuuki32_priority, *fuuki32_tilebank;
+uint32_t *fuuki32_vram_0, *fuuki32_vram_1;
+uint32_t *fuuki32_vram_2, *fuuki32_vram_3;
+uint32_t *fuuki32_vregs,  *fuuki32_priority, *fuuki32_tilebank;
 
 static uint32_t spr_buffered_tilebank[2];
 
@@ -61,8 +61,8 @@ static struct tilemap *tilemap_##_N_; \
 \
 static void get_tile_info_##_N_(int tile_index) \
 { \
-	data16_t code = (fuuki32_vram_##_N_[tile_index]&0xffff0000)>>16; \
-	data16_t attr = (fuuki32_vram_##_N_[tile_index]&0x0000ffff); \
+	uint16_t code = (fuuki32_vram_##_N_[tile_index]&0xffff0000)>>16; \
+	uint16_t attr = (fuuki32_vram_##_N_[tile_index]&0x0000ffff); \
 	SET_TILE_INFO(1 + _N_, code, attr & 0x3f,TILE_FLIPYX( (attr >> 6) & 3 )) \
 } \
 \
@@ -156,7 +156,7 @@ static void fuuki32_draw_sprites(struct mame_bitmap *bitmap, const struct rectan
 	int max_x		=	Machine->visible_area.max_x+1;
 	int max_y		=	Machine->visible_area.max_y+1;
 
-	data32_t *src = buffered_spriteram32_2; /* Use spriteram buffered by 2 frames, need palette buffered by one frame? */
+	uint32_t *src = buffered_spriteram32_2; /* Use spriteram buffered by 2 frames, need palette buffered by one frame? */
 
 	/* Draw them backwards, for pdrawgfx */
 	for ( offs = (spriteram_size-8)/4; offs >=0; offs -= 8/4 )
@@ -310,10 +310,10 @@ static void fuuki32_draw_layer(struct mame_bitmap *bitmap, const struct rectangl
 
 VIDEO_UPDATE( fuuki32 )
 {
-	data16_t layer0_scrollx, layer0_scrolly;
-	data16_t layer1_scrollx, layer1_scrolly;
-	data16_t layer2_scrollx, layer2_scrolly;
-	data16_t scrollx_offs,   scrolly_offs;
+	uint16_t layer0_scrollx, layer0_scrolly;
+	uint16_t layer1_scrollx, layer1_scrolly;
+	uint16_t layer2_scrollx, layer2_scrolly;
+	uint16_t scrollx_offs,   scrolly_offs;
 
 	/*
 	It's not independant bits causing layers to switch, that wouldn't make sense with 3 bits.

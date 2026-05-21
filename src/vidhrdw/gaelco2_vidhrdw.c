@@ -80,8 +80,8 @@ Multi monitor notes:
 #include "tilemap.h"
 #include "vidhrdw/generic.h"
 
-data16_t *gaelco2_vregs;
-static data16_t *gaelco2_videoram;
+uint16_t *gaelco2_vregs;
+static uint16_t *gaelco2_videoram;
 
 /* tilemaps */
 static struct tilemap *pant[2];

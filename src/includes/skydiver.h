@@ -6,7 +6,7 @@
 
 /*----------- defined in vidhrdw/skydiver.c -----------*/
 
-extern data8_t *skydiver_videoram;
+extern uint8_t *skydiver_videoram;
 
 MACHINE_INIT( skydiver );
 WRITE_HANDLER( skydiver_videoram_w );

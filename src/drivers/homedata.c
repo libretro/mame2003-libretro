@@ -544,7 +544,7 @@ static MACHINE_INIT( pteacher_upd7807 )
 
 static WRITE_HANDLER( bankswitch_w )
 {
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int len = memory_region_length(REGION_CPU1) - 0x10000+0x4000;
 	int offs = (data * 0x4000) & (len-1);
 

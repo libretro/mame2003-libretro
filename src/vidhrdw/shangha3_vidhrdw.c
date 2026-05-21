@@ -62,12 +62,12 @@ Word | Bit(s)           | Use
 #include "vidhrdw/generic.h"
 
 
-data16_t *shangha3_ram;
+uint16_t *shangha3_ram;
 size_t shangha3_ram_size;
 
 int shangha3_do_shadows;
 
-static data16_t gfxlist_addr;
+static uint16_t gfxlist_addr;
 static struct mame_bitmap *rawbitmap;
 
 

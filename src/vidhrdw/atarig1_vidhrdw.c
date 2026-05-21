@@ -156,7 +156,7 @@ WRITE16_HANDLER( atarig1_mo_control_w )
 
 void atarig1_scanline_update(int scanline)
 {
-	data16_t *base = &atarigen_alpha[(scanline / 8) * 64 + 48];
+	uint16_t *base = &atarigen_alpha[(scanline / 8) * 64 + 48];
 	int i;
 
 	if (scanline == 0) logerror("-------\n");
@@ -168,7 +168,7 @@ void atarig1_scanline_update(int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		data16_t word;
+		uint16_t word;
 
 		/* first word controls horizontal scroll */
 		word = *base++;

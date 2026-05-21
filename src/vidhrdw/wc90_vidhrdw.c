@@ -2,16 +2,16 @@
 #include "vidhrdw/generic.h"
 
 
-data8_t *wc90_fgvideoram,*wc90_bgvideoram,*wc90_txvideoram;
+uint8_t *wc90_fgvideoram,*wc90_bgvideoram,*wc90_txvideoram;
 
 
-data8_t *wc90_scroll0xlo, *wc90_scroll0xhi;
-data8_t *wc90_scroll1xlo, *wc90_scroll1xhi;
-data8_t *wc90_scroll2xlo, *wc90_scroll2xhi;
+uint8_t *wc90_scroll0xlo, *wc90_scroll0xhi;
+uint8_t *wc90_scroll1xlo, *wc90_scroll1xhi;
+uint8_t *wc90_scroll2xlo, *wc90_scroll2xhi;
 
-data8_t *wc90_scroll0ylo, *wc90_scroll0yhi;
-data8_t *wc90_scroll1ylo, *wc90_scroll1yhi;
-data8_t *wc90_scroll2ylo, *wc90_scroll2yhi;
+uint8_t *wc90_scroll0ylo, *wc90_scroll0yhi;
+uint8_t *wc90_scroll1ylo, *wc90_scroll1yhi;
+uint8_t *wc90_scroll2ylo, *wc90_scroll2yhi;
 
 
 static struct tilemap *tx_tilemap,*fg_tilemap,*bg_tilemap;

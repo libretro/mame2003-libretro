@@ -10,9 +10,9 @@
 #include "tilemap.h"
 #include "vidhrdw/generic.h"
 
-data16_t *targeth_spriteram;
-data16_t *targeth_vregs;
-data16_t *targeth_videoram;
+uint16_t *targeth_spriteram;
+uint16_t *targeth_vregs;
+uint16_t *targeth_videoram;
 
 static struct tilemap *pant[2];
 

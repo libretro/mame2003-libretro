@@ -60,13 +60,13 @@ driver by Zsolt Vasvari and Alex Pasadyn
 #include "cpu/tms34010/tms34010.h"
 
 static size_t code_rom_size;
-static data16_t *exterm_code_rom;
-static data16_t *exterm_master_speedup, *exterm_slave_speedup;
+static uint16_t *exterm_code_rom;
+static uint16_t *exterm_master_speedup, *exterm_slave_speedup;
 
-extern data16_t *exterm_master_videoram, *exterm_slave_videoram;
+extern uint16_t *exterm_master_videoram, *exterm_slave_videoram;
 
-static data8_t aimpos[2];
-static data8_t trackball_old[2];
+static uint8_t aimpos[2];
+static uint8_t trackball_old[2];
 
 
 /* Functions in vidhrdw/exterm.c */
@@ -121,15 +121,15 @@ READ16_HANDLER( exterm_host_data_r )
  *
  *************************************/
 
-static data16_t exterm_trackball_port_r(int which, data16_t mem_mask)
+static uint16_t exterm_trackball_port_r(int which, uint16_t mem_mask)
 {
-	data16_t port;
+	uint16_t port;
 
 	/* Read the fake input port */
-	data8_t trackball_pos = readinputport(3 + which);
+	uint8_t trackball_pos = readinputport(3 + which);
 
 	/* Calculate the change from the last position. */
-	data8_t trackball_diff = trackball_old[which] - trackball_pos;
+	uint8_t trackball_diff = trackball_old[which] - trackball_pos;
 
 	/* Store the new position for the next comparision. */
 	trackball_old[which] = trackball_pos;
@@ -170,7 +170,7 @@ WRITE16_HANDLER( exterm_output_port_0_w )
 {
 	/* All the outputs are activated on the rising edge */
 
-	static data16_t last = 0;
+	static uint16_t last = 0;
 
 	if (ACCESSING_LSB)
 	{
@@ -282,7 +282,7 @@ static MEMORY_WRITE16_START( master_writemem )
 	{ TOBYTE(0x01580000), TOBYTE(0x0158000f), gottlieb_sh_word_w },
 	{ TOBYTE(0x015c0000), TOBYTE(0x015c000f), watchdog_reset16_w },
 	{ TOBYTE(0x01800000), TOBYTE(0x01807fff), paletteram16_xRRRRRGGGGGBBBBB_word_w, &paletteram16 },
-	{ TOBYTE(0x02800000), TOBYTE(0x02807fff), MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size }, /* EEPROM */
+	{ TOBYTE(0x02800000), TOBYTE(0x02807fff), MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size }, /* EEPROM */
 	{ TOBYTE(0xc0000000), TOBYTE(0xc00001ff), tms34010_io_register_w },
 	{ TOBYTE(0xff000000), TOBYTE(0xffffffff), MWA16_ROM, &exterm_code_rom, &code_rom_size },
 MEMORY_END

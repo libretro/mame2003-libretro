@@ -8,16 +8,16 @@
 #include "kyugo.h"
 
 
-data8_t *kyugo_fgvideoram;
-data8_t *kyugo_bgvideoram;
-data8_t *kyugo_bgattribram;
-data8_t *kyugo_spriteram_1;
-data8_t *kyugo_spriteram_2;
+uint8_t *kyugo_fgvideoram;
+uint8_t *kyugo_bgvideoram;
+uint8_t *kyugo_bgattribram;
+uint8_t *kyugo_spriteram_1;
+uint8_t *kyugo_spriteram_2;
 
 
-static data8_t scroll_x_lo;
-static data8_t scroll_x_hi;
-static data8_t scroll_y;
+static uint8_t scroll_x_lo;
+static uint8_t scroll_x_hi;
+static uint8_t scroll_y;
 static struct tilemap *fg_tilemap;
 static struct tilemap *bg_tilemap;
 static int bgpalbank,fgcolor;
@@ -180,9 +180,9 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 {
 	/* sprite information is scattered through memory */
 	/* and uses a portion of the text layer memory (outside the visible area) */
-	data8_t *spriteram_area1 = &kyugo_spriteram_1[0x28];
-	data8_t *spriteram_area2 = &kyugo_spriteram_2[0x28];
-	data8_t *spriteram_area3 = &kyugo_fgvideoram[0x28];
+	uint8_t *spriteram_area1 = &kyugo_spriteram_1[0x28];
+	uint8_t *spriteram_area2 = &kyugo_spriteram_2[0x28];
+	uint8_t *spriteram_area3 = &kyugo_fgvideoram[0x28];
 
 	int n;
 

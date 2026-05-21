@@ -69,7 +69,7 @@ static WRITE_HANDLER( a000_w )
 
 static READ_HANDLER( strvmstr_question_r )
 {
-	data8_t *Question = memory_region(REGION_USER1);
+	uint8_t *Question = memory_region(REGION_USER1);
 	return Question[offset + 0x10000 * ((strvmstr_control >> 3) & 3)];
 }
 

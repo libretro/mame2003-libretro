@@ -30,7 +30,7 @@ MACHINE_INIT( zerozone );	/* hack for ZeroWing/OutZone. See vidhrdw */
 
 extern int toaplan1_unk_reset_port;
 
-extern data8_t *toaplan1_sharedram;
+extern uint8_t *toaplan1_sharedram;
 
 
 
@@ -73,7 +73,7 @@ VIDEO_UPDATE( zerowing );
 VIDEO_UPDATE( demonwld );
 
 
-extern data16_t *toaplan1_colorram1;
-extern data16_t *toaplan1_colorram2;
+extern uint16_t *toaplan1_colorram1;
+extern uint16_t *toaplan1_colorram2;
 extern size_t toaplan1_colorram1_size;
 extern size_t toaplan1_colorram2_size;

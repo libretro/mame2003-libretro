@@ -46,7 +46,7 @@ Registers per channel:
 #define GAELCO_NUM_CHANNELS 	0x07
 #define VOLUME_LEVELS 			0x10
 
-data16_t *gaelco_sndregs;
+uint16_t *gaelco_sndregs;
 
 /* table for converting from 8 to 16 bits with volume control */
 int16_t volume_table[VOLUME_LEVELS][256];

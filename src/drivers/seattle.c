@@ -46,12 +46,12 @@
 #define TIMER_CLOCK			TIME_IN_HZ(50000000)
 #define DMA_SECS_PER_BYTE	TIME_IN_HZ(50000000)
 
-static data32_t *rambase;
-static data32_t *rombase;
-static data32_t *galileo_regs;
+static uint32_t *rambase;
+static uint32_t *rombase;
+static uint32_t *galileo_regs;
 
-static data32_t pci_bridge_regs[0x40];
-static data32_t pci_3dfx_regs[0x40];
+static uint32_t pci_bridge_regs[0x40];
+static uint32_t pci_3dfx_regs[0x40];
 
 static void *timer[4];
 static uint32_t timer_count[4];
@@ -59,8 +59,8 @@ static uint8_t timer_active[4];
 
 static uint8_t vblank_signalled;
 static uint8_t vblank_irq;
-static data32_t *vblank_config;
-static data32_t *vblank_enable;
+static uint32_t *vblank_config;
+static uint32_t *vblank_enable;
 
 /* carnevil: only draw player 2's gun crosshair once a second player is
    actually present. An unbound player-2 gun stays pinned at analog neutral
@@ -68,12 +68,12 @@ static data32_t *vblank_enable;
    until the machine is reset. */
 static uint8_t carnevil_p2_active;
 
-static data32_t *asic_reset;
+static uint32_t *asic_reset;
 
-static data8_t pending_analog_read;
+static uint8_t pending_analog_read;
 
-static data32_t *generic_speedup;
-static data32_t *generic_speedup2;
+static uint32_t *generic_speedup;
+static uint32_t *generic_speedup2;
 
 
 static void timer_callback(int param);
@@ -220,14 +220,14 @@ static INTERRUPT_GEN( assert_vblank )
 
 static WRITE32_HANDLER( cmos_w )
 {
-	data32_t *cmos_base = (data32_t *)generic_nvram;
+	uint32_t *cmos_base = (uint32_t *)generic_nvram;
 	COMBINE_DATA(&cmos_base[offset]);
 }
 
 
 static READ32_HANDLER( cmos_r )
 {
-	data32_t *cmos_base = (data32_t *)generic_nvram;
+	uint32_t *cmos_base = (uint32_t *)generic_nvram;
 	return cmos_base[offset];
 }
 
@@ -239,14 +239,14 @@ static READ32_HANDLER( cmos_r )
  *
  *************************************/
 
-static void pci_bridge_w(uint8_t reg, uint8_t type, data32_t data)
+static void pci_bridge_w(uint8_t reg, uint8_t type, uint32_t data)
 {
 	pci_bridge_regs[reg] = data;
 	logerror("%06X:PCI bridge write: reg %d type %d = %08X\n", activecpu_get_pc(), reg, type, data);
 }
 
 
-static void pci_3dfx_w(uint8_t reg, uint8_t type, data32_t data)
+static void pci_3dfx_w(uint8_t reg, uint8_t type, uint32_t data)
 {
 	pci_3dfx_regs[reg] = data;
 
@@ -273,9 +273,9 @@ static void pci_3dfx_w(uint8_t reg, uint8_t type, data32_t data)
  *
  *************************************/
 
-static data32_t pci_bridge_r(uint8_t reg, uint8_t type)
+static uint32_t pci_bridge_r(uint8_t reg, uint8_t type)
 {
-	data32_t result = pci_bridge_regs[reg];
+	uint32_t result = pci_bridge_regs[reg];
 
 	logerror("%06X:PCI bridge read: reg %d type %d = %08X\n", activecpu_get_pc(), reg, type, result);
 
@@ -283,9 +283,9 @@ static data32_t pci_bridge_r(uint8_t reg, uint8_t type)
 }
 
 
-static data32_t pci_3dfx_r(uint8_t reg, uint8_t type)
+static uint32_t pci_3dfx_r(uint8_t reg, uint8_t type)
 {
-	data32_t result = pci_3dfx_regs[reg];
+	uint32_t result = pci_3dfx_regs[reg];
 
 	switch (reg)
 	{
@@ -349,7 +349,7 @@ static void timer_callback(int which)
 static int dma_fetch_next(int which)
 {
 	offs_t address = 0;
-	data32_t data;
+	uint32_t data;
 
 	/* no-op for unchained mode */
 	if (!(galileo_regs[0x840/4 + which] & 0x200))
@@ -427,7 +427,7 @@ static void perform_dma(int which)
 {
 	offs_t srcaddr = galileo_regs[0x810/4 + which];
 	offs_t dstaddr = galileo_regs[0x820/4 + which];
-	data32_t bytesleft = galileo_regs[0x800/4 + which] & 0xffff;
+	uint32_t bytesleft = galileo_regs[0x800/4 + which] & 0xffff;
 	int srcinc, dstinc, i;
 
 	/* determine src/dst inc */
@@ -449,7 +449,7 @@ static void perform_dma(int which)
 	/* special case: transfer ram to voodoo */
 	if (bytesleft % 4 == 0 && srcaddr % 4 == 0 && srcaddr < 0x007fffff && dstaddr >= 0x08000000 && dstaddr < 0x09000000)
 	{
-		data32_t *src = &rambase[srcaddr/4];
+		uint32_t *src = &rambase[srcaddr/4];
 		bytesleft /= 4;
 
 		/* transfer to registers */
@@ -609,7 +609,7 @@ static void perform_dma(int which)
 
 static READ32_HANDLER( galileo_r )
 {
-	data32_t result = galileo_regs[offset];
+	uint32_t result = galileo_regs[offset];
 
 	/* switch off the offset for special cases */
 	switch (offset)
@@ -891,7 +891,7 @@ static VIDEO_UPDATE( carnevil )
 
 static READ32_HANDLER( carnevil_gun_r )
 {
-	data32_t result = 0;
+	uint32_t result = 0;
 
 	switch (offset)
 	{
@@ -1017,7 +1017,7 @@ static MEMORY_WRITE32_START( seattle_writemem )
 	{ 0xac000000, 0xac000fff, galileo_w, &galileo_regs },
 	{ 0xb3000000, 0xb3000003, asic_fifo_w },
 	{ 0xb6000000, 0xb600003f, midway_ioasic_w },
-	{ 0xb6100000, 0xb611ffff, cmos_w, (data32_t **)&generic_nvram, &generic_nvram_size },
+	{ 0xb6100000, 0xb611ffff, cmos_w, (uint32_t **)&generic_nvram, &generic_nvram_size },
 	{ 0xb7100000, 0xb7100003, seattle_watchdog_w },
 	{ 0xb7300000, 0xb7300003, vblank_enable_w, &vblank_enable },
 	{ 0xb7400000, 0xb7400003, vblank_config_w, &vblank_config },

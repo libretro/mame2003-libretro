@@ -417,7 +417,7 @@ static void reset_callback(int param)
  *
  *************************************/
 
-static INLINE int convert_to_offset_and_size32(offs_t *offset, data32_t mem_mask)
+static INLINE int convert_to_offset_and_size32(offs_t *offset, uint32_t mem_mask)
 {
 	int size = 4;
 
@@ -446,7 +446,7 @@ static INLINE int convert_to_offset_and_size32(offs_t *offset, data32_t mem_mask
 	return size;
 }
 
-static INLINE int convert_to_offset_and_size16(offs_t *offset, data32_t mem_mask)
+static INLINE int convert_to_offset_and_size16(offs_t *offset, uint32_t mem_mask)
 {
 	int size = 2;
 

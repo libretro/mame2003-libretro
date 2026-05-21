@@ -84,14 +84,14 @@ Compared to the real PCB, MAME is too fast, so 60fps needs to be changed to 58fp
 
 /* Variables defined in vidhrdw: */
 
-extern data16_t *metro_videoregs;
-extern data16_t *metro_screenctrl;
-extern data16_t *metro_scroll;
-extern data16_t *metro_tiletable;
+extern uint16_t *metro_videoregs;
+extern uint16_t *metro_screenctrl;
+extern uint16_t *metro_scroll;
+extern uint16_t *metro_tiletable;
 extern size_t metro_tiletable_size;
-extern data16_t *metro_vram_0, *metro_vram_1, *metro_vram_2;
-extern data16_t *metro_window;
-extern data16_t *metro_K053936_ram;
+extern uint16_t *metro_vram_0, *metro_vram_1, *metro_vram_2;
+extern uint16_t *metro_window;
+extern uint16_t *metro_K053936_ram;
 WRITE16_HANDLER( metro_K053936_w );
 
 
@@ -127,7 +127,7 @@ static int irq_line, blitter_bit;
 
 static uint8_t requested_int[8];
 
-static data16_t *metro_irq_levels, *metro_irq_vectors, *metro_irq_enable;
+static uint16_t *metro_irq_levels, *metro_irq_vectors, *metro_irq_enable;
 
 READ16_HANDLER( metro_irq_cause_r )
 {
@@ -147,7 +147,7 @@ static void update_irq_state(void)
 {
 	/*	Get the pending IRQs (only the enabled ones, e.g. where
 		irq_enable is *0*)	*/
-	data16_t irq = metro_irq_cause_r(0,0) & ~*metro_irq_enable;
+	uint16_t irq = metro_irq_cause_r(0,0) & ~*metro_irq_enable;
 
 	if (irq_line == -1)	/* mouja, gakusai, gakusai2, dokyusei, dokyusp */
 	{
@@ -322,7 +322,7 @@ static void ymf278b_interrupt(int active)
 #ifdef TEST_SOUND
 static int metro_io_callback(int ioline, int state)
 {
-	data8_t data;
+	uint8_t data;
 
     switch ( ioline )
 	{
@@ -347,7 +347,7 @@ logerror("soundcmd %02x\n", data & 0xff);
 	}
 }
 
-data16_t metro_soundstatus;
+uint16_t metro_soundstatus;
 
 WRITE16_HANDLER( metro_soundstatus_w )
 {
@@ -508,7 +508,7 @@ WRITE16_HANDLER( metro_soundlatch_w )
 	}
 }
 
-data16_t metro_soundstatus;
+uint16_t metro_soundstatus;
 
 WRITE16_HANDLER( metro_soundstatus_w )
 {
@@ -650,13 +650,13 @@ WRITE16_HANDLER( metro_coin_lockout_4words_w )
 	that the blitter can readily use (which is a form of compression)
 */
 
-static data16_t *metro_rombank;
+static uint16_t *metro_rombank;
 
 READ16_HANDLER( metro_bankedrom_r )
 {
 	const int region = REGION_GFX1;
 
-	data8_t *ROM = memory_region( region );
+	uint8_t *ROM = memory_region( region );
 	size_t  len  = memory_region_length( region );
 
 	offset = offset * 2 + 0x10000 * (*metro_rombank);
@@ -714,7 +714,7 @@ READ16_HANDLER( metro_bankedrom_r )
 
 ***************************************************************************/
 
-data16_t *metro_blitter_regs;
+uint16_t *metro_blitter_regs;
 
 void metro_blit_done(int param)
 {
@@ -722,12 +722,12 @@ void metro_blit_done(int param)
 	update_irq_state();
 }
 
-static INLINE int blt_read(const data8_t *ROM, const int offs)
+static INLINE int blt_read(const uint8_t *ROM, const int offs)
 {
 	return ROM[offs] ^ 0xff;
 }
 
-static INLINE void blt_write(const int tmap, const offs_t offs, const data16_t data, const data16_t mask)
+static INLINE void blt_write(const int tmap, const offs_t offs, const uint16_t data, const uint16_t mask)
 {
 	switch( tmap )
 	{
@@ -747,7 +747,7 @@ WRITE16_HANDLER( metro_blitter_w )
 	{
 		const int region = REGION_GFX1;
 
-		data8_t *src	=	memory_region(region);
+		uint8_t *src	=	memory_region(region);
 		size_t  src_len	=	memory_region_length(region);
 
 		uint32_t tmap		=	(metro_blitter_regs[ 0x00 / 2 ] << 16 ) +
@@ -758,7 +758,7 @@ WRITE16_HANDLER( metro_blitter_w )
 							 metro_blitter_regs[ 0x0a / 2 ];
 
 		int shift			=	(dst_offs & 0x80) ? 0 : 8;
-		data16_t mask		=	(dst_offs & 0x80) ? 0xff00 : 0x00ff;
+		uint16_t mask		=	(dst_offs & 0x80) ? 0xff00 : 0x00ff;
 
 //		logerror("CPU #0 PC %06X : Blitter regs %08X, %08X, %08X\n",activecpu_get_pc(),tmap,src_offs,dst_offs);
 
@@ -776,7 +776,7 @@ WRITE16_HANDLER( metro_blitter_w )
 
 		while (1)
 		{
-			data16_t b1,b2,count;
+			uint16_t b1,b2,count;
 
 			src_offs %= src_len;
 			b1 = blt_read(src,src_offs);
@@ -895,9 +895,9 @@ WRITE16_HANDLER( metro_blitter_w )
 /* Really weird way of mapping 3 DSWs */
 static READ16_HANDLER( balcube_dsw_r )
 {
-	data16_t dsw1 = readinputport(2) >> 0;
-	data16_t dsw2 = readinputport(2) >> 8;
-	data16_t dsw3 = readinputport(3);
+	uint16_t dsw1 = readinputport(2) >> 0;
+	uint16_t dsw2 = readinputport(2) >> 8;
+	uint16_t dsw3 = readinputport(3);
 
 	switch (offset*2)
 	{
@@ -1302,11 +1302,11 @@ static WRITE16_HANDLER( gakusai_oki_bank_lo_w )
 	}
 }
 
-static data16_t *gakusai_input_sel;
+static uint16_t *gakusai_input_sel;
 
 static READ16_HANDLER( gakusai_input_r )
 {
-	data16_t input_sel = (*gakusai_input_sel) ^ 0x3e;
+	uint16_t input_sel = (*gakusai_input_sel) ^ 0x3e;
 	// Bit 0 ??
 	if (input_sel & 0x0002)	return readinputport(0);
 	if (input_sel & 0x0004)	return readinputport(1);
@@ -3779,7 +3779,7 @@ MACHINE_DRIVER_END
 
 NVRAM_HANDLER( dokyusp )
 {
-	data8_t def_data[] = {0x00,0xe0};
+	uint8_t def_data[] = {0x00,0xe0};
 
 	if (read_or_write)
 		EEPROM_save(file);
@@ -4170,7 +4170,7 @@ static DRIVER_INIT( metro )
 
 DRIVER_INIT( karatour )
 {
-	data16_t *RAM = (data16_t *) memory_region( REGION_USER1 );
+	uint16_t *RAM = (uint16_t *) memory_region( REGION_USER1 );
 int i;
 	metro_vram_0 = RAM + (0x20000/2) * 0;
 	metro_vram_1 = RAM + (0x20000/2) * 1;
@@ -4186,8 +4186,8 @@ static DRIVER_INIT( balcube )
 	const int region	=	REGION_GFX1;
 
 	const size_t len	=	memory_region_length(region);
-	data8_t *src		=	memory_region(region);
-	data8_t *end		=	memory_region(region) + len;
+	uint8_t *src		=	memory_region(region);
+	uint8_t *end		=	memory_region(region) + len;
 
 	while(src < end)
 	{

@@ -48,9 +48,9 @@ WRITE16_HANDLER( bionicc_paletteram_w );
 WRITE16_HANDLER( bionicc_scroll_w );
 WRITE16_HANDLER( bionicc_gfxctrl_w );
 
-extern data16_t *bionicc_bgvideoram;
-extern data16_t *bionicc_fgvideoram;
-extern data16_t *bionicc_txvideoram;
+extern uint16_t *bionicc_bgvideoram;
+extern uint16_t *bionicc_fgvideoram;
+extern uint16_t *bionicc_txvideoram;
 
 VIDEO_START( bionicc );
 VIDEO_UPDATE( bionicc );
@@ -61,7 +61,7 @@ void bionicc_sound_cmd(int data);
 
 
 
-static data16_t bionicc_inp[3];
+static uint16_t bionicc_inp[3];
 
 WRITE16_HANDLER( hacked_controls_w )
 {
@@ -88,7 +88,7 @@ static WRITE16_HANDLER( bionicc_mpu_trigger_w )
 }
 
 
-static data16_t soundcommand;
+static uint16_t soundcommand;
 
 WRITE16_HANDLER( hacked_soundcommand_w )
 {

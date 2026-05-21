@@ -51,9 +51,9 @@ VIDEO_START( wndrplnt );
 
 enum { KARNOV=0, KARNOVJ, CHELNOV, CHELNOVJ, CHELNOVW, WNDRPLNT };
 
-static data16_t i8751_return,i8751_needs_ack,i8751_coin_pending,i8751_command_queue;
-static data16_t *karnov_ram;
-extern data16_t karnov_scroll[2], *karnov_pf_data;
+static uint16_t i8751_return,i8751_needs_ack,i8751_coin_pending,i8751_command_queue;
+static uint16_t *karnov_ram;
+extern uint16_t karnov_scroll[2], *karnov_pf_data;
 static int microcontroller_id,coin_mask;
 
 /******************************************************************************/
@@ -1028,7 +1028,7 @@ static DRIVER_INIT( wndrplnt )
 
 static DRIVER_INIT( chelnov )
 {
-	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	microcontroller_id=CHELNOV;
 	coin_mask=0xe0;
@@ -1038,7 +1038,7 @@ static DRIVER_INIT( chelnov )
 
 static DRIVER_INIT( chelnovw )
 {
-	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	microcontroller_id=CHELNOVW;
 	coin_mask=0xe0;
@@ -1048,7 +1048,7 @@ static DRIVER_INIT( chelnovw )
 
 static DRIVER_INIT( chelnovj )
 {
-	data16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	microcontroller_id=CHELNOVJ;
 	coin_mask=0xe0;

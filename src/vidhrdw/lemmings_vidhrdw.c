@@ -15,15 +15,15 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *lemmings_pixel_0_data,*lemmings_pixel_1_data,*lemmings_vram_data,*lemmings_control_data;
-static data16_t *sprite_triple_buffer_0,*sprite_triple_buffer_1;
-static data8_t *vram_buffer, *vram_dirty;
+uint16_t *lemmings_pixel_0_data,*lemmings_pixel_1_data,*lemmings_vram_data,*lemmings_control_data;
+static uint16_t *sprite_triple_buffer_0,*sprite_triple_buffer_1;
+static uint8_t *vram_buffer, *vram_dirty;
 struct mame_bitmap *bitmap0;
 static struct tilemap *vram_tilemap;
 
 /******************************************************************************/
 
-static void lemmings_drawsprites(struct mame_bitmap *bitmap, data16_t *spritedata, int gfxbank, data16_t pri)
+static void lemmings_drawsprites(struct mame_bitmap *bitmap, uint16_t *spritedata, int gfxbank, uint16_t pri)
 {
 	int offs;
 
@@ -82,7 +82,7 @@ static void lemmings_drawsprites(struct mame_bitmap *bitmap, data16_t *spritedat
 
 static void get_tile_info(int tile_index)
 {
-	data16_t tile=lemmings_vram_data[tile_index];
+	uint16_t tile=lemmings_vram_data[tile_index];
 
 	SET_TILE_INFO(
 			2,
@@ -96,10 +96,10 @@ VIDEO_START( lemmings )
 	bitmap0 = bitmap_alloc(2048,256);
 	vram_tilemap = tilemap_create(get_tile_info,tilemap_scan_cols,TILEMAP_TRANSPARENT,8,8,64,32);
 
-	vram_buffer = (data8_t*)malloc(2048*64); /* 64 bytes per VRAM character */
-	vram_dirty = (data8_t*)malloc(2048);
-	sprite_triple_buffer_0 = (data16_t*)malloc(0x800);
-	sprite_triple_buffer_1 = (data16_t*)malloc(0x800);
+	vram_buffer = (uint8_t*)malloc(2048*64); /* 64 bytes per VRAM character */
+	vram_dirty = (uint8_t*)malloc(2048);
+	sprite_triple_buffer_0 = (uint16_t*)malloc(0x800);
+	sprite_triple_buffer_1 = (uint16_t*)malloc(0x800);
 
 	if (!bitmap0 || !vram_tilemap || !vram_buffer || !vram_dirty || !sprite_triple_buffer_0 || !sprite_triple_buffer_1)
 		return 1;

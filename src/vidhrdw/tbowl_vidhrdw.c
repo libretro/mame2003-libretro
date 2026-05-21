@@ -6,8 +6,8 @@
 #include "vidhrdw/generic.h"
 
 static struct tilemap *tx_tilemap, *bg_tilemap, *bg2_tilemap;
-data8_t *tbowl_txvideoram, *tbowl_bgvideoram, *tbowl_bg2videoram;
-data8_t *tbowl_spriteram;
+uint8_t *tbowl_txvideoram, *tbowl_bgvideoram, *tbowl_bg2videoram;
+uint8_t *tbowl_spriteram;
 
 /*** Tilemap Stuff
 

@@ -30,23 +30,23 @@
 #include "inptport.h"
 
 
-static data32_t *ram_base;
-static data32_t *fastram_base;
+static uint32_t *ram_base;
+static uint32_t *fastram_base;
 static uint8_t cmos_protected;
 static uint16_t control_data;
 
 static uint8_t adc_data;
 static uint8_t adc_shift;
 
-static data16_t last_port0;
+static uint16_t last_port0;
 static uint8_t shifter_state;
 
 static void *timer[2];
 static double timer_rate;
 
-static data32_t *tms32031_control;
+static uint32_t *tms32031_control;
 
-static data32_t *midvplus_misc;
+static uint32_t *midvplus_misc;
 
 
 
@@ -93,8 +93,8 @@ static MACHINE_INIT( midvplus )
 
 static READ32_HANDLER( port0_r )
 {
-	data16_t val = readinputport(0);
-	data16_t diff = val ^ last_port0;
+	uint16_t val = readinputport(0);
+	uint16_t diff = val ^ last_port0;
 
 	/* make sure the shift controls are mutually exclusive */
 	if ((diff & 0x0400) && !(val & 0x0400))
@@ -180,7 +180,7 @@ static WRITE32_HANDLER( midvunit_cmos_w )
 {
 	if (!cmos_protected)
 	{
-		data32_t *cmos = (data32_t *)generic_nvram;
+		uint32_t *cmos = (uint32_t *)generic_nvram;
 		COMBINE_DATA(&cmos[offset]);
 	}
 }
@@ -188,7 +188,7 @@ static WRITE32_HANDLER( midvunit_cmos_w )
 
 static READ32_HANDLER( midvunit_cmos_r )
 {
-	data32_t *cmos = (data32_t *)generic_nvram;
+	uint32_t *cmos = (uint32_t *)generic_nvram;
 	return cmos[offset];
 }
 
@@ -353,7 +353,7 @@ static uint32_t bit_data[0x10] =
 
 static READ32_HANDLER( bit_data_r )
 {
-	data32_t *cmos_base = (data32_t *)generic_nvram;
+	uint32_t *cmos_base = (uint32_t *)generic_nvram;
 	int bit = (bit_data[bit_index / 32] >> (31 - (bit_index % 32))) & 1;
 	bit_index = (bit_index + 1) % 512;
 	return bit ? cmos_base[offset] : ~cmos_base[offset];
@@ -401,7 +401,7 @@ static WRITE32_HANDLER( offroadc_serial_data_w )
 
 static READ32_HANDLER( midvplus_misc_r )
 {
-	data32_t result = midvplus_misc[offset];
+	uint32_t result = midvplus_misc[offset];
 
 	switch (offset)
 	{
@@ -426,7 +426,7 @@ static READ32_HANDLER( midvplus_misc_r )
 
 static WRITE32_HANDLER( midvplus_misc_w )
 {
-	data32_t olddata = midvplus_misc[offset];
+	uint32_t olddata = midvplus_misc[offset];
 	int logit = 1;
 
 	COMBINE_DATA(&midvplus_misc[offset]);
@@ -511,7 +511,7 @@ static MEMORY_WRITE32_START( vunit_writemem )
 	{ ADDR_RANGE(0x600000, 0x600000), midvunit_dma_queue_w },
 	{ ADDR_RANGE(0x808000, 0x80807f), tms32031_control_w, &tms32031_control },
 	{ ADDR_RANGE(0x809800, 0x809fff), MWA32_RAM },
-	{ ADDR_RANGE(0x900000, 0x97ffff), midvunit_videoram_w, (data32_t **)&midvunit_videoram },
+	{ ADDR_RANGE(0x900000, 0x97ffff), midvunit_videoram_w, (uint32_t **)&midvunit_videoram },
 	{ ADDR_RANGE(0x980020, 0x98002b), midvunit_video_control_w },
 	{ ADDR_RANGE(0x980040, 0x980040), midvunit_page_control_w },
 	{ ADDR_RANGE(0x980080, 0x980080), MWA32_NOP },
@@ -521,7 +521,7 @@ static MEMORY_WRITE32_START( vunit_writemem )
 	{ ADDR_RANGE(0x995020, 0x995020), midvunit_cmos_protect_w },
 	{ ADDR_RANGE(0x997000, 0x997000), MWA32_NOP },	/* link communications*/
 	{ ADDR_RANGE(0x9a0000, 0x9a0000), midvunit_sound_w },
-	{ ADDR_RANGE(0x9c0000, 0x9c1fff), midvunit_cmos_w, (data32_t **)&generic_nvram, &generic_nvram_size },
+	{ ADDR_RANGE(0x9c0000, 0x9c1fff), midvunit_cmos_w, (uint32_t **)&generic_nvram, &generic_nvram_size },
 	{ ADDR_RANGE(0x9e0000, 0x9e7fff), midvunit_paletteram_w, &paletteram32 },
 	{ ADDR_RANGE(0xa00000, 0xbfffff), midvunit_textureram_w, &midvunit_textureram },
 	{ ADDR_RANGE(0xc00000, 0xffffff), MWA32_ROM },
@@ -556,7 +556,7 @@ static MEMORY_WRITE32_START( midvplus_writemem )
 	{ ADDR_RANGE(0x600000, 0x600000), midvunit_dma_queue_w },
 	{ ADDR_RANGE(0x808000, 0x80807f), tms32031_control_w, &tms32031_control },
 	{ ADDR_RANGE(0x809800, 0x809fff), MWA32_RAM },
-	{ ADDR_RANGE(0x900000, 0x97ffff), midvunit_videoram_w, (data32_t **)&midvunit_videoram },
+	{ ADDR_RANGE(0x900000, 0x97ffff), midvunit_videoram_w, (uint32_t **)&midvunit_videoram },
 	{ ADDR_RANGE(0x980020, 0x98002b), midvunit_video_control_w },
 	{ ADDR_RANGE(0x980040, 0x980040), midvunit_page_control_w },
 	{ ADDR_RANGE(0x980080, 0x980080), MWA32_NOP },
@@ -1348,7 +1348,7 @@ ROM_END
  *
  *************************************/
 
-static data32_t *generic_speedup;
+static uint32_t *generic_speedup;
 static READ32_HANDLER( generic_speedup_r )
 {
 	activecpu_eat_cycles(100);

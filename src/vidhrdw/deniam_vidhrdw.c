@@ -2,7 +2,7 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t *deniam_videoram,*deniam_textram;
+uint16_t *deniam_videoram,*deniam_textram;
 static int display_enable;
 static int bg_scrollx_offs,bg_scrolly_offs,fg_scrollx_offs,fg_scrolly_offs;
 static int bg_scrollx_reg,bg_scrolly_reg,bg_page_reg;
@@ -166,7 +166,7 @@ WRITE16_HANDLER( deniam_palette_w )
 }
 
 
-static data16_t coinctrl;
+static uint16_t coinctrl;
 
 READ16_HANDLER( deniam_coinctrl_r )
 {

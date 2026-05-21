@@ -48,13 +48,13 @@ MACHINE_INIT( namcond1 )
 }
 
 // instance of the shared ram pointer
-data16_t *namcond1_shared_ram;
+uint16_t *namcond1_shared_ram;
 
 READ16_HANDLER( namcond1_shared_ram_r )
 {
     static uint8_t plyr1 = 0, plyr2 = 0;
 
-    data16_t data;
+    uint16_t data;
 	uint8_t poll_coins;
     uint8_t   current, pressed;
 
@@ -186,7 +186,7 @@ WRITE16_HANDLER( namcond1_cuskey_w )
 }
 
 #define NAMCOND1_EEPROM_SIZE    0x200
-data16_t *namcond1_eeprom;
+uint16_t *namcond1_eeprom;
 
 /* not used at this point */
 NVRAM_HANDLER( namcond1 )

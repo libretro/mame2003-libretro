@@ -43,7 +43,7 @@ uint16_t atarig42_motion_object_mask;
  *
  *************************************/
 
-static data16_t current_control;
+static uint16_t current_control;
 static uint8_t playfield_tile_bank;
 static uint8_t playfield_color_bank;
 static uint16_t playfield_xscroll;
@@ -165,7 +165,7 @@ WRITE16_HANDLER( atarig42_mo_control_w )
 
 void atarig42_scanline_update(int scanline)
 {
-	data16_t *base = &atarigen_alpha[(scanline / 8) * 64 + 48];
+	uint16_t *base = &atarigen_alpha[(scanline / 8) * 64 + 48];
 	int i;
 
 	if (scanline == 0) logerror("-------\n");
@@ -177,7 +177,7 @@ void atarig42_scanline_update(int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		data16_t word;
+		uint16_t word;
 
 		word = *base++;
 		if (word & 0x8000)

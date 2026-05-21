@@ -66,7 +66,7 @@ This was pointed out by Bart Puype
 
 /* Variables defined in vidhrdw */
 
-extern data32_t *psikyo_vram_0, *psikyo_vram_1, *psikyo_vregs;
+extern uint32_t *psikyo_vram_0, *psikyo_vram_1, *psikyo_vregs;
 extern int psikyo_ka302c_banking;
 
 /* Functions defined in vidhrdw */
@@ -304,7 +304,7 @@ READ32_HANDLER( s1945_input_r )
 
 static WRITE32_HANDLER( paletteram32_xRRRRRGGGGGBBBBB_dword_w )
 {
-	paletteram16 = (data16_t *)paletteram32;
+	paletteram16 = (uint16_t *)paletteram32;
 	if (ACCESSING_MSW32)
 		paletteram16_xRRRRRGGGGGBBBBB_word_w(offset*2, data >> 16, mem_mask >> 16);
 	if (ACCESSING_LSW32)

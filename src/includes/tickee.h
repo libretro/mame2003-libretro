@@ -6,12 +6,12 @@
 
 /*----------- defined in driver/tickee.c -----------*/
 
-extern data16_t *tickee_control;
+extern uint16_t *tickee_control;
 
 
 /*----------- defined in vidhrdw/tickee.c -----------*/
 
-extern data16_t *tickee_vram;
+extern uint16_t *tickee_vram;
 
 VIDEO_START( tickee );
 

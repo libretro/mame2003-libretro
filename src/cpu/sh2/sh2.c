@@ -185,7 +185,7 @@ static void sh2_timer_callback(int data);
 #define Rn	((opcode>>8)&15)
 #define Rm	((opcode>>4)&15)
 
-static INLINE data8_t RB(offs_t A)
+static INLINE uint8_t RB(offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r((A & 0x1fc)>>2, ~(0xff << (((~A) & 3)*8))) >> (((~A) & 3)*8);
@@ -199,7 +199,7 @@ static INLINE data8_t RB(offs_t A)
 	return cpu_readmem32bedw(A & AM);
 }
 
-static INLINE data16_t RW(offs_t A)
+static INLINE uint16_t RW(offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r((A & 0x1fc)>>2, ~(0xffff << (((~A) & 2)*8))) >> (((~A) & 2)*8);
@@ -213,7 +213,7 @@ static INLINE data16_t RW(offs_t A)
 	return cpu_readmem32bedw_word(A & AM);
 }
 
-static INLINE data32_t RL(offs_t A)
+static INLINE uint32_t RL(offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r((A & 0x1fc)>>2, 0);
@@ -227,7 +227,7 @@ static INLINE data32_t RL(offs_t A)
   return cpu_readmem32bedw_dword(A & AM);
 }
 
-static INLINE void WB(offs_t A, data8_t V)
+static INLINE void WB(offs_t A, uint8_t V)
 {
 
 	if (A >= 0xe0000000)
@@ -248,7 +248,7 @@ static INLINE void WB(offs_t A, data8_t V)
 	cpu_writemem32bedw(A & AM,V);
 }
 
-static INLINE void WW(offs_t A, data16_t V)
+static INLINE void WW(offs_t A, uint16_t V)
 {
 	if (A >= 0xe0000000)
 	{
@@ -268,7 +268,7 @@ static INLINE void WW(offs_t A, data16_t V)
 	cpu_writemem32bedw_word(A & AM,V);
 }
 
-static INLINE void WL(offs_t A, data32_t V)
+static INLINE void WL(offs_t A, uint32_t V)
 {
 	if (A >= 0xe0000000)
 	{

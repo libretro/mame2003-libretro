@@ -11,8 +11,8 @@ Video hardware
 
 #include "vidhrdw/generic.h"
 
-static data8_t *quizdna_bg_ram;
-static data8_t *quizdna_fg_ram;
+static uint8_t *quizdna_bg_ram;
+static uint8_t *quizdna_fg_ram;
 
 static struct tilemap *quizdna_bg_tilemap;
 static struct tilemap *quizdna_fg_tilemap;
@@ -37,7 +37,7 @@ static void get_bg_tile_info(int tile_index)
 static void get_fg_tile_info(int tile_index)
 {
 	int code,col,x,y;
-	data8_t *FG = memory_region(REGION_USER1);
+	uint8_t *FG = memory_region(REGION_USER1);
 
 	x = tile_index & 0x1f;
 	y = FG[(tile_index >> 5) & 0x1f] & 0x3f;
@@ -72,7 +72,7 @@ VIDEO_START( quizdna )
 
 WRITE_HANDLER( quizdna_bg_ram_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	quizdna_bg_ram[offset] = data;
 	RAM[0x12000+offset] = data;
 
@@ -83,7 +83,7 @@ WRITE_HANDLER( quizdna_fg_ram_w )
 {
 	int i;
 	int offs = offset & 0xfff;
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	RAM[0x10000+offs] = data;
 	RAM[0x11000+offs] = data; /* mirror */

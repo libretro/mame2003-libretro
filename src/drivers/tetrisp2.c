@@ -46,11 +46,11 @@ static void *rockn_timer_l4;
 
 /* Variables defined in vidhrdw: */
 
-extern data16_t *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
-extern data16_t *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
-extern data16_t *tetrisp2_vram_rot, *tetrisp2_rotregs;
+extern uint16_t *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
+extern uint16_t *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
+extern uint16_t *tetrisp2_vram_rot, *tetrisp2_rotregs;
 
-extern data16_t *tetrisp2_priority;
+extern uint16_t *tetrisp2_priority;
 
 /* Functions defined in vidhrdw: */
 
@@ -178,7 +178,7 @@ static READ16_HANDLER( tetrisp2_ip_1_word_r )
 
 ***************************************************************************/
 
-static data16_t *tetrisp2_nvram;
+static uint16_t *tetrisp2_nvram;
 static size_t tetrisp2_nvram_size;
 
 NVRAM_HANDLER( tetrisp2 )

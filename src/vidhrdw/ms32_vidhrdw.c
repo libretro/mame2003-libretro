@@ -14,18 +14,18 @@ priority should be given to
 
 #include "driver.h"
 
-data32_t *ms32_fce00000;
-data32_t *ms32_roz_ctrl;
-data32_t *ms32_tx_scroll;
-data32_t *ms32_bg_scroll;
-data32_t *ms32_priram;
-data32_t *ms32_palram;
-data32_t *ms32_bgram;
-data32_t *ms32_rozram;
-data32_t *ms32_lineram;
-data32_t *ms32_spram;
-data32_t *ms32_txram;
-data32_t *ms32_mainram;
+uint32_t *ms32_fce00000;
+uint32_t *ms32_roz_ctrl;
+uint32_t *ms32_tx_scroll;
+uint32_t *ms32_bg_scroll;
+uint32_t *ms32_priram;
+uint32_t *ms32_palram;
+uint32_t *ms32_bgram;
+uint32_t *ms32_rozram;
+uint32_t *ms32_lineram;
+uint32_t *ms32_spram;
+uint32_t *ms32_txram;
+uint32_t *ms32_mainram;
 
 // kirarast, tp2m32, and 47pie2 require the sprites in a different order
 int ms32_reverse_sprite_order;
@@ -66,7 +66,7 @@ static void get_ms32_bg_tile_info(int tile_index)
 	SET_TILE_INFO(2,tileno,colour,0)
 }
 
-static data32_t brt[4];
+static uint32_t brt[4];
 static int brt_r,brt_g,brt_b;
 
 VIDEO_START( ms32 )
@@ -240,7 +240,7 @@ WRITE32_HANDLER( ms32_gfxctrl_w )
 
 /* SPRITES based on tetrisp2 for now, readd priority bits later */
 
-static void ms32_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, data32_t *sprram_top, size_t sprram_size)
+static void ms32_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint32_t *sprram_top, size_t sprram_size)
 {
 /***************************************************************************
 
@@ -285,8 +285,8 @@ static void ms32_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle
 	struct GfxElement *gfx = Machine->gfx[0];
 	struct GfxElement mygfx = *gfx;
 
-	data32_t		*source	= sprram_top;
-	const data32_t	*finish	= sprram_top + (sprram_size - 0x10) / 4;
+	uint32_t		*source	= sprram_top;
+	const uint32_t	*finish	= sprram_top + (sprram_size - 0x10) / 4;
 
 
 	if (ms32_reverse_sprite_order == 1)
@@ -397,7 +397,7 @@ static void draw_roz(struct mame_bitmap *bitmap, const struct rectangle *cliprec
 
 		while (y <= maxy)
 		{
-			data32_t *lineaddr = ms32_lineram + 8 * (y & 0xff);
+			uint32_t *lineaddr = ms32_lineram + 8 * (y & 0xff);
 
 			int start2x = (lineaddr[0x00/4] & 0xffff) | ((lineaddr[0x04/4] & 3) << 16);
 			int start2y = (lineaddr[0x08/4] & 0xffff) | ((lineaddr[0x0c/4] & 3) << 16);

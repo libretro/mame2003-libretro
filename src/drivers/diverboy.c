@@ -48,7 +48,7 @@
 
 #include "driver.h"
 
-extern data16_t *diverboy_spriteram;
+extern uint16_t *diverboy_spriteram;
 extern size_t diverboy_spriteram_size;
 
 VIDEO_START(diverboy);

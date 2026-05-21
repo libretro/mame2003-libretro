@@ -58,12 +58,12 @@ static MEMORY_WRITE16_START( writemem )
 	{ TOBYTE(0x60c000e0), TOBYTE(0x60c000ff), midxunit_security_w },
 	{ TOBYTE(0x80800000), TOBYTE(0x8080001f), midxunit_analog_select_w },
 	{ TOBYTE(0x80c00000), TOBYTE(0x80c000ff), midxunit_uart_w },
-	{ TOBYTE(0xa0440000), TOBYTE(0xa047ffff), midxunit_cmos_w, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ TOBYTE(0xa0440000), TOBYTE(0xa047ffff), midxunit_cmos_w, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ TOBYTE(0xa0800000), TOBYTE(0xa08fffff), midxunit_paletteram_w, &paletteram16 },
 	{ TOBYTE(0xc0000000), TOBYTE(0xc00003ff), tms34020_io_register_w },
 	{ TOBYTE(0xc0800000), TOBYTE(0xc08000ff), midtunit_dma_w },
 	{ TOBYTE(0xc0c00000), TOBYTE(0xc0c000ff), midtunit_dma_w },
-	{ TOBYTE(0xf8000000), TOBYTE(0xfbffffff), MWA16_ROM, (data16_t **)&midwunit_decode_memory },
+	{ TOBYTE(0xf8000000), TOBYTE(0xfbffffff), MWA16_ROM, (uint16_t **)&midwunit_decode_memory },
 	{ TOBYTE(0xff000000), TOBYTE(0xffffffff), MWA16_ROM, &midyunit_code_rom },
 MEMORY_END
 

@@ -752,8 +752,8 @@ static INLINE void BURNODD(int cycles, int opcodes, int cyclesum)
 	}
 }
 
-static data8_t z180_readcontrol(offs_t port);
-static void z180_writecontrol(offs_t port, data8_t data);
+static uint8_t z180_readcontrol(offs_t port);
+static void z180_writecontrol(offs_t port, uint8_t data);
 static void z180_dma0(void);
 static void z180_dma1(void);
 
@@ -768,10 +768,10 @@ static void z180_dma1(void);
 #include "z180ed.c"
 #include "z180op.c"
 
-static data8_t z180_readcontrol(offs_t port)
+static uint8_t z180_readcontrol(offs_t port)
 {
 	/* normal external readport */
-	data8_t data = cpu_readport16(port);
+	uint8_t data = cpu_readport16(port);
 
 	/* but ignore the data and read the internal register */
 	switch ((port & 0x3f) + Z180_CNTLA0)
@@ -1129,7 +1129,7 @@ static data8_t z180_readcontrol(offs_t port)
 	return data;
 }
 
-static void z180_writecontrol(offs_t port, data8_t data)
+static void z180_writecontrol(offs_t port, uint8_t data)
 {
 	/* normal external write port */
 	cpu_writeport16(port, data);

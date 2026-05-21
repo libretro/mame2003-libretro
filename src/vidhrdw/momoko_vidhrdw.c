@@ -10,18 +10,18 @@ Video hardware driver by Uki
 
 #include "vidhrdw/generic.h"
 
-data8_t *momoko_bg_scrollx;
-data8_t *momoko_bg_scrolly;
-data8_t momoko_fg_scrollx;
-data8_t momoko_fg_scrolly;
-data8_t momoko_fg_select;
-data8_t momoko_text_scrolly;
-data8_t momoko_text_mode;
-data8_t momoko_bg_select;
-data8_t momoko_bg_priority;
-data8_t momoko_bg_mask;
-data8_t momoko_fg_mask;
-data8_t momoko_flipscreen;
+uint8_t *momoko_bg_scrollx;
+uint8_t *momoko_bg_scrolly;
+uint8_t momoko_fg_scrollx;
+uint8_t momoko_fg_scrolly;
+uint8_t momoko_fg_select;
+uint8_t momoko_text_scrolly;
+uint8_t momoko_text_mode;
+uint8_t momoko_bg_select;
+uint8_t momoko_bg_priority;
+uint8_t momoko_bg_mask;
+uint8_t momoko_fg_mask;
+uint8_t momoko_flipscreen;
 
 /****************************************************************************/
 
@@ -72,9 +72,9 @@ WRITE_HANDLER( momoko_flipscreen_w )
 void momoko_draw_bg_pri(struct mame_bitmap *bitmap, int chr, int col, int flipx, int flipy, int x,int y, int pri)
 {
 	int xx,sx,sy,px,py,dot;
-	data32_t gfxadr;
-	data8_t d0, d1;
-	data8_t *BG_GFX = memory_region( REGION_GFX2 );
+	uint32_t gfxadr;
+	uint8_t d0, d1;
+	uint8_t *BG_GFX = memory_region( REGION_GFX2 );
 	for (sy=0; sy<8; sy++)
 	{
 		gfxadr = chr*16 + sy*2;
@@ -105,10 +105,10 @@ VIDEO_UPDATE( momoko )
 {
 	int x, y, dx, dy, rx, ry, radr, chr, sy, fx, fy, px, py, offs, col, pri, flip ;
 
-	data8_t *BG_MAP     = memory_region( REGION_USER1 );
-	data8_t *BG_COL_MAP = memory_region( REGION_USER2 );
-	data8_t *FG_MAP     = memory_region( REGION_USER3 );
-	data8_t *TEXT_COLOR = memory_region( REGION_PROMS );
+	uint8_t *BG_MAP     = memory_region( REGION_USER1 );
+	uint8_t *BG_COL_MAP = memory_region( REGION_USER2 );
+	uint8_t *FG_MAP     = memory_region( REGION_USER3 );
+	uint8_t *TEXT_COLOR = memory_region( REGION_PROMS );
 
 
 	flip = momoko_flipscreen ^ (readinputport(4) & 0x01);

@@ -82,7 +82,7 @@ WRITE16_HANDLER( suna16_flipscreen_w )
 
 VIDEO_START( suna16 )
 {
-	paletteram16_2 = auto_malloc( 0x100 * sizeof(data16_t) );
+	paletteram16_2 = auto_malloc( 0x100 * sizeof(uint16_t) );
 	if (paletteram16_2 != NULL)	return 0;
 	else						return 1;
 }

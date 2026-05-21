@@ -123,7 +123,7 @@ static WRITE16_HANDLER( xmen_18fa00_w )
 	}
 }
 
-static data8_t sound_curbank;
+static uint8_t sound_curbank;
 
 static void sound_reset_bank(void)
 {
@@ -475,7 +475,7 @@ static DRIVER_INIT( xmen )
 
 static DRIVER_INIT( xmen6p )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 
 	rom[0x21a6/2] = 0x4e71;
 	rom[0x21a8/2] = 0x4e71;

@@ -98,9 +98,9 @@ Preliminary Memory map:
 #include "machine/scudsp.h"
 #include <time.h>
 
-extern data32_t* stv_vdp2_regs;
-extern data32_t* stv_vdp2_vram;
-extern data32_t* stv_vdp2_cram;
+extern uint32_t* stv_vdp2_regs;
+extern uint32_t* stv_vdp2_vram;
+extern uint32_t* stv_vdp2_cram;
 
 #define USE_SLAVE 1
 
@@ -122,21 +122,21 @@ DRIVER_INIT(dnmtdeka);
 /**************************************************************************************/
 /*to be added into a stv Header file,remember to remove all the static...*/
 
-static data8_t *smpc_ram;
+static uint8_t *smpc_ram;
 //static void stv_dump_ram(void);
 
-static data32_t* stv_workram_l;
-data32_t* stv_workram_h;
-static data32_t* stv_backupram;
-data32_t* stv_scu;
-static data32_t* ioga;
-static data16_t* scsp_regs;
+static uint32_t* stv_workram_l;
+uint32_t* stv_workram_h;
+static uint32_t* stv_backupram;
+uint32_t* stv_scu;
+static uint32_t* ioga;
+static uint16_t* scsp_regs;
 
 int stv_vblank;
 /*SMPC stuff*/
 static uint8_t SCSP_reset;
 static void system_reset(void);
-static data8_t en_68k;
+static uint8_t en_68k;
 /*SCU stuff*/
 static int 	  timer_0;				/* Counter for Timer 0 irq*/
 /*Maybe add these in a struct...*/
@@ -190,7 +190,7 @@ static void CD_refresh_timer(int param)
 	//timer_adjust(CD_refresh, CD_period, 0, CD_period);
 }
 
-data32_t cdregister[0x9ffff];
+uint32_t cdregister[0x9ffff];
 
 int DectoBCD(int num)
 {
@@ -2993,7 +2993,7 @@ static void dma_indirect_lv2()
 
 WRITE32_HANDLER( stv_sh2_soundram_w )
 {
-	data8_t *SNDRAM = memory_region(REGION_CPU3);
+	uint8_t *SNDRAM = memory_region(REGION_CPU3);
 
 	if (!(mem_mask & 0xff000000)) SNDRAM[offset*4+1] = (data & 0xff000000)>>24;
 	if (!(mem_mask & 0x00ff0000)) SNDRAM[offset*4+0] = (data & 0x00ff0000)>>16;
@@ -3003,7 +3003,7 @@ WRITE32_HANDLER( stv_sh2_soundram_w )
 
 READ32_HANDLER( stv_sh2_soundram_r )
 {
-	data8_t *SNDRAM = memory_region(REGION_CPU3);
+	uint8_t *SNDRAM = memory_region(REGION_CPU3);
 
 	return  (SNDRAM[offset*4+1]<<24) | (SNDRAM[offset*4+0]<<16) | (SNDRAM[offset*4+3]<<8) | (SNDRAM[offset*4+2]<<0);
 
@@ -4529,7 +4529,7 @@ ROM_END
 DRIVER_INIT( sfish2 )
 {
 	/* this is WRONG but works for some games */
-	data32_t *rom = (data32_t *)memory_region(REGION_USER1);
+	uint32_t *rom = (uint32_t *)memory_region(REGION_USER1);
 	rom[0xf10/4] = (rom[0xf10/4] & 0xff000000)|((rom[0xf10/4]/2)&0x00ffffff);
 	rom[0xf20/4] = (rom[0xf20/4] & 0xff000000)|((rom[0xf20/4]/2)&0x00ffffff);
 	rom[0xf30/4] = (rom[0xf30/4] & 0xff000000)|((rom[0xf30/4]/2)&0x00ffffff);
@@ -4541,7 +4541,7 @@ DRIVER_INIT( sfish2 )
 DRIVER_INIT( sfish2j )
 {
 	/* this is WRONG but works for some games */
-	data32_t *rom = (data32_t *)memory_region(REGION_USER1);
+	uint32_t *rom = (uint32_t *)memory_region(REGION_USER1);
 	rom[0xf10/4] = (rom[0xf10/4] & 0xff000000)|((rom[0xf10/4]/2)&0x00ffffff);
 	rom[0xf20/4] = (rom[0xf20/4] & 0xff000000)|((rom[0xf20/4]/2)&0x00ffffff);
 	rom[0xf30/4] = (rom[0xf30/4] & 0xff000000)|((rom[0xf30/4]/2)&0x00ffffff);

@@ -47,7 +47,7 @@ static WRITE_HANDLER( thedeep_sound_w )
 	cpu_set_nmi_line(1, PULSE_LINE);
 }
 
-static data8_t protection_command, protection_data;
+static uint8_t protection_command, protection_data;
 static int protection_index, protection_irq;
 static int rombank;
 

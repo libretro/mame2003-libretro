@@ -116,19 +116,19 @@ static int8_t dcs_cpunum;
 
 static struct dcs_state dcs;
 
-static data16_t *dcs_speedup1;
-static data16_t *dcs_speedup2;
-static data16_t *dcs_speedup3;
-static data16_t *dcs_speedup4;
+static uint16_t *dcs_speedup1;
+static uint16_t *dcs_speedup2;
+static uint16_t *dcs_speedup3;
+static uint16_t *dcs_speedup4;
 
-static data16_t *dcs_sram_bank0;
-static data16_t *dcs_sram_bank1;
-static data16_t *dcs_expanded_rom;
+static uint16_t *dcs_sram_bank0;
+static uint16_t *dcs_sram_bank1;
+static uint16_t *dcs_expanded_rom;
 
-static data16_t *dcs_polling_base;
+static uint16_t *dcs_polling_base;
 
 #if (LOG_DCS_TRANSFERS)
-static data16_t *transfer_dest;
+static uint16_t *transfer_dest;
 static int transfer_state;
 static int transfer_start;
 static int transfer_stop;
@@ -327,8 +327,8 @@ MACHINE_DRIVER_END
 
 static void dcs_boot(void)
 {
-	data8_t *src = (data8_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE);
-	data32_t *dst = (data32_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_PGM_OFFSET);
+	uint8_t *src = (uint8_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE);
+	uint32_t *dst = (uint32_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_PGM_OFFSET);
 	switch (Machine->drv->cpu[dcs_cpunum].cpu_type)
 	{
 		case CPU_ADSP2104:
@@ -716,7 +716,7 @@ void dcs_data_w(int data)
 			case 2:
 				transfer_start |= data;
 				transfer_state++;
-				transfer_dest = (data16_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE + 0x8000 + transfer_start*2);
+				transfer_dest = (uint16_t *)(memory_region(REGION_CPU1 + dcs_cpunum) + ADSP2100_SIZE + 0x8000 + transfer_start*2);
 				logerror("Start address = %08X\n", transfer_start);
 				break;
 

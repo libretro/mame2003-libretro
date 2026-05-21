@@ -36,8 +36,8 @@
 #if 0
 static uint8_t 		which_input;
 #endif
-static data32_t *	mo_command;
-static data32_t *	protection_base;
+static uint32_t *	mo_command;
+static uint32_t *	protection_base;
 
 
 
@@ -163,8 +163,8 @@ static WRITE32_HANDLER( mo_command_w )
  *
  *************************************/
 
-static data16_t last_write;
-static data16_t last_write_offset;
+static uint16_t last_write;
+static uint16_t last_write_offset;
 
 static WRITE32_HANDLER( atarigx2_protection_w )
 {
@@ -1124,7 +1124,7 @@ static READ32_HANDLER( atarigx2_protection_r )
 		{ 0xffffffff, 0xffff }
 	};
 
-	data32_t result = protection_base[offset];
+	uint32_t result = protection_base[offset];
 
 	if (offset == 0x300)
 		result |= 0x80000000;
@@ -1200,7 +1200,7 @@ static MEMORY_WRITE32_START( main_writemem )
 	{ 0x000000, 0x07ffff, MWA32_ROM },
 	{ 0xc80000, 0xc80fff, MWA32_RAM },
 	{ 0xca0000, 0xca0fff, atarigx2_protection_w, &protection_base },
-	{ 0xd20000, 0xd20fff, atarigen_eeprom32_w, (data32_t **)&atarigen_eeprom, &atarigen_eeprom_size },
+	{ 0xd20000, 0xd20fff, atarigen_eeprom32_w, (uint32_t **)&atarigen_eeprom, &atarigen_eeprom_size },
 	{ 0xd40000, 0xd40fff, atarigen_666_paletteram32_w, &paletteram32 },
 	{ 0xd70000, 0xd71fff, MWA32_RAM },
 	{ 0xd72000, 0xd75fff, atarigen_playfield32_w, &atarigen_playfield32 },

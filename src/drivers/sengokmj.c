@@ -74,7 +74,7 @@ Dumped by Uki
 #include "vidhrdw/generic.h"
 #include "sndhrdw/seibu.h"
 
-extern data8_t *bg_vram,*md_vram,*tx_vram,*fg_vram;
+extern uint8_t *bg_vram,*md_vram,*tx_vram,*fg_vram;
 static uint8_t sengokumj_mux_data;
 
 READ_HANDLER( sengoku_bg_vram_r );

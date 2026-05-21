@@ -313,11 +313,11 @@ static INLINE void sprtmtch_plot_pixel(int x, int y, int pen, int flags)
 
 int sprtmtch_drawgfx( int i, int dest, int flags )
 {
-	data8_t cmd, pen;
+	uint8_t cmd, pen;
 	int x = dest & 0xff;
 	int y = dest >> 8;
 
-	data8_t *SRC		=	memory_region( REGION_GFX1 );
+	uint8_t *SRC		=	memory_region( REGION_GFX1 );
 	size_t   size_src	=	memory_region_length( REGION_GFX1 );
 
 	int sx;
@@ -753,7 +753,7 @@ void mjdialq2_copylayer(struct mame_bitmap *bitmap,const struct rectangle *clipr
 static int toggle;
 if (keyboard_pressed_memory(KEYCODE_T))	toggle = 1-toggle;
 if (toggle)	{
-	data8_t *RAM	=	memory_region( REGION_GFX1 );
+	uint8_t *RAM	=	memory_region( REGION_GFX1 );
 	size_t size		=	memory_region_length( REGION_GFX1 );
 	static int i = 0, c = 0;
 

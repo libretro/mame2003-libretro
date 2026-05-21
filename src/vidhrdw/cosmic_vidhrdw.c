@@ -264,7 +264,7 @@ static void draw_bitmap(struct mame_bitmap *bitmap)
 
 	for (offs = 0; offs < videoram_size; offs++)
 	{
-		data8_t data = videoram[offs];
+		uint8_t data = videoram[offs];
 
 		if (data != 0)	/* optimization, not absolutely neccessary */
 		{
@@ -341,7 +341,7 @@ static void cosmica_draw_starfield(struct mame_bitmap *bitmap)
 {
 	uint8_t y = 0;
 	uint8_t map = 0;
-	data8_t *PROM = memory_region(REGION_USER2);
+	uint8_t *PROM = memory_region(REGION_USER2);
 
 
 	while (1)
@@ -399,8 +399,8 @@ static void cosmica_draw_starfield(struct mame_bitmap *bitmap)
 static void devzone_draw_grid(struct mame_bitmap *bitmap)
 {
 	uint8_t y;
-	data8_t *horz_PROM = memory_region(REGION_USER2);
-	data8_t *vert_PROM = memory_region(REGION_USER3);
+	uint8_t *horz_PROM = memory_region(REGION_USER2);
+	uint8_t *vert_PROM = memory_region(REGION_USER3);
 	offs_t horz_addr = 0;
 
 	uint8_t count = 0;
@@ -469,7 +469,7 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 {
 	uint8_t y = 0;
 	uint8_t water = cpu_getcurrentframe();
-	data8_t *PROM = memory_region(REGION_USER2);
+	uint8_t *PROM = memory_region(REGION_USER2);
 
 
 	/* all positioning is via logic gates:
@@ -541,8 +541,8 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 					offs_t offs = ((x >> 3) & 0x03) | ((y & 0x1f) << 2) |
 					              (flip_screen ? 0x80 : 0);
 
-					data8_t plane1 = PROM[offs         ] << (x & 0x07);
-					data8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);
+					uint8_t plane1 = PROM[offs         ] << (x & 0x07);
+					uint8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);
 
 					plane1 >>= 7;
 					plane2 >>= 7;
@@ -559,8 +559,8 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 				{
 					offs_t offs = hd | (water << 1) | 0x0200;
 
-					data8_t plane1 = PROM[offs         ] << (x & 0x07);
-					data8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);
+					uint8_t plane1 = PROM[offs         ] << (x & 0x07);
+					uint8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);
 
 					plane1 >>= 7;
 					plane2 >>= 7;

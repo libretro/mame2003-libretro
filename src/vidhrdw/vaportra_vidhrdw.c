@@ -12,11 +12,11 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *vaportra_pf1_data,*vaportra_pf2_data,*vaportra_pf3_data,*vaportra_pf4_data;
+uint16_t *vaportra_pf1_data,*vaportra_pf2_data,*vaportra_pf3_data,*vaportra_pf4_data;
 
-static data16_t vaportra_control_0[8];
-static data16_t vaportra_control_1[8];
-static data16_t vaportra_control_2[2];
+static uint16_t vaportra_control_0[8];
+static uint16_t vaportra_control_1[8];
+static uint16_t vaportra_control_2[2];
 
 static struct tilemap *pf1_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static int flipscreen;
@@ -28,7 +28,7 @@ static uint32_t vaportra_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5) + ((row & 0x20) << 6);
 }
 
-static INLINE void get_bg_tile_info(int tile_index,int gfx_bank,data16_t *gfx_base)
+static INLINE void get_bg_tile_info(int tile_index,int gfx_bank,uint16_t *gfx_base)
 {
 	int data = gfx_base[tile_index];
 
@@ -83,7 +83,7 @@ VIDEO_START( vaportra )
 
 WRITE16_HANDLER( vaportra_pf1_data_w )
 {
-	data16_t oldword=vaportra_pf1_data[offset];
+	uint16_t oldword=vaportra_pf1_data[offset];
 	COMBINE_DATA(&vaportra_pf1_data[offset]);
 	if (oldword!=vaportra_pf1_data[offset])
 		tilemap_mark_tile_dirty(pf1_tilemap,offset);
@@ -91,7 +91,7 @@ WRITE16_HANDLER( vaportra_pf1_data_w )
 
 WRITE16_HANDLER( vaportra_pf2_data_w )
 {
-	data16_t oldword=vaportra_pf2_data[offset];
+	uint16_t oldword=vaportra_pf2_data[offset];
 	COMBINE_DATA(&vaportra_pf2_data[offset]);
 	if (oldword!=vaportra_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset);
@@ -99,7 +99,7 @@ WRITE16_HANDLER( vaportra_pf2_data_w )
 
 WRITE16_HANDLER( vaportra_pf3_data_w )
 {
-	data16_t oldword=vaportra_pf3_data[offset];
+	uint16_t oldword=vaportra_pf3_data[offset];
 	COMBINE_DATA(&vaportra_pf3_data[offset]);
 	if (oldword!=vaportra_pf3_data[offset])
 		tilemap_mark_tile_dirty(pf3_tilemap,offset);
@@ -107,7 +107,7 @@ WRITE16_HANDLER( vaportra_pf3_data_w )
 
 WRITE16_HANDLER( vaportra_pf4_data_w )
 {
-	data16_t oldword=vaportra_pf4_data[offset];
+	uint16_t oldword=vaportra_pf4_data[offset];
 	COMBINE_DATA(&vaportra_pf4_data[offset]);
 	if (oldword!=vaportra_pf4_data[offset])
 		tilemap_mark_tile_dirty(pf4_tilemap,offset);

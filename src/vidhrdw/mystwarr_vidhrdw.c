@@ -382,7 +382,7 @@ WRITE16_HANDLER(ddd_053936_enable_w)
 
 WRITE16_HANDLER(ddd_053936_clip_w)
 {
-	static data16_t clip;
+	static uint16_t clip;
 	int old, clip_x, clip_y, size_x, size_y;
 	int minx, maxx, miny, maxy;
 
@@ -428,8 +428,8 @@ WRITE16_HANDLER(ddd_053936_clip_w)
 // reference: 223e5c in gaiapolis (ROMs 34j and 36m)
 READ16_HANDLER(gai_053936_tilerom_0_r)
 {
-	data8_t *ROM1 = (data8_t *)memory_region(REGION_GFX4);
-	data8_t *ROM2 = (data8_t *)memory_region(REGION_GFX4);
+	uint8_t *ROM1 = (uint8_t *)memory_region(REGION_GFX4);
+	uint8_t *ROM2 = (uint8_t *)memory_region(REGION_GFX4);
 
 	ROM1 += 0x20000;
 	ROM2 += 0x20000+0x40000;
@@ -439,8 +439,8 @@ READ16_HANDLER(gai_053936_tilerom_0_r)
 
 READ16_HANDLER(ddd_053936_tilerom_0_r)
 {
-	data8_t *ROM1 = (data8_t *)memory_region(REGION_GFX4);
-	data8_t *ROM2 = (data8_t *)memory_region(REGION_GFX4);
+	uint8_t *ROM1 = (uint8_t *)memory_region(REGION_GFX4);
+	uint8_t *ROM2 = (uint8_t *)memory_region(REGION_GFX4);
 
 	ROM2 += 0x40000;
 
@@ -450,7 +450,7 @@ READ16_HANDLER(ddd_053936_tilerom_0_r)
 // reference: 223e1a in gaiapolis (ROM 36j)
 READ16_HANDLER(ddd_053936_tilerom_1_r)
 {
-	data8_t *ROM = (data8_t *)memory_region(REGION_GFX4);
+	uint8_t *ROM = (uint8_t *)memory_region(REGION_GFX4);
 
 	return ROM[offset/2];
 }
@@ -458,7 +458,7 @@ READ16_HANDLER(ddd_053936_tilerom_1_r)
 // reference: 223db0 in gaiapolis (ROMs 32n, 29n, 26n)
 READ16_HANDLER(gai_053936_tilerom_2_r)
 {
-	data8_t *ROM = (data8_t *)memory_region(REGION_GFX3);
+	uint8_t *ROM = (uint8_t *)memory_region(REGION_GFX3);
 
 	offset += (roz_rombank * 0x100000);
 
@@ -467,7 +467,7 @@ READ16_HANDLER(gai_053936_tilerom_2_r)
 
 READ16_HANDLER(ddd_053936_tilerom_2_r)
 {
-	data8_t *ROM = (data8_t *)memory_region(REGION_GFX3);
+	uint8_t *ROM = (uint8_t *)memory_region(REGION_GFX3);
 
 	offset += (roz_rombank * 0x100000);
 

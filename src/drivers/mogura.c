@@ -2,8 +2,8 @@
 
 #include "driver.h"
 
-data8_t *mogura_tileram;
-data8_t* mogura_gfxram;
+uint8_t *mogura_tileram;
+uint8_t* mogura_gfxram;
 static struct tilemap *mogura_tilemap;
 
 PALETTE_INIT( mogura )

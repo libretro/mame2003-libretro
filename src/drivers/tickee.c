@@ -19,10 +19,10 @@
 #include "tickee.h"
 
 
-data16_t *tickee_control;
+uint16_t *tickee_control;
 
 
-static data16_t *code_rom;
+static uint16_t *code_rom;
 
 
 /*************************************
@@ -64,7 +64,7 @@ static READ_HANDLER( port1_r )
 
 static WRITE16_HANDLER( tickee_control_w )
 {
-	data16_t olddata = tickee_control[offset];
+	uint16_t olddata = tickee_control[offset];
 
 	/* offsets:
 
@@ -108,7 +108,7 @@ MEMORY_END
 
 static MEMORY_WRITE16_START( writemem )
 	{ TOBYTE(0x00000000), TOBYTE(0x003fffff), MWA16_RAM, &tickee_vram },
-	{ TOBYTE(0x04000000), TOBYTE(0x04003fff), MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ TOBYTE(0x04000000), TOBYTE(0x04003fff), MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ TOBYTE(0x04100000), TOBYTE(0x041000ff), tlc34076_lsb_w },
 	{ TOBYTE(0x04200000), TOBYTE(0x0420000f), AY8910_control_port_0_lsb_w },
 	{ TOBYTE(0x04200010), TOBYTE(0x0420001f), AY8910_write_port_0_lsb_w },

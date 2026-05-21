@@ -71,19 +71,19 @@ Note #3: Bt481A 256-Word Color Palette 15, 16 & 24-bit Color Power-Down RAMDAC
 
 
 /* global variables */
-data32_t *	policetr_rambase;
+uint32_t *	policetr_rambase;
 
 
 /* local variables */
-static data32_t *rom_base;
+static uint32_t *rom_base;
 
-static data32_t control_data;
+static uint32_t control_data;
 
-static data32_t bsmt_reg;
-static data32_t bsmt_data_bank;
-static data32_t bsmt_data_offset;
+static uint32_t bsmt_reg;
+static uint32_t bsmt_data_bank;
+static uint32_t bsmt_data_offset;
 
-static data32_t *speedup_data;
+static uint32_t *speedup_data;
 static uint32_t last_cycles;
 static uint32_t loop_count;
 

@@ -71,9 +71,9 @@ TO DO :
 
 #include "driver.h"
 
-data16_t *stlforce_bg_videoram, *stlforce_mlow_videoram, *stlforce_mhigh_videoram, *stlforce_tx_videoram;
-data16_t *stlforce_bg_scrollram, *stlforce_mlow_scrollram, *stlforce_mhigh_scrollram, *stlforce_vidattrram;
-data16_t *stlforce_spriteram;
+uint16_t *stlforce_bg_videoram, *stlforce_mlow_videoram, *stlforce_mhigh_videoram, *stlforce_tx_videoram;
+uint16_t *stlforce_bg_scrollram, *stlforce_mlow_scrollram, *stlforce_mhigh_scrollram, *stlforce_vidattrram;
+uint16_t *stlforce_spriteram;
 
 VIDEO_START( stlforce );
 VIDEO_UPDATE( stlforce );

@@ -25,7 +25,7 @@ always false - counter was reloaded and incremented before interrupt occurs
 #include "machine/6821pia.h"
 
 
-data8_t *tugboat_ram,*tugboat_score;
+uint8_t *tugboat_ram,*tugboat_score;
 
 
 static uint8_t hd46505_0_reg[18],hd46505_1_reg[18];

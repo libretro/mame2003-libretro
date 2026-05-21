@@ -19,10 +19,10 @@ WRITE_HANDLER( chaknpop_mcu_portC_w );
 
 
 /* vidhrdw/chaknpop.c */
-extern data8_t *chaknpop_txram;
-extern data8_t *chaknpop_sprram;
+extern uint8_t *chaknpop_txram;
+extern uint8_t *chaknpop_sprram;
 extern size_t chaknpop_sprram_size;
-extern data8_t *chaknpop_attrram;
+extern uint8_t *chaknpop_attrram;
 
 
 PALETTE_INIT( chaknpop );

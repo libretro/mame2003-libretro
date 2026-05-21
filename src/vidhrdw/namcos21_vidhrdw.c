@@ -90,10 +90,10 @@ quad primitives (n x 5 words) - indices of four verticies plus color code
 
 static int mbDspError;
 
-static data16_t namcos21_polyattr0[1]; /* ??? */
-static data16_t namcos21_polyattr1[1]; /* ??? */
+static uint16_t namcos21_polyattr0[1]; /* ??? */
+static uint16_t namcos21_polyattr1[1]; /* ??? */
 
-static data16_t namcos21_objattr[8];
+static uint16_t namcos21_objattr[8];
 /* fff0 0000 during startup tests (all)
  * 0000 8000 (starblade)
  * ffff 0080 (solvalou)
@@ -487,7 +487,7 @@ VIDEO_UPDATE( namcos21_default )
 	 * Starblade expects during setup.
 	  */
 	{
-		const data16_t cmd1[] =
+		const uint16_t cmd1[] =
 		{
 			0x0000,0x0001,0x0002,0x000a,0xcca3,0x0000,0x0000,0x0000,
 			0x0000,0x0002,0x0000,0x0000,0x0001,0x0000,0x0000,0x0000,

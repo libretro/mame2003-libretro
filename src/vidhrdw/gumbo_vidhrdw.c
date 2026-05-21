@@ -2,8 +2,8 @@
 
 #include "driver.h"
 
-extern data16_t *gumbo_bg_videoram;
-extern data16_t *gumbo_fg_videoram;
+extern uint16_t *gumbo_bg_videoram;
+extern uint16_t *gumbo_fg_videoram;
 
 static struct tilemap *gumbo_bg_tilemap;
 static struct tilemap *gumbo_fg_tilemap;

@@ -13,10 +13,10 @@
 
 
 static uint8_t selected_videoram;
-static data8_t *local_videoram[2];
+static uint8_t *local_videoram[2];
 
 static uint8_t selected_paletteram;
-static data8_t *local_paletteram;
+static uint8_t *local_paletteram;
 
 static int scrollx[2], scrolly[2];
 static uint8_t gfxreg;

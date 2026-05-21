@@ -47,7 +47,7 @@ static int pcm_adr;
 
 static void pcm_w(int irq)
 {
-	data8_t *PCM = memory_region(REGION_SOUND1);
+	uint8_t *PCM = memory_region(REGION_SOUND1);
 
 	int data = PCM[pcm_adr / 2];
 

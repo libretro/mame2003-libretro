@@ -2,14 +2,14 @@
 
 #include "driver.h"
 
-extern data16_t *fitfight_spriteram;
-extern data16_t *fof_100000, *fof_600000, *fof_700000, *fof_800000, *fof_900000, *fof_a00000;
+extern uint16_t *fitfight_spriteram;
+extern uint16_t *fof_100000, *fof_600000, *fof_700000, *fof_800000, *fof_900000, *fof_a00000;
 
-extern data16_t *fof_bak_tileram;
+extern uint16_t *fof_bak_tileram;
 static struct tilemap *fof_bak_tilemap;
-extern data16_t *fof_mid_tileram;
+extern uint16_t *fof_mid_tileram;
 static struct tilemap *fof_mid_tilemap;
-extern data16_t *fof_txt_tileram;
+extern uint16_t *fof_txt_tileram;
 static struct tilemap *fof_txt_tilemap;
 
 extern char bbprot_kludge;
@@ -17,8 +17,8 @@ extern char bbprot_kludge;
 static void fitfight_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	const struct GfxElement *gfx = Machine->gfx[3];
-	data16_t *source = fitfight_spriteram;
-	data16_t *finish = source + 0x800/2;
+	uint16_t *source = fitfight_spriteram;
+	uint16_t *finish = source + 0x800/2;
 
 	while( source<finish )
 	{

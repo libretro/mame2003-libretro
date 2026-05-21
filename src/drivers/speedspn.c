@@ -53,7 +53,7 @@ TCH-SS9.u34     "     /               AB2Bh
 ******************************************************************************/
 
 /* in vidhrdw */
-extern data8_t *speedspn_attram;
+extern uint8_t *speedspn_attram;
 
 WRITE_HANDLER( speedspn_vidram_w );
 WRITE_HANDLER( speedspn_attram_w );

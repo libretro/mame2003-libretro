@@ -57,9 +57,9 @@ READ16_HANDLER( ttl_ram_r );
 WRITE16_HANDLER( ttl_ram_w );
 WRITE16_HANDLER( rng_936_videoram_w );
 
-data16_t *rng_936_videoram;
+uint16_t *rng_936_videoram;
 
-static data16_t *rng_sysreg;
+static uint16_t *rng_sysreg;
 static int init_eeprom_count;
 static int rng_z80_control;
 static int rng_sound_status;
@@ -97,7 +97,7 @@ static NVRAM_HANDLER( rungun )
 
 static READ16_HANDLER( rng_sysregs_r )
 {
-	data16_t data = 0;
+	uint16_t data = 0;
 
 	switch (offset)
 	{

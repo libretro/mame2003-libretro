@@ -139,7 +139,7 @@ WRITE_HANDLER( sys16_7751_sh_rom_select_w );
 
 int sys16_wwfix=0, sys16_alienfix=0; //*
 
-static data16_t coinctrl;
+static uint16_t coinctrl;
 
 static WRITE16_HANDLER( sys16_3d_coinctrl_w )
 {
@@ -272,7 +272,7 @@ static WRITE16_HANDLER( sound_command_nmi_w ){
 	}
 }
 
-//static data16_t coinctrl;
+//static uint16_t coinctrl;
 
 static READ16_HANDLER( sys16_coinctrl_r ){
 	return coinctrl;
@@ -1378,7 +1378,7 @@ static DRIVER_INIT( aurail )
 
 static DRIVER_INIT( auraila )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 	int diff = 0x40000;	/* place decrypted opcodes in a empty hole */
 
 	init_aurail();
@@ -3104,7 +3104,7 @@ static READ16_HANDLER( goldnaxa_skip_r ){
 
 // This version has somekind of hardware comparitor for collision detection,
 // and a hardware multiplier.
-static data16_t ga_hardware_collision_data[5];
+static uint16_t ga_hardware_collision_data[5];
 static WRITE16_HANDLER( ga_hardware_collision_w )
 {
 	static int bit=1;
@@ -3486,7 +3486,7 @@ ROM_END
 /***************************************************************************/
 
 static READ16_HANDLER( mjl_io_player1_r ){
-	data16_t data=input_port_0_r( offset ) & 0x80;
+	uint16_t data=input_port_0_r( offset ) & 0x80;
 
 	if( sys16_extraram2[2/2] & 0x4 )
 		data|=(input_port_5_r( offset ) & 0x3f) << 1;
@@ -3497,7 +3497,7 @@ static READ16_HANDLER( mjl_io_player1_r ){
 }
 
 static READ16_HANDLER( mjl_io_service_r ){
-	data16_t data=input_port_2_r( offset ) & 0x3f;
+	uint16_t data=input_port_2_r( offset ) & 0x3f;
 
 	if(sys16_extraram2[2/2] & 0x4){
 		data|=(input_port_5_r( offset ) & 0x40);
@@ -3513,7 +3513,7 @@ static READ16_HANDLER( mjl_io_service_r ){
 
 static READ16_HANDLER( mjl_io_player2_r )
 {
-	data16_t data=input_port_1_r( offset ) & 0x80;
+	uint16_t data=input_port_1_r( offset ) & 0x80;
 	if(sys16_extraram2[2/2] & 0x4)
 		data|=(input_port_7_r( offset ) & 0x3f) << 1;
 	else
@@ -3788,7 +3788,7 @@ static int passht4b_io2_val;
 static int passht4b_io3_val;
 
 static READ16_HANDLER( passht4b_service_r ){
-	data16_t val=input_port_2_word_r(offset,0);
+	uint16_t val=input_port_2_word_r(offset,0);
 	if(!(readinputport(0) & 0x40)) val&=0xef;
 	if(!(readinputport(1) & 0x40)) val&=0xdf;
 	if(!(readinputport(5) & 0x40)) val&=0xbf;

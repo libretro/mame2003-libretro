@@ -4,7 +4,7 @@
 #include "namcos2.h"	/* for game-specific hacks */
 #include "namcoic.h"
 
-static data16_t mSpritePos[4];
+static uint16_t mSpritePos[4];
 
 WRITE16_HANDLER( namco_spritepos16_w )
 {
@@ -17,7 +17,7 @@ READ16_HANDLER( namco_spritepos16_r )
 
 WRITE32_HANDLER( namco_spritepos32_w )
 {
-	data32_t v;
+	uint32_t v;
 	offset *= 2;
 	v = (mSpritePos[offset]<<16)|mSpritePos[offset+1];
 	COMBINE_DATA( &v );
@@ -30,10 +30,10 @@ READ32_HANDLER( namco_spritepos32_r )
 	return (mSpritePos[offset]<<16)|mSpritePos[offset+1];
 }
 
-static INLINE data8_t
-nth_byte16( const data16_t *pSource, int which )
+static INLINE uint8_t
+nth_byte16( const uint16_t *pSource, int which )
 {
-	data16_t data = pSource[which/2];
+	uint16_t data = pSource[which/2];
 	if( which&1 )
 	{
 		return data&0xff;
@@ -47,10 +47,10 @@ nth_byte16( const data16_t *pSource, int which )
 /* nth_word32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of 16 bit words.
  */
-static INLINE data16_t
-nth_word32( const data32_t *pSource, int which )
+static INLINE uint16_t
+nth_word32( const uint32_t *pSource, int which )
 {
-	data32_t data = pSource[which/2];
+	uint32_t data = pSource[which/2];
 	if( which&1 )
 	{
 		return data&0xffff;
@@ -64,10 +64,10 @@ nth_word32( const data32_t *pSource, int which )
 /* nth_byte32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of bytes.
  */
-static INLINE data8_t
-nth_byte32( const data32_t *pSource, int which )
+static INLINE uint8_t
+nth_byte32( const uint32_t *pSource, int which )
 {
-		data32_t data = pSource[which/4];
+		uint32_t data = pSource[which/4];
 		switch( which&3 )
 		{
 		case 0: return data>>24;
@@ -93,16 +93,16 @@ static int mPalXOR;		/* XOR'd with palette select register; needed for System21 
  * 0x14000 sprite list (page1)
  */
 static void
-draw_spriteC355( int page, struct mame_bitmap *bitmap, const struct rectangle *cliprect, const data16_t *pSource, int pri, int zpos )
+draw_spriteC355( int page, struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint16_t *pSource, int pri, int zpos )
 {
 	unsigned screen_height_remaining, screen_width_remaining;
 	unsigned source_height_remaining, source_width_remaining;
 	int32_t hpos,vpos;
-	data16_t hsize,vsize;
-	data16_t palette;
-	data16_t linkno;
-	data16_t offset;
-	data16_t format;
+	uint16_t hsize,vsize;
+	uint16_t palette;
+	uint16_t linkno;
+	uint16_t offset;
+	uint16_t format;
 	int tile_index;
 	int num_cols,num_rows;
 	int dx,dy;
@@ -112,8 +112,8 @@ draw_spriteC355( int page, struct mame_bitmap *bitmap, const struct rectangle *c
 	uint32_t zoomx, zoomy;
 	int tile_screen_width;
 	int tile_screen_height;
-	const data16_t *spriteformat16 = &spriteram16[0x4000/2];
-	const data16_t *spritetile16 = &spriteram16[0x8000/2];
+	const uint16_t *spriteformat16 = &spriteram16[0x4000/2];
+	const uint16_t *spritetile16 = &spriteram16[0x8000/2];
 	int color;
 
 	struct rectangle clip;
@@ -196,7 +196,7 @@ draw_spriteC355( int page, struct mame_bitmap *bitmap, const struct rectangle *c
 		{
 			int dh = mSpritePos[1];
 			int dv = mSpritePos[0];
-			const data16_t *pWinAttr = &spriteram16[0x2400/2+((palette>>8)&0xf)*4];
+			const uint16_t *pWinAttr = &spriteram16[0x2400/2+((palette>>8)&0xf)*4];
 
 			dh &= 0x1ff; if( dh&0x100 ) dh |= ~0x1ff;
 			dv &= 0x1ff; if( dv&0x100 ) dv |= ~0x1ff;
@@ -335,11 +335,11 @@ DrawObjectList(
 		struct mame_bitmap *bitmap,
 		const struct rectangle *cliprect,
 		int pri,
-		const data16_t *pSpriteList16,
-		const data16_t *pSpriteTable,
+		const uint16_t *pSpriteList16,
+		const uint16_t *pSpriteTable,
 		int n )
 {
-	data16_t which;
+	uint16_t which;
 	int i;
 	int count = 0;
 	/* count the sprites */
@@ -376,7 +376,7 @@ READ16_HANDLER( namco_obj16_r )
 
 WRITE32_HANDLER( namco_obj32_w )
 {
-	data32_t v;
+	uint32_t v;
 	offset *= 2;
 	v = (spriteram16[offset]<<16)|spriteram16[offset+1];
 	COMBINE_DATA( &v );
@@ -398,9 +398,9 @@ READ32_HANDLER( namco_obj32_r )
  *	Namco NB2 - The Outfoxies, Mach Breakers
  *	Namco System 2 - Metal Hawk, Lucky and Wild
  */
-static data16_t *rozbank16;
-static data16_t *rozvideoram16;
-static data16_t *rozcontrol16;
+static uint16_t *rozbank16;
+static uint16_t *rozvideoram16;
+static uint16_t *rozcontrol16;
 static int mRozGfxBank;
 static int mRozMaskRegion;
 static struct tilemap *mRozTilemap[2];
@@ -413,7 +413,7 @@ static int mRozPage[2];		/* base addr for tilemap */
 static void
 roz_get_info( int tile_index,int which )
 {
-	data16_t tile;
+	uint16_t tile;
 	int bank;
 	int mangle;
 	/* when size control is understood, we can simulate it by masking column and row, which will
@@ -544,8 +544,8 @@ void namco_roz_draw(
 	int which;
 	for( which=0; which<2; which++ )
 	{
-		const data16_t *pSource = &rozcontrol16[which*8];
-		data16_t attrs = pSource[1];
+		const uint16_t *pSource = &rozcontrol16[which*8];
+		uint16_t attrs = pSource[1];
 		if( (attrs&0x8000)==0 )
 		{ /* layer is enabled */
 			int color = attrs&0xf;
@@ -581,7 +581,7 @@ void namco_roz_draw(
 				int bDirty;
 				uint32_t startx,starty;
 				int incxx,incxy,incyx,incyy;
-				data16_t temp;
+				uint16_t temp;
 
 				temp = pSource[2];
 				if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
@@ -647,7 +647,7 @@ READ16_HANDLER( namco_rozbank16_r )
 
 WRITE16_HANDLER( namco_rozbank16_w )
 {
-	data16_t old_data;
+	uint16_t old_data;
 
 	old_data = rozbank16[offset];
 	COMBINE_DATA( &rozbank16[offset] );
@@ -658,7 +658,7 @@ WRITE16_HANDLER( namco_rozbank16_w )
 	}
 }
 
-static void writerozvideo( int offset, data16_t data )
+static void writerozvideo( int offset, uint16_t data )
 {
 	int i;
 	if( rozvideoram16[offset]!=data )
@@ -681,7 +681,7 @@ READ16_HANDLER( namco_rozvideoram16_r )
 
 WRITE16_HANDLER( namco_rozvideoram16_w )
 {
-	data16_t v;
+	uint16_t v;
 
 	v = rozvideoram16[offset];
 	COMBINE_DATA( &v );
@@ -696,7 +696,7 @@ READ32_HANDLER( namco_rozcontrol32_r )
 
 WRITE32_HANDLER( namco_rozcontrol32_w )
 {
-	data32_t v;
+	uint32_t v;
 	offset *=2;
 	v = (rozcontrol16[offset]<<16)|rozcontrol16[offset+1];
 	COMBINE_DATA(&v);
@@ -712,7 +712,7 @@ READ32_HANDLER( namco_rozbank32_r )
 
 WRITE32_HANDLER( namco_rozbank32_w )
 {
-	data32_t v;
+	uint32_t v;
 	offset *=2;
 	v = (rozbank16[offset]<<16)|rozbank16[offset+1];
 	COMBINE_DATA(&v);
@@ -728,7 +728,7 @@ READ32_HANDLER( namco_rozvideoram32_r )
 
 WRITE32_HANDLER( namco_rozvideoram32_w )
 {
-	data32_t v;
+	uint32_t v;
 	offset *= 2;
 	v = (rozvideoram16[offset]<<16)|rozvideoram16[offset+1];
 	COMBINE_DATA( &v );
@@ -771,7 +771,7 @@ WRITE32_HANDLER( namco_rozvideoram32_w )
  *		0x1fe00..0x1ffdf	---- --xx xxxx xxxx		zoomx
  *		0x1fffd				always 0xffff 0xffff?
  */
-static data16_t *mpRoadRAM; /* at 0x880000 in Final Lap; at 0xa00000 in Lucky&Wild */
+static uint16_t *mpRoadRAM; /* at 0x880000 in Final Lap; at 0xa00000 in Lucky&Wild */
 static unsigned char *mpRoadDirty;
 static int mbRoadSomethingIsDirty;
 static int mRoadGfxBank;
@@ -814,7 +814,7 @@ static struct GfxLayout RoadTileLayout =
 
 void get_road_info( int tile_index )
 {
-	data16_t data = mpRoadRAM[tile_index];
+	uint16_t data = mpRoadRAM[tile_index];
 	/* ------xx xxxxxxxx tile number
 	 * xxxxxx-- -------- palette select
 	 */

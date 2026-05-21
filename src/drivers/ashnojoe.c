@@ -66,8 +66,8 @@ Coin B is not used
 
 #include "driver.h"
 
-extern data16_t *ashnojoetileram16, *ashnojoetileram16_2, *ashnojoetileram16_3, *ashnojoetileram16_4, *ashnojoetileram16_5, *ashnojoetileram16_6, *ashnojoetileram16_7;
-extern data16_t *ashnojoe_tilemap_reg;
+extern uint16_t *ashnojoetileram16, *ashnojoetileram16_2, *ashnojoetileram16_3, *ashnojoetileram16_4, *ashnojoetileram16_5, *ashnojoetileram16_6, *ashnojoetileram16_7;
+extern uint16_t *ashnojoe_tilemap_reg;
 
 extern WRITE16_HANDLER( ashnojoe_tileram_w );
 extern WRITE16_HANDLER( ashnojoe_tileram2_w );

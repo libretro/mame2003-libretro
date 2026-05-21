@@ -69,7 +69,7 @@ BS07    4464 4464     BS-64           BS-200
 #include "cpu/z80/z80.h"
 
 /* public functions from vidhrdw/djboy.h */
-extern void djboy_set_videoreg( data8_t data );
+extern void djboy_set_videoreg( uint8_t data );
 extern WRITE_HANDLER( djboy_scrollx_w );
 extern WRITE_HANDLER( djboy_scrolly_w );
 extern WRITE_HANDLER( djboy_videoram_w );
@@ -77,12 +77,12 @@ extern WRITE_HANDLER( djboy_paletteram_w );
 extern VIDEO_START( djboy );
 extern VIDEO_UPDATE( djboy );
 
-static data8_t *sharedram;
+static uint8_t *sharedram;
 static READ_HANDLER( sharedram_r )	{ return sharedram[offset]; }
 static WRITE_HANDLER( sharedram_w )	{ sharedram[offset] = data; }
 
 static int prot_offs;
-static data8_t prot_ram[0x80];
+static uint8_t prot_ram[0x80];
 
 /******************************************************************************/
 
@@ -112,7 +112,7 @@ static WRITE_HANDLER( cpu1_bankswitch_w )
 
 static WRITE_HANDLER( cpu2_bankswitch_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU2);
+	uint8_t *RAM = memory_region(REGION_CPU2);
 	
 	djboy_set_videoreg( data );
 
@@ -207,7 +207,7 @@ static WRITE_HANDLER( cpu2_data_w )
 
 static READ_HANDLER( cpu2_data_r )
 {
-	data8_t result = 0x00;
+	uint8_t result = 0x00;
 	static int which;
 
 	switch( activecpu_get_pc() )

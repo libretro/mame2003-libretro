@@ -6,7 +6,7 @@
 
 **************************************************************************/
 
-extern data32_t *voodoo_regs;
+extern uint32_t *voodoo_regs;
 
 VIDEO_START( voodoo_1x4mb );
 VIDEO_START( voodoo_2x4mb );
@@ -15,7 +15,7 @@ VIDEO_START( voodoo2_2x4mb );
 VIDEO_STOP( voodoo );
 VIDEO_UPDATE( voodoo );
 
-void voodoo_set_init_enable(data32_t newval);
+void voodoo_set_init_enable(uint32_t newval);
 
 void voodoo_enable_direct_fb(int enable);
 

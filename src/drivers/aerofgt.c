@@ -52,9 +52,9 @@ register 08 could be screen height / 2 (vblank start?)
 #include "cpu/z80/z80.h"
 
 
-extern data16_t *aerofgt_rasterram;
-extern data16_t *aerofgt_bg1videoram,*aerofgt_bg2videoram;
-extern data16_t *aerofgt_spriteram1,*aerofgt_spriteram2,*aerofgt_spriteram3;
+extern uint16_t *aerofgt_rasterram;
+extern uint16_t *aerofgt_bg1videoram,*aerofgt_bg2videoram;
+extern uint16_t *aerofgt_spriteram1,*aerofgt_spriteram2,*aerofgt_spriteram3;
 extern size_t aerofgt_spriteram1_size,aerofgt_spriteram2_size,aerofgt_spriteram3_size;
 
 WRITE16_HANDLER( aerofgt_bg1videoram_w );
@@ -116,7 +116,7 @@ static WRITE_HANDLER( pending_command_clear_w )
 
 static WRITE_HANDLER( aerofgt_sh_bankswitch_w )
 {
-	data8_t *rom = memory_region(REGION_CPU2) + 0x10000;
+	uint8_t *rom = memory_region(REGION_CPU2) + 0x10000;
 
 	cpu_setbank(1,rom + (data & 0x03) * 0x8000);
 }

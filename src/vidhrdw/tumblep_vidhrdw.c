@@ -16,8 +16,8 @@ to switch between 8*8 tiles and 16*16 tiles.
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-static data16_t tumblep_control_0[8];
-data16_t *tumblep_pf1_data,*tumblep_pf2_data;
+static uint16_t tumblep_control_0[8];
+uint16_t *tumblep_pf1_data,*tumblep_pf2_data;
 static struct tilemap *pf1_tilemap,*pf1_alt_tilemap,*pf2_tilemap;
 static int flipscreen;
 
@@ -213,7 +213,7 @@ static void fncywld_drawsprites(struct mame_bitmap *bitmap,const struct rectangl
 
 WRITE16_HANDLER( tumblep_pf1_data_w )
 {
-	data16_t oldword=tumblep_pf1_data[offset];
+	uint16_t oldword=tumblep_pf1_data[offset];
 	COMBINE_DATA(&tumblep_pf1_data[offset]);
 	if (oldword!=tumblep_pf1_data[offset]) {
 		tilemap_mark_tile_dirty(pf1_tilemap,offset);
@@ -224,7 +224,7 @@ WRITE16_HANDLER( tumblep_pf1_data_w )
 
 WRITE16_HANDLER( tumblep_pf2_data_w )
 {
-	data16_t oldword=tumblep_pf2_data[offset];
+	uint16_t oldword=tumblep_pf2_data[offset];
 	COMBINE_DATA(&tumblep_pf2_data[offset]);
 	if (oldword!=tumblep_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset);
@@ -232,7 +232,7 @@ WRITE16_HANDLER( tumblep_pf2_data_w )
 
 WRITE16_HANDLER( fncywld_pf1_data_w )
 {
-	data16_t oldword=tumblep_pf1_data[offset];
+	uint16_t oldword=tumblep_pf1_data[offset];
 	COMBINE_DATA(&tumblep_pf1_data[offset]);
 	if (oldword!=tumblep_pf1_data[offset]) {
 		tilemap_mark_tile_dirty(pf1_tilemap,offset/2);
@@ -243,7 +243,7 @@ WRITE16_HANDLER( fncywld_pf1_data_w )
 
 WRITE16_HANDLER( fncywld_pf2_data_w )
 {
-	data16_t oldword=tumblep_pf2_data[offset];
+	uint16_t oldword=tumblep_pf2_data[offset];
 	COMBINE_DATA(&tumblep_pf2_data[offset]);
 	if (oldword!=tumblep_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset/2);
@@ -262,7 +262,7 @@ static uint32_t tumblep_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
 }
 
-static INLINE void get_bg_tile_info(int tile_index,int gfx_bank,data16_t *gfx_base)
+static INLINE void get_bg_tile_info(int tile_index,int gfx_bank,uint16_t *gfx_base)
 {
 	int data = gfx_base[tile_index];
 
@@ -287,7 +287,7 @@ static void get_fg_tile_info(int tile_index)
 			0)
 }
 
-static INLINE void get_fncywld_bg_tile_info(int tile_index,int gfx_bank,data16_t *gfx_base)
+static INLINE void get_fncywld_bg_tile_info(int tile_index,int gfx_bank,uint16_t *gfx_base)
 {
 	int data = gfx_base[tile_index*2];
 	int attr = gfx_base[tile_index*2+1];

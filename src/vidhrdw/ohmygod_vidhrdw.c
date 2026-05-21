@@ -2,7 +2,7 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t *ohmygod_videoram;
+uint16_t *ohmygod_videoram;
 
 static int spritebank;
 static struct tilemap *bg_tilemap;
@@ -68,14 +68,14 @@ WRITE16_HANDLER( ohmygod_spritebank_w )
 
 WRITE16_HANDLER( ohmygod_scrollx_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(bg_tilemap,0,scroll - 0x81ec);
 }
 
 WRITE16_HANDLER( ohmygod_scrolly_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(bg_tilemap,0,scroll - 0x81ef);
 }
@@ -94,7 +94,7 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 	for (offs = 0;offs < spriteram_size/4;offs += 4)
 	{
 		int sx,sy,code,color,flipx;
-		data16_t *sr;
+		uint16_t *sr;
 
 		sr = spritebank ? (spriteram16+spriteram_size/4) : spriteram16;
 

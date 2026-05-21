@@ -173,17 +173,17 @@ static uint8_t blitter_int;
 static uint8_t tms34061_int;
 static uint8_t periodic_int;
 
-static data8_t sound_data;
+static uint8_t sound_data;
 
-static data8_t pia_porta_data;
-static data8_t pia_portb_data;
+static uint8_t pia_porta_data;
+static uint8_t pia_portb_data;
 
-static data8_t *via6522;
-static data16_t via6522_timer_count[2];
+static uint8_t *via6522;
+static uint16_t via6522_timer_count[2];
 static void *via6522_timer[2];
-static data8_t via6522_int_state;
+static uint8_t via6522_int_state;
 
-static data8_t *main_ram;
+static uint8_t *main_ram;
 static size_t main_ram_size;
 
 
@@ -344,7 +344,7 @@ static WRITE_HANDLER( rimrockn_bank_w )
 
 static READ_HANDLER( special_port0_r )
 {
-	data8_t result = readinputport(0);
+	uint8_t result = readinputport(0);
 	result = (result & 0xfe) | (pia_portb_data & 0x01);
 	return result;
 }
@@ -727,11 +727,11 @@ MEMORY_END
 
 static MEMORY_WRITE16_START( ninclown_writemem )
 	{ 0x000000, 0x00007f, MWA16_RAM },
-	{ 0x000080, 0x003fff, MWA16_RAM, (data16_t **)&main_ram, &main_ram_size },
+	{ 0x000080, 0x003fff, MWA16_RAM, (uint16_t **)&main_ram, &main_ram_size },
 	{ 0x004000, 0x07ffff, MWA16_ROM },
 	{ 0x100080, 0x100081, sound_data16_w },
-	{ 0x100100, 0x100101, grom_bank16_w, (data16_t **)&itech8_grom_bank },
-	{ 0x100180, 0x100181, display_page16_w, (data16_t **)&itech8_display_page },
+	{ 0x100100, 0x100101, grom_bank16_w, (uint16_t **)&itech8_grom_bank },
+	{ 0x100180, 0x100181, display_page16_w, (uint16_t **)&itech8_display_page },
 	{ 0x100240, 0x100241, tms34061_latch16_w },
 	{ 0x100280, 0x100281, MWA16_NOP },
 	{ 0x100300, 0x10031f, blitter16_w },

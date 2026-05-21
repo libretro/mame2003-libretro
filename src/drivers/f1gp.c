@@ -25,7 +25,7 @@ f1gp2:
 
 
 
-static data16_t *sharedram;
+static uint16_t *sharedram;
 
 static READ16_HANDLER( sharedram_r )
 {
@@ -39,7 +39,7 @@ static WRITE16_HANDLER( sharedram_w )
 
 static READ16_HANDLER( extrarom_r )
 {
-	data8_t *rom = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_USER1);
 
 	offset *= 2;
 
@@ -48,7 +48,7 @@ static READ16_HANDLER( extrarom_r )
 
 static READ16_HANDLER( extrarom2_r )
 {
-	data8_t *rom = memory_region(REGION_USER2);
+	uint8_t *rom = memory_region(REGION_USER2);
 
 	offset *= 2;
 
@@ -57,7 +57,7 @@ static READ16_HANDLER( extrarom2_r )
 
 static WRITE_HANDLER( f1gp_sh_bankswitch_w )
 {
-	data8_t *rom = memory_region(REGION_CPU3) + 0x10000;
+	uint8_t *rom = memory_region(REGION_CPU3) + 0x10000;
 
 	cpu_setbank(1,rom + (data & 0x01) * 0x8000);
 }

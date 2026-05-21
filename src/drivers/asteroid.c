@@ -187,7 +187,7 @@ static WRITE_HANDLER( llander_led_w )
  *
  *************************************/
 
-static data8_t *llander_zeropage;
+static uint8_t *llander_zeropage;
 
 static READ_HANDLER( llander_zeropage_r )
 {

@@ -39,8 +39,8 @@ static struct tilemap *tilemap_0a, *tilemap_0b, *tilemap_1;
 
 /* Variables & functions needed by drivers: */
 
-data8_t *clshroad_vram_0, *clshroad_vram_1;
-data8_t *clshroad_vregs;
+uint8_t *clshroad_vram_0, *clshroad_vram_1;
+uint8_t *clshroad_vregs;
 
 WRITE_HANDLER( clshroad_vram_0_w );
 WRITE_HANDLER( clshroad_vram_1_w );
@@ -130,7 +130,7 @@ Offset:
 
 static void get_tile_info_0a( int tile_index )
 {
-	data8_t code;
+	uint8_t code;
 	tile_index = (tile_index & 0x1f) + (tile_index & ~0x1f)*2;
 	code	=	clshroad_vram_0[ tile_index * 2 + 0x40 ];
 //	color	=	clshroad_vram_0[ tile_index * 2 + 0x41 ];
@@ -143,7 +143,7 @@ static void get_tile_info_0a( int tile_index )
 
 static void get_tile_info_0b( int tile_index )
 {
-	data8_t code;
+	uint8_t code;
 	tile_index = (tile_index & 0x1f) + (tile_index & ~0x1f)*2;
 	code	=	clshroad_vram_0[ tile_index * 2 + 0x00 ];
 //	color	=	clshroad_vram_0[ tile_index * 2 + 0x01 ];
@@ -203,8 +203,8 @@ static uint32_t tilemap_scan_rows_extra( uint32_t col, uint32_t row, uint32_t nu
 
 static void get_tile_info_fb1( int tile_index )
 {
-	data8_t code	=	clshroad_vram_1[ tile_index + 0x000 ];
-	data8_t color	=	clshroad_vram_1[ tile_index + 0x400 ];
+	uint8_t code	=	clshroad_vram_1[ tile_index + 0x000 ];
+	uint8_t color	=	clshroad_vram_1[ tile_index + 0x400 ];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -214,8 +214,8 @@ static void get_tile_info_fb1( int tile_index )
 
 static void get_tile_info_1( int tile_index )
 {
-	data8_t code	=	clshroad_vram_1[ tile_index + 0x000 ];
-	data8_t color	=	clshroad_vram_1[ tile_index + 0x400 ];
+	uint8_t code	=	clshroad_vram_1[ tile_index + 0x000 ];
+	uint8_t color	=	clshroad_vram_1[ tile_index + 0x400 ];
 	SET_TILE_INFO(
 			2,
 			code + ((color & 0xf0)<<4),

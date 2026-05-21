@@ -1,6 +1,6 @@
 #include "driver.h"
 
-data8_t *usg_videoram,*usg_charram;
+uint8_t *usg_videoram,*usg_charram;
 
 
 struct tilemap *usg_tilemap;

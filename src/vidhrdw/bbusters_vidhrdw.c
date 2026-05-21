@@ -25,28 +25,28 @@
 #include "vidhrdw/generic.h"
 
 static struct tilemap *fix_tilemap,*pf1_tilemap,*pf2_tilemap;
-static const data8_t *scale_table_ptr;
-static data8_t scale_line_count;
+static const uint8_t *scale_table_ptr;
+static uint8_t scale_line_count;
 
-data16_t *bbuster_pf1_data,*bbuster_pf2_data,*bbuster_pf1_scroll_data,*bbuster_pf2_scroll_data;
+uint16_t *bbuster_pf1_data,*bbuster_pf2_data,*bbuster_pf1_scroll_data,*bbuster_pf2_scroll_data;
 
 /******************************************************************************/
 
 static void get_bbuster_tile_info( int tile_index )
 {
-	data16_t tile=videoram16[tile_index];
+	uint16_t tile=videoram16[tile_index];
 	SET_TILE_INFO(0,tile&0xfff,tile>>12,0)
 }
 
 static void get_pf1_tile_info( int tile_index )
 {
-	data16_t tile=bbuster_pf1_data[tile_index];
+	uint16_t tile=bbuster_pf1_data[tile_index];
 	SET_TILE_INFO(3,tile&0xfff,tile>>12,0)
 }
 
 static void get_pf2_tile_info( int tile_index )
 {
-	data16_t tile=bbuster_pf2_data[tile_index];
+	uint16_t tile=bbuster_pf2_data[tile_index];
 	SET_TILE_INFO(4,tile&0xfff,tile>>12,0)
 }
 
@@ -117,7 +117,7 @@ VIDEO_START( mechatt )
 		else if (dy&0x40) code+=32;				\
 		else if (dx&0x40) code+=16
 
-static INLINE const data8_t *get_source_ptr(unsigned int sprite, int dx, int dy, int bank, int block)
+static INLINE const uint8_t *get_source_ptr(unsigned int sprite, int dx, int dy, int bank, int block)
 {
 	const struct GfxElement *gfx=Machine->gfx[bank];
 	int source_base,code=0;
@@ -161,7 +161,7 @@ static void bbusters_draw_block(struct mame_bitmap *dest,int x,int y,int size,in
 {
 	const pen_t *pal = &Machine->gfx[bank]->colortable[Machine->gfx[bank]->color_granularity * (color % Machine->gfx[bank]->total_colors)];
 	unsigned int xinc=(scale_line_count * 0x10000 ) / size;
-	data8_t pixel;
+	uint8_t pixel;
 	int x_index;
 	int dy=y;
 	int sx,ex=scale_line_count;
@@ -170,8 +170,8 @@ static void bbusters_draw_block(struct mame_bitmap *dest,int x,int y,int size,in
 
 		if (dy>=16 && dy<240) {
 			uint16_t *destline = (uint16_t *)dest->line[dy];
-			data8_t srcline=*scale_table_ptr;
-			const data8_t *srcptr=0;
+			uint8_t srcline=*scale_table_ptr;
+			const uint8_t *srcptr=0;
 
 			if (!flipy)
 				srcline=size-srcline-1;
@@ -202,9 +202,9 @@ static void bbusters_draw_block(struct mame_bitmap *dest,int x,int y,int size,in
 	}
 }
 
-static void draw_sprites(struct mame_bitmap *bitmap, const data16_t *source, int bank, int colval, int colmask)
+static void draw_sprites(struct mame_bitmap *bitmap, const uint16_t *source, int bank, int colval, int colmask)
 {
-	const data8_t *scale_table=memory_region(REGION_USER1);
+	const uint8_t *scale_table=memory_region(REGION_USER1);
 	int offs;
 
 	for (offs = 0;offs <0x800 ;offs += 4) {

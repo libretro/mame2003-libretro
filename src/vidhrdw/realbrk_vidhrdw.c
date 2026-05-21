@@ -23,7 +23,7 @@
 #include "vidhrdw/generic.h"
 #include "realbrk.h"
 
-data16_t *realbrk_vram_0, *realbrk_vram_1, *realbrk_vram_2, *realbrk_vregs;
+uint16_t *realbrk_vram_0, *realbrk_vram_1, *realbrk_vram_2, *realbrk_vregs;
 
 static int disable_video;
 
@@ -71,8 +71,8 @@ static struct tilemap	*tilemap_0,*tilemap_1,	// Backgrounds
 
 static void get_tile_info_0(int tile_index)
 {
-	data16_t attr = realbrk_vram_0[tile_index * 2 + 0];
-	data16_t code = realbrk_vram_0[tile_index * 2 + 1];
+	uint16_t attr = realbrk_vram_0[tile_index * 2 + 0];
+	uint16_t code = realbrk_vram_0[tile_index * 2 + 1];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -82,8 +82,8 @@ static void get_tile_info_0(int tile_index)
 
 static void get_tile_info_1(int tile_index)
 {
-	data16_t attr = realbrk_vram_1[tile_index * 2 + 0];
-	data16_t code = realbrk_vram_1[tile_index * 2 + 1];
+	uint16_t attr = realbrk_vram_1[tile_index * 2 + 0];
+	uint16_t code = realbrk_vram_1[tile_index * 2 + 1];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -93,15 +93,15 @@ static void get_tile_info_1(int tile_index)
 
 WRITE16_HANDLER( realbrk_vram_0_w )
 {
-	data16_t old_data	=	realbrk_vram_0[offset];
-	data16_t new_data	=	COMBINE_DATA(&realbrk_vram_0[offset]);
+	uint16_t old_data	=	realbrk_vram_0[offset];
+	uint16_t new_data	=	COMBINE_DATA(&realbrk_vram_0[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_0,offset/2);
 }
 
 WRITE16_HANDLER( realbrk_vram_1_w )
 {
-	data16_t old_data	=	realbrk_vram_1[offset];
-	data16_t new_data	=	COMBINE_DATA(&realbrk_vram_1[offset]);
+	uint16_t old_data	=	realbrk_vram_1[offset];
+	uint16_t new_data	=	COMBINE_DATA(&realbrk_vram_1[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_1,offset/2);
 }
 
@@ -121,7 +121,7 @@ WRITE16_HANDLER( realbrk_vram_1_w )
 
 static void get_tile_info_2(int tile_index)
 {
-	data16_t code = realbrk_vram_2[tile_index];
+	uint16_t code = realbrk_vram_2[tile_index];
 	SET_TILE_INFO(
 			1,
 			code & 0x0fff,
@@ -131,8 +131,8 @@ static void get_tile_info_2(int tile_index)
 
 WRITE16_HANDLER( realbrk_vram_2_w )
 {
-	data16_t old_data	=	realbrk_vram_2[offset];
-	data16_t new_data	=	COMBINE_DATA(&realbrk_vram_2[offset]);
+	uint16_t old_data	=	realbrk_vram_2[offset];
+	uint16_t new_data	=	COMBINE_DATA(&realbrk_vram_2[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_2,offset);
 }
 
@@ -233,7 +233,7 @@ static void realbrk_draw_sprites(struct mame_bitmap *bitmap,const struct rectang
 		int x, xdim, xnum, xstart, xend, xinc;
 		int y, ydim, ynum, ystart, yend, yinc;
 
-		data16_t *s;
+		uint16_t *s;
 
 		if (spriteram16[offs] & 0x8000)	continue;
 
@@ -323,8 +323,8 @@ static void realbrk_draw_sprites(struct mame_bitmap *bitmap,const struct rectang
 
 WRITE16_HANDLER( realbrk_vregs_w )
 {
-	data16_t old_data = realbrk_vregs[offset];
-	data16_t new_data = COMBINE_DATA(&realbrk_vregs[offset]);
+	uint16_t old_data = realbrk_vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&realbrk_vregs[offset]);
 	if (new_data != old_data)
 	{
 		if (offset == 0xa/2)

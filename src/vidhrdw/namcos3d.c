@@ -58,11 +58,11 @@ static int mbShade;
 
 int32_t *namco_zbuffer;
 
-static data16_t *mpTextureTileMap16;
-static data8_t *mpTextureTileMapAttr;
-static data8_t *mpTextureTileData;
+static uint16_t *mpTextureTileMap16;
+static uint8_t *mpTextureTileMapAttr;
+static uint8_t *mpTextureTileData;
 
-static data8_t mXYAttrToPixel[16][16][16];
+static uint8_t mXYAttrToPixel[16][16][16];
 
 static void
 InitXYAttrToPixel( void )
@@ -93,8 +93,8 @@ namcos3d_Init( int width, int height, void *pTilemapROM, void *pTextureROM )
 		if( pTilemapROM && pTextureROM )
 		{ /* following setup is Namco System 22 specific */
 			int i;
-			const data8_t *pSource = 0x200000 + (data8_t *)pTilemapROM;
-			data8_t *pDest = auto_malloc(0x80000*2); /* TBA: recycle pTilemapROM */
+			const uint8_t *pSource = 0x200000 + (uint8_t *)pTilemapROM;
+			uint8_t *pDest = auto_malloc(0x80000*2); /* TBA: recycle pTilemapROM */
 			if( pDest )
 			{
 				InitXYAttrToPixel();
@@ -112,7 +112,7 @@ namcos3d_Init( int width, int height, void *pTilemapROM, void *pTextureROM )
 					unsigned i;
 					for( i=0; i<0x200000/2; i++ )
 					{
-						data16_t data = mpTextureTileMap16[i];
+						uint16_t data = mpTextureTileMap16[i];
 						mpTextureTileMap16[i] = (data>>8)|(data<<8);
 					}
 				}

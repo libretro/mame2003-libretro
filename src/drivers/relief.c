@@ -442,7 +442,7 @@ ROM_END
  *
  *************************************/
 
-static void init_common(const data16_t *def_eeprom)
+static void init_common(const uint16_t *def_eeprom)
 {
 	uint8_t *sound_base = memory_region(REGION_SOUND1);
 
@@ -472,7 +472,7 @@ static void init_common(const data16_t *def_eeprom)
 
 static DRIVER_INIT( relief )
 {
-	static const data16_t default_eeprom[] =
+	static const uint16_t default_eeprom[] =
 	{
 		0x0001,0x0166,0x0128,0x01E6,0x0100,0x012C,0x0300,0x0144,
 		0x0700,0x01C0,0x2F00,0x01EC,0x0B00,0x0148,0x0140,0x0100,
@@ -488,7 +488,7 @@ static DRIVER_INIT( relief )
 
 static DRIVER_INIT( relief2 )
 {
-	static const data16_t default_eeprom[] =
+	static const uint16_t default_eeprom[] =
 	{
 		0x0001,0x01FD,0x019F,0x015E,0x01FF,0x019E,0x03FF,0x015F,
 		0x07FF,0x01FD,0x12FF,0x01FC,0x01FB,0x07FF,0x01F7,0x01FF,

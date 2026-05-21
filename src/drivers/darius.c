@@ -148,12 +148,12 @@ VIDEO_UPDATE( darius );
 static uint16_t cpua_ctrl;
 static uint16_t coin_word=0;
 
-extern data16_t *darius_fg_ram;
+extern uint16_t *darius_fg_ram;
 READ16_HANDLER ( darius_fg_layer_r );
 WRITE16_HANDLER( darius_fg_layer_w );
 
 static size_t sharedram_size;
-static data16_t *sharedram;
+static uint16_t *sharedram;
 
 
 static READ16_HANDLER( sharedram_r )

@@ -28,12 +28,12 @@ static uint8_t crc16_msb;
 static uint8_t tape_crc16_lsb[256];
 static uint8_t tape_crc16_msb[256];
 
-static data8_t (*decocass_dongle_r)(offs_t offset);
-static void (*decocass_dongle_w)(offs_t offset, data8_t data);
+static uint8_t (*decocass_dongle_r)(offs_t offset);
+static void (*decocass_dongle_w)(offs_t offset, uint8_t data);
 
-static data8_t decocass_reset;
-static data8_t i8041_p1;
-static data8_t i8041_p2;
+static uint8_t decocass_reset;
+static uint8_t i8041_p1;
+static uint8_t i8041_p2;
 
 /* dongle type #1: jumpers C and D assignments */
 #define MAKE_MAP(m0,m1,m2,m3,m4,m5,m6,m7)		\
@@ -80,10 +80,10 @@ static int type4_latch; 		/* latched enable PROM (1100xxxx written to E5x1) */
 static int type5_latch; 		/* latched enable PROM (1100xxxx written to E5x1) */
 
 /* four inputs from the quadrature decoder (H1, V1, H2, V2) */
-static data8_t decocass_quadrature_decoder[4];
+static uint8_t decocass_quadrature_decoder[4];
 
 /* sound latches, ACK status bits and NMI timer */
-static data8_t decocass_sound_ack;
+static uint8_t decocass_sound_ack;
 static void *decocass_sound_timer;
 
 WRITE_HANDLER( decocass_coin_counter_w )
@@ -102,14 +102,14 @@ WRITE_HANDLER( decocass_sound_command_w )
 
 READ_HANDLER( decocass_sound_data_r )
 {
-	data8_t data = soundlatch2_r(0);
+	uint8_t data = soundlatch2_r(0);
 	LOG(2,("CPU #%d sound data    <- $%02x\n", cpu_getactivecpu(), data));
 	return data;
 }
 
 READ_HANDLER( decocass_sound_ack_r )
 {
-	data8_t data = decocass_sound_ack;	/* D6+D7 */
+	uint8_t data = decocass_sound_ack;	/* D6+D7 */
 	LOG(2,("CPU #%d sound ack     <- $%02x\n", cpu_getactivecpu(), data));
 	return data;
 }
@@ -123,7 +123,7 @@ WRITE_HANDLER( decocass_sound_data_w )
 
 READ_HANDLER( decocass_sound_command_r )
 {
-	data8_t data = soundlatch_r(0);
+	uint8_t data = soundlatch_r(0);
 	LOG(2,("CPU #%d sound command <- $%02x\n", cpu_getactivecpu(), data));
 	cpu_set_irq_line(1, M6502_IRQ_LINE, CLEAR_LINE);
 	decocass_sound_ack &= ~0x80;
@@ -143,7 +143,7 @@ WRITE_HANDLER( decocass_sound_nmi_enable_w )
 
 READ_HANDLER( decocass_sound_nmi_enable_r )
 {
-	data8_t data = 0xff;
+	uint8_t data = 0xff;
 	LOG(2,("CPU #%d sound NMI enb <- $%02x\n", cpu_getactivecpu(), data));
 	timer_adjust(decocass_sound_timer, TIME_IN_HZ(256 * 57 / 8 / 2), 0, TIME_IN_HZ(256 * 57 / 8 / 2));
 	return data;
@@ -151,7 +151,7 @@ READ_HANDLER( decocass_sound_nmi_enable_r )
 
 READ_HANDLER( decocass_sound_data_ack_reset_r )
 {
-	data8_t data = 0xff;
+	uint8_t data = 0xff;
 	LOG(2,("CPU #%d sound ack rst <- $%02x\n", cpu_getactivecpu(), data));
 	decocass_sound_ack &= ~0x40;
 	return data;
@@ -193,7 +193,7 @@ WRITE_HANDLER( decocass_adc_w )
  */
 READ_HANDLER( decocass_input_r )
 {
-	data8_t data = 0xff;
+	uint8_t data = 0xff;
 	switch (offset & 7)
 	{
 	case 0: case 1: case 2:
@@ -422,7 +422,7 @@ static void tape_update(void)
 		else
 		if (tape_byte < TAPE_BLOCK)
 		{
-			data8_t *ptr = memory_region(REGION_USER2) + tape_block * 256 + tape_byte - TAPE_HEADER;
+			uint8_t *ptr = memory_region(REGION_USER2) + tape_block * 256 + tape_byte - TAPE_HEADER;
 			rdata = (*ptr >> tape_bit) & 1;
 			if (tape_byte != last_byte)
 				LOG(4,("tape %5.4fs: DATA(%02x) $%02x\n", tape_time, tape_byte - TAPE_HEADER, *ptr));
@@ -506,7 +506,7 @@ static void tape_update(void)
 }
 
 #ifdef MAME_DEBUG
-static void decocass_fno(offs_t offset, data8_t data)
+static void decocass_fno(offs_t offset, uint8_t data)
 {
 		/* 8041ENA/ and is this a FNO write (function number)? */
 		if (0 == (i8041_p2 & 0x01))
@@ -551,8 +551,8 @@ static void decocass_fno(offs_t offset, data8_t data)
 
 READ_HANDLER( decocass_type1_r )
 {
-	static data8_t latch1;
-	data8_t data;
+	static uint8_t latch1;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -578,7 +578,7 @@ READ_HANDLER( decocass_type1_r )
 	else
 	{
 		offs_t promaddr;
-		data8_t save;
+		uint8_t save;
 		uint8_t *prom = memory_region(REGION_USER1);
 
 		if (firsttime)
@@ -636,7 +636,7 @@ READ_HANDLER( decocass_type1_r )
 
 READ_HANDLER( decocass_type1_map1_r )
 {
-	static data8_t map[] = {
+	static uint8_t map[] = {
 		0x01,0x34,0x03,0x36,0xa4,0x15,0xa6,0x17,
 		0x09,0x3c,0x0b,0x3e,0xac,0x1d,0xae,0x1f,
 		0x90,0x14,0x92,0x16,0x85,0x00,0x87,0x02,
@@ -670,7 +670,7 @@ READ_HANDLER( decocass_type1_map1_r )
 		0x75,0xe5,0x77,0xe7,0x60,0xd1,0x62,0xd3,
 		0x7d,0xed,0x7f,0xef,0x68,0xd9,0x6a,0xdb
 	};
-	data8_t save, data;
+	uint8_t save, data;
 
 	if (1 == (offset & 1))
 	{
@@ -709,7 +709,7 @@ READ_HANDLER( decocass_type1_map1_r )
 
 READ_HANDLER( decocass_type1_map2_r )
 {
-	static data8_t map[] = {
+	static uint8_t map[] = {
 /* 00 */0x06,0x1f,0x8f,0x0c,0x02,0x1b,0x8b,0x08,
 		0x1e,0x1d,0x8e,0x16,0x1a,0x19,0x8a,0x12,
 		0x95,0x17,0x94,0x05,0x91,0x13,0x90,0x01,
@@ -743,8 +743,8 @@ READ_HANDLER( decocass_type1_map2_r )
 		0xe5,0xfe,0x6f,0xfd,0xe1,0xfa,0x6b,0xf9,
 		0xe4,0xfc,0x6d,0xf6,0xe0,0xf8,0x69,0xf2
 	};
-	static data8_t latch2;
-	data8_t save, addr, data;
+	static uint8_t latch2;
+	uint8_t save, addr, data;
 
 	/* read from tape:
 	 *	7d 43 5d 4f 04 ae e3 59 57 cb d6 55 4d 15
@@ -795,7 +795,7 @@ READ_HANDLER( decocass_type1_map2_r )
 
 READ_HANDLER( decocass_type1_map3_r )
 {
-	static data8_t map[] = {
+	static uint8_t map[] = {
 /* 00 */0x03,0x36,0x01,0x34,0xa6,0x17,0xa4,0x15,
 		0x0b,0x3e,0x09,0x3c,0xae,0x1f,0xac,0x1d,
 		0x92,0x16,0x90,0x14,0x87,0x02,0x85,0x00,
@@ -829,8 +829,8 @@ READ_HANDLER( decocass_type1_map3_r )
 		0x77,0xe7,0x75,0xe5,0x62,0xd3,0x60,0xd1,
 		0x7f,0xef,0x7d,0xed,0x6a,0xdb,0x68,0xd9
 	};
-	static data8_t latch3;
-	data8_t save, addr, data;
+	static uint8_t latch3;
+	uint8_t save, addr, data;
 
 	/* read from tape:
 	 *	f6 5f e5 c5 17 23 62 40 67 51 c5 ee 85 23
@@ -891,13 +891,13 @@ READ_HANDLER( decocass_type1_map3_r )
  ***************************************************************************/
 READ_HANDLER( decocass_type2_r )
 {
-	data8_t data;
+	uint8_t data;
 
 	if (1 == type2_xx_latch)
 	{
 		if (1 == (offset & 1))
 		{
-			data8_t *prom = memory_region(REGION_USER1);
+			uint8_t *prom = memory_region(REGION_USER1);
 			data = prom[256 * type2_d2_latch + type2_promaddr];
 			LOG(3,("%9.7f 6502-PC: %04x decocass_type2_r(%02x): $%02x <- prom[%03x]\n", timer_get_time(), activecpu_get_previouspc(), offset, data, 256 * type2_d2_latch + type2_promaddr));
 		}
@@ -971,13 +971,13 @@ WRITE_HANDLER( decocass_type2_w )
  ***************************************************************************/
 READ_HANDLER( decocass_type3_r )
 {
-	data8_t data, save;
+	uint8_t data, save;
 
 	if (1 == (offset & 1))
 	{
 		if (1 == type3_pal_19)
 		{
-			data8_t *prom = memory_region(REGION_USER1);
+			uint8_t *prom = memory_region(REGION_USER1);
 			data = prom[type3_ctrs];
 			LOG(3,("%9.7f 6502-PC: %04x decocass_type3_r(%02x): $%02x <- prom[$%03x]\n", timer_get_time(), activecpu_get_previouspc(), offset, data, type3_ctrs));
 			if (++type3_ctrs == 4096)
@@ -1211,7 +1211,7 @@ WRITE_HANDLER( decocass_type3_w )
 
 READ_HANDLER( decocass_type4_r )
 {
-	data8_t data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -1294,7 +1294,7 @@ WRITE_HANDLER( decocass_type4_w )
 
 READ_HANDLER( decocass_type5_r )
 {
-	data8_t data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -1368,7 +1368,7 @@ WRITE_HANDLER( decocass_type5_w )
 
 READ_HANDLER( decocass_e5xx_r )
 {
-	data8_t data;
+	uint8_t data;
 
 	/* E5x2-E5x3 and mirrors */
 	if (2 == (offset & E5XX_MASK))
@@ -1868,7 +1868,7 @@ WRITE_HANDLER( i8041_p1_w )
 
 READ_HANDLER( i8041_p1_r )
 {
-	data8_t data = i8041_p1;
+	uint8_t data = i8041_p1;
 	static int i8041_p1_old;
 
 	if (data != i8041_p1_old)
@@ -1915,7 +1915,7 @@ WRITE_HANDLER( i8041_p2_w )
 
 READ_HANDLER( i8041_p2_r )
 {
-	data8_t data;
+	uint8_t data;
 	static int i8041_p2_old;
 
 	tape_update();

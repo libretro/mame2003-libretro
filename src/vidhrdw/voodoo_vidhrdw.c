@@ -81,14 +81,14 @@ static float *depth_lookup;
 static uint8_t *lod_lookup;
 
 /* register pointers */
-data32_t *voodoo_regs;
+uint32_t *voodoo_regs;
 static float *fvoodoo_regs;
 
 /* color DAC fake registers */
 static uint8_t dac_regs[8];
 static uint8_t dac_read;
 
-static data32_t init_enable;
+static uint32_t init_enable;
 
 /* When a driver composites on top of the readout (e.g. carnevil's gun
    crosshairs draw into the game bitmap after VIDEO_UPDATE), it must force the
@@ -813,7 +813,7 @@ VIDEO_UPDATE( voodoo )
  *
  *************************************/
 
-void voodoo_set_init_enable(data32_t newval)
+void voodoo_set_init_enable(uint32_t newval)
 {
 	init_enable = newval;
 }
@@ -1456,7 +1456,7 @@ WRITE32_HANDLER( voodoo2_regs_w )
 	else
 	{
 		offs_t addr = ((voodoo_regs[cmdFifoBaseAddr] & 0x3ff) << 12) + ((offset & 0xffff) * 4);
-		data32_t old_depth = voodoo_regs[cmdFifoDepth];
+		uint32_t old_depth = voodoo_regs[cmdFifoDepth];
 		
 		/* swizzling */
 		if (offset & 0x10000)
@@ -2356,7 +2356,7 @@ WRITE32_HANDLER( voodoo_regs_w )
 
 READ32_HANDLER( voodoo_regs_r )
 {
-	data32_t result;
+	uint32_t result;
 	
 	if ((offset & 0x800c0) == 0x80000 && (voodoo_regs[fbiInit3] & 1))
 		offset = register_alias_map[offset & 0x3f];
@@ -2431,7 +2431,7 @@ READ32_HANDLER( voodoo_regs_r )
  *
  *************************************/
 
-static void lfbwrite_0(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_0(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / (FRAMEBUF_WIDTH/2);
@@ -2444,7 +2444,7 @@ static void lfbwrite_0(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x + 1] = data >> 16;
 }
 
-static void lfbwrite_1(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_1(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / (FRAMEBUF_WIDTH/2);
@@ -2457,7 +2457,7 @@ static void lfbwrite_1(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x + 1] = ((data >> 15) & 0xffe0) | ((data >> 16) & 0x001f);
 }
 
-static void lfbwrite_2(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_2(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / (FRAMEBUF_WIDTH/2);
@@ -2470,21 +2470,11 @@ static void lfbwrite_2(offs_t offset, data32_t data, data32_t mem_mask)
 		buffer[y * FRAMEBUF_WIDTH + x + 1] = ((data >> 15) & 0xffe0) | ((data >> 16) & 0x001f);
 }
 
-static void lfbwrite_3(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_3(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_4(offs_t offset, data32_t data, data32_t mem_mask)
-{
-	uint16_t *buffer = *lfb_write_buffer;
-	int y = offset / FRAMEBUF_WIDTH;
-	int x = offset % FRAMEBUF_WIDTH;
-	if (lfb_flipy)
-		y = inverted_yorigin - y;
-	buffer[y * FRAMEBUF_WIDTH + x] = (((data >> 19) & 0x1f) << 11) | (((data >> 10) & 0x3f) << 5) | (((data >> 3) & 0x1f) << 0);
-}
-
-static void lfbwrite_5(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_4(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
@@ -2494,31 +2484,41 @@ static void lfbwrite_5(offs_t offset, data32_t data, data32_t mem_mask)
 	buffer[y * FRAMEBUF_WIDTH + x] = (((data >> 19) & 0x1f) << 11) | (((data >> 10) & 0x3f) << 5) | (((data >> 3) & 0x1f) << 0);
 }
 
-static void lfbwrite_6(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_5(offs_t offset, uint32_t data, uint32_t mem_mask)
+{
+	uint16_t *buffer = *lfb_write_buffer;
+	int y = offset / FRAMEBUF_WIDTH;
+	int x = offset % FRAMEBUF_WIDTH;
+	if (lfb_flipy)
+		y = inverted_yorigin - y;
+	buffer[y * FRAMEBUF_WIDTH + x] = (((data >> 19) & 0x1f) << 11) | (((data >> 10) & 0x3f) << 5) | (((data >> 3) & 0x1f) << 0);
+}
+
+static void lfbwrite_6(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_7(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_7(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_8(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_8(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_9(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_9(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_a(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_a(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_b(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_b(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 }
 
-static void lfbwrite_c(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_c(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
@@ -2531,7 +2531,7 @@ static void lfbwrite_c(offs_t offset, data32_t data, data32_t mem_mask)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = data >> 16;
 }
 
-static void lfbwrite_d(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_d(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
@@ -2544,7 +2544,7 @@ static void lfbwrite_d(offs_t offset, data32_t data, data32_t mem_mask)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = data >> 16;
 }
 
-static void lfbwrite_e(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_e(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
@@ -2557,7 +2557,7 @@ static void lfbwrite_e(offs_t offset, data32_t data, data32_t mem_mask)
 		depthbuf[y * FRAMEBUF_WIDTH + x] = data >> 16;
 }
 
-static void lfbwrite_f(offs_t offset, data32_t data, data32_t mem_mask)
+static void lfbwrite_f(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	int y = offset / (FRAMEBUF_WIDTH/2);
 	int x = (offset % (FRAMEBUF_WIDTH/2)) * 2;
@@ -2569,7 +2569,7 @@ static void lfbwrite_f(offs_t offset, data32_t data, data32_t mem_mask)
 		depthbuf[y * FRAMEBUF_WIDTH + x + 1] = ((data >> 15) & 0xffe0) | ((data >> 16) & 0x001f);
 }
 
-static void (*lfbwrite[16])(offs_t offset, data32_t data, data32_t mem_mask) =
+static void (*lfbwrite[16])(offs_t offset, uint32_t data, uint32_t mem_mask) =
 {
 	lfbwrite_0,	lfbwrite_1,	lfbwrite_2,	lfbwrite_3,	
 	lfbwrite_4,	lfbwrite_5,	lfbwrite_6,	lfbwrite_7,	

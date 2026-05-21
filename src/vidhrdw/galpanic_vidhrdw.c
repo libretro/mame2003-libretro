@@ -3,7 +3,7 @@
 
 
 
-data16_t *galpanic_bgvideoram,*galpanic_fgvideoram;
+uint16_t *galpanic_bgvideoram,*galpanic_fgvideoram;
 size_t galpanic_fgvideoram_size;
 
 

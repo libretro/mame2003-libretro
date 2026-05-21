@@ -6,10 +6,10 @@
 ***************************************************************************/
 
 /* defined in vihdrdw/fastfred.h */
-extern data8_t *fastfred_videoram;
-extern data8_t *fastfred_spriteram;
+extern uint8_t *fastfred_videoram;
+extern uint8_t *fastfred_spriteram;
 extern size_t fastfred_spriteram_size;
-extern data8_t *fastfred_attributesram;
+extern uint8_t *fastfred_attributesram;
 
 PALETTE_INIT( fastfred );
 VIDEO_START( fastfred );
@@ -24,7 +24,7 @@ WRITE_HANDLER( fastfred_flip_screen_x_w );
 WRITE_HANDLER( fastfred_flip_screen_y_w );
 VIDEO_UPDATE( fastfred );
 
-extern data8_t *imago_fg_videoram;
+extern uint8_t *imago_fg_videoram;
 VIDEO_START( imago );
 VIDEO_UPDATE( imago );
 WRITE_HANDLER( imago_fg_videoram_w );

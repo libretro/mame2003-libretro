@@ -10,11 +10,11 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t *tecmo16_videoram;
-data16_t *tecmo16_colorram;
-data16_t *tecmo16_videoram2;
-data16_t *tecmo16_colorram2;
-data16_t *tecmo16_charram;
+uint16_t *tecmo16_videoram;
+uint16_t *tecmo16_colorram;
+uint16_t *tecmo16_videoram2;
+uint16_t *tecmo16_colorram2;
+uint16_t *tecmo16_charram;
 
 static struct tilemap *fg_tilemap,*bg_tilemap,*tx_tilemap;
 
@@ -137,42 +137,42 @@ WRITE16_HANDLER( tecmo16_charram_w )
 
 WRITE16_HANDLER( tecmo16_scroll_x_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(fg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll_y_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(fg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll2_x_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(bg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll2_y_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(bg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll_char_x_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(tx_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll_char_y_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(tx_tilemap,0,scroll-16);
 }

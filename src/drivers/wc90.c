@@ -56,16 +56,16 @@ Press one of the start buttons to exit.
 #include "cpu/z80/z80.h"
 
 
-extern data8_t *wc90_fgvideoram,*wc90_bgvideoram,*wc90_txvideoram;
+extern uint8_t *wc90_fgvideoram,*wc90_bgvideoram,*wc90_txvideoram;
 
 
-extern data8_t *wc90_scroll0xlo, *wc90_scroll0xhi;
-extern data8_t *wc90_scroll1xlo, *wc90_scroll1xhi;
-extern data8_t *wc90_scroll2xlo, *wc90_scroll2xhi;
+extern uint8_t *wc90_scroll0xlo, *wc90_scroll0xhi;
+extern uint8_t *wc90_scroll1xlo, *wc90_scroll1xhi;
+extern uint8_t *wc90_scroll2xlo, *wc90_scroll2xhi;
 
-extern data8_t *wc90_scroll0ylo, *wc90_scroll0yhi;
-extern data8_t *wc90_scroll1ylo, *wc90_scroll1yhi;
-extern data8_t *wc90_scroll2ylo, *wc90_scroll2yhi;
+extern uint8_t *wc90_scroll0ylo, *wc90_scroll0yhi;
+extern uint8_t *wc90_scroll1ylo, *wc90_scroll1yhi;
+extern uint8_t *wc90_scroll2ylo, *wc90_scroll2yhi;
 
 VIDEO_START( wc90 );
 VIDEO_START( wc90t );
@@ -75,7 +75,7 @@ WRITE_HANDLER( wc90_txvideoram_w );
 VIDEO_UPDATE( wc90 );
 
 
-static data8_t *wc90_shared;
+static uint8_t *wc90_shared;
 
 static READ_HANDLER( wc90_shared_r )
 {
@@ -90,7 +90,7 @@ static WRITE_HANDLER( wc90_shared_w )
 static WRITE_HANDLER( wc90_bankswitch_w )
 {
 	int bankaddress;
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 
 	bankaddress = 0x10000 + ( ( data & 0xf8 ) << 8 );
@@ -100,7 +100,7 @@ static WRITE_HANDLER( wc90_bankswitch_w )
 static WRITE_HANDLER( wc90_bankswitch1_w )
 {
 	int bankaddress;
-	data8_t *RAM = memory_region(REGION_CPU2);
+	uint8_t *RAM = memory_region(REGION_CPU2);
 
 
 	bankaddress = 0x10000 + ( ( data & 0xf8 ) << 8 );

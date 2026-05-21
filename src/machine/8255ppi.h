@@ -32,7 +32,7 @@ void ppi8255_set_portCwrite( int which, mem_write_handler portCwrite);
 
 #ifdef MESS
 /* Peek at the ports */
-data8_t ppi8255_peek( int which, offs_t offset );
+uint8_t ppi8255_peek( int which, offs_t offset );
 #endif
 
 /* Helpers */

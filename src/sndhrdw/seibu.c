@@ -130,7 +130,7 @@ static int start, end, start1, end1;
 
 void seibu_adpcm_decrypt(int region)
 {
-	data8_t *ROM = memory_region(region);
+	uint8_t *ROM = memory_region(region);
 	int i;
 
 	for (i = 0; i < memory_region_length(region); i++)

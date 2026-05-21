@@ -26,7 +26,7 @@ Revisions:
 VIDEO_START( spy );
 VIDEO_UPDATE( spy );
 
-static data8_t *pmcram;
+static uint8_t *pmcram;
 
 
 static INTERRUPT_GEN( spy_interrupt )

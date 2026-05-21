@@ -92,12 +92,12 @@ MACHINE_DRIVER_END
 void gw_decrypt(void)
 {
 	int i;
-	data16_t *src = (data16_t *) (memory_region(REGION_CPU1));
+	uint16_t *src = (uint16_t *) (memory_region(REGION_CPU1));
 
 	int rom_size = 0x80000;
 
 	for(i=0; i<rom_size/2; i++) {
-		data16_t x = src[i];
+		uint16_t x = src[i];
 
     	if((i & 0x2000) == 0x0000 || (i & 0x0004) == 0x0000 || (i & 0x0090) == 0x0000)
     		x ^= 0x0004;

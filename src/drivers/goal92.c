@@ -19,7 +19,7 @@ extern READ16_HANDLER( goal92_fg_bank_r );
 extern VIDEO_START( goal92 );
 extern VIDEO_UPDATE( goal92 );
 
-extern data16_t *goal92_back_data,*goal92_fore_data,*goal92_textram,*goal92_scrollram16;
+extern uint16_t *goal92_back_data,*goal92_fore_data,*goal92_textram,*goal92_scrollram16;
 
 static WRITE16_HANDLER( goal92_sound_command_w )
 {

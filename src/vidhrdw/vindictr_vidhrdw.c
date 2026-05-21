@@ -152,7 +152,7 @@ WRITE16_HANDLER( vindictr_paletteram_w )
 
 void vindictr_scanline_update(int scanline)
 {
-	data16_t *base = &atarigen_alpha[((scanline - 8) / 8) * 64 + 42];
+	uint16_t *base = &atarigen_alpha[((scanline - 8) / 8) * 64 + 42];
 	int x;
 
 	/* keep in range */
@@ -164,7 +164,7 @@ void vindictr_scanline_update(int scanline)
 	/* update the current parameters */
 	for (x = 42; x < 64; x++)
 	{
-		data16_t data = *base++;
+		uint16_t data = *base++;
 
 		switch ((data >> 9) & 7)
 		{

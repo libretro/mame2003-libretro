@@ -58,7 +58,7 @@ READ32_HANDLER( polygonet_ttl_ram_r );
 WRITE32_HANDLER( polygonet_ttl_ram_w );
 
 static int init_eeprom_count;
-static data32_t *dsp_shared_ram;
+static uint32_t *dsp_shared_ram;
 
 static struct EEPROM_interface eeprom_interface =
 {
@@ -121,9 +121,9 @@ static WRITE32_HANDLER( polygonet_eeprom_w )
 /* TTL tile readback for ROM test */
 static READ32_HANDLER( ttl_rom_r )
 {
-	data32_t *ROM;
+	uint32_t *ROM;
 
-	ROM = (data32_t *)memory_region(REGION_GFX1);
+	ROM = (uint32_t *)memory_region(REGION_GFX1);
 
 	return ROM[offset];
 }
@@ -131,9 +131,9 @@ static READ32_HANDLER( ttl_rom_r )
 /* PSAC2 tile readback for ROM test */
 static READ32_HANDLER( psac_rom_r )
 {
-	data32_t *ROM;
+	uint32_t *ROM;
 
-	ROM = (data32_t *)memory_region(REGION_GFX2);
+	ROM = (uint32_t *)memory_region(REGION_GFX2);
 
 	return ROM[offset];
 }

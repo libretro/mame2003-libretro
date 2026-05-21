@@ -165,12 +165,12 @@
 /* memory access function table */
 typedef struct
 {
-	data8_t		(*readbyte)(offs_t);
-	data16_t	(*readword)(offs_t);
-	data32_t	(*readlong)(offs_t);
-	void		(*writebyte)(offs_t, data8_t);
-	void		(*writeword)(offs_t, data16_t);
-	void		(*writelong)(offs_t, data32_t);
+	uint8_t		(*readbyte)(offs_t);
+	uint16_t	(*readword)(offs_t);
+	uint32_t	(*readlong)(offs_t);
+	void		(*writebyte)(offs_t, uint8_t);
+	void		(*writeword)(offs_t, uint16_t);
+	void		(*writelong)(offs_t, uint32_t);
 } memory_handlers;
 
 
@@ -202,8 +202,8 @@ typedef struct
 	memory_handlers memory;
 
 	/* cache memory */
-	data32_t *	icache;
-	data32_t *	dcache;
+	uint32_t *	icache;
+	uint32_t *	dcache;
 	size_t		icache_size;
 	size_t		dcache_size;
 	

@@ -67,10 +67,10 @@ zooming might be wrong
 
 #define TAOTAIDO_SHOW_ALL_INPUTS	0
 
-data16_t *taotaido_spriteram;
-data16_t *taotaido_spriteram2;
-data16_t *taotaido_scrollram;
-data16_t *taotaido_bgram;
+uint16_t *taotaido_spriteram;
+uint16_t *taotaido_spriteram2;
+uint16_t *taotaido_scrollram;
+uint16_t *taotaido_bgram;
 
 WRITE16_HANDLER( taotaido_sprite_character_bank_select_w );
 WRITE16_HANDLER( taotaido_tileregs_w );
@@ -147,7 +147,7 @@ static WRITE_HANDLER( pending_command_clear_w )
 
 static WRITE_HANDLER( taotaido_sh_bankswitch_w )
 {
-	data8_t *rom = memory_region(REGION_CPU2) + 0x10000;
+	uint8_t *rom = memory_region(REGION_CPU2) + 0x10000;
 
 	cpu_setbank(1,rom + (data & 0x03) * 0x8000);
 }

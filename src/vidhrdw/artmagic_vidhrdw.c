@@ -13,8 +13,8 @@
 #define INSTANT_BLIT		1
 
 
-data16_t *artmagic_vram0;
-data16_t *artmagic_vram1;
+uint16_t *artmagic_vram0;
+uint16_t *artmagic_vram1;
 
 /* decryption parameters */
 int artmagic_xor[16], artmagic_is_stoneball;
@@ -70,7 +70,7 @@ VIDEO_START( artmagic )
  *
  *************************************/
 
-void artmagic_to_shiftreg(offs_t address, data16_t *data)
+void artmagic_to_shiftreg(offs_t address, uint16_t *data)
 {
 	uint16_t *vram = address_to_vram(&address);
 	if (vram)
@@ -78,7 +78,7 @@ void artmagic_to_shiftreg(offs_t address, data16_t *data)
 }
 
 
-void artmagic_from_shiftreg(offs_t address, data16_t *data)
+void artmagic_from_shiftreg(offs_t address, uint16_t *data)
 {
 	uint16_t *vram = address_to_vram(&address);
 	if (vram)

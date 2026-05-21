@@ -37,7 +37,7 @@ Dumped 01/11/2000
 #include "vidhrdw/generic.h"
 #include "cpu/m6809/m6809.h"
 
-data8_t *compgolf_bg_ram;
+uint8_t *compgolf_bg_ram;
 static struct tilemap *text_tilemap, *background_tilemap;
 
 WRITE_HANDLER( compgolf_video_w )

@@ -28,7 +28,7 @@ typedef struct
 
 
 /* globals available to everyone */
-data8_t *flower_soundregs1,*flower_soundregs2;
+uint8_t *flower_soundregs1,*flower_soundregs2;
 
 /* data about the sound system */
 static sound_channel channel_list[MAX_VOICES];

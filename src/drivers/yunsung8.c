@@ -33,7 +33,7 @@ To Do:
 
 /* Variables defined in vidhrdw: */
 
-extern data8_t *yunsung8_videoram_0, *yunsung8_videoram_1;
+extern uint8_t *yunsung8_videoram_0, *yunsung8_videoram_1;
 extern int yunsung8_layers_ctrl;
 
 /* Functions defined in vidhrdw: */

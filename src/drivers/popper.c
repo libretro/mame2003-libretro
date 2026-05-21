@@ -80,7 +80,7 @@ Notes:
 
 #include "driver.h"
 
-extern data8_t *popper_videoram, *popper_attribram, *popper_ol_videoram, *popper_ol_attribram, *popper_spriteram;
+extern uint8_t *popper_videoram, *popper_attribram, *popper_ol_videoram, *popper_ol_attribram, *popper_spriteram;
 extern size_t popper_spriteram_size;
 
 WRITE_HANDLER( popper_videoram_w );
@@ -94,7 +94,7 @@ WRITE_HANDLER( popper_gfx_bank_w );
 PALETTE_INIT( popper );
 VIDEO_START( popper );
 VIDEO_UPDATE( popper );
-static data8_t *popper_sharedram;
+static uint8_t *popper_sharedram;
 
 static READ_HANDLER( popper_sharedram_r )
 {
@@ -130,7 +130,7 @@ static READ_HANDLER( popper_sharedram_r )
 //                      -------x  sound
 static READ_HANDLER( popper_input_ports_r )
 {
-	data8_t data=0;
+	uint8_t data=0;
 	switch (offset)
 	{
 		//           player inputs        dsw1                           dsw2

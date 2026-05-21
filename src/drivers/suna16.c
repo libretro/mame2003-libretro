@@ -791,7 +791,7 @@ ROM_END
 
 DRIVER_INIT( uballoon )
 {
-	data16_t *RAM = (data16_t *) memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *) memory_region(REGION_CPU1);
 
 	/* Patch out the protection checks */
 	RAM[0x0113c/2] = 0x4e71;	// bne $646

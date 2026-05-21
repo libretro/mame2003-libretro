@@ -8,10 +8,10 @@
 
 /*----------- defined in vidhrdw/btoads.c -----------*/
 
-extern data16_t *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
-extern data16_t *btoads_vram_bg0, *btoads_vram_bg1;
-extern data16_t *btoads_sprite_scale;
-extern data16_t *btoads_sprite_control;
+extern uint16_t *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
+extern uint16_t *btoads_vram_bg0, *btoads_vram_bg1;
+extern uint16_t *btoads_sprite_scale;
+extern uint16_t *btoads_sprite_control;
 
 VIDEO_START( btoads );
 VIDEO_UPDATE( btoads );

@@ -34,7 +34,7 @@ VIDEO_UPDATE( zerozone );
 WRITE16_HANDLER( zerozone_tilemap_w );
 WRITE16_HANDLER( zerozone_tilebank_w );
 
-extern data16_t *zerozone_videoram;
+extern uint16_t *zerozone_videoram;
 
 static READ16_HANDLER( zerozone_input_r )
 {

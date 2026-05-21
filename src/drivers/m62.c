@@ -69,8 +69,8 @@ WRITE_HANDLER( m62_hscroll_low_w );
 WRITE_HANDLER( m62_hscroll_high_w );
 WRITE_HANDLER( m62_vscroll_low_w );
 WRITE_HANDLER( m62_vscroll_high_w );
-extern data8_t *m62_tileram;
-extern data8_t *m62_textram;
+extern uint8_t *m62_tileram;
+extern uint8_t *m62_textram;
 
 VIDEO_START( kungfum );
 VIDEO_UPDATE( kungfum );
@@ -108,7 +108,7 @@ VIDEO_UPDATE( youjyudn );
 VIDEO_START( horizon );
 VIDEO_UPDATE( horizon );
 WRITE_HANDLER( horizon_scrollram_w );
-extern data8_t *horizon_scrollram;
+extern uint8_t *horizon_scrollram;
 
 static int bankaddress;
 static int bankaddress2;

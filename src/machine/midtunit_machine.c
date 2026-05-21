@@ -71,7 +71,7 @@ WRITE16_HANDLER( midtunit_cmos_w )
 	if (1)/*cmos_write_enable)*/
 	{
 #endif
-		COMBINE_DATA(&((data16_t *)generic_nvram)[offset]);
+		COMBINE_DATA(&((uint16_t *)generic_nvram)[offset]);
 		cmos_write_enable = 0;
 	//}
 #if 0
@@ -86,7 +86,7 @@ WRITE16_HANDLER( midtunit_cmos_w )
 
 READ16_HANDLER( midtunit_cmos_r )
 {
-	return ((data16_t *)generic_nvram)[offset];
+	return ((uint16_t *)generic_nvram)[offset];
 }
 
 
@@ -177,7 +177,7 @@ static READ16_HANDLER( mk_mirror_r )
  *
  *************************************/
 
-static data16_t mk2_prot_data;
+static uint16_t mk2_prot_data;
 
 static READ16_HANDLER( mk2_prot_const_r )
 {
@@ -248,7 +248,7 @@ static const uint32_t nbajamte_prot_values[128] =
 };
 
 static const uint32_t *nbajam_prot_table;
-static data16_t nbajam_prot_queue[5];
+static uint16_t nbajam_prot_queue[5];
 static uint8_t nbajam_prot_index;
 
 static READ16_HANDLER( nbajam_prot_r )
@@ -371,7 +371,7 @@ static WRITE16_HANDLER( jdredd_prot_w )
 
 static READ16_HANDLER( jdredd_prot_r )
 {
-	data16_t result = 0xffff;
+	uint16_t result = 0xffff;
 
 	if (jdredd_prot_table && jdredd_prot_index < jdredd_prot_max)
 		result = jdredd_prot_table[jdredd_prot_index++] << 9;
@@ -382,7 +382,7 @@ static READ16_HANDLER( jdredd_prot_r )
 
 
 #if ENABLE_ALL_JDREDD_LEVELS
-static data16_t *jdredd_hack;
+static uint16_t *jdredd_hack;
 static READ16_HANDLER( jdredd_hack_r )
 {
 	if (activecpu_get_pc() == 0xFFBA7EB0)

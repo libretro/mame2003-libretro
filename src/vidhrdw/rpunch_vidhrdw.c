@@ -21,7 +21,7 @@
  *
  *************************************/
 
-data16_t *rpunch_bitmapram;
+uint16_t *rpunch_bitmapram;
 size_t rpunch_bitmapram_size;
 static uint32_t *rpunch_bitmapsum;
 
@@ -29,7 +29,7 @@ int rpunch_sprite_palette;
 
 static struct tilemap *background[2];
 
-static data16_t videoflags;
+static uint16_t videoflags;
 static uint8_t crtc_register;
 static void *crtc_timer;
 static uint8_t bins, gins;
@@ -299,7 +299,7 @@ static void draw_bitmap(struct mame_bitmap *bitmap, const struct rectangle *clip
 		if (y >= cliprect->min_y && y <= cliprect->max_y)
 			if (rpunch_bitmapsum[y] != (BITMAP_WIDTH/4) * 0xffff)
 			{
-				data16_t *src = &rpunch_bitmapram[y * 128 + BITMAP_XOFFSET/4];
+				uint16_t *src = &rpunch_bitmapram[y * 128 + BITMAP_XOFFSET/4];
 				uint8_t scanline[BITMAP_WIDTH], *dst = scanline;
 
 				/* extract the scanline */

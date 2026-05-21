@@ -3,10 +3,10 @@
 
 
 
-extern data16_t *welltris_spriteram;
+extern uint16_t *welltris_spriteram;
 extern size_t welltris_spriteram_size;
-extern data16_t *welltris_pixelram;
-extern data16_t *welltris_charvideoram;
+extern uint16_t *welltris_pixelram;
+extern uint16_t *welltris_charvideoram;
 
 static struct tilemap *char_tilemap;
 static unsigned char gfxbank[8];

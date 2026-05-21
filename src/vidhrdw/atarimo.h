@@ -37,7 +37,7 @@ typedef int (*atarimo_special_cb)(struct mame_bitmap *bitmap, const struct recta
 /* description for a four-word mask */
 struct atarimo_entry
 {
-	data16_t			data[4];
+	uint16_t			data[4];
 };
 
 /* description of the motion objects */
@@ -74,7 +74,7 @@ struct atarimo_desc
 	struct atarimo_entry absolutemask;		/* mask for absolute coordinates */
 
 	struct atarimo_entry specialmask;		/* mask for the special value */
-	data16_t			specialvalue;		/* resulting value to indicate "special" */
+	uint16_t			specialvalue;		/* resulting value to indicate "special" */
 	atarimo_special_cb	specialcb;			/* callback routine for special entries */
 };
 
@@ -125,11 +125,11 @@ WRITE16_HANDLER( atarimo_1_slipram_w );
 	GLOBAL VARIABLES
 ##########################################################################*/
 
-extern data16_t *atarimo_0_spriteram;
-extern data16_t *atarimo_0_slipram;
+extern uint16_t *atarimo_0_spriteram;
+extern uint16_t *atarimo_0_slipram;
 
-extern data16_t *atarimo_1_spriteram;
-extern data16_t *atarimo_1_slipram;
+extern uint16_t *atarimo_1_spriteram;
+extern uint16_t *atarimo_1_slipram;
 
 
 #endif

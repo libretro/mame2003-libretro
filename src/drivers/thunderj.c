@@ -24,8 +24,8 @@
 
 
 
-static data16_t *shared_ram;
-static data16_t *rom_base[2];
+static uint16_t *shared_ram;
+static uint16_t *rom_base[2];
 
 
 /*************************************
@@ -63,8 +63,8 @@ static MACHINE_INIT( thunderj )
 	atarigen_interrupt_reset(update_interrupts);
 	atarijsa_reset();
 	
-	rom_base[0] = (data16_t *)memory_region(REGION_CPU1);
-	rom_base[1] = (data16_t *)memory_region(REGION_CPU2);
+	rom_base[0] = (uint16_t *)memory_region(REGION_CPU1);
+	rom_base[1] = (uint16_t *)memory_region(REGION_CPU2);
 	cpu_setbank(1, shared_ram);
 }
 
@@ -126,7 +126,7 @@ static void shared_sync_callback(int param)
 
 static READ16_HANDLER( shared_ram_r )
 {
-	data16_t result = shared_ram[offset];
+	uint16_t result = shared_ram[offset];
 	
 	/* look for a byte access, and then check for the high bit and a TAS opcode */
 	if (mem_mask != 0 && (result & ~mem_mask & 0x8080))

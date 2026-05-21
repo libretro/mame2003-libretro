@@ -134,7 +134,7 @@ Dumped by Chackn
 static READ_HANDLER( angelkds_sound_r );
 static WRITE_HANDLER( angelkds_sound_w );
 
-extern data8_t *angelkds_txvideoram, *angelkds_bgtopvideoram, *angelkds_bgbotvideoram;
+extern uint8_t *angelkds_txvideoram, *angelkds_bgtopvideoram, *angelkds_bgbotvideoram;
 
 WRITE_HANDLER( angelkds_bgtopvideoram_w );
 WRITE_HANDLER( angelkds_bgbotvideoram_w );

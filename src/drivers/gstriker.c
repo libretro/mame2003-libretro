@@ -175,8 +175,8 @@ VSIS-20V3
 ******************************************************************************/
 
 
-data16_t *gs_videoram3;
-data16_t *gs_mixer_regs;
+uint16_t *gs_videoram3;
+uint16_t *gs_mixer_regs;
 
 /* in vidhrdw */
 WRITE16_HANDLER( gsx_videoram3_w );

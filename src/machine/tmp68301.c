@@ -11,7 +11,7 @@
 #include "driver.h"
 #include "machine/tmp68301.h"
 
-data16_t *tmp68301_regs;
+uint16_t *tmp68301_regs;
 
 static uint8_t tmp68301_IE[3];		// 3 External Interrupt Lines
 static void *tmp68301_timer[3];		// 3 Timers
@@ -29,10 +29,10 @@ int tmp68301_irq_callback(int int_level)
 
 void tmp68301_timer_callback(int i)
 {
-	data16_t TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
-	data16_t IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
-	data16_t ICR	=	tmp68301_regs[0x8e/2+i];	// Interrupt Controller Register (ICR7..9)
-	data16_t IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
+	uint16_t TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
+	uint16_t IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
+	uint16_t ICR	=	tmp68301_regs[0x8e/2+i];	// Interrupt Controller Register (ICR7..9)
+	uint16_t IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
 
 //	logerror("CPU #0 PC %06X: callback timer %04X, j = %d\n",activecpu_get_pc(),i,tcount);
 
@@ -62,9 +62,9 @@ void tmp68301_timer_callback(int i)
 
 void tmp68301_update_timer( int i )
 {
-	data16_t TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
-	data16_t MAX1	=	tmp68301_regs[(0x204 + i * 0x20)/2];
-	data16_t MAX2	=	tmp68301_regs[(0x206 + i * 0x20)/2];
+	uint16_t TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
+	uint16_t MAX1	=	tmp68301_regs[(0x204 + i * 0x20)/2];
+	uint16_t MAX2	=	tmp68301_regs[(0x206 + i * 0x20)/2];
 
 	int max = 0;
 	double duration = 0;
@@ -126,8 +126,8 @@ static void update_irq_state(void)
 
 	/* Take care of external interrupts */
 
-	data16_t IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
-	data16_t IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
+	uint16_t IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
+	uint16_t IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
 
 	for (i = 0; i < 3; i++)
 	{
@@ -135,7 +135,7 @@ static void update_irq_state(void)
 				!(IMR & (1<<i))
 			)
 		{
-			data16_t ICR	=	tmp68301_regs[0x80/2+i];	// Interrupt Controller Register (ICR0..2)
+			uint16_t ICR	=	tmp68301_regs[0x80/2+i];	// Interrupt Controller Register (ICR0..2)
 
 			// Interrupt Controller Register (ICR0..2)
 			int level = ICR & 0x0007;

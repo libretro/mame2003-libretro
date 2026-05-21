@@ -13,20 +13,20 @@ unico used for zero point etc.
 #include "cpu/pic16c5x/pic16c5x.h"
 
 
-static data16_t drgnmst_snd_command;
-static data16_t drgnmst_snd_flag;
-static data8_t drgnmst_oki_control;
-static data8_t drgnmst_oki_command;
-static data8_t pic16c5x_port0;
-static data8_t drgnmst_oki0_bank;
-static data8_t drgnmst_oki1_bank;
+static uint16_t drgnmst_snd_command;
+static uint16_t drgnmst_snd_flag;
+static uint8_t drgnmst_oki_control;
+static uint8_t drgnmst_oki_command;
+static uint8_t pic16c5x_port0;
+static uint8_t drgnmst_oki0_bank;
+static uint8_t drgnmst_oki1_bank;
 
-data16_t *drgnmst_vidregs;
-data16_t *drgnmst_rowscrollram;
-data16_t *drgnmst_fg_videoram;
-data16_t *drgnmst_bg_videoram;
-data16_t *drgnmst_md_videoram;
-data16_t *drgnmst_vidregs2;
+uint16_t *drgnmst_vidregs;
+uint16_t *drgnmst_rowscrollram;
+uint16_t *drgnmst_fg_videoram;
+uint16_t *drgnmst_bg_videoram;
+uint16_t *drgnmst_md_videoram;
+uint16_t *drgnmst_vidregs2;
 
 
 WRITE16_HANDLER( drgnmst_fg_videoram_w );
@@ -474,9 +474,9 @@ static uint8_t drgnmst_asciitohex(uint8_t data)
 
 static DRIVER_INIT( drgnmst )
 {
-	data8_t *drgnmst_PICROM_HEX = memory_region(REGION_USER1);
-	data8_t *drgnmst_PICROM = memory_region(REGION_CPU2);
-	data8_t *drgnmst_PCM = memory_region(REGION_SOUND1);
+	uint8_t *drgnmst_PICROM_HEX = memory_region(REGION_USER1);
+	uint8_t *drgnmst_PICROM = memory_region(REGION_CPU2);
+	uint8_t *drgnmst_PCM = memory_region(REGION_SOUND1);
 	int32_t   offs, data;
 	uint16_t  src_pos = 0;
 	uint16_t  dst_pos = 0;

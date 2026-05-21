@@ -138,8 +138,8 @@ If someone could fix the protection it'd be fully playable with sound and music.
 #include "vidhrdw/generic.h"
 #include "sndhrdw/seibu.h"
 
-extern data16_t *nmk_bgvideoram,*nmk_fgvideoram,*nmk_txvideoram;
-extern data16_t *gunnail_scrollram;
+extern uint16_t *nmk_bgvideoram,*nmk_fgvideoram,*nmk_txvideoram;
+extern uint16_t *gunnail_scrollram;
 
 READ16_HANDLER( nmk_bgvideoram_r );
 WRITE16_HANDLER( nmk_bgvideoram_w );
@@ -214,7 +214,7 @@ WRITE_HANDLER ( ssmissin_soundbank_w )
 }
 
 
-static data16_t *ram;
+static uint16_t *ram;
 
 static WRITE16_HANDLER( macross_mcu_w )
 {
@@ -4219,14 +4219,14 @@ static DRIVER_INIT( nmk )
 
 static DRIVER_INIT( hachamf )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 
 	rom[0x0006/2] = 0x7dc2;	/* replace reset vector with the "real" one */
 }
 
 static DRIVER_INIT( acrobatm )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	RAM[0x724/2] = 0x4e71; /* Protection */
 	RAM[0x726/2] = 0x4e71;
@@ -4240,7 +4240,7 @@ static DRIVER_INIT( acrobatm )
 
 static DRIVER_INIT( tdragonb )
 {
-	data16_t *ROM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *ROM = (uint16_t *)memory_region(REGION_CPU1);
 
 	decode_tdragonb();
 
@@ -4251,7 +4251,7 @@ static DRIVER_INIT( tdragonb )
 
 static DRIVER_INIT( tdragon )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	RAM[0x94b0/2] = 0; /* Patch out JMP to shared memory (protection) */
 	RAM[0x94b2/2] = 0x92f4;
@@ -4265,7 +4265,7 @@ static DRIVER_INIT( ssmissin )
 
 static DRIVER_INIT( strahl )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	RAM[0x79e/2] = 0x4e71; /* Protection */
 	RAM[0x7a0/2] = 0x4e71;
@@ -4279,7 +4279,7 @@ static DRIVER_INIT( strahl )
 
 static DRIVER_INIT( bioship )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	RAM[0xe78a/2] = 0x4e71; /* Protection */
 	RAM[0xe78c/2] = 0x4e71;
@@ -4320,7 +4320,7 @@ static WRITE16_HANDLER ( test_2a_mustang_w )
 
 static DRIVER_INIT( blkheart )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	is_blkheart = 1; // sprite enable is different?
 
@@ -4338,7 +4338,7 @@ static DRIVER_INIT( blkheart )
 
 static DRIVER_INIT( mustang )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 
 	is_blkheart = 1; // sprite enable is different?
 
@@ -4373,7 +4373,7 @@ static DRIVER_INIT( bjtwin )
  *	008F7E: 207C 000F 9000           movea.l #$f9000, A0
  */
 
-//	data 16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+//	data 16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 //	rom[0x09172/2] = 0x6006;	/* patch checksum error */
 //	rom[0x08f74/2] = 0x4e71);
 }

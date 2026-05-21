@@ -50,7 +50,7 @@
 	0.41 | Mapped more Dipswitches and the odd minor fix.
 	0.40 | Updated the Driver so it 'works' with the new memory system introduced in 0.37b8
 		 | I'm pretty sure I've not done this right in places (for example writes to VRAM
-		 | should probably use data16_t or something.  <request>Help</request> :)
+		 | should probably use uint16_t or something.  <request>Help</request> :)
 		 | Also Added dipswitches to a few more of the games (Borench & PotoPoto) zzzz.
 	0.38 | Started Mapping Dipswitches & Controls on a Per Game basis.  Thunderforce AC now has
 		 | this information correct.
@@ -171,7 +171,7 @@ static uint16_t 		prot_write_buf;		/* remembers what was written */
 static uint16_t		prot_read_buf;		/* remembers what was returned */
 
 /* Ribbit! palette swizzling */
-static data16_t *	ribbit_palette_select;	/* pointer to base of ROM we're interested in */
+static uint16_t *	ribbit_palette_select;	/* pointer to base of ROM we're interested in */
 static offs_t		swizzle_table_index;/* which kind of swizzling is active? */
 
 /* sound-related variables */
@@ -179,13 +179,13 @@ static uint8_t		sound_banks;		/* number of sound banks */
 static uint8_t		bloxeed_sound;		/* use kludge for bloxeed sound? */
 
 /* RAM pointers */
-static data16_t *	main_ram;			/* pointer to main RAM */
+static uint16_t *	main_ram;			/* pointer to main RAM */
 
 /* Genesis based */
 unsigned int	z80_68000_latch			= 0;
 unsigned int	z80_latch_bitcount		= 0;
 static int z80running;
-static data16_t *genesis_68k_ram;
+static uint16_t *genesis_68k_ram;
 static unsigned char *genesis_z80_ram;
 
 /* Megatech BIOS specific */
@@ -787,7 +787,7 @@ static READ16_HANDLER( puyopuy2_prot_r )
 /* kludge for Ribbit! */
 static READ16_HANDLER( ribbit_prot_hack_r )
 {
-	data16_t result = main_ram[0xc166/2];
+	uint16_t result = main_ram[0xc166/2];
 
 	/* Ribbit is kind of evil in that they store the table shifted one state out of sequence */
 	/* the following code just makes sure that the important comparison works */
@@ -1179,7 +1179,7 @@ $A1001F Port C serial control
 
 */
 
-data16_t *genesis_io_ram;
+uint16_t *genesis_io_ram;
 
 READ16_HANDLER ( genesis_io_r )
 {
@@ -4365,7 +4365,7 @@ static DRIVER_INIT( pclub )
 
 DRIVER_INIT( puckpkmn )
 {
-	data8_t *rom	=	memory_region(REGION_CPU1);
+	uint8_t *rom	=	memory_region(REGION_CPU1);
 	size_t len		=	memory_region_length(REGION_CPU1);
 	int i;
 	for (i = 0; i < len; i++)

@@ -42,7 +42,7 @@ enum
 
 /* graphics-related variables */
        uint8_t	midtunit_gfx_rom_large;
-static data16_t	midtunit_control;
+static uint16_t	midtunit_control;
 static uint8_t	midtunit_using_34020;
 
 /* videoram-related variables */
@@ -51,7 +51,7 @@ static uint16_t *	local_videoram;
 static uint8_t	videobank_select;
 
 /* DMA-related variables */
-static data16_t	dma_register[18];
+static uint16_t	dma_register[18];
 static struct
 {
 	uint32_t		offset;			/* source offset, in bits */

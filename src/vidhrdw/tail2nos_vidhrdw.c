@@ -3,13 +3,13 @@
 #include "konamiic.h"
 
 
-data16_t *tail2nos_bgvideoram;
+uint16_t *tail2nos_bgvideoram;
 
 
 static struct tilemap *bg_tilemap;
 
 static int charbank,charpalette,video_enable;
-static data16_t *zoomdata;
+static uint16_t *zoomdata;
 static int dirtygfx;
 static unsigned char *dirtychar;
 
@@ -69,7 +69,7 @@ VIDEO_START( tail2nos )
 
 	K051316_wraparound_enable(0,1);
 	K051316_set_offset(0,-89,-14);
-	zoomdata = (data16_t *)memory_region(REGION_GFX3);
+	zoomdata = (uint16_t *)memory_region(REGION_GFX3);
 
 	return 0;
 }

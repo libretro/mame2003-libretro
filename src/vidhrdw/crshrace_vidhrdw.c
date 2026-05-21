@@ -4,8 +4,8 @@
 #include "crshrace.h"
 
 
-data16_t *crshrace_videoram1,*crshrace_videoram2;
-data16_t *crshrace_roz_ctrl1,*crshrace_roz_ctrl2;
+uint16_t *crshrace_videoram1,*crshrace_videoram2;
+uint16_t *crshrace_roz_ctrl1,*crshrace_roz_ctrl2;
 
 static int roz_bank,gfxctrl,flipscreen;
 

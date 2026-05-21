@@ -7,8 +7,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *zerozone_videoram;
-static data16_t zerozone_tilebank;
+uint16_t *zerozone_videoram;
+static uint16_t zerozone_tilebank;
 
 static struct tilemap *zerozone_tilemap;
 

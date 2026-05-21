@@ -2,7 +2,7 @@
 #include "vidhrdw/generic.h"
 
 
-data8_t *mjkjidai_videoram;
+uint8_t *mjkjidai_videoram;
 
 static int display_enable;
 static struct tilemap *bg_tilemap;
@@ -59,7 +59,7 @@ WRITE_HANDLER( mjkjidai_videoram_w )
 
 WRITE_HANDLER( mjkjidai_ctrl_w )
 {
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 //	logerror("%04x: port c0 = %02x\n",activecpu_get_pc(),data);
 

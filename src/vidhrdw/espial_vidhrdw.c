@@ -9,13 +9,13 @@
 #include "driver.h"
 
 
-data8_t *espial_videoram;
-data8_t *espial_colorram;
-data8_t *espial_attributeram;
-data8_t *espial_scrollram;
-data8_t *espial_spriteram_1;
-data8_t *espial_spriteram_2;
-data8_t *espial_spriteram_3;
+uint8_t *espial_videoram;
+uint8_t *espial_colorram;
+uint8_t *espial_attributeram;
+uint8_t *espial_scrollram;
+uint8_t *espial_spriteram_1;
+uint8_t *espial_spriteram_2;
+uint8_t *espial_spriteram_3;
 
 static int flipscreen;
 static struct tilemap *tilemap;
@@ -80,9 +80,9 @@ PALETTE_INIT( espial )
 
 static void get_tile_info(int tile_index)
 {
-	data8_t code = espial_videoram[tile_index];
-	data8_t col = espial_colorram[tile_index];
-	data8_t attr = espial_attributeram[tile_index];
+	uint8_t code = espial_videoram[tile_index];
+	uint8_t col = espial_colorram[tile_index];
+	uint8_t attr = espial_attributeram[tile_index];
 	SET_TILE_INFO(0,
 				  code | ((attr & 0x03) << 8),
 				  col & 0x3f,

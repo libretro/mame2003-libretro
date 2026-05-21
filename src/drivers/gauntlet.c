@@ -132,7 +132,7 @@
 
 static uint8_t speech_val;
 static uint8_t last_speech_write;
-static data16_t sound_reset_val;
+static uint16_t sound_reset_val;
 
 
 

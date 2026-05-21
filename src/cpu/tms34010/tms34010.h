@@ -62,8 +62,8 @@ struct tms34010_config
 {
 	uint8_t	halt_on_reset;						/* /HCS pin, which determines HALT state after reset */
 	void	(*output_int)(int state);			/* output interrupt callback */
-	void	(*to_shiftreg)(offs_t, data16_t *);	/* shift register write */
-	void	(*from_shiftreg)(offs_t, data16_t *);/* shift register read */
+	void	(*to_shiftreg)(offs_t, uint16_t *);	/* shift register write */
+	void	(*from_shiftreg)(offs_t, uint16_t *);/* shift register read */
 	void	(*display_addr_changed)(uint32_t offs, int rowbytes, int scanline);/* display address changed */
 	void	(*display_int_callback)(int scanline);/* display interrupt callback */
 };

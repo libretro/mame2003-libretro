@@ -79,10 +79,10 @@ Notes:
 #include "sound/namcona.h"
 #include "machine/random.h"
 
-static data16_t *mpBank0, *mpBank1;
-static data8_t mCoinCount[4];
-static data8_t mCoinState;
-static data16_t *mcu_ram;
+static uint16_t *mpBank0, *mpBank1;
+static uint8_t mCoinCount[4];
+static uint8_t mCoinState;
+static uint16_t *mcu_ram;
 static int mEnableInterrupts;
 int namcona1_gametype;
 
@@ -147,7 +147,7 @@ static const uint8_t QuiztouDefaultNvMem[] =
 	0x23,0x64,0xB8,0xA6
 }; /* QuiztouDefaultNvMem */
 
-static data8_t namcona1_nvmem[NA1_NVRAM_SIZE];
+static uint8_t namcona1_nvmem[NA1_NVRAM_SIZE];
 
 static NVRAM_HANDLER( namcosna1 )
 {
@@ -380,8 +380,8 @@ static void
 simulate_mcu( void )
 {
 	int i;
-	data16_t data;
-	data8_t poll_coins;
+	uint16_t data;
+	uint8_t poll_coins;
 
 	mcu_ram[0xf60/2] = 0x0000; /* mcu ready */
 
@@ -447,7 +447,7 @@ simulate_mcu( void )
 	{
 		int p1 = readinputport(1);
 		int p2 = readinputport(2);
-		data32_t code = 0;
+		uint32_t code = 0;
 		if( p2&0x40 ) code |= 0x2000; // enter (top-level of self-test)
 		if( p2&0x20 ) code |= 0x1000; // exit  (top-level of self-test)
 		if( p1&0x40 ) code |= 0x0020; // next  (top-level of self-test)
@@ -501,7 +501,7 @@ static WRITE16_HANDLER( namcona1_mcu_w )
  */
 static void write_version_info( void )
 {
-	const data16_t source[0x8] =
+	const uint16_t source[0x8] =
 	{ /* "NSA-BIOS ver"... */
 		0x534e,0x2d41,0x4942,0x534f,0x7620,0x7265,0x2e31,0x3133
 	};
@@ -514,8 +514,8 @@ static void write_version_info( void )
 
 static WRITE16_HANDLER( mcu_command_w )
 {
-	data16_t *pMem = (data16_t *)memory_region( REGION_CPU1 );
-	data16_t cmd = pMem[0xf72/2]>>8;
+	uint16_t *pMem = (uint16_t *)memory_region( REGION_CPU1 );
+	uint16_t cmd = pMem[0xf72/2]>>8;
 
 	switch( cmd ){
 	case 0x03:
@@ -576,7 +576,7 @@ static WRITE16_HANDLER( mcu_command_w )
 static READ16_HANDLER( custom_key_r )
 {
 	static unsigned char keyseq;
-	static data16_t count;
+	static uint16_t count;
 	int old_count;
 
 	old_count = count;
@@ -634,7 +634,7 @@ static READ16_HANDLER( custom_key_r )
 		if( offset==4 ) keyseq = 0;
 		if( offset==3 )
 		{
-			const data16_t data[] =
+			const uint16_t data[] =
 			{
 				0x0000,0x2000,0x2100,0x2104,0x0106,0x0007,0x4003,0x6021,
 				0x61a0,0x31a4,0x9186,0x9047,0xc443,0x6471,0x6db0,0x39bc,
@@ -670,7 +670,7 @@ static READ16_HANDLER( namcona1_vreg_r )
 static int
 transfer_dword( uint32_t dest, uint32_t source )
 {
-	data16_t data;
+	uint16_t data;
 
 	if( source>=0x400000 && source<0xc00000 )
 	{
@@ -1027,7 +1027,7 @@ MACHINE_DRIVER_END
 static void
 init_namcona1( void )
 {
-	data16_t *pMem = (data16_t *)memory_region( REGION_CPU1 );
+	uint16_t *pMem = (uint16_t *)memory_region( REGION_CPU1 );
 	pMem[0] = 0x0007; pMem[1] = 0xfffc; /* (?) stack */
 	pMem[2] = 0x00c0; pMem[3] = 0x0000; /* reset vector */
 

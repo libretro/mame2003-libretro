@@ -13,9 +13,9 @@ the vdp1 draws to the FRAMEBUFFER which is mapped in memory
 
 #include "driver.h"
 
-data32_t *stv_vdp1_vram;
-data32_t *stv_vdp1_regs;
-extern data32_t *stv_scu;
+uint32_t *stv_vdp1_vram;
+uint32_t *stv_vdp1_regs;
+extern uint32_t *stv_scu;
 char shienryu_sprite_kludge;
 /*
 Registers:
@@ -101,7 +101,7 @@ READ32_HANDLER ( stv_vdp1_vram_r )
 
 WRITE32_HANDLER ( stv_vdp1_vram_w )
 {
-	data8_t *vdp1 = memory_region(REGION_GFX2);
+	uint8_t *vdp1 = memory_region(REGION_GFX2);
 
 	COMBINE_DATA (&stv_vdp1_vram[offset]);
 
@@ -206,12 +206,12 @@ to the framebuffer we CAN'T frameskip the vdp1 drawing as the hardware can READ 
 and if we skip the drawing the content could be incorrect when it reads it, although i have no idea
 why they would want to */
 
-extern data32_t* stv_vdp2_cram;
+extern uint32_t* stv_vdp2_cram;
 
 static INLINE void drawpixel(uint16_t *dest, int patterndata, int offsetcnt)
 {
 	int pix,mode,transmask;
-	data8_t* gfxdata = memory_region(REGION_GFX2);
+	uint8_t* gfxdata = memory_region(REGION_GFX2);
 	int pix2;
 
 	switch (stv2_current_sprite.CMDPMOD&0x0038)

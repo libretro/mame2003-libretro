@@ -179,7 +179,7 @@ static WRITE_HANDLER( hanamai_keyboard_w )
 
 static WRITE_HANDLER( dynax_rombank_w )
 {
-	data8_t *ROM = memory_region(REGION_CPU1);
+	uint8_t *ROM = memory_region(REGION_CPU1);
 	cpu_setbank(1,&ROM[0x08000+0x8000*(data & 0x0f)]);
 }
 
@@ -188,13 +188,13 @@ static int hnoridur_bank;
 
 static WRITE_HANDLER( hnoridur_rombank_w )
 {
-	data8_t *ROM = memory_region(REGION_CPU1) + 0x10000 + 0x8000*data;
+	uint8_t *ROM = memory_region(REGION_CPU1) + 0x10000 + 0x8000*data;
 //logerror("%04x: rom bank = %02x\n",activecpu_get_pc(),data);
 	cpu_setbank(1,ROM);
 	hnoridur_bank = data;
 }
 
-static data8_t palette_ram[16*256*2];
+static uint8_t palette_ram[16*256*2];
 static int palbank;
 
 static WRITE_HANDLER( hnoridur_palbank_w )
@@ -220,7 +220,7 @@ static WRITE_HANDLER( hnoridur_palette_w )
 		// hnoridur: R/W RAM
 		case 0x18:
 		{
-			data8_t *RAM = memory_region(REGION_CPU1) + 0x10000 + hnoridur_bank * 0x8000;
+			uint8_t *RAM = memory_region(REGION_CPU1) + 0x10000 + hnoridur_bank * 0x8000;
 			RAM[offset] = data;
 			return;
 		}
@@ -662,7 +662,7 @@ PORT_END
 					Yarunara / Quiz TV Q&Q / Mahjong Angels
 ***************************************************************************/
 
-static data8_t yarunara_select, yarunara_ip;
+static uint8_t yarunara_select, yarunara_ip;
 static WRITE_HANDLER( yarunara_input_w )
 {
 	switch (offset)
@@ -2573,12 +2573,12 @@ static DRIVER_INIT( maya )
 {
 	/* Address lines scrambling on 1 z80 rom */
 	int i;
-	data8_t	*gfx = (data8_t *)memory_region(REGION_GFX1);
-	data8_t	*rom = memory_region(REGION_CPU1) + 0x28000,
+	uint8_t	*gfx = (uint8_t *)memory_region(REGION_GFX1);
+	uint8_t	*rom = memory_region(REGION_CPU1) + 0x28000,
 			*end = rom + 0x10000;
 	for (;rom < end; rom+=8)
 	{
-		data8_t temp[8];
+		uint8_t temp[8];
 		temp[0] = rom[0];	temp[1] = rom[1];	temp[2] = rom[2];	temp[3] = rom[3];
 		temp[4] = rom[4];	temp[5] = rom[5];	temp[6] = rom[6];	temp[7] = rom[7];
 

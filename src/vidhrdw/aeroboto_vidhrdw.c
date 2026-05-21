@@ -9,9 +9,9 @@
 #define SCROLL_SPEED 1
 
 
-data8_t *aeroboto_videoram;
-data8_t *aeroboto_hscroll, *aeroboto_vscroll, *aeroboto_tilecolor;
-data8_t *aeroboto_starx, *aeroboto_stary, *aeroboto_bgcolor;
+uint8_t *aeroboto_videoram;
+uint8_t *aeroboto_hscroll, *aeroboto_vscroll, *aeroboto_tilecolor;
+uint8_t *aeroboto_starx, *aeroboto_stary, *aeroboto_bgcolor;
 
 static int aeroboto_charbank, aeroboto_starsoff;
 
@@ -54,7 +54,7 @@ VIDEO_START( aeroboto )
 
 	#if STARS_LAYOUT
 	{
-		data8_t *rom, *temp;
+		uint8_t *rom, *temp;
 		int i, length;
 
 		rom = memory_region(REGION_GFX2);
@@ -156,8 +156,8 @@ VIDEO_UPDATE( aeroboto )
 	static struct rectangle splitrect1 = { 0, 255, 0, 39 };
 	static struct rectangle splitrect2 = { 0, 255, 40, 255 };
 	static int sx=0, sy=0;
-	static data8_t ox=0, oy=0;
-	data8_t *src_base, *src_colptr, *src_rowptr;
+	static uint8_t ox=0, oy=0;
+	uint8_t *src_base, *src_colptr, *src_rowptr;
 	int src_offsx, src_colmask, sky_color, star_color, x, y, i, j, pen;
 
 	sky_color = star_color = *aeroboto_bgcolor << 2;

@@ -21,10 +21,10 @@ extern enum namcos22_gametype
 
 #define NAMCOS22_PALETTE_SIZE 0x8000
 
-extern data32_t *namcos22_cgram;
-extern data32_t *namcos22_textram;
-extern data32_t *namcos22_polygonram;
-extern data32_t *namcos22_gamma;
+extern uint32_t *namcos22_cgram;
+extern uint32_t *namcos22_textram;
+extern uint32_t *namcos22_polygonram;
+extern uint32_t *namcos22_gamma;
 
 READ32_HANDLER( namcos22_cgram_r );
 WRITE32_HANDLER( namcos22_cgram_w );

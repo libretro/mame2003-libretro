@@ -56,7 +56,7 @@ static READ16_HANDLER( sound_cpu_r )
 
 static READ16_HANDLER( pow_video16_r )
 {
-	data16_t data = videoram16[offset];
+	uint16_t data = videoram16[offset];
 	return data;
 }
 

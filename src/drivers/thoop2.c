@@ -13,9 +13,9 @@ The DS5002FP has up to 128 KB undumped gameplay code
 #include "vidhrdw/generic.h"
 #include "cpu/m68000/m68000.h"
 
-extern data16_t *thoop2_vregs;
-extern data16_t *thoop2_videoram;
-extern data16_t *thoop2_spriteram;
+extern uint16_t *thoop2_vregs;
+extern uint16_t *thoop2_videoram;
+extern uint16_t *thoop2_spriteram;
 
 /* from vidhrdw/thoop2.c */
 WRITE16_HANDLER( thoop2_vram_w );

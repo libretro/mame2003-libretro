@@ -28,8 +28,8 @@ void K053936GP_1_zoom_draw(struct mame_bitmap *bitmap, const struct rectangle *c
 
 // 1st-Tier GX/MW Variables and Functions
 extern int konamigx_cfgport;
-extern data8_t  konamigx_wrport1_0, konamigx_wrport1_1;
-extern data16_t konamigx_wrport2;
+extern uint8_t  konamigx_wrport1_0, konamigx_wrport1_1;
+extern uint16_t konamigx_wrport2;
 
 
 // Tile and Sprite Mixcode Decoders

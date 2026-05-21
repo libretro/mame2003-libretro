@@ -19,7 +19,7 @@ static int glfgreat_roz_rom_bank,glfgreat_roz_char_bank,glfgreat_roz_rom_mode;
 
 static void glfgreat_get_roz_tile_info(int tile_index)
 {
-	data8_t *rom = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_USER1);
 	int code;
 
 	tile_index += 0x40000 * glfgreat_roz_rom_bank;
@@ -31,7 +31,7 @@ static void glfgreat_get_roz_tile_info(int tile_index)
 
 static void prmrsocr_get_roz_tile_info(int tile_index)
 {
-	data8_t *rom = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_USER1);
 	int code = rom[tile_index+0x20000] + 256*rom[tile_index];
 
 	SET_TILE_INFO(0,code & 0x1fff,code >> 13,0)

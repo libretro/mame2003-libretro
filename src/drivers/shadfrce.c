@@ -79,8 +79,8 @@ lev 7 : 0x7c : 0000 11d0 - just rte
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *shadfrce_fgvideoram, *shadfrce_bg0videoram,  *shadfrce_bg1videoram,   *shadfrce_spvideoram;
-/* data16_t *shadfrce_videoregs; */
+uint16_t *shadfrce_fgvideoram, *shadfrce_bg0videoram,  *shadfrce_bg1videoram,   *shadfrce_spvideoram;
+/* uint16_t *shadfrce_videoregs; */
 
 /* in vidhrdw */
 WRITE16_HANDLER ( shadfrce_bg0scrollx_w );

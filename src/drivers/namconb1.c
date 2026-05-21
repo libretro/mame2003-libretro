@@ -295,20 +295,20 @@ GFX:                Custom 145     ( 80 pin PQFP)
 #include "machine/random.h"
 
 #define NB1_NVMEM_SIZE (0x800)
-static data32_t *nvmem32;
+static uint32_t *nvmem32;
 
-data32_t *namconb1_workram32;
-data32_t *namconb1_spritebank32;
-data32_t *namconb1_scrollram32;
+uint32_t *namconb1_workram32;
+uint32_t *namconb1_spritebank32;
+uint32_t *namconb1_scrollram32;
 
 static NVRAM_HANDLER( namconb1 ){
 	int i;
-	data8_t data[4];
+	uint8_t data[4];
 	if( read_or_write )
 	{
 		for( i=0; i<NB1_NVMEM_SIZE/4; i++ )
 		{
-			data32_t dword = nvmem32[i];
+			uint32_t dword = nvmem32[i];
 			data[0] = dword>>24;
 			data[1] = (dword&0x00ff0000)>>16;
 			data[2] = (dword&0x0000ff00)>>8;
@@ -376,8 +376,8 @@ static void
 ShuffleDataROMs( void )
 {
 	size_t len = memory_region_length(REGION_USER1)/4;
-	data8_t *pMem8 = (data8_t *)memory_region( REGION_USER1 );
-	data32_t *pMem32 = (data32_t *)pMem8;
+	uint8_t *pMem8 = (uint8_t *)memory_region( REGION_USER1 );
+	uint32_t *pMem32 = (uint32_t *)pMem8;
 	int i;
 
 	for( i=0; i<len; i++ )
@@ -402,8 +402,8 @@ static DRIVER_INIT( outfxies )
 
 static READ32_HANDLER( custom_key_r )
 {
-	static data16_t count;
-	data16_t old_count;
+	static uint16_t count;
+	uint16_t old_count;
 	old_count = count;
 	do
 	{

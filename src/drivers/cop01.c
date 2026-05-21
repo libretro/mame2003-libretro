@@ -55,7 +55,7 @@ Mighty Guy board layout:
 #define MIGHTGUY_HACK	0
 
 
-extern data8_t *cop01_bgvideoram,*cop01_fgvideoram;
+extern uint8_t *cop01_bgvideoram,*cop01_fgvideoram;
 
 PALETTE_INIT( cop01 );
 VIDEO_START( cop01 );
@@ -602,7 +602,7 @@ static DRIVER_INIT( mightguy )
 #if MIGHTGUY_HACK
 	/* This is a hack to fix the game code to get a fully working
 	   "Starting Area" fake Dip Switch */
-	data8_t *RAM = (data8_t *)memory_region(REGION_CPU1);
+	uint8_t *RAM = (uint8_t *)memory_region(REGION_CPU1);
 	RAM[0x00e4] = 0x07;	// rlca
 	RAM[0x00e5] = 0x07;	// rlca
 	RAM[0x00e6] = 0x07;	// rlca

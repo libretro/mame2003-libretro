@@ -110,8 +110,8 @@ VIDEO_START( skullxbo )
 WRITE16_HANDLER( skullxbo_xscroll_w )
 {
 	/* combine data */
-	data16_t oldscroll = *atarigen_xscroll;
-	data16_t newscroll = oldscroll;
+	uint16_t oldscroll = *atarigen_xscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if something changed, force an update */
@@ -131,9 +131,9 @@ WRITE16_HANDLER( skullxbo_yscroll_w )
 {
 	/* combine data */
 	int scanline = cpu_getscanline();
-	data16_t oldscroll = *atarigen_yscroll;
-	data16_t newscroll = oldscroll;
-	data16_t effscroll;
+	uint16_t oldscroll = *atarigen_yscroll;
+	uint16_t newscroll = oldscroll;
+	uint16_t effscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if something changed, force an update */
@@ -190,7 +190,7 @@ WRITE16_HANDLER( skullxbo_playfieldlatch_w )
 
 void skullxbo_scanline_update(int scanline)
 {
-	data16_t *base = &atarigen_alpha[(scanline / 8) * 64 + 42];
+	uint16_t *base = &atarigen_alpha[(scanline / 8) * 64 + 42];
 	int x;
 
 	/* keep in range */
@@ -208,8 +208,8 @@ void skullxbo_scanline_update(int scanline)
 	/* update the current parameters */
 	for (x = 42; x < 64; x++)
 	{
-		data16_t data = *base++;
-		data16_t command = data & 0x000f;
+		uint16_t data = *base++;
+		uint16_t command = data & 0x000f;
 
 		/* only command I've ever seen */
 		if (command == 0x0d)

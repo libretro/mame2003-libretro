@@ -40,7 +40,7 @@ VIDEO_UPDATE( fantland );
 
 ***************************************************************************/
 
-static data8_t fantland_nmi_enable;
+static uint8_t fantland_nmi_enable;
 
 static WRITE_HANDLER( fantland_nmi_enable_w )
 {

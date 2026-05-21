@@ -45,7 +45,7 @@ VIDEO_START( m90 );
 
 static void set_m90_bank(void)
 {
-	data8_t *rom = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_USER1);
 
 	if (!rom)
 		usrintf_showmessage("bankswitch with no banked ROM!");

@@ -10,8 +10,8 @@ Additional tweaking by Jarek Burczynski
 #include "driver.h"
 #include "generic.h"
 
-data16_t *magmax_scroll_x;
-data16_t *magmax_scroll_y;
+uint16_t *magmax_scroll_x;
+uint16_t *magmax_scroll_y;
 unsigned short magmax_vreg;
 static int flipscreen = 0;
 

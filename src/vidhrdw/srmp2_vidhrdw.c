@@ -101,7 +101,7 @@ static void srmp2_draw_sprites(struct mame_bitmap *bitmap)
 	int flip	=	ctrl & 0x40;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	data16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int max_y	=	Machine -> drv -> screen_height;
 
@@ -313,7 +313,7 @@ static void mjyuugi_draw_sprites_map(struct mame_bitmap *bitmap)
 	int numcol	=	ctrl2 & 0x000f;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	data16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int upper	=	( spriteram16[ 0x604/2 ] & 0xFF ) +
 					( spriteram16[ 0x606/2 ] & 0xFF ) * 256;
@@ -412,7 +412,7 @@ static void mjyuugi_draw_sprites(struct mame_bitmap *bitmap)
 	int flip	=	ctrl & 0x40;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	data16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int max_y	=	Machine -> drv -> screen_height;
 

@@ -237,29 +237,29 @@ static dsp32_regs dsp32;
 
 #else
 
-static INLINE data16_t RWORD(offs_t addr)
+static INLINE uint16_t RWORD(offs_t addr)
 {
-	data16_t data;
+	uint16_t data;
 	if (addr & 1) fprintf(stderr, "Unaligned word read @ %06X, PC=%06X\n", addr, dsp32.PC);
 	data = cpu_readmem24ledw_word(addr);
 	return data;
 }
 
-static INLINE data32_t RLONG(offs_t addr)
+static INLINE uint32_t RLONG(offs_t addr)
 {
-	data32_t data;
+	uint32_t data;
 	if (addr & 3) fprintf(stderr, "Unaligned long read @ %06X, PC=%06X\n", addr, dsp32.PC);
 	data = cpu_readmem24ledw_dword(addr);
 	return data;
 }
 
-static INLINE void WWORD(offs_t addr, data16_t data)
+static INLINE void WWORD(offs_t addr, uint16_t data)
 {
 	if (addr & 1) fprintf(stderr, "Unaligned word write @ %06X, PC=%06X\n", addr, dsp32.PC);
 	cpu_writemem24ledw_word((addr), data);
 }
 
-static INLINE void WLONG(offs_t addr, data32_t data)
+static INLINE void WLONG(offs_t addr, uint32_t data)
 {
 	if (addr & 3) fprintf(stderr, "Unaligned long write @ %06X, PC=%06X\n", addr, dsp32.PC);
 	cpu_writemem24ledw_dword((addr), data);
@@ -311,9 +311,9 @@ void dsp32c_set_irq_callback(int (*callback)(int irqline))
 **	REGISTER HANDLING
 **#################################################################################################*/
 
-static void update_pcr(data16_t newval)
+static void update_pcr(uint16_t newval)
 {
-	data16_t oldval = dsp32.pcr;
+	uint16_t oldval = dsp32.pcr;
 	dsp32.pcr = newval;
 
 	/* reset the chip if we get a reset */
@@ -323,7 +323,7 @@ static void update_pcr(data16_t newval)
 	/* track the state of the output pins */
 	if (dsp32.output_pins_changed)
 	{
-		data16_t newoutput = ((newval & (PCR_PIFs | PCR_ENI)) == (PCR_PIFs | PCR_ENI)) ? DSP32_OUTPUT_PIF : 0;
+		uint16_t newoutput = ((newval & (PCR_PIFs | PCR_ENI)) == (PCR_PIFs | PCR_ENI)) ? DSP32_OUTPUT_PIF : 0;
 		if (newoutput != dsp32.lastpins)
 		{
 			dsp32.lastpins = newoutput;
@@ -866,7 +866,7 @@ static INLINE void dma_store(void)
 
 void dsp32c_pio_w(int cpunum, int reg, int data)
 {
-	data16_t mask;
+	uint16_t mask;
 	uint8_t mode;
 
 	cpuintrf_push_context(cpunum);
@@ -948,7 +948,7 @@ void dsp32c_pio_w(int cpunum, int reg, int data)
 
 int dsp32c_pio_r(int cpunum, int reg)
 {
-	data16_t mask, result = 0xffff;
+	uint16_t mask, result = 0xffff;
 	uint8_t mode, shift = 0;
 
 	cpuintrf_push_context(cpunum);

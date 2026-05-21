@@ -30,11 +30,11 @@ Note:	if MAME_DEBUG is defined, pressing Z with:
 
 /* Variables that driver has access to: */
 
-data8_t *paradise_vram_0,*paradise_vram_1,*paradise_vram_2;
+uint8_t *paradise_vram_0,*paradise_vram_1,*paradise_vram_2;
 
 /* Variables only used here */
 
-static data8_t paradise_palbank, paradise_priority;
+static uint8_t paradise_palbank, paradise_priority;
 
 WRITE_HANDLER( paradise_flipscreen_w )
 {

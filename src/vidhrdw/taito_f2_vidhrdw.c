@@ -20,7 +20,7 @@ struct tempsprite
 };
 static struct tempsprite *spritelist;
 
-static data16_t *spriteram_buffered,*spriteram_delayed;
+static uint16_t *spriteram_buffered,*spriteram_delayed;
 
 
 /************************************************************
@@ -40,7 +40,7 @@ static data16_t *spriteram_buffered,*spriteram_delayed;
 ************************************************************/
 
 int f2_sprite_type = 0;
-data16_t *f2_sprite_extension;
+uint16_t *f2_sprite_extension;
 size_t f2_spriteext_size;
 
 static uint16_t spritebank[8];

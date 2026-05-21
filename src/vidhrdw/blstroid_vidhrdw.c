@@ -16,7 +16,7 @@
  *
  *************************************/
 
-data16_t *blstroid_priorityram;
+uint16_t *blstroid_priorityram;
 
 
 

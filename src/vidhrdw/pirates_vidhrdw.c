@@ -1,9 +1,9 @@
 #include "driver.h"
 
 
-data16_t *pirates_tx_tileram, *pirates_spriteram;
-data16_t *pirates_fg_tileram,  *pirates_bg_tileram;
-data16_t *pirates_scroll;
+uint16_t *pirates_tx_tileram, *pirates_spriteram;
+uint16_t *pirates_fg_tileram,  *pirates_bg_tileram;
+uint16_t *pirates_scroll;
 
 static struct tilemap *tx_tilemap, *fg_tilemap, *bg_tilemap;
 
@@ -80,8 +80,8 @@ WRITE16_HANDLER( pirates_bg_tileram_w )
 static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect)
 {
 	const struct GfxElement *gfx = Machine->gfx[1];
-	data16_t *source = pirates_spriteram + 4;
-	data16_t *finish = source + 0x800/2-4;
+	uint16_t *source = pirates_spriteram + 4;
+	uint16_t *finish = source + 0x800/2-4;
 
 	while( source<finish )
 	{

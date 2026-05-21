@@ -26,9 +26,9 @@ The output selects the active layer, it can be:
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *bionicc_fgvideoram;
-data16_t *bionicc_bgvideoram;
-data16_t *bionicc_txvideoram;
+uint16_t *bionicc_fgvideoram;
+uint16_t *bionicc_bgvideoram;
+uint16_t *bionicc_txvideoram;
 
 static struct tilemap *tx_tilemap, *bg_tilemap, *fg_tilemap;
 
@@ -147,7 +147,7 @@ WRITE16_HANDLER( bionicc_paletteram_w )
 
 WRITE16_HANDLER( bionicc_scroll_w )
 {
-	static data16_t scroll[4];
+	static uint16_t scroll[4];
 
 	data = COMBINE_DATA(&scroll[offset]);
 

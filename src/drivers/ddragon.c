@@ -63,7 +63,7 @@ extern int technos_video_hw;
 static int dd_sub_cpu_busy;
 static int sprite_irq, sound_irq, ym_irq, snd_cpu;
 static int adpcm_pos[2],adpcm_end[2],adpcm_idle[2];
-static data8_t* darktowr_mcu_ports;
+static uint8_t* darktowr_mcu_ports;
 static int VBLK;
 /* end of private globals */
 
@@ -113,7 +113,7 @@ static MACHINE_INIT( ddragon2 )
 
 static WRITE_HANDLER( ddragon_bankswitch_w )
 {
-	const data8_t *RAM = memory_region(REGION_CPU1);
+	const uint8_t *RAM = memory_region(REGION_CPU1);
 
 	ddragon_scrolly_hi = ( ( data & 0x02 ) << 7 );
 	ddragon_scrollx_hi = ( ( data & 0x01 ) << 8 );
@@ -170,7 +170,7 @@ static WRITE_HANDLER( darktowr_bankswitch_w )
 
 static READ_HANDLER( darktowr_bank_r )
 {
-	const data8_t *RAM = memory_region(REGION_CPU1);
+	const uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/* MCU is mapped into main cpu memory as a bank */
 	if (darktowr_bank==4) {
@@ -1484,7 +1484,7 @@ toffy / stoffy are 'encrytped
 static DRIVER_INIT( toffy )
 {
 	/* the program rom has a simple bitswap encryption */
-	data8_t *rom=memory_region(REGION_CPU1);
+	uint8_t *rom=memory_region(REGION_CPU1);
 	int i;
 
 	for (i = 0;i < 0x20000;i++)

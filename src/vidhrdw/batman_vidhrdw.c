@@ -142,7 +142,7 @@ void batman_scanline_update(int scanline)
 	/* update the scanline parameters */
 	if (scanline <= Machine->visible_area.max_y && atarivc_state.rowscroll_enable)
 	{
-		data16_t *base = &atarigen_alpha[scanline / 8 * 64 + 48];
+		uint16_t *base = &atarigen_alpha[scanline / 8 * 64 + 48];
 		int scan, i;
 
 		for (scan = 0; scan < 8; scan++, scanline++)

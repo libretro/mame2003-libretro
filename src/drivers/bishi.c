@@ -20,7 +20,7 @@ VIDEO_START(bishi);
 VIDEO_UPDATE(bishi);
 
 /*static int init_eeprom_count;*/
-static data16_t cur_control;
+static uint16_t cur_control;
 
 static READ16_HANDLER( control_r )
 {

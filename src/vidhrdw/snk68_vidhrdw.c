@@ -132,7 +132,7 @@ WRITE16_HANDLER( pow_flipscreen16_w )
 
 WRITE16_HANDLER( pow_paletteram16_word_w )
 {
-	data16_t newword;
+	uint16_t newword;
 	int r,g,b;
 
 	COMBINE_DATA(&paletteram16[offset]);

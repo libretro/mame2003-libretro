@@ -7,11 +7,11 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *goal92_back_data,*goal92_fore_data,*goal92_textram,*goal92_scrollram16;
+uint16_t *goal92_back_data,*goal92_fore_data,*goal92_textram,*goal92_scrollram16;
 
 static struct tilemap *background_layer,*foreground_layer,*text_layer;
 
-static data16_t fg_bank = 0;
+static uint16_t fg_bank = 0;
 
 READ16_HANDLER( goal92_fg_bank_r )
 {

@@ -15,9 +15,9 @@
 
 
 
-data16_t *twincobr_68k_dsp_ram;
-data8_t  *twincobr_sharedram;
-data8_t  *wardner_mainram;
+uint16_t *twincobr_68k_dsp_ram;
+uint8_t  *twincobr_sharedram;
+uint8_t  *wardner_mainram;
 
 
 extern int twincobr_fg_rom_bank;

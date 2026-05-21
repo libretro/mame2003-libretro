@@ -54,7 +54,7 @@ READ16_HANDLER(ddd_053936_tilerom_1_r);
 READ16_HANDLER(gai_053936_tilerom_2_r);
 READ16_HANDLER(ddd_053936_tilerom_2_r);
 
-static data16_t *gx_workram;
+static uint16_t *gx_workram;
 
 static int init_eeprom_count;
 static int mw_irq_control;
@@ -212,7 +212,7 @@ static int suspension_active, resume_trigger;
 
 static READ16_HANDLER(waitskip_r)
 {
-	data16_t data = gx_workram[waitskip.offs+offset];
+	uint16_t data = gx_workram[waitskip.offs+offset];
 	mem_mask = ~mem_mask;
 
 	if (activecpu_get_pc() == waitskip.pc && (data & mem_mask) == (waitskip.data & mem_mask))

@@ -24,7 +24,7 @@
 
 #define TMS34010_RDMEM(A)			((unsigned)cpu_readmem29lew      (A))
 #define TMS34010_RDMEM_WORD(A)		((unsigned)cpu_readmem29lew_word (A))
-static INLINE data32_t TMS34010_RDMEM_DWORD(offs_t A)
+static INLINE uint32_t TMS34010_RDMEM_DWORD(offs_t A)
 {
 	uint32_t result = cpu_readmem29lew_word(A);
 	return result | (cpu_readmem29lew_word(A+2)<<16);
@@ -32,7 +32,7 @@ static INLINE data32_t TMS34010_RDMEM_DWORD(offs_t A)
 
 #define TMS34010_WRMEM(A,V)			(cpu_writemem29lew(A,V))
 #define TMS34010_WRMEM_WORD(A,V)	(cpu_writemem29lew_word(A,V))
-static INLINE void TMS34010_WRMEM_DWORD(offs_t A,data32_t V)
+static INLINE void TMS34010_WRMEM_DWORD(offs_t A,uint32_t V)
 {
 	cpu_writemem29lew_word(A,V);
 	cpu_writemem29lew_word(A+2,V>>16);

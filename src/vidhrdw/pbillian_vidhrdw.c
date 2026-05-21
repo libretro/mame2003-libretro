@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 struct tilemap *pb_tilemap;
-extern data8_t *pb_videoram;
+extern uint8_t *pb_videoram;
 extern int is_pbillian;
 
 WRITE_HANDLER( pb_videoram_w )

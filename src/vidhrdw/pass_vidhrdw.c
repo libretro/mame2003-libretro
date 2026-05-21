@@ -6,8 +6,8 @@ static struct tilemap *pass_bg_tilemap;
 static struct tilemap *pass_fg_tilemap;
 
 /* in drivers/pass.c */
-extern data16_t *pass_bg_videoram;
-extern data16_t *pass_fg_videoram;
+extern uint16_t *pass_bg_videoram;
+extern uint16_t *pass_fg_videoram;
 /* end in drivers/pass.c */
 
 /* background tilemap stuff */

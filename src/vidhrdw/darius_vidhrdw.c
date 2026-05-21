@@ -5,7 +5,7 @@
 
 
 static struct tilemap *fg_tilemap;
-data16_t *darius_fg_ram;
+uint16_t *darius_fg_ram;
 
 struct tempsprite
 {
@@ -21,7 +21,7 @@ static struct tempsprite *spritelist;
 
 /***************************************************************************/
 
-static void actual_get_fg_tile_info(data16_t *ram,int gfxnum,int tile_index)
+static void actual_get_fg_tile_info(uint16_t *ram,int gfxnum,int tile_index)
 {
 	uint16_t code = (ram[tile_index + 0x2000] & 0x7ff);
 	uint16_t attr = ram[tile_index];

@@ -10,14 +10,14 @@
 #include "vidhrdw/generic.h"
 
 
-data8_t *tubep_textram;
-data8_t *rjammer_backgroundram;
-data8_t *tubep_backgroundram;
-data8_t *tubep_sprite_colorsharedram;
+uint8_t *tubep_textram;
+uint8_t *rjammer_backgroundram;
+uint8_t *tubep_backgroundram;
+uint8_t *tubep_sprite_colorsharedram;
 
-static data8_t *spritemap;
-static data8_t *dirtybuff;
-static data8_t prom2[32];
+static uint8_t *spritemap;
+static uint8_t *dirtybuff;
+static uint8_t prom2[32];
 
 #include "res_net.h"
 

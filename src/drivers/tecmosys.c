@@ -95,7 +95,7 @@ ae500w07.ad1 - M6295 Samples (23c4001)
 #include "driver.h"
 
 
-static data16_t* protram;
+static uint16_t* protram;
 
 static uint8_t device[0x10000];
 static uint32_t device_read_ptr = 0;
@@ -522,7 +522,7 @@ ROM_END
 
 static DRIVER_INIT( deroon )
 {
-	data16_t *ROM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *ROM = (uint16_t *)memory_region(REGION_CPU1);
 
 	memcpy(protram, ROM+0xC46/2, 0x10);
 

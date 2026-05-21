@@ -14,16 +14,16 @@
 
 static int ttl_gfx_index;
 static struct tilemap *ttl_tilemap, *rng_936_tilemap;
-static data16_t ttl_vram[0x1000];
+static uint16_t ttl_vram[0x1000];
 
 static int sprite_colorbase;
-extern data16_t *rng_936_videoram;
+extern uint16_t *rng_936_videoram;
 
 /* TTL text plane stuff */
 
 static INLINE void ttl_get_tile_info(int tile_index)
 {
-	data32_t *lvram = (data32_t *)ttl_vram;
+	uint32_t *lvram = (uint32_t *)ttl_vram;
 	int attr, code;
 
 	code = (lvram[tile_index]>>16)&0xffff;

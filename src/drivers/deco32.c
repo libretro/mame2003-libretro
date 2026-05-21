@@ -114,12 +114,12 @@ from Dragon Gun.
 #include "bootstrap.h"
 #include "inptport.h"
 
-static data32_t *deco32_ram;
+static uint32_t *deco32_ram;
 static int raster_enable,raster_offset;
 static void *raster_irq_timer;
 static uint8_t nslasher_sound_irq;
 
-extern data32_t *deco32_ace_ram;
+extern uint32_t *deco32_ace_ram;
 extern VIDEO_START( nslasher );
 extern VIDEO_UPDATE( nslasher );
 extern WRITE32_HANDLER( deco32_ace_ram_w );
@@ -361,7 +361,7 @@ static WRITE32_HANDLER( tattass_control_w )
 	static int pendingCommand=0; /* 1 = read, 2 = write */
 	static int readBitCount=0;
 	static int byteAddr=0;
-	data8_t *eeprom=EEPROM_get_data_pointer(0);
+	uint8_t *eeprom=EEPROM_get_data_pointer(0);
 
 	/* Eprom in low byte */
 	if (mem_mask==0xffffff00) { /* Byte write to low byte only (different from word writing including low byte) */
@@ -2878,7 +2878,7 @@ ROM_END
 
 static READ32_HANDLER( captaven_skip )
 {
-	data32_t ret=deco32_ram[0x748c/4];
+	uint32_t ret=deco32_ram[0x748c/4];
 
 	if (activecpu_get_pc()==0x39e8 && (ret&0xff)!=0) {
 /*		log_cb(RETRO_LOG_ERROR, LOGPRE "CPU Spin - %d cycles left this frame ran %d (%d)\n",cycles_left_to_run(),cycles_currently_ran(),cycles_left_to_run()+cycles_currently_ran());*/
@@ -2890,7 +2890,7 @@ static READ32_HANDLER( captaven_skip )
 
 static READ32_HANDLER( dragngun_skip )
 {
-	data32_t ret=deco32_ram[0x1f15c/4];
+	uint32_t ret=deco32_ram[0x1f15c/4];
 
 	if (activecpu_get_pc()==0x628c && (ret&0xff)!=0) {
 		/*logerror("%08x (%08x): CPU Spin - %d cycles left this frame ran %d (%d)\n",activecpu_get_pc(),ret,cycles_left_to_run(),cycles_currently_ran(),cycles_left_to_run()+cycles_currently_ran());*/
@@ -2903,7 +2903,7 @@ static READ32_HANDLER( dragngun_skip )
 static READ32_HANDLER( tattass_skip )
 {
 	int left=cycles_left_to_run();
-	data32_t ret=deco32_ram[0];
+	uint32_t ret=deco32_ram[0];
 
 	if (activecpu_get_pc()==0x1c5ec && left>32) {
 		/*logerror("%08x (%08x): CPU Spin - %d cycles left this frame ran %d (%d)\n",activecpu_get_pc(),ret,cycles_left_to_run(),cycles_currently_ran(),cycles_left_to_run()+cycles_currently_ran());*/
@@ -2940,9 +2940,9 @@ static DRIVER_INIT( captaven )
 
 static DRIVER_INIT( dragngun )
 {
-	data32_t *ROM = (uint32_t *)memory_region(REGION_CPU1);
-	const data8_t *SRC_RAM = memory_region(REGION_GFX1);
-	data8_t *DST_RAM = memory_region(REGION_GFX2);
+	uint32_t *ROM = (uint32_t *)memory_region(REGION_CPU1);
+	const uint8_t *SRC_RAM = memory_region(REGION_GFX1);
+	uint8_t *DST_RAM = memory_region(REGION_GFX2);
 
 	deco74_decrypt(REGION_GFX1);
 	deco74_decrypt(REGION_GFX2);
@@ -2965,8 +2965,8 @@ static DRIVER_INIT( fghthist )
 
 static DRIVER_INIT( lockload )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
-/*	data32_t *ROM = (uint32_t *)memory_region(REGION_CPU1);*/
+	uint8_t *RAM = memory_region(REGION_CPU1);
+/*	uint32_t *ROM = (uint32_t *)memory_region(REGION_CPU1);*/
 
 	deco74_decrypt(REGION_GFX1);
 	deco74_decrypt(REGION_GFX2);
@@ -2983,8 +2983,8 @@ static DRIVER_INIT( lockload )
 
 static DRIVER_INIT( tattass )
 {
-	data8_t *RAM = memory_region(REGION_GFX1);
-	data8_t *tmp = (data8_t *)malloc(0x80000);
+	uint8_t *RAM = memory_region(REGION_GFX1);
+	uint8_t *tmp = (uint8_t *)malloc(0x80000);
 
 	/* Reorder bitplanes to make decoding easier */
 	memcpy(tmp,RAM+0x80000,0x80000);
@@ -3006,8 +3006,8 @@ static DRIVER_INIT( tattass )
 
 static DRIVER_INIT( nslasher )
 {
-	data8_t *RAM = memory_region(REGION_GFX1);
-	data8_t *tmp = (data8_t *)malloc(0x80000);
+	uint8_t *RAM = memory_region(REGION_GFX1);
+	uint8_t *tmp = (uint8_t *)malloc(0x80000);
 
 	/* Reorder bitplanes to make decoding easier */
 	memcpy(tmp,RAM+0x80000,0x80000);

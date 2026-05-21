@@ -25,9 +25,9 @@ Revisions:
 #include "vidhrdw/generic.h"
 
 
-extern data8_t *aeroboto_videoram;
-extern data8_t *aeroboto_hscroll, *aeroboto_vscroll, *aeroboto_tilecolor;
-extern data8_t *aeroboto_starx, *aeroboto_stary, *aeroboto_bgcolor;
+extern uint8_t *aeroboto_videoram;
+extern uint8_t *aeroboto_hscroll, *aeroboto_vscroll, *aeroboto_tilecolor;
+extern uint8_t *aeroboto_starx, *aeroboto_stary, *aeroboto_bgcolor;
 
 VIDEO_START( aeroboto );
 VIDEO_UPDATE( aeroboto );
@@ -37,7 +37,7 @@ WRITE_HANDLER( aeroboto_3000_w );
 WRITE_HANDLER( aeroboto_videoram_w );
 WRITE_HANDLER( aeroboto_tilecolor_w );
 
-static data8_t *aeroboto_mainram;
+static uint8_t *aeroboto_mainram;
 static int disable_irq = 0;
 
 

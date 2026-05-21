@@ -5,7 +5,7 @@
 #define TOTAL_CHARS 0x1000
 #define TOTAL_SPRITES 0x4000
 
-data16_t *gradius3_gfxram;
+uint16_t *gradius3_gfxram;
 int gradius3_priority;
 static int layer_colorbase[3],sprite_colorbase;
 static int dirtygfx;

@@ -46,7 +46,7 @@ static MACHINE_INIT( aztarac )
 
 static READ16_HANDLER( nvram_r )
 {
-	return ((data16_t *)generic_nvram)[offset] | 0xfff0;
+	return ((uint16_t *)generic_nvram)[offset] | 0xfff0;
 }
 
 
@@ -86,7 +86,7 @@ MEMORY_END
 
 static MEMORY_WRITE16_START( writemem )
 	{ 0x000000, 0x00bfff, MWA16_ROM },
-	{ 0x022000, 0x0220ff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x022000, 0x0220ff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x027008, 0x027009, aztarac_sound_w },
 	{ 0xff8000, 0xffafff, MWA16_RAM, &aztarac_vectorram },
 	{ 0xffb000, 0xffb001, aztarac_ubr_w },

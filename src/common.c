@@ -179,7 +179,7 @@ int resource_tracking_tag = 0;
 
 /* generic NVRAM */
 size_t generic_nvram_size;
-data8_t *generic_nvram;
+uint8_t *generic_nvram;
 
 /* disks */
 static struct chd_file *disk_handle[4];

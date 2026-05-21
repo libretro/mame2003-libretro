@@ -8,15 +8,15 @@
 #include "vidhrdw/generic.h"
 #include <math.h>
 
-data16_t *nemesis_videoram1b;
-data16_t *nemesis_videoram2b;
-data16_t *nemesis_videoram1f;
-data16_t *nemesis_videoram2f;
+uint16_t *nemesis_videoram1b;
+uint16_t *nemesis_videoram2b;
+uint16_t *nemesis_videoram1f;
+uint16_t *nemesis_videoram2f;
 
-data16_t *nemesis_characterram;
+uint16_t *nemesis_characterram;
 size_t nemesis_characterram_size;
-data16_t *nemesis_xscroll1,*nemesis_xscroll2,*nemesis_yscroll;
-data16_t *nemesis_yscroll1,*nemesis_yscroll2;
+uint16_t *nemesis_xscroll1,*nemesis_xscroll2,*nemesis_yscroll;
+uint16_t *nemesis_yscroll1,*nemesis_yscroll2;
 
 static int spriteram_words;
 static int tilemap_flip;
@@ -227,7 +227,7 @@ READ16_HANDLER( nemesis_characterram_word_r )
 
 WRITE16_HANDLER( nemesis_characterram_word_w )
 {
-	data16_t oldword = nemesis_characterram[offset];
+	uint16_t oldword = nemesis_characterram[offset];
 	COMBINE_DATA(nemesis_characterram + offset);
 	data = nemesis_characterram[offset];
 

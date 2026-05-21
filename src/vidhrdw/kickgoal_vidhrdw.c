@@ -3,7 +3,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern data16_t *kickgoal_fgram, *kickgoal_bgram, *kickgoal_bg2ram, *kickgoal_scrram;
+extern uint16_t *kickgoal_fgram, *kickgoal_bgram, *kickgoal_bg2ram, *kickgoal_scrram;
 struct tilemap *kickgoal_fgtm, *kickgoal_bgtm, *kickgoal_bg2tm;
 
 /* FG */

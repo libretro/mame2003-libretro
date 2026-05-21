@@ -13,7 +13,7 @@
 struct _LFO
 {
     unsigned short phase;
-    data32_t phase_step;
+    uint32_t phase_step;
     int *table;
     int *scale;
 };
@@ -128,7 +128,7 @@ static INLINE signed int ALFO_Step(struct _LFO *LFO)
 	return p<<(SHIFT-LFO_SHIFT);
 }
 
-void LFO_ComputeStep(struct _LFO *LFO,data32_t LFOF,data32_t LFOWS,data32_t LFOS,int ALFO)
+void LFO_ComputeStep(struct _LFO *LFO,uint32_t LFOF,uint32_t LFOWS,uint32_t LFOS,int ALFO)
 {
     float step=(float) LFOFreq[LFOF]*256.0/(float)Machine->sample_rate;
     LFO->phase_step=(unsigned int) ((float) (1<<LFO_SHIFT)*step);

@@ -198,8 +198,8 @@ actual code sent to the hardware.
 /* Variables defined here, that have to be shared: */
 struct tilemap *megasys1_tmap[3];
 
-data16_t *megasys1_scrollram_0, *megasys1_scrollram_1, *megasys1_scrollram_2;
-data16_t *megasys1_objectram, *megasys1_vregs, *megasys1_ram;
+uint16_t *megasys1_scrollram_0, *megasys1_scrollram_1, *megasys1_scrollram_2;
+uint16_t *megasys1_objectram, *megasys1_vregs, *megasys1_ram;
 
 int megasys1_scroll_flag[3], megasys1_scrollx[3], megasys1_scrolly[3], megasys1_pages_per_tmap_x[3], megasys1_pages_per_tmap_y[3];
 int megasys1_active_layers, megasys1_sprite_bank;
@@ -316,13 +316,13 @@ VIDEO_START( megasys1 )
 #define MEGASYS1_GET_TILE_INFO(_n_) \
 void megasys1_get_scroll_##_n_##_tile_info_8x8(int tile_index) \
 { \
-	data16_t code = megasys1_scrollram_##_n_[tile_index]; \
+	uint16_t code = megasys1_scrollram_##_n_[tile_index]; \
 	SET_TILE_INFO( _n_ , (code & 0xfff) * megasys1_8x8_scroll_##_n_##_factor, code >> (16 - megasys1_bits_per_color_code), 0 ) \
 } \
 \
 void megasys1_get_scroll_##_n_##_tile_info_16x16(int tile_index) \
 { \
-	data16_t code = megasys1_scrollram_##_n_[tile_index/4]; \
+	uint16_t code = megasys1_scrollram_##_n_[tile_index/4]; \
 	SET_TILE_INFO( _n_ , (code & 0xfff) * megasys1_16x16_scroll_##_n_##_factor + (tile_index & 3), code >> (16-megasys1_bits_per_color_code), 0 ); \
 } \
 \
@@ -346,8 +346,8 @@ uint32_t megasys1_##_n_##_scan_16x16(uint32_t col,uint32_t row,uint32_t num_cols
 #define MEGASYS1_SCROLLRAM_W(_n_) \
 WRITE16_HANDLER( megasys1_scrollram_##_n_##_w ) \
 { \
-	data16_t old_data = megasys1_scrollram_##_n_[offset]; \
-	data16_t new_data = COMBINE_DATA(&megasys1_scrollram_##_n_[offset]); \
+	uint16_t old_data = megasys1_scrollram_##_n_[offset]; \
+	uint16_t new_data = COMBINE_DATA(&megasys1_scrollram_##_n_[offset]); \
 	if (old_data != new_data) \
 	{ \
 		if ( (offset < 0x40000/2) && (megasys1_tmap[_n_]) ) \
@@ -440,7 +440,7 @@ MEGASYS1_SCROLL_FLAG_W(2)
 /* Used by MS1-A/Z, B */
 WRITE16_HANDLER( megasys1_vregs_A_w )
 {
-	data16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -491,7 +491,7 @@ READ16_HANDLER( megasys1_vregs_C_r )
 
 WRITE16_HANDLER( megasys1_vregs_C_w )
 {
-	data16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -532,7 +532,7 @@ WRITE16_HANDLER( megasys1_vregs_C_w )
 /* Used by MS1-D only */
 WRITE16_HANDLER( megasys1_vregs_D_w )
 {
-	data16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -600,8 +600,8 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 		{
 			for (sprite = 0; sprite < 4 ; sprite ++)
 			{
-				data16_t *objectdata = &megasys1_objectram[offs + (0x800/2) * sprite];
-				data16_t *spritedata = &spriteram16[ (objectdata[ 0 ] & 0x7f) * 0x10/2];
+				uint16_t *objectdata = &megasys1_objectram[offs + (0x800/2) * sprite];
+				uint16_t *spritedata = &spriteram16[ (objectdata[ 0 ] & 0x7f) * 0x10/2];
 
 				attr = spritedata[ 8/2 ];
 				if (((attr & 0xc0)>>6) != sprite)	continue;	// flipping
@@ -644,7 +644,7 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 
 		for (sprite = 0x80-1;sprite >= 0;sprite--)
 		{
-			data16_t *spritedata = &spriteram16[ sprite * 0x10/2];
+			uint16_t *spritedata = &spriteram16[ sprite * 0x10/2];
 
 			attr = spritedata[ 8/2 ];
 

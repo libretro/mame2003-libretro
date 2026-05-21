@@ -55,7 +55,7 @@ MEMORY_END
 static MEMORY_WRITE16_START( writemem )
 	{ TOBYTE(0x00000000), TOBYTE(0x003fffff), midtunit_vram_w },
 	{ TOBYTE(0x01000000), TOBYTE(0x013fffff), MWA16_RAM, &midyunit_scratch_ram },
-	{ TOBYTE(0x01400000), TOBYTE(0x0141ffff), midtunit_cmos_w, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ TOBYTE(0x01400000), TOBYTE(0x0141ffff), midtunit_cmos_w, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ TOBYTE(0x01480000), TOBYTE(0x014fffff), midtunit_cmos_enable_w },
 	{ TOBYTE(0x01800000), TOBYTE(0x0187ffff), midtunit_paletteram_w, &paletteram16 },
 	{ TOBYTE(0x01a80000), TOBYTE(0x01a800ff), midtunit_dma_w },
@@ -64,7 +64,7 @@ static MEMORY_WRITE16_START( writemem )
 	{ TOBYTE(0x01d01020), TOBYTE(0x01d0103f), midtunit_sound_w },
 	{ TOBYTE(0x01d81060), TOBYTE(0x01d8107f), watchdog_reset16_w },
 	{ TOBYTE(0x01f00000), TOBYTE(0x01f0001f), midtunit_control_w },
-	{ TOBYTE(0x02000000), TOBYTE(0x07ffffff), MWA16_ROM, (data16_t **)&midyunit_gfx_rom, &midyunit_gfx_rom_size },
+	{ TOBYTE(0x02000000), TOBYTE(0x07ffffff), MWA16_ROM, (uint16_t **)&midyunit_gfx_rom, &midyunit_gfx_rom_size },
 	{ TOBYTE(0xc0000000), TOBYTE(0xc00001ff), tms34010_io_register_w },
 	{ TOBYTE(0xff800000), TOBYTE(0xffffffff), MWA16_ROM, &midyunit_code_rom },
 MEMORY_END

@@ -91,7 +91,7 @@ Heavy use is made of sprite zooming.
 
 static void groundfx_draw_sprites_16x16(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int do_hack,int x_offs,int y_offs)
 {
-	data16_t *spritemap = (data16_t *)memory_region(REGION_USER1);
+	uint16_t *spritemap = (uint16_t *)memory_region(REGION_USER1);
 	int offs, data, tilenum, color, flipx, flipy;
 	int x, y, priority, dblsize, curx, cury;
 	int sprites_flipscreen = 0;

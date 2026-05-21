@@ -5,10 +5,10 @@
 
 static struct tilemap *gcpinbal_tilemap[3];
 
-data16_t *gcpinbal_tilemapram;
-data16_t *gcpinbal_ioc_ram;
+uint16_t *gcpinbal_tilemapram;
+uint16_t *gcpinbal_ioc_ram;
 
-//data16_t *gcpinbal_ctrlram;
+//uint16_t *gcpinbal_ctrlram;
 //static uint16_t gcpinbal_ctrl_reg;
 
 static uint16_t gcpinbal_scrollx[3],gcpinbal_scrolly[3];

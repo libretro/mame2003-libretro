@@ -52,8 +52,8 @@ WRITE16_HANDLER( niyanpai_palette_w )
 {
 	int r, g, b;
 	int offs_h, offs_l;
-	data16_t oldword = niyanpai_palette[offset];
-	data16_t newword;
+	uint16_t oldword = niyanpai_palette[offset];
+	uint16_t newword;
 
 	COMBINE_DATA(&niyanpai_palette[offset]);
 	newword = niyanpai_palette[offset];

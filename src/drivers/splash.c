@@ -12,10 +12,10 @@ Driver by Manuel Abadia <manu@teleline.es>
 #include "cpu/m68000/m68000.h"
 
 
-extern data16_t *splash_vregs;
-extern data16_t *splash_videoram;
-extern data16_t *splash_spriteram;
-extern data16_t *splash_pixelram;
+extern uint16_t *splash_vregs;
+extern uint16_t *splash_videoram;
+extern uint16_t *splash_spriteram;
+extern uint16_t *splash_pixelram;
 
 /* from vidhrdw/gaelco.c */
 READ16_HANDLER( splash_vram_r );

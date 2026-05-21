@@ -134,7 +134,7 @@ TODO:
 
 static READ16_HANDLER( extrarom1_r )
 {
-	data8_t *rom = memory_region(REGION_USER1);
+	uint8_t *rom = memory_region(REGION_USER1);
 
 	offset *= 2;
 
@@ -143,7 +143,7 @@ static READ16_HANDLER( extrarom1_r )
 
 static READ16_HANDLER( extrarom2_r )
 {
-	data8_t *rom = memory_region(REGION_USER2);
+	uint8_t *rom = memory_region(REGION_USER2);
 
 	offset *= 2;
 
@@ -152,7 +152,7 @@ static READ16_HANDLER( extrarom2_r )
 
 static WRITE_HANDLER( crshrace_sh_bankswitch_w )
 {
-	data8_t *rom = memory_region(REGION_CPU2) + 0x10000;
+	uint8_t *rom = memory_region(REGION_CPU2) + 0x10000;
 
 	cpu_setbank(1,rom + (data & 0x03) * 0x8000);
 }
@@ -730,7 +730,7 @@ ROM_END
 void crshrace_patch_code(uint16_t offset)
 {
 	/* A hack which shows 3 player mode in code which is disabled */
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 	RAM[(offset + 0)/2] = 0x4e71;
 	RAM[(offset + 2)/2] = 0x4e71;
 	RAM[(offset + 4)/2] = 0x4e71;

@@ -30,8 +30,8 @@ WRITE16_HANDLER( madmotor_pf3_data_w );
 WRITE16_HANDLER( madmotor_pf1_control_w );
 WRITE16_HANDLER( madmotor_pf2_control_w );
 WRITE16_HANDLER( madmotor_pf3_control_w );
-extern data16_t *madmotor_pf1_rowscroll;
-extern data16_t *madmotor_pf1_data,*madmotor_pf2_data,*madmotor_pf3_data;
+extern uint16_t *madmotor_pf1_rowscroll;
+extern uint16_t *madmotor_pf1_data,*madmotor_pf2_data,*madmotor_pf3_data;
 
 
 /******************************************************************************/

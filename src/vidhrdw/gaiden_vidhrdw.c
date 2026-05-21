@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *gaiden_videoram,*gaiden_videoram2,*gaiden_videoram3;
+uint16_t *gaiden_videoram,*gaiden_videoram2,*gaiden_videoram3;
 int gaiden_sprite_sizey;
 int raiga_alpha;
 
@@ -131,42 +131,42 @@ VIDEO_START( raiga )
 
 WRITE16_HANDLER( gaiden_txscrollx_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(text_layer, 0, scroll);
 }
 
 WRITE16_HANDLER( gaiden_txscrolly_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(text_layer, 0, scroll);
 }
 
 WRITE16_HANDLER( gaiden_fgscrollx_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(foreground, 0, scroll);
 }
 
 WRITE16_HANDLER( gaiden_fgscrolly_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(foreground, 0, scroll);
 }
 
 WRITE16_HANDLER( gaiden_bgscrollx_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(background, 0, scroll);
 }
 
 WRITE16_HANDLER( gaiden_bgscrolly_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(background, 0, scroll);
 }

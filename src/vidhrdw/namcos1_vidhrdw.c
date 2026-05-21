@@ -58,7 +58,7 @@ static unsigned char *namcos1_paletteram;
   0ff0-0fff : display control register
   1000-1fff : playfield control register
 */
-static data8_t *namcos1_controlram;
+static uint8_t *namcos1_controlram;
 
 /* palette dirty information */
 static unsigned char sprite_palette_state[MAX_SPRITES+1];
@@ -68,7 +68,7 @@ static unsigned char tilemap_palette_state[MAX_PLAYFIELDS];
 static int scrolloffsX[4];
 static int scrolloffsY[4];
 
-static data8_t namcos1_playfield_control[0x100];
+static uint8_t namcos1_playfield_control[0x100];
 struct playfield playfields[MAX_PLAYFIELDS];
 
 static struct tilemap *tilemap[MAX_PLAYFIELDS];
@@ -80,7 +80,7 @@ static int flipscreen;
 
 static unsigned priority_xlat[8] = {0,1,2,3,4,5,6,7};
 static int update_status, idle_counter, idle_threshold;
-static data8_t *sp_updatebuffer, *sp_backbuffer;
+static uint8_t *sp_updatebuffer, *sp_backbuffer;
 extern int namcos1_game_id;
 
 static void namcos1_set_flipscreen(int flip)
@@ -304,7 +304,7 @@ WRITE_HANDLER( namcos1_videocontrol_w )
 }
 
 /* tilemap callback */
-static INLINE void background_get_info(int tile_index,int info_color,data8_t *info_vram)
+static INLINE void background_get_info(int tile_index,int info_color,uint8_t *info_vram)
 {
 	int code;
 
@@ -314,7 +314,7 @@ static INLINE void background_get_info(int tile_index,int info_color,data8_t *in
 	tile_info.mask_data = &mpMaskData[code<<3];
 }
 
-static INLINE void foreground_get_info(int tile_index,int info_color,data8_t *info_vram)
+static INLINE void foreground_get_info(int tile_index,int info_color,uint8_t *info_vram)
 {
 	int code;
 
@@ -352,7 +352,7 @@ static void update_playfield( int layer )
 #endif
 
 #ifdef TRY_PDRAWGFX
-static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, data8_t *namcos1_spriteram)
+static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint8_t *namcos1_spriteram)
 {
 	static const int sprite_sizemap[4] = {16,8,32,4};
 	struct rectangle rect;
@@ -422,7 +422,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 	}
 }
 #else
-static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect,data8_t *namcos1_spriteram,int priority)
+static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect,uint8_t *namcos1_spriteram,int priority)
 {
 	static const int sprite_sizemap[4] = {16,8,32,4};
 	struct rectangle rect;
@@ -713,7 +713,7 @@ WRITE_HANDLER( namcos1_sub_update_w )
 
 VIDEO_UPDATE( namcos1 )
 {
-	data8_t *temp;
+	uint8_t *temp;
 
 	if (idle_counter < idle_threshold && !(update_status & UPDATE_OVERRIDE))
 	{

@@ -21,8 +21,8 @@
 static void twincobr_restore_screen(void);
 
 
-static data16_t *twincobr_bgvideoram16;
-static data16_t *twincobr_fgvideoram16;
+static uint16_t *twincobr_bgvideoram16;
+static uint16_t *twincobr_fgvideoram16;
 
 int wardner_sprite_hack;	/* Required for weird sprite priority in wardner  */
 							/* when hero is in shop. Hero should cover shop owner */

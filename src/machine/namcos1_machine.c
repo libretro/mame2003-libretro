@@ -683,7 +683,7 @@ static WRITE_HANDLER( unknown_w ) {
 }
 
 /* Main bankswitching routine */
-void namcos1_bankswitch(int cpu, offs_t offset, data8_t data)
+void namcos1_bankswitch(int cpu, offs_t offset, uint8_t data)
 {
 	static int chip = 0;
 	mem_read_handler handler_r;
@@ -1265,8 +1265,8 @@ DRIVER_INIT( bakutotu )
 
 	// resolves CPU deadlocks caused by sloppy coding(see driver\namcos1.c)
 	{
-		data8_t target[8] = {0x34,0x37,0x35,0x37,0x96,0x00,0x2e,0xed};
-		data8_t *rombase, *srcptr, *endptr, *scanptr;
+		uint8_t target[8] = {0x34,0x37,0x35,0x37,0x96,0x00,0x2e,0xed};
+		uint8_t *rombase, *srcptr, *endptr, *scanptr;
 
 		rombase = memory_region(REGION_USER1);
 		srcptr = rombase + 0x1e000;

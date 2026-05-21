@@ -85,12 +85,12 @@ Stephh's notes :
 
 #include "driver.h"
 
-data16_t *fitfight_spriteram;
-data16_t *fof_100000, *fof_600000, *fof_700000, *fof_800000, *fof_900000, *fof_a00000;
+uint16_t *fitfight_spriteram;
+uint16_t *fof_100000, *fof_600000, *fof_700000, *fof_800000, *fof_900000, *fof_a00000;
 
-data16_t *fof_bak_tileram;
-data16_t *fof_mid_tileram;
-data16_t *fof_txt_tileram;
+uint16_t *fof_bak_tileram;
+uint16_t *fof_mid_tileram;
+uint16_t *fof_txt_tileram;
 char bbprot_kludge;
 
 static uint16_t fitfight_700000_data = 0;
@@ -1109,7 +1109,7 @@ ROM_END
 
 static DRIVER_INIT( fitfight )
 {
-//	data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+//	uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 //	mem16[0x0165B2/2]=0x4e71; // for now so it boots
 	install_mem_read16_handler (0, 0x700000, 0x700001, fitfight_700000_r);
 	bbprot_kludge = 0;
@@ -1117,7 +1117,7 @@ static DRIVER_INIT( fitfight )
 
 static DRIVER_INIT( histryma )
 {
-//	data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+//	uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 //	mem16[0x017FDC/2]=0x4e71; // for now so it boots
 	install_mem_read16_handler (0, 0x700000, 0x700001, histryma_700000_r);
 	bbprot_kludge = 0;

@@ -65,10 +65,10 @@ VIDEO_UPDATE( dynamski );
 
 /***************************************************************************************/
 
-static data8_t bbx_sound_enable;
-static data8_t bbx_AY8910_control;
-static data8_t sound_latch;
-static data8_t *shareram;
+static uint8_t bbx_sound_enable;
+static uint8_t bbx_AY8910_control;
+static uint8_t sound_latch;
+static uint8_t *shareram;
 
 /***************************************************************************************/
 

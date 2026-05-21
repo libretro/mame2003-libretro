@@ -81,9 +81,9 @@ Palette related:
 #include "cpu/m68000/m68000.h"
 
 /* from vidhrdw/wrally.c */
-extern data16_t *wrally_vregs;
-extern data16_t *wrally_videoram;
-extern data16_t *wrally_spriteram;
+extern uint16_t *wrally_vregs;
+extern uint16_t *wrally_videoram;
+extern uint16_t *wrally_spriteram;
 
 WRITE16_HANDLER( wrally_vram_w );
 VIDEO_START( wrally );

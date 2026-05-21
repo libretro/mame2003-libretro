@@ -16,8 +16,8 @@ void neogeo_register_main_savestate(void);
 
 /*----------- defined in machine/neogeo.c -----------*/
 
-extern data16_t *neogeo_ram16;
-extern data16_t *neogeo_sram16;
+extern uint16_t *neogeo_ram16;
+extern uint16_t *neogeo_sram16;
 
 extern int mcd_action;
 extern int mcd_number;
@@ -26,7 +26,7 @@ extern int memcard_number;
 extern int memcard_manager;
 extern uint8_t *neogeo_memcard;
 
-extern data8_t *neogeo_game_vectors;
+extern uint8_t *neogeo_game_vectors;
 
 MACHINE_INIT( neogeo );
 DRIVER_INIT( neogeo );

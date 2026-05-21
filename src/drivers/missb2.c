@@ -11,7 +11,7 @@ redesigned (8bpp!) graphics and different sound hardware... Crazy
 #include <retro_endianness.h>
 #include "vidhrdw/generic.h"
 
-static data8_t *bg_paletteram,*bg_vram;
+static uint8_t *bg_paletteram,*bg_vram;
 
 /* vidhrdw/bublbobl.c */
 extern unsigned char *bublbobl_objectram;

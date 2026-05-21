@@ -129,7 +129,7 @@ Notes:
 #include "cpu/m68000/m68000.h"
 #include "cpu/z80/z80.h"
 
-extern data16_t *gaiden_videoram,*gaiden_videoram2,*gaiden_videoram3;
+extern uint16_t *gaiden_videoram,*gaiden_videoram2,*gaiden_videoram3;
 extern int gaiden_sprite_sizey;
 
 extern int raiga_alpha;

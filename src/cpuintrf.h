@@ -588,10 +588,10 @@ int cpunum_execute(int cpunum, int cycles);
 void cpunum_reset(int cpunum, void *param, int (*irqack)(int));
 
 /* read a byte from another CPU's memory space */
-data8_t cpunum_read_byte(int cpunum, offs_t address);
+uint8_t cpunum_read_byte(int cpunum, offs_t address);
 
 /* write a byte from another CPU's memory space */
-void cpunum_write_byte(int cpunum, offs_t address, data8_t data);
+void cpunum_write_byte(int cpunum, offs_t address, uint8_t data);
 
 /* return a pointer to the saved context of a given CPU, or NULL if the
    context is active (and contained within the CPU core */

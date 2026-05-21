@@ -64,8 +64,8 @@ Notes:
 
 /* BG LAYER */
 
-data16_t* dbz2_bg_videoram;
-data16_t* dbz2_bg2_videoram;
+uint16_t* dbz2_bg_videoram;
+uint16_t* dbz2_bg2_videoram;
 
 WRITE16_HANDLER(dbz2_bg_videoram_w);
 WRITE16_HANDLER(dbz2_bg2_videoram_w);
@@ -578,11 +578,11 @@ static DRIVER_INIT(dbz2)
 
 static DRIVER_INIT(dbz)
 {
-	data16_t *ROM;
+	uint16_t *ROM;
 
 	konami_rom_deinterleave_2(REGION_GFX1);
 
-	ROM = (data16_t *)memory_region(REGION_CPU1);
+	ROM = (uint16_t *)memory_region(REGION_CPU1);
 
 	// nop out dbz1's mask rom test
 	// tile ROM test

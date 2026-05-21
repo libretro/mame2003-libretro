@@ -27,12 +27,12 @@ WRITE_HANDLER( gomoku_bgram_w );
 WRITE_HANDLER( gomoku_flipscreen_w );
 WRITE_HANDLER( gomoku_bg_dispsw_w );
 
-extern data8_t *gomoku_soundregs;
+extern uint8_t *gomoku_soundregs;
 WRITE_HANDLER( gomoku_sound_w );
 
-extern data8_t *gomoku_videoram;
-extern data8_t *gomoku_colorram;
-extern data8_t *gomoku_bgram;
+extern uint8_t *gomoku_videoram;
+extern uint8_t *gomoku_colorram;
+extern uint8_t *gomoku_bgram;
 
 int gomoku_sh_start(const struct MachineSound *msound);
 void gomoku_sh_stop(void);

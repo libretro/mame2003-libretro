@@ -65,7 +65,7 @@ MEMORY_END
 static DRIVER_INIT( namcos10 )
 {
 	int i;
-	data16_t *RAM = (data16_t *)memory_region( REGION_USER2 );
+	uint16_t *RAM = (uint16_t *)memory_region( REGION_USER2 );
 
 	for( i = 0; i < memory_region_length( REGION_USER2 ) / 2; i++ )
 	{

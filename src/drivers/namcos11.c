@@ -161,8 +161,8 @@ static INLINE void verboselog( int n_level, const char *s_fmt, ... )
 	}
 }
 
-static data32_t *namcos11_sharedram;
-static data32_t *namcos11_keycus;
+static uint32_t *namcos11_sharedram;
+static uint32_t *namcos11_keycus;
 static size_t namcos11_keycus_size;
 
 static WRITE32_HANDLER( keycus_w )
@@ -175,7 +175,7 @@ static WRITE32_HANDLER( keycus_w )
 static READ32_HANDLER( keycus_c406_r )
 {
 	/* todo: verify behaviour */
-	data32_t data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 	switch( offset )
@@ -196,7 +196,7 @@ static READ32_HANDLER( keycus_c406_r )
 static READ32_HANDLER( keycus_c409_r )
 {
 	/* todo: verify behaviour */
-	data32_t data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 	switch( offset )
@@ -212,8 +212,8 @@ static READ32_HANDLER( keycus_c409_r )
 /* dunk mania */
 static READ32_HANDLER( keycus_c410_r )
 {
-	data32_t data;
-	data32_t n_value;
+	uint32_t data;
+	uint32_t n_value;
 
 	if( ( namcos11_keycus[ 0 ] & 0x0000ffff ) != 0xfffe )
 	{
@@ -246,8 +246,8 @@ static READ32_HANDLER( keycus_c410_r )
 /* prime goal ex */
 static READ32_HANDLER( keycus_c411_r )
 {
-	data32_t data;
-	data32_t n_value;
+	uint32_t data;
+	uint32_t n_value;
 
 	data = namcos11_keycus[ offset ];
 	if( ( namcos11_keycus[ 1 ] & 0x0000ffff ) == 0x00007256 )
@@ -279,7 +279,7 @@ static READ32_HANDLER( keycus_c411_r )
 /* xevious 3d/g */
 static READ32_HANDLER( keycus_c430_r )
 {
-	data32_t data;
+	uint32_t data;
 	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 2 ] & 0x0000ffff ) == 0x0000e296 )
@@ -313,7 +313,7 @@ static READ32_HANDLER( keycus_c430_r )
 /* dancing eyes */
 static READ32_HANDLER( keycus_c431_r )
 {
-	data32_t data;
+	uint32_t data;
 	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 0 ] & 0x0000ffff ) == 0x00009e61 )
@@ -536,7 +536,7 @@ static MEMORY_WRITE32_START( namcos11_writemem )
 	{ 0x1f802040, 0x1f802043, MWA32_NOP },
 	{ 0x1fa04000, 0x1fa0ffff, sharedram_w, &namcos11_sharedram }, /* shared ram */
 	{ 0x1fa20000, 0x1fa2ffff, keycus_w, &namcos11_keycus, &namcos11_keycus_size }, /* keycus */
-	{ 0x1fa30000, 0x1fa30fff, MWA32_RAM, (data32_t **)&generic_nvram, &generic_nvram_size }, /* flash */
+	{ 0x1fa30000, 0x1fa30fff, MWA32_RAM, (uint32_t **)&generic_nvram, &generic_nvram_size }, /* flash */
 	{ 0x1fb00000, 0x1fb00003, MWA32_NOP },    /* ?? */
 	{ 0x1fbf6000, 0x1fbf6003, MWA32_NOP },    /* ?? */
 	{ 0x1fc00000, 0x1fffffff, MWA32_ROM },    /* bios */
@@ -675,19 +675,19 @@ MACHINE_INIT( namcos11 )
    audio. */
 #include "cpu/m37710/m37710.h"
 
-static data16_t *namcos11_c76_ram;
+static uint16_t *namcos11_c76_ram;
 
 /* Shared RAM as the C76 sees it (16-bit); the main CPU sees the same bytes as
    32-bit at 0x1fa04000. */
 static READ16_HANDLER( c76_shared_r )
 {
-	data16_t *share16 = (data16_t *)namcos11_sharedram;
+	uint16_t *share16 = (uint16_t *)namcos11_sharedram;
 	return share16[ offset ];
 }
 
 static WRITE16_HANDLER( c76_shared_w )
 {
-	data16_t *share16 = (data16_t *)namcos11_sharedram;
+	uint16_t *share16 = (uint16_t *)namcos11_sharedram;
 	COMBINE_DATA( &share16[ offset ] );
 }
 
@@ -695,7 +695,7 @@ static WRITE16_HANDLER( c76_shared_w )
    16-bit bus. mem_mask is active-low (set bit = byte preserved). */
 static READ16_HANDLER( c76_sfr_r )
 {
-	data16_t data = 0;
+	uint16_t data = 0;
 	if( ( mem_mask & 0x00ff ) == 0 )
 		data |= m37710_internal_read( offset * 2 );
 	if( ( mem_mask & 0xff00 ) == 0 )

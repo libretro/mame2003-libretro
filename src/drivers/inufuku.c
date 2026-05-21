@@ -76,11 +76,11 @@ TODO:
 VIDEO_UPDATE( inufuku );
 VIDEO_START( inufuku );
 
-data16_t *inufuku_bg_videoram;
-data16_t *inufuku_bg_rasterram;
-data16_t *inufuku_text_videoram;
-data16_t *inufuku_spriteram1;
-data16_t *inufuku_spriteram2;
+uint16_t *inufuku_bg_videoram;
+uint16_t *inufuku_bg_rasterram;
+uint16_t *inufuku_text_videoram;
+uint16_t *inufuku_spriteram1;
+uint16_t *inufuku_spriteram2;
 size_t inufuku_spriteram1_size;
 static unsigned short pending_command;
 

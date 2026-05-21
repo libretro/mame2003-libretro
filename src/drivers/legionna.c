@@ -78,8 +78,8 @@ extern VIDEO_UPDATE( godzilla );
 extern VIDEO_UPDATE( sdgndmrb );
 void heatbrl_setgfxbank(uint16_t data);
 
-extern data16_t *legionna_back_data,*legionna_fore_data,*legionna_mid_data,*legionna_scrollram16,*legionna_textram;
-static data16_t *mcu_ram;
+extern uint16_t *legionna_back_data,*legionna_fore_data,*legionna_mid_data,*legionna_scrollram16,*legionna_textram;
+static uint16_t *mcu_ram;
 
 static WRITE16_HANDLER( legionna_paletteram16_w )	/* xBBBBxRRRRxGGGGx */
 {
@@ -2060,7 +2060,7 @@ static DRIVER_INIT( legionna )
 {
 	/* Unscramble gfx: quarters 1&2 swapped, quarters 3&4 swapped */
 
-	data8_t *gfx = memory_region(REGION_GFX1);
+	uint8_t *gfx = memory_region(REGION_GFX1);
 	int len = memory_region_length(REGION_GFX1)/2;
 	int a,i;
 

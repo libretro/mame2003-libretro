@@ -23,7 +23,7 @@ blocken:
 #include "cpu/z80/z80.h"
 
 
-extern data16_t *shangha3_ram;
+extern uint16_t *shangha3_ram;
 extern size_t shangha3_ram_size;
 extern int shangha3_do_shadows;
 

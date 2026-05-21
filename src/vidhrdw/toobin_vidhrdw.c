@@ -167,8 +167,8 @@ WRITE16_HANDLER( toobin_intensity_w )
 
 WRITE16_HANDLER( toobin_xscroll_w )
 {
-	data16_t oldscroll = *atarigen_xscroll;
-	data16_t newscroll = oldscroll;
+	uint16_t oldscroll = *atarigen_xscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if anything has changed, force a partial update */
@@ -186,8 +186,8 @@ WRITE16_HANDLER( toobin_xscroll_w )
 
 WRITE16_HANDLER( toobin_yscroll_w )
 {
-	data16_t oldscroll = *atarigen_yscroll;
-	data16_t newscroll = oldscroll;
+	uint16_t oldscroll = *atarigen_yscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if anything has changed, force a partial update */

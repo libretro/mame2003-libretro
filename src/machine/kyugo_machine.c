@@ -8,7 +8,7 @@
 #include "kyugo.h"
 
 
-data8_t *kyugo_sharedram;
+uint8_t *kyugo_sharedram;
 
 
 /*************************************

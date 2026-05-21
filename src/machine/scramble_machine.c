@@ -150,7 +150,7 @@ WRITE_HANDLER( galaxian_leds_w )
 
 static READ_HANDLER( scrambls_input_port_2_r )
 {
-	data8_t res;
+	uint8_t res;
 
 
 	res = readinputport(2);
@@ -174,7 +174,7 @@ static READ_HANDLER( ckongs_input_port_2_r )
 }
 
 
-static data8_t moonwar_port_select;
+static uint8_t moonwar_port_select;
 
 static WRITE_HANDLER( moonwar_port_select_w )
 {
@@ -183,8 +183,8 @@ static WRITE_HANDLER( moonwar_port_select_w )
 
 static READ_HANDLER( moonwar_input_port_0_r )
 {
-	data8_t sign;
-	data8_t delta;
+	uint8_t sign;
+	uint8_t delta;
 
 	delta = (moonwar_port_select ? readinputport(3) : readinputport(4));
 
@@ -209,7 +209,7 @@ static READ_HANDLER( stratgyx_input_port_3_r )
 
 static READ_HANDLER( darkplnt_input_port_1_r )
 {
-	static data8_t remap[] = {0x03, 0x02, 0x00, 0x01, 0x21, 0x20, 0x22, 0x23,
+	static uint8_t remap[] = {0x03, 0x02, 0x00, 0x01, 0x21, 0x20, 0x22, 0x23,
 							  0x33, 0x32, 0x30, 0x31, 0x11, 0x10, 0x12, 0x13,
 							  0x17, 0x16, 0x14, 0x15, 0x35, 0x34, 0x36, 0x37,
 							  0x3f, 0x3e, 0x3c, 0x3d, 0x1d, 0x1c, 0x1e, 0x1f,
@@ -217,7 +217,7 @@ static READ_HANDLER( darkplnt_input_port_1_r )
 							  0x2b, 0x2a, 0x28, 0x29, 0x09, 0x08, 0x0a, 0x0b,
 							  0x0f, 0x0e, 0x0c, 0x0d, 0x2d, 0x2c, 0x2e, 0x2f,
 							  0x27, 0x26, 0x24, 0x25, 0x05, 0x04, 0x06, 0x07 };
-	data8_t val;
+	uint8_t val;
 
 	val = readinputport(1);
 
@@ -352,7 +352,7 @@ static READ_HANDLER( checkmaj_protection_r )
 /* Zig Zag can swap ROMs 2 and 3 as a form of copy protection */
 WRITE_HANDLER( zigzag_sillyprotection_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 
 	if (data)
@@ -437,7 +437,7 @@ WRITE_HANDLER( _4in1_bank_w )
 {
 	/* games are banked at 0x0000 - 0x3fff */
 	offs_t bankaddress;
-	data8_t *RAM=memory_region(REGION_CPU1);
+	uint8_t *RAM=memory_region(REGION_CPU1);
 
 	_4in1_bank = data & 0x03;
 
@@ -464,7 +464,7 @@ static void gmgalax_select_game(int game)
 {
 	/* games are banked at 0x0000 - 0x3fff */
 	offs_t bankaddress;
-	data8_t *RAM=memory_region(REGION_CPU1);
+	uint8_t *RAM=memory_region(REGION_CPU1);
 
 	gmgalax_selected_game = game;
 
@@ -700,9 +700,9 @@ DRIVER_INIT( kingball )
 }
 
 
-static data8_t decode_mooncrst(data8_t data,offs_t addr)
+static uint8_t decode_mooncrst(uint8_t data,offs_t addr)
 {
-	data8_t res;
+	uint8_t res;
 
 	res = data;
 	if (BIT(data,1)) res ^= 0x40;
@@ -720,7 +720,7 @@ DRIVER_INIT( mooncrsu )
 DRIVER_INIT( mooncrst )
 {
 	offs_t i;
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 
 	for (i = 0;i < memory_region_length(REGION_CPU1);i++)
@@ -737,7 +737,7 @@ DRIVER_INIT( mooncrgx )
 DRIVER_INIT( moonqsr )
 {
 	offs_t i;
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	offs_t diff = memory_region_length(REGION_CPU1) / 2;
 
 
@@ -797,7 +797,7 @@ Pin layout is such that links can replace the PAL if encryption is not used.
 	};
 
 	offs_t i;
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 
 
 	for (i = 0; i < memory_region_length(REGION_CPU1); i++)
@@ -831,7 +831,7 @@ DRIVER_INIT( azurian )
 DRIVER_INIT( 4in1 )
 {
 	offs_t i;
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/* Decrypt Program Roms */
 	for (i = 0; i < memory_region_length(REGION_CPU1); i++)

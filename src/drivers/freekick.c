@@ -41,7 +41,7 @@ TODO:
 #include "machine/8255ppi.h"
 
 
-extern data8_t *freek_videoram;
+extern uint8_t *freek_videoram;
 
 VIDEO_START(freekick);
 VIDEO_UPDATE(gigas);

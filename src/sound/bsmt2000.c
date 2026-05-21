@@ -474,7 +474,7 @@ void BSMT2000_sh_reset(void)
 
 ***********************************************************************************************/
 
-static void bsmt2000_reg_write(struct BSMT2000Chip *chip, offs_t offset, data16_t data, data16_t mem_mask)
+static void bsmt2000_reg_write(struct BSMT2000Chip *chip, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	struct BSMT2000Voice *voice = &chip->voice[offset % chip->voices];
 	int regindex = offset / chip->voices;

@@ -26,8 +26,8 @@
  *
  *************************************/
 
-data16_t *cyberbal_paletteram_0;
-data16_t *cyberbal_paletteram_1;
+uint16_t *cyberbal_paletteram_0;
+uint16_t *cyberbal_paletteram_1;
 
 
 
@@ -39,7 +39,7 @@ data16_t *cyberbal_paletteram_1;
 
 static uint8_t current_screen;
 static uint8_t total_screens;
-static data16_t current_slip[2];
+static uint16_t current_slip[2];
 static uint8_t playfield_palette_bank[2];
 static uint16_t playfield_xscroll[2];
 static uint16_t playfield_yscroll[2];
@@ -327,8 +327,8 @@ void cyberbal_scanline_update(int scanline)
 	/* loop over screens */
 	for (i = 0; i < total_screens; i++)
 	{
-		data16_t *vram = i ? atarigen_alpha2 : atarigen_alpha;
-		data16_t *base = &vram[((scanline - 8) / 8) * 64 + 47];
+		uint16_t *vram = i ? atarigen_alpha2 : atarigen_alpha;
+		uint16_t *base = &vram[((scanline - 8) / 8) * 64 + 47];
 
 		/* keep in range */
 		if (base < vram)

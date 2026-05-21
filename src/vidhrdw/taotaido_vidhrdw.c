@@ -10,17 +10,17 @@ zooming might be wrong (only used on title logo?)
 
 #include "driver.h"
 
-static data16_t taotaido_sprite_character_bank_select[8];
-static data16_t taotaido_video_bank_select[8];
+static uint16_t taotaido_sprite_character_bank_select[8];
+static uint16_t taotaido_video_bank_select[8];
 static struct tilemap *bg_tilemap;
 
-extern data16_t *taotaido_spriteram;
-extern data16_t *taotaido_spriteram2;
-extern data16_t *taotaido_scrollram;
-extern data16_t *taotaido_bgram;
+extern uint16_t *taotaido_spriteram;
+extern uint16_t *taotaido_spriteram2;
+extern uint16_t *taotaido_scrollram;
+extern uint16_t *taotaido_bgram;
 
-static data16_t *taotaido_spriteram_old, *taotaido_spriteram_older;
-static data16_t *taotaido_spriteram2_old, *taotaido_spriteram2_older;
+static uint16_t *taotaido_spriteram_old, *taotaido_spriteram_older;
+static uint16_t *taotaido_spriteram2_old, *taotaido_spriteram2_older;
 
 /* sprite tile codes 0x4000 - 0x7fff get remapped according to the content of these registers */
 WRITE16_HANDLER( taotaido_sprite_character_bank_select_w )
@@ -49,7 +49,7 @@ static void taotaido_drawsprite( uint16_t spriteno, struct mame_bitmap *bitmap, 
 
 	int x,y;
 
-	data16_t *source = &taotaido_spriteram_older[spriteno*4];
+	uint16_t *source = &taotaido_spriteram_older[spriteno*4];
 	const struct GfxElement *gfx = Machine->gfx[0];
 
 
@@ -121,8 +121,8 @@ static void taotaido_drawsprite( uint16_t spriteno, struct mame_bitmap *bitmap, 
 static void taotaido_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	/* first part of sprite ram is the list of sprites to draw, terminated with 0x4000 */
-	data16_t *source = taotaido_spriteram_older;
-	data16_t *finish = taotaido_spriteram_older + 0x2000/2;
+	uint16_t *source = taotaido_spriteram_older;
+	uint16_t *finish = taotaido_spriteram_older + 0x2000/2;
 
 	while( source<finish )
 	{

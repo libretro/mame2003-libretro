@@ -1,7 +1,7 @@
 
 #include "driver.h"
 
-extern data8_t *hitme_vidram;
+extern uint8_t *hitme_vidram;
 
 
 /* Palette Init */

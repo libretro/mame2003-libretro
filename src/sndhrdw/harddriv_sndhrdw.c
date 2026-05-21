@@ -13,7 +13,7 @@
 #define CYCLES_PER_BIO		(20000000 / BIO_FREQUENCY)
 
 
-data16_t *hdsnddsp_ram;
+uint16_t *hdsnddsp_ram;
 
 
 /*************************************
@@ -262,7 +262,7 @@ WRITE16_HANDLER( hdsnd68k_320ram_w )
 
 READ16_HANDLER( hdsnd68k_320ports_r )
 {
-	data16_t result;
+	uint16_t result;
 	cpuintrf_push_context(hdcpu_sounddsp);
 	result = TMS32010_In(offset & 7);
 	cpuintrf_pop_context();

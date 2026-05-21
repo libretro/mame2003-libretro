@@ -23,8 +23,8 @@ TODO:
 /* Variables that vidhrdw has access to */
 
 /* Variables defined in vidhrdw */
-extern data16_t *powerins_vram_0, *powerins_vctrl_0;
-extern data16_t *powerins_vram_1, *powerins_vctrl_1;
+extern uint16_t *powerins_vram_0, *powerins_vctrl_0;
+extern uint16_t *powerins_vram_1, *powerins_vctrl_1;
 
 /* Functions defined in vidhrdw */
 

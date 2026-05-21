@@ -11,9 +11,9 @@
 
 static struct tilemap *background_layer,*foreground_layer,*text_layer;
 
-data16_t *toki_background1_videoram16;
-data16_t *toki_background2_videoram16;
-data16_t *toki_scrollram16;
+uint16_t *toki_background1_videoram16;
+uint16_t *toki_background2_videoram16;
+uint16_t *toki_scrollram16;
 static unsigned int toki_background_xscroll[256];
 static unsigned int toki_foreground_xscroll[256];
 
@@ -218,7 +218,7 @@ WRITE16_HANDLER( toki_background2_videoram16_w )
 void toki_draw_sprites (struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
 	int x,y,xoffs,yoffs,tile,flipx,flipy,color,offs;
-	data16_t *sprite_word;
+	uint16_t *sprite_word;
 
 	for (offs = (spriteram_size/2)-4;offs >= 0;offs -= 4)
 	{
@@ -262,7 +262,7 @@ void toki_draw_sprites (struct mame_bitmap *bitmap,const struct rectangle *clipr
 void tokib_draw_sprites (struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
 	int x,y,tile,flipx,color,offs;
-	data16_t *sprite_word;
+	uint16_t *sprite_word;
 
 	for (offs = 0;offs < spriteram_size / 2;offs += 4)
 	{

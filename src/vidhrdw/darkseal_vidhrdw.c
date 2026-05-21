@@ -88,11 +88,11 @@ Sprites - Data East custom chip 52
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *darkseal_pf12_row,*darkseal_pf34_row;
-data16_t *darkseal_pf1_data,*darkseal_pf2_data,*darkseal_pf3_data;
+uint16_t *darkseal_pf12_row,*darkseal_pf34_row;
+uint16_t *darkseal_pf1_data,*darkseal_pf2_data,*darkseal_pf3_data;
 
-static data16_t darkseal_control_0[8];
-static data16_t darkseal_control_1[8];
+static uint16_t darkseal_control_0[8];
+static uint16_t darkseal_control_1[8];
 
 static struct tilemap *pf1_tilemap,*pf2_tilemap,*pf3_tilemap;
 static int flipscreen;
@@ -106,7 +106,7 @@ static uint32_t darkseal_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5) + ((row & 0x20) << 6);
 }
 
-static INLINE void get_bg_tile_info(int tile_index,int gfx_bank,data16_t *gfx_base)
+static INLINE void get_bg_tile_info(int tile_index,int gfx_bank,uint16_t *gfx_base)
 {
 	int tile,color;
 
@@ -233,7 +233,7 @@ static void darkseal_drawsprites(struct mame_bitmap *bitmap, const struct rectan
 
 WRITE16_HANDLER( darkseal_pf1_data_w )
 {
-	data16_t oldword=darkseal_pf1_data[offset];
+	uint16_t oldword=darkseal_pf1_data[offset];
 	COMBINE_DATA(&darkseal_pf1_data[offset]);
 	if (oldword!=darkseal_pf1_data[offset])
 		tilemap_mark_tile_dirty(pf1_tilemap,offset);
@@ -241,7 +241,7 @@ WRITE16_HANDLER( darkseal_pf1_data_w )
 
 WRITE16_HANDLER( darkseal_pf2_data_w )
 {
-	data16_t oldword=darkseal_pf2_data[offset];
+	uint16_t oldword=darkseal_pf2_data[offset];
 	COMBINE_DATA(&darkseal_pf2_data[offset]);
 	if (oldword!=darkseal_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset);
@@ -249,7 +249,7 @@ WRITE16_HANDLER( darkseal_pf2_data_w )
 
 WRITE16_HANDLER( darkseal_pf3_data_w )
 {
-	data16_t oldword=darkseal_pf3_data[offset];
+	uint16_t oldword=darkseal_pf3_data[offset];
 	COMBINE_DATA(&darkseal_pf3_data[offset]);
 	if (oldword!=darkseal_pf3_data[offset])
 		tilemap_mark_tile_dirty(pf3_tilemap,offset);

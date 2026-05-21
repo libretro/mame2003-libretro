@@ -4,8 +4,8 @@ static unsigned char bg_color,  old_bg_color;
 #define mainsnk_offset 8
 static struct tilemap *me_fg_tilemap;
 static struct tilemap *me_bg_tilemap;
-data8_t *me_fgram;
-data8_t *me_bgram;
+uint8_t *me_fgram;
+uint8_t *me_bgram;
 static int me_gfx_ctrl;
 
 WRITE_HANDLER(me_c600_w)

@@ -537,7 +537,7 @@ DRIVER_INIT( motorace )
 {
 	int A,j;
 	unsigned char *rom = memory_region(REGION_CPU1);
-	data8_t *buffer = malloc(0x2000);
+	uint8_t *buffer = malloc(0x2000);
 
 	if (buffer)
 	{

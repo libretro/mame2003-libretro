@@ -17,7 +17,7 @@
 #define POSX   6
 #define LENGTH 7
 
-data16_t *cchasm_ram;
+uint16_t *cchasm_ram;
 
 static int xcenter, ycenter;
 

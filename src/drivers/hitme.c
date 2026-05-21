@@ -23,7 +23,7 @@
 static float timeout_time;
 static int timeout_counter;
 static const float tock = .0189;
-data8_t *hitme_vidram;
+uint8_t *hitme_vidram;
 
 WRITE_HANDLER( hitme_vidram_w );
 VIDEO_START (hitme);

@@ -67,7 +67,7 @@ WRITE16_HANDLER( snowbros_flipscreen_w );
 VIDEO_UPDATE( snowbros );
 VIDEO_UPDATE( wintbob );
 
-static data16_t *hyperpac_ram;
+static uint16_t *hyperpac_ram;
 
 static INTERRUPT_GEN( snowbros_interrupt )
 {
@@ -864,15 +864,15 @@ ROM_END
 
 static DRIVER_INIT( cookbib2 )
 {
-//	data16_t *HCROM = (data16_t*)memory_region(REGION_CPU1);
-	data16_t *PROTDATA = (data16_t*)memory_region(REGION_USER1);
+//	uint16_t *HCROM = (uint16_t*)memory_region(REGION_CPU1);
+	uint16_t *PROTDATA = (uint16_t*)memory_region(REGION_USER1);
 	int i;
 //	hyperpac_ram[0xf000/2] = 0x46fc;
 //	hyperpac_ram[0xf002/2] = 0x2700;
 
 // verified on real hardware, need to move this to a file really
 
-//	static data16_t cookbib2_mcu68k[] =
+//	static uint16_t cookbib2_mcu68k[] =
 //	{
 //		// moved to protdata.bin
 //	};
@@ -1227,7 +1227,7 @@ READ16_HANDLER ( _4in1_02_read )
 static DRIVER_INIT(4in1boot)
 {
 	unsigned char *buffer;
-	data8_t *src = memory_region(REGION_CPU1);
+	uint8_t *src = memory_region(REGION_CPU1);
 	int len = memory_region_length(REGION_CPU1);
 
 	/* strange order */

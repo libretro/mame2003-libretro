@@ -99,7 +99,7 @@ static uint8_t whichport = 0;
 
 static READ16_HANDLER( nvram_r )
 {
-	return ((data16_t *)generic_nvram)[offset] | 0xfff0;
+	return ((uint16_t *)generic_nvram)[offset] | 0xfff0;
 }
 
 
@@ -227,7 +227,7 @@ static MEMORY_WRITE16_START( writemem )
 	{ 0x014000, 0x01bfff, MWA16_RAM },
 	{ 0x01c000, 0x01cfff, MWA16_RAM, &spriteram16, &spriteram_size },
 	{ 0x800000, 0x8007ff, atarigen_playfield_w, &atarigen_playfield },
-	{ 0x900000, 0x9001ff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x900000, 0x9001ff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x944000, 0x944007, analog_w },
 	{ 0x948000, 0x948001, digital_w },
 	{ 0x950000, 0x9501ff, foodf_paletteram_w, &paletteram16 },

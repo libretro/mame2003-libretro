@@ -15,7 +15,7 @@
 
 static int background_color,background_disable;
 static struct tilemap *background_tilemap, *fix_tilemap;
-static data8_t deco16_io_ram[16];
+static uint8_t deco16_io_ram[16];
 
 #if 0
 void debug_print(struct mame_bitmap *bitmap)
@@ -49,7 +49,7 @@ static uint32_t fix_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t nu
 
 static void get_back_tile_info( int tile_index )
 {
-	const data8_t *RAM = memory_region(REGION_USER1);
+	const uint8_t *RAM = memory_region(REGION_USER1);
 	int tile,bank;
 
 	/* Convert tile index of 512x512 to paged format */

@@ -20,7 +20,7 @@ RAM Location 9240: Controls what level you are on: 0-3 (for each scene)
 #include "driver.h"
 #include "cpu/z80/z80.h"
 
-extern data8_t *portrait_bgvideoram,*portrait_fgvideoram,*portrait_spriteram;
+extern uint8_t *portrait_bgvideoram,*portrait_fgvideoram,*portrait_spriteram;
 
 int portrait_scrollx_hi, portrait_scrollx_lo;
 

@@ -39,8 +39,8 @@ Notes:
 
 extern int suna8_text_dim; /* specifies format of text layer */
 
-extern data8_t suna8_rombank, suna8_spritebank, suna8_palettebank;
-extern data8_t suna8_unknown;
+extern uint8_t suna8_rombank, suna8_spritebank, suna8_palettebank;
+extern uint8_t suna8_unknown;
 
 /* Functions defined in vidhrdw: */
 
@@ -73,12 +73,12 @@ VIDEO_UPDATE( suna8 );
 
 DRIVER_INIT( hardhead )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int i;
 
 	for (i = 0; i < 0x8000; i++)
 	{
-		data8_t x = RAM[i];
+		uint8_t x = RAM[i];
 		if (!   ( (i & 0x800) && ((~i & 0x400) ^ ((i & 0x4000)>>4)) )	)
 		{
 			x	=	x ^ 0x58;
@@ -134,7 +134,7 @@ static int is_special(int i)
 
 DRIVER_INIT( brickzn3 )
 {
-	data8_t	*RAM	=	memory_region(REGION_CPU1);
+	uint8_t	*RAM	=	memory_region(REGION_CPU1);
 	size_t	size	=	memory_region_length(REGION_CPU1)/2;
 	int i;
 
@@ -145,9 +145,9 @@ DRIVER_INIT( brickzn3 )
 	for (i = 0; i < 0x50000; i++)
 	{
 		int encry;
-		data8_t x = RAM[i];
+		uint8_t x = RAM[i];
 
-		data8_t mask = 0x90;
+		uint8_t mask = 0x90;
 
 	if (i >= 0x8000)
 	{
@@ -345,7 +345,7 @@ DRIVER_INIT( brickzn3 )
 
 	for (i = 0; i < 0x8000; i++)
 	{
-		data8_t x = RAM[i];
+		uint8_t x = RAM[i];
 
 		if ( !is_special(i) )
 		{
@@ -382,7 +382,7 @@ RAM[0x256c+size] = 0x00;	// HALT -> NOP
 								Hard Head 2
 ***************************************************************************/
 
-static INLINE data8_t hardhea2_decrypt(data8_t x, int encry, int mask)
+static INLINE uint8_t hardhea2_decrypt(uint8_t x, int encry, int mask)
 {
 		switch( encry )
 		{
@@ -424,9 +424,9 @@ static INLINE data8_t hardhea2_decrypt(data8_t x, int encry, int mask)
 
 DRIVER_INIT( hardhea2 )
 {
-	data8_t	*RAM	=	memory_region(REGION_CPU1);
+	uint8_t	*RAM	=	memory_region(REGION_CPU1);
 	size_t	size	=	memory_region_length(REGION_CPU1)/2;
-	data8_t x;
+	uint8_t x;
 	int i,encry,mask;
 
 	memory_set_opcode_base(0,RAM + size);
@@ -577,7 +577,7 @@ rom13:	0?, 1y, 2n, 3n		?,?,?,? (palettes)
 ***************************************************************************/
 
 /* SAME AS HARDHEA2 */
-static INLINE data8_t starfigh_decrypt(data8_t x, int encry, int mask)
+static INLINE uint8_t starfigh_decrypt(uint8_t x, int encry, int mask)
 {
 		switch( encry )
 		{
@@ -619,9 +619,9 @@ static INLINE data8_t starfigh_decrypt(data8_t x, int encry, int mask)
 
 DRIVER_INIT( starfigh )
 {
-	data8_t	*RAM	=	memory_region(REGION_CPU1);
+	uint8_t	*RAM	=	memory_region(REGION_CPU1);
 	size_t	size	=	memory_region_length(REGION_CPU1)/2;
-	data8_t x;
+	uint8_t x;
 	int i,encry,mask;
 
 	memory_set_opcode_base(0,RAM + size);
@@ -713,7 +713,7 @@ DRIVER_INIT( starfigh )
 
 static DRIVER_INIT( sparkman )
 {
-	data8_t	*RAM	=	memory_region(REGION_CPU1);
+	uint8_t	*RAM	=	memory_region(REGION_CPU1);
 	size_t	size	=	memory_region_length(REGION_CPU1)/2;
 	int i;
 
@@ -733,7 +733,7 @@ static DRIVER_INIT( sparkman )
 	for (i = 0; i < 0x8000; i++)
 	{
 		int encry;
-		data8_t x = RAM[i];
+		uint8_t x = RAM[i];
 
 /*
 		0000 2fff	44	0
@@ -828,7 +828,7 @@ static DRIVER_INIT( sparkman )
 								Hard Head
 ***************************************************************************/
 
-static data8_t protection_val;
+static uint8_t protection_val;
 
 static READ_HANDLER( hardhead_protection_r )
 {
@@ -860,7 +860,7 @@ static WRITE_HANDLER( hardhead_protection_w )
 								Hard Head
 ***************************************************************************/
 
-static data8_t *hardhead_ip;
+static uint8_t *hardhead_ip;
 
 static READ_HANDLER( hardhead_ip_r )
 {
@@ -883,7 +883,7 @@ static READ_HANDLER( hardhead_ip_r )
 */
 static WRITE_HANDLER( hardhead_bankswitch_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bank = data & 0x0f;
 
 	if (data & ~0xef) 	logerror("CPU #0 - PC %04X: unknown bank bits: %02X\n",activecpu_get_pc(),data);
@@ -954,7 +954,7 @@ PORT_END
 */
 static WRITE_HANDLER( rranger_bankswitch_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bank = data & 0x07;
 	if ((~data & 0x10) && (bank >= 4))	bank += 4;
 
@@ -1063,7 +1063,7 @@ static WRITE_HANDLER( brickzn_unknown_w )
 */
 static WRITE_HANDLER( brickzn_rombank_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bank = data & 0x0f;
 
 	if (data & ~0x0f) 	logerror("CPU #0 - PC %04X: unknown rom bank bits: %02X\n",activecpu_get_pc(),data);
@@ -1112,7 +1112,7 @@ PORT_END
 								Hard Head 2
 ***************************************************************************/
 
-static data8_t suna8_nmi_enable;
+static uint8_t suna8_nmi_enable;
 
 /* Probably wrong: */
 static WRITE_HANDLER( hardhea2_nmi_w )
@@ -1161,7 +1161,7 @@ static READ_HANDLER( hardhea2_c080_r )
 */
 static WRITE_HANDLER( hardhea2_rombank_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bank = data & 0x0f;
 
 	if (data & ~0x0f) 	logerror("CPU #0 - PC %04X: unknown rom bank bits: %02X\n",activecpu_get_pc(),data);
@@ -1211,7 +1211,7 @@ PORT_END
 								Star Fighter
 ***************************************************************************/
 
-static data8_t spritebank_latch;
+static uint8_t spritebank_latch;
 static WRITE_HANDLER( starfigh_spritebank_latch_w )
 {
 	spritebank_latch = (data >> 2) & 1;
@@ -1302,7 +1302,7 @@ static WRITE_HANDLER( sparkman_spritebank_w )
 */
 static WRITE_HANDLER( sparkman_rombank_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bank = data & 0x0f;
 
 	if (data & ~0x0f) 	logerror("CPU #0 - PC %04X: unknown rom bank bits: %02X\n",activecpu_get_pc(),data);

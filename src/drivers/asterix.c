@@ -147,7 +147,7 @@ static WRITE16_HANDLER( sound_irq_w )
 // You're not supposed to laugh.
 // This emulation is grossly overkill but hey, I'm having fun.
 
-static data16_t prot[2];
+static uint16_t prot[2];
 
 static WRITE16_HANDLER( protection_w )
 {
@@ -397,8 +397,8 @@ static DRIVER_INIT( asterix )
 	konami_rom_deinterleave_2(REGION_GFX2);
 
 #if 0
-	*(data16_t *)(memory_region(REGION_CPU1) + 0x07f34) = 0x602a;
-	*(data16_t *)(memory_region(REGION_CPU1) + 0x00008) = 0x0400;
+	*(uint16_t *)(memory_region(REGION_CPU1) + 0x07f34) = 0x602a;
+	*(uint16_t *)(memory_region(REGION_CPU1) + 0x00008) = 0x0400;
 #endif
 }
 

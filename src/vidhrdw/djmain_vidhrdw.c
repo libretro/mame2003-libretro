@@ -10,7 +10,7 @@
 #define NUM_SPRITES	(0x800 / 16)
 #define NUM_LAYERS	2
 
-data32_t *djmain_obj_ram;
+uint32_t *djmain_obj_ram;
 
 
 static void djmain_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect)

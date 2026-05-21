@@ -2,7 +2,7 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t *sf1_objectram,*sf1_videoram;
+uint16_t *sf1_objectram,*sf1_videoram;
 
 static int sf1_active = 0;
 
@@ -92,14 +92,14 @@ WRITE16_HANDLER( sf1_videoram_w )
 
 WRITE16_HANDLER( sf1_bg_scroll_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(bg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( sf1_fg_scroll_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(fg_tilemap,0,scroll);
 }

@@ -43,7 +43,7 @@ Note 2: Lethal Justice uses a TMS34010FNL-50 instead of the TMS34010FNL-40
 #include "lethalj.h"
 
 
-static data16_t *code_rom;
+static uint16_t *code_rom;
 
 
 

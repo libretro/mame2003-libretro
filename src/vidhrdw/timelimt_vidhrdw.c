@@ -1,7 +1,7 @@
 #include "vidhrdw/generic.h"
 
 /* globals */
-data8_t *timelimt_bg_videoram;
+uint8_t *timelimt_bg_videoram;
 size_t timelimt_bg_videoram_size;
 
 /* locals */

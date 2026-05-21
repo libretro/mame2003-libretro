@@ -112,8 +112,8 @@
  *
  *************************************/
 
-static data32_t *	ram_base;
-static data32_t *	rom_base;
+static uint32_t *	ram_base;
+static uint32_t *	rom_base;
 
 static double		hblank_offset;
 
@@ -247,7 +247,7 @@ static WRITE32_HANDLER( eeprom_data_w )
 	if (eeprom_enabled)
 	{
 		mem_mask |= 0xffffff00;
-		COMBINE_DATA(&((data32_t *)generic_nvram)[offset]);
+		COMBINE_DATA(&((uint32_t *)generic_nvram)[offset]);
 		eeprom_enabled = 0;
 	}
 }
@@ -360,7 +360,7 @@ MEMORY_END
 static MEMORY_WRITE32_START( writemem )
 	{ 0x00000000, 0x0001ffff, MWA32_RAM, &ram_base },
 	{ 0x01800000, 0x01bfffff, MWA32_ROM, &rom_base },
-	{ 0x40000000, 0x400007ff, eeprom_data_w, (data32_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x40000000, 0x400007ff, eeprom_data_w, (uint32_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x41000000, 0x41000003, sound_data_w },
 	{ 0x41000100, 0x4100011f, interrupt_control_w },
 	{ 0x41000208, 0x4100020f, sound_reset_w },
@@ -506,7 +506,7 @@ ROM_END
 */
 
 
-static data32_t *speedup_data;
+static uint32_t *speedup_data;
 static READ32_HANDLER( speedup_r )
 {
 	int result = *speedup_data;
@@ -516,7 +516,7 @@ static READ32_HANDLER( speedup_r )
 }
 
 
-static data32_t *movie_speedup_data;
+static uint32_t *movie_speedup_data;
 static READ32_HANDLER( movie_speedup_r )
 {
 	int result = *movie_speedup_data;

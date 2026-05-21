@@ -10,14 +10,14 @@
 #include "tilemap.h"
 #include "vidhrdw/generic.h"
 
-data16_t *wrally_spriteram;
-data16_t *wrally_vregs;
-data16_t *wrally_videoram;
+uint16_t *wrally_spriteram;
+uint16_t *wrally_vregs;
+uint16_t *wrally_videoram;
 
 static struct tilemap *pant[2];
 
 /* from machine/wrally.c */
-extern data16_t *wrally_encr_table[2];
+extern uint16_t *wrally_encr_table[2];
 
 /***************************************************************************
 

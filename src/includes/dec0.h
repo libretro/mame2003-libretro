@@ -9,9 +9,9 @@ VIDEO_UPDATE( hippodrm );
 VIDEO_UPDATE( slyspy );
 VIDEO_UPDATE( midres );
 
-extern data16_t *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
-extern data16_t *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
-extern data16_t *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
+extern uint16_t *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
+extern uint16_t *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
+extern uint16_t *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
 
 WRITE16_HANDLER( dec0_pf1_control_0_w );
 WRITE16_HANDLER( dec0_pf1_control_1_w );
@@ -64,5 +64,5 @@ WRITE_HANDLER( hippodrm_prot_w );
 READ_HANDLER( hippodrm_shared_r );
 WRITE_HANDLER( hippodrm_shared_w );
 
-extern data16_t *dec0_ram;
-extern data8_t *robocop_shared_ram;
+extern uint16_t *dec0_ram;
+extern uint8_t *robocop_shared_ram;

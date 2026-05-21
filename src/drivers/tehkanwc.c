@@ -863,7 +863,7 @@ static DRIVER_INIT( teedoff )
 		023A: 00          nop
 	*/
 
-	data8_t *ROM = memory_region(REGION_CPU1);
+	uint8_t *ROM = memory_region(REGION_CPU1);
 
 	ROM[0x0238] = 0x00;
 	ROM[0x0239] = 0x00;

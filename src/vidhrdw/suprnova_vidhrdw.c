@@ -17,16 +17,16 @@ Tilemap flip flags were reversed
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern data32_t *skns_tilemapA_ram, *skns_tilemapB_ram, *skns_v3slc_ram;
-extern data32_t *skns_palette_ram, *skns_v3t_ram, *skns_main_ram, *skns_cache_ram;
-extern data32_t *skns_pal_regs, *skns_v3_regs, *skns_spc_regs;
-extern data32_t skns_v3t_dirty[0x4000]; // allocate this elsewhere?
-extern data32_t skns_v3t_4bppdirty[0x8000]; // allocate this elsewhere?
+extern uint32_t *skns_tilemapA_ram, *skns_tilemapB_ram, *skns_v3slc_ram;
+extern uint32_t *skns_palette_ram, *skns_v3t_ram, *skns_main_ram, *skns_cache_ram;
+extern uint32_t *skns_pal_regs, *skns_v3_regs, *skns_spc_regs;
+extern uint32_t skns_v3t_dirty[0x4000]; // allocate this elsewhere?
+extern uint32_t skns_v3t_4bppdirty[0x8000]; // allocate this elsewhere?
 extern int skns_v3t_somedirty,skns_v3t_4bpp_somedirty;
 
 void skns_palette_update(void);
 
-static data8_t decodebuffer[64*128];
+static uint8_t decodebuffer[64*128];
 static int old_depthA=0, depthA=0;
 static int old_depthB=0, depthB=0;
 
@@ -34,8 +34,8 @@ static int sprite_kludge_x=0, sprite_kludge_y=0;
 
 static int skns_rle_decode ( int romoffset, int size )
 {
-	data8_t *src = memory_region (REGION_GFX1)+ romoffset;
-	data8_t *dst = decodebuffer;
+	uint8_t *src = memory_region (REGION_GFX1)+ romoffset;
+	uint8_t *dst = decodebuffer;
 
 	while(size>0) {
 		uint8_t code = *src++;
@@ -262,8 +262,8 @@ static void skns_drawsprites( struct mame_bitmap *bitmap, const struct rectangle
 
 	/* sprite ram start / end is not really fixed registers change it */
 
-	data32_t *source = buffered_spriteram32;
-	data32_t *finish = source + spriteram_size/4;
+	uint32_t *source = buffered_spriteram32;
+	uint32_t *finish = source + spriteram_size/4;
 
 	int group_x_offset[4];
 	int group_y_offset[4];
@@ -693,7 +693,7 @@ VIDEO_UPDATE(skns)
 {
 	int i, offset;
 
-	data8_t *btiles;
+	uint8_t *btiles;
 
 
 	skns_palette_update();
@@ -718,7 +718,7 @@ VIDEO_UPDATE(skns)
 			{
 				if (skns_v3t_dirty[i] == 1)
 				{
-					decodechar(Machine->gfx[1], i, (data8_t*)btiles, Machine->drv->gfxdecodeinfo[0].gfxlayout);
+					decodechar(Machine->gfx[1], i, (uint8_t*)btiles, Machine->drv->gfxdecodeinfo[0].gfxlayout);
 
 					skns_v3t_dirty[i] = 0;
 				}
@@ -744,7 +744,7 @@ VIDEO_UPDATE(skns)
 			{
 				if (skns_v3t_4bppdirty[i] == 1)
 				{
-					decodechar(Machine->gfx[3], i, (data8_t*)btiles, Machine->drv->gfxdecodeinfo[3].gfxlayout);
+					decodechar(Machine->gfx[3], i, (uint8_t*)btiles, Machine->drv->gfxdecodeinfo[3].gfxlayout);
 
 					skns_v3t_4bppdirty[i] = 0;
 				}

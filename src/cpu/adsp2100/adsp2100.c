@@ -1994,7 +1994,7 @@ void adsp2104_set_tx_callback(TX_CALLBACK cb)
 	sport_tx_callback = cb;
 }
 
-void adsp2104_load_boot_data(data8_t *srcdata, data32_t *dstdata)
+void adsp2104_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	/* see how many words we need to copy */
 	int pagelen = (srcdata[BYTE_XOR_LE(3)] + 1) * 8;
@@ -2102,7 +2102,7 @@ void adsp2105_set_tx_callback(TX_CALLBACK cb)
 	sport_tx_callback = cb;
 }
 
-void adsp2105_load_boot_data(data8_t *srcdata, data32_t *dstdata)
+void adsp2105_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	adsp2104_load_boot_data(srcdata, dstdata);
 }
@@ -2204,7 +2204,7 @@ void adsp2115_set_tx_callback(TX_CALLBACK cb)
 	sport_tx_callback = cb;
 }
 
-void adsp2115_load_boot_data(data8_t *srcdata, data32_t *dstdata)
+void adsp2115_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	adsp2104_load_boot_data(srcdata, dstdata);
 }

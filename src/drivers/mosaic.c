@@ -11,8 +11,8 @@ Notes:
 #include "cpu/z180/z180.h"
 
 
-extern data8_t *mosaic_fgvideoram;
-extern data8_t *mosaic_bgvideoram;
+extern uint8_t *mosaic_fgvideoram;
+extern uint8_t *mosaic_bgvideoram;
 WRITE_HANDLER( mosaic_fgvideoram_w );
 WRITE_HANDLER( mosaic_bgvideoram_w );
 VIDEO_START( mosaic );

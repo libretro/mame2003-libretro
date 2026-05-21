@@ -18,7 +18,7 @@
 #include "harddisk.h"
 #include "am53cf96.h"
 
-data8_t scsi_regs[32], fifo[16], fptr = 0, last_cmd, xfer_state;
+uint8_t scsi_regs[32], fifo[16], fptr = 0, last_cmd, xfer_state;
 int lba, blocks;
 struct hard_disk_file *disk;
 static struct AM53CF96interface *intf;
@@ -234,7 +234,7 @@ void am53cf96_init( struct AM53CF96interface *interface )
 }
 
 // retrieve data from the SCSI controller
-void am53cf96_read_data(int bytes, data8_t *pData)
+void am53cf96_read_data(int bytes, uint8_t *pData)
 {
 	int i;
 

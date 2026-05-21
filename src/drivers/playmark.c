@@ -39,15 +39,15 @@ World Beach Volley:
 #include "cpu/pic16c5x/pic16c5x.h"
 
 
-static data16_t playmark_snd_command;
-static data16_t playmark_snd_flag;
-static data8_t playmark_oki_control;
-static data8_t playmark_oki_command;
+static uint16_t playmark_snd_command;
+static uint16_t playmark_snd_flag;
+static uint8_t playmark_oki_control;
+static uint8_t playmark_oki_command;
 
 
-extern data16_t *bigtwin_bgvideoram;
+extern uint16_t *bigtwin_bgvideoram;
 extern size_t bigtwin_bgvideoram_size;
-extern data16_t *wbeachvl_videoram1,*wbeachvl_videoram2,*wbeachvl_videoram3;
+extern uint16_t *wbeachvl_videoram1,*wbeachvl_videoram2,*wbeachvl_videoram3;
 
 VIDEO_START( bigtwin );
 VIDEO_START( wbeachvl );
@@ -703,8 +703,8 @@ static uint8_t playmark_asciitohex(uint8_t data)
 
 static DRIVER_INIT( bigtwin )
 {
-	data8_t *playmark_PICROM_HEX = memory_region(REGION_USER1);
-	data8_t *playmark_PICROM = memory_region(REGION_CPU2);
+	uint8_t *playmark_PICROM_HEX = memory_region(REGION_USER1);
+	uint8_t *playmark_PICROM = memory_region(REGION_CPU2);
 	int32_t   offs, data;
 	uint16_t  src_pos = 0;
 	uint16_t  dst_pos = 0;

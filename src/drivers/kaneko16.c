@@ -69,7 +69,7 @@ To Do:
 /* Variables only used here: */
 
 static int shogwarr_mcu_status, shogwarr_mcu_command_offset;
-static data16_t *mcu_ram, gtmr_mcu_com[4];
+static uint16_t *mcu_ram, gtmr_mcu_com[4];
 
 
 /***************************************************************************
@@ -152,7 +152,7 @@ static MACHINE_INIT( bloodwar )
 
 	kaneko16_sprite_type = 1;
 
-	memset(gtmr_mcu_com, 0, 4 * sizeof( data16_t) );
+	memset(gtmr_mcu_com, 0, 4 * sizeof( uint16_t) );
 }
 
 static MACHINE_INIT( bakubrkr )
@@ -176,7 +176,7 @@ static MACHINE_INIT( gtmr )
 
 	kaneko16_sprite_type = 1;
 
-	memset(gtmr_mcu_com, 0, 4 * sizeof( data16_t) );
+	memset(gtmr_mcu_com, 0, 4 * sizeof( uint16_t) );
 }
 
 static MACHINE_INIT( mgcrystl )
@@ -241,9 +241,9 @@ static MACHINE_INIT( shogwarr )
 
 void bloodwar_mcu_run(void)
 {
-	data16_t mcu_command	=	mcu_ram[0x0010/2];
-	data16_t mcu_offset		=	mcu_ram[0x0012/2] / 2;
-	data16_t mcu_data		=	mcu_ram[0x0014/2];
+	uint16_t mcu_command	=	mcu_ram[0x0010/2];
+	uint16_t mcu_offset		=	mcu_ram[0x0012/2] / 2;
+	uint16_t mcu_data		=	mcu_ram[0x0014/2];
 
 	logerror("CPU #0 PC %06X : MCU executed command: %04X %04X %04X\n",activecpu_get_pc(),mcu_command,mcu_offset*2,mcu_data);
 
@@ -391,7 +391,7 @@ WRITE16_HANDLER( bloodwar_mcu_com##_n_##_w ) \
 	if (gtmr_mcu_com[2] != 0xFFFF)	return; \
 	if (gtmr_mcu_com[3] != 0xFFFF)	return; \
 \
-	memset(gtmr_mcu_com, 0, 4 * sizeof( data16_t ) ); \
+	memset(gtmr_mcu_com, 0, 4 * sizeof( uint16_t ) ); \
 	bloodwar_mcu_run(); \
 }
 
@@ -421,9 +421,9 @@ const struct GameDriver driver_gtmr2;
 
 void gtmr_mcu_run(void)
 {
-	data16_t mcu_command	=	mcu_ram[0x0010/2];
-	data16_t mcu_offset		=	mcu_ram[0x0012/2] / 2;
-	data16_t mcu_data		=	mcu_ram[0x0014/2];
+	uint16_t mcu_command	=	mcu_ram[0x0010/2];
+	uint16_t mcu_offset		=	mcu_ram[0x0012/2] / 2;
+	uint16_t mcu_data		=	mcu_ram[0x0014/2];
 
 	logerror("CPU #0 PC %06X : MCU executed command: %04X %04X %04X\n",activecpu_get_pc(),mcu_command,mcu_offset*2,mcu_data);
 
@@ -502,7 +502,7 @@ WRITE16_HANDLER( gtmr_mcu_com##_n_##_w ) \
 	if (gtmr_mcu_com[2] != 0xFFFF)	return; \
 	if (gtmr_mcu_com[3] != 0xFFFF)	return; \
 \
-	memset(gtmr_mcu_com, 0, 4 * sizeof( data16_t ) ); \
+	memset(gtmr_mcu_com, 0, 4 * sizeof( uint16_t ) ); \
 	gtmr_mcu_run(); \
 }
 
@@ -603,7 +603,7 @@ static WRITE16_HANDLER( sandscrp_mcu_ram_w )
 
 void shogwarr_mcu_run(void)
 {
-	data16_t mcu_command;
+	uint16_t mcu_command;
 
 	if ( shogwarr_mcu_status != (1|2|4|8) )	return;
 
@@ -1438,8 +1438,8 @@ WRITE16_HANDLER( sandscrp_coin_counter_w )
 	}
 }
 
-static data8_t latch1_full;
-static data8_t latch2_full;
+static uint8_t latch1_full;
+static uint8_t latch2_full;
 
 static READ16_HANDLER( sandscrp_latchstatus_word_r )
 {
@@ -3915,7 +3915,7 @@ DRIVER_INIT( shogwarr )
 {
 	/* Code patches */
 #if 0
-	data16_t *RAM = memory_region(REGION_CPU1);
+	uint16_t *RAM = memory_region(REGION_CPU1);
 	RAM[0x0039a / 2] = 0x4e71;	// 200000 test
 	RAM[0x003e6 / 2] = 0x4e71;	// 20030a test
 	RAM[0x223a8 / 2] = 0x6000;	// rom test
@@ -4013,7 +4013,7 @@ DRIVER_INIT( fjbuster )
 /*
 	Need to find equivalent for Fujiyama Buster for these patches:
 
-	data16_t *RAM = memory_region(REGION_CPU1);
+	uint16_t *RAM = memory_region(REGION_CPU1);
 	RAM[0x0039a / 2] = 0x4e71;	// 200000 test
 	RAM[0x003e6 / 2] = 0x4e71;	// 20030a test
 	RAM[0x223a8 / 2] = 0x6000;	// rom test

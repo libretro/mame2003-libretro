@@ -914,9 +914,9 @@ int has_TC0480SCP(void)
 #define PC080SN_MAX_CHIPS 2
 static int PC080SN_chips;
 
-static data16_t PC080SN_ctrl[PC080SN_MAX_CHIPS][8];
+static uint16_t PC080SN_ctrl[PC080SN_MAX_CHIPS][8];
 
-static data16_t *PC080SN_ram[PC080SN_MAX_CHIPS],
+static uint16_t *PC080SN_ram[PC080SN_MAX_CHIPS],
 				*PC080SN_bg_ram[PC080SN_MAX_CHIPS][2],
 				*PC080SN_bgscroll_ram[PC080SN_MAX_CHIPS][2];
 
@@ -927,7 +927,7 @@ static struct tilemap *PC080SN_tilemap[PC080SN_MAX_CHIPS][2];
 static int PC080SN_bg_gfx[PC080SN_MAX_CHIPS];
 static int PC080SN_yinvert,PC080SN_dblwidth;
 
-static INLINE void common_get_PC080SN_bg_tile_info(data16_t *ram,int gfxnum,int tile_index)
+static INLINE void common_get_PC080SN_bg_tile_info(uint16_t *ram,int gfxnum,int tile_index)
 {
 	uint16_t code,attr;
 
@@ -949,7 +949,7 @@ static INLINE void common_get_PC080SN_bg_tile_info(data16_t *ram,int gfxnum,int 
 			TILE_FLIPYX((attr & 0xc000) >> 14))
 }
 
-static INLINE void common_get_PC080SN_fg_tile_info(data16_t *ram,int gfxnum,int tile_index)
+static INLINE void common_get_PC080SN_fg_tile_info(uint16_t *ram,int gfxnum,int tile_index)
 {
 	uint16_t code,attr;
 
@@ -1114,7 +1114,7 @@ READ16_HANDLER( PC080SN_word_1_r )
 	return PC080SN_ram[1][offset];
 }
 
-static void PC080SN_word_w(int chip,offs_t offset,data16_t data,uint32_t mem_mask)
+static void PC080SN_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int oldword = PC080SN_ram[chip][offset];
 
@@ -1148,7 +1148,7 @@ WRITE16_HANDLER( PC080SN_word_1_w )
 	PC080SN_word_w(1,offset,data,mem_mask);
 }
 
-static void PC080SN_xscroll_word_w(int chip,offs_t offset,data16_t data,uint32_t mem_mask)
+static void PC080SN_xscroll_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC080SN_ctrl[chip][offset]);
 
@@ -1166,7 +1166,7 @@ static void PC080SN_xscroll_word_w(int chip,offs_t offset,data16_t data,uint32_t
 	}
 }
 
-static void PC080SN_yscroll_word_w(int chip,offs_t offset,data16_t data,uint32_t mem_mask)
+static void PC080SN_yscroll_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC080SN_ctrl[chip][offset+2]);
 
@@ -1186,7 +1186,7 @@ static void PC080SN_yscroll_word_w(int chip,offs_t offset,data16_t data,uint32_t
 	}
 }
 
-static void PC080SN_ctrl_word_w(int chip,offs_t offset,data16_t data,uint32_t mem_mask)
+static void PC080SN_ctrl_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC080SN_ctrl[chip][offset+4]);
 
@@ -1338,7 +1338,7 @@ uint16_t topspeed_get_road_pixel_color(uint16_t pixel,uint16_t color)
 
 
 static void topspeed_custom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int chip,int layer,int flags,
-							uint32_t priority,data16_t *color_ctrl_ram)
+							uint32_t priority,uint16_t *color_ctrl_ram)
 {
 	uint16_t *dst16,*src16;
 	uint8_t *tsrc;
@@ -1441,7 +1441,7 @@ void PC080SN_tilemap_draw(struct mame_bitmap *bitmap,const struct rectangle *cli
 	tilemap_draw(bitmap,cliprect,PC080SN_tilemap[chip][layer],flags,priority);
 }
 
-void PC080SN_tilemap_draw_special(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int chip,int layer,int flags,uint32_t priority,data16_t *ram)
+void PC080SN_tilemap_draw_special(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int chip,int layer,int flags,uint32_t priority,uint16_t *ram)
 {
 	topspeed_custom_draw(bitmap,cliprect,chip,layer,flags,priority,ram);
 }
@@ -1466,10 +1466,10 @@ void PC080SN_tilemap_draw_special(struct mame_bitmap *bitmap,const struct rectan
 
 */
 
-static data16_t PC090OJ_ctrl,PC090OJ_buffer,PC090OJ_gfxnum;
+static uint16_t PC090OJ_ctrl,PC090OJ_buffer,PC090OJ_gfxnum;
 uint16_t PC090OJ_sprite_ctrl;
 
-static data16_t *PC090OJ_ram,*PC090OJ_ram_buffered;
+static uint16_t *PC090OJ_ram,*PC090OJ_ram_buffered;
 
 static int PC090OJ_xoffs,PC090OJ_yoffs;
 
@@ -1508,7 +1508,7 @@ READ16_HANDLER( PC090OJ_word_0_r )	// in case we find a game using 2...
 	return PC090OJ_ram[offset];
 }
 
-static void PC090OJ_word_w(offs_t offset,data16_t data,uint32_t mem_mask)
+static void PC090OJ_word_w(offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&PC090OJ_ram[offset]);
 
@@ -1613,7 +1613,7 @@ void PC090OJ_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cl
 #define TC0080VCO_CHAR_RAM_SIZE 0x2000
 #define TC0080VCO_TOTAL_CHARS 256
 
-static data16_t *TC0080VCO_ram,
+static uint16_t *TC0080VCO_ram,
 				*TC0080VCO_bg0_ram_0, *TC0080VCO_bg0_ram_1,
 				*TC0080VCO_bg1_ram_0, *TC0080VCO_bg1_ram_1,
 				*TC0080VCO_tx_ram_0,  *TC0080VCO_tx_ram_1,
@@ -1621,10 +1621,10 @@ static data16_t *TC0080VCO_ram,
 
 /* This sprite related stuff still needs to be accessed in
    vidhrdw/taito_h */
-data16_t *TC0080VCO_chain_ram_0, *TC0080VCO_chain_ram_1,
+uint16_t *TC0080VCO_chain_ram_0, *TC0080VCO_chain_ram_1,
 				*TC0080VCO_spriteram, *TC0080VCO_scroll_ram;
 
-static data16_t TC0080VCO_bg0_scrollx,TC0080VCO_bg0_scrolly,
+static uint16_t TC0080VCO_bg0_scrollx,TC0080VCO_bg0_scrolly,
 		TC0080VCO_bg1_scrollx,TC0080VCO_bg1_scrolly;
 
 static struct tilemap *TC0080VCO_tilemap[3];
@@ -2322,9 +2322,9 @@ static struct rectangle myclip;
 
 const int TC0100SCN_SINGLE_VDU = 1024;
 
-static data16_t TC0100SCN_ctrl[TC0100SCN_MAX_CHIPS][8];
+static uint16_t TC0100SCN_ctrl[TC0100SCN_MAX_CHIPS][8];
 
-static data16_t *TC0100SCN_ram[TC0100SCN_MAX_CHIPS],
+static uint16_t *TC0100SCN_ram[TC0100SCN_MAX_CHIPS],
 				*TC0100SCN_bg_ram[TC0100SCN_MAX_CHIPS],
 				*TC0100SCN_fg_ram[TC0100SCN_MAX_CHIPS],
 				*TC0100SCN_tx_ram[TC0100SCN_MAX_CHIPS],
@@ -2348,7 +2348,7 @@ static int TC0100SCN_gfxbank,TC0100SCN_chip_colbank[3],TC0100SCN_colbank[3];
 static int TC0100SCN_dblwidth[TC0100SCN_MAX_CHIPS];
 
 
-static INLINE void common_get_bg0_tile_info(data16_t *ram,int gfxnum,int tile_index,int colbank,int dblwidth)
+static INLINE void common_get_bg0_tile_info(uint16_t *ram,int gfxnum,int tile_index,int colbank,int dblwidth)
 {
 	int code,attr;
 
@@ -2370,7 +2370,7 @@ static INLINE void common_get_bg0_tile_info(data16_t *ram,int gfxnum,int tile_in
 			TILE_FLIPYX((attr & 0xc000) >> 14))
 }
 
-static INLINE void common_get_bg1_tile_info(data16_t *ram,int gfxnum,int tile_index,int colbank,int dblwidth)
+static INLINE void common_get_bg1_tile_info(uint16_t *ram,int gfxnum,int tile_index,int colbank,int dblwidth)
 {
 	int code,attr;
 
@@ -2392,7 +2392,7 @@ static INLINE void common_get_bg1_tile_info(data16_t *ram,int gfxnum,int tile_in
 			TILE_FLIPYX((attr & 0xc000) >> 14))
 }
 
-static INLINE void common_get_tx_tile_info(data16_t *ram,int gfxnum,int tile_index,int colbank,int dblwidth)
+static INLINE void common_get_tx_tile_info(uint16_t *ram,int gfxnum,int tile_index,int colbank,int dblwidth)
 {
 	int attr = ram[tile_index];
 
@@ -2847,7 +2847,7 @@ READ16_HANDLER( TC0100SCN_word_2_r )
 	return TC0100SCN_ram[2][offset];
 }
 
-static void TC0100SCN_word_w(int chip,offs_t offset,data16_t data,uint32_t mem_mask)
+static void TC0100SCN_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int oldword = TC0100SCN_ram[chip][offset];
 
@@ -2930,7 +2930,7 @@ READ16_HANDLER( TC0100SCN_ctrl_word_2_r )
 }
 
 
-static void TC0100SCN_ctrl_word_w(int chip,offs_t offset,data16_t data,uint32_t mem_mask)
+static void TC0100SCN_ctrl_word_w(int chip,offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	COMBINE_DATA(&TC0100SCN_ctrl[chip][offset]);
 
@@ -3135,8 +3135,8 @@ int TC0100SCN_bottomlayer(int chip)
 /***************************************************************************/
 
 #define TC0280GRD_RAM_SIZE 0x2000
-static data16_t TC0280GRD_ctrl[8];
-static data16_t *TC0280GRD_ram;
+static uint16_t TC0280GRD_ctrl[8];
+static uint16_t *TC0280GRD_ram;
 static struct tilemap *TC0280GRD_tilemap;
 static int TC0280GRD_gfxnum,TC0280GRD_base_color;
 
@@ -3322,8 +3322,8 @@ if (data & 0xff)
 
 #define TC0480SCP_RAM_SIZE 0x10000
 #define TC0480SCP_TOTAL_CHARS 256
-static data16_t TC0480SCP_ctrl[0x18];
-static data16_t *TC0480SCP_ram,
+static uint16_t TC0480SCP_ctrl[0x18];
+static uint16_t *TC0480SCP_ram,
 		*TC0480SCP_bg_ram[4],
 		*TC0480SCP_tx_ram,
 		*TC0480SCP_char_ram,
@@ -3345,7 +3345,7 @@ static int TC0480SCP_text_xoffs,TC0480SCP_text_yoffs;
 static int TC0480SCP_flip_xoffs,TC0480SCP_flip_yoffs;
 
 
-static INLINE void common_get_tc0480bg_tile_info(data16_t *ram,int gfxnum,int tile_index)
+static INLINE void common_get_tc0480bg_tile_info(uint16_t *ram,int gfxnum,int tile_index)
 {
 	int code = ram[2*tile_index + 1] & 0x7fff;
 	int attr = ram[2*tile_index];
@@ -3356,7 +3356,7 @@ static INLINE void common_get_tc0480bg_tile_info(data16_t *ram,int gfxnum,int ti
 			TILE_FLIPYX((attr & 0xc000) >> 14))
 }
 
-static INLINE void common_get_tc0480tx_tile_info(data16_t *ram,int gfxnum,int tile_index)
+static INLINE void common_get_tc0480tx_tile_info(uint16_t *ram,int gfxnum,int tile_index)
 {
 	int attr = ram[tile_index];
 	SET_TILE_INFO(
@@ -3707,7 +3707,7 @@ READ16_HANDLER( TC0480SCP_word_r )
 	return TC0480SCP_ram[offset];
 }
 
-static void TC0480SCP_word_write(offs_t offset,data16_t data,uint32_t mem_mask)
+static void TC0480SCP_word_write(offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int oldword = TC0480SCP_ram[offset];
 	COMBINE_DATA(&TC0480SCP_ram[offset]);
@@ -3769,7 +3769,7 @@ READ16_HANDLER( TC0480SCP_ctrl_word_r )
 	return TC0480SCP_ctrl[offset];
 }
 
-static void TC0480SCP_ctrl_word_write(offs_t offset,data16_t data,uint32_t mem_mask)
+static void TC0480SCP_ctrl_word_write(offs_t offset,uint16_t data,uint32_t mem_mask)
 {
 	int flip = TC0480SCP_pri_reg & 0x40;
 
@@ -4350,7 +4350,7 @@ int TC0480SCP_get_bg_priority(void)
                             TC0150ROD
 ****************************************************************/
 
-static data16_t *TC0150ROD_ram;
+static uint16_t *TC0150ROD_ram;
 #define TC0150ROD_RAM_SIZE 0x2000
 
 READ16_HANDLER( TC0150ROD_word_r )
@@ -4553,9 +4553,9 @@ void TC0150ROD_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,
 	int x_offs = 0xa7;	/* Increasing this shifts road to right */
 	uint16_t scanline[512];
 	uint16_t roada_line[512],roadb_line[512];
-	data16_t *dst16;
-	data16_t *roada,*roadb;
-	data16_t *roadgfx = (data16_t *)memory_region(REGION_GFX3);
+	uint16_t *dst16;
+	uint16_t *roada,*roadb;
+	uint16_t *roadgfx = (uint16_t *)memory_region(REGION_GFX3);
 
 	uint16_t pixel,color,gfx_word;
 	uint16_t roada_clipl,roada_clipr,roada_bodyctrl;
@@ -5157,7 +5157,7 @@ void TC0150ROD_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,
 
 static int TC0110PCR_type = 0;
 static int TC0110PCR_addr[3];
-static data16_t *TC0110PCR_ram[3];
+static uint16_t *TC0110PCR_ram[3];
 #define TC0110PCR_RAM_SIZE 0x2000
 
 
@@ -5516,8 +5516,8 @@ logerror("PC %06x: warning - write %04x to TC0110PCR address %02x\n",activecpu_g
 /***************************************************************************/
 
 
-static data8_t TC0220IOC_regs[8];
-static data8_t TC0220IOC_port;
+static uint8_t TC0220IOC_regs[8];
+static uint8_t TC0220IOC_port;
 
 READ_HANDLER( TC0220IOC_r )
 {
@@ -5678,7 +5678,7 @@ logerror("CPU #0 PC %06x: warning - write to LSB of TC0220IOC address %02x\n",ac
 /***************************************************************************/
 
 
-static data8_t TC0510NIO_regs[8];
+static uint8_t TC0510NIO_regs[8];
 
 READ_HANDLER( TC0510NIO_r )
 {
@@ -5761,7 +5761,7 @@ WRITE16_HANDLER( TC0510NIO_halfword_wordswap_w )
 
 /***************************************************************************/
 
-static data8_t TC0640FIO_regs[8];
+static uint8_t TC0640FIO_regs[8];
 
 READ_HANDLER( TC0640FIO_r )
 {

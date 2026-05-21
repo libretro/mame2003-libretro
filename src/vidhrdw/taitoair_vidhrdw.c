@@ -51,10 +51,10 @@ sprite RAM
 #include "taitoic.h"
 
 
-extern data16_t	*TC0080VCO_chain_ram_0;
-extern data16_t	*TC0080VCO_chain_ram_1;
-extern data16_t	*TC0080VCO_spriteram;
-extern data16_t	*TC0080VCO_scroll_ram;
+extern uint16_t	*TC0080VCO_chain_ram_0;
+extern uint16_t	*TC0080VCO_chain_ram_1;
+extern uint16_t	*TC0080VCO_spriteram;
+extern uint16_t	*TC0080VCO_scroll_ram;
 extern int		TC0080VCO_flipscreen;
 
 /* Needed in the sprite palette color marking */
@@ -206,7 +206,7 @@ static void taitoair_draw_sprites(struct mame_bitmap *bitmap, const struct recta
 	}
 }
 
-extern data16_t	*taitoair_line_ram;
+extern uint16_t	*taitoair_line_ram;
 
 enum { FRAC_SHIFT = 16, POLY_MAX_PT = 16 };
 

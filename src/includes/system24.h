@@ -6,7 +6,7 @@
 
 /* New Code */
 
-extern data16_t *system24temp_sys16_shared_ram;
+extern uint16_t *system24temp_sys16_shared_ram;
 READ16_HANDLER( system24temp_sys16_shared_ram_r );
 WRITE16_HANDLER( system24temp_sys16_shared_ram_w );
 

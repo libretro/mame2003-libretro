@@ -139,11 +139,11 @@ Memo:
 //	0xFFFE4E	-		-
 
 
-static data16_t tmp68301_address_decoder[0x10];
-static data16_t tmp68301_interrupt_controller[0x20];
-static data16_t tmp68301_parallel_interface[0x10];
-static data16_t tmp68301_serial_interface[0x30];
-static data16_t tmp68301_timer[0x50];
+static uint16_t tmp68301_address_decoder[0x10];
+static uint16_t tmp68301_interrupt_controller[0x20];
+static uint16_t tmp68301_parallel_interface[0x10];
+static uint16_t tmp68301_serial_interface[0x30];
+static uint16_t tmp68301_timer[0x50];
 
 
 READ16_HANDLER( tmp68301_address_decoder_r )

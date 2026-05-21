@@ -62,7 +62,7 @@
  *
  *************************************/
 
-static data16_t control_word;
+static uint16_t control_word;
 
 
 
@@ -426,7 +426,7 @@ MEMORY_END
 
 static MEMORY_WRITE16_START( trisport_writemem )
 	{ 0x000000, 0x03ffff, MWA16_ROM },
-	{ 0x100000, 0x103fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x100000, 0x103fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x120000, 0x12007f, mcr68_paletteram_w, &paletteram16 },
 	{ 0x140000, 0x1407ff, MWA16_RAM, &spriteram16, &spriteram_size },
 	{ 0x160000, 0x160fff, mcr68_videoram_w, &videoram16, &videoram_size },

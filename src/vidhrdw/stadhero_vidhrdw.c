@@ -12,12 +12,12 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *stadhero_pf1_data,*stadhero_pf2_data;
+uint16_t *stadhero_pf1_data,*stadhero_pf2_data;
 static struct tilemap *pf1_tilemap,*pf2_tilemap;
 static int flipscreen;
 
-static data16_t stadhero_pf2_control_0[8];
-static data16_t stadhero_pf2_control_1[8];
+static uint16_t stadhero_pf2_control_0[8];
+static uint16_t stadhero_pf2_control_1[8];
 
 /******************************************************************************/
 
@@ -102,7 +102,7 @@ VIDEO_UPDATE( stadhero )
 
 WRITE16_HANDLER( stadhero_pf1_data_w )
 {
-	data16_t oldword=stadhero_pf1_data[offset];
+	uint16_t oldword=stadhero_pf1_data[offset];
 	COMBINE_DATA(&stadhero_pf1_data[offset]);
 	if (oldword!=stadhero_pf1_data[offset])
 		tilemap_mark_tile_dirty(pf1_tilemap,offset);
@@ -110,7 +110,7 @@ WRITE16_HANDLER( stadhero_pf1_data_w )
 
 WRITE16_HANDLER( stadhero_pf2_data_w )
 {
-	data16_t oldword=stadhero_pf2_data[offset];
+	uint16_t oldword=stadhero_pf2_data[offset];
 	COMBINE_DATA(&stadhero_pf2_data[offset]);
 	if (oldword!=stadhero_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset);

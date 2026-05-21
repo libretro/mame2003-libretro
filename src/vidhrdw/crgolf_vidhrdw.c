@@ -9,11 +9,11 @@
 
 
 /* globals */
-data8_t *crgolf_color_select;
-data8_t *crgolf_screen_flip;
-data8_t *crgolf_screen_select;
-data8_t *crgolf_screenb_enable;
-data8_t *crgolf_screena_enable;
+uint8_t *crgolf_color_select;
+uint8_t *crgolf_screen_flip;
+uint8_t *crgolf_screen_select;
+uint8_t *crgolf_screenb_enable;
+uint8_t *crgolf_screena_enable;
 
 
 /* local variables */

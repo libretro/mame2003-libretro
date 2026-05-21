@@ -89,7 +89,7 @@ struct atarimo_data
 	int					codehighshift;		/* shift count for the upper code */
 
 	struct atarimo_entry *spriteram;		/* pointer to sprite RAM */
-	data16_t **			slipram;			/* pointer to the SLIP RAM pointer */
+	uint16_t **			slipram;			/* pointer to the SLIP RAM pointer */
 	uint16_t *			codelookup;			/* lookup table for codes */
 	uint8_t *				colorlookup;		/* lookup table for colors */
 	uint8_t *				gfxlookup;			/* lookup table for graphics */
@@ -131,11 +131,11 @@ struct atarimo_data
 	GLOBAL VARIABLES
 ##########################################################################*/
 
-data16_t *atarimo_0_spriteram;
-data16_t *atarimo_0_slipram;
+uint16_t *atarimo_0_spriteram;
+uint16_t *atarimo_0_slipram;
 
-data16_t *atarimo_1_spriteram;
-data16_t *atarimo_1_slipram;
+uint16_t *atarimo_1_spriteram;
+uint16_t *atarimo_1_slipram;
 
 
 

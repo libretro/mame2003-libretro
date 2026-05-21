@@ -26,7 +26,7 @@ a symmetrical visible area).
 #include "cpu/z80/z80.h"
 
 
-extern data16_t *gradius3_gfxram;
+extern uint16_t *gradius3_gfxram;
 extern int gradius3_priority;
 VIDEO_START( gradius3 );
 READ16_HANDLER( gradius3_gfxrom_r );
@@ -87,7 +87,7 @@ static MACHINE_INIT( gradius3 )
 	irqBmask = 0;
 }
 
-static data16_t *sharedram;
+static uint16_t *sharedram;
 
 static READ16_HANDLER( sharedram_r )
 {

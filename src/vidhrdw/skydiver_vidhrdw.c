@@ -9,7 +9,7 @@
 #include "skydiver.h"
 
 
-data8_t *skydiver_videoram;
+uint8_t *skydiver_videoram;
 
 static struct tilemap *bg_tilemap;
 static int width = 0;
@@ -41,7 +41,7 @@ MACHINE_INIT( skydiver )
 
 static void get_tile_info(int tile_index)
 {
-	data8_t code = skydiver_videoram[tile_index];
+	uint8_t code = skydiver_videoram[tile_index];
 	SET_TILE_INFO(0, code & 0x3f, code >> 6, 0)
 }
 

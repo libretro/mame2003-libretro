@@ -1,6 +1,6 @@
 #include "driver.h"
 
-extern data16_t *pgm_mainram;
+extern uint16_t *pgm_mainram;
 
 /*** ASIC 3 (oriental legends protection) ****************************************/
 
@@ -354,8 +354,8 @@ READ16_HANDLER (dw2_d80000_r )
 // if(dw2reg<0x20) //NOT SURE!!
 	{
 		//The value at 0x80EECE is computed in the routine at 0x107c18
-		data16_t d=pgm_mainram[0xEECE/2];
-		data16_t d2=0;
+		uint16_t d=pgm_mainram[0xEECE/2];
+		uint16_t d2=0;
 		d=(d>>8)|(d<<8);
 		DW2BITSWAP(d,d2,7 ,0);
 		DW2BITSWAP(d,d2,4 ,1);

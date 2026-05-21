@@ -29,7 +29,7 @@ lev 7 : 0x7c : 0000 0000 - x
 
 
 
-data16_t *kickgoal_fgram, *kickgoal_bgram, *kickgoal_bg2ram, *kickgoal_scrram;
+uint16_t *kickgoal_fgram, *kickgoal_bgram, *kickgoal_bg2ram, *kickgoal_scrram;
 
 WRITE16_HANDLER( kickgoal_fgram_w  );
 WRITE16_HANDLER( kickgoal_bgram_w  );
@@ -262,7 +262,7 @@ ROM_END
 
 DRIVER_INIT( kickgoal )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 
 	/* fix "bug" that prevents game from writing to EEPROM */
 	rom[0x12b0/2] = 0x0001;

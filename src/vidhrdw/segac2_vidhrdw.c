@@ -231,7 +231,7 @@ VIDEO_START( segac2 )
 	}
 
 	/* reset the palettes */
-	memset(paletteram16, 0, 0x800 * sizeof(data16_t));
+	memset(paletteram16, 0, 0x800 * sizeof(uint16_t));
 	segac2_bg_palbase = 0x000;
 	segac2_sp_palbase = 0x100;
 	segac2_palbank    = 0x000;
@@ -306,7 +306,7 @@ VIDEO_START( segac2 )
 
 VIDEO_START( puckpkmn )
 {
-	paletteram16 = auto_malloc(0x800 * sizeof(data16_t));
+	paletteram16 = auto_malloc(0x800 * sizeof(uint16_t));
 
 	if (video_start_segac2())
 		return 1;
@@ -323,7 +323,7 @@ VIDEO_START( puckpkmn )
 
 VIDEO_START( megatech )
 {
-	paletteram16 = auto_malloc(0x800 * sizeof(data16_t));
+	paletteram16 = auto_malloc(0x800 * sizeof(uint16_t));
 
 	if (video_start_segac2())
 		return 1;
@@ -341,7 +341,7 @@ VIDEO_START( megatech )
 
 VIDEO_START( megaplay )
 {
-	paletteram16 = auto_malloc(0x800 * sizeof(data16_t));
+	paletteram16 = auto_malloc(0x800 * sizeof(uint16_t));
 
 	if (video_start_segac2())
 		return 1;

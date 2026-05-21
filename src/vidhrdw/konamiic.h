@@ -160,7 +160,7 @@ int K053247_read_register(int regnum);
 void K053247_set_SpriteOffset(int offsx, int offsy);
 void K053247_wraparound_enable(int status);
 void K05324x_set_z_rejection(int zcode); // common to K053245/6/7
-void K053247_export_config(data16_t **ram, struct GfxElement **gfx, void **callback, int *dx, int *dy);
+void K053247_export_config(uint16_t **ram, struct GfxElement **gfx, void **callback, int *dx, int *dy);
 
 READ_HANDLER( K053246_r );
 WRITE_HANDLER( K053246_w );
@@ -212,8 +212,8 @@ void K051316_wraparound_enable(int chip, int status);
 void K051316_set_offset(int chip, int xoffs, int yoffs);
 
 
-extern data16_t *K053936_0_ctrl,*K053936_0_linectrl;
-extern data16_t *K053936_1_ctrl,*K053936_1_linectrl;
+extern uint16_t *K053936_0_ctrl,*K053936_0_linectrl;
+extern uint16_t *K053936_1_ctrl,*K053936_1_linectrl;
 void K053936_0_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority);
 void K053936_1_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority);
 void K053936_wraparound_enable(int chip, int status);
@@ -302,7 +302,7 @@ WRITE32_HANDLER( K056832_b_long_w );
 #define K056832_BPP_4dj	4
 
 void K055555_vh_start(void); // "PCU2"
-void K055555_write_reg(data8_t regnum, data8_t regdat);
+void K055555_write_reg(uint8_t regnum, uint8_t regdat);
 WRITE16_HANDLER( K055555_word_w );
 WRITE32_HANDLER( K055555_long_w );
 int K055555_read_register(int regnum);

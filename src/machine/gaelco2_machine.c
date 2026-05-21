@@ -220,7 +220,7 @@ WRITE16_HANDLER( gaelco2_eeprom_data_w )
 
 ***************************************************************************/
 
-data16_t *snowboar_protection;
+uint16_t *snowboar_protection;
 
 /*
 	The game writes 2 values and then reads from a memory address.

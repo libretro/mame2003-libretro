@@ -3,7 +3,7 @@
 #include "driver.h"
 
 static struct tilemap *flower_bg0_tilemap, *flower_bg1_tilemap;
-extern data8_t *flower_sharedram;
+extern uint8_t *flower_sharedram;
 
 static void flower_drawtextlayer( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
@@ -39,8 +39,8 @@ static void flower_drawsprites( struct mame_bitmap *bitmap, const struct rectang
 	unsigned char *floweram = memory_region(REGION_CPU1);
 
 	const struct GfxElement *gfx = Machine->gfx[1];
-	data8_t *source = &floweram[0xde00]+0x200;
-	data8_t *finish = source - 0x200;
+	uint8_t *source = &floweram[0xde00]+0x200;
+	uint8_t *finish = source - 0x200;
 
 	source -= 8;
 

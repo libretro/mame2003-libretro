@@ -5,19 +5,19 @@
 #include "namcos2.h"
 #include "namcoic.h"
 
-data16_t *namcos2_sprite_ram;
+uint16_t *namcos2_sprite_ram;
 size_t namcos2_68k_vram_size;
-data16_t *namcos2_68k_palette_ram;
+uint16_t *namcos2_68k_palette_ram;
 size_t namcos2_68k_palette_size;
 size_t namcos2_68k_roz_ram_size;
-data16_t *namcos2_68k_roz_ram;
+uint16_t *namcos2_68k_roz_ram;
 
-static data16_t namcos2_68k_roz_ctrl[0x8];
+static uint16_t namcos2_68k_roz_ctrl[0x8];
 
 static struct tilemap *tilemap[6];
 static struct tilemap *tilemap_roz;
 
-static data16_t namcos2_68k_vram_ctrl[0x20];
+static uint16_t namcos2_68k_vram_ctrl[0x20];
 
 /**
  * namcos2_gfx_ctrl selects a bank of 128 sprites within spriteram
@@ -29,7 +29,7 @@ static data16_t namcos2_68k_vram_ctrl[0x20];
  * ---- xxxx ---- ---- roz palette
  * ---- ---- ---- xxxx sprite bank
  */
-static data16_t namcos2_gfx_ctrl;
+static uint16_t namcos2_gfx_ctrl;
 
 READ16_HANDLER( namcos2_gfx_ctrl_r )
 {
@@ -43,7 +43,7 @@ WRITE16_HANDLER( namcos2_gfx_ctrl_w )
 
 /**************************************************************************/
 
-static INLINE void get_tile_info(int tile_index,data16_t *vram)
+static INLINE void get_tile_info(int tile_index,uint16_t *vram)
 {
 	int tile;
 	tile = vram[tile_index];
@@ -123,7 +123,7 @@ DrawTilemaps( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int 
 
 WRITE16_HANDLER( namcos2_68k_vram_w )
 {
-	data16_t oldword = videoram16[offset];
+	uint16_t oldword = videoram16[offset];
 	COMBINE_DATA( &videoram16[offset] );
 
 	if( oldword != videoram16[offset] )
@@ -158,7 +158,7 @@ READ16_HANDLER( namcos2_68k_vram_ctrl_r )
 WRITE16_HANDLER( namcos2_68k_vram_ctrl_w )
 {
 	int i;
-	data16_t oldword, newword;
+	uint16_t oldword, newword;
 	oldword = namcos2_68k_vram_ctrl[offset];
 	COMBINE_DATA( &namcos2_68k_vram_ctrl[offset] );
 	newword = namcos2_68k_vram_ctrl[offset];
@@ -304,7 +304,7 @@ READ16_HANDLER( namcos2_68k_roz_ram_r )
 
 WRITE16_HANDLER( namcos2_68k_roz_ram_w )
 {
-	data16_t oldword = namcos2_68k_roz_ram[offset];
+	uint16_t oldword = namcos2_68k_roz_ram[offset];
 	COMBINE_DATA(&namcos2_68k_roz_ram[offset]);
 	if (oldword != namcos2_68k_roz_ram[offset])
 	{
@@ -505,7 +505,7 @@ DrawSpritesMetalHawk( struct mame_bitmap *bitmap, const struct rectangle *clipre
 	 *	--------xxxx---- color
 	 *	x--------------- unknown
 	 */
-	const data16_t *pSource = namcos2_sprite_ram;
+	const uint16_t *pSource = namcos2_sprite_ram;
 	struct rectangle rect;
 	int loop;
 	for(loop=0;loop < 128;loop++)

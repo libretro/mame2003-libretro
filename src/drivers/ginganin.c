@@ -54,7 +54,7 @@ f5d6	print 7 digit BCD number: d0.l to (a1)+ color $3000
 /* Variables only used here */
 
 /* Variables defined in vidhrdw */
-extern data16_t *ginganin_fgram16, *ginganin_txtram16, *ginganin_vregs16;
+extern uint16_t *ginganin_fgram16, *ginganin_txtram16, *ginganin_vregs16;
 
 /* Functions defined in vidhrdw */
 WRITE16_HANDLER( ginganin_fgram16_w );
@@ -442,10 +442,10 @@ ROM_END
 
 DRIVER_INIT( ginganin )
 {
-	data16_t *rom;
+	uint16_t *rom;
 
 	/* main cpu patches */
-	rom = (data16_t *)memory_region(REGION_CPU1);
+	rom = (uint16_t *)memory_region(REGION_CPU1);
 	/* avoid writes to rom getting to the log */
 	rom[0x408/2] = 0x6000;
 	rom[0x40a/2] = 0x001c;

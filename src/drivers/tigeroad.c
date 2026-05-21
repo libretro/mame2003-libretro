@@ -32,7 +32,7 @@ extern VIDEO_UPDATE( tigeroad );
 extern VIDEO_EOF( tigeroad );
 
 
-static data16_t *ram16;
+static uint16_t *ram16;
 
 /*
  F1 Dream protection code written by Eric Hustvedt (hustvedt@ma.ultranet.com).

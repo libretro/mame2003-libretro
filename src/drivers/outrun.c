@@ -152,7 +152,7 @@ static void generate_gr_screen(
 	}
 }
 
-static data16_t coinctrl;
+static uint16_t coinctrl;
 
 static WRITE16_HANDLER( sys16_3d_coinctrl_w )
 {
@@ -214,7 +214,7 @@ static PORT_WRITE_START( sound_writeport )
 	{ 0x01, 0x01, YM2151_data_port_0_w },
 PORT_END
 
-static data16_t *shared_ram;
+static uint16_t *shared_ram;
 static READ16_HANDLER( shared_ram_r ){
 	return shared_ram[offset];
 }
@@ -904,7 +904,7 @@ static DRIVER_INIT( outrun )
 
 static DRIVER_INIT( outrunb )
 {
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 	int i;
 
 	machine_init_sys16_onetime();
@@ -919,7 +919,7 @@ static DRIVER_INIT( outrunb )
 */
 
 	for( i=0;i<0x40000;i+=2 ){
-		data16_t word = RAM[i/2];
+		uint16_t word = RAM[i/2];
 		uint8_t even = word>>8;
 		uint8_t odd = word&0xff;
 
@@ -938,10 +938,10 @@ static DRIVER_INIT( outrunb )
   if even bytes &0xc0 == 0x40 or 0x80 then they are xored with 0xc0
   if odd bytes &0x0c == 0x04 or 0x08 then they are xored with 0x0c
 */
-	RAM = (data16_t *)memory_region(REGION_CPU3);
+	RAM = (uint16_t *)memory_region(REGION_CPU3);
 	for(i=0;i<0x40000;i+=2)
 	{
-		data16_t word = RAM[i/2];
+		uint16_t word = RAM[i/2];
 		uint8_t even = word>>8;
 		uint8_t odd = word&0xff;
 
@@ -1111,7 +1111,7 @@ static MACHINE_DRIVER_START( outruna )
 MACHINE_DRIVER_END
 
 
-static data16_t *shared_ram2;
+static uint16_t *shared_ram2;
 static READ16_HANDLER( shared_ram2_r ){
 	return shared_ram2[offset];
 }

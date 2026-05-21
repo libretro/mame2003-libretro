@@ -25,7 +25,7 @@ TODO:
 #include "cpu/z80/z80.h"
 
 
-extern data16_t *galspnbl_bgvideoram,*galspnbl_videoram,*galspnbl_colorram;
+extern uint16_t *galspnbl_bgvideoram,*galspnbl_videoram,*galspnbl_colorram;
 
 PALETTE_INIT( galspnbl );
 WRITE16_HANDLER( galspnbl_bgvideoram_w );

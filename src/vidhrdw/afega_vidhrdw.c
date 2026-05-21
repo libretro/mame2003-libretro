@@ -43,8 +43,8 @@ Note:	if MAME_DEBUG is defined, pressing Z with:
 
 /* Variables needed by drivers: */
 
-data16_t *afega_vram_0, *afega_scroll_0;
-data16_t *afega_vram_1, *afega_scroll_1;
+uint16_t *afega_vram_0, *afega_scroll_0;
+uint16_t *afega_vram_1, *afega_scroll_1;
 
 
 /***************************************************************************
@@ -105,7 +105,7 @@ static struct tilemap *tilemap_0, *tilemap_1;
 
 static void get_tile_info_0(int tile_index)
 {
-	data16_t code = afega_vram_0[tile_index];
+	uint16_t code = afega_vram_0[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -114,7 +114,7 @@ static void get_tile_info_0(int tile_index)
 }
 static void get_tile_info_1(int tile_index)
 {
-	data16_t code = afega_vram_1[tile_index];
+	uint16_t code = afega_vram_1[tile_index];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -124,14 +124,14 @@ static void get_tile_info_1(int tile_index)
 
 WRITE16_HANDLER( afega_vram_0_w )
 {
-	data16_t old_data	=	afega_vram_0[offset];
-	data16_t new_data	=	COMBINE_DATA(&afega_vram_0[offset]);
+	uint16_t old_data	=	afega_vram_0[offset];
+	uint16_t new_data	=	COMBINE_DATA(&afega_vram_0[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_0,offset);
 }
 WRITE16_HANDLER( afega_vram_1_w )
 {
-	data16_t old_data	=	afega_vram_1[offset];
-	data16_t new_data	=	COMBINE_DATA(&afega_vram_1[offset]);
+	uint16_t old_data	=	afega_vram_1[offset];
+	uint16_t new_data	=	COMBINE_DATA(&afega_vram_1[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_1,offset);
 }
 

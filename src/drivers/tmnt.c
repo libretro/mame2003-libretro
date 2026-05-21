@@ -104,7 +104,7 @@ VIDEO_EOF( detatwin );
 
 static int tmnt_soundlatch;
 static int cbj_snd_irqlatch, cbj_nvram_bank;
-static data16_t cbj_nvram[0x400*0x20];	// 32k paged in a 1k window
+static uint16_t cbj_nvram[0x400*0x20];	// 32k paged in a 1k window
 
 static READ16_HANDLER( K052109_word_noA12_r )
 {
@@ -283,7 +283,7 @@ static WRITE16_HANDLER( prmrsocr_sound_irq_w )
 
 static WRITE_HANDLER( prmrsocr_s_bankswitch_w )
 {
-	data8_t *rom = memory_region(REGION_CPU2) + 0x10000;
+	uint8_t *rom = memory_region(REGION_CPU2) + 0x10000;
 
 	cpu_setbank(1,rom + (data & 7) * 0x4000);
 }
@@ -1020,8 +1020,8 @@ static MEMORY_READ16_START( tmnt2_readmem ) //*
 	{ 0x600000, 0x603fff, K052109_word_r },
 MEMORY_END
 
-static data16_t *tmnt2_1c0800,*sunset_104000;
-static data16_t *tmnt2_rom;
+static uint16_t *tmnt2_1c0800,*sunset_104000;
+static uint16_t *tmnt2_rom;
 
 #if 1 //*
 static INLINE uint32_t tmnt2_get_word(uint32_t addr)
@@ -1171,7 +1171,7 @@ WRITE16_HANDLER( tmnt2_1c0800_w )
 	{
 		unsigned int CellSrc;
 		unsigned int CellVar;
-		data16_t *src;
+		uint16_t *src;
 		int dst;
 		int x,y;
 
@@ -1180,7 +1180,7 @@ WRITE16_HANDLER( tmnt2_1c0800_w )
 		CellSrc = tmnt2_1c0800[0x00] | (tmnt2_1c0800[0x01] << 16 );
 //        if ( CellDest >= 0x180000 && CellDest < 0x183fe0 ) {
         CellVar -= 0x104000;
-		src = (data16_t *)(memory_region(REGION_CPU1) + CellSrc);
+		src = (uint16_t *)(memory_region(REGION_CPU1) + CellSrc);
 
 		CellVar >>= 1;
 
@@ -4045,7 +4045,7 @@ static DRIVER_INIT( glfgreat )
 
 static DRIVER_INIT( cuebrckj )
 {
-	generic_nvram = (data8_t *)cbj_nvram;
+	generic_nvram = (uint8_t *)cbj_nvram;
 	generic_nvram_size = 0x400*0x20;
 
 	/* ROMs are interleaved at byte level */

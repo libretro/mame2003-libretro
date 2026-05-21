@@ -82,7 +82,7 @@ static MEMORY_WRITE16_START( writemem )
 	{ TOBYTE(0x01c00060), TOBYTE(0x01c0007f), midyunit_cmos_enable_w },
 	{ TOBYTE(0x01e00000), TOBYTE(0x01e0001f), midyunit_sound_w },
 	{ TOBYTE(0x01f00000), TOBYTE(0x01f0001f), midyunit_control_w },
-	{ TOBYTE(0x02000000), TOBYTE(0x05ffffff), MWA16_ROM, (data16_t **)&midyunit_gfx_rom, &midyunit_gfx_rom_size },
+	{ TOBYTE(0x02000000), TOBYTE(0x05ffffff), MWA16_ROM, (uint16_t **)&midyunit_gfx_rom, &midyunit_gfx_rom_size },
 	{ TOBYTE(0xc0000000), TOBYTE(0xc00001ff), midyunit_io_register_w },
 	{ TOBYTE(0xff800000), TOBYTE(0xffffffff), MWA16_ROM, &midyunit_code_rom },
 MEMORY_END

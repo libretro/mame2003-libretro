@@ -15,7 +15,7 @@ some bits by David Haywood
 #include "vidhrdw/generic.h"
 
 static struct tilemap *bg_layer,*fg_layer;
-data16_t *bg_videoram,*fg_videoram;
+uint16_t *bg_videoram,*fg_videoram;
 
 static WRITE16_HANDLER ( crospang_soundlatch_w )
 {

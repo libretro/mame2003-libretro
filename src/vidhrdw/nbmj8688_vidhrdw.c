@@ -26,10 +26,10 @@ static int mjsikaku_screen_refresh;
 static int mjsikaku_gfxmode;
 
 static struct mame_bitmap *mjsikaku_tmpbitmap;
-static data16_t *mjsikaku_videoram;
-static data8_t *nbmj8688_color_lookup;
+static uint16_t *mjsikaku_videoram;
+static uint8_t *nbmj8688_color_lookup;
 
-static data8_t *HD61830B_ram[2];
+static uint8_t *HD61830B_ram[2];
 static int HD61830B_instr[2];
 static int HD61830B_addr[2];
 
@@ -559,9 +559,9 @@ static void mbmj8688_gfxdraw(int gfxtype)
 static int common_video_start(void)
 {
 	if ((mjsikaku_tmpbitmap = auto_bitmap_alloc(512, 256)) == 0) return 1;
-	if ((mjsikaku_videoram = auto_malloc(512 * 256 * sizeof(data16_t))) == 0) return 1;
-	if ((nbmj8688_color_lookup = auto_malloc(0x20 * sizeof(data8_t))) == 0) return 1;
-	memset(mjsikaku_videoram, 0, (512 * 256 * sizeof(data16_t)));
+	if ((mjsikaku_videoram = auto_malloc(512 * 256 * sizeof(uint16_t))) == 0) return 1;
+	if ((nbmj8688_color_lookup = auto_malloc(0x20 * sizeof(uint8_t))) == 0) return 1;
+	memset(mjsikaku_videoram, 0, (512 * 256 * sizeof(uint16_t)));
 
 	mjsikaku_scrolly = 0;	// reset because crystalg/crystal2 don't write to this register
 

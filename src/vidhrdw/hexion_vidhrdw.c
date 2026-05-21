@@ -1,7 +1,7 @@
 #include "driver.h"
 
 
-static data8_t *vram[2],*unkram;
+static uint8_t *vram[2],*unkram;
 static int bankctrl,rambank,pmcbank,gfxrom_select;
 static struct tilemap *tilemap[2];
 
@@ -13,7 +13,7 @@ static struct tilemap *tilemap[2];
 
 ***************************************************************************/
 
-static INLINE void get_tile_info(int tile_index,data8_t *ram)
+static INLINE void get_tile_info(int tile_index,uint8_t *ram)
 {
 	tile_index *= 4;
 	SET_TILE_INFO(

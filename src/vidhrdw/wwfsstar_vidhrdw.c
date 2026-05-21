@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *wwfsstar_fg0_videoram, *wwfsstar_bg0_videoram;
+uint16_t *wwfsstar_fg0_videoram, *wwfsstar_bg0_videoram;
 extern int wwfsstar_scrollx, wwfsstar_scrolly;
 static struct tilemap *fg0_tilemap, *bg0_tilemap;
 
@@ -56,7 +56,7 @@ static void get_fg0_tile_info(int tile_index)
 
 	**- End of Comments -*/
 
-	data16_t *tilebase;
+	uint16_t *tilebase;
 	int tileno;
 	int colbank;
 	tilebase =  &wwfsstar_fg0_videoram[tile_index*2];
@@ -92,7 +92,7 @@ static void get_bg0_tile_info(int tile_index)
 
 	**- End of Comments -*/
 
-	data16_t *tilebase;
+	uint16_t *tilebase;
 	int tileno, colbank, flipx;
 	tilebase =  &wwfsstar_bg0_videoram[tile_index*2];
 	tileno =  (tilebase[1] & 0x00ff) | ((tilebase[0] & 0x000f) << 8);
@@ -135,8 +135,8 @@ static void wwfsstar_drawsprites( struct mame_bitmap *bitmap, const struct recta
 	**- End of Comments -*/
 
 	const struct GfxElement *gfx = Machine->gfx[1];
-	data16_t *source = spriteram16;
-	data16_t *finish = source + 0x3ff/2;
+	uint16_t *source = spriteram16;
+	uint16_t *finish = source + 0x3ff/2;
 
 	while (source < finish)
 	{

@@ -906,7 +906,7 @@ READ16_HANDLER( ygv608_r )
 	static int p3_state = 0;
 	static int pattern_name_base = 0;  /* pattern name table base address */
 	int pn=0;
-	data16_t  data = 0;
+	uint16_t  data = 0;
 
 	switch (offset)
 	{
@@ -1049,7 +1049,7 @@ READ16_HANDLER( ygv608_r )
 
 		case 0x06:
 		case 0x07:
-			return( (data16_t)(ygv608.ports.b[offset]) << 8 );
+			return( (uint16_t)(ygv608.ports.b[offset]) << 8 );
 
 		default :
 			logerror( "unknown ygv608 register (%d)\n", offset );
@@ -1315,7 +1315,7 @@ void HandleRomTransfers( void )
 #endif
 }
 
-void nvsram( offs_t offset, data16_t data )
+void nvsram( offs_t offset, uint16_t data )
 {
   static int i = 0;
 

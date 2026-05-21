@@ -55,8 +55,8 @@ VIDEO_START( gunbustr );
 VIDEO_UPDATE( gunbustr );
 
 static uint16_t coin_word;
-static data32_t *gunbustr_ram;
-extern data32_t *f3_shared_ram;
+static uint32_t *gunbustr_ram;
+extern uint32_t *f3_shared_ram;
 
 /* F3 sound */
 READ16_HANDLER(f3_68000_share_r);
@@ -68,7 +68,7 @@ WRITE16_HANDLER(es5510_dsp_w);
 WRITE16_HANDLER(f3_volume_w);
 WRITE16_HANDLER(f3_es5505_bank_w);
 void f3_68681_reset(void);
-extern data32_t *f3_shared_ram;
+extern uint32_t *f3_shared_ram;
 
 /*********************************************************************/
 
@@ -133,7 +133,7 @@ static WRITE32_HANDLER( gunbustr_input_w )
 #if 0
 {
 char t[64];
-static data32_t mem[2];
+static uint32_t mem[2];
 COMBINE_DATA(&mem[offset]);
 
 sprintf(t,"%08x %08x",mem[0],mem[1]);
@@ -379,7 +379,7 @@ static struct GfxDecodeInfo gunbustr_gfxdecodeinfo[] =
 static MACHINE_INIT( gunbustr )
 {
 	/* Sound cpu program loads to 0xc00000 so we use a bank */
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU2);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU2);
 	cpu_setbank(1,&RAM[0x80000]);
 
 	RAM[0]=RAM[0x80000]; /* Stack and Reset vectors */
@@ -400,7 +400,7 @@ static struct ES5505interface es5505_interface =
 	{ 0 }				/* irq callback */
 };
 
-static data8_t default_eeprom[128]={
+static uint8_t default_eeprom[128]={
 	0x00,0x01,0x00,0x85,0x00,0xfd,0x00,0xff,0x00,0x67,0x00,0x02,0x00,0x00,0x00,0x7b,
 	0x00,0xff,0x00,0xff,0x00,0x78,0x00,0x03,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	0x01,0x01,0x00,0x00,0x01,0x02,0x00,0x00,0x01,0x01,0x00,0x00,0x00,0x10,0x00,0x00,

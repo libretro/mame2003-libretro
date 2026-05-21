@@ -3,9 +3,9 @@
 #include "dogfgt.h"
 
 
-data8_t *dogfgt_bgvideoram;
+uint8_t *dogfgt_bgvideoram;
 
-static data8_t *bitmapram;
+static uint8_t *bitmapram;
 static int bm_plane;
 static struct mame_bitmap *pixbitmap;
 static int pixcolor;

@@ -23,9 +23,9 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data8_t *skyarmy_videoram;
-data8_t *skyarmy_colorram;
-data8_t *skyarmy_scrollram;
+uint8_t *skyarmy_videoram;
+uint8_t *skyarmy_colorram;
+uint8_t *skyarmy_scrollram;
 static struct tilemap* skyarmy_tilemap;
 
 static void get_skyarmy_tile_info(int tile_index)

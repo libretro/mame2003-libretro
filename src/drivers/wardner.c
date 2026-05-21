@@ -144,10 +144,10 @@ READ16_HANDLER( twincobr_BIO_r );
 extern int wardner_membank;
 extern int twincobr_intenable;
 
-static data8_t *wardner_sharedram;
-static data8_t *wardner_spare_pal_ram;
+static uint8_t *wardner_sharedram;
+static uint8_t *wardner_spare_pal_ram;
 
-extern data8_t *wardner_mainram;
+extern uint8_t *wardner_mainram;
 
 
 /******************** Video stuff **********************/
@@ -278,7 +278,7 @@ MEMORY_END
 static MEMORY_WRITE_START( writemem )
 	{ 0x0000, 0x6fff, MWA_ROM },
 	{ 0x7000, 0x7fff, wardner_mainram_w, &wardner_mainram },
-	{ 0x8000, 0x8fff, wardner_sprite_w, (data8_t **)&spriteram16, &spriteram_size },
+	{ 0x8000, 0x8fff, wardner_sprite_w, (uint8_t **)&spriteram16, &spriteram_size },
 	{ 0x9000, 0x9fff, MWA_ROM },
 	{ 0xa000, 0xadff, paletteram_xBBBBBGGGGGRRRRR_w, &paletteram },
 	{ 0xae00, 0xafff, wardner_spare_pal_ram_w, &wardner_spare_pal_ram },
@@ -784,8 +784,8 @@ ROM_END
 
 static DRIVER_INIT( wardner )
 {
-	data8_t *source = memory_region(REGION_USER1);
-	data16_t *dest = (data16_t *)&memory_region(REGION_CPU3)[TMS32010_PGM_OFFSET];
+	uint8_t *source = memory_region(REGION_USER1);
+	uint16_t *dest = (uint16_t *)&memory_region(REGION_CPU3)[TMS32010_PGM_OFFSET];
 	int A;
 
 	/* The ROM loader fixes the nibble images. Here we fix the byte ordering. */

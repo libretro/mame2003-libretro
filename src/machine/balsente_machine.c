@@ -28,7 +28,7 @@ uint8_t balsente_shooter;
 uint8_t balsente_shooter_x;
 uint8_t balsente_shooter_y;
 uint8_t balsente_adc_shift;
-data16_t *shrike_shared;
+uint16_t *shrike_shared;
 
 
 /* 8253 counter state */

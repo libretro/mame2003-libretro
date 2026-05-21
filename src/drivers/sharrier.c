@@ -326,7 +326,7 @@ static void set_tile_bank18( int data ){
 }
 #endif
 
-static void set_page( int page[4], data16_t data ){
+static void set_page( int page[4], uint16_t data ){
 	page[1] = data>>12;
 	page[0] = (data>>8)&0xf;
 	page[3] = (data>>4)&0xf;
@@ -345,7 +345,7 @@ static WRITE16_HANDLER( sound_command_nmi_w ){
 	}
 }
 
-static data16_t coinctrl;
+static uint16_t coinctrl;
 
 static WRITE16_HANDLER( sys16_3d_coinctrl_w )
 {
@@ -387,8 +387,8 @@ static WRITE16_HANDLER( sys16_coinctrl_w )
 	Hang-On shared road RAM and 68000 #2 work RAM
 */
 
-data16_t *hangon_roadram;
-data16_t *hangon_sharedram;
+uint16_t *hangon_roadram;
+uint16_t *hangon_sharedram;
 
 static READ16_HANDLER( hangon_sharedram_r ) {
 	return hangon_sharedram[offset];
@@ -583,7 +583,7 @@ MACHINE_DRIVER_END
 
 static READ16_HANDLER( sh_io_joy_r ){ return (input_port_5_r( offset ) << 8) + input_port_6_r( offset ); }
 
-static data16_t *shared_ram;
+static uint16_t *shared_ram;
 static READ16_HANDLER( shared_ram_r ){
 	return shared_ram[offset];
 }
@@ -775,7 +775,7 @@ MACHINE_DRIVER_END
 
 /***************************************************************************/
 
-data16_t er_io_analog_sel;
+uint16_t er_io_analog_sel;
 
 static READ16_HANDLER( er_io_analog_r )
 {
@@ -969,7 +969,7 @@ static MACHINE_INIT( enduror ){
 }
 
 static void enduror_sprite_decode( void ){
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 	sys16_interleave_sprite_data( 8*0x20000 );
 	generate_gr_screen(512,1024,8,0,4,0x8000);
 
@@ -985,7 +985,7 @@ static void endurob_sprite_decode( void ){
 
 static void endurora_opcode_decode( void )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 	int diff = 0x50000;	/* place decrypted opcodes in a hole after RAM */
 
 
@@ -1003,7 +1003,7 @@ static void endurora_opcode_decode( void )
 
 static void endurob2_opcode_decode( void )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 	int diff = 0x50000;	/* place decrypted opcodes in a hole after RAM */
 
 

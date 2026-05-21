@@ -48,7 +48,7 @@ Sound PCB
 
 
 
-data8_t* sbugger_videoram, *sbugger_videoram_attr;
+uint8_t* sbugger_videoram, *sbugger_videoram_attr;
 
 PALETTE_INIT(sbugger);
 VIDEO_UPDATE(sbugger);

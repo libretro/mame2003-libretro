@@ -224,7 +224,7 @@ static WRITE_HANDLER( dual_pokey_w )
  *
  *************************************/
 
-static data8_t *gammaram;
+static uint8_t *gammaram;
 
 static READ_HANDLER( mhavoc_gammaram_r )
 {

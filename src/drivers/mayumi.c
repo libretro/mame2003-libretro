@@ -30,7 +30,7 @@ static INTERRUPT_GEN( mayumi_interrupt )
 
 static WRITE_HANDLER( bank_sel_w )
 {
-	data8_t *BANKROM = memory_region(REGION_CPU1);
+	uint8_t *BANKROM = memory_region(REGION_CPU1);
 	int bank = ((data & 0x80)) >> 7 | ((data & 0x40) >> 5);
 	cpu_setbank(1, &BANKROM[0x10000+bank*0x4000]);
 

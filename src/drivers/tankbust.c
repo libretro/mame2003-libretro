@@ -23,7 +23,7 @@ To do:
 VIDEO_START( tankbust );
 VIDEO_UPDATE( tankbust );
 
-extern data8_t * txt_ram;
+extern uint8_t * txt_ram;
 
 WRITE_HANDLER( tankbust_background_videoram_w );
 READ_HANDLER ( tankbust_background_videoram_r );

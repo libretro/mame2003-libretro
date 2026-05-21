@@ -10,9 +10,9 @@
 #include "tilemap.h"
 #include "vidhrdw/generic.h"
 
-data16_t *gaelco_vregs;
-data16_t *gaelco_videoram;
-data16_t *gaelco_spriteram;
+uint16_t *gaelco_vregs;
+uint16_t *gaelco_videoram;
+uint16_t *gaelco_spriteram;
 
 int sprite_count[5];
 int *sprite_table[5];

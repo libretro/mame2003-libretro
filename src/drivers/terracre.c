@@ -84,11 +84,11 @@ AT-2
 #include "vidhrdw/generic.h"
 #include "cpu/z80/z80.h"
 
-static const data16_t *mpProtData;
-static data8_t mAmazonProtCmd;
-static data8_t mAmazonProtReg[6];
+static const uint16_t *mpProtData;
+static uint8_t mAmazonProtCmd;
+static uint8_t mAmazonProtReg[6];
 
-extern data16_t *amazon_videoram;
+extern uint16_t *amazon_videoram;
 
 extern PALETTE_INIT( amazon );
 extern WRITE16_HANDLER( amazon_background_w );
@@ -99,7 +99,7 @@ extern WRITE16_HANDLER( amazon_flipscreen_w );
 extern VIDEO_START( amazon );
 extern VIDEO_UPDATE( amazon );
 
-static const data16_t mAmazonProtData[] =
+static const uint16_t mAmazonProtData[] =
 {
 	/* default high scores (0x40db4) - wrong data ? */
 	0x0000,0x5000,0x5341,0x4b45,0x5349,0x4755,0x5245,
@@ -113,7 +113,7 @@ static const data16_t mAmazonProtData[] =
 	0xc800 /* checksum */
 };
 
-static const data16_t mAmatelasProtData[] =
+static const uint16_t mAmatelasProtData[] =
 {
 	/* default high scores (0x40db4) */
 	0x0000,0x5000,0x5341,0x4b45,0x5349,0x4755,0x5245,
@@ -127,7 +127,7 @@ static const data16_t mAmatelasProtData[] =
 	0x6100 /* checksum */
 };
 
-static const data16_t mHoreKidProtData[] =
+static const uint16_t mHoreKidProtData[] =
 {
 	/* N/A */
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
@@ -170,7 +170,7 @@ static READ16_HANDLER( amazon_protection_r )
 	offset = mAmazonProtReg[2];
 	if( offset<=0x56 )
 	{
-		data16_t data;
+		uint16_t data;
 		data = mpProtData[offset/2];
 		if( offset&1 ) return data&0xff;
 		return data>>8;

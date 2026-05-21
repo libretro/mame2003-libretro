@@ -359,22 +359,22 @@ Stephh's notes (based on some tests) :
 enum { EEPROM_SYS32_0=0, EEPROM_ALIEN3, EEPROM_RADM, EEPROM_RADR };
 
 static unsigned char irq_status;
-static data16_t *system32_shared_ram;
-data16_t *system32_mixerregs[2];		// mixer registers
+static uint16_t *system32_shared_ram;
+uint16_t *system32_mixerregs[2];		// mixer registers
 static int s32_blo, s32_bhi;		// bank high and low values
 static int s32_f1_prot;			// port f1 is used to protect the sound program on some games
-static data16_t *sys32_protram;
+static uint16_t *sys32_protram;
 static int tocab, fromcab;
-static data16_t *system32_workram;
-data16_t sys32_tilebank_external;
-data16_t sys32_displayenable;
+static uint16_t *system32_workram;
+uint16_t sys32_tilebank_external;
+uint16_t sys32_displayenable;
 
 /* Video Hardware */
 int system32_temp_kludge;
-data16_t *sys32_spriteram16;
-data16_t *sys32_txtilemap_ram;
-data16_t *sys32_ramtile_ram;
-data16_t *scrambled_paletteram16[2];
+uint16_t *sys32_spriteram16;
+uint16_t *sys32_txtilemap_ram;
+uint16_t *sys32_ramtile_ram;
+uint16_t *scrambled_paletteram16[2];
 
 int system32_mixerShift;
 extern int system32_screen_mode;
@@ -942,14 +942,14 @@ static READ_HANDLER( system32_bank_r )
 // the Z80's work RAM is fully shared with the V60 or V70 and battery backed up.
 static READ_HANDLER( sys32_shared_snd_r )
 {
-	data8_t *RAM = (data8_t *)system32_shared_ram;
+	uint8_t *RAM = (uint8_t *)system32_shared_ram;
 
 	return RAM[offset];
 }
 
 static WRITE_HANDLER( sys32_shared_snd_w )
 {
-	data8_t *RAM = (data8_t *)system32_shared_ram;
+	uint8_t *RAM = (uint8_t *)system32_shared_ram;
 
 	RAM[offset] = data;
 }
@@ -1188,10 +1188,10 @@ WORKING (seems to be anyway)
 
 */
 
-static data16_t sys32_gun_p1_x_c00050_data;
-static data16_t sys32_gun_p1_y_c00052_data;
-static data16_t sys32_gun_p2_x_c00054_data;
-static data16_t sys32_gun_p2_y_c00056_data;
+static uint16_t sys32_gun_p1_x_c00050_data;
+static uint16_t sys32_gun_p1_y_c00052_data;
+static uint16_t sys32_gun_p2_x_c00054_data;
+static uint16_t sys32_gun_p2_y_c00056_data;
 
 static WRITE16_HANDLER ( sys32_gun_p1_x_c00050_w ) { sys32_gun_p1_x_c00050_data = readinputport(7); }
 static WRITE16_HANDLER ( sys32_gun_p1_y_c00052_w ) { sys32_gun_p1_y_c00052_data = readinputport(8); sys32_gun_p1_y_c00052_data = (sys32_gun_p1_y_c00052_data+1)&0xff; }
@@ -3008,7 +3008,7 @@ static DRIVER_INIT ( f1en )
 static DRIVER_INIT ( jpark )
 {
 	/* Temp. Patch until we emulate the 'Drive Board', thanks to Malice */
-	data16_t *pROM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *pROM = (uint16_t *)memory_region(REGION_CPU1);
 	pROM[0xC15A8/2] = 0xCD70;
 	pROM[0xC15AA/2] = 0xD8CD;
 

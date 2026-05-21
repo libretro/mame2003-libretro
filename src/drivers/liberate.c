@@ -29,7 +29,7 @@ VIDEO_START( boomrang );
 VIDEO_START( liberate );
 
 static int deco16_bank;
-static data8_t *scratchram;
+static uint8_t *scratchram;
 
 WRITE_HANDLER( deco16_io_w );
 WRITE_HANDLER( prosport_paletteram_w );
@@ -39,7 +39,7 @@ WRITE_HANDLER( liberate_videoram_w );
 
 static READ_HANDLER( deco16_bank_r )
 {
-	const data8_t *ROM = memory_region(REGION_USER1);
+	const uint8_t *ROM = memory_region(REGION_USER1);
 
 	/* The tilemap bank can be swapped into main memory */
 	if (deco16_bank)
@@ -62,7 +62,7 @@ static WRITE_HANDLER( deco16_bank_w )
 
 static READ_HANDLER( deco16_io_r )
 {
-	const data8_t *ROM = memory_region(REGION_CPU1);
+	const uint8_t *ROM = memory_region(REGION_CPU1);
 
 	if (deco16_bank) {
 		if (offset==0) return readinputport(1); /* Player 1 controls */
@@ -869,7 +869,7 @@ ROM_END
 
 static void sound_cpu_decrypt(void)
 {
-	data8_t *RAM = memory_region(REGION_CPU2);
+	uint8_t *RAM = memory_region(REGION_CPU2);
 	int i;
 
 	/* Bit swapping on sound cpu - Opcodes only */

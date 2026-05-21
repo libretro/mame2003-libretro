@@ -554,9 +554,9 @@ CUSTOM: 304 (x4, 120 PIN PQFP)
 enum namcos22_gametype namcos22_gametype; /* used for game-specific hacks */
 
 /* memory region pointers */
-static data32_t *namcos22_shareram;
-static data32_t *namcos22_C139_SCI;
-static data32_t *namcos22_system_controller;
+static uint32_t *namcos22_shareram;
+static uint32_t *namcos22_C139_SCI;
+static uint32_t *namcos22_system_controller;
 
 /* Super System22 supports a sprite layer.
  * Sprites are rendered as part of the polygon draw list, based on a per-sprite Z attribute.
@@ -635,8 +635,8 @@ static WRITE32_HANDLER( namcos22_C139_SCI_w )
 /**
  * helper function used to read a byte from a chunk of 32 bit memory
  */
-static data8_t
-nthbyte( const data32_t *pSource, int offs )
+static uint8_t
+nthbyte( const uint32_t *pSource, int offs )
 {
 	pSource += offs/4;
 	return (pSource[0]<<((offs&3)*8))>>24;
@@ -735,11 +735,11 @@ static READ32_HANDLER( namcos22_keycus_r )
  * Other values seem to be digital versions of analog ports, for example "the gas pedal is
  * pressed" as a boolean flag.  IO RAM supplies it as an analog value.
  */
-static data32_t mSys22PortBits;
+static uint32_t mSys22PortBits;
 
 static READ32_HANDLER( namcos22_portbit_r )
 {
-	data32_t data = mSys22PortBits;
+	uint32_t data = mSys22PortBits;
 	mSys22PortBits>>=1;
 	return data&0x10001;
 }
@@ -771,9 +771,9 @@ static READ32_HANDLER( namcos22_mcuram_r )
 
 static struct
 {
-	data16_t portR; /* next address for read */
-	data16_t portW; /* next address for write */
-	data16_t RAM[SPOTRAM_SIZE];
+	uint16_t portR; /* next address for read */
+	uint16_t portW; /* next address for write */
+	uint16_t RAM[SPOTRAM_SIZE];
 } mSpotRAM;
 
 static READ32_HANDLER( spotram_r )
@@ -908,8 +908,8 @@ SimulateAlpineRacerMCU( void )
 	{
 		namcos22_shareram[0x0300/4] = 0x7551<<16; /* protection? */
 		namcos22_shareram[0x7d00/4] = readinputport(1)<<8;
-		namcos22_shareram[(0xa0bd0a-0xa04000)/4] = (data16_t)(readinputport(2)-0x8000); /* swing */
-		namcos22_shareram[(0xa0bd0c-0xa04000)/4] = ((data16_t)(readinputport(3)-0x8000))<<16; /* edge */
+		namcos22_shareram[(0xa0bd0a-0xa04000)/4] = (uint16_t)(readinputport(2)-0x8000); /* swing */
+		namcos22_shareram[(0xa0bd0c-0xa04000)/4] = ((uint16_t)(readinputport(3)-0x8000))<<16; /* edge */
 	}
 }
 
@@ -918,7 +918,7 @@ SimulatePropCycleMCU( void )
 {
 		int dx,dy;
 		uint16_t data;
-		static data16_t pedal;
+		static uint16_t pedal;
 
 		namcos22_shareram[(0xa0bd00-0xa04000)/4] = readinputport(1)<<8;
 
@@ -942,7 +942,7 @@ SimulatePropCycleMCU( void )
 static void
 SimulateCyberCyclesMCU( void )
 {
-	data32_t data = 0;
+	uint32_t data = 0;
 return;
 	if( keyboard_pressed(KEYCODE_SPACE) ) data |= 0x01000; // "view switch"
 	namcos22_shareram[(0xa0bd00 - 0xa04000)/4] = data;
@@ -2265,9 +2265,9 @@ static unsigned
 GetPolyData( unsigned addr )
 {
 	size_t ptRomSize = memory_region_length(REGION_GFX4)/3;
-	data8_t *pPolyL = memory_region(REGION_GFX4);
-	data8_t *pPolyM = pPolyL + ptRomSize;
-	data8_t *pPolyH = pPolyM + ptRomSize;
+	uint8_t *pPolyL = memory_region(REGION_GFX4);
+	uint8_t *pPolyM = pPolyL + ptRomSize;
+	uint8_t *pPolyH = pPolyM + ptRomSize;
 	return (pPolyH[addr]*256+pPolyM[addr])*256+pPolyL[addr];
 }
 
@@ -2277,9 +2277,9 @@ GetPolyData( unsigned addr )
 static void PutPolyData( unsigned addr, unsigned data )
 {
 	size_t ptRomSize = memory_region_length(REGION_GFX4)/3;
-	data8_t *pPolyL = memory_region(REGION_GFX4);
-	data8_t *pPolyM = pPolyL + ptRomSize;
-	data8_t *pPolyH = pPolyM + ptRomSize;
+	uint8_t *pPolyL = memory_region(REGION_GFX4);
+	uint8_t *pPolyM = pPolyL + ptRomSize;
+	uint8_t *pPolyH = pPolyM + ptRomSize;
 	/* logerror( "%08x: %02x\n", addr, pPolyM[addr]^((data>>8)&0xff) ); */
 	pPolyH[addr] = data>>16;
 	pPolyM[addr] = (data>>8)&0xff;
@@ -2420,7 +2420,7 @@ DRIVER_INIT( alpiner )
 
 DRIVER_INIT( airco22 )
 { /* patch DSP RAM test */
-	data32_t *pROM = (data32_t *)memory_region(REGION_CPU1);
+	uint32_t *pROM = (uint32_t *)memory_region(REGION_CPU1);
 	pROM[0x6d74/4] &= 0x0000ffff;
 	pROM[0x6d74/4] |= 0x4e710000;
 
@@ -2436,7 +2436,7 @@ DRIVER_INIT( airco22 )
 
 DRIVER_INIT( propcycl )
 {
-	data32_t *pROM = (data32_t *)memory_region(REGION_CPU1);
+	uint32_t *pROM = (uint32_t *)memory_region(REGION_CPU1);
 
 	/* patch out protection */
 	pROM[0x1992C/4] = 0x4E754E75;
@@ -2483,7 +2483,7 @@ DRIVER_INIT( raveracw )
 
 DRIVER_INIT( cybrcomm )
 {
-	data32_t *pROM = (data32_t *)memory_region(REGION_CPU1);
+	uint32_t *pROM = (uint32_t *)memory_region(REGION_CPU1);
 	pROM[0x18ade8/4] = 0x4e714e71;
 	pROM[0x18ae38/4] = 0x4e714e71;
 	pROM[0x18ae80/4] = 0x4e714e71;
@@ -2495,7 +2495,7 @@ DRIVER_INIT( cybrcomm )
 
 DRIVER_INIT( cybrcyc )
 { /* patch DSP RAM test */
-	data32_t *pROM = (data32_t *)memory_region(REGION_CPU1);
+	uint32_t *pROM = (uint32_t *)memory_region(REGION_CPU1);
 	pROM[0x355C/4] &= 0x0000ffff;
 	pROM[0x355C/4] |= 0x4e710000;
 

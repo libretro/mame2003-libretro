@@ -25,9 +25,9 @@ WRITE16_HANDLER( darkseal_control_0_w );
 WRITE16_HANDLER( darkseal_control_1_w );
 WRITE16_HANDLER( darkseal_palette_24bit_rg_w );
 WRITE16_HANDLER( darkseal_palette_24bit_b_w );
-extern data16_t *darkseal_pf12_row, *darkseal_pf34_row;
-extern data16_t *darkseal_pf1_data,*darkseal_pf2_data,*darkseal_pf3_data;
-static data16_t *darkseal_ram;
+extern uint16_t *darkseal_pf12_row, *darkseal_pf34_row;
+extern uint16_t *darkseal_pf1_data,*darkseal_pf2_data,*darkseal_pf3_data;
+static uint16_t *darkseal_ram;
 
 /******************************************************************************/
 

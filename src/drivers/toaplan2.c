@@ -235,19 +235,19 @@ To Do / Unknowns:
 #define CPU_2_Zx80		0xff
 
 /************ Machine RAM related values ************/
-static data8_t *toaplan2_shared_ram;
-static data8_t *raizing_shared_ram;		/* Shared ram used in Shippumd and Mahoudai */
-static data16_t *toaplan2_shared_ram16;	/* Really 8bit RAM connected to Z180 */
-static data16_t *Zx80_shared_ram;		/* Really 8bit RAM connected to Z180 */
-static data16_t *battleg_commram16;		/* Comm ram used in Battle Garegga */
-static data16_t *raizing_cpu_comm16;	/* Raizing commands for the Z80 */
-static data8_t  raizing_cpu_reply[2];	/* Raizing replies to the 68K */
+static uint8_t *toaplan2_shared_ram;
+static uint8_t *raizing_shared_ram;		/* Shared ram used in Shippumd and Mahoudai */
+static uint16_t *toaplan2_shared_ram16;	/* Really 8bit RAM connected to Z180 */
+static uint16_t *Zx80_shared_ram;		/* Really 8bit RAM connected to Z180 */
+static uint16_t *battleg_commram16;		/* Comm ram used in Battle Garegga */
+static uint16_t *raizing_cpu_comm16;	/* Raizing commands for the Z80 */
+static uint8_t  raizing_cpu_reply[2];	/* Raizing replies to the 68K */
 
 /************ Video RAM related values ************/
-extern data16_t *toaplan2_txvideoram16;
-extern data16_t *toaplan2_txvideoram16_offs;
-extern data16_t *toaplan2_txscrollram16;
-extern data16_t *toaplan2_tx_gfxram16;
+extern uint16_t *toaplan2_txvideoram16;
+extern uint16_t *toaplan2_txvideoram16_offs;
+extern uint16_t *toaplan2_txscrollram16;
+extern uint16_t *toaplan2_tx_gfxram16;
 size_t toaplan2_tx_vram_size;
 size_t toaplan2_tx_offs_vram_size;
 size_t toaplan2_tx_scroll_vram_size;
@@ -383,7 +383,7 @@ static DRIVER_INIT( pipibibi )
 	int A;
 	int oldword, newword;
 
-	data16_t *pipibibi_68k_rom = (data16_t *)(memory_region(REGION_CPU1));
+	uint16_t *pipibibi_68k_rom = (uint16_t *)(memory_region(REGION_CPU1));
 
 	/* unscramble the 68K ROM data. */
 
@@ -461,7 +461,7 @@ static DRIVER_INIT( pipibibi )
 
 static DRIVER_INIT( battleg )
 {
-	data8_t *Z80 = (data8_t *)memory_region(REGION_CPU2);
+	uint8_t *Z80 = (uint8_t *)memory_region(REGION_CPU2);
 
 	/* Set Z80 bank switch */
 	cpu_setbank(1, &Z80[0x10000]);		/* Default bank is 2 */
@@ -921,14 +921,14 @@ static WRITE16_HANDLER( battleg_commram_w )
 
 static READ_HANDLER( battleg_commram_check_r0 )
 {
-	data8_t *battleg_common_RAM = (data8_t *)battleg_commram16;
+	uint8_t *battleg_common_RAM = (uint8_t *)battleg_commram16;
 
 	return battleg_common_RAM[BYTE_XOR_BE(offset * 2 + 1)];
 }
 
 static WRITE_HANDLER( battleg_commram_check_w0 )
 {
-	data8_t *battleg_common_RAM = (data8_t *)battleg_commram16;
+	uint8_t *battleg_common_RAM = (uint8_t *)battleg_commram16;
 
 	battleg_common_RAM[BYTE_XOR_BE(0)] = data;
 	cpu_yield();					/* Command issued so switch control */
@@ -941,7 +941,7 @@ static READ16_HANDLER( battleg_z80check_r )
 
 static WRITE_HANDLER( battleg_bankswitch_w )
 {
-	data8_t *RAM = (data8_t *)memory_region(REGION_CPU2);
+	uint8_t *RAM = (uint8_t *)memory_region(REGION_CPU2);
 	int bankaddress;
 	int bank;
 
@@ -961,7 +961,7 @@ static void raizing_oki6295_set_bankbase( int chip, int channel, int base )
 	/* controlled. The sample table at the beginning of the addressing space  */
 	/* is divided in four pages as well, banked together with the sample data */
 
-	data8_t *rom = (data8_t *)memory_region(REGION_SOUND1 + chip);
+	uint8_t *rom = (uint8_t *)memory_region(REGION_SOUND1 + chip);
 
 	/* copy the samples */
 	memcpy(rom + channel * 0x10000, rom + 0x40000 + base, 0x10000);
@@ -998,7 +998,7 @@ static WRITE_HANDLER( raizing_okim6295_bankselect_3 )
 
 static WRITE_HANDLER( batrider_bankswitch_w )
 {
-	data8_t *RAM = (data8_t *)memory_region(REGION_CPU2);
+	uint8_t *RAM = (uint8_t *)memory_region(REGION_CPU2);
 	int bankaddress;
 	int bank;
 
@@ -1036,7 +1036,7 @@ static WRITE16_HANDLER( batrider_z80_busreq_w )
 
 static READ16_HANDLER( raizing_z80rom_r )
 {
-	data8_t *Z80_ROM_test = (data8_t *)memory_region(REGION_CPU2);
+	uint8_t *Z80_ROM_test = (uint8_t *)memory_region(REGION_CPU2);
 
 	if (offset < 0x8000)
 		return Z80_ROM_test[offset] & 0xff;
@@ -1049,7 +1049,7 @@ static READ16_HANDLER( raizing_z80rom_r )
 /*###################### Battle Bakraid ##############################*/
 
 /* EEPROM contents with battle Bakraid Unlimited version features unlocked */
-static data8_t bbakraid_unlimited_nvram[512] = {
+static uint8_t bbakraid_unlimited_nvram[512] = {
 	0xc2,0x49,0x00,0x07,0xa1,0x20,0x2a,0x2a,0x2a,0x90,0x90,0x90,0x00,0x00,0x00,0x00,
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x06,0x1a,0x80,0x2a,0x2a,0x2a,0x94,
 	0x94,0x94,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x04,
@@ -1175,14 +1175,14 @@ static WRITE16_HANDLER ( raizing_sndcomms_w )
 /****** Battle Bakraid Z80 handlers ******/
 static READ_HANDLER ( raizing_command_r )
 {
-	data8_t *raizing_cpu_comm = (data8_t *)raizing_cpu_comm16;
+	uint8_t *raizing_cpu_comm = (uint8_t *)raizing_cpu_comm16;
 
 	logerror("Z80 (PC:%04x) reading %02x from $48\n",activecpu_get_pc(),raizing_cpu_comm[BYTE_XOR_BE(1)]);
 	return raizing_cpu_comm[BYTE_XOR_BE(1)];
 }
 static READ_HANDLER ( raizing_request_r )
 {
-	data8_t *raizing_cpu_comm = (data8_t *)raizing_cpu_comm16;
+	uint8_t *raizing_cpu_comm = (uint8_t *)raizing_cpu_comm16;
 
 	logerror("Z80 (PC:%04x) reading %02x from $4A\n",activecpu_get_pc(),raizing_cpu_comm[BYTE_XOR_BE(3)]);
 	return raizing_cpu_comm[BYTE_XOR_BE(3)];

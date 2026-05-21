@@ -98,7 +98,7 @@ Stephh's additional notes :
 
 
 
-extern data16_t *galpanic_bgvideoram,*galpanic_fgvideoram;
+extern uint16_t *galpanic_bgvideoram,*galpanic_fgvideoram;
 extern size_t galpanic_fgvideoram_size;
 
 PALETTE_INIT( galpanic );
@@ -141,7 +141,7 @@ static WRITE16_HANDLER( galpanic_6295_bankswitch_w )
 }
 
 
-static data16_t *galpanib_calc_data;
+static uint16_t *galpanib_calc_data;
 
 static struct {
 	uint16_t x1p, y1p, x1s, y1s;

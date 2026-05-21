@@ -12,8 +12,8 @@ driver by Nicola Salmoria
 
 
 
-extern data16_t *blockout_videoram;
-extern data16_t *blockout_frontvideoram;
+extern uint16_t *blockout_videoram;
+extern uint16_t *blockout_frontvideoram;
 extern unsigned char *blockout_frontcolor;
 
 WRITE16_HANDLER( blockout_videoram_w );

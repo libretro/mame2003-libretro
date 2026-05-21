@@ -30,8 +30,8 @@ The Sen Jin protection supplies some 68k code seen in the 2760-29cf range
 
 /* Variables defined in vidhrdw: */
 
-extern data16_t *afega_vram_0, *afega_scroll_0;
-extern data16_t *afega_vram_1, *afega_scroll_1;
+extern uint16_t *afega_vram_0, *afega_scroll_0;
+extern uint16_t *afega_vram_1, *afega_scroll_1;
 
 /* Functions defined in vidhrdw: */
 
@@ -645,9 +645,9 @@ static void decryptcode( int a23, int a22, int a21, int a20, int a19, int a18, i
 	int a11, int a10, int a9, int a8, int a7, int a6, int a5, int a4, int a3, int a2, int a1, int a0 )
 {
 	int i;
-	data8_t *RAM = memory_region( REGION_CPU1 );
+	uint8_t *RAM = memory_region( REGION_CPU1 );
 	size_t  size = memory_region_length( REGION_CPU1 );
-	data8_t *buffer = malloc( size );
+	uint8_t *buffer = malloc( size );
 
 	if( buffer )
 	{

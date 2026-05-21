@@ -6,7 +6,7 @@ Super Cross II (JPN Ver.)
 #include "driver.h"
 
 static struct tilemap *sprcros2_bgtilemap, *sprcros2_fgtilemap;
-data8_t *sprcros2_fgvideoram, *sprcros2_spriteram, *sprcros2_bgvideoram;
+uint8_t *sprcros2_fgvideoram, *sprcros2_spriteram, *sprcros2_bgvideoram;
 size_t sprcros2_spriteram_size;
 extern int sprcros2_m_port7;
 

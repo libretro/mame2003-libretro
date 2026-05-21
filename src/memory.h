@@ -82,12 +82,12 @@ typedef uint32_t			data32_t;
 typedef uint32_t			offs_t;
 
 /* ----- typedefs for the various common memory/port handlers ----- */
-typedef data8_t			(*read8_handler)  (UNUSEDARG offs_t offset);
-typedef void			(*write8_handler) (UNUSEDARG offs_t offset, UNUSEDARG data8_t data);
-typedef data16_t		(*read16_handler) (UNUSEDARG offs_t offset, UNUSEDARG data16_t mem_mask);
-typedef void			(*write16_handler)(UNUSEDARG offs_t offset, UNUSEDARG data16_t data, UNUSEDARG data16_t mem_mask);
-typedef data32_t		(*read32_handler) (UNUSEDARG offs_t offset, UNUSEDARG data32_t mem_mask);
-typedef void			(*write32_handler)(UNUSEDARG offs_t offset, UNUSEDARG data32_t data, UNUSEDARG data32_t mem_mask);
+typedef uint8_t			(*read8_handler)  (UNUSEDARG offs_t offset);
+typedef void			(*write8_handler) (UNUSEDARG offs_t offset, UNUSEDARG uint8_t data);
+typedef uint16_t		(*read16_handler) (UNUSEDARG offs_t offset, UNUSEDARG uint16_t mem_mask);
+typedef void			(*write16_handler)(UNUSEDARG offs_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask);
+typedef uint32_t		(*read32_handler) (UNUSEDARG offs_t offset, UNUSEDARG uint32_t mem_mask);
+typedef void			(*write32_handler)(UNUSEDARG offs_t offset, UNUSEDARG uint32_t data, UNUSEDARG uint32_t mem_mask);
 typedef offs_t			(*opbase_handler) (UNUSEDARG offs_t address);
 
 /* ----- typedefs for the various common memory handlers ----- */
@@ -123,12 +123,12 @@ struct ExtMemory
 ***************************************************************************/
 
 /* ----- macros for declaring the various common memory/port handlers ----- */
-#define READ_HANDLER(name) 		data8_t  name(UNUSEDARG offs_t offset)
-#define WRITE_HANDLER(name) 	void     name(UNUSEDARG offs_t offset, UNUSEDARG data8_t data)
-#define READ16_HANDLER(name)	data16_t name(UNUSEDARG offs_t offset, UNUSEDARG data16_t mem_mask)
-#define WRITE16_HANDLER(name)	void     name(UNUSEDARG offs_t offset, UNUSEDARG data16_t data, UNUSEDARG data16_t mem_mask)
-#define READ32_HANDLER(name)	data32_t name(UNUSEDARG offs_t offset, UNUSEDARG data32_t mem_mask)
-#define WRITE32_HANDLER(name)	void     name(UNUSEDARG offs_t offset, UNUSEDARG data32_t data, UNUSEDARG data32_t mem_mask)
+#define READ_HANDLER(name) 		uint8_t  name(UNUSEDARG offs_t offset)
+#define WRITE_HANDLER(name) 	void     name(UNUSEDARG offs_t offset, UNUSEDARG uint8_t data)
+#define READ16_HANDLER(name)	uint16_t name(UNUSEDARG offs_t offset, UNUSEDARG uint16_t mem_mask)
+#define WRITE16_HANDLER(name)	void     name(UNUSEDARG offs_t offset, UNUSEDARG uint16_t data, UNUSEDARG uint16_t mem_mask)
+#define READ32_HANDLER(name)	uint32_t name(UNUSEDARG offs_t offset, UNUSEDARG uint32_t mem_mask)
+#define WRITE32_HANDLER(name)	void     name(UNUSEDARG offs_t offset, UNUSEDARG uint32_t data, UNUSEDARG uint32_t mem_mask)
 #define OPBASE_HANDLER(name)	offs_t   name(UNUSEDARG offs_t address)
 
 /* ----- macros for accessing bytes and words within larger chunks ----- */
@@ -478,7 +478,7 @@ struct Memory_WriteAddress
 {
     offs_t				start, end;		/* start, end addresses, inclusive */
 	mem_write_handler	handler;		/* handler callback */
-	data8_t **			base;			/* receives pointer to memory (optional) */
+	uint8_t **			base;			/* receives pointer to memory (optional) */
     size_t *			size;			/* receives size of memory in bytes (optional) */
 };
 
@@ -486,7 +486,7 @@ struct Memory_WriteAddress16
 {
     offs_t				start, end;		/* start, end addresses, inclusive */
 	mem_write16_handler handler;		/* handler callback */
-	data16_t **			base;			/* receives pointer to memory (optional) */
+	uint16_t **			base;			/* receives pointer to memory (optional) */
     size_t *			size;			/* receives size of memory in bytes (optional) */
 };
 
@@ -494,7 +494,7 @@ struct Memory_WriteAddress32
 {
     offs_t				start, end;		/* start, end addresses, inclusive */
 	mem_write32_handler handler;		/* handler callback */
-	data32_t **			base;			/* receives pointer to memory (optional) */
+	uint32_t **			base;			/* receives pointer to memory (optional) */
 	size_t *			size;			/* receives size of memory in bytes (optional) */
 };
 
@@ -635,40 +635,40 @@ struct IO_WritePort32
 
 /* ----- for declaring 8-bit handlers ----- */
 #define DECLARE_HANDLERS_8BIT(type, abits) \
-data8_t  cpu_read##type##abits             (offs_t offset);					\
-void     cpu_write##type##abits            (offs_t offset, data8_t data);
+uint8_t  cpu_read##type##abits             (offs_t offset);					\
+void     cpu_write##type##abits            (offs_t offset, uint8_t data);
 
 /* ----- for declaring 16-bit bigendian handlers ----- */
 #define DECLARE_HANDLERS_16BIT_BE(type, abits) \
-data8_t  cpu_read##type##abits##bew        (offs_t offset);					\
-data16_t cpu_read##type##abits##bew_word   (offs_t offset);					\
-void     cpu_write##type##abits##bew       (offs_t offset, data8_t data);	\
-void     cpu_write##type##abits##bew_word  (offs_t offset, data16_t data);
+uint8_t  cpu_read##type##abits##bew        (offs_t offset);					\
+uint16_t cpu_read##type##abits##bew_word   (offs_t offset);					\
+void     cpu_write##type##abits##bew       (offs_t offset, uint8_t data);	\
+void     cpu_write##type##abits##bew_word  (offs_t offset, uint16_t data);
 
 /* ----- for declaring 16-bit littleendian handlers ----- */
 #define DECLARE_HANDLERS_16BIT_LE(type, abits) \
-data8_t  cpu_read##type##abits##lew        (offs_t offset);					\
-data16_t cpu_read##type##abits##lew_word   (offs_t offset);					\
-void     cpu_write##type##abits##lew       (offs_t offset, data8_t data);	\
-void     cpu_write##type##abits##lew_word  (offs_t offset, data16_t data);
+uint8_t  cpu_read##type##abits##lew        (offs_t offset);					\
+uint16_t cpu_read##type##abits##lew_word   (offs_t offset);					\
+void     cpu_write##type##abits##lew       (offs_t offset, uint8_t data);	\
+void     cpu_write##type##abits##lew_word  (offs_t offset, uint16_t data);
 
 /* ----- for declaring 32-bit bigendian handlers ----- */
 #define DECLARE_HANDLERS_32BIT_BE(type, abits) \
-data8_t  cpu_read##type##abits##bedw       (offs_t offset);					\
-data16_t cpu_read##type##abits##bedw_word  (offs_t offset);					\
-data32_t cpu_read##type##abits##bedw_dword (offs_t offset);					\
-void     cpu_write##type##abits##bedw      (offs_t offset, data8_t data);	\
-void     cpu_write##type##abits##bedw_word (offs_t offset, data16_t data);	\
-void     cpu_write##type##abits##bedw_dword(offs_t offset, data32_t data);
+uint8_t  cpu_read##type##abits##bedw       (offs_t offset);					\
+uint16_t cpu_read##type##abits##bedw_word  (offs_t offset);					\
+uint32_t cpu_read##type##abits##bedw_dword (offs_t offset);					\
+void     cpu_write##type##abits##bedw      (offs_t offset, uint8_t data);	\
+void     cpu_write##type##abits##bedw_word (offs_t offset, uint16_t data);	\
+void     cpu_write##type##abits##bedw_dword(offs_t offset, uint32_t data);
 
 /* ----- for declaring 32-bit littleendian handlers ----- */
 #define DECLARE_HANDLERS_32BIT_LE(type, abits) \
-data8_t  cpu_read##type##abits##ledw       (offs_t offset);					\
-data16_t cpu_read##type##abits##ledw_word  (offs_t offset);					\
-data32_t cpu_read##type##abits##ledw_dword (offs_t offset);					\
-void     cpu_write##type##abits##ledw      (offs_t offset, data8_t data);	\
-void     cpu_write##type##abits##ledw_word (offs_t offset, data16_t data);	\
-void     cpu_write##type##abits##ledw_dword(offs_t offset, data32_t data);
+uint8_t  cpu_read##type##abits##ledw       (offs_t offset);					\
+uint16_t cpu_read##type##abits##ledw_word  (offs_t offset);					\
+uint32_t cpu_read##type##abits##ledw_dword (offs_t offset);					\
+void     cpu_write##type##abits##ledw      (offs_t offset, uint8_t data);	\
+void     cpu_write##type##abits##ledw_word (offs_t offset, uint16_t data);	\
+void     cpu_write##type##abits##ledw_dword(offs_t offset, uint32_t data);
 
 /* ----- for declaring memory handlers ----- */
 #define DECLARE_MEM_HANDLERS_8BIT(abits) \
@@ -807,7 +807,7 @@ DECLARE_PORT_HANDLERS_32BIT_LE(32)
 int			memory_init(void);
 void		memory_shutdown(void);
 void		memory_set_context(int activecpu);
-void		memory_set_unmap_value(data32_t value);
+void		memory_set_unmap_value(uint32_t value);
 
 /* ----- dynamic bank handlers ----- */
 void		memory_set_bankhandler_r(int bank, offs_t offset, mem_read_handler handler);
@@ -827,12 +827,12 @@ void *		memory_get_read_ptr(int cpunum, offs_t offset);
 void *		memory_get_write_ptr(int cpunum, offs_t offset);
 
 /* ----- dynamic memory mapping ----- */
-data8_t *	install_mem_read_handler    (int cpunum, offs_t start, offs_t end, mem_read_handler handler);
-data16_t *	install_mem_read16_handler  (int cpunum, offs_t start, offs_t end, mem_read16_handler handler);
-data32_t *	install_mem_read32_handler  (int cpunum, offs_t start, offs_t end, mem_read32_handler handler);
-data8_t *	install_mem_write_handler   (int cpunum, offs_t start, offs_t end, mem_write_handler handler);
-data16_t *	install_mem_write16_handler (int cpunum, offs_t start, offs_t end, mem_write16_handler handler);
-data32_t *	install_mem_write32_handler (int cpunum, offs_t start, offs_t end, mem_write32_handler handler);
+uint8_t *	install_mem_read_handler    (int cpunum, offs_t start, offs_t end, mem_read_handler handler);
+uint16_t *	install_mem_read16_handler  (int cpunum, offs_t start, offs_t end, mem_read16_handler handler);
+uint32_t *	install_mem_read32_handler  (int cpunum, offs_t start, offs_t end, mem_read32_handler handler);
+uint8_t *	install_mem_write_handler   (int cpunum, offs_t start, offs_t end, mem_write_handler handler);
+uint16_t *	install_mem_write16_handler (int cpunum, offs_t start, offs_t end, mem_write16_handler handler);
+uint32_t *	install_mem_write32_handler (int cpunum, offs_t start, offs_t end, mem_write32_handler handler);
 
 /* ----- dynamic port mapping ----- */
 void		install_port_read_handler   (int cpunum, offs_t start, offs_t end, port_read_handler handler);
@@ -895,29 +895,29 @@ extern struct ExtMemory	ext_memory[];		/* externally-allocated memory */
 #endif
 
 /* ----- safe opcode and opcode argument reading ----- */
-data8_t		cpu_readop_safe(offs_t offset);
-data16_t	cpu_readop16_safe(offs_t offset);
-data32_t	cpu_readop32_safe(offs_t offset);
-data8_t		cpu_readop_arg_safe(offs_t offset);
-data16_t	cpu_readop_arg16_safe(offs_t offset);
-data32_t	cpu_readop_arg32_safe(offs_t offset);
+uint8_t		cpu_readop_safe(offs_t offset);
+uint16_t	cpu_readop16_safe(offs_t offset);
+uint32_t	cpu_readop32_safe(offs_t offset);
+uint8_t		cpu_readop_arg_safe(offs_t offset);
+uint16_t	cpu_readop_arg16_safe(offs_t offset);
+uint32_t	cpu_readop_arg32_safe(offs_t offset);
 
 /* ----- unsafe opcode and opcode argument reading ----- */
 #define cpu_readop_unsafe(A)		(OP_ROM[(A) & mem_amask])
-#define cpu_readop16_unsafe(A)		(*(data16_t *)&OP_ROM[(A) & mem_amask])
-#define cpu_readop32_unsafe(A)		(*(data32_t *)&OP_ROM[(A) & mem_amask])
+#define cpu_readop16_unsafe(A)		(*(uint16_t *)&OP_ROM[(A) & mem_amask])
+#define cpu_readop32_unsafe(A)		(*(uint32_t *)&OP_ROM[(A) & mem_amask])
 #define cpu_readop_arg_unsafe(A)	(OP_RAM[(A) & mem_amask])
-#define cpu_readop_arg16_unsafe(A)	(*(data16_t *)&OP_RAM[(A) & mem_amask])
-#define cpu_readop_arg32_unsafe(A)	(*(data32_t *)&OP_RAM[(A) & mem_amask])
+#define cpu_readop_arg16_unsafe(A)	(*(uint16_t *)&OP_RAM[(A) & mem_amask])
+#define cpu_readop_arg32_unsafe(A)	(*(uint32_t *)&OP_RAM[(A) & mem_amask])
 
 /* ----- opcode and opcode argument reading ----- */
 void activecpu_set_op_base(unsigned val);
-static INLINE data8_t  cpu_readop(offs_t A)		{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_unsafe(A); }
-static INLINE data16_t cpu_readop16(offs_t A)		{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop16_unsafe(A); }
-static INLINE data32_t cpu_readop32(offs_t A)		{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop32_unsafe(A); }
-static INLINE data8_t  cpu_readop_arg(offs_t A)	{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_arg_unsafe(A); }
-static INLINE data16_t cpu_readop_arg16(offs_t A)	{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_arg16_unsafe(A); }
-static INLINE data32_t cpu_readop_arg32(offs_t A)	{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_arg32_unsafe(A); }
+static INLINE uint8_t  cpu_readop(offs_t A)		{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_unsafe(A); }
+static INLINE uint16_t cpu_readop16(offs_t A)		{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop16_unsafe(A); }
+static INLINE uint32_t cpu_readop32(offs_t A)		{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop32_unsafe(A); }
+static INLINE uint8_t  cpu_readop_arg(offs_t A)	{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_arg_unsafe(A); }
+static INLINE uint16_t cpu_readop_arg16(offs_t A)	{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_arg16_unsafe(A); }
+static INLINE uint32_t cpu_readop_arg32(offs_t A)	{ if (address_is_unsafe(A)) { activecpu_set_op_base(A); } return cpu_readop_arg32_unsafe(A); }
 
 /* ----- bank switching for CPU cores ----- */
 #define change_pc_generic(pc,abits,minbits,setop)										\

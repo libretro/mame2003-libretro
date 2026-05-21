@@ -56,12 +56,12 @@ Notes:
 #include "neogeo.h"
 #include "state.h"
 
-static data16_t *neogeo_vidram16;
-static data16_t *neogeo_paletteram16;	/* pointer to 1 of the 2 palette banks */
-static data16_t *neogeo_palettebank[2]; /* 0x100*16 2 byte palette entries */
+static uint16_t *neogeo_vidram16;
+static uint16_t *neogeo_paletteram16;	/* pointer to 1 of the 2 palette banks */
+static uint16_t *neogeo_palettebank[2]; /* 0x100*16 2 byte palette entries */
 static int neogeo_palette_index;
-static data16_t neogeo_vidram16_modulo;
-static data16_t neogeo_vidram16_offset;
+static uint16_t neogeo_vidram16_modulo;
+static uint16_t neogeo_vidram16_offset;
 static int high_tile;
 static int vhigh_tile;
 static int vvhigh_tile;
@@ -125,7 +125,7 @@ static void set_palettebank_on_postload(void)
 
 	for (i = 0; i < 0x2000 >> 1; i++)
 	{
-		data16_t newword = neogeo_paletteram16[i];
+		uint16_t newword = neogeo_paletteram16[i];
 		int r,g,b;
 
 		r = ((newword >> 7) & 0x1e) | ((newword >> 14) & 0x01);
@@ -201,7 +201,7 @@ static void swap_palettes(void)
 
 	for (i = 0; i < 0x2000 >> 1; i++)
 	{
-		data16_t newword = neogeo_paletteram16[i];
+		uint16_t newword = neogeo_paletteram16[i];
 		int r,g,b;
 
 		r = ((newword >> 7) & 0x1e) | ((newword >> 14) & 0x01);
@@ -245,7 +245,7 @@ READ16_HANDLER( neogeo_paletteram16_r )
 
 WRITE16_HANDLER( neogeo_paletteram16_w )
 {
-	data16_t oldword, newword;
+	uint16_t oldword, newword;
 	int r,g,b;
 
 	oldword = newword = neogeo_paletteram16[offset];

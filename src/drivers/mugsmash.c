@@ -41,8 +41,8 @@ behavior we use .
 
 #include "driver.h"
 
-data16_t *mugsmash_videoram1, *mugsmash_videoram2, *mugs_spriteram;
-data16_t *mugsmash_regs1, *mugsmash_regs2;
+uint16_t *mugsmash_videoram1, *mugsmash_videoram2, *mugs_spriteram;
+uint16_t *mugsmash_regs1, *mugsmash_regs2;
 
 VIDEO_START( mugsmash );
 VIDEO_UPDATE( mugsmash );

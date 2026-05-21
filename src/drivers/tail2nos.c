@@ -15,7 +15,7 @@ press F1+F3 to see ROM/RAM tests and the final animation
 #include "cpu/z80/z80.h"
 
 
-extern data16_t *tail2nos_bgvideoram;
+extern uint16_t *tail2nos_bgvideoram;
 
 WRITE16_HANDLER( tail2nos_bgvideoram_w );
 READ16_HANDLER( tail2nos_zoomdata_r );

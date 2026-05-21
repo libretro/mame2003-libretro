@@ -39,7 +39,7 @@ READ_HANDLER( toypop_customio_r );
 READ_HANDLER( liblrabl_customio_r );
 
 // vidhrdw\toypop.c
-extern data16_t *toypop_bg_image;
+extern uint16_t *toypop_bg_image;
 READ16_HANDLER( toypop_merged_background_r );
 WRITE16_HANDLER( toypop_merged_background_w );
 WRITE_HANDLER( toypop_palettebank_w );

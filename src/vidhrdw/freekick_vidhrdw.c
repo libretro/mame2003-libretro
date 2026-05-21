@@ -4,7 +4,7 @@
 #include "vidhrdw/generic.h"
 
 struct tilemap *freek_tilemap;
-data8_t *freek_videoram;
+uint8_t *freek_videoram;
 
 
 static void get_freek_tile_info(int tile_index)

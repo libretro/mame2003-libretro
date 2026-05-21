@@ -4,10 +4,10 @@ extern int unico_has_lightgun;
 
 /* Variables defined in vidhrdw: */
 
-extern data16_t *unico_vram_0,   *unico_scrollx_0, *unico_scrolly_0;
-extern data16_t *unico_vram_1,   *unico_scrollx_1, *unico_scrolly_1;
-extern data16_t *unico_vram_2,   *unico_scrollx_2, *unico_scrolly_2;
-extern data32_t *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
+extern uint16_t *unico_vram_0,   *unico_scrollx_0, *unico_scrolly_0;
+extern uint16_t *unico_vram_1,   *unico_scrollx_1, *unico_scrolly_1;
+extern uint16_t *unico_vram_2,   *unico_scrollx_2, *unico_scrolly_2;
+extern uint32_t *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
 
 /* Functions defined in vidhrdw: */
 

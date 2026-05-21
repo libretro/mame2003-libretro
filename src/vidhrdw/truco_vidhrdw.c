@@ -32,7 +32,7 @@ PALETTE_INIT( truco )
 
 VIDEO_UPDATE( truco )
 {
-	data8_t		*vid = memory_region( REGION_CPU1 ) + 0x1800;
+	uint8_t		*vid = memory_region( REGION_CPU1 ) + 0x1800;
 	int x, y;
 
 	for( y = 0; y < 192; y++ ) {

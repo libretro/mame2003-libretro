@@ -139,7 +139,7 @@ logerror("cchip1_r bank: %02x offset: %04x\n",current_bank,offset);
 
 /* Mega Blast */
 
-data16_t *cchip_ram;
+uint16_t *cchip_ram;
 
 WRITE16_HANDLER( cchip2_word_w )
 {

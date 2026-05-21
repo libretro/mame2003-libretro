@@ -105,9 +105,9 @@ WRITE16_HANDLER( bloodbro_bgvideoram_w );
 WRITE16_HANDLER( bloodbro_fgvideoram_w );
 WRITE16_HANDLER( bloodbro_txvideoram_w );
 
-extern data16_t *bloodbro_bgvideoram,*bloodbro_fgvideoram;
-extern data16_t *bloodbro_txvideoram;
-extern data16_t *bloodbro_scroll;
+extern uint16_t *bloodbro_bgvideoram,*bloodbro_fgvideoram;
+extern uint16_t *bloodbro_txvideoram;
+extern uint16_t *bloodbro_scroll;
 
 /***************************************************************************/
 

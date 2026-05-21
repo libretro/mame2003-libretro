@@ -6,10 +6,10 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-static data8_t djboy_videoreg, djboy_scrollx, djboy_scrolly;
+static uint8_t djboy_videoreg, djboy_scrollx, djboy_scrolly;
 static struct tilemap *background;
 
-void djboy_set_videoreg( data8_t data )
+void djboy_set_videoreg( uint8_t data )
 {
 	djboy_videoreg = data;
 }
@@ -60,7 +60,7 @@ draw_sprites( struct mame_bitmap *bitmap,const struct rectangle *cliprect )
 	int page;
 	for( page=0; page<2; page++ )
 	{
-		const data8_t *pSource = &spriteram[page*0x800];
+		const uint8_t *pSource = &spriteram[page*0x800];
 		int sx = 0;
 		int sy = 0;
 		int offs;

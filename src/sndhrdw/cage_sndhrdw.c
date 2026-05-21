@@ -51,12 +51,12 @@ static void *dma_timer;
 static uint8_t timer_enabled[2];
 static void *timer[2];
 
-static data32_t *tms32031_io_regs;
+static uint32_t *tms32031_io_regs;
 
 static uint16_t cage_from_main;
 static uint16_t cage_control;
 
-static data32_t *speedup_ram;
+static uint32_t *speedup_ram;
 
 /*************************************
  *

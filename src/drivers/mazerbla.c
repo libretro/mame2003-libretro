@@ -38,7 +38,7 @@ TO DO:
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-static data8_t *cfb_ram;
+static uint8_t *cfb_ram;
 
 static uint32_t VCU_gfx_addr = 0;
 static uint32_t VCU_gfx_param_addr = 0;
@@ -330,7 +330,7 @@ note:
 
 
 
-static data8_t *cfb_zpu_sharedram;
+static uint8_t *cfb_zpu_sharedram;
 static WRITE_HANDLER ( sharedram_CFB_ZPU_w )
 {
 	cfb_zpu_sharedram[offset] = data;

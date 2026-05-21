@@ -37,15 +37,15 @@ So this is the correct behavior of real hardware, not an emulation bug.
 #include "vidhrdw/generic.h"
 #include "cpu/z80/z80.h"
 
-static data16_t *ram;
-static data16_t *ram2;
+static uint16_t *ram;
+static uint16_t *ram2;
 
-extern data16_t *nemesis_videoram1b;
-extern data16_t *nemesis_videoram1f;
-extern data16_t *nemesis_videoram2b;
-extern data16_t *nemesis_videoram2f;
-extern data16_t *nemesis_characterram;
-extern data16_t *nemesis_xscroll1,*nemesis_xscroll2, *nemesis_yscroll;
+extern uint16_t *nemesis_videoram1b;
+extern uint16_t *nemesis_videoram1f;
+extern uint16_t *nemesis_videoram2b;
+extern uint16_t *nemesis_videoram2f;
+extern uint16_t *nemesis_characterram;
+extern uint16_t *nemesis_xscroll1,*nemesis_xscroll2, *nemesis_yscroll;
 extern size_t nemesis_characterram_size;
 
 READ16_HANDLER( nemesis_videoram1b_word_r );
@@ -78,7 +78,7 @@ READ16_HANDLER( gx400_yscroll_word_r );
 READ16_HANDLER( gx400_yscroll1_word_r );
 READ16_HANDLER( gx400_yscroll2_word_r );
 
-extern data16_t *nemesis_yscroll1, *nemesis_yscroll2;
+extern uint16_t *nemesis_yscroll1, *nemesis_yscroll2;
 
 WRITE16_HANDLER( nemesis_palette_word_w );
 

@@ -317,7 +317,7 @@ MEMORY_END
 
 static MEMORY_WRITE16_START( niyanpai_writemem )
 	{ 0x000000, 0x03ffff, MWA16_ROM },
-	{ 0x040000, 0x040fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x040000, 0x040fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 
 	{ 0x0a0000, 0x0a08ff, niyanpai_palette_w },
 	{ 0x0a0900, 0x0a11ff, MWA16_RAM },		// palette work ram?

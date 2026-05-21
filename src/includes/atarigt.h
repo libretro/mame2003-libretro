@@ -11,10 +11,10 @@ extern uint8_t atarigt_is_primrage;
 
 /*----------- defined in vidhrdw/atarigt.c -----------*/
 
-extern data16_t *atarigt_colorram;
+extern uint16_t *atarigt_colorram;
 
-void atarigt_colorram_w(offs_t address, data16_t data, data16_t mem_mask);
-data16_t atarigt_colorram_r(offs_t address);
+void atarigt_colorram_w(offs_t address, uint16_t data, uint16_t mem_mask);
+uint16_t atarigt_colorram_r(offs_t address);
 
 VIDEO_START( atarigt );
 VIDEO_UPDATE( atarigt );

@@ -1097,10 +1097,10 @@ static int init_buffered_spriteram(void)
 	}
 
 	/* make 16-bit and 32-bit pointer variants */
-	buffered_spriteram16 = (data16_t *)buffered_spriteram;
-	buffered_spriteram32 = (data32_t *)buffered_spriteram;
-	buffered_spriteram16_2 = (data16_t *)buffered_spriteram_2;
-	buffered_spriteram32_2 = (data32_t *)buffered_spriteram_2;
+	buffered_spriteram16 = (uint16_t *)buffered_spriteram;
+	buffered_spriteram32 = (uint32_t *)buffered_spriteram;
+	buffered_spriteram16_2 = (uint16_t *)buffered_spriteram_2;
+	buffered_spriteram32_2 = (uint32_t *)buffered_spriteram_2;
 	return 0;
 }
 

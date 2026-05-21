@@ -15,10 +15,10 @@
 #define NAMCONB1_SPRITEGFX		1
 #define NAMCONB1_ROTGFX			2
 
-extern data32_t *namconb1_workram32;
-extern data32_t *namconb1_spritebank32;
-extern data32_t *namconb1_scrollram32;
-extern data32_t *namconb1_spritepos32;
+extern uint32_t *namconb1_workram32;
+extern uint32_t *namconb1_spritebank32;
+extern uint32_t *namconb1_scrollram32;
+extern uint32_t *namconb1_spritepos32;
 
 WRITE32_HANDLER( namconb1_videoram_w );
 

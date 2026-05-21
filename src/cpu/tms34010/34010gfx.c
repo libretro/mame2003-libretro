@@ -204,7 +204,7 @@ int compute_pixblt_b_cycles(int left_partials, int right_partials, int full_word
 
 
 /* Shift register handling */
-static void shiftreg_w(offs_t offset,data16_t data)
+static void shiftreg_w(offs_t offset,uint16_t data)
 {
 	if (state.config->from_shiftreg)
 		(*state.config->from_shiftreg)((uint32_t)(offset << 3) & ~15, &state.shiftreg[0]);
@@ -212,7 +212,7 @@ static void shiftreg_w(offs_t offset,data16_t data)
 		log_cb(RETRO_LOG_DEBUG, LOGPRE "From ShiftReg function not set. PC = %08X\n", PC);
 }
 
-static data16_t shiftreg_r(offs_t offset)
+static uint16_t shiftreg_r(offs_t offset)
 {
 	if (state.config->to_shiftreg)
 		(*state.config->to_shiftreg)((uint32_t)(offset << 3) & ~15, &state.shiftreg[0]);
@@ -221,7 +221,7 @@ static data16_t shiftreg_r(offs_t offset)
 	return state.shiftreg[0];
 }
 
-static data16_t dummy_shiftreg_r(offs_t offset)
+static uint16_t dummy_shiftreg_r(offs_t offset)
 {
 	return state.shiftreg[0];
 }
@@ -1032,8 +1032,8 @@ static void FUNCTION_NAME(pixblt)(int src_is_linear, int dst_is_linear)
 	if (!P_FLAG)
 	{
 		int dx, dy, x, y, words, yreverse;
-		void (*word_write)(offs_t address,data16_t data);
-		data16_t (*word_read)(offs_t address);
+		void (*word_write)(offs_t address,uint16_t data);
+		uint16_t (*word_read)(offs_t address);
 		uint32_t saddr, daddr;
 
 		/* determine read/write functions */
@@ -1277,8 +1277,8 @@ static void FUNCTION_NAME(pixblt_r)(int src_is_linear, int dst_is_linear)
 	if (!P_FLAG)
 	{
 		int dx, dy, x, y, words, yreverse;
-		void (*word_write)(offs_t address,data16_t data);
-		data16_t (*word_read)(offs_t address);
+		void (*word_write)(offs_t address,uint16_t data);
+		uint16_t (*word_read)(offs_t address);
 		uint32_t saddr, daddr;
 
 		/* determine read/write functions */
@@ -1525,8 +1525,8 @@ static void FUNCTION_NAME(pixblt_b)(int dst_is_linear)
 	if (!P_FLAG)
 	{
 		int dx, dy, x, y, words, left_partials, right_partials, full_words;
-		void (*word_write)(offs_t address,data16_t data);
-		data16_t (*word_read)(offs_t address);
+		void (*word_write)(offs_t address,uint16_t data);
+		uint16_t (*word_read)(offs_t address);
 		uint32_t saddr, daddr;
 
 		/* determine read/write functions */
@@ -1726,8 +1726,8 @@ static void FUNCTION_NAME(fill)(int dst_is_linear)
 	if (!P_FLAG)
 	{
 		int dx, dy, x, y, words, left_partials, right_partials, full_words;
-		void (*word_write)(offs_t address,data16_t data);
-		data16_t (*word_read)(offs_t address);
+		void (*word_write)(offs_t address,uint16_t data);
+		uint16_t (*word_read)(offs_t address);
 		uint32_t daddr;
 
 		/* determine read/write functions */

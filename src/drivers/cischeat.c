@@ -154,13 +154,13 @@ To Do:
 
 /* Variables only used here: */
 
-static data16_t *rom_1, *rom_2, *rom_3;
-static data16_t *sharedram1, *sharedram2;
+static uint16_t *rom_1, *rom_2, *rom_3;
+static uint16_t *sharedram1, *sharedram2;
 
 /* Variables defined in vidhrdw: */
 
-extern data16_t *cischeat_roadram[2];
-extern data16_t *f1gpstr2_ioready;
+extern uint16_t *cischeat_roadram[2];
+extern uint16_t *f1gpstr2_ioready;
 
 /* Functions defined in vidhrdw: */
 
@@ -210,7 +210,7 @@ static READ16_HANDLER( rom_3_r ) {return rom_3[offset];}
 
 WRITE16_HANDLER( bigrun_paletteram16_w )
 {
-	data16_t word = COMBINE_DATA(&paletteram16[offset]);
+	uint16_t word = COMBINE_DATA(&paletteram16[offset]);
 	int r = ((word >> 8) & 0xF0 ) | ((word << 0) & 0x08);
 	int g = ((word >> 4) & 0xF0 ) | ((word << 1) & 0x08);
 	int b = ((word >> 0) & 0xF0 ) | ((word << 2) & 0x08);
@@ -282,7 +282,7 @@ MEMORY_END
 
 WRITE16_HANDLER( cischeat_paletteram16_w )
 {
-	data16_t word = COMBINE_DATA(&paletteram16[offset]);
+	uint16_t word = COMBINE_DATA(&paletteram16[offset]);
 	int r = ((word >> 8) & 0xF0 ) | ((word << 0) & 0x08);
 	int g = ((word >> 4) & 0xF0 ) | ((word << 1) & 0x08);
 	int b = ((word >> 0) & 0xF0 ) | ((word << 2) & 0x08);
@@ -350,7 +350,7 @@ MEMORY_END
 
 WRITE16_HANDLER( f1gpstar_paletteram16_w )
 {
-	data16_t word = COMBINE_DATA(&paletteram16[offset]);
+	uint16_t word = COMBINE_DATA(&paletteram16[offset]);
 	int r = ((word >> 8) & 0xF0 ) | ((word << 0) & 0x08);
 	int g = ((word >> 4) & 0xF0 ) | ((word << 1) & 0x08);
 	int b = ((word >> 0) & 0xF0 ) | ((word << 2) & 0x08);
@@ -477,7 +477,7 @@ WRITE16_HANDLER( scudhamm_paletteram16_w )
 }
 
 
-data16_t scudhamm_motor_command;
+uint16_t scudhamm_motor_command;
 
 /*	Motor Status.
 
@@ -1839,7 +1839,7 @@ ROM_END
 DRIVER_INIT( bigrun )
 {
 	/* Split ROMs */
-	rom_1 = (data16_t *) memory_region(REGION_USER1);
+	rom_1 = (uint16_t *) memory_region(REGION_USER1);
 
 	cischeat_untangle_sprites(REGION_GFX4);	// Untangle sprites
 	phantasm_rom_decode(3);					// Decrypt sound cpu code
@@ -1961,17 +1961,17 @@ ROM_END
 DRIVER_INIT( cischeat )
 {
 	/* Split ROMs */
-	rom_1 = (data16_t *) (memory_region(REGION_USER1) + 0x00000);
-	rom_2 = (data16_t *) (memory_region(REGION_CPU2)  + 0x40000);
-	rom_3 = (data16_t *) (memory_region(REGION_CPU3)  + 0x40000);
+	rom_1 = (uint16_t *) (memory_region(REGION_USER1) + 0x00000);
+	rom_2 = (uint16_t *) (memory_region(REGION_CPU2)  + 0x40000);
+	rom_3 = (uint16_t *) (memory_region(REGION_CPU3)  + 0x40000);
 
 	memcpy(memory_region(REGION_USER1) + 0x80000, rom_2, 0x40000);
 	memset(rom_2, 0, 0x40000);
-	rom_2 = (data16_t *) (memory_region(REGION_USER1) + 0x80000);
+	rom_2 = (uint16_t *) (memory_region(REGION_USER1) + 0x80000);
 
 	memcpy(memory_region(REGION_USER1) + 0xc0000, rom_3, 0x40000);
 	memset(rom_3, 0, 0x40000);
-	rom_3 = (data16_t *) (memory_region(REGION_USER1) + 0xc0000);
+	rom_3 = (uint16_t *) (memory_region(REGION_USER1) + 0xc0000);
 
 	cischeat_untangle_sprites(REGION_GFX4);	// Untangle sprites
 	astyanax_rom_decode(3);					// Decrypt sound cpu code
@@ -2188,7 +2188,7 @@ ROM_END
 DRIVER_INIT( f1gpstar )
 {
 	/* Split ROMs */
-	rom_1 = (data16_t *) memory_region(REGION_USER1);
+	rom_1 = (uint16_t *) memory_region(REGION_USER1);
 
 	cischeat_untangle_sprites(REGION_GFX4);
 }

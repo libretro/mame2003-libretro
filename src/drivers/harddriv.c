@@ -273,7 +273,7 @@ static MEMORY_WRITE16_START( driver_writemem_gsp )
 	{ TOBYTE(0xf4800000), TOBYTE(0xf48000ff), hdgsp_control_hi_w, &hdgsp_control_hi },
 	{ TOBYTE(0xf5000000), TOBYTE(0xf5007fff), hdgsp_paletteram_lo_w, &hdgsp_paletteram_lo },
 	{ TOBYTE(0xf5800000), TOBYTE(0xf5807fff), hdgsp_paletteram_hi_w, &hdgsp_paletteram_hi },
-	{ TOBYTE(0xff800000), TOBYTE(0xffffffff), MWA16_BANK1, (data16_t **)&hdgsp_vram, &hdgsp_vram_size },
+	{ TOBYTE(0xff800000), TOBYTE(0xffffffff), MWA16_BANK1, (uint16_t **)&hdgsp_vram, &hdgsp_vram_size },
 MEMORY_END
 
 
@@ -356,7 +356,7 @@ static MEMORY_WRITE16_START( multisync_writemem_gsp )
 	{ TOBYTE(0xf5000000), TOBYTE(0xf5007fff), hdgsp_paletteram_lo_w, &hdgsp_paletteram_lo },
 	{ TOBYTE(0xf5800000), TOBYTE(0xf5807fff), hdgsp_paletteram_hi_w, &hdgsp_paletteram_hi },
 	{ TOBYTE(0xff800000), TOBYTE(0xffbfffff), MWA16_BANK1 },
-	{ TOBYTE(0xffc00000), TOBYTE(0xffffffff), MWA16_RAM, (data16_t **)&hdgsp_vram, &hdgsp_vram_size },
+	{ TOBYTE(0xffc00000), TOBYTE(0xffffffff), MWA16_RAM, (uint16_t **)&hdgsp_vram, &hdgsp_vram_size },
 MEMORY_END
 
 
@@ -425,7 +425,7 @@ static MEMORY_WRITE16_START( multisync2_writemem_gsp )
 	{ TOBYTE(0xf4800000), TOBYTE(0xf48000ff), hdgsp_control_hi_w, &hdgsp_control_hi },
 	{ TOBYTE(0xf5000000), TOBYTE(0xf5007fff), hdgsp_paletteram_lo_w, &hdgsp_paletteram_lo },
 	{ TOBYTE(0xf5800000), TOBYTE(0xf5807fff), hdgsp_paletteram_hi_w, &hdgsp_paletteram_hi },
-	{ TOBYTE(0xff800000), TOBYTE(0xffffffff), MWA16_BANK1, (data16_t **)&hdgsp_vram, &hdgsp_vram_size },
+	{ TOBYTE(0xff800000), TOBYTE(0xffffffff), MWA16_BANK1, (uint16_t **)&hdgsp_vram, &hdgsp_vram_size },
 MEMORY_END
 
 
@@ -3558,11 +3558,11 @@ static void init_ds3(void)
 
 	/* if we have a sound DSP, boot it */
 	if (hdcpu_sound != -1 && Machine->drv->cpu[hdcpu_sound].cpu_type == CPU_ADSP2105)
-		adsp2105_load_boot_data((data8_t *)(memory_region(REGION_CPU1 + hdcpu_sound) + ADSP2100_SIZE),
-								(data32_t *)(memory_region(REGION_CPU1 + hdcpu_sound) + ADSP2100_PGM_OFFSET));
+		adsp2105_load_boot_data((uint8_t *)(memory_region(REGION_CPU1 + hdcpu_sound) + ADSP2100_SIZE),
+								(uint32_t *)(memory_region(REGION_CPU1 + hdcpu_sound) + ADSP2100_PGM_OFFSET));
 	if (hdcpu_sounddsp != -1 && Machine->drv->cpu[hdcpu_sounddsp].cpu_type == CPU_ADSP2105)
-		adsp2105_load_boot_data((data8_t *)(memory_region(REGION_CPU1 + hdcpu_sounddsp) + ADSP2100_SIZE),
-								(data32_t *)(memory_region(REGION_CPU1 + hdcpu_sounddsp) + ADSP2100_PGM_OFFSET));
+		adsp2105_load_boot_data((uint8_t *)(memory_region(REGION_CPU1 + hdcpu_sounddsp) + ADSP2100_SIZE),
+								(uint32_t *)(memory_region(REGION_CPU1 + hdcpu_sounddsp) + ADSP2100_PGM_OFFSET));
 
 /*
 
@@ -3646,12 +3646,12 @@ static void init_dsk(void)
 	/* install extra RAM */
 	install_mem_read16_handler(hdcpu_main, 0x900000, 0x90ffff, hd68k_dsk_ram_r);
 	install_mem_write16_handler(hdcpu_main, 0x900000, 0x90ffff, hd68k_dsk_ram_w);
-	hddsk_ram = (data16_t *)(memory_region(REGION_USER3) + 0x40000);
+	hddsk_ram = (uint16_t *)(memory_region(REGION_USER3) + 0x40000);
 
 	/* install extra ZRAM */
 	install_mem_read16_handler(hdcpu_main, 0x910000, 0x910fff, hd68k_dsk_zram_r);
 	install_mem_write16_handler(hdcpu_main, 0x910000, 0x910fff, hd68k_dsk_zram_w);
-	hddsk_zram = (data16_t *)(memory_region(REGION_USER3) + 0x50000);
+	hddsk_zram = (uint16_t *)(memory_region(REGION_USER3) + 0x50000);
 
 	/* install ASIC65 */
 	install_mem_write16_handler(hdcpu_main, 0x914000, 0x917fff, asic65_data_w);
@@ -3660,7 +3660,7 @@ static void init_dsk(void)
 
 	/* install extra ROM */
 	install_mem_read16_handler(hdcpu_main, 0x940000, 0x9fffff, hd68k_dsk_small_rom_r);
-	hddsk_rom = (data16_t *)(memory_region(REGION_USER3) + 0x00000);
+	hddsk_rom = (uint16_t *)(memory_region(REGION_USER3) + 0x00000);
 
 	/* set up the ASIC65 */
 	asic65_config(ASIC65_STANDARD);
@@ -3685,11 +3685,11 @@ static void init_dsk2(void)
 	/* install extra RAM */
 	install_mem_read16_handler(hdcpu_main, 0x880000, 0x8bffff, hd68k_dsk_ram_r);
 	install_mem_write16_handler(hdcpu_main, 0x880000, 0x8bffff, hd68k_dsk_ram_w);
-	hddsk_ram = (data16_t *)(memory_region(REGION_USER3) + 0x100000);
+	hddsk_ram = (uint16_t *)(memory_region(REGION_USER3) + 0x100000);
 
 	/* install extra ROM */
 	install_mem_read16_handler(hdcpu_main, 0x900000, 0x9fffff, hd68k_dsk_rom_r);
-	hddsk_rom = (data16_t *)(memory_region(REGION_USER3) + 0x000000);
+	hddsk_rom = (uint16_t *)(memory_region(REGION_USER3) + 0x000000);
 
 	/* set up the ASIC65 */
 	asic65_config(ASIC65_STANDARD);
@@ -3797,7 +3797,7 @@ static DRIVER_INIT( stunrun )
 }
 
 
-data32_t *rddsp32_speedup;
+uint32_t *rddsp32_speedup;
 offs_t rddsp32_speedup_pc;
 READ32_HANDLER( rddsp32_speedup_r )
 {
@@ -3931,7 +3931,7 @@ static void steeltal_init_common(offs_t ds3_transfer_pc, int proto_sloop)
 	/* set up adsp speedup handlers */
 	install_mem_read16_handler(hdcpu_adsp, ADSP_DATA_ADDR_RANGE(0x1fff, 0x1fff), hdadsp_speedup_r);
 	install_mem_read16_handler(hdcpu_adsp, ADSP_DATA_ADDR_RANGE(0x1f99, 0x1f99), hdds3_speedup_r);
-	hdds3_speedup_addr = (data16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET) + 0x1f99;
+	hdds3_speedup_addr = (uint16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET) + 0x1f99;
 	hdds3_speedup_pc = 0xff;
 	hdds3_transfer_pc = ds3_transfer_pc;
 }
@@ -3961,7 +3961,7 @@ static DRIVER_INIT( hdrivair )
 	/* set up adsp speedup handlers */
 	install_mem_read16_handler(hdcpu_adsp, ADSP_DATA_ADDR_RANGE(0x1fff, 0x1fff), hdadsp_speedup_r);
 	install_mem_read16_handler(hdcpu_adsp, ADSP_DATA_ADDR_RANGE(0x1f99, 0x1f99), hdds3_speedup_r);
-	hdds3_speedup_addr = (data16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET) + 0x1f99;
+	hdds3_speedup_addr = (uint16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET) + 0x1f99;
 	hdds3_speedup_pc = 0x2da;
 	hdds3_transfer_pc = 0x407b8;
 }
@@ -3986,7 +3986,7 @@ static DRIVER_INIT( hdrivaip )
 	/* set up adsp speedup handlers */
 	install_mem_read16_handler(hdcpu_adsp, ADSP_DATA_ADDR_RANGE(0x1fff, 0x1fff), hdadsp_speedup_r);
 	install_mem_read16_handler(hdcpu_adsp, ADSP_DATA_ADDR_RANGE(0x1f9a, 0x1f9a), hdds3_speedup_r);
-	hdds3_speedup_addr = (data16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET) + 0x1f9a;
+	hdds3_speedup_addr = (uint16_t *)(memory_region(REGION_CPU1 + hdcpu_adsp) + ADSP2100_DATA_OFFSET) + 0x1f9a;
 	hdds3_speedup_pc = 0x2d9;
 	hdds3_transfer_pc = 0X407da;
 }

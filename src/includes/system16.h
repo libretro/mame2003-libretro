@@ -43,18 +43,18 @@ extern int sys16_sprite_aburner( struct sys16_sprite_attributes *sprite, const u
 extern int sys16_sh_shadowpal;
 extern int sys16_MaxShadowColors;
 
-extern data16_t *sys16_tileram;
-extern data16_t *sys16_textram;
-extern data16_t *sys16_spriteram;
-extern data16_t *sys16_roadram;
+extern uint16_t *sys16_tileram;
+extern uint16_t *sys16_textram;
+extern uint16_t *sys16_spriteram;
+extern uint16_t *sys16_roadram;
 
 /* machine hardware */
-extern data16_t *sys16_workingram;
-extern data16_t *sys16_workingram2;
-extern data16_t *sys16_extraram;
-extern data16_t *sys16_extraram2;
-extern data16_t *sys16_extraram3;
-extern data16_t *sys16_extraram4;
+extern uint16_t *sys16_workingram;
+extern uint16_t *sys16_workingram2;
+extern uint16_t *sys16_extraram;
+extern uint16_t *sys16_extraram2;
+extern uint16_t *sys16_extraram3;
+extern uint16_t *sys16_extraram4;
 
 extern void sys16_patch_code( int offset, int data );
 extern void sys16_patch_code2( int offset, int data );
@@ -110,14 +110,14 @@ extern READ16_HANDLER( SYS16_CPU2_RESET_HACK );
 extern struct GfxDecodeInfo sys16_gfxdecodeinfo[];
 
 // encryption decoding
-void endurob2_decode_data(data16_t *dest,data16_t *source,int size);
-void endurob2_decode_data2(data16_t *dest,data16_t *source,int size);
-void enduror_decode_data(data16_t *dest,data16_t *source,int size);
-void enduror_decode_data2(data16_t *dest,data16_t *source,int size);
+void endurob2_decode_data(uint16_t *dest,uint16_t *source,int size);
+void endurob2_decode_data2(uint16_t *dest,uint16_t *source,int size);
+void enduror_decode_data(uint16_t *dest,uint16_t *source,int size);
+void enduror_decode_data2(uint16_t *dest,uint16_t *source,int size);
 
-void aurail_decode_data(data16_t *dest,data16_t *source,int size);
-void aurail_decode_opcode1(data16_t *dest,data16_t *source,int size);
-void aurail_decode_opcode2(data16_t *dest,data16_t *source,int size);
+void aurail_decode_data(uint16_t *dest,uint16_t *source,int size);
+void aurail_decode_opcode1(uint16_t *dest,uint16_t *source,int size);
+void aurail_decode_opcode2(uint16_t *dest,uint16_t *source,int size);
 
 #define SYS16_JOY1 PORT_START \
 	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_BUTTON3 ) \
@@ -282,28 +282,28 @@ extern int sys16_fg2_page[4];
 
 extern int sys18_bg2_active;
 extern int sys18_fg2_active;
-extern data16_t *sys18_splittab_bg_x;
-extern data16_t *sys18_splittab_bg_y;
-extern data16_t *sys18_splittab_fg_x;
-extern data16_t *sys18_splittab_fg_y;
+extern uint16_t *sys18_splittab_bg_x;
+extern uint16_t *sys18_splittab_bg_y;
+extern uint16_t *sys18_splittab_fg_x;
+extern uint16_t *sys18_splittab_fg_y;
 
 #ifdef SPACEHARRIER_OFFSETS
-extern data16_t *spaceharrier_patternoffsets;
+extern uint16_t *spaceharrier_patternoffsets;
 #endif
 
-extern data16_t *sys16_gr_ver;
-extern data16_t *sys16_gr_hor;
-extern data16_t *sys16_gr_pal;
-extern data16_t *sys16_gr_flip;
+extern uint16_t *sys16_gr_ver;
+extern uint16_t *sys16_gr_hor;
+extern uint16_t *sys16_gr_pal;
+extern uint16_t *sys16_gr_flip;
 extern int sys16_gr_palette;
 extern int sys16_gr_palette_default;
 extern unsigned char sys16_gr_colorflip[2][4];
-extern data16_t *sys16_gr_second_road;
+extern uint16_t *sys16_gr_second_road;
 
-extern data16_t *sys16_tileram;
-extern data16_t *sys16_textram;
-extern data16_t *sys16_spriteram;
-extern data16_t *sys16_roadram;
+extern uint16_t *sys16_tileram;
+extern uint16_t *sys16_textram;
+extern uint16_t *sys16_spriteram;
+extern uint16_t *sys16_roadram;
 
 /* sound */
 extern struct SEGAPCMinterface sys16_segapcm_interface_15k;

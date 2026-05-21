@@ -3,8 +3,8 @@
 
 
 
-data16_t *blockout_videoram;
-data16_t *blockout_frontvideoram;
+uint16_t *blockout_videoram;
+uint16_t *blockout_frontvideoram;
 
 
 
@@ -46,7 +46,7 @@ WRITE16_HANDLER( blockout_paletteram_w )
 
 WRITE16_HANDLER( blockout_frontcolor_w )
 {
-	static data16_t color;
+	static uint16_t color;
 
 	COMBINE_DATA(&color);
 	setcolor(512,color);
@@ -72,7 +72,7 @@ VIDEO_START( blockout )
 
 static void updatepixels(int x,int y)
 {
-	data16_t front,back;
+	uint16_t front,back;
 	int color;
 
 
@@ -98,7 +98,7 @@ static void updatepixels(int x,int y)
 
 WRITE16_HANDLER( blockout_videoram_w )
 {
-	data16_t oldword = blockout_videoram[offset];
+	uint16_t oldword = blockout_videoram[offset];
 	COMBINE_DATA(&blockout_videoram[offset]);
 
 	if (oldword != blockout_videoram[offset])

@@ -12,7 +12,7 @@ driver by Jarek Burczynski
 #include "vidhrdw/taitoic.h"
 #include "sndhrdw/taitosnd.h"
 
-data16_t *rastan_ram;	/* speedup hack */
+uint16_t *rastan_ram;	/* speedup hack */
 
 WRITE16_HANDLER( rastan_spritectrl_w );
 

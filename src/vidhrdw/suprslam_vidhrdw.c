@@ -4,7 +4,7 @@
 #include "vidhrdw/konamiic.h"
 
 
-data16_t *suprslam_screen_videoram, *suprslam_bg_videoram,*suprslam_sp_videoram, *suprslam_spriteram;
+uint16_t *suprslam_screen_videoram, *suprslam_bg_videoram,*suprslam_sp_videoram, *suprslam_spriteram;
 uint16_t screen_bank, bg_bank;
 static struct tilemap *suprslam_screen_tilemap, *suprslam_bg_tilemap;
 
@@ -35,9 +35,9 @@ static void suprslam_drawsprites( struct mame_bitmap *bitmap, const struct recta
 
 
 	const struct GfxElement *gfx = Machine->gfx[1];
-	data16_t *source = suprslam_spriteram;
-	data16_t *source2 = suprslam_spriteram;
-	data16_t *finish = source + 0x2000/2;
+	uint16_t *source = suprslam_spriteram;
+	uint16_t *source2 = suprslam_spriteram;
+	uint16_t *finish = source + 0x2000/2;
 
 	while( source<finish )
 	{

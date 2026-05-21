@@ -21,10 +21,10 @@ static struct tempsprite *spritelist;
 
 static int sprites_disabled,sprites_active_area,sprites_master_scrollx,sprites_master_scrolly;
 static int sprites_flipscreen = 0;
-static data16_t *spriteram_buffered,*spriteram_delayed;
+static uint16_t *spriteram_buffered,*spriteram_delayed;
 
 int taito_sprite_type = 0;
-data16_t *taito_sprite_ext;
+uint16_t *taito_sprite_ext;
 size_t taito_spriteext_size;
 static uint16_t spritebank[8];
 

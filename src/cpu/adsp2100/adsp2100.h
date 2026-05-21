@@ -187,7 +187,7 @@ extern unsigned adsp2104_dasm(char *buffer, unsigned pc);
 extern void adsp2104_set_rx_callback( RX_CALLBACK cb );
 extern void adsp2104_set_tx_callback( TX_CALLBACK cb );
 
-extern void adsp2104_load_boot_data(data8_t *srcdata, data32_t *dstdata);
+extern void adsp2104_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
 #endif
 
 #if (HAS_ADSP2105)
@@ -222,7 +222,7 @@ extern unsigned adsp2105_dasm(char *buffer, unsigned pc);
 extern void adsp2105_set_rx_callback( RX_CALLBACK cb );
 extern void adsp2105_set_tx_callback( TX_CALLBACK cb );
 
-extern void adsp2105_load_boot_data(data8_t *srcdata, data32_t *dstdata);
+extern void adsp2105_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
 #endif
 
 #if (HAS_ADSP2115)
@@ -259,7 +259,7 @@ extern unsigned adsp2115_dasm(char *buffer, unsigned pc);
 extern void adsp2115_set_rx_callback( RX_CALLBACK cb );
 extern void adsp2115_set_tx_callback( TX_CALLBACK cb );
 
-extern void adsp2115_load_boot_data(data8_t *srcdata, data32_t *dstdata);
+extern void adsp2115_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
 #endif
 
 #endif /* _ADSP2100_H */

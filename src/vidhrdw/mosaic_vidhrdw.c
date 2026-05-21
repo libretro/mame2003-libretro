@@ -10,8 +10,8 @@
 #include "vidhrdw/generic.h"
 
 
-data8_t *mosaic_fgvideoram;
-data8_t *mosaic_bgvideoram;
+uint8_t *mosaic_fgvideoram;
+uint8_t *mosaic_bgvideoram;
 
 static struct tilemap *bg_tilemap,*fg_tilemap;
 

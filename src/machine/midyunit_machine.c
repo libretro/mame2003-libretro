@@ -26,12 +26,12 @@
 /* protection data types */
 struct protection_data
 {
-	data16_t	reset_sequence[3];
-	data16_t	data_sequence[100];
+	uint16_t	reset_sequence[3];
+	uint16_t	data_sequence[100];
 };
 static const struct protection_data *prot_data;
-static data16_t prot_result;
-static data16_t prot_sequence[3];
+static uint16_t prot_result;
+static uint16_t prot_sequence[3];
 static uint8_t prot_index;
 
 
@@ -70,14 +70,14 @@ static uint8_t prot_index;
 
 
 /* code related variables */
-       data16_t *midyunit_code_rom;
-       data16_t *midyunit_scratch_ram;
+       uint16_t *midyunit_code_rom;
+       uint16_t *midyunit_scratch_ram;
 
 /* input-related variables */
 static uint8_t	term2_analog_select;
 
 /* CMOS-related variables */
-       data16_t *midyunit_cmos_ram;
+       uint16_t *midyunit_cmos_ram;
        uint32_t 	midyunit_cmos_page;
 static uint8_t	cmos_w_enable;
 
@@ -88,10 +88,10 @@ static uint8_t	sound_type;
        offs_t 	midyunit_speedup_pc;
        offs_t 	midyunit_speedup_offset;
        offs_t 	midyunit_speedup_spin[3];
-       data16_t *midyunit_speedup_base;
+       uint16_t *midyunit_speedup_base;
 
 /* hack-related variables */
-static data16_t *t2_hack_mem;
+static uint16_t *t2_hack_mem;
 
 
 
@@ -566,7 +566,7 @@ static READ16_HANDLER( term2_speedup_r )
 
 READ16_HANDLER( midyunit_generic_speedup_1_16bit )
 {
-	data16_t value = midyunit_speedup_base[offset];
+	uint16_t value = midyunit_speedup_base[offset];
 
 	/* just return if this isn't the offset we're looking for */
 	if (offset != midyunit_speedup_offset)

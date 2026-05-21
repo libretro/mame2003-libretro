@@ -11,9 +11,9 @@
 
 
 
-data8_t *vastar_bg1videoram,*vastar_bg2videoram,*vastar_fgvideoram;
-data8_t *vastar_bg1_scroll,*vastar_bg2_scroll;
-data8_t *vastar_sprite_priority;
+uint8_t *vastar_bg1videoram,*vastar_bg2videoram,*vastar_fgvideoram;
+uint8_t *vastar_bg1_scroll,*vastar_bg2_scroll;
+uint8_t *vastar_sprite_priority;
 
 static struct tilemap *fg_tilemap, *bg1_tilemap, *bg2_tilemap;
 

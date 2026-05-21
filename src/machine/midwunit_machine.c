@@ -47,7 +47,7 @@
 static uint8_t	cmos_write_enable;
 
 /* I/O-related variables */
-static data16_t	iodata[8];
+static uint16_t	iodata[8];
 static uint8_t	ioshuffle[16];
 static uint8_t	midxunit_analog_port;
 
@@ -77,7 +77,7 @@ WRITE16_HANDLER( midwunit_cmos_w )
 {
 	if (cmos_write_enable)
 	{
-		COMBINE_DATA(&((data16_t *)generic_nvram)[offset]);
+		COMBINE_DATA(&((uint16_t *)generic_nvram)[offset]);
 		cmos_write_enable = 0;
 	}
 	else
@@ -90,13 +90,13 @@ WRITE16_HANDLER( midwunit_cmos_w )
 
 WRITE16_HANDLER( midxunit_cmos_w )
 {
-	COMBINE_DATA(&((data16_t *)generic_nvram)[offset]);
+	COMBINE_DATA(&((uint16_t *)generic_nvram)[offset]);
 }
 
 
 READ16_HANDLER( midwunit_cmos_r )
 {
-	return ((data16_t *)generic_nvram)[offset];
+	return ((uint16_t *)generic_nvram)[offset];
 }
 
 
@@ -519,7 +519,7 @@ DRIVER_INIT( nbahangt )
 
 static READ16_HANDLER( midwunit_generic_speedup_1_address )
 {
-	data16_t value = midyunit_speedup_base[offset];
+	uint16_t value = midyunit_speedup_base[offset];
 
 	/* just return if this isn't the offset we're looking for */
 	if (offset != midyunit_speedup_offset)

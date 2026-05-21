@@ -6,7 +6,7 @@
    just made a copy & renamed them for now to avoid any conflicts
 */
 
-data16_t *system24temp_sys16_shared_ram;
+uint16_t *system24temp_sys16_shared_ram;
 READ16_HANDLER( system24temp_sys16_shared_ram_r )
 {
 	return system24temp_sys16_shared_ram[offset];

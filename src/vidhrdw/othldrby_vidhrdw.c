@@ -7,10 +7,10 @@
 #define SPRITERAM_START 0x1800
 #define SPRITERAM_SIZE (VIDEORAM_SIZE-SPRITERAM_START)
 
-static data16_t *vram,*buf_spriteram,*buf_spriteram2;
+static uint16_t *vram,*buf_spriteram,*buf_spriteram2;
 
 #define VREG_SIZE 18
-static data16_t vreg[VREG_SIZE];
+static uint16_t vreg[VREG_SIZE];
 
 static struct tilemap *tilemap[3];
 
@@ -23,7 +23,7 @@ static struct tilemap *tilemap[3];
 
 static INLINE void get_tile_info(int tile_index,int plane)
 {
-	data16_t attr;
+	uint16_t attr;
 
 	tile_index = 2*tile_index + 0x800*plane;
 	attr = vram[tile_index];

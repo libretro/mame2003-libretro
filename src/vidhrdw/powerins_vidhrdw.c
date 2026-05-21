@@ -39,9 +39,9 @@ Note:	if MAME_DEBUG is defined, pressing Z with:
 #include "vidhrdw/generic.h"
 
 /* Variables that driver has access to: */
-data16_t *powerins_vram_0, *powerins_vctrl_0;
-data16_t *powerins_vram_1, *powerins_vctrl_1;
-data16_t *powerins_vregs;
+uint16_t *powerins_vram_0, *powerins_vctrl_0;
+uint16_t *powerins_vram_1, *powerins_vctrl_1;
+uint16_t *powerins_vregs;
 
 /* Variables only used here: */
 static struct tilemap *tilemap_0, *tilemap_1;
@@ -88,7 +88,7 @@ WRITE16_HANDLER( powerins_paletteram16_w )
 	/*	RRRR GGGG BBBB RGBx	*/
 	/*	4321 4321 4321 000x	*/
 
-	data16_t newword = COMBINE_DATA(&paletteram16[offset]);
+	uint16_t newword = COMBINE_DATA(&paletteram16[offset]);
 
 	int r = ((newword >> 8) & 0xF0 ) | ((newword << 0) & 0x08);
 	int g = ((newword >> 4) & 0xF0 ) | ((newword << 1) & 0x08);
@@ -128,7 +128,7 @@ Offset:
 
 static void get_tile_info_0( int tile_index )
 {
-	data16_t code = powerins_vram_0[tile_index];
+	uint16_t code = powerins_vram_0[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x07ff) + (tile_bank*0x800),
@@ -138,8 +138,8 @@ static void get_tile_info_0( int tile_index )
 
 WRITE16_HANDLER( powerins_vram_0_w )
 {
-	data16_t oldword = powerins_vram_0[offset];
-	data16_t newword = COMBINE_DATA(&powerins_vram_0[offset]);
+	uint16_t oldword = powerins_vram_0[offset];
+	uint16_t newword = COMBINE_DATA(&powerins_vram_0[offset]);
 	if (oldword != newword)
 		tilemap_mark_tile_dirty(tilemap_0, offset);
 }
@@ -170,7 +170,7 @@ Offset:
 
 static void get_tile_info_1( int tile_index )
 {
-	data16_t code = powerins_vram_1[tile_index];
+	uint16_t code = powerins_vram_1[tile_index];
 	SET_TILE_INFO(
 			1,
 			code & 0x0fff,
@@ -180,8 +180,8 @@ static void get_tile_info_1( int tile_index )
 
 WRITE16_HANDLER( powerins_vram_1_w )
 {
-	data16_t oldword = powerins_vram_1[offset];
-	data16_t newword = COMBINE_DATA(&powerins_vram_1[offset]);
+	uint16_t oldword = powerins_vram_1[offset];
+	uint16_t newword = COMBINE_DATA(&powerins_vram_1[offset]);
 	if (oldword != newword)
 		tilemap_mark_tile_dirty(tilemap_1, offset);
 }
@@ -278,8 +278,8 @@ Offset:		Format:					Value:
 
 static void powerins_draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
-	data16_t *source = spriteram16 + 0x8000/2;
-	data16_t *finish = spriteram16 + 0x9000/2;
+	uint16_t *source = spriteram16 + 0x8000/2;
+	uint16_t *finish = spriteram16 + 0x9000/2;
 
 	int screen_w	=	Machine->drv->screen_width;
 	int screen_h	=	Machine->drv->screen_height;

@@ -1,7 +1,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data32_t *avengrgs_vram, *avengrgs_ram1, *avengrgs_ram2;
+uint32_t *avengrgs_vram, *avengrgs_ram1, *avengrgs_ram2;
 
 /******************************************************************************/
 
@@ -12,10 +12,10 @@ VIDEO_START( avengrgs )
 
 static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
-	data32_t *index_ptr;
+	uint32_t *index_ptr;
 	int offs,fx=0,fy=0,x,y,color,sprite,indx,h,w,bank,bx,by;
 	int xmult,ymult,xoffs,yoffs;
-	data8_t *rom = memory_region(REGION_GFX4) + 0x20000, *index_ptr8;
+	uint8_t *rom = memory_region(REGION_GFX4) + 0x20000, *index_ptr8;
 
 //	for (offs = 0; offs<0x3000/4; offs+=8)
 	for (offs = (0x3000/4)-8; offs>=0; offs-=8)
@@ -105,10 +105,10 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 VIDEO_UPDATE( avengrgs )
 {
 	int mx,my;
-	data32_t *vram_ptr=avengrgs_ram1 + (0x1dc00/4);
+	uint32_t *vram_ptr=avengrgs_ram1 + (0x1dc00/4);
 
 #if 0
-//	data8_t *rom = memory_region(REGION_GFX4);
+//	uint8_t *rom = memory_region(REGION_GFX4);
 
 //	static int bank=0;
 //	static int base=0x40000;

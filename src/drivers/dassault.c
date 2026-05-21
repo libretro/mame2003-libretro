@@ -126,7 +126,7 @@ Stephh's notes (based on the games M68000 code and some tests) :
 VIDEO_START( dassault );
 VIDEO_UPDATE( dassault );
 
-static data16_t *dassault_ram,*shared_ram,*dassault_ram2;
+static uint16_t *dassault_ram,*shared_ram,*dassault_ram2;
 
 /**********************************************************************************/
 
@@ -833,9 +833,9 @@ static READ16_HANDLER( thndzone_main_skip )
 
 static void init_dassault(void)
 {
-	const data8_t *src = memory_region(REGION_GFX1);
-	data8_t *dst = memory_region(REGION_GFX2);
-	data8_t *tmp = (data8_t *)malloc(0x80000);
+	const uint8_t *src = memory_region(REGION_GFX1);
+	uint8_t *dst = memory_region(REGION_GFX2);
+	uint8_t *tmp = (uint8_t *)malloc(0x80000);
 
 	/* Playfield 4 also has access to the char graphics, make things easier
 	by just copying the chars to both banks (if I just used a different gfx
@@ -853,9 +853,9 @@ static void init_dassault(void)
 
 static void init_thndzone(void)
 {
-	const data8_t *src = memory_region(REGION_GFX1);
-	data8_t *dst = memory_region(REGION_GFX2);
-	data8_t *tmp = (data8_t *)malloc(0x80000);
+	const uint8_t *src = memory_region(REGION_GFX1);
+	uint8_t *dst = memory_region(REGION_GFX2);
+	uint8_t *tmp = (uint8_t *)malloc(0x80000);
 
 	/* Playfield 4 also has access to the char graphics, make things easier
 	by just copying the chars to both banks (if I just used a different gfx

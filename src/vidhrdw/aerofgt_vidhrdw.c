@@ -1,13 +1,13 @@
 #include "driver.h"
 
 
-data16_t *aerofgt_rasterram;
-data16_t *aerofgt_bg1videoram,*aerofgt_bg2videoram;
-data16_t *aerofgt_spriteram1,*aerofgt_spriteram2,*aerofgt_spriteram3;
+uint16_t *aerofgt_rasterram;
+uint16_t *aerofgt_bg1videoram,*aerofgt_bg2videoram;
+uint16_t *aerofgt_spriteram1,*aerofgt_spriteram2,*aerofgt_spriteram3;
 size_t aerofgt_spriteram1_size,aerofgt_spriteram2_size,aerofgt_spriteram3_size;
 
 static unsigned char gfxbank[8];
-static data16_t bg1scrollx,bg1scrolly,bg2scrollx,bg2scrolly;
+static uint16_t bg1scrollx,bg1scrolly,bg2scrollx,bg2scrolly;
 
 static int charpalettebank,spritepalettebank;
 
@@ -142,7 +142,7 @@ VIDEO_START( spinlbrk )
 	/* sprite maps are hardcoded in this game */
 
 	/* enemy sprites use ROM instead of RAM */
-	aerofgt_spriteram2 = (data16_t *)memory_region(REGION_GFX5);
+	aerofgt_spriteram2 = (uint16_t *)memory_region(REGION_GFX5);
 	aerofgt_spriteram2_size = 0x20000;
 
 	/* front sprites are direct maps */
@@ -234,7 +234,7 @@ WRITE16_HANDLER( spinlbrk_gfxbank_w )
 
 WRITE16_HANDLER( turbofrc_gfxbank_w )
 {
-	static data16_t bank[2];
+	static uint16_t bank[2];
 	struct tilemap *tmap = (offset == 0) ? bg1_tilemap : bg2_tilemap;
 
 	data = COMBINE_DATA(&bank[offset]);
@@ -247,7 +247,7 @@ WRITE16_HANDLER( turbofrc_gfxbank_w )
 
 WRITE16_HANDLER( aerofgt_gfxbank_w )
 {
-	static data16_t bank[4];
+	static uint16_t bank[4];
 	struct tilemap *tmap = (offset < 2) ? bg1_tilemap : bg2_tilemap;
 
 	data = COMBINE_DATA(&bank[offset]);

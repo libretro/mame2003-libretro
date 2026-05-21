@@ -398,13 +398,13 @@ static INLINE void K053936GP_copyroz32clip( struct mame_bitmap *dst_bitmap, stru
 }
 
 // adpoted from generic K053936_zoom_draw()
-static void K053936GP_zoom_draw(int chip, data16_t *ctrl, data16_t *linectrl,
+static void K053936GP_zoom_draw(int chip, uint16_t *ctrl, uint16_t *linectrl,
 		struct mame_bitmap *bitmap, const struct rectangle *cliprect, struct tilemap *tilemap,
 		int tilebpp, int blend)
 {
 	struct mame_bitmap *src_bitmap;
 	struct rectangle *src_cliprect;
-	data16_t *lineaddr;
+	uint16_t *lineaddr;
 
 	struct rectangle my_clip;
 	uint32_t startx, starty;
@@ -939,8 +939,8 @@ static INLINE void zdrawgfxzoom32GP( struct mame_bitmap *bitmap, const struct Gf
 /***************************************************************************/
 
 // global system ports access
-data8_t  konamigx_wrport1_0, konamigx_wrport1_1;
-data16_t konamigx_wrport2;
+uint8_t  konamigx_wrport1_0, konamigx_wrport1_1;
+uint16_t konamigx_wrport2;
 
 // frequently used registers
 static int K053246_objset1;
@@ -1209,11 +1209,11 @@ static void gx_wipezbuf(int noshadow)
 #define GX_MAX_OBJECTS (GX_MAX_SPRITES + GX_MAX_LAYERS)
 
 static struct GX_OBJ { int order, offs, code, color; } *gx_objpool;
-static data16_t *gx_spriteram;
+static uint16_t *gx_spriteram;
 static int gx_objdma, gx_primode;
 
 // mirrored K053247 and K054338 settings
-static data16_t *K053247_ram;
+static uint16_t *K053247_ram;
 static struct GfxElement *K053247_gfx;
 static void (*K053247_callback)(int *code,int *color,int *priority);
 static int K053247_dx, K053247_dy;
@@ -2002,7 +2002,7 @@ WRITE16_HANDLER( K053990_martchmp_word_w )
 	int dst_addr, dst_count, dst_skip;
 	int mod_addr, mod_count, mod_skip, mod_offs;
 	int mode, i, element_size = 1;
-	data16_t mod_val, mod_data;
+	uint16_t mod_val, mod_data;
 
 	COMBINE_DATA(prot_data+offset);
 

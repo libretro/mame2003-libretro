@@ -66,9 +66,9 @@ write:
 
 
 
-extern data8_t *vastar_bg1videoram,*vastar_bg2videoram,*vastar_fgvideoram;
-extern data8_t *vastar_bg1_scroll,*vastar_bg2_scroll;
-extern data8_t *vastar_sprite_priority;
+extern uint8_t *vastar_bg1videoram,*vastar_bg2videoram,*vastar_fgvideoram;
+extern uint8_t *vastar_bg1_scroll,*vastar_bg2_scroll;
+extern uint8_t *vastar_sprite_priority;
 
 WRITE_HANDLER( vastar_bg1videoram_w );
 WRITE_HANDLER( vastar_bg2videoram_w );

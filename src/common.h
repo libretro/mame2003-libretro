@@ -415,7 +415,7 @@ void coin_lockout_global_w(int on);  /* Locks out all coin inputs */
 
 /* generic NVRAM handler */
 extern size_t generic_nvram_size;
-extern data8_t *generic_nvram;
+extern uint8_t *generic_nvram;
 extern void nvram_handler_generic_0fill(mame_file *file, int read_or_write);
 extern void nvram_handler_generic_1fill(mame_file *file, int read_or_write);
 

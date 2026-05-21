@@ -30,11 +30,11 @@ TO DO :
 */
 
 #include "driver.h"
-data16_t *oneshot_sprites;
-data16_t *oneshot_bg_videoram;
-data16_t *oneshot_mid_videoram;
-data16_t *oneshot_fg_videoram;
-data16_t *oneshot_scroll;
+uint16_t *oneshot_sprites;
+uint16_t *oneshot_bg_videoram;
+uint16_t *oneshot_mid_videoram;
+uint16_t *oneshot_fg_videoram;
+uint16_t *oneshot_scroll;
 
 int gun_x_p1,gun_y_p1,gun_x_p2,gun_y_p2;
 int gun_x_shift;

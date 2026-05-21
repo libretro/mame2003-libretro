@@ -128,7 +128,7 @@ ROM15.BIN       MX29F1610, SOP44 Surface Mounted Mask ROM /
 
 */
 
-data32_t *silkroad_vidram,*silkroad_vidram2,*silkroad_vidram3, *silkroad_sprram, *silkroad_regs;
+uint32_t *silkroad_vidram,*silkroad_vidram2,*silkroad_vidram3, *silkroad_sprram, *silkroad_regs;
 
 WRITE32_HANDLER( silkroad_fgram_w );
 WRITE32_HANDLER( silkroad_fgram2_w );
@@ -431,7 +431,7 @@ DRIVER_INIT( silkroad )
 	   verified as correct... problem with the original which the gfx
 	   hardware didn't care about? */
 
-	data8_t *src = memory_region(REGION_GFX1)+0x1000000;
+	uint8_t *src = memory_region(REGION_GFX1)+0x1000000;
 	int len = 0x0200000;
 	unsigned char *buffer;
 

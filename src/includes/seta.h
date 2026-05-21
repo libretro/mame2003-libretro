@@ -11,11 +11,11 @@ void seta_coin_lockout_w(int data);
 
 /* Variables and functions defined in vidhrdw/seta.c */
 
-extern data16_t *seta_vram_0, *seta_vctrl_0;
-extern data16_t *seta_vram_2, *seta_vctrl_2;
-extern data16_t *seta_vregs;
+extern uint16_t *seta_vram_0, *seta_vctrl_0;
+extern uint16_t *seta_vram_2, *seta_vctrl_2;
+extern uint16_t *seta_vregs;
 
-extern data16_t *seta_workram; // Needed for zombraid Crosshair hack
+extern uint16_t *seta_workram; // Needed for zombraid Crosshair hack
 
 extern int seta_tiles_offset;
 
@@ -43,7 +43,7 @@ VIDEO_UPDATE( seta_no_layers );
 
 /* Variables and functions defined in vidhrdw/seta2.c */
 
-extern data16_t *seta2_vregs;
+extern uint16_t *seta2_vregs;
 
 WRITE16_HANDLER( seta2_vregs_w );
 
@@ -59,7 +59,7 @@ VIDEO_EOF( seta2 );
 
 /* Variables and functions defined in vidhrdw/ssv.c */
 
-extern data16_t *ssv_scroll;
+extern uint16_t *ssv_scroll;
 
 extern int ssv_special;
 

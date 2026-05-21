@@ -70,7 +70,7 @@ struct {
 	   uint32_t internal_prg[0x100];
 } dsp_reg;
 
-extern data32_t* stv_scu;
+extern uint32_t* stv_scu;
 
 static uint32_t opcode;
 static uint8_t update_mul = 0;

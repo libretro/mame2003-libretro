@@ -58,8 +58,8 @@
  *
  *************************************/
 
-data8_t *itech8_grom_bank;
-data8_t *itech8_display_page;
+uint8_t *itech8_grom_bank;
+uint8_t *itech8_display_page;
 
 
 static uint8_t blitter_data[16];

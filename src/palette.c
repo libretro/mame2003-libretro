@@ -35,11 +35,11 @@ enum
 uint32_t direct_rgb_components[3];
 uint16_t *palette_shadow_table;
 
-data8_t *paletteram;
-data8_t *paletteram_2;	/* use when palette RAM is split in two parts */
-data16_t *paletteram16;
-data16_t *paletteram16_2;
-data32_t *paletteram32;
+uint8_t *paletteram;
+uint8_t *paletteram_2;	/* use when palette RAM is split in two parts */
+uint16_t *paletteram16;
+uint16_t *paletteram16_2;
+uint32_t *paletteram32;
 
 
 
@@ -1821,7 +1821,7 @@ WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBIIII_word_w )
 WRITE16_HANDLER( paletteram16_xrgb_word_w )
 {
 	int r, g, b;
-	data16_t data0, data1;
+	uint16_t data0, data1;
 
 	COMBINE_DATA(paletteram16 + offset);
 
@@ -1844,7 +1844,7 @@ WRITE16_HANDLER( paletteram16_xrgb_word_w )
 WRITE16_HANDLER( paletteram16_xbgr_word_w )
 {
 	int r, g, b;
-	data16_t data0, data1;
+	uint16_t data0, data1;
 
 	COMBINE_DATA(paletteram16 + offset);
 

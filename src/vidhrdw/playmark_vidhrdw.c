@@ -3,9 +3,9 @@
 
 
 
-data16_t *bigtwin_bgvideoram;
+uint16_t *bigtwin_bgvideoram;
 size_t bigtwin_bgvideoram_size;
-data16_t *wbeachvl_videoram1,*wbeachvl_videoram2,*wbeachvl_videoram3;
+uint16_t *wbeachvl_videoram1,*wbeachvl_videoram2,*wbeachvl_videoram3;
 
 static struct mame_bitmap *bgbitmap;
 static int bgscrollx,bgscrolly;
@@ -189,7 +189,7 @@ WRITE16_HANDLER( bigtwin_bgvideoram_w )
 
 WRITE16_HANDLER( bigtwin_scroll_w )
 {
-	static data16_t scroll[6];
+	static uint16_t scroll[6];
 
 
 	data = COMBINE_DATA(&scroll[offset]);
@@ -207,7 +207,7 @@ WRITE16_HANDLER( bigtwin_scroll_w )
 
 WRITE16_HANDLER( wbeachvl_scroll_w )
 {
-	static data16_t scroll[6];
+	static uint16_t scroll[6];
 
 
 	data = COMBINE_DATA(&scroll[offset]);

@@ -166,18 +166,18 @@ Games marked * need dumping / redumping
 
 #include "driver.h"
 
-extern data32_t *ms32_fce00000;
-extern data32_t *ms32_roz_ctrl;
-extern data32_t *ms32_tx_scroll;
-extern data32_t *ms32_bg_scroll;
-extern data32_t *ms32_priram;
-extern data32_t *ms32_palram;
-extern data32_t *ms32_bgram;
-extern data32_t *ms32_rozram;
-extern data32_t *ms32_lineram;
-extern data32_t *ms32_spram;
-extern data32_t *ms32_txram;
-extern data32_t *ms32_mainram;
+extern uint32_t *ms32_fce00000;
+extern uint32_t *ms32_roz_ctrl;
+extern uint32_t *ms32_tx_scroll;
+extern uint32_t *ms32_bg_scroll;
+extern uint32_t *ms32_priram;
+extern uint32_t *ms32_palram;
+extern uint32_t *ms32_bgram;
+extern uint32_t *ms32_rozram;
+extern uint32_t *ms32_lineram;
+extern uint32_t *ms32_spram;
+extern uint32_t *ms32_txram;
+extern uint32_t *ms32_mainram;
 
 WRITE32_HANDLER( ms32_brightness_w );
 WRITE32_HANDLER( ms32_palram_w );
@@ -197,11 +197,11 @@ WRITE32_HANDLER( ms32_gfxctrl_w );
 VIDEO_START( ms32 );
 VIDEO_UPDATE( ms32 );
 
-static data32_t *ms32_fc000000;
+static uint32_t *ms32_fc000000;
 
-static data32_t *ms32_mahjong_input_select;
+static uint32_t *ms32_mahjong_input_select;
 
-static data32_t to_main;
+static uint32_t to_main;
 
 /********** READ INPUTS **********/
 
@@ -2292,7 +2292,7 @@ static DRIVER_INIT (47pie2)
 
 static DRIVER_INIT (tp2m32)
 {
-	data32_t *pROM = (data32_t *)memory_region(REGION_CPU1);
+	uint32_t *pROM = (uint32_t *)memory_region(REGION_CPU1);
 	/* fix SBR register */
 	pROM[0x1b848/4] &= 0x0000ffff;
 
@@ -2301,7 +2301,7 @@ static DRIVER_INIT (tp2m32)
 
 static DRIVER_INIT (f1superb)
 {
-	data32_t *pROM = (data32_t *)memory_region(REGION_CPU1);
+	uint32_t *pROM = (uint32_t *)memory_region(REGION_CPU1);
 	pROM[0x19d04/4]=0x167a021a; // bne->br  : sprite Y offset table is always copied to RAM
 	init_ss92046_01();
 }

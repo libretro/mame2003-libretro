@@ -35,7 +35,7 @@ WRITE_HANDLER( soundlatch_w )
 
 WRITE16_HANDLER( soundlatch_word_w )
 {
-	static data16_t word;
+	static uint16_t word;
 	COMBINE_DATA(&word);
 
 	/* make all the CPUs synchronize, and only AFTER that write the new command to the latch */
@@ -81,7 +81,7 @@ WRITE_HANDLER( soundlatch2_w )
 
 WRITE16_HANDLER( soundlatch2_word_w )
 {
-	static data16_t word;
+	static uint16_t word;
 	COMBINE_DATA(&word);
 
 	/* make all the CPUs synchronize, and only AFTER that write the new command to the latch */
@@ -127,7 +127,7 @@ WRITE_HANDLER( soundlatch3_w )
 
 WRITE16_HANDLER( soundlatch3_word_w )
 {
-	static data16_t word;
+	static uint16_t word;
 	COMBINE_DATA(&word);
 
 	/* make all the CPUs synchronize, and only AFTER that write the new command to the latch */
@@ -173,7 +173,7 @@ WRITE_HANDLER( soundlatch4_w )
 
 WRITE16_HANDLER( soundlatch4_word_w )
 {
-	static data16_t word;
+	static uint16_t word;
 	COMBINE_DATA(&word);
 
 	/* make all the CPUs synchronize, and only AFTER that write the new command to the latch */

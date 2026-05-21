@@ -67,7 +67,7 @@ unsigned char statriv2_default_eeprom[256] = {
 };
 
 
-data8_t *statriv2_videoram;
+uint8_t *statriv2_videoram;
 static struct tilemap* statriv2_tilemap;
 
 /* Video Related, move to vidhrdw later */
@@ -137,9 +137,9 @@ static NVRAM_HANDLER (statriv2)
 }
 
 
-static data8_t  question_offset_low;
-static data8_t  question_offset_med;
-static data8_t  question_offset_high;
+static uint8_t  question_offset_low;
+static uint8_t  question_offset_med;
+static uint8_t  question_offset_high;
 
 static WRITE_HANDLER ( question_offset_low_w )
 {
@@ -158,7 +158,7 @@ static WRITE_HANDLER ( question_offset_high_w )
 
 static READ_HANDLER (statriv2_questions_read)
 {
-	data8_t *question_data    = memory_region       ( REGION_USER1 );
+	uint8_t *question_data    = memory_region       ( REGION_USER1 );
 	int offs;
 
 	question_offset_low++;
@@ -230,7 +230,7 @@ static READ_HANDLER (statriv2_questions_read)
 
 static READ_HANDLER (supertr2_questions_read)
 {
-	data8_t *question_data = memory_region( REGION_USER1 );
+	uint8_t *question_data = memory_region( REGION_USER1 );
 	int offs;
 	int XORval;
 

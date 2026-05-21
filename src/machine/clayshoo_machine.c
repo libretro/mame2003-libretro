@@ -10,8 +10,8 @@
 #include "machine/8255ppi.h"
 
 
-static data8_t input_port_select;
-static data8_t analog_port_val;
+static uint8_t input_port_select;
+static uint8_t analog_port_val;
 
 
 /*************************************
@@ -26,12 +26,12 @@ static WRITE_HANDLER( input_port_select_w )
 }
 
 
-static data8_t difficulty_input_port_r(int bit)
+static uint8_t difficulty_input_port_r(int bit)
 {
-	data8_t ret = 0;
+	uint8_t ret = 0;
 
 	/* read fake port and remap the buttons to 2 bits */
-	data8_t	raw = readinputport(6);
+	uint8_t	raw = readinputport(6);
 
 	if (raw & (1 << (bit + 1)))
 		ret = 0x03;		/* expert */
@@ -46,7 +46,7 @@ static data8_t difficulty_input_port_r(int bit)
 
 static READ_HANDLER( input_port_r )
 {
-	data8_t ret = 0;
+	uint8_t ret = 0;
 
 
 	switch (input_port_select)

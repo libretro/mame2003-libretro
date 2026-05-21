@@ -26,7 +26,7 @@ WRITE16_HANDLER( vaportra_control_2_w );
 WRITE16_HANDLER( vaportra_palette_24bit_rg_w );
 WRITE16_HANDLER( vaportra_palette_24bit_b_w );
 
-extern data16_t *vaportra_pf1_data,*vaportra_pf2_data,*vaportra_pf3_data,*vaportra_pf4_data;
+extern uint16_t *vaportra_pf1_data,*vaportra_pf2_data,*vaportra_pf3_data,*vaportra_pf4_data;
 
 /******************************************************************************/
 

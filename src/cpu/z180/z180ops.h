@@ -69,7 +69,7 @@ static INLINE void z180_mmu( void )
  * Read a byte from given memory location
  ***************************************************************/
 #define RM(addr)	cpu_readmem20(MMU_REMAP_ADDR(addr))
-data8_t cpu_readmemz180(offs_t offset)
+uint8_t cpu_readmemz180(offs_t offset)
 {
 	return RM(offset);
 }
@@ -78,7 +78,7 @@ data8_t cpu_readmemz180(offs_t offset)
  * Write a byte to given memory location
  ***************************************************************/
 #define WM(addr,value) cpu_writemem20(MMU_REMAP_ADDR(addr),value)
-void cpu_writememz180(offs_t offset, data8_t data)
+void cpu_writememz180(offs_t offset, uint8_t data)
 {
 	WM(offset, data);
 }

@@ -3,12 +3,12 @@
 
 #include "driver.h"
 
-extern data16_t *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
+extern uint16_t *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
 static struct tilemap *pgm_tx_tilemap, *pgm_bg_tilemap;
 static uint16_t *sprite_bitmap;
-static data16_t *pgm_spritebufferram; // buffered spriteram
+static uint16_t *pgm_spritebufferram; // buffered spriteram
 
-extern data8_t *pgm_sprite_a_region;   /* = memory_region       ( REGION_GFX4 ); */
+extern uint8_t *pgm_sprite_a_region;   /* = memory_region       ( REGION_GFX4 ); */
 extern size_t	pgm_sprite_a_region_allocate;
 
 /* Sprites - These are a pain! */
@@ -18,15 +18,15 @@ static void pgm_drawsprite(int wide, int high, int xpos, int ypos, int palt, int
 {
 	int xcnt, ycnt, offset, xdrawpos, ydrawpos;
 
-	data8_t *bdata    = memory_region       ( REGION_GFX4 );
+	uint8_t *bdata    = memory_region       ( REGION_GFX4 );
 	size_t  bdatasize = memory_region_length( REGION_GFX4 )-1;
-	data8_t *adata    = pgm_sprite_a_region;
+	uint8_t *adata    = pgm_sprite_a_region;
 	size_t  adatasize = pgm_sprite_a_region_allocate-1;
 
-	data16_t *dest;
-	data16_t msk;
+	uint16_t *dest;
+	uint16_t msk;
 
-	data32_t aoffset;
+	uint32_t aoffset;
 	int draw;
 
 	aoffset = (bdata[(boffset+3) & bdatasize] << 24) | (bdata[(boffset+2) & bdatasize] << 16) | (bdata[(boffset+1) & bdatasize] << 8) | (bdata[(boffset+0) & bdatasize] << 0);

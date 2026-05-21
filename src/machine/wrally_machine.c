@@ -9,7 +9,7 @@
 
 #include "driver.h"
 
-data16_t *wrally_encr_table[2];
+uint16_t *wrally_encr_table[2];
 
 /***************************************************************************
 
@@ -145,8 +145,8 @@ DRIVER_INIT( wrally )
 	int i;
 
 	/* recreate encryption tables on start up */
-	wrally_encr_table[0] = (data16_t *)auto_malloc(0x10000*2);
-	wrally_encr_table[1] = (data16_t *)auto_malloc(0x10000*2);
+	wrally_encr_table[0] = (uint16_t *)auto_malloc(0x10000*2);
+	wrally_encr_table[1] = (uint16_t *)auto_malloc(0x10000*2);
 	for (i = 0; i < 0x10000; i++){
 		wrally_encr_table[0][i] = wrally_decode_vram(i);
 		wrally_encr_table[1][i] = wrally_decode_vram(i);

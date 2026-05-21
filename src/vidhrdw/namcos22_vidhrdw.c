@@ -70,9 +70,9 @@ static struct Matrix
 } *mpMatrix;
 
 static int mPtRomSize;
-static const data8_t *mpPolyH;
-static const data8_t *mpPolyM;
-static const data8_t *mpPolyL;
+static const uint8_t *mpPolyH;
+static const uint8_t *mpPolyM;
+static const uint8_t *mpPolyL;
 
 static int32_t
 GetPolyData( int32_t addr )
@@ -108,25 +108,25 @@ static struct GfxLayout cg_layout =
 	64*16
 }; /* cg_layout */
 
-data32_t *namcos22_cgram;
-data32_t *namcos22_textram;
-data32_t *namcos22_polygonram;
-data32_t *namcos22_gamma;
+uint32_t *namcos22_cgram;
+uint32_t *namcos22_textram;
+uint32_t *namcos22_polygonram;
+uint32_t *namcos22_gamma;
 
 static int cgsomethingisdirty;
 static unsigned char *cgdirty;
 static unsigned char *dirtypal;
 static struct tilemap *tilemap;
 
-static data8_t
-nthbyte( const data32_t *pSource, int offs )
+static uint8_t
+nthbyte( const uint32_t *pSource, int offs )
 {
 	pSource += offs/4;
 	return (pSource[0]<<((offs&3)*8))>>24;
 }
 
-static data16_t
-nthword( const data32_t *pSource, int offs )
+static uint16_t
+nthword( const uint32_t *pSource, int offs )
 {
 	pSource += offs/2;
 	return (pSource[0]<<((offs&1)*16))>>16;
@@ -134,7 +134,7 @@ nthword( const data32_t *pSource, int offs )
 
 static void TextTilemapGetInfo( int tile_index )
 {
-	data16_t data = nthword( namcos22_textram,tile_index );
+	uint16_t data = nthword( namcos22_textram,tile_index );
 	/**
 	 * xxxx------------ palette select
 	 * ----xx---------- flip
@@ -312,8 +312,8 @@ DrawSprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 	int i;
 	int deltax, deltay;
 	int color,flipx,flipy;
-	data32_t xypos, size, attrs, code;
-	const data32_t *pSource, *pPal;
+	uint32_t xypos, size, attrs, code;
+	const uint32_t *pSource, *pPal;
 	int numcols, numrows, row, col;
 	int xpos, ypos, tile;
 	int num_sprites;
@@ -466,7 +466,7 @@ static void
 DrawTextLayer( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	unsigned i;
-	data32_t data;
+	uint32_t data;
 
 	if( cgsomethingisdirty )
 	{
@@ -1350,7 +1350,7 @@ READ32_HANDLER( namcos22_gamma_r )
  */
 WRITE32_HANDLER( namcos22_gamma_w )
 {
-	data32_t old = namcos22_gamma[offset];
+	uint32_t old = namcos22_gamma[offset];
 	COMBINE_DATA( &namcos22_gamma[offset] );
 	if( old!=namcos22_gamma[offset] )
 	{

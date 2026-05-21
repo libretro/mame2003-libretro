@@ -33,9 +33,9 @@
  *************************************/
 
 static uint8_t which_input;
-static data16_t *mo_command;
+static uint16_t *mo_command;
 
-static data16_t *bslapstic_base;
+static uint16_t *bslapstic_base;
 static void *bslapstic_bank0;
 static uint8_t bslapstic_bank;
 static uint8_t bslapstic_primed;

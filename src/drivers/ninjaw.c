@@ -159,7 +159,7 @@ VIDEO_UPDATE( ninjaw );
 static uint16_t cpua_ctrl = 0xff;
 
 static size_t sharedram_size;
-static data16_t *sharedram;
+static uint16_t *sharedram;
 
 
 static READ16_HANDLER( sharedram_r )

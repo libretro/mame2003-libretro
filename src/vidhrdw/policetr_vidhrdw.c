@@ -17,7 +17,7 @@
 
 
 /* local variables */
-static data32_t palette_offset;
+static uint32_t palette_offset;
 static uint8_t palette_index;
 static uint8_t palette_data[3];
 

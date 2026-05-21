@@ -2,8 +2,8 @@
 #include "vidhrdw/generic.h"
 #include "tilemap.h"
 
-data16_t *xorworld_videoram;
-data16_t *xorworld_spriteram;
+uint16_t *xorworld_videoram;
+uint16_t *xorworld_spriteram;
 
 static struct tilemap *screen;
 

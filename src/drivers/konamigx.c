@@ -128,14 +128,14 @@ WRITE32_HANDLER( konamigx_555_palette_w );
 WRITE32_HANDLER( konamigx_555_palette2_w );
 WRITE32_HANDLER( konamigx_tilebank_w );
 
-data32_t *gx_psacram, *gx_subpaletteram32;
+uint32_t *gx_psacram, *gx_subpaletteram32;
 WRITE32_HANDLER( konamigx_t1_psacmap_w );
 WRITE32_HANDLER( konamigx_t4_psacmap_w );
 
 int konamigx_cfgport;
 
-static data32_t *gx_workram; /* workram pointer for ESC protection fun */
-static data16_t *gx_sndram;
+static uint32_t *gx_workram; /* workram pointer for ESC protection fun */
+static uint16_t *gx_sndram;
 static int gx_rdport1_3, gx_syncen;
 
 static void *dmadelay_timer;
@@ -502,7 +502,7 @@ static READ32_HANDLER( eeprom_r )
 
 static WRITE32_HANDLER( eeprom_w )
 {
-	data32_t odata;
+	uint32_t odata;
 
 	if (!(mem_mask & 0xff000000))
 	{
@@ -600,7 +600,7 @@ static int suspension_active, resume_trigger;
 
 static READ32_HANDLER(waitskip_r)
 {
-	data32_t data = gx_workram[waitskip.offs+offset];
+	uint32_t data = gx_workram[waitskip.offs+offset];
 	mem_mask = ~mem_mask;
 
 	if (activecpu_get_pc() == waitskip.pc && (data & mem_mask) == (waitskip.data & mem_mask))
@@ -775,12 +775,12 @@ static INTERRUPT_GEN(konamigx_hbinterrupt)
 /**********************************************************************************/
 /* sound communication handlers */
 
-static data8_t sndto000[16], sndto020[16];	/* read/write split mapping */
+static uint8_t sndto000[16], sndto020[16];	/* read/write split mapping */
 static int snd020_hack;
 
 static READ32_HANDLER( sound020_r )
 {
-	data32_t reg, MSW, LSW, rv = 0;
+	uint32_t reg, MSW, LSW, rv = 0;
 
 	reg = offset << 1;
 
@@ -976,14 +976,14 @@ static READ32_HANDLER( gx6bppspr_r )
 
 static READ32_HANDLER( type1_roz_r1 )
 {
-	data32_t *ROM = (data32_t *)memory_region(REGION_GFX3);
+	uint32_t *ROM = (uint32_t *)memory_region(REGION_GFX3);
 
 	return ROM[offset];
 }
 
 static READ32_HANDLER( type1_roz_r2 )
 {
-	data32_t *ROM = (data32_t *)memory_region(REGION_GFX3);
+	uint32_t *ROM = (uint32_t *)memory_region(REGION_GFX3);
 
 	ROM += (0x600000/2);
 
@@ -1235,10 +1235,10 @@ static MEMORY_WRITE32_START( type1writemem )
 	{ 0xdd0000, 0xdd00ff, MWA32_NOP },		// LAN board
 	{ 0xdda000, 0xddafff, adc0834_w },
 	{ 0xdde000, 0xdde003, type1_cablamps_w },
-	{ 0xe00000, 0xe0001f, MWA32_RAM, (data32_t**)&K053936_1_ctrl },
+	{ 0xe00000, 0xe0001f, MWA32_RAM, (uint32_t**)&K053936_1_ctrl },
 	{ 0xe20000, 0xe2000f, MWA32_NOP },
 	{ 0xe40000, 0xe40003, MWA32_NOP },
-	{ 0xe80000, 0xe81fff, MWA32_RAM, (data32_t**)&K053936_1_linectrl },
+	{ 0xe80000, 0xe81fff, MWA32_RAM, (uint32_t**)&K053936_1_linectrl },
 	{ 0xec0000, 0xedffff, konamigx_t1_psacmap_w, &gx_psacram },
 	{ 0xf80000, 0xf80fff, MWA32_RAM },
 	{ 0xfc0000, 0xfc00ff, MWA32_RAM },
@@ -1284,10 +1284,10 @@ static MEMORY_WRITE32_START( type3writemem )
 	{ 0xd80000, 0xd800ff, K054338_long_w },
 	{ 0xda0000, 0xda1fff, K056832_ram_long_w },
 	{ 0xd90000, 0xd97fff, MWA32_RAM },
-	{ 0xe00000, 0xe0001f, MWA32_RAM, (data32_t**)&K053936_1_ctrl },
+	{ 0xe00000, 0xe0001f, MWA32_RAM, (uint32_t**)&K053936_1_ctrl },
 	{ 0xe20000, 0xe20003, MWA32_NOP },
 	{ 0xe40000, 0xe40003, MWA32_NOP },
-	{ 0xe60000, 0xe60fff, MWA32_RAM, (data32_t**)&K053936_1_linectrl },
+	{ 0xe60000, 0xe60fff, MWA32_RAM, (uint32_t**)&K053936_1_linectrl },
 	{ 0xe80000, 0xe87fff, konamigx_555_palette_w, &paletteram32 }, 	// main monitor palette (twice as large as reality)
 	{ 0xea0000, 0xea3fff, konamigx_555_palette2_w, &gx_subpaletteram32 }, // sub monitor palette
 	{ 0xf00000, 0xf07fff, MWA32_RAM },
@@ -1333,10 +1333,10 @@ static MEMORY_WRITE32_START( type4writemem )
 	{ 0xd80000, 0xd800ff, K054338_long_w },
 	{ 0xd90000, 0xd97fff, MWA32_RAM },
 	{ 0xda0000, 0xda1fff, K056832_ram_long_w },
-	{ 0xe00000, 0xe0001f, MWA32_RAM, (data32_t**)&K053936_1_ctrl },
+	{ 0xe00000, 0xe0001f, MWA32_RAM, (uint32_t**)&K053936_1_ctrl },
 	{ 0xe20000, 0xe20003, MWA32_NOP },
 	{ 0xe40000, 0xe40003, MWA32_NOP },
-	{ 0xe60000, 0xe60fff, MWA32_RAM, (data32_t**)&K053936_1_linectrl },  // 29C & 29G (PSAC2 line control)
+	{ 0xe60000, 0xe60fff, MWA32_RAM, (uint32_t**)&K053936_1_linectrl },  // 29C & 29G (PSAC2 line control)
 	{ 0xe80000, 0xe8ffff, konamigx_palette_w, &paletteram32 }, // 11G/13G/15G (main screen palette RAM) (twice as large as reality)
 	{ 0xea0000, 0xea7fff, konamigx_palette2_w, &gx_subpaletteram32 }, // 5G/7G/9G (sub screen palette RAM)
 	{ 0xf00000, 0xf07fff, konamigx_t4_psacmap_w, &gx_psacram },	// PSAC2 tilemap
@@ -1347,7 +1347,7 @@ MEMORY_END
 
 static READ16_HANDLER( dual539_r )
 {
-	data16_t ret = 0;
+	uint16_t ret = 0;
 
 	if (ACCESSING_LSB16)
 		ret |= K054539_1_r(offset);
@@ -3289,7 +3289,7 @@ static DRIVER_INIT(konamigx)
 
 	else if (!strcmp(Machine->gamedrv->name, "tkmmpzdm"))
 	{
-		data32_t *rom = (data32_t*)memory_region(REGION_CPU1);
+		uint32_t *rom = (uint32_t*)memory_region(REGION_CPU1);
 
 		// The display is initialized after POST but the copyright screen disabled
 		// planes B,C,D and didn't bother restoring them. I've spent a good

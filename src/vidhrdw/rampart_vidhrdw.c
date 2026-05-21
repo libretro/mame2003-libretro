@@ -17,7 +17,7 @@
  *
  *************************************/
 
-data16_t *rampart_bitmap;
+uint16_t *rampart_bitmap;
 
 
 
@@ -198,7 +198,7 @@ void rampart_bitmap_render(struct mame_bitmap *bitmap, const struct rectangle *c
 	for (y = 0; y < ydim; y++)
 		if (pfdirty[y])
 		{
-			const data16_t *src = &rampart_bitmap[256 * y];
+			const uint16_t *src = &rampart_bitmap[256 * y];
 			uint8_t scanline[512];
 			uint8_t *dst = scanline;
 

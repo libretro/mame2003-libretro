@@ -11,9 +11,9 @@
 
 
 
-data8_t *citycon_videoram;
-data8_t *citycon_linecolor;
-data8_t *citycon_scroll;
+uint8_t *citycon_videoram;
+uint8_t *citycon_linecolor;
+uint8_t *citycon_scroll;
 
 static int bg_image;
 static struct tilemap *bg_tilemap,*fg_tilemap;
@@ -42,7 +42,7 @@ static void get_fg_tile_info(int tile_index)
 
 static void get_bg_tile_info(int tile_index)
 {
-	data8_t *rom = memory_region(REGION_GFX4);
+	uint8_t *rom = memory_region(REGION_GFX4);
 	int code = rom[0x1000 * bg_image + tile_index];
 	SET_TILE_INFO(
 			3 + bg_image,

@@ -7,10 +7,10 @@
 
 static struct tilemap *wgp_piv_tilemap[3];
 
-data16_t *wgp_spritemap;
+uint16_t *wgp_spritemap;
 size_t wgp_spritemap_size;
-data16_t *wgp_pivram;
-data16_t *wgp_piv_ctrlram;
+uint16_t *wgp_pivram;
+uint16_t *wgp_piv_ctrlram;
 
 static uint16_t wgp_piv_ctrl_reg;
 static uint16_t wgp_piv_zoom[3],wgp_piv_scrollx[3],wgp_piv_scrolly[3];

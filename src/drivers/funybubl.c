@@ -16,7 +16,7 @@ banking might not be 100%
 
 #include "driver.h"
 
-data8_t* banked_videoram;
+uint8_t* banked_videoram;
 
 
 
@@ -35,7 +35,7 @@ static WRITE_HANDLER ( bank2_w )
 		cpu_setbank(2,&rom[0x10000+0x4000*(data&0x3f)]);
 }
 
-static data8_t *funybubl_paletteram;
+static uint8_t *funybubl_paletteram;
 
 
 /* wrong i guess */

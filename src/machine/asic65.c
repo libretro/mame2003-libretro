@@ -185,7 +185,7 @@ READ16_HANDLER( asic65_r )
 {
 	int command = (asic65_command < MAX_COMMANDS) ? command_map[asic65_type][asic65_command] : OP_UNKNOWN;
 	int64_t element, result64 = 0;
-	data16_t result = 0;
+	uint16_t result = 0;
 
 	/* update results */
 	switch (command)

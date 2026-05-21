@@ -1,4 +1,4 @@
-extern data16_t *crshrace_videoram1,*crshrace_videoram2;
+extern uint16_t *crshrace_videoram1,*crshrace_videoram2;
 
 WRITE16_HANDLER( crshrace_videoram1_w );
 WRITE16_HANDLER( crshrace_videoram2_w );

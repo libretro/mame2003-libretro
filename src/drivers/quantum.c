@@ -154,9 +154,9 @@ MEMORY_END
 MEMORY_WRITE16_START( writemem )
 	{ 0x000000, 0x013fff, MWA16_ROM },
 	{ 0x018000, 0x01cfff, MWA16_RAM },
-	{ 0x800000, 0x801fff, MWA16_RAM, (data16_t **)&vectorram, &vectorram_size },
+	{ 0x800000, 0x801fff, MWA16_RAM, (uint16_t **)&vectorram, &vectorram_size },
 	{ 0x840000, 0x84003f, pokey_word_w },
-	{ 0x900000, 0x9001ff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x900000, 0x9001ff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x950000, 0x95001f, quantum_colorram_w },
 	{ 0x958000, 0x958001, led_w },
 	{ 0x960000, 0x960001, MWA16_NOP },	/* enable NVRAM? */

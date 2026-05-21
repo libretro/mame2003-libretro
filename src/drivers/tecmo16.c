@@ -22,11 +22,11 @@ buttons 1 and 2 during P.O.S.T.
 #include "vidhrdw/generic.h"
 
 
-extern data16_t *tecmo16_videoram;
-extern data16_t *tecmo16_colorram;
-extern data16_t *tecmo16_videoram2;
-extern data16_t *tecmo16_colorram2;
-extern data16_t *tecmo16_charram;
+extern uint16_t *tecmo16_videoram;
+extern uint16_t *tecmo16_colorram;
+extern uint16_t *tecmo16_videoram2;
+extern uint16_t *tecmo16_colorram2;
+extern uint16_t *tecmo16_charram;
 
 WRITE16_HANDLER( tecmo16_videoram_w );
 WRITE16_HANDLER( tecmo16_colorram_w );

@@ -4,16 +4,16 @@
 //int sys16_sh_shadowpal;
 //int sys16_MaxShadowColors;
 
-data16_t *sys16_workingram;
-data16_t *sys16_workingram2;
-data16_t *sys16_extraram;
-data16_t *sys16_extraram2;
-data16_t *sys16_extraram3;
-data16_t *sys16_extraram4;
+uint16_t *sys16_workingram;
+uint16_t *sys16_workingram2;
+uint16_t *sys16_extraram;
+uint16_t *sys16_extraram2;
+uint16_t *sys16_extraram3;
+uint16_t *sys16_extraram4;
 
 static void patch_codeX( int offset, int data, int cpu ){
 	int aligned_offset = offset&0xfffffe;
-	data16_t *mem = (data16_t *)memory_region(REGION_CPU1+cpu);
+	uint16_t *mem = (uint16_t *)memory_region(REGION_CPU1+cpu);
 	int old_word = mem[aligned_offset/2];
 
 	if( offset&1 )
@@ -41,7 +41,7 @@ WRITE16_HANDLER( SYS16_MWA16_WORKINGRAM2_SHARE ){ COMBINE_DATA( &sys16_workingra
 READ16_HANDLER( SYS16_MRA16_ROADRAM_SHARE ){ return sys16_roadram[offset]; }
 WRITE16_HANDLER( SYS16_MWA16_ROADRAM_SHARE ){ COMBINE_DATA( &sys16_roadram[offset] ); }
 READ16_HANDLER( SYS16_CPU3ROM16_r ){
-	const data16_t *pMem = (data16_t *)memory_region(REGION_CPU3);
+	const uint16_t *pMem = (uint16_t *)memory_region(REGION_CPU3);
 	return pMem[offset];
 }
 READ16_HANDLER( SYS16_CPU2_RESET_HACK ){
@@ -112,7 +112,7 @@ void sys16_interleave_sprite_data( int bank_size )
 	free( temp );
 }
 
-void system16_decode(data16_t *dest,data16_t *source,int size,unsigned short *decrypt_data)
+void system16_decode(uint16_t *dest,uint16_t *source,int size,unsigned short *decrypt_data)
 {
 	int offset,data,decode_offset,mask;
 
@@ -710,14 +710,14 @@ unsigned short enduroracer_decrypt_data2[16][256]=
 };
 
 
-void endurob2_decode_data(data16_t *dest,data16_t *source,int size)
+void endurob2_decode_data(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)enduroracer_decrypt_data);
 }
 
 
 // This seems generally correct, but there are errors.
-void endurob2_decode_data2(data16_t *dest,data16_t *source,int size)
+void endurob2_decode_data2(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)enduroracer_decrypt_data2);
 }
@@ -1282,12 +1282,12 @@ unsigned short enduroracer_decrypt_data4[16][256]=
 };
 
 
-void enduror_decode_data(data16_t *dest,data16_t *source,int size)
+void enduror_decode_data(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)enduroracer_decrypt_data3);
 }
 
-void enduror_decode_data2(data16_t *dest,data16_t *source,int size)
+void enduror_decode_data2(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)enduroracer_decrypt_data4);
 }
@@ -2123,17 +2123,17 @@ unsigned short aurail_decrypt_opcode2[16][256]={
 0xc848,0xffff,0xe408,0xffff,0xffff,0xffff,0xfc48,0xffff,0x9008,0x4448,0xffff,0xffff,0xffff,0xffff,0xffff,0xf408}
 };
 
-void aurail_decode_data(data16_t *dest,data16_t *source,int size)
+void aurail_decode_data(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)aurail_decrypt_data);
 }
 
-void aurail_decode_opcode1(data16_t *dest,data16_t *source,int size)
+void aurail_decode_opcode1(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)aurail_decrypt_opcode1);
 }
 
-void aurail_decode_opcode2(data16_t *dest,data16_t *source,int size)
+void aurail_decode_opcode2(uint16_t *dest,uint16_t *source,int size)
 {
 	system16_decode(dest,source,size,(unsigned short *)aurail_decrypt_opcode2);
 }

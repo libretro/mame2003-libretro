@@ -46,10 +46,10 @@ extern int unico_has_lightgun;
 
 /* Variables needed by drivers: */
 
-data16_t *unico_vram_0,   *unico_scrollx_0, *unico_scrolly_0;
-data16_t *unico_vram_1,   *unico_scrollx_1, *unico_scrolly_1;
-data16_t *unico_vram_2,   *unico_scrollx_2, *unico_scrolly_2;
-data32_t *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
+uint16_t *unico_vram_0,   *unico_scrollx_0, *unico_scrolly_0;
+uint16_t *unico_vram_1,   *unico_scrollx_1, *unico_scrolly_1;
+uint16_t *unico_vram_2,   *unico_scrollx_2, *unico_scrolly_2;
+uint32_t *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
 
 
 /***************************************************************************
@@ -65,7 +65,7 @@ data32_t *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
 
 WRITE16_HANDLER( unico_palette_w )
 {
-	data16_t data1, data2;
+	uint16_t data1, data2;
 	COMBINE_DATA(&paletteram16[offset]);
 	data1 = paletteram16[offset & ~1];
 	data2 = paletteram16[offset |  1];
@@ -77,7 +77,7 @@ WRITE16_HANDLER( unico_palette_w )
 
 WRITE32_HANDLER( unico_palette32_w )
 {
-	data32_t rgb0 = COMBINE_DATA(&paletteram32[offset]);
+	uint32_t rgb0 = COMBINE_DATA(&paletteram32[offset]);
 	palette_set_color( offset,
 		 (rgb0 >> 24) & 0xFC,
 		 (rgb0 >> 16) & 0xFC,
@@ -104,28 +104,28 @@ static struct tilemap *tilemap_##_N_; \
 \
 static void get_tile_info_##_N_(int tile_index) \
 { \
-	data16_t code = unico_vram_##_N_[ 2 * tile_index + 0 ]; \
-	data16_t attr = unico_vram_##_N_[ 2 * tile_index + 1 ]; \
+	uint16_t code = unico_vram_##_N_[ 2 * tile_index + 0 ]; \
+	uint16_t attr = unico_vram_##_N_[ 2 * tile_index + 1 ]; \
 	SET_TILE_INFO(1, code, attr & 0x1f, TILE_FLIPYX( attr >> 5 )) \
 } \
 \
 static void get_tile_info32_##_N_(int tile_index) \
 { \
-	data32_t code = unico_vram32_##_N_[tile_index]; \
+	uint32_t code = unico_vram32_##_N_[tile_index]; \
 	SET_TILE_INFO(1, code >> 16, code & 0x1f, TILE_FLIPYX( code >> 5 )) \
 } \
 \
 WRITE16_HANDLER( unico_vram_##_N_##_w ) \
 { \
-	data16_t old_data	=	unico_vram_##_N_[offset]; \
-	data16_t new_data	=	COMBINE_DATA(&unico_vram_##_N_[offset]); \
+	uint16_t old_data	=	unico_vram_##_N_[offset]; \
+	uint16_t new_data	=	COMBINE_DATA(&unico_vram_##_N_[offset]); \
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_##_N_,offset/2); \
 } \
 \
 WRITE32_HANDLER( unico_vram32_##_N_##_w ) \
 { \
-	data32_t old_data	=	unico_vram32_##_N_[offset]; \
-	data32_t new_data	=	COMBINE_DATA(&unico_vram32_##_N_[offset]); \
+	uint32_t old_data	=	unico_vram32_##_N_[offset]; \
+	uint32_t new_data	=	COMBINE_DATA(&unico_vram32_##_N_[offset]); \
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_##_N_,offset); \
 }
 

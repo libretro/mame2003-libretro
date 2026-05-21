@@ -81,12 +81,12 @@ WRITE16_HANDLER(es5510_dsp_w);
 WRITE16_HANDLER(f3_volume_w);
 WRITE16_HANDLER(f3_es5505_bank_w);
 void f3_68681_reset(void);
-extern data32_t *f3_shared_ram;
+extern uint32_t *f3_shared_ram;
 
 static uint16_t coin_word, frame_counter=0;
 static uint16_t port_sel = 0;
 extern uint16_t groundfx_rotate_ctrl[8];
-static data32_t *groundfx_ram;
+static uint32_t *groundfx_ram;
 
 /***********************************************************
 				COLOR RAM
@@ -125,7 +125,7 @@ static void groundfx_interrupt5(int x)
 				EPROM
 **********************************************************/
 
-static data8_t default_eeprom[128]=
+static uint8_t default_eeprom[128]=
 {
 	0x02,0x01,0x11,0x12,0x01,0x01,0x01,0x00,0x80,0x80,0x30,0x01,0x00,0x00,0x62,0x45,
 	0xe0,0xa0,0xff,0x28,0xff,0xff,0xfa,0xd7,0x33,0x28,0x00,0x00,0x33,0x28,0x00,0x00,
@@ -431,7 +431,7 @@ static struct GfxDecodeInfo groundfx_gfxdecodeinfo[] =
 static MACHINE_INIT( groundfx )
 {
 	/* Sound cpu program loads to 0xc00000 so we use a bank */
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU2);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU2);
 	cpu_setbank(1,&RAM[0x80000]);
 
 	RAM[0]=RAM[0x80000]; /* Stack and Reset vectors */

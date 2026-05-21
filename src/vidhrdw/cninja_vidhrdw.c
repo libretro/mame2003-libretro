@@ -302,7 +302,7 @@ static void robocop2_drawsprites(struct mame_bitmap *bitmap, const struct rectan
 	}
 }
 
-static void mutantf_drawsprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const data16_t *spriteptr, int gfxbank)
+static void mutantf_drawsprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint16_t *spriteptr, int gfxbank)
 {
 	int offs,end,inc;
 

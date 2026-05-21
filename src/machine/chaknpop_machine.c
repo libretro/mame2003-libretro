@@ -9,14 +9,14 @@
 
 #define MCU_INITIAL_SEED	0x81
 
-static data8_t mcu_seed;
-static data8_t mcu_select;
-static data8_t mcu_result;
-static data8_t mcu_wait;
+static uint8_t mcu_seed;
+static uint8_t mcu_select;
+static uint8_t mcu_result;
+static uint8_t mcu_wait;
 
 /* mcu data that is extracted from the real board! */
 /* updated on 2st Jun 2003 */
-static data8_t mcu_data[256] = {
+static uint8_t mcu_data[256] = {
 	0x3a, 0xe6, 0x80, 0xc6, 0x0e, 0xdd, 0x77, 0xfd,
 	0x7e, 0xfe, 0x10, 0x38, 0x10, 0xdd, 0x7e, 0x03,
 	0xc6, 0x08, 0xdd, 0x77, 0x03, 0xdd, 0x7e, 0xff,
@@ -51,7 +51,7 @@ static data8_t mcu_data[256] = {
 	0x10, 0xfc, 0x3e, 0x01, 0x32, 0x5b, 0x81, 0xc9
 };
 
-static void mcu_update_seed(data8_t data)
+static void mcu_update_seed(uint8_t data)
 {
 	if (!(data & 0x80))
 	{
@@ -93,8 +93,8 @@ READ_HANDLER( chaknpop_mcu_portC_r )
 
 WRITE_HANDLER( chaknpop_mcu_portA_w )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
-	data8_t mcu_command;
+	uint8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t mcu_command;
 
 	mcu_command = data + mcu_seed;
 	mcu_result = 0;

@@ -25,9 +25,9 @@
 
 /* Variables that driver has access to: */
 
-data16_t *yunsun16_vram_0,   *yunsun16_vram_1;
-data16_t *yunsun16_scroll_0, *yunsun16_scroll_1;
-data16_t *yunsun16_priority;
+uint16_t *yunsun16_vram_0,   *yunsun16_vram_1;
+uint16_t *yunsun16_scroll_0, *yunsun16_scroll_1;
+uint16_t *yunsun16_priority;
 
 
 /***************************************************************************
@@ -57,8 +57,8 @@ uint32_t yunsun16_tilemap_scan_pages(uint32_t col,uint32_t row,uint32_t num_cols
 
 static void get_tile_info_0(int tile_index)
 {
-	data16_t code = yunsun16_vram_0[ 2 * tile_index + 0 ];
-	data16_t attr = yunsun16_vram_0[ 2 * tile_index + 1 ];
+	uint16_t code = yunsun16_vram_0[ 2 * tile_index + 0 ];
+	uint16_t attr = yunsun16_vram_0[ 2 * tile_index + 1 ];
 	SET_TILE_INFO(
 			TMAP_GFX,
 			code,
@@ -68,8 +68,8 @@ static void get_tile_info_0(int tile_index)
 
 static void get_tile_info_1(int tile_index)
 {
-	data16_t code = yunsun16_vram_1[ 2 * tile_index + 0 ];
-	data16_t attr = yunsun16_vram_1[ 2 * tile_index + 1 ];
+	uint16_t code = yunsun16_vram_1[ 2 * tile_index + 0 ];
+	uint16_t attr = yunsun16_vram_1[ 2 * tile_index + 1 ];
 	SET_TILE_INFO(
 			TMAP_GFX,
 			code,
@@ -79,15 +79,15 @@ static void get_tile_info_1(int tile_index)
 
 WRITE16_HANDLER( yunsun16_vram_0_w )
 {
-	data16_t old_data	=	yunsun16_vram_0[offset];
-	data16_t new_data	=	COMBINE_DATA(&yunsun16_vram_0[offset]);
+	uint16_t old_data	=	yunsun16_vram_0[offset];
+	uint16_t new_data	=	COMBINE_DATA(&yunsun16_vram_0[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_0,offset/2);
 }
 
 WRITE16_HANDLER( yunsun16_vram_1_w )
 {
-	data16_t old_data	=	yunsun16_vram_1[offset];
-	data16_t new_data	=	COMBINE_DATA(&yunsun16_vram_1[offset]);
+	uint16_t old_data	=	yunsun16_vram_1[offset];
+	uint16_t new_data	=	COMBINE_DATA(&yunsun16_vram_1[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_1,offset/2);
 }
 

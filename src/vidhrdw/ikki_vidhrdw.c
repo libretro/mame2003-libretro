@@ -67,7 +67,7 @@ VIDEO_UPDATE( ikki )
 {
 
 	int offs,chr,col,px,py,f,bank,d;
-	data8_t *VIDEOATTR = memory_region( REGION_USER1 );
+	uint8_t *VIDEOATTR = memory_region( REGION_USER1 );
 
 	f = ikki_flipscreen;
 

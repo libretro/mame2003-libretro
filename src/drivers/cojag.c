@@ -65,11 +65,11 @@
  *
  *************************************/
 
-data32_t *jaguar_shared_ram;
-data32_t *jaguar_gpu_ram;
-data32_t *jaguar_gpu_clut;
-data32_t *jaguar_dsp_ram;
-data32_t *jaguar_wave_rom;
+uint32_t *jaguar_shared_ram;
+uint32_t *jaguar_gpu_ram;
+uint32_t *jaguar_gpu_clut;
+uint32_t *jaguar_dsp_ram;
+uint32_t *jaguar_wave_rom;
 uint8_t cojag_is_r3000;
 
 
@@ -80,10 +80,10 @@ uint8_t cojag_is_r3000;
  *
  *************************************/
 
-static data32_t misc_control_data;
+static uint32_t misc_control_data;
 static uint8_t eeprom_enable;
 
-static data32_t *rom_base;
+static uint32_t *rom_base;
 static size_t rom_size;
 
 static struct ide_interface ide_intf =
@@ -317,9 +317,9 @@ static WRITE32_HANDLER( eeprom_data_w )
 	run it until we get back to the spin loop.
 */
 
-static data32_t *gpu_jump_address;
+static uint32_t *gpu_jump_address;
 static uint8_t gpu_command_pending;
-static data32_t gpu_spin_pc;
+static uint32_t gpu_spin_pc;
 
 static void gpu_sync_timer(int param)
 {
@@ -384,7 +384,7 @@ static READ32_HANDLER( gpu_jump_r )
 
 #if ENABLE_SPEEDUP_HACKS
 
-static data32_t *main_speedup;
+static uint32_t *main_speedup;
 static int main_speedup_hits;
 static uint32_t main_speedup_last_cycles;
 static uint32_t main_speedup_max_cycles;
@@ -550,7 +550,7 @@ static MEMORY_WRITE32_START( r3000_writemem )
 	{ 0x12000000, 0x120fffff, MWA32_RAM },	// tested in self-test only?
 	{ 0x14000004, 0x14000007, watchdog_reset32_w },
 	{ 0x16000000, 0x16000003, eeprom_enable_w },
-	{ 0x18000000, 0x18001fff, eeprom_data_w, (data32_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x18000000, 0x18001fff, eeprom_data_w, (uint32_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x1fc00000, 0x1fdfffff, MWA32_ROM, &rom_base, &rom_size },
 MEMORY_END
 
@@ -582,7 +582,7 @@ static MEMORY_WRITE32_START( m68020_writemem )
 	{ 0x000000, 0x7fffff, MWA32_RAM, &jaguar_shared_ram },
 	{ 0x800000, 0x9fffff, MWA32_ROM, &rom_base, &rom_size },
 	{ 0xa00000, 0xa1ffff, MWA32_RAM },
-	{ 0xa20000, 0xa21fff, eeprom_data_w, (data32_t **)&generic_nvram, &generic_nvram_size },
+	{ 0xa20000, 0xa21fff, eeprom_data_w, (uint32_t **)&generic_nvram, &generic_nvram_size },
 	{ 0xa30000, 0xa30003, watchdog_reset32_w },
 	{ 0xa40000, 0xa40003, eeprom_enable_w },
 	{ 0xb70000, 0xb70003, misc_control_w },

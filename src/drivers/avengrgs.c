@@ -66,8 +66,8 @@ VIDEO_START( avengrgs );
 VIDEO_UPDATE( avengrgs );
 VIDEO_STOP(avengrgs);
 
-extern data32_t *avengrgs_vram,*avengrgs_ram1, *avengrgs_ram2;
-static data32_t *avengrgs_ram;
+extern uint32_t *avengrgs_vram,*avengrgs_ram1, *avengrgs_ram2;
+static uint32_t *avengrgs_ram;
 
 /***************************************************************************/
 
@@ -90,7 +90,7 @@ static READ32_HANDLER(test3_r)
 static WRITE32_HANDLER( avengrs_eprom_w )
 {
 	if (mem_mask==0xffff00ff) {
-		data8_t ebyte=(data>>8)&0xff;
+		uint8_t ebyte=(data>>8)&0xff;
 		if (ebyte&0x80) {
 			EEPROM_set_clock_line((ebyte & 0x2) ? ASSERT_LINE : CLEAR_LINE);
 			EEPROM_write_bit(ebyte & 0x1);
@@ -339,7 +339,7 @@ ROM_END
 
 static READ32_HANDLER( avengrgs_speedup_r )
 {
-	data32_t a=avengrgs_ram[0x89a0/4];
+	uint32_t a=avengrgs_ram[0x89a0/4];
 //	logerror("Read %08x\n",activecpu_get_pc());
 	if (activecpu_get_pc()==0x3236 && (a&1)) cpu_spinuntil_int();
 

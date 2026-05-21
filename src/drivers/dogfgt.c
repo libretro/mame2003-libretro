@@ -12,7 +12,7 @@ driver by Nicola Salmoria
 #include "dogfgt.h"
 
 
-static data8_t *sharedram;
+static uint8_t *sharedram;
 
 static READ_HANDLER( sharedram_r )
 {

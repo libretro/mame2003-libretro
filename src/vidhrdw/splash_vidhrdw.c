@@ -10,10 +10,10 @@
 #include "tilemap.h"
 #include "vidhrdw/generic.h"
 
-data16_t *splash_vregs;
-data16_t *splash_videoram;
-data16_t *splash_spriteram;
-data16_t *splash_pixelram;
+uint16_t *splash_vregs;
+uint16_t *splash_videoram;
+uint16_t *splash_spriteram;
+uint16_t *splash_pixelram;
 
 static struct tilemap *screen[2];
 static struct mame_bitmap *screen2;

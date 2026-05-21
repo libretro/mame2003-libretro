@@ -29,7 +29,7 @@ WRITE16_HANDLER( gotcha_gfxbank_select_w );
 WRITE16_HANDLER( gotcha_gfxbank_w );
 WRITE16_HANDLER( gotcha_scroll_w );
 
-extern data16_t *gotcha_fgvideoram,*gotcha_bgvideoram;
+extern uint16_t *gotcha_fgvideoram,*gotcha_bgvideoram;
 
 
 

@@ -12,7 +12,7 @@ enable / disable tilemap bits might be wrong
 
 static struct tilemap *tx_tilemap,*bgbot_tilemap ,*bgtop_tilemap;
 
-data8_t *angelkds_txvideoram, *angelkds_bgbotvideoram, *angelkds_bgtopvideoram;
+uint8_t *angelkds_txvideoram, *angelkds_bgbotvideoram, *angelkds_bgtopvideoram;
 
 /*** Text Layer Tilemap
 

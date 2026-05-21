@@ -41,8 +41,8 @@ Boulderdash use the same graphics chips but are different pcbs.
 #include "cpu/h6280/h6280.h"
 #include "dec0.h"
 
-data16_t *dec0_ram;
-data8_t *robocop_shared_ram;
+uint16_t *dec0_ram;
+uint8_t *robocop_shared_ram;
 
 /******************************************************************************/
 

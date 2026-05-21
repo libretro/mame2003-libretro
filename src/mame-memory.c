@@ -160,7 +160,7 @@ uint8_t *						cpu_bankbase[STATIC_COUNT];		/* array of bank bases */
 int ext_entries = 0;										/* number of entries ext_memory[] entries used */
 struct ExtMemory			ext_memory[MAX_EXT_MEMORY];		/* externally-allocated memory */
 
-static data32_t				unmap_value;					/* unmapped memory value */
+static uint32_t				unmap_value;					/* unmapped memory value */
 
 static opbase_handler		opbasefunc;						/* opcode base override */
 
@@ -377,7 +377,7 @@ void memory_set_context(int activecpu)
 	memory value
 -------------------------------------------------*/
 
-void memory_set_unmap_value(data32_t value)
+void memory_set_unmap_value(uint32_t value)
 {
 	unmap_value = value;
 }
@@ -447,7 +447,7 @@ opbase_handler memory_set_opbase_handler(int cpunum, opbase_handler function)
 	read handler for 8-bit case
 -------------------------------------------------*/
 
-data8_t *install_mem_read_handler(int cpunum, offs_t start, offs_t end, mem_read_handler handler)
+uint8_t *install_mem_read_handler(int cpunum, offs_t start, offs_t end, mem_read_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 8)
@@ -471,7 +471,7 @@ data8_t *install_mem_read_handler(int cpunum, offs_t start, offs_t end, mem_read
 	read handler for 16-bit case
 -------------------------------------------------*/
 
-data16_t *install_mem_read16_handler(int cpunum, offs_t start, offs_t end, mem_read16_handler handler)
+uint16_t *install_mem_read16_handler(int cpunum, offs_t start, offs_t end, mem_read16_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 16)
@@ -495,7 +495,7 @@ data16_t *install_mem_read16_handler(int cpunum, offs_t start, offs_t end, mem_r
 	read handler for 32-bit case
 -------------------------------------------------*/
 
-data32_t *install_mem_read32_handler(int cpunum, offs_t start, offs_t end, mem_read32_handler handler)
+uint32_t *install_mem_read32_handler(int cpunum, offs_t start, offs_t end, mem_read32_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 32)
@@ -519,7 +519,7 @@ data32_t *install_mem_read32_handler(int cpunum, offs_t start, offs_t end, mem_r
 	read handler for 8-bit case
 -------------------------------------------------*/
 
-data8_t *install_mem_write_handler(int cpunum, offs_t start, offs_t end, mem_write_handler handler)
+uint8_t *install_mem_write_handler(int cpunum, offs_t start, offs_t end, mem_write_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 8)
@@ -543,7 +543,7 @@ data8_t *install_mem_write_handler(int cpunum, offs_t start, offs_t end, mem_wri
 	read handler for 16-bit case
 -------------------------------------------------*/
 
-data16_t *install_mem_write16_handler(int cpunum, offs_t start, offs_t end, mem_write16_handler handler)
+uint16_t *install_mem_write16_handler(int cpunum, offs_t start, offs_t end, mem_write16_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 16)
@@ -567,7 +567,7 @@ data16_t *install_mem_write16_handler(int cpunum, offs_t start, offs_t end, mem_
 	read handler for 32-bit case
 -------------------------------------------------*/
 
-data32_t *install_mem_write32_handler(int cpunum, offs_t start, offs_t end, mem_write32_handler handler)
+uint32_t *install_mem_write32_handler(int cpunum, offs_t start, offs_t end, mem_write32_handler handler)
 {
 	/* sanity check */
 	if (cpudata[cpunum].mem.dbits != 32)
@@ -1804,7 +1804,7 @@ void register_banks(void)
 -------------------------------------------------*/
 
 #define READBYTE8(name,abits,lookup,handlist,mask)										\
-data8_t name(offs_t address)															\
+uint8_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1830,7 +1830,7 @@ data8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE16BE(name,abits,lookup,handlist,mask)									\
-data8_t name(offs_t address)															\
+uint8_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1857,7 +1857,7 @@ data8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE16LE(name,abits,lookup,handlist,mask)									\
-data8_t name(offs_t address)															\
+uint8_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1884,7 +1884,7 @@ data8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE32BE(name,abits,lookup,handlist,mask)									\
-data8_t name(offs_t address)															\
+uint8_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1911,7 +1911,7 @@ data8_t name(offs_t address)															\
 }																						\
 
 #define READBYTE32LE(name,abits,lookup,handlist,mask)									\
-data8_t name(offs_t address)															\
+uint8_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1944,7 +1944,7 @@ data8_t name(offs_t address)															\
 -------------------------------------------------*/
 
 #define READWORD16(name,abits,lookup,handlist,mask)										\
-data16_t name(offs_t address)															\
+uint16_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1958,7 +1958,7 @@ data16_t name(offs_t address)															\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMREADEND(*(data16_t *)&cpu_bankbase[entry][address])							\
+		MEMREADEND(*(uint16_t *)&cpu_bankbase[entry][address])							\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -1970,7 +1970,7 @@ data16_t name(offs_t address)															\
 }																						\
 
 #define READWORD32BE(name,abits,lookup,handlist,mask)									\
-data16_t name(offs_t address)															\
+uint16_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -1984,7 +1984,7 @@ data16_t name(offs_t address)															\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMREADEND(*(data16_t *)&cpu_bankbase[entry][WORD_XOR_BE(address)])				\
+		MEMREADEND(*(uint16_t *)&cpu_bankbase[entry][WORD_XOR_BE(address)])				\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -1997,7 +1997,7 @@ data16_t name(offs_t address)															\
 }																						\
 
 #define READWORD32LE(name,abits,lookup,handlist,mask)									\
-data16_t name(offs_t address)															\
+uint16_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -2011,7 +2011,7 @@ data16_t name(offs_t address)															\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMREADEND(*(data16_t *)&cpu_bankbase[entry][WORD_XOR_LE(address)])				\
+		MEMREADEND(*(uint16_t *)&cpu_bankbase[entry][WORD_XOR_LE(address)])				\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -2030,7 +2030,7 @@ data16_t name(offs_t address)															\
 -------------------------------------------------*/
 
 #define READLONG32(name,abits,lookup,handlist,mask)										\
-data32_t name(offs_t address)															\
+uint32_t name(offs_t address)															\
 {																						\
 	uint8_t entry;																		\
 	MEMREADSTART																		\
@@ -2044,7 +2044,7 @@ data32_t name(offs_t address)															\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMREADEND(*(data32_t *)&cpu_bankbase[entry][address])							\
+		MEMREADEND(*(uint32_t *)&cpu_bankbase[entry][address])							\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -2061,7 +2061,7 @@ data32_t name(offs_t address)															\
 -------------------------------------------------*/
 
 #define WRITEBYTE8(name,abits,lookup,handlist,mask)										\
-void name(offs_t address, data8_t data)													\
+void name(offs_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2086,7 +2086,7 @@ void name(offs_t address, data8_t data)													\
 }																						\
 
 #define WRITEBYTE16BE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data8_t data)													\
+void name(offs_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2112,7 +2112,7 @@ void name(offs_t address, data8_t data)													\
 }																						\
 
 #define WRITEBYTE16LE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data8_t data)													\
+void name(offs_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2138,7 +2138,7 @@ void name(offs_t address, data8_t data)													\
 }																						\
 
 #define WRITEBYTE32BE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data8_t data)													\
+void name(offs_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2164,7 +2164,7 @@ void name(offs_t address, data8_t data)													\
 }																						\
 
 #define WRITEBYTE32LE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data8_t data)													\
+void name(offs_t address, uint8_t data)													\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2196,7 +2196,7 @@ void name(offs_t address, data8_t data)													\
 -------------------------------------------------*/
 
 #define WRITEWORD16(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data16_t data)												\
+void name(offs_t address, uint16_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2210,7 +2210,7 @@ void name(offs_t address, data16_t data)												\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMWRITEEND(*(data16_t *)&cpu_bankbase[entry][address] = data)					\
+		MEMWRITEEND(*(uint16_t *)&cpu_bankbase[entry][address] = data)					\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -2221,7 +2221,7 @@ void name(offs_t address, data16_t data)												\
 }																						\
 
 #define WRITEWORD32BE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data16_t data)												\
+void name(offs_t address, uint16_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2235,7 +2235,7 @@ void name(offs_t address, data16_t data)												\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMWRITEEND(*(data16_t *)&cpu_bankbase[entry][WORD_XOR_BE(address)] = data)		\
+		MEMWRITEEND(*(uint16_t *)&cpu_bankbase[entry][WORD_XOR_BE(address)] = data)		\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -2247,7 +2247,7 @@ void name(offs_t address, data16_t data)												\
 }																						\
 
 #define WRITEWORD32LE(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data16_t data)												\
+void name(offs_t address, uint16_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2261,7 +2261,7 @@ void name(offs_t address, data16_t data)												\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMWRITEEND(*(data16_t *)&cpu_bankbase[entry][WORD_XOR_LE(address)] = data)		\
+		MEMWRITEEND(*(uint16_t *)&cpu_bankbase[entry][WORD_XOR_LE(address)] = data)		\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -2279,7 +2279,7 @@ void name(offs_t address, data16_t data)												\
 -------------------------------------------------*/
 
 #define WRITELONG32(name,abits,lookup,handlist,mask)									\
-void name(offs_t address, data32_t data)												\
+void name(offs_t address, uint32_t data)												\
 {																						\
 	uint8_t entry;																		\
 	MEMWRITESTART																		\
@@ -2293,7 +2293,7 @@ void name(offs_t address, data32_t data)												\
 	/* handle banks inline */															\
 	address -= handlist[entry].offset;													\
 	if (entry <= STATIC_RAM)															\
-		MEMWRITEEND(*(data32_t *)&cpu_bankbase[entry][address] = data)					\
+		MEMWRITEEND(*(uint32_t *)&cpu_bankbase[entry][address] = data)					\
 																						\
 	/* fall back to the handler */														\
 	else																				\
@@ -2526,37 +2526,37 @@ GENERATE_PORT_HANDLERS_32BIT_LE(32)
 	safe opcode reading
 -------------------------------------------------*/
 
-data8_t cpu_readop_safe(offs_t offset)
+uint8_t cpu_readop_safe(offs_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_unsafe(offset);
 }
 
-data16_t cpu_readop16_safe(offs_t offset)
+uint16_t cpu_readop16_safe(offs_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop16_unsafe(offset);
 }
 
-data32_t cpu_readop32_safe(offs_t offset)
+uint32_t cpu_readop32_safe(offs_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop32_unsafe(offset);
 }
 
-data8_t cpu_readop_arg_safe(offs_t offset)
+uint8_t cpu_readop_arg_safe(offs_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_arg_unsafe(offset);
 }
 
-data16_t cpu_readop_arg16_safe(offs_t offset)
+uint16_t cpu_readop_arg16_safe(offs_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_arg16_unsafe(offset);
 }
 
-data32_t cpu_readop_arg32_safe(offs_t offset)
+uint32_t cpu_readop_arg32_safe(offs_t offset)
 {
 	activecpu_set_op_base(offset);
 	return cpu_readop_arg32_unsafe(offset);
@@ -2620,13 +2620,13 @@ static READ_HANDLER( mrh8_bad )
 static READ16_HANDLER( mrh16_bad )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory word read from %08X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), mem_mask ^ 0xffff);
-	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return ((data16_t *)cpu_bankbase[STATIC_RAM])[offset];
+	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return ((uint16_t *)cpu_bankbase[STATIC_RAM])[offset];
 	return unmap_value;
 }
 static READ32_HANDLER( mrh32_bad )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory dword read from %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), mem_mask ^ 0xffffffff);
-	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return ((data32_t *)cpu_bankbase[STATIC_RAM])[offset];
+	if (activecpu_address_bits() <= SPARSE_THRESH && unmap_value == 0) return ((uint32_t *)cpu_bankbase[STATIC_RAM])[offset];
 	return unmap_value;
 }
 
@@ -2638,12 +2638,12 @@ static WRITE_HANDLER( mwh8_bad )
 static WRITE16_HANDLER( mwh16_bad )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory word write to %08X = %04X & %04X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*2), data, mem_mask ^ 0xffff);
-	if (activecpu_address_bits() <= SPARSE_THRESH) COMBINE_DATA(&((data16_t *)cpu_bankbase[STATIC_RAM])[offset]);
+	if (activecpu_address_bits() <= SPARSE_THRESH) COMBINE_DATA(&((uint16_t *)cpu_bankbase[STATIC_RAM])[offset]);
 }
 static WRITE32_HANDLER( mwh32_bad )
 {
 	log_cb(RETRO_LOG_DEBUG, LOGPRE "cpu #%d (PC=%08X): unmapped memory dword write to %08X = %08X & %08X\n", cpu_getactivecpu(), activecpu_get_pc(), effective_offset(offset*4), data, mem_mask ^ 0xffffffff);
-	if (activecpu_address_bits() <= SPARSE_THRESH) COMBINE_DATA(&((data32_t *)cpu_bankbase[STATIC_RAM])[offset]);
+	if (activecpu_address_bits() <= SPARSE_THRESH) COMBINE_DATA(&((uint32_t *)cpu_bankbase[STATIC_RAM])[offset]);
 }
 
 static READ_HANDLER( prh8_bad )

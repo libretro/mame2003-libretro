@@ -39,11 +39,11 @@
  *************************************/
 
 /* referenced by the video hardware */
-data8_t dribling_abca;
+uint8_t dribling_abca;
 
-static data8_t dr, ds, sh;
-static data8_t input_mux;
-static data8_t di;
+static uint8_t dr, ds, sh;
+static uint8_t input_mux;
+static uint8_t di;
 
 
 

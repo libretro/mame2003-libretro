@@ -30,52 +30,52 @@ static INLINE void verboselog( int n_level, const char *s_fmt, ... )
 static uint8_t *m_p_n_ram;
 static size_t m_n_ramsize;
 
-static data16_t m_n_mainvolumeleft;
-static data16_t m_n_mainvolumeright;
-static data16_t m_n_reverberationdepthleft;
-static data16_t m_n_reverberationdepthright;
-static data32_t m_n_voiceon;
-static data32_t m_n_voiceoff;
-static data32_t m_n_modulationmode;
-static data32_t m_n_noisemode;
-static data32_t m_n_reverbmode;
-static data32_t m_n_channelonoff;
-static data16_t m_n_reverbworkareastart;
-static data16_t m_n_irqaddress;
-static data16_t m_n_spudata;
-static data16_t m_n_spucontrol;
-static data16_t m_n_spustatus;
-static data16_t m_n_cdvolumeleft;
-static data16_t m_n_cdvolumeright;
-static data16_t m_n_externalvolumeleft;
-static data16_t m_n_externalvolumeright;
-static data16_t m_p_n_volumeleft[ 24 ];
-static data16_t m_p_n_volumeright[ 24 ];
-static data16_t m_p_n_pitch[ 24 ];
-static data16_t m_p_n_address[ 24 ];
-static data16_t m_p_n_attackdecaysustain[ 24 ];
-static data16_t m_p_n_sustainrelease[ 24 ];
-static data16_t m_p_n_adsrvolume[ 24 ];
-static data16_t m_p_n_repeataddress[ 24 ];
-static data32_t m_p_n_effect[ 16 ];
-static data32_t *m_p_n_spuram;
+static uint16_t m_n_mainvolumeleft;
+static uint16_t m_n_mainvolumeright;
+static uint16_t m_n_reverberationdepthleft;
+static uint16_t m_n_reverberationdepthright;
+static uint32_t m_n_voiceon;
+static uint32_t m_n_voiceoff;
+static uint32_t m_n_modulationmode;
+static uint32_t m_n_noisemode;
+static uint32_t m_n_reverbmode;
+static uint32_t m_n_channelonoff;
+static uint16_t m_n_reverbworkareastart;
+static uint16_t m_n_irqaddress;
+static uint16_t m_n_spudata;
+static uint16_t m_n_spucontrol;
+static uint16_t m_n_spustatus;
+static uint16_t m_n_cdvolumeleft;
+static uint16_t m_n_cdvolumeright;
+static uint16_t m_n_externalvolumeleft;
+static uint16_t m_n_externalvolumeright;
+static uint16_t m_p_n_volumeleft[ 24 ];
+static uint16_t m_p_n_volumeright[ 24 ];
+static uint16_t m_p_n_pitch[ 24 ];
+static uint16_t m_p_n_address[ 24 ];
+static uint16_t m_p_n_attackdecaysustain[ 24 ];
+static uint16_t m_p_n_sustainrelease[ 24 ];
+static uint16_t m_p_n_adsrvolume[ 24 ];
+static uint16_t m_p_n_repeataddress[ 24 ];
+static uint32_t m_p_n_effect[ 16 ];
+static uint32_t *m_p_n_spuram;
 
 #define SPU_REG( a ) ( ( a - 0xc00 ) / 4 )
 #define SPU_CHANNEL_REG( a ) ( a / 4 )
 
-static INLINE data32_t psxreadlong( data32_t n_address )
+static INLINE uint32_t psxreadlong( uint32_t n_address )
 {
-	return *( (data32_t *)&m_p_n_ram[ n_address ] );
+	return *( (uint32_t *)&m_p_n_ram[ n_address ] );
 }
 
-static INLINE void psxwritelong( data32_t n_address, data32_t n_data )
+static INLINE void psxwritelong( uint32_t n_address, uint32_t n_data )
 {
-	*( (data32_t *)&m_p_n_ram[ n_address ] ) = n_data;
+	*( (uint32_t *)&m_p_n_ram[ n_address ] ) = n_data;
 }
 
 static void spu_read( uint32_t n_address, int32_t n_size )
 {
-	data32_t n_spuoffset;
+	uint32_t n_spuoffset;
 
 	verboselog( 1, "spu_read( %08x, %08x )\n", n_address, n_size );
 
@@ -91,7 +91,7 @@ static void spu_read( uint32_t n_address, int32_t n_size )
 
 static void spu_write( uint32_t n_address, int32_t n_size )
 {
-	data32_t n_spuoffset;
+	uint32_t n_spuoffset;
 
 	verboselog( 1, "spu_write( %08x, %08x )\n", n_address, n_size );
 

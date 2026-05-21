@@ -256,7 +256,7 @@ static READ_HANDLER ( majs101b_dsw_r )
 }
 
 
-static data8_t suzume_bank;
+static uint8_t suzume_bank;
 
 static READ_HANDLER ( suzume_dsw_r )
 {
@@ -278,7 +278,7 @@ static READ_HANDLER ( suzume_dsw_r )
 
 static WRITE_HANDLER ( suzume_bank_w )
 {
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int address;
 
 	suzume_bank = data;
@@ -294,7 +294,7 @@ logerror("%04x: bank %02x\n",activecpu_get_pc(),data);
 
 static WRITE_HANDLER ( tontonb_bank_w )
 {
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int address;
 
 logerror("%04x: bank %02x\n",activecpu_get_pc(),data);
@@ -312,7 +312,7 @@ logerror("%04x: bank %02x\n",activecpu_get_pc(),data);
 /* bits 5 and 6 seem to affect which Dip Switch to read in 'majs101b' */
 static WRITE_HANDLER ( dynax_bank_w )
 {
-	data8_t *rom = memory_region(REGION_CPU1);
+	uint8_t *rom = memory_region(REGION_CPU1);
 	int address;
 
 //logerror("%04x: bank %02x\n",activecpu_get_pc(),data);

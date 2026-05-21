@@ -57,10 +57,10 @@ Notes:
  * Another function takes as input 2 pairs of (x,y) coordinates, and returns
  * a code reflecting the direction (8 angles) from one point to the other.
  */
-static data8_t avengers_param[4];
+static uint8_t avengers_param[4];
 static int avengers_palette_pen;
-static data8_t *avengers_soundlatch2, avengers_soundstate=0;
-static data8_t avengers_adpcm;
+static uint8_t *avengers_soundlatch2, avengers_soundstate=0;
+static uint8_t avengers_adpcm;
 
 WRITE_HANDLER( avengers_adpcm_w )
 {
@@ -259,7 +259,7 @@ static READ_HANDLER( avengers_protection_r )
 
 static READ_HANDLER( avengers_soundlatch2_r )
 {
-	data8_t data = *avengers_soundlatch2 | avengers_soundstate;
+	uint8_t data = *avengers_soundlatch2 | avengers_soundstate;
 	avengers_soundstate = 0;
 	return(data);
 }

@@ -223,7 +223,7 @@ MACHINE_INIT( pacplus )
 
 MACHINE_INIT( mschamp )
 {
-	data8_t *rom = memory_region(REGION_CPU1) + 0x10000;
+	uint8_t *rom = memory_region(REGION_CPU1) + 0x10000;
 	int bankaddr = ((readinputport(3) & 1) * 0x8000);
 
 	cpu_setbank(1,&rom[bankaddr]);

@@ -2,14 +2,14 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t armedf_vreg;
+uint16_t armedf_vreg;
 
-data16_t *terraf_text_videoram;
-data16_t *armedf_bg_videoram;
-data16_t *armedf_fg_videoram;
-static data16_t armedf_fg_scrollx,armedf_fg_scrolly;
+uint16_t *terraf_text_videoram;
+uint16_t *armedf_bg_videoram;
+uint16_t *armedf_fg_videoram;
+static uint16_t armedf_fg_scrollx,armedf_fg_scrolly;
 
-data16_t terraf_scroll_msb;
+uint16_t terraf_scroll_msb;
 
 static struct tilemap *bg_tilemap, *fg_tilemap, *tx_tilemap;
 
@@ -200,14 +200,14 @@ WRITE16_HANDLER( armedf_fg_scrolly_w )
 
 WRITE16_HANDLER( armedf_bg_scrollx_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(bg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( armedf_bg_scrolly_w )
 {
-	static data16_t scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(bg_tilemap,0,scroll);
 }

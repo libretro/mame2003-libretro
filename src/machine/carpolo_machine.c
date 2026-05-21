@@ -75,15 +75,15 @@
 #define TTL7474_1A_2				11
 
 
-static data8_t ball_screen_collision_cause;
-static data8_t car_ball_collision_x;
-static data8_t car_ball_collision_y;
-static data8_t car_car_collision_cause;
-static data8_t car_goal_collision_cause;
-static data8_t car_ball_collision_cause;
-static data8_t car_border_collision_cause;
-static data8_t priority_0_extension;
-static data8_t last_wheel_value[4];
+static uint8_t ball_screen_collision_cause;
+static uint8_t car_ball_collision_x;
+static uint8_t car_ball_collision_y;
+static uint8_t car_car_collision_cause;
+static uint8_t car_goal_collision_cause;
+static uint8_t car_ball_collision_cause;
+static uint8_t car_border_collision_cause;
+static uint8_t priority_0_extension;
+static uint8_t last_wheel_value[4];
 
 
 static void TTL74148_3S_cb(void)
@@ -118,7 +118,7 @@ static void TTL7474_2U_2_cb(void)
 }
 
 
-void carpolo_generate_ball_screen_interrupt(data8_t cause)
+void carpolo_generate_ball_screen_interrupt(uint8_t cause)
 {
 	ball_screen_collision_cause = cause;
 
@@ -227,7 +227,7 @@ READ_HANDLER( carpolo_interrupt_cause_r )
 
 INTERRUPT_GEN( carpolo_timer_interrupt )
 {
-	data8_t port_value;
+	uint8_t port_value;
 	int player;
 
 
@@ -429,7 +429,7 @@ static READ_HANDLER( pia_0_port_b_r )
 
 static READ_HANDLER( pia_1_port_a_r )
 {
-	data8_t ret;
+	uint8_t ret;
 
 	/* bit 0 - Player 4 steering input (left or right)
 	   bit 1 - Player 3 steering input (left or right)
@@ -452,7 +452,7 @@ static READ_HANDLER( pia_1_port_a_r )
 
 static READ_HANDLER( pia_1_port_b_r )
 {
-	data8_t ret;
+	uint8_t ret;
 
 	/* bit 4 - Player 4 steering input (wheel moving or stopped)
 	   bit 5 - Player 3 steering input (wheel moving or stopped)

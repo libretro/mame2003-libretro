@@ -353,14 +353,14 @@ VIDEO_START( wgp );
 VIDEO_START( wgp2 );
 VIDEO_UPDATE( wgp );
 
-extern data16_t *wgp_spritemap;
+extern uint16_t *wgp_spritemap;
 extern size_t    wgp_spritemap_size;
 
-extern data16_t *wgp_pivram;
+extern uint16_t *wgp_pivram;
 READ16_HANDLER ( wgp_pivram_word_r );
 WRITE16_HANDLER( wgp_pivram_word_w );
 
-extern data16_t *wgp_piv_ctrlram;
+extern uint16_t *wgp_piv_ctrlram;
 READ16_HANDLER ( wgp_piv_ctrl_word_r );
 WRITE16_HANDLER( wgp_piv_ctrl_word_w );
 
@@ -368,7 +368,7 @@ static uint16_t cpua_ctrl = 0xff;
 static uint16_t port_sel=0;
 extern uint16_t wgp_rotate_ctrl[8];
 
-static data16_t *sharedram;
+static uint16_t *sharedram;
 static size_t sharedram_size;
 
 static READ16_HANDLER( sharedram_r )
@@ -1458,7 +1458,7 @@ DRIVER_INIT( wgp )
 #if 0
 	/* Patch for coding error that causes corrupt data in
 	   sprite tilemapping area from $4083c0-847f */
-	data16_t *ROM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *ROM = (uint16_t *)memory_region(REGION_CPU1);
 	ROM[0x25dc / 2] = 0x0602;	// faulty value is 0x0206
 #endif
 
@@ -1475,7 +1475,7 @@ DRIVER_INIT( wgp )
 DRIVER_INIT( wgp2 )
 {
 	/* Code patches to prevent failure in memory checks */
-	data16_t *ROM = (data16_t *)memory_region(REGION_CPU3);
+	uint16_t *ROM = (uint16_t *)memory_region(REGION_CPU3);
 	ROM[0x8008 / 2] = 0x0;
 	ROM[0x8010 / 2] = 0x0;
 

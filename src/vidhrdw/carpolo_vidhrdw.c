@@ -10,8 +10,8 @@
 #include "carpolo.h"
 
 
-data8_t *carpolo_alpharam;
-data8_t *carpolo_spriteram;
+uint8_t *carpolo_alpharam;
+uint8_t *carpolo_spriteram;
 
 
 /* the screen elements' priorties determine their color */
@@ -207,7 +207,7 @@ static void draw_alpha_line(struct mame_bitmap *bitmap, const struct rectangle *
 
 	for (x = 0; x < 32; x++)
 	{
-		data8_t code, col;
+		uint8_t code, col;
 
 		code = carpolo_alpharam[alpha_line * 32 + x] >> 2;
 		col  = carpolo_alpharam[alpha_line * 32 + x] & 0x03;
@@ -577,9 +577,9 @@ static int check_sprite_right_goal_collision(int x1, int y1, int code1, int flip
 
 /* returns 1 for collision with vertical border,
    2 for collision with horizontal border */
-static int check_sprite_border_collision(data8_t x1, data8_t y1, int code1, int flipy1)
+static int check_sprite_border_collision(uint8_t x1, uint8_t y1, int code1, int flipy1)
 {
-	data8_t x,y;
+	uint8_t x,y;
 	int collided = 0;
 
 
@@ -601,15 +601,15 @@ static int check_sprite_border_collision(data8_t x1, data8_t y1, int code1, int 
 		{
 			if ((read_pixel(sprite_border_collision_bitmap, x, y) == Machine->pens[1]))
 			{
-				if (((data8_t)(x1 + x) == LEFT_BORDER) ||
-					((data8_t)(x1 + x) == RIGHT_BORDER))
+				if (((uint8_t)(x1 + x) == LEFT_BORDER) ||
+					((uint8_t)(x1 + x) == RIGHT_BORDER))
 				{
 					collided = 1;
 					break;
 				}
 
-				if (((data8_t)(y1 + y) == TOP_BORDER) ||
-					((data8_t)(y1 + y) == BOTTOM_BORDER))
+				if (((uint8_t)(y1 + y) == TOP_BORDER) ||
+					((uint8_t)(y1 + y) == BOTTOM_BORDER))
 				{
 					collided = 2;
 					break;

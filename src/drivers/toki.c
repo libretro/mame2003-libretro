@@ -23,10 +23,10 @@ for now. Even at 12 this slowdown still happens a little.
 #include "cpu/z80/z80.h"
 #include "sndhrdw/seibu.h"
 
-extern data16_t *toki_background1_videoram16;
-extern data16_t *toki_background2_videoram16;
-extern data16_t *toki_sprites_dataram16;
-extern data16_t *toki_scrollram16;
+extern uint16_t *toki_background1_videoram16;
+extern uint16_t *toki_background2_videoram16;
+extern uint16_t *toki_sprites_dataram16;
+extern uint16_t *toki_scrollram16;
 
 INTERRUPT_GEN( toki_interrupt );
 VIDEO_START( toki );

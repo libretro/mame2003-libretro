@@ -161,8 +161,8 @@ WRITE16_HANDLER( fncywld_pf2_data_w );
 WRITE16_HANDLER( tumblep_control_0_w );
 WRITE16_HANDLER( semicom_soundcmd_w );
 
-extern data16_t *tumblep_pf1_data,*tumblep_pf2_data;
-data16_t* tumblep_mainram;
+extern uint16_t *tumblep_pf1_data,*tumblep_pf2_data;
+uint16_t* tumblep_mainram;
 
 /******************************************************************************/
 
@@ -1117,7 +1117,7 @@ ROM_END
 void tumblep_patch_code(uint16_t offset)
 {
 	/* A hack which enables all Dip Switches effects */
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 	RAM[(offset + 0)/2] = 0x0240;
 	RAM[(offset + 2)/2] = 0xffff;	// andi.w  #$f3ff, D0
 }
@@ -1125,7 +1125,7 @@ void tumblep_patch_code(uint16_t offset)
 
 static void tumblepb_gfx1_decrypt(void)
 {
-	data8_t *rom = memory_region(REGION_GFX1);
+	uint8_t *rom = memory_region(REGION_GFX1);
 	int len = memory_region_length(REGION_GFX1);
 	int i;
 
@@ -1176,7 +1176,7 @@ static DRIVER_INIT( fncywld )
 	#if FNCYWLD_HACK
 	/* This is a hack to allow you to use the extra features
          of the 2 first "Unused" Dip Switch (see notes above). */
-	data16_t *RAM = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *)memory_region(REGION_CPU1);
 	RAM[0x0005fa/2] = 0x4e71;
 	RAM[0x00060a/2] = 0x4e71;
 	#endif
@@ -1187,12 +1187,12 @@ static DRIVER_INIT( fncywld )
 static DRIVER_INIT( htchctch )
 {
 
-//	data16_t *HCROM = (data16_t*)memory_region(REGION_CPU1);
-	data16_t *PROTDATA = (data16_t*)memory_region(REGION_USER1);
+//	uint16_t *HCROM = (uint16_t*)memory_region(REGION_CPU1);
+	uint16_t *PROTDATA = (uint16_t*)memory_region(REGION_USER1);
 	int i;
 	/* simulate RAM initialization done by the protection MCU */
 	/* verified on real hardware */
-//	static data16_t htchctch_mcu68k[] =
+//	static uint16_t htchctch_mcu68k[] =
 //	{
 //		/* moved to protdata.bin file .. */
 //	};

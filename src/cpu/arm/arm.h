@@ -40,7 +40,7 @@ extern const char *arm_info(void *context, int regnum);
 extern unsigned arm_dasm(char *buffer, unsigned pc);
 
 #ifdef MAME_DEBUG
-extern void arm_disasm( char *pBuf, data32_t pc, data32_t opcode );
+extern void arm_disasm( char *pBuf, uint32_t pc, uint32_t opcode );
 #endif
 
 enum

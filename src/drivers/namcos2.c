@@ -458,7 +458,7 @@ $a00000 checks have been seen on the Final Lap boards.
 /* 68000/6809/63705 Shared memory area - DUAL PORT Memory	 */
 /*************************************************************/
 
-static data8_t *namcos2_dpram;	/* 2Kx8 */
+static uint8_t *namcos2_dpram;	/* 2Kx8 */
 
 static void
 GollyGhostUpdateLED_c4( int data )

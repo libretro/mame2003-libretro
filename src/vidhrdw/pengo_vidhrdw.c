@@ -20,7 +20,7 @@ static int gfx_bank;
 static int flipscreen;
 static int xoffsethack;
 static struct tilemap *tilemap;
-data8_t *sprite_bank, *tiles_bankram;
+uint8_t *sprite_bank, *tiles_bankram;
 
 static struct rectangle spritevisiblearea =
 {

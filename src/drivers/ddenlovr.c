@@ -286,7 +286,7 @@ static int blit_draw(int src,int sx,int flags)
 
 static READ_HANDLER( rongrong_gfxrom_r )
 {
-	data8_t *rom	=	memory_region( REGION_GFX1 );
+	uint8_t *rom	=	memory_region( REGION_GFX1 );
 	size_t size		=	memory_region_length( REGION_GFX1 );
 	int address	=	dynax_blit_address;
 
@@ -306,7 +306,7 @@ static READ16_HANDLER( ddenlovr_gfxrom_r )
 	return rongrong_gfxrom_r(offset);
 }
 
-static void blitter_w(int blitter, offs_t offset,data8_t data,int irq_vector)
+static void blitter_w(int blitter, offs_t offset,uint8_t data,int irq_vector)
 {
 	static int dynax_blit_reg[2];
 
@@ -794,7 +794,7 @@ static WRITE16_HANDLER( ddenlovr_coincounter_1_w )
 }
 
 
-static data8_t palram[0x200];
+static uint8_t palram[0x200];
 
 static WRITE_HANDLER( rongrong_palette_w )
 {
@@ -923,7 +923,7 @@ static READ16_HANDLER( unk16_r )
 
 
 
-static data8_t quiz365_select;
+static uint8_t quiz365_select;
 
 READ_HANDLER( quiz365_input_r )
 {
@@ -941,7 +941,7 @@ WRITE_HANDLER( quiz365_select_w )
 }
 
 
-static data8_t rongrong_select2;
+static uint8_t rongrong_select2;
 
 READ_HANDLER( rongrong_input2_r )
 {
@@ -1074,7 +1074,7 @@ static READ16_HANDLER( nettoqc_special_r )
 	return readinputport(2) | (dynax_blitter_irq_flag ? 0x60 : 0x00 );
 }
 
-static data16_t nettoqc_select;
+static uint16_t nettoqc_select;
 
 static WRITE16_HANDLER( nettoqc_select_w )
 {
@@ -1096,7 +1096,7 @@ static READ16_HANDLER( nettoqc_input_r )
 	Writes 67 4c 3a to 200e0b then 19 to 200e0d. Expects to read 51 from 200c03
 */
 
-static data16_t *nettoqc_protection_val;
+static uint16_t *nettoqc_protection_val;
 
 static READ16_HANDLER( nettoqc_protection_r )
 {
@@ -1164,7 +1164,7 @@ MEMORY_END
 								Rong Rong
 ***************************************************************************/
 
-static data8_t rongrong_select;
+static uint8_t rongrong_select;
 
 READ_HANDLER( rongrong_input_r )
 {
@@ -1291,7 +1291,7 @@ static READ_HANDLER( magic_r )
 	return 0x01;
 }
 
-static data8_t mmpanic_select;
+static uint8_t mmpanic_select;
 static WRITE_HANDLER( mmpanic_select_w )
 {
 	mmpanic_select = data;
@@ -1320,7 +1320,7 @@ static WRITE_HANDLER( mmpanic_blitter2_w )
 }
 
 /* A led for each of the 9 buttons */
-static data16_t mmpanic_leds;
+static uint16_t mmpanic_leds;
 
 static void mmpanic_update_leds(void)
 {

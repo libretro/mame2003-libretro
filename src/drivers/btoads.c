@@ -19,8 +19,8 @@
  *
  *************************************/
 
-static data16_t *code_rom;
-static data16_t *main_speedup;
+static uint16_t *code_rom;
+static uint16_t *main_speedup;
 
 static uint8_t main_to_sound_data;
 static uint8_t main_to_sound_ready;
@@ -223,7 +223,7 @@ static MEMORY_WRITE16_START( main_writemem )
 	{ TOBYTE(0x20000380), TOBYTE(0x200003ff), main_sound_w },
 	{ TOBYTE(0x20000400), TOBYTE(0x2000047f), btoads_misc_control_w },
 	{ TOBYTE(0x40000000), TOBYTE(0x4000000f), MWA16_NOP },	/* watchdog? */
-	{ TOBYTE(0x60000000), TOBYTE(0x6003ffff), MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ TOBYTE(0x60000000), TOBYTE(0x6003ffff), MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ TOBYTE(0xa0000000), TOBYTE(0xa03fffff), btoads_vram_fg_display_w, &btoads_vram_fg0 },
 	{ TOBYTE(0xa4000000), TOBYTE(0xa43fffff), btoads_vram_fg_draw_w, &btoads_vram_fg1 },
 	{ TOBYTE(0xa8000000), TOBYTE(0xa87fffff), MWA16_RAM, &btoads_vram_fg_data },

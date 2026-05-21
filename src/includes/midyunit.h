@@ -13,16 +13,16 @@
 
 /*----------- defined in machine/midyunit.c -----------*/
 
-extern data16_t *midyunit_code_rom;
-extern data16_t *midyunit_scratch_ram;
+extern uint16_t *midyunit_code_rom;
+extern uint16_t *midyunit_scratch_ram;
 
-extern data16_t *midyunit_cmos_ram;
+extern uint16_t *midyunit_cmos_ram;
 extern uint32_t 	midyunit_cmos_page;
 
 extern offs_t 	midyunit_speedup_pc;
 extern offs_t 	midyunit_speedup_offset;
 extern offs_t 	midyunit_speedup_spin[3];
-extern data16_t *midyunit_speedup_base;
+extern uint16_t *midyunit_speedup_base;
 
 WRITE16_HANDLER( midyunit_cmos_w );
 READ16_HANDLER( midyunit_cmos_r );

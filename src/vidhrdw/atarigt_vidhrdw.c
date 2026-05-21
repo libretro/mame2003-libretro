@@ -43,7 +43,7 @@
  *
  *************************************/
 
-data16_t *atarigt_colorram;
+uint16_t *atarigt_colorram;
 
 
 
@@ -190,9 +190,9 @@ VIDEO_START( atarigt )
  *
  *************************************/
 
-void atarigt_colorram_w(offs_t address, data16_t data, data16_t mem_mask)
+void atarigt_colorram_w(offs_t address, uint16_t data, uint16_t mem_mask)
 {
-	data16_t olddata;
+	uint16_t olddata;
 
 	/* update the raw data */
 	address = (address & 0x7ffff) / 2;
@@ -214,7 +214,7 @@ void atarigt_colorram_w(offs_t address, data16_t data, data16_t mem_mask)
 }
 
 
-data16_t atarigt_colorram_r(offs_t address)
+uint16_t atarigt_colorram_r(offs_t address)
 {
 	address &= 0x7ffff;
 	return atarigt_colorram[address / 2];
@@ -230,7 +230,7 @@ data16_t atarigt_colorram_r(offs_t address)
 
 void atarigt_scanline_update(int scanline)
 {
-	data32_t *base = &atarigen_alpha32[(scanline / 8) * 32 + 24];
+	uint32_t *base = &atarigen_alpha32[(scanline / 8) * 32 + 24];
 	int i;
 
 	/* keep in range */
@@ -240,7 +240,7 @@ void atarigt_scanline_update(int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		data32_t word = *base++;
+		uint32_t word = *base++;
 
 		if (word & 0x80000000)
 		{

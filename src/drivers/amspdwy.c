@@ -45,8 +45,8 @@ VIDEO_UPDATE( amspdwy );
 #define AMSPDWY_WHEEL_R( _n_ ) \
 READ_HANDLER( amspdwy_wheel_##_n_##_r ) \
 { \
-	static data8_t wheel_old, ret; \
-	data8_t wheel = readinputport(5 + _n_); \
+	static uint8_t wheel_old, ret; \
+	uint8_t wheel = readinputport(5 + _n_); \
 	if (wheel != wheel_old) \
 	{ \
 		wheel = (wheel & 0x7fff) - (wheel & 0x8000); \
@@ -105,7 +105,7 @@ MEMORY_END
 
 READ_HANDLER( amspdwy_port_r )
 {
-	data8_t *Tracks = memory_region(REGION_CPU1)+0x10000;
+	uint8_t *Tracks = memory_region(REGION_CPU1)+0x10000;
 	return Tracks[offset];
 }
 

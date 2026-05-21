@@ -13,8 +13,8 @@ extern void *playback;
 
 extern int neogeo_rng;
 
-data16_t *neogeo_ram16;
-data16_t *neogeo_sram16;
+uint16_t *neogeo_ram16;
+uint16_t *neogeo_sram16;
 
 
 /***************** MEMCARD GLOBAL VARIABLES ******************/
@@ -25,7 +25,7 @@ int memcard_number=0;		/* 000...999, -1=None */
 int memcard_manager=0;		/* 0=Normal boot 1=Call memcard manager */
 uint8_t *neogeo_memcard;		/* Pointer to 2kb RAM zone */
 
-data8_t *neogeo_game_vectors;
+uint8_t *neogeo_game_vectors;
 
 
 
@@ -37,7 +37,7 @@ static void neogeo_register_sub_savestate(void);
 MACHINE_INIT( neogeo )
 {
 #if 0
-	data16_t src, res, *mem16= (data16_t *)memory_region(REGION_USER1);
+	uint16_t src, res, *mem16= (uint16_t *)memory_region(REGION_USER1);
 #endif
 	time_t ltime;
 	struct tm *today;
@@ -106,7 +106,7 @@ MACHINE_INIT( neogeo )
 DRIVER_INIT( neogeo )
 {
 	extern struct YM2610interface neogeo_ym2610_interface;
-	data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 	int tileno,numtiles;
 
 	numtiles = memory_region_length(REGION_GFX3)/128;
@@ -193,7 +193,7 @@ DRIVER_INIT( neogeo )
 	memcard_number=0;
 
 
-	mem16 = (data16_t *)memory_region(REGION_USER1);
+	mem16 = (uint16_t *)memory_region(REGION_USER1);
 
 #if 0
 	if (mem16[0x11b00/2] == 0x4eba)
@@ -251,7 +251,7 @@ DRIVER_INIT( neogeo )
 
 
 	{ /* info from elsemi, this is how nebula works, is there a better way in mame? */
-		data8_t* gamerom = memory_region(REGION_CPU1);
+		uint8_t* gamerom = memory_region(REGION_CPU1);
 		neogeo_game_vectors = auto_malloc (0x80);
 		memcpy( neogeo_game_vectors, gamerom, 0x80 );
 	}
@@ -268,15 +268,15 @@ DRIVER_INIT( neogeo )
 
 WRITE16_HANDLER (neogeo_select_bios_vectors)
 {
-	data8_t* gamerom = memory_region(REGION_CPU1);
-	data8_t* biosrom = memory_region(REGION_USER1);
+	uint8_t* gamerom = memory_region(REGION_CPU1);
+	uint8_t* biosrom = memory_region(REGION_USER1);
 
 	memcpy( gamerom, biosrom, 0x80 );
 }
 
 WRITE16_HANDLER (neogeo_select_game_vectors)
 {
-	data8_t* gamerom = memory_region(REGION_CPU1);
+	uint8_t* gamerom = memory_region(REGION_CPU1);
 	memcpy( gamerom, neogeo_game_vectors, 0x80 );
 }
 
@@ -286,7 +286,7 @@ static int prot_data;
 
 static READ16_HANDLER( fatfury2_protection_16_r )
 {
-	data16_t res = (prot_data >> 24) & 0xff;
+	uint16_t res = (prot_data >> 24) & 0xff;
 
 	switch (offset)
 	{
@@ -629,7 +629,7 @@ static void neogeo_custom_memory(void)
 		/* patch out protection check */
 		/* the protection routines are at 0x25dcc and involve reading and writing */
 		/* addresses in the 0x2xxxxx range */
-		data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+		uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 		mem16[0x2240/2] = 0x4e71;
 	}
 
@@ -642,7 +642,7 @@ static void neogeo_custom_memory(void)
 		/* here (or maybe the SRAM location to protect is different), so I patch out */
 		/* the routine which trashes memory. Without this, the game goes nuts after */
 		/* the first bonus stage. */
-		data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+		uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 		mem16[0xb820/2] = 0x4e71;
 		mem16[0xb822/2] = 0x4e71;
 
@@ -655,7 +655,7 @@ static void neogeo_custom_memory(void)
 	if (!strcmp(Machine->gamedrv->name,"fatfury3"))
 	{
 		/* patch the first word, it must be 0x0010 not 0x0000 (initial stack pointer) */
-		data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+		uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 		mem16[0x0000/2] = 0x0010;
 	}
 
@@ -663,7 +663,7 @@ static void neogeo_custom_memory(void)
 	{
 		/* patch out protection checks */
 		int i;
-		data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+		uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 
 		for (i = 0;i < (0x100000/2) - 4;i++)
 		{
@@ -694,7 +694,7 @@ static void neogeo_custom_memory(void)
 
 // patches no longer needed, the YM2610 emulator handles the wrong calls correctly.
 
-//		data8_t *mem8 = memory_region(REGION_CPU2);
+//		uint8_t *mem8 = memory_region(REGION_CPU2);
 
 //		if (!strcmp(Machine->gamedrv->name,"ncombat")) mem8[0xeb99] = 0x0c;
 //		if (!strcmp(Machine->gamedrv->name,"bjourney")) mem8[0xec7a] = 0x0c;
@@ -873,7 +873,7 @@ int neogeo_memcard_create(int number)
 
 static void neogeo_register_sub_savestate(void)
 {
-	data8_t* gamevector = memory_region(REGION_CPU1);
+	uint8_t* gamevector = memory_region(REGION_CPU1);
 
 	state_save_register_int   ("neogeo", 0, "sram_locked",             &sram_locked);
 	state_save_register_UINT16("neogeo", 0, "neogeo_ram16",            neogeo_ram16,             0x10000/2);

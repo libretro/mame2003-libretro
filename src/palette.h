@@ -119,11 +119,11 @@ typedef uint16_t rgb15_t;
 extern uint32_t direct_rgb_components[3];
 extern uint16_t *palette_shadow_table;
 
-extern data8_t *paletteram;
-extern data8_t *paletteram_2;	/* use when palette RAM is split in two parts */
-extern data16_t *paletteram16;
-extern data16_t *paletteram16_2;
-extern data32_t *paletteram32;
+extern uint8_t *paletteram;
+extern uint8_t *paletteram_2;	/* use when palette RAM is split in two parts */
+extern uint16_t *paletteram16;
+extern uint16_t *paletteram16_2;
+extern uint32_t *paletteram32;
 
 
 

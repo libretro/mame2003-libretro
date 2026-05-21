@@ -2,7 +2,7 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t *galspnbl_bgvideoram,*galspnbl_videoram,*galspnbl_colorram;
+uint16_t *galspnbl_bgvideoram,*galspnbl_videoram,*galspnbl_colorram;
 static int screenscroll;
 
 

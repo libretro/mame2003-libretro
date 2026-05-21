@@ -35,8 +35,8 @@ EEPROM chip: 93C46
 #include "vidhrdw/generic.h"
 #include "cpu/m68000/m68000.h"
 
-extern data16_t *xorworld_videoram;
-extern data16_t *xorworld_spriteram;
+extern uint16_t *xorworld_videoram;
+extern uint16_t *xorworld_spriteram;
 
 /* from vidhrdw/xorworld.c */
 READ16_HANDLER(xorworld_vram_r);
@@ -71,7 +71,7 @@ static NVRAM_HANDLER( xorworld )
 	after level 5 and some pieces don't rotate properly some times) */
 static DRIVER_INIT( xorworld )
 {
-	data16_t *rom = (data16_t *)(memory_region(REGION_CPU1) + 0x1390);
+	uint16_t *rom = (uint16_t *)(memory_region(REGION_CPU1) + 0x1390);
 
 	PATCH(0x4239); PATCH(0x00ff); PATCH(0xe196);	/* clr.b $ffe196 */
 	PATCH(0x4239); PATCH(0x00ff); PATCH(0xe197);	/* clr.b $ffe197 */

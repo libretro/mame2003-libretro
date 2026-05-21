@@ -1,9 +1,9 @@
 #include "driver.h"
 
-data16_t *polepos_view16_memory;
-data16_t *polepos_road16_memory;
-data16_t *polepos_sprite16_memory;
-data16_t *polepos_alpha16_memory;
+uint16_t *polepos_view16_memory;
+uint16_t *polepos_road16_memory;
+uint16_t *polepos_sprite16_memory;
+uint16_t *polepos_alpha16_memory;
 
 /* modified vertical position built from three nibbles (12 bit)
  * of ROMs 136014-142, 136014-143, 136014-144
@@ -11,10 +11,10 @@ data16_t *polepos_alpha16_memory;
  * to this value and the upper 10 bits of the result are used to
  * address the playfield video memory (AB0 - AB9).
  */
-static data16_t polepos_vertical_position_modifier[256];
+static uint16_t polepos_vertical_position_modifier[256];
 
-static data16_t view16_hscroll;
-static data16_t road16_vscroll;
+static uint16_t view16_hscroll;
+static uint16_t road16_vscroll;
 
 static const uint8_t *road_control;
 static const uint8_t *road_bits1;
@@ -236,7 +236,7 @@ READ16_HANDLER( polepos_view16_r )
 
 WRITE16_HANDLER( polepos_view16_w )
 {
-	data16_t oldword = polepos_view16_memory[offset];
+	uint16_t oldword = polepos_view16_memory[offset];
 	COMBINE_DATA(&polepos_view16_memory[offset]);
 	if (oldword != polepos_view16_memory[offset])
 	{
@@ -252,7 +252,7 @@ READ_HANDLER( polepos_view_r )
 
 WRITE_HANDLER( polepos_view_w )
 {
-	data16_t oldword = polepos_view16_memory[offset];
+	uint16_t oldword = polepos_view16_memory[offset];
 	polepos_view16_memory[offset] = (polepos_view16_memory[offset] & 0xff00) | data;
 	if (oldword != polepos_view16_memory[offset])
 	{
@@ -310,7 +310,7 @@ static void draw_view(struct mame_bitmap *bitmap)
 		for (y = 0; y < 16; y++, offs++)
 			if (view_dirty[offs])
 			{
-				data16_t word = polepos_view16_memory[offs];
+				uint16_t word = polepos_view16_memory[offs];
 				int code = (word & 0xff) | ((word >> 6) & 0x100);
 				int color = (word >> 8) & 0x3f;
 
@@ -399,8 +399,8 @@ static void draw_road(struct mame_bitmap *bitmap)
 
 static void draw_sprites(struct mame_bitmap *bitmap)
 {
-	data16_t *posmem = &polepos_sprite16_memory[0x380];
-	data16_t *sizmem = &polepos_sprite16_memory[0x780];
+	uint16_t *posmem = &polepos_sprite16_memory[0x380];
+	uint16_t *sizmem = &polepos_sprite16_memory[0x780];
 	int i;
 
 	for (i = 0; i < 64; i++, posmem += 2, sizmem += 2)
@@ -428,7 +428,7 @@ static void draw_alpha(struct mame_bitmap *bitmap)
 	for (y = offs = 0; y < 32; y++)
 		for (x = 0; x < 32; x++, offs++)
 		{
-			data16_t word = polepos_alpha16_memory[offs];
+			uint16_t word = polepos_alpha16_memory[offs];
 			int code = (word & 0xff) | ((word >> 6) & 0x100);
 			int color = (word >> 8) & 0x3f; /* 6 bits color */
 

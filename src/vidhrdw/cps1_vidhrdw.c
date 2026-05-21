@@ -486,7 +486,7 @@ static INLINE int cps1_port(int offset)
 	return cps1_output[offset/2];
 }
 
-static INLINE data16_t *cps1_base(int offset,int boundary)
+static INLINE uint16_t *cps1_base(int offset,int boundary)
 {
 	int base=cps1_port(offset)*256;
 	/*
@@ -553,8 +553,8 @@ WRITE16_HANDLER( cps1_output_w )
 
 
 /* Public variables */
-data16_t *cps1_gfxram;
-data16_t *cps1_output;
+uint16_t *cps1_gfxram;
+uint16_t *cps1_output;
 
 size_t cps1_gfxram_size;
 size_t cps1_output_size;
@@ -569,14 +569,14 @@ const int cps1_other_size  =0x0800;
 const int cps1_palette_align=0x0800;	/* can't be larger than this, breaks ringdest & batcirc otherwise */
 const int cps1_palette_size=cps1_palette_entries*32; /* Size of palette RAM */
 
-static data16_t *cps1_scroll1;
-static data16_t *cps1_scroll2;
-static data16_t *cps1_scroll3;
-static data16_t *cps1_obj;
-static data16_t *cps1_buffered_obj;
-static data16_t *cps1_palette;
-static data16_t *cps1_other;
-static data16_t *cps1_old_palette;
+static uint16_t *cps1_scroll1;
+static uint16_t *cps1_scroll2;
+static uint16_t *cps1_scroll3;
+static uint16_t *cps1_obj;
+static uint16_t *cps1_buffered_obj;
+static uint16_t *cps1_palette;
+static uint16_t *cps1_other;
+static uint16_t *cps1_old_palette;
 
 /* Working variables */
 static int cps1_last_sprite_offset;     /* Offset of the last sprite */
@@ -622,11 +622,11 @@ const int stars_rom_size = 0x2000;
 
 /* PSL: CPS2 support */
 const int cps2_obj_size    =0x2000;
-data16_t *cps2_objram1,*cps2_objram2;
-data16_t *cps2_output;
+uint16_t *cps2_objram1,*cps2_objram2;
+uint16_t *cps2_output;
 
 size_t cps2_output_size;
-static data16_t *cps2_buffered_obj;
+static uint16_t *cps2_buffered_obj;
 static int pri_ctrl;				/* Sprite layer priorities */
 static int cps2_objram_bank;
 static int cps2_last_sprite_offset;     /* Offset of the last sprite */
@@ -721,8 +721,8 @@ DRIVER_INIT( cps1 )
 
 DRIVER_INIT( cps2 )
 {
-	data16_t *rom = (data16_t *)memory_region(REGION_CPU1);
-	data16_t *xor = (data16_t *)memory_region(REGION_USER1);
+	uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
+	uint16_t *xor = (uint16_t *)memory_region(REGION_USER1);
 	int i;
 
 
@@ -1168,7 +1168,7 @@ void cps1_render_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 
 
 	int i, baseadd;
-	data16_t *base=cps1_buffered_obj;
+	uint16_t *base=cps1_buffered_obj;
 
 	/* some sf2 hacks draw the sprites in reverse order */
 	if (cps1_game_config->kludge == 10)
@@ -1350,7 +1350,7 @@ WRITE16_HANDLER( cps2_objram2_w )
 		COMBINE_DATA(&cps2_objram2[offset]);
 }
 
-static data16_t *cps2_objbase(void)
+static uint16_t *cps2_objbase(void)
 {
 	int baseptr;
 	baseptr = 0x7000;
@@ -1369,7 +1369,7 @@ static data16_t *cps2_objbase(void)
 void cps2_find_last_sprite(void)    /* Find the offset of last sprite */
 {
 	int offset=0;
-	data16_t *base=cps2_buffered_obj;
+	uint16_t *base=cps2_buffered_obj;
 
 	/* Locate the end of table marker */
 	while (offset < cps2_obj_size/2)
@@ -1410,7 +1410,7 @@ void cps2_render_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 }
 
 	int i;
-	data16_t *base=cps2_buffered_obj;
+	uint16_t *base=cps2_buffered_obj;
 	int xoffs = 64-cps2_port(CPS2_OBJ_XOFFS);
 	int yoffs = 16-cps2_port(CPS2_OBJ_YOFFS);
 

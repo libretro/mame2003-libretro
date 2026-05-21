@@ -35,10 +35,10 @@
 /* externally accessible */
 uint8_t hdgsp_multisync;
 uint8_t *hdgsp_vram;
-data16_t *hdgsp_control_lo;
-data16_t *hdgsp_control_hi;
-data16_t *hdgsp_paletteram_lo;
-data16_t *hdgsp_paletteram_hi;
+uint16_t *hdgsp_control_lo;
+uint16_t *hdgsp_control_hi;
+uint16_t *hdgsp_paletteram_lo;
+uint16_t *hdgsp_paletteram_hi;
 size_t hdgsp_vram_size;
 
 

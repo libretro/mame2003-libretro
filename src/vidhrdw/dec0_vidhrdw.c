@@ -105,17 +105,17 @@ static struct tilemap *pf1_tilemap_0,*pf1_tilemap_1,*pf1_tilemap_2;
 static struct tilemap *pf2_tilemap_0,*pf2_tilemap_1,*pf2_tilemap_2;
 static struct tilemap *pf3_tilemap_0,*pf3_tilemap_1,*pf3_tilemap_2;
 
-data16_t *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
-data16_t *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
-data16_t *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
-static data16_t dec0_pf1_control_0[4];
-static data16_t dec0_pf1_control_1[4];
-static data16_t dec0_pf2_control_0[4];
-static data16_t dec0_pf2_control_1[4];
-static data16_t dec0_pf3_control_0[4];
-static data16_t dec0_pf3_control_1[4];
-static data16_t *dec0_spriteram;
-static data16_t dec0_pri;
+uint16_t *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
+uint16_t *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
+uint16_t *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
+static uint16_t dec0_pf1_control_0[4];
+static uint16_t dec0_pf1_control_1[4];
+static uint16_t dec0_pf2_control_0[4];
+static uint16_t dec0_pf2_control_1[4];
+static uint16_t dec0_pf3_control_0[4];
+static uint16_t dec0_pf3_control_1[4];
+static uint16_t *dec0_spriteram;
+static uint16_t dec0_pri;
 
 /******************************************************************************/
 
@@ -729,7 +729,7 @@ WRITE16_HANDLER( dec0_pf1_control_1_w )
 
 WRITE16_HANDLER( dec0_pf1_data_w )
 {
-	data16_t oldword=dec0_pf1_data[offset];
+	uint16_t oldword=dec0_pf1_data[offset];
 	COMBINE_DATA(&dec0_pf1_data[offset]);
 	if (oldword!=dec0_pf1_data[offset]) {
 		tilemap_mark_tile_dirty(pf1_tilemap_0,offset);
@@ -750,7 +750,7 @@ WRITE16_HANDLER( dec0_pf2_control_1_w )
 
 WRITE16_HANDLER( dec0_pf2_data_w )
 {
-	data16_t oldword=dec0_pf2_data[offset];
+	uint16_t oldword=dec0_pf2_data[offset];
 	COMBINE_DATA(&dec0_pf2_data[offset]);
 	if (oldword!=dec0_pf2_data[offset]) {
 		tilemap_mark_tile_dirty(pf2_tilemap_0,offset);
@@ -771,7 +771,7 @@ WRITE16_HANDLER( dec0_pf3_control_1_w )
 
 WRITE16_HANDLER( dec0_pf3_data_w )
 {
-	data16_t oldword=dec0_pf3_data[offset];
+	uint16_t oldword=dec0_pf3_data[offset];
 	COMBINE_DATA(&dec0_pf3_data[offset]);
 	if (oldword!=dec0_pf3_data[offset]) {
 		tilemap_mark_tile_dirty(pf3_tilemap_0,offset);
@@ -788,7 +788,7 @@ WRITE16_HANDLER( dec0_priority_w )
 WRITE_HANDLER( dec0_pf3_control_8bit_w )
 {
 	static int buffer[0x20];
-	data16_t myword;
+	uint16_t myword;
 
 	buffer[offset]=data;
 
@@ -803,13 +803,13 @@ WRITE_HANDLER( dec0_pf3_control_8bit_w )
 WRITE_HANDLER( dec0_pf3_data_8bit_w )
 {
 	if (offset&1) { /* MSB has changed */
-		data16_t lsb=dec0_pf3_data[offset>>1];
-		data16_t newword=(lsb&0xff) | (data<<8);
+		uint16_t lsb=dec0_pf3_data[offset>>1];
+		uint16_t newword=(lsb&0xff) | (data<<8);
 		dec0_pf3_data[offset>>1]=newword;
 	}
 	else { /* LSB has changed */
-		data16_t msb=dec0_pf3_data[offset>>1];
-		data16_t newword=(msb&0xff00) | data;
+		uint16_t msb=dec0_pf3_data[offset>>1];
+		uint16_t newword=(msb&0xff00) | data;
 		dec0_pf3_data[offset>>1]=newword;
 	}
 	tilemap_mark_tile_dirty(pf3_tilemap_0,offset>>1);

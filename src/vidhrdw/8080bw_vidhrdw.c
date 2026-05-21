@@ -17,7 +17,7 @@ static int screen_red_enabled;		/* 1 for games that can turn the screen red */
 static int color_map_select;
 static int background_color;
 static uint8_t cloud_pos;
-static data8_t bowler_bonus_display;
+static uint8_t bowler_bonus_display;
 static int helifire_mv2_offset;
 static uint32_t helifire_star_rng;
 

@@ -58,24 +58,24 @@ static uint8_t vint_state;
 static uint8_t xint_state;
 static uint8_t qint_state;
 
-static data8_t sound_data;
+static uint8_t sound_data;
 static uint8_t sound_int_state;
 
-static data8_t *via6522;
-static data16_t via6522_timer_count[2];
+static uint8_t *via6522;
+static uint16_t via6522_timer_count[2];
 static void *via6522_timer[2];
-static data8_t via6522_int_state;
+static uint8_t via6522_int_state;
 
-static data16_t *main_rom;
-static data16_t *main_ram;
+static uint16_t *main_rom;
+static uint16_t *main_ram;
 static size_t main_ram_size;
-static data32_t *nvram;
+static uint32_t *nvram;
 static size_t nvram_size;
 
 static offs_t itech020_prot_address;
 
-static data8_t *sound_speedup_data;
-static data16_t sound_speedup_pc;
+static uint8_t *sound_speedup_data;
+static uint16_t sound_speedup_pc;
 
 static uint8_t is_drivedge;
 
@@ -298,7 +298,7 @@ static READ16_HANDLER( wcbowl_prot_result_r )
 
 static READ32_HANDLER( itech020_prot_result_r )
 {
-	data32_t result = ((data32_t *)main_ram)[itech020_prot_address >> 2];
+	uint32_t result = ((uint32_t *)main_ram)[itech020_prot_address >> 2];
 	result >>= (~itech020_prot_address & 3) * 8;
 	return (result & 0xff) << 8;
 }
@@ -696,19 +696,19 @@ MEMORY_END
 
 
 static MEMORY_WRITE32_START( drivedge_writemem )
-	{ 0x000000, 0x03ffff, MWA32_RAM, (data32_t **)&main_ram, &main_ram_size },
+	{ 0x000000, 0x03ffff, MWA32_RAM, (uint32_t **)&main_ram, &main_ram_size },
 	{ 0x040000, 0x07ffff, MWA32_BANK2 },
 	{ 0x084000, 0x084003, sound_data32_w },
 //	{ 0x100000, 0x10000f, ???_w },	= 4 longwords (TMS control?)
 	{ 0x180000, 0x180003, drivedge_color0_w },
 	{ 0x1a0000, 0x1bffff, itech020_paletteram_w, &paletteram32 },
 //	{ 0x1c0000, 0x1c0001, ???_w },	= 0x64
-	{ 0x1e0000, 0x1e00ff, itech020_video_w, (data32_t **)&itech32_video },
+	{ 0x1e0000, 0x1e00ff, itech020_video_w, (uint32_t **)&itech32_video },
 //	{ 0x1e4000, 0x1e4003, ???_w },	= 0x1ffff
 	{ 0x280000, 0x280fff, MWA32_RAM },	// initialized to zero
 	{ 0x300000, 0x300fff, MWA32_RAM },	// initialized to zero
 	{ 0x380000, 0x380003, MWA32_NOP },	// watchdog
-	{ 0x600000, 0x607fff, MWA32_ROM, (data32_t **)&main_rom },
+	{ 0x600000, 0x607fff, MWA32_ROM, (uint32_t **)&main_rom },
 MEMORY_END
 
 // 0x10000c/0/4/8 = $8000/$0/$0/$ffff1e
@@ -733,18 +733,18 @@ MEMORY_END
 
 
 static MEMORY_WRITE32_START( itech020_writemem )
-	{ 0x000000, 0x007fff, MWA32_RAM, (data32_t **)&main_ram, &main_ram_size },
+	{ 0x000000, 0x007fff, MWA32_RAM, (uint32_t **)&main_ram, &main_ram_size },
 	{ 0x080000, 0x080003, int1_ack32_w },
 	{ 0x300000, 0x300003, itech020_color1_w },
 	{ 0x380000, 0x380003, itech020_color2_w },
 	{ 0x400000, 0x400003, itech020_watchdog_w },
 	{ 0x480000, 0x480003, sound_data32_w },
-	{ 0x500000, 0x5000ff, itech020_video_w, (data32_t **)&itech32_video },
+	{ 0x500000, 0x5000ff, itech020_video_w, (uint32_t **)&itech32_video },
 	{ 0x580000, 0x59ffff, itech020_paletteram_w, &paletteram32 },
 	{ 0x600000, 0x603fff, MWA32_RAM, &nvram, &nvram_size },
 	{ 0x680000, 0x680003, MWA32_NOP },				/* written by protection */
 	{ 0x700000, 0x700003, itech020_plane_w },
-	{ 0x800000, 0x9fffff, MWA32_ROM, (data32_t **)&main_rom },
+	{ 0x800000, 0x9fffff, MWA32_ROM, (uint32_t **)&main_rom },
 MEMORY_END
 
 

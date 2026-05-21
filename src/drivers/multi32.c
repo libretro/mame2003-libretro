@@ -27,21 +27,21 @@
 int multi32;
 
 static unsigned char irq_status;
-static data16_t *system32_shared_ram;
-extern data16_t *system32_mixerregs[2];  // mixer registers
+static uint16_t *system32_shared_ram;
+extern uint16_t *system32_mixerregs[2];  // mixer registers
 
-static data16_t *sys32_protram;
-static data16_t *system32_workram;
-extern data16_t sys32_tilebank_external;
-extern data16_t sys32_displayenable;
+static uint16_t *sys32_protram;
+static uint16_t *system32_workram;
+extern uint16_t sys32_tilebank_external;
+extern uint16_t sys32_displayenable;
 
 /* Video Hardware */
 extern int system32_temp_kludge;
-extern data16_t *sys32_spriteram16;
-extern data16_t *sys32_txtilemap_ram;
-extern data16_t *sys32_ramtile_ram;
-extern data16_t *scrambled_paletteram16[2];
-static data16_t *paletteram16_b;
+extern uint16_t *sys32_spriteram16;
+extern uint16_t *sys32_txtilemap_ram;
+extern uint16_t *sys32_ramtile_ram;
+extern uint16_t *scrambled_paletteram16[2];
+static uint16_t *paletteram16_b;
 
 extern int system32_mixerShift;
 extern int system32_screen_mode;
@@ -61,8 +61,8 @@ VIDEO_UPDATE( system32 );
 
 extern int system32_use_default_eeprom;
 
-static data16_t controlB[256];
-static data16_t control[256];
+static uint16_t controlB[256];
+static uint16_t control[256];
 
 static void irq_raise(int level)
 {
@@ -615,14 +615,14 @@ static READ_HANDLER( system32_bank_r )
 
 static READ_HANDLER( sys32_shared_snd_r )
 {
-	data8_t *RAM = (data8_t *)system32_shared_ram;
+	uint8_t *RAM = (uint8_t *)system32_shared_ram;
 
 	return RAM[offset];
 }
 
 static WRITE_HANDLER( sys32_shared_snd_w )
 {
-	data8_t *RAM = (data8_t *)system32_shared_ram;
+	uint8_t *RAM = (uint8_t *)system32_shared_ram;
 
 	RAM[offset] = data;
 }

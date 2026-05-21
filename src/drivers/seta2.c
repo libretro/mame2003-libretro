@@ -182,7 +182,7 @@ WRITE16_HANDLER( seta2_sound_bank_w )
 {
 	if (ACCESSING_LSB && Machine->sample_rate)
 	{
-		data8_t *ROM = memory_region( REGION_SOUND1 );
+		uint8_t *ROM = memory_region( REGION_SOUND1 );
 		int banks = (memory_region_length( REGION_SOUND1 ) - 0x100000) / 0x20000;
 		if (data >= banks)
 		{
@@ -1603,7 +1603,7 @@ ROM_END
 
 DRIVER_INIT( gundamex )
 {
-	data16_t *ROM = (data16_t *)memory_region( REGION_CPU1 );
+	uint16_t *ROM = (uint16_t *)memory_region( REGION_CPU1 );
 
 	/* ??? doesn't boot otherwise */
 	ROM[0x0f98/2] = 0x4e71;

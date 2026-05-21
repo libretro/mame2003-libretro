@@ -22,10 +22,10 @@
  *
  *************************************/
 
-data16_t *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
-data16_t *btoads_vram_bg0, *btoads_vram_bg1;
-data16_t *btoads_sprite_scale;
-data16_t *btoads_sprite_control;
+uint16_t *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
+uint16_t *btoads_vram_bg0, *btoads_vram_bg1;
+uint16_t *btoads_sprite_scale;
+uint16_t *btoads_sprite_control;
 
 static uint8_t *vram_fg_draw, *vram_fg_display;
 

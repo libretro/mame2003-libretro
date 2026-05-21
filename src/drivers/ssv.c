@@ -117,8 +117,8 @@ To Do:
 ***************************************************************************/
 
 static uint8_t requested_int;
-static data16_t *ssv_irq_vectors;
-static data16_t irq_enable;
+static uint16_t *ssv_irq_vectors;
+static uint16_t irq_enable;
 
 /* Update the IRQ state based on all possible causes */
 static void update_irq_state(void)
@@ -133,7 +133,7 @@ int ssv_irq_callback(int level)
 	{
 		if (requested_int & (1 << i))
 		{
-			data16_t vector = ssv_irq_vectors[i * (16/2)] & 7;
+			uint16_t vector = ssv_irq_vectors[i * (16/2)] & 7;
 			return vector;
 		}
 	}
@@ -258,7 +258,7 @@ MACHINE_INIT( ssv )
 
 ***************************************************************************/
 
-static data16_t *ssv_nvram;
+static uint16_t *ssv_nvram;
 static size_t    ssv_nvram_size;
 
 NVRAM_HANDLER( ssv )
@@ -313,7 +313,7 @@ NVRAM_HANDLER( ssv )
 	/*{ 0x990000, 0x99007f, ssv_scroll_w	},*/
 
 
-static data16_t *ssv_input_sel;
+static uint16_t *ssv_input_sel;
 
 /***************************************************************************
 								Drift Out '94
@@ -363,7 +363,7 @@ MEMORY_END
 
 static READ16_HANDLER( hypreact_input_r )
 {
-	data16_t input_sel = *ssv_input_sel;
+	uint16_t input_sel = *ssv_input_sel;
 	if (input_sel & 0x0001)	return readinputport(5);
 	if (input_sel & 0x0002)	return readinputport(6);
 	if (input_sel & 0x0004)	return readinputport(7);
@@ -499,7 +499,7 @@ MEMORY_END
 
 static READ16_HANDLER( srmp4_input_r )
 {
-	data16_t input_sel = *ssv_input_sel;
+	uint16_t input_sel = *ssv_input_sel;
 	if (input_sel & 0x0002)	return readinputport(5);
 	if (input_sel & 0x0004)	return readinputport(6);
 	if (input_sel & 0x0008)	return readinputport(7);
@@ -547,7 +547,7 @@ static WRITE16_HANDLER( srmp7_sound_bank_w )
 
 static READ16_HANDLER( srmp7_input_r )
 {
-	data16_t input_sel = *ssv_input_sel;
+	uint16_t input_sel = *ssv_input_sel;
 	if (input_sel & 0x0002)	return readinputport(5);
 	if (input_sel & 0x0004)	return readinputport(6);
 	if (input_sel & 0x0008)	return readinputport(7);
@@ -596,7 +596,7 @@ MEMORY_END
 							Pachinko Sexy Reaction
 ***************************************************************************/
 
-static data16_t serial;
+static uint16_t serial;
 
 static READ16_HANDLER( sxyreact_ballswitch_r )
 {
@@ -2661,7 +2661,7 @@ DRIVER_INIT( ryorioh )		{	init_ssv();
 DRIVER_INIT( srmp4 )		{	init_ssv();
 								ssv_sprites_offsx = -8;	ssv_sprites_offsy = +0xf0;
 								ssv_tilemap_offsx = +0;	ssv_tilemap_offsy = -0xf0;
-//	((data16_t *)memory_region(REGION_USER1))[0x2b38/2] = 0x037a;	/* patch to see gal test mode */
+//	((uint16_t *)memory_region(REGION_USER1))[0x2b38/2] = 0x037a;	/* patch to see gal test mode */
 							}
 DRIVER_INIT( srmp7 )		{	init_ssv();
 								ssv_sprites_offsx = +0;	ssv_sprites_offsy = -0xf;

@@ -48,8 +48,8 @@ WRITE_HANDLER( amspdwy_flipscreen_w )
 
 static void get_tile_info( int tile_index )
 {
-	data8_t code	=	videoram[ tile_index ];
-	data8_t color	=	colorram[ tile_index ];
+	uint8_t code	=	videoram[ tile_index ];
+	uint8_t color	=	colorram[ tile_index ];
 	SET_TILE_INFO(
 			0,
 			code + ((color & 0x18)<<5),

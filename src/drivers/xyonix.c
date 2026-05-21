@@ -22,7 +22,7 @@ TODO:
 #include "driver.h"
 #include "cpu/z80/z80.h"
 
-data8_t *xyonix_vidram;
+uint8_t *xyonix_vidram;
 
 /* in vidhrdw/xyonix.c */
 PALETTE_INIT( xyonix );

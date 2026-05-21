@@ -3,15 +3,15 @@
 #include "state.h"
 #include "deco16ic.h"
 
-data32_t *deco32_pf1_data,*deco32_pf2_data,*deco32_pf3_data,*deco32_pf4_data;
-data32_t *deco32_pf12_control,*deco32_pf34_control;
-data32_t *deco32_pf1_rowscroll,*deco32_pf2_rowscroll,*deco32_pf3_rowscroll,*deco32_pf4_rowscroll;
-data32_t *dragngun_sprite_layout_0_ram, *dragngun_sprite_layout_1_ram;
-data32_t *dragngun_sprite_lookup_0_ram, *dragngun_sprite_lookup_1_ram;
-data32_t *deco32_ace_ram;
+uint32_t *deco32_pf1_data,*deco32_pf2_data,*deco32_pf3_data,*deco32_pf4_data;
+uint32_t *deco32_pf12_control,*deco32_pf34_control;
+uint32_t *deco32_pf1_rowscroll,*deco32_pf2_rowscroll,*deco32_pf3_rowscroll,*deco32_pf4_rowscroll;
+uint32_t *dragngun_sprite_layout_0_ram, *dragngun_sprite_layout_1_ram;
+uint32_t *dragngun_sprite_lookup_0_ram, *dragngun_sprite_lookup_1_ram;
+uint32_t *deco32_ace_ram;
 static int deco32_ace_ram_dirty, has_ace_ram;
 
-static data8_t *dirty_palette;
+static uint8_t *dirty_palette;
 static struct tilemap *pf1_tilemap,*pf1a_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static int deco32_pf1_bank,deco32_pf2_bank,deco32_pf3_bank,deco32_pf4_bank;
 static int deco32_pf1_flip,deco32_pf2_flip,deco32_pf3_flip,deco32_pf4_flip;
@@ -20,7 +20,7 @@ static int deco32_pf2_colourbank,deco32_pf4_colourbank,deco32_pri;
 static int dragngun_sprite_ctrl;
 
 int deco32_raster_display_position;
-data16_t *deco32_raster_display_list;
+uint16_t *deco32_raster_display_list;
 
 static struct mame_bitmap *sprite0_mix_bitmap, *sprite1_mix_bitmap, *tilemap_alpha_bitmap;
 
@@ -29,7 +29,7 @@ static struct mame_bitmap *sprite0_mix_bitmap, *sprite1_mix_bitmap, *tilemap_alp
 
 WRITE32_HANDLER( deco32_pf1_data_w )
 {
-	const data32_t oldword=deco32_pf1_data[offset];
+	const uint32_t oldword=deco32_pf1_data[offset];
 	COMBINE_DATA(&deco32_pf1_data[offset]);
 
 	if (oldword!=deco32_pf1_data[offset]) {
@@ -41,7 +41,7 @@ WRITE32_HANDLER( deco32_pf1_data_w )
 
 WRITE32_HANDLER( deco32_pf2_data_w )
 {
-	const data32_t oldword=deco32_pf2_data[offset];
+	const uint32_t oldword=deco32_pf2_data[offset];
 	COMBINE_DATA(&deco32_pf2_data[offset]);
 
 	if (oldword!=deco32_pf2_data[offset])
@@ -50,7 +50,7 @@ WRITE32_HANDLER( deco32_pf2_data_w )
 
 WRITE32_HANDLER( deco32_pf3_data_w )
 {
-	const data32_t oldword=deco32_pf3_data[offset];
+	const uint32_t oldword=deco32_pf3_data[offset];
 	COMBINE_DATA(&deco32_pf3_data[offset]);
 
 	if (oldword!=deco32_pf3_data[offset])
@@ -59,7 +59,7 @@ WRITE32_HANDLER( deco32_pf3_data_w )
 
 WRITE32_HANDLER( deco32_pf4_data_w )
 {
-	const data32_t oldword=deco32_pf4_data[offset];
+	const uint32_t oldword=deco32_pf4_data[offset];
 	COMBINE_DATA(&deco32_pf4_data[offset]);
 
 	if (oldword!=deco32_pf4_data[offset])
@@ -202,7 +202,7 @@ WRITE32_HANDLER( deco32_palette_dma_w )
 
 /******************************************************************************/
 
-static void captaven_drawsprites(struct mame_bitmap *bitmap, const data32_t *spritedata, int gfxbank)
+static void captaven_drawsprites(struct mame_bitmap *bitmap, const uint32_t *spritedata, int gfxbank)
 {
 	int offs;
 
@@ -288,7 +288,7 @@ static void captaven_drawsprites(struct mame_bitmap *bitmap, const data32_t *spr
 }
 
 
-static void fghthist_draw_sprites(struct mame_bitmap *bitmap, const data32_t *spritedata, int gfxbank, int mask, int colourmask)
+static void fghthist_draw_sprites(struct mame_bitmap *bitmap, const uint32_t *spritedata, int gfxbank, int mask, int colourmask)
 {
 	int offs;
 
@@ -405,7 +405,7 @@ static void deco32_draw_sprite(struct mame_bitmap *dest,const struct rectangle *
 }
 
 
-static void nslasher_draw_sprites(struct mame_bitmap *bitmap, const data32_t *spritedata, int gfxbank)
+static void nslasher_draw_sprites(struct mame_bitmap *bitmap, const uint32_t *spritedata, int gfxbank)
 {
 	int offs;
 
@@ -467,7 +467,7 @@ static void nslasher_draw_sprites(struct mame_bitmap *bitmap, const data32_t *sp
 }
 
 
-static void tattass_drawsprites(struct mame_bitmap *bitmap, const data32_t *spritedata, int gfxbank, int mask)
+static void tattass_drawsprites(struct mame_bitmap *bitmap, const uint32_t *spritedata, int gfxbank, int mask)
 {
 	int offs;
 
@@ -745,10 +745,10 @@ static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const stru
 	}
 }
 
-static void dragngun_drawsprites(struct mame_bitmap *bitmap, const data32_t *spritedata)
+static void dragngun_drawsprites(struct mame_bitmap *bitmap, const uint32_t *spritedata)
 {
-	const data32_t *layout_ram;
-	const data32_t *lookup_ram;
+	const uint32_t *layout_ram;
+	const uint32_t *lookup_ram;
 	int offs;
 
 	/*
@@ -942,9 +942,9 @@ static void get_pf1a_tile_info(int tile_index)
 
 static void get_pf2_tile_info(int tile_index)
 {
-	data32_t tile=deco32_pf2_data[tile_index];
-	data8_t	colour=(tile>>12)&0xf;
-	data8_t flags=0;
+	uint32_t tile=deco32_pf2_data[tile_index];
+	uint8_t	colour=(tile>>12)&0xf;
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf12_control[6]>>8)&0x01) {
@@ -962,9 +962,9 @@ static void get_pf2_tile_info(int tile_index)
 
 static void get_pf3_tile_info(int tile_index)
 {
-	data32_t tile=deco32_pf3_data[tile_index];
-	data8_t	colour=(tile>>12)&0xf;
-	data8_t flags=0;
+	uint32_t tile=deco32_pf3_data[tile_index];
+	uint8_t	colour=(tile>>12)&0xf;
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>0)&0x01) {
@@ -982,9 +982,9 @@ static void get_pf3_tile_info(int tile_index)
 
 static void get_pf4_tile_info(int tile_index)
 {
-	data32_t tile=deco32_pf4_data[tile_index];
-	data8_t	colour=(tile>>12)&0xf;
-	data8_t flags=0;
+	uint32_t tile=deco32_pf4_data[tile_index];
+	uint8_t	colour=(tile>>12)&0xf;
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>8)&0x01) {
@@ -1009,8 +1009,8 @@ static void get_ca_pf3_tile_info(int tile_index)
 
 static void get_ll_pf3_tile_info(int tile_index)
 {
-	data32_t tile=deco32_pf3_data[tile_index];
-	data8_t flags=0;
+	uint32_t tile=deco32_pf3_data[tile_index];
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>0)&0x01)
@@ -1024,8 +1024,8 @@ static void get_ll_pf3_tile_info(int tile_index)
 
 static void get_ll_pf4_tile_info(int tile_index)
 {
-	data32_t tile=deco32_pf4_data[tile_index];
-	data8_t flags=0;
+	uint32_t tile=deco32_pf4_data[tile_index];
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>8)&0x01)
@@ -1269,16 +1269,16 @@ static void combined_tilemap_draw(struct mame_bitmap *bitmap)
 	const struct mame_bitmap *bitmap1 = tilemap_get_pixmap(pf4_tilemap);
 	int x,y,p;
 
-	const data16_t width_mask=0x3ff;
-	const data16_t height_mask=0x1ff;
-	const data16_t y_src=deco32_pf34_control[2];
-/*	const data32_t *rows=deco32_pf3_rowscroll;*/
+	const uint16_t width_mask=0x3ff;
+	const uint16_t height_mask=0x1ff;
+	const uint16_t y_src=deco32_pf34_control[2];
+/*	const uint32_t *rows=deco32_pf3_rowscroll;*/
 
-	const data16_t *bitmap0_y;
-	const data16_t *bitmap1_y;
-	data32_t *bitmap2_y;
+	const uint16_t *bitmap0_y;
+	const uint16_t *bitmap1_y;
+	uint32_t *bitmap2_y;
 
-	data16_t x_src;
+	uint16_t x_src;
 
 	for (y=8; y<248; y++) {
 		const int py=(y_src+y)&height_mask;
@@ -1302,7 +1302,7 @@ static void combined_tilemap_draw(struct mame_bitmap *bitmap)
 	}
 }
 
-static void deco32_setup_scroll(struct tilemap *pf_tilemap, data16_t height, data8_t control0, data8_t control1, data16_t sy, data16_t sx, data32_t *rowdata, data32_t *coldata)
+static void deco32_setup_scroll(struct tilemap *pf_tilemap, uint16_t height, uint8_t control0, uint8_t control1, uint16_t sy, uint16_t sx, uint32_t *rowdata, uint32_t *coldata)
 {
 	int rows,offs;
 

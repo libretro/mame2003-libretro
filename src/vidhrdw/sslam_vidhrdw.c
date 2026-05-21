@@ -4,16 +4,16 @@
 
 static struct tilemap *sslam_bg_tilemap, *sslam_tx_tilemap, *sslam_md_tilemap;
 
-extern data16_t *sslam_bg_tileram, *sslam_tx_tileram, *sslam_md_tileram;
-extern data16_t *sslam_spriteram, *sslam_regs;
+extern uint16_t *sslam_bg_tileram, *sslam_tx_tileram, *sslam_md_tileram;
+extern uint16_t *sslam_spriteram, *sslam_regs;
 
 static void sslam_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	/* there are still some sprite problems .. */
 
 	const struct GfxElement *gfx = Machine->gfx[3];
-	data16_t *source = sslam_spriteram;
-	data16_t *finish = source + 0x20000/2;
+	uint16_t *source = sslam_spriteram;
+	uint16_t *finish = source + 0x20000/2;
 
 	source += 3; // strange
 

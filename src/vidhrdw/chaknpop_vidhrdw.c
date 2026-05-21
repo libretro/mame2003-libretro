@@ -19,19 +19,19 @@
 #define TX_COLOR1	0x0b
 #define TX_COLOR2	0x3f
 
-data8_t *chaknpop_txram;
-data8_t *chaknpop_sprram;
+uint8_t *chaknpop_txram;
+uint8_t *chaknpop_sprram;
 size_t chaknpop_sprram_size;
-data8_t *chaknpop_attrram;
+uint8_t *chaknpop_attrram;
 
-static data8_t *vram1;
-static data8_t *vram2;
-static data8_t *vram3;
-static data8_t *vram4;
+static uint8_t *vram1;
+static uint8_t *vram2;
+static uint8_t *vram3;
+static uint8_t *vram4;
 
 static struct tilemap *tx_tilemap;
 
-static data8_t gfxmode;
+static uint8_t gfxmode;
 static int flip_x, flip_y;
 
 
@@ -78,7 +78,7 @@ PALETTE_INIT( chaknpop )
 
 static void set_vram_bank(void)
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 	int bankaddress;
 
 	if (gfxmode & GFX_VRAM_BANK)
@@ -183,7 +183,7 @@ static void chaknpop_get_tx_tile_info(int tile_index)
 
 VIDEO_START( chaknpop )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/*                          info                       offset             type             w   h  col row */
 	tx_tilemap = tilemap_create(chaknpop_get_tx_tile_info, tilemap_scan_rows, TILEMAP_OPAQUE,  8,  8, 32, 32);

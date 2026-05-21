@@ -11,7 +11,7 @@
 
 
 
-data8_t *zaccaria_videoram,*zaccaria_attributesram;
+uint8_t *zaccaria_videoram,*zaccaria_attributesram;
 
 static struct tilemap *bg_tilemap;
 

@@ -192,15 +192,15 @@ CPU68 PCB:
 
 /* globals (shared by videohrdw/namcos21.c) */
 
-data16_t *namcos21_dspram16;
-data16_t *namcos21_spritepos;
+uint16_t *namcos21_dspram16;
+uint16_t *namcos21_spritepos;
 
 /* private data */
 
-static data16_t	*mpDataROM;
-static data16_t	*mpSharedRAM1;
-static data8_t	*mpDualPortRAM;
-static data16_t	*mpSharedRAM2;
+static uint16_t	*mpDataROM;
+static uint16_t	*mpSharedRAM1;
+static uint8_t	*mpDualPortRAM;
+static uint16_t	*mpSharedRAM2;
 
 extern WRITE16_HANDLER( namcos21_polyattr0_w );
 extern WRITE16_HANDLER( namcos21_polyattr1_w );
@@ -821,7 +821,7 @@ ROM_END
 
 static void namcos21_init( int game_type )
 {
-	data32_t *pMem = (data32_t *)memory_region(REGION_USER2);
+	uint32_t *pMem = (uint32_t *)memory_region(REGION_USER2);
 	int numWords = memory_region_length(REGION_USER2)/4;
 	int i;
 
@@ -834,7 +834,7 @@ static void namcos21_init( int game_type )
 		}
 	}
 	namcos2_gametype = game_type;
-	mpDataROM = (data16_t *)memory_region( REGION_USER1 );
+	mpDataROM = (uint16_t *)memory_region( REGION_USER1 );
 } /* namcos21_init */
 
 static DRIVER_INIT( winrun )
@@ -846,7 +846,7 @@ static DRIVER_INIT( aircombt )
 {
 #if 0
 	/* replace first four tests of aircombj with special "hidden" tests */
-	data16_t *pMem = (data16_t *)memory_region( REGION_CPU1 );
+	uint16_t *pMem = (uint16_t *)memory_region( REGION_CPU1 );
 	pMem[0x2a32/2] = 0x90;
 	pMem[0x2a34/2] = 0x94;
 	pMem[0x2a36/2] = 0x88;
@@ -869,7 +869,7 @@ DRIVER_INIT( cybsled )
 
 DRIVER_INIT( solvalou )
 {
-	data16_t *pMem = (data16_t *)memory_region( REGION_CPU1 );
+	uint16_t *pMem = (uint16_t *)memory_region( REGION_CPU1 );
 
 	/* patch out DSP memtest/clear */
 	pMem[0x1FD7C/2] = 0x4E71;

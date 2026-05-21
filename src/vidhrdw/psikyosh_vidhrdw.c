@@ -954,16 +954,16 @@ static void psikyosh_drawsprites( struct mame_bitmap *bitmap, const struct recta
 	**- End Sprite Format -*/
 
 	const struct GfxElement *gfx;
-	data32_t *src = buffered_spriteram32; /* Use buffered spriteram */
-	data16_t *list = (data16_t *)src + 0x3800/2;
-	data16_t listlen=0x800/2, listcntr=0;
-	data16_t *zoom_table = (data16_t *)psikyosh_zoomram;
-	data8_t  *alpha_table = (data8_t *)psikyosh_vidregs;
+	uint32_t *src = buffered_spriteram32; /* Use buffered spriteram */
+	uint16_t *list = (uint16_t *)src + 0x3800/2;
+	uint16_t listlen=0x800/2, listcntr=0;
+	uint16_t *zoom_table = (uint16_t *)psikyosh_zoomram;
+	uint8_t  *alpha_table = (uint8_t *)psikyosh_vidregs;
 
 	while( listcntr < listlen )
 	{
-		data32_t listdat, sprnum, xpos, ypos, high, wide, flpx, flpy, zoomx, zoomy, tnum, colr, dpth;
-		data32_t pri, alpha, alphamap, trans;
+		uint32_t listdat, sprnum, xpos, ypos, high, wide, flpx, flpy, zoomx, zoomy, tnum, colr, dpth;
+		uint32_t pri, alpha, alphamap, trans;
 
 		listdat = list[BYTE_XOR_BE(listcntr)];
 		sprnum = (listdat & 0x03ff) * 4;
@@ -1078,7 +1078,7 @@ static void psikyosh_prelineblend( struct mame_bitmap *bitmap, const struct rect
 	   gnbarich sets the 0x000000ff to 0x7f in test mode whilst the others use 0x80.
 	   As it's only used in testmode I'll just leave it as a toggle for now */
 	uint32_t *dstline;
-	data32_t *linefill = psikyosh_bgram; /* Per row */
+	uint32_t *linefill = psikyosh_bgram; /* Per row */
 	int x,y;
 
 	if (bitmap->depth != 32)
@@ -1111,7 +1111,7 @@ static void psikyosh_postlineblend( struct mame_bitmap *bitmap, const struct rec
 	{
 	/* There are 224 values for post-lineblending. Using one for every row currently */
 	uint32_t *dstline;
-	data32_t *lineblend = psikyosh_bgram+0x400/4; /* Per row */
+	uint32_t *lineblend = psikyosh_bgram+0x400/4; /* Per row */
 	int x,y;
 
 	profiler_mark(PROFILER_USER2);

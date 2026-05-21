@@ -9,7 +9,7 @@
 #include "tickee.h"
 
 
-data16_t *tickee_vram;
+uint16_t *tickee_vram;
 
 
 /* local variables */

@@ -28,9 +28,9 @@
 
 /* Variables that driver has access to: */
 
-data16_t *fuuki16_vram_0, *fuuki16_vram_1;
-data16_t *fuuki16_vram_2, *fuuki16_vram_3;
-data16_t *fuuki16_vregs,  *fuuki16_priority, *fuuki16_unknown;
+uint16_t *fuuki16_vram_0, *fuuki16_vram_1;
+uint16_t *fuuki16_vram_2, *fuuki16_vram_3;
+uint16_t *fuuki16_vregs,  *fuuki16_priority, *fuuki16_unknown;
 
 
 /***************************************************************************
@@ -56,15 +56,15 @@ static struct tilemap *tilemap_##_N_; \
 \
 static void get_tile_info_##_N_(int tile_index) \
 { \
-	data16_t code = fuuki16_vram_##_N_[ 2 * tile_index + 0 ]; \
-	data16_t attr = fuuki16_vram_##_N_[ 2 * tile_index + 1 ]; \
+	uint16_t code = fuuki16_vram_##_N_[ 2 * tile_index + 0 ]; \
+	uint16_t attr = fuuki16_vram_##_N_[ 2 * tile_index + 1 ]; \
 	SET_TILE_INFO(1 + _N_, code, attr & 0x3f,TILE_FLIPYX( (attr >> 6) & 3 )) \
 } \
 \
 WRITE16_HANDLER( fuuki16_vram_##_N_##_w ) \
 { \
-	data16_t old_data	=	fuuki16_vram_##_N_[offset]; \
-	data16_t new_data	=	COMBINE_DATA(&fuuki16_vram_##_N_[offset]); \
+	uint16_t old_data	=	fuuki16_vram_##_N_[offset]; \
+	uint16_t new_data	=	COMBINE_DATA(&fuuki16_vram_##_N_[offset]); \
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_##_N_,offset/2); \
 }
 
@@ -292,10 +292,10 @@ static void fuuki16_draw_layer(struct mame_bitmap *bitmap, const struct rectangl
 
 VIDEO_UPDATE( fuuki16 )
 {
-	data16_t layer0_scrollx, layer0_scrolly;
-	data16_t layer1_scrollx, layer1_scrolly;
-	data16_t layer2_scrollx, layer2_scrolly;
-	data16_t scrollx_offs,   scrolly_offs;
+	uint16_t layer0_scrollx, layer0_scrolly;
+	uint16_t layer1_scrollx, layer1_scrolly;
+	uint16_t layer2_scrollx, layer2_scrolly;
+	uint16_t scrollx_offs,   scrolly_offs;
 
 	/*
 	It's not independant bits causing layers to switch, that wouldn't make sense with 3 bits.

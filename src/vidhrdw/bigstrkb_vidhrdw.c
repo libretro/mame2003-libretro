@@ -4,9 +4,9 @@
 
 static struct tilemap *bsb_tilemap, *bsb_tilemap2, *bsb_tilemap3;
 
-extern data16_t *bsb_videoram, *bsb_videoram2, *bsb_videoram3;
-extern data16_t *bsb_vidreg1, *bsb_vidreg2;
-extern data16_t *bigstrkb_spriteram;
+extern uint16_t *bsb_videoram, *bsb_videoram2, *bsb_videoram3;
+extern uint16_t *bsb_vidreg1, *bsb_vidreg2;
+extern uint16_t *bigstrkb_spriteram;
 
 /* Sprites */
 
@@ -21,8 +21,8 @@ static void bigstrkb_drawsprites( struct mame_bitmap *bitmap, const struct recta
 	**- End of Comments -*/
 
 	const struct GfxElement *gfx = Machine->gfx[2];
-	data16_t *source = bigstrkb_spriteram;
-	data16_t *finish = source + 0x800/2;
+	uint16_t *source = bigstrkb_spriteram;
+	uint16_t *finish = source + 0x800/2;
 
 	while( source<finish )
 	{

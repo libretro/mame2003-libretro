@@ -65,8 +65,8 @@
 
 int suna8_text_dim; /* specifies format of text layer */
 
-data8_t suna8_rombank, suna8_spritebank, suna8_palettebank;
-data8_t suna8_unknown;
+uint8_t suna8_rombank, suna8_spritebank, suna8_palettebank;
+uint8_t suna8_unknown;
 
 /* Functions defined in vidhrdw: */
 
@@ -86,9 +86,9 @@ static int tiles, rombank;
 
 static void get_tile_info(int tile_index)
 {
-	data8_t code, attr;
+	uint8_t code, attr;
 	if (keyboard_pressed(KEYCODE_X))
-	{	data8_t *rom = memory_region(REGION_CPU1) + 0x10000 + 0x4000*rombank;
+	{	uint8_t *rom = memory_region(REGION_CPU1) + 0x10000 + 0x4000*rombank;
 		code = rom[ 2 * tile_index + 0 ];
 		attr = rom[ 2 * tile_index + 1 ];	}
 	else

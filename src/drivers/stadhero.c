@@ -14,7 +14,7 @@
 VIDEO_START( stadhero );
 VIDEO_UPDATE( stadhero );
 
-extern data16_t *stadhero_pf1_data,*stadhero_pf2_data;
+extern uint16_t *stadhero_pf1_data,*stadhero_pf2_data;
 
 WRITE16_HANDLER( stadhero_pf1_data_w );
 WRITE16_HANDLER( stadhero_pf2_data_w );

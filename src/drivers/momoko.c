@@ -19,8 +19,8 @@ Flipped screen looks wrong, but it is correct.
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern data8_t *momoko_bg_scrollx;
-extern data8_t *momoko_bg_scrolly;
+extern uint8_t *momoko_bg_scrollx;
+extern uint8_t *momoko_bg_scrolly;
 
 VIDEO_UPDATE( momoko );
 
@@ -37,7 +37,7 @@ WRITE_HANDLER( momoko_bg_priority_w);
 
 WRITE_HANDLER( momoko_bg_read_bank_w )
 {
-	data8_t *BG_MAP = memory_region(REGION_USER1);
+	uint8_t *BG_MAP = memory_region(REGION_USER1);
 	int bank_address = (data & 0x1f) * 0x1000;
 	cpu_setbank(1, &BG_MAP[bank_address]);
 }

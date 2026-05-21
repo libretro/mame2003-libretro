@@ -9,8 +9,8 @@
 
 /*----------- defined in vidhrdw/midvunit.c -----------*/
 
-extern data16_t *midvunit_videoram;
-extern data32_t *midvunit_textureram;
+extern uint16_t *midvunit_videoram;
+extern uint32_t *midvunit_textureram;
 
 WRITE32_HANDLER( midvunit_dma_queue_w );
 READ32_HANDLER( midvunit_dma_queue_entries_r );

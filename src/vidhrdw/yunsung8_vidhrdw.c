@@ -32,7 +32,7 @@ Note:	if MAME_DEBUG is defined, pressing Z with:
 
 /* Variables that driver has access to: */
 
-data8_t *yunsung8_videoram_0, *yunsung8_videoram_1;
+uint8_t *yunsung8_videoram_0, *yunsung8_videoram_1;
 int yunsung8_layers_ctrl;
 
 /* Variables only used here: */

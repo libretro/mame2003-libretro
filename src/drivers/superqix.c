@@ -300,9 +300,9 @@ ROM_END
 
 static DRIVER_INIT(perestro)
 {
-	data8_t *src;
+	uint8_t *src;
 	int len;
-	data8_t temp[16];
+	uint8_t temp[16];
 	int i,j;
 
 	/* decrypt program code; the address lines are shuffled around in a non-trivial way */

@@ -3,8 +3,8 @@
 #include "gstriker.h"
 
 /* imports from driver file */
-extern data16_t *gs_videoram3;
-extern data16_t *gs_mixer_regs;
+extern uint16_t *gs_videoram3;
+extern uint16_t *gs_mixer_regs;
 
 
 /*** VS920A (score tilemap) **********************************************/
@@ -240,7 +240,7 @@ struct tilemap* MB60553_get_tilemap(int numchip)
 
 WRITE16_HANDLER(MB60553_0_regs_w)
 {
-	data16_t oldreg = MB60553[0].regs[offset];
+	uint16_t oldreg = MB60553[0].regs[offset];
 
 	COMBINE_DATA(&MB60553[0].regs[offset]);
 
@@ -250,7 +250,7 @@ WRITE16_HANDLER(MB60553_0_regs_w)
 
 WRITE16_HANDLER(MB60553_1_regs_w)
 {
-	data16_t oldreg = MB60553[1].regs[offset];
+	uint16_t oldreg = MB60553[1].regs[offset];
 
 	COMBINE_DATA(&MB60553[1].regs[offset]);
 
@@ -411,7 +411,7 @@ static void CG10103_draw_sprite(struct mame_bitmap* screen, const struct rectang
 
 static void CG10103_draw(int numchip, struct mame_bitmap* screen, const struct rectangle* cliprect, int priority)
 {
-	data16_t* splist;
+	uint16_t* splist;
 	int i;
 
 	CG10103_cur_chip = &CG10103[numchip];

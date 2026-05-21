@@ -63,7 +63,7 @@ static struct tilemap *bg_tilemap, *fg_tilemap, *tx_tilemap;
 static int layers_ctrl, flipscreen;
 
 /* Variables that driver has access to */
-data16_t *ginganin_fgram16, *ginganin_txtram16, *ginganin_vregs16;
+uint16_t *ginganin_fgram16, *ginganin_txtram16, *ginganin_vregs16;
 
 /* Variables defined in drivers */
 
@@ -100,7 +100,7 @@ static void get_bg_tile_info(int tile_index)
 
 static void get_fg_tile_info(int tile_index)
 {
-	data16_t code = ginganin_fgram16[tile_index];
+	uint16_t code = ginganin_fgram16[tile_index];
 	SET_TILE_INFO(
 			FG_GFX,
 			code,
@@ -110,7 +110,7 @@ static void get_fg_tile_info(int tile_index)
 
 WRITE16_HANDLER( ginganin_fgram16_w )
 {
-	data16_t oldword = ginganin_fgram16[offset];
+	uint16_t oldword = ginganin_fgram16[offset];
 	COMBINE_DATA(&ginganin_fgram16[offset]);
 	if (oldword != ginganin_fgram16[offset])
 		tilemap_mark_tile_dirty(fg_tilemap,offset);
@@ -125,7 +125,7 @@ WRITE16_HANDLER( ginganin_fgram16_w )
 
 static void get_txt_tile_info(int tile_index)
 {
-	data16_t code = ginganin_txtram16[tile_index];
+	uint16_t code = ginganin_txtram16[tile_index];
 	SET_TILE_INFO(
 			TXT_GFX,
 			code,
@@ -135,7 +135,7 @@ static void get_txt_tile_info(int tile_index)
 
 WRITE16_HANDLER( ginganin_txtram16_w )
 {
-	data16_t oldword = ginganin_txtram16[offset];
+	uint16_t oldword = ginganin_txtram16[offset];
 	COMBINE_DATA(&ginganin_txtram16[offset]);
 	if (oldword != ginganin_txtram16[offset])
 		tilemap_mark_tile_dirty(tx_tilemap,offset);

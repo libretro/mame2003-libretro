@@ -11,7 +11,7 @@
 
 extern unsigned char *m68000_sharedram;
 
-data16_t *toypop_bg_image;
+uint16_t *toypop_bg_image;
 static int flipscreen, palettebank;
 
 /***************************************************************************
@@ -114,7 +114,7 @@ void draw_background_and_characters(struct mame_bitmap *bitmap)
 		{
 			for (x = 0; x < 288; x+=2)
 			{
-				data16_t data = toypop_bg_image[offs];
+				uint16_t data = toypop_bg_image[offs];
 				scanline[x]   = data;
 				scanline[x+1] = data >> 8;
 				offs--;
@@ -129,7 +129,7 @@ void draw_background_and_characters(struct mame_bitmap *bitmap)
 		{
 			for (x = 0; x < 288; x+=2)
 			{
-				data16_t data = toypop_bg_image[offs];
+				uint16_t data = toypop_bg_image[offs];
 				scanline[x]   = data >> 8;
 				scanline[x+1] = data;
 				offs++;

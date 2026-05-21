@@ -31,12 +31,12 @@
 #include "lasso.h"
 
 
-data8_t *lasso_videoram;
-data8_t *lasso_colorram;
-data8_t *lasso_spriteram;
+uint8_t *lasso_videoram;
+uint8_t *lasso_colorram;
+uint8_t *lasso_spriteram;
 size_t lasso_spriteram_size;
-data8_t *lasso_bitmap_ram; 	/* 0x2000 bytes for a 256 x 256 x 1 bitmap */
-data8_t *wwjgtin_track_scroll;
+uint8_t *lasso_bitmap_ram; 	/* 0x2000 bytes for a 256 x 256 x 1 bitmap */
+uint8_t *wwjgtin_track_scroll;
 
 /* variables only used here: */
 static struct tilemap *bg_tilemap, *track_tilemap;
@@ -118,7 +118,7 @@ static void lasso_get_bg_tile_info(int tile_index)
 
 static void wwjgtin_get_track_tile_info(int tile_index)
 {
-	data8_t *ROM = memory_region(REGION_USER1);
+	uint8_t *ROM = memory_region(REGION_USER1);
 	int code  = ROM[tile_index];
 	int color = ROM[tile_index + 0x2000];
 	SET_TILE_INFO(2,
@@ -273,7 +273,7 @@ WRITE_HANDLER( wwjgtin_lastcolor_w )
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int reverse )
 {
-	const data8_t *finish, *source;
+	const uint8_t *finish, *source;
 	int inc;
 
 	if (reverse)
@@ -332,7 +332,7 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 
 static void draw_lasso( struct mame_bitmap *bitmap)
 {
-	const data8_t *source = lasso_bitmap_ram;
+	const uint8_t *source = lasso_bitmap_ram;
 	int x,y;
 	pen_t pen = Machine->pens[0x3f];
 
@@ -341,7 +341,7 @@ static void draw_lasso( struct mame_bitmap *bitmap)
 	{
 		for (x = 0; x < 256; )
 		{
-			data8_t data = *source++;
+			uint8_t data = *source++;
 
 			if (data)
 			{

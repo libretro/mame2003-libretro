@@ -24,7 +24,7 @@ extern WRITE_HANDLER( timelimt_scroll_y_w );
 extern WRITE_HANDLER( timelimt_scroll_x_msb_w );
 extern WRITE_HANDLER( timelimt_scroll_x_lsb_w );
 
-extern data8_t *timelimt_bg_videoram;
+extern uint8_t *timelimt_bg_videoram;
 extern size_t timelimt_bg_videoram_size;
 
 /***************************************************************************/

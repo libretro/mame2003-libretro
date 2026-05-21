@@ -67,7 +67,7 @@ VIDEO_START( nitrobal )
 
 /******************************************************************************/
 
-static void rohga_drawsprites(struct mame_bitmap *bitmap, const data16_t *spriteptr)
+static void rohga_drawsprites(struct mame_bitmap *bitmap, const uint16_t *spriteptr)
 {
 	int offs;
 
@@ -133,7 +133,7 @@ static void rohga_drawsprites(struct mame_bitmap *bitmap, const data16_t *sprite
 	}
 }
 
-static void wizdfire_drawsprites(struct mame_bitmap *bitmap, data16_t *spriteptr, int mode, int bank)
+static void wizdfire_drawsprites(struct mame_bitmap *bitmap, uint16_t *spriteptr, int mode, int bank)
 {
 	int offs;
 
@@ -230,7 +230,7 @@ static void wizdfire_drawsprites(struct mame_bitmap *bitmap, data16_t *spriteptr
 	}
 }
 
-static void nitrobal_drawsprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const data16_t *spriteptr, int gfxbank)
+static void nitrobal_drawsprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint16_t *spriteptr, int gfxbank)
 {
 	int offs,end,inc;
 

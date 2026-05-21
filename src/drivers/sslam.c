@@ -36,8 +36,8 @@ a small kid and even with a dog! And remember, Winners don't use Drugs ;)
 
 #include "driver.h"
 
-data16_t *sslam_bg_tileram, *sslam_tx_tileram, *sslam_md_tileram;
-data16_t *sslam_spriteram, *sslam_regs;
+uint16_t *sslam_bg_tileram, *sslam_tx_tileram, *sslam_md_tileram;
+uint16_t *sslam_spriteram, *sslam_regs;
 
 
 /* vidhrdw/playmark.c */

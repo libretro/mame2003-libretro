@@ -33,12 +33,12 @@ extern const struct IO_WritePort frogger_sound_writeport[];
 
 
 /* defined in vidhrdw/galaxian.c */
-extern data8_t *galaxian_videoram;
-extern data8_t *galaxian_spriteram;
-extern data8_t *galaxian_spriteram2;
-extern data8_t *galaxian_attributesram;
-extern data8_t *galaxian_bulletsram;
-extern data8_t *rockclim_videoram;
+extern uint8_t *galaxian_videoram;
+extern uint8_t *galaxian_spriteram;
+extern uint8_t *galaxian_spriteram2;
+extern uint8_t *galaxian_attributesram;
+extern uint8_t *galaxian_bulletsram;
+extern uint8_t *rockclim_videoram;
 
 extern size_t galaxian_spriteram_size;
 extern size_t galaxian_spriteram2_size;

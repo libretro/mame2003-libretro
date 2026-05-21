@@ -39,7 +39,7 @@ Notes:
 #include "machine/8255ppi.h"
 
 
-extern data8_t *zaccaria_videoram,*zaccaria_attributesram;
+extern uint8_t *zaccaria_videoram,*zaccaria_attributesram;
 
 PALETTE_INIT( zaccaria );
 VIDEO_START( zaccaria );

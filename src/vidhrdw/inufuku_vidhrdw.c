@@ -15,13 +15,13 @@
 #include "vidhrdw/generic.h"
 
 
-extern data16_t *inufuku_spriteram1;
-extern data16_t *inufuku_spriteram2;
+extern uint16_t *inufuku_spriteram1;
+extern uint16_t *inufuku_spriteram2;
 extern size_t inufuku_spriteram1_size;
 
-extern data16_t *inufuku_bg_videoram;
-extern data16_t *inufuku_bg_rasterram;
-extern data16_t *inufuku_text_videoram;
+extern uint16_t *inufuku_bg_videoram;
+extern uint16_t *inufuku_bg_rasterram;
+extern uint16_t *inufuku_text_videoram;
 
 static int inufuku_bg_scrollx, inufuku_bg_scrolly;
 static int inufuku_text_scrollx, inufuku_text_scrolly;

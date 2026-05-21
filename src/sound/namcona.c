@@ -45,8 +45,8 @@ static int mSampleRate;
 static int mStream;
 static int16_t *mpMixerBuffer;
 static int32_t *mpPitchTable;
-static data16_t *mpROM;
-static data16_t *mpMetaData;
+static uint16_t *mpROM;
+static uint16_t *mpMetaData;
 
 struct voice
 {
@@ -70,9 +70,9 @@ struct voice
 
 struct sequence
 {
-	data8_t volume;
-	data8_t reg2; /* master freq? */
-	data8_t tempo;
+	uint8_t volume;
+	uint8_t reg2; /* master freq? */
+	uint8_t tempo;
 	int addr;
 	int pause;
 	int channel[8];
@@ -91,7 +91,7 @@ struct sequence
  * ---------x------ 1 if the main CPU has written a new sound command
  * ----------xxxxxx unknown/unused
  */
-data16_t *
+uint16_t *
 GetSequenceStatusAddr( struct sequence *pSeq )
 {
 	int offs = pSeq - mSequence;
@@ -108,19 +108,19 @@ Silence( void )
 	}
 	for( i=0; i<MAX_SEQUENCE; i++ )
 	{
-		data16_t *pStatus = GetSequenceStatusAddr(&mSequence[i]);
+		uint16_t *pStatus = GetSequenceStatusAddr(&mSequence[i]);
 		*pStatus &= 0xff7f; /* wipe "sequence-is-playing" flag */
 	}
 }
 
-static data8_t
+static uint8_t
 ReadMetaDataByte( int addr )
 {
-	data16_t data = mpMetaData[addr/2];
+	uint16_t data = mpMetaData[addr/2];
 	return (addr&1)?(data&0xff):(data>>8);
 } /* ReadMetaDataByte */
 
-static data16_t
+static uint16_t
 ReadMetaDataWord( int addr )
 {
 	return ReadMetaDataByte(addr)+ReadMetaDataByte(addr+1)*256;
@@ -129,7 +129,7 @@ ReadMetaDataWord( int addr )
 static signed char
 ReadPCMSample( int addr, int flag )
 {
-	data16_t data16 = mpROM[addr/2];
+	uint16_t data16 = mpROM[addr/2];
 	int dat = (addr&1)?(data16&0xff):(data16>>8);
 
 	if( flag&0x100 )
@@ -182,7 +182,7 @@ PopSequenceAddr( struct sequence *pSequence )
 	}
 	else
 	{
-		data16_t *pStatus = GetSequenceStatusAddr(pSequence);
+		uint16_t *pStatus = GetSequenceStatusAddr(pSequence);
 		*pStatus &= 0xff7f; /* wipe "sequence-is-playing" flag */
 	}
 } /* PopSequenceAddr */
@@ -232,10 +232,10 @@ HandleRepeatOut( struct sequence *pSequence )
 static void
 MapArgs( struct sequence *pSequence,
 		 int bCommon,
-		 void (*callback)( struct sequence *, int chan, data8_t data ) )
+		 void (*callback)( struct sequence *, int chan, uint8_t data ) )
 {
-	data8_t set = ReadMetaDataByte(pSequence->addr++);
-	data8_t data = 0;
+	uint8_t set = ReadMetaDataByte(pSequence->addr++);
+	uint8_t data = 0;
 	int i;
 	if( bCommon )
 	{
@@ -255,7 +255,7 @@ MapArgs( struct sequence *pSequence,
 } /* MapArgs */
 
 static void
-AssignChannel( struct sequence *pSequence, int chan, data8_t data )
+AssignChannel( struct sequence *pSequence, int chan, uint8_t data )
 {
 	if( data<MAX_VOICE )
 	{
@@ -271,12 +271,12 @@ AssignChannel( struct sequence *pSequence, int chan, data8_t data )
 } /* AssignChannel */
 
 static void
-IgnoreUnknownOp( struct sequence *pSequence, int chan, data8_t data )
+IgnoreUnknownOp( struct sequence *pSequence, int chan, uint8_t data )
 {
 } /* IgnoreUnknownOp */
 
 static void
-SelectWave( struct sequence *pSequence, int chan, data8_t data )
+SelectWave( struct sequence *pSequence, int chan, uint8_t data )
 {
 	struct voice *pVoice = &mVoice[pSequence->channel[chan]];
 	int bank = 0x20000 + pVoice->bank*0x20000;
@@ -298,7 +298,7 @@ SelectWave( struct sequence *pSequence, int chan, data8_t data )
 } /* SelectWave */
 
 static void
-PlayNote( struct sequence *pSequence, int chan, data8_t data )
+PlayNote( struct sequence *pSequence, int chan, uint8_t data )
 {
 	struct voice *pVoice = &mVoice[pSequence->channel[chan]];
 	if( data & 0x80 )
@@ -307,7 +307,7 @@ PlayNote( struct sequence *pSequence, int chan, data8_t data )
 	}
 	else
 	{
-		data16_t Note = (data<<8) + (pVoice->dnote<<8) + pVoice->detune + pVoice->baseFreq;
+		uint16_t Note = (data<<8) + (pVoice->dnote<<8) + pVoice->detune + pVoice->baseFreq;
 		if (Note < 0x7f00)
 		{
 			pVoice->delta = mpPitchTable[Note>>8];
@@ -325,7 +325,7 @@ PlayNote( struct sequence *pSequence, int chan, data8_t data )
 } /* PlayNote */
 
 static void
-Detune( struct sequence *pSequence, int chan, data8_t data )
+Detune( struct sequence *pSequence, int chan, uint8_t data )
 {
 	struct voice *pVoice = &mVoice[pSequence->channel[chan]];
 	pVoice->detune = data;
@@ -333,21 +333,21 @@ Detune( struct sequence *pSequence, int chan, data8_t data )
 
 
 static void
-DNote( struct sequence *pSequence, int chan, data8_t data )
+DNote( struct sequence *pSequence, int chan, uint8_t data )
 {
 	struct voice *pVoice = &mVoice[pSequence->channel[chan]];
 	pVoice->dnote = data;
 } /* DNote */
 
 static void
-Pan( struct sequence *pSequence, int chan, data8_t data )
+Pan( struct sequence *pSequence, int chan, uint8_t data )
 {
 	struct voice *pVoice = &mVoice[pSequence->channel[chan]];
 	pVoice->pan = data;
 } /* Pan */
 
 static void
-Volume( struct sequence *pSequence, int chan, data8_t data )
+Volume( struct sequence *pSequence, int chan, uint8_t data )
 {
 	struct voice *pVoice = &mVoice[pSequence->channel[chan]];
 	pVoice->volume = data;
@@ -356,8 +356,8 @@ Volume( struct sequence *pSequence, int chan, data8_t data )
 static void
 UpdateSequence( struct sequence *pSequence )
 {
-	data16_t *pStatus = GetSequenceStatusAddr(pSequence);
-	data16_t data = *pStatus;
+	uint16_t *pStatus = GetSequenceStatusAddr(pSequence);
+	uint16_t data = *pStatus;
 
 	if( data&0x0040 )
 	{ /* bit 0x0040 indicates that a sound request was written by the main CPU */
@@ -487,7 +487,7 @@ UpdateSequence( struct sequence *pSequence )
 						if (no < MAX_SEQUENCE)
 						{
 							struct sequence *pSequence2 = &mSequence[no];
-							data16_t *pStatus2 = GetSequenceStatusAddr(pSequence2);
+							uint16_t *pStatus2 = GetSequenceStatusAddr(pSequence2);
 							int offs = 0x12+cod*2;
 							*pStatus2 = (cod<<8)|0x0080;
 							memset( pSequence2, 0x00, sizeof(struct sequence) );
@@ -506,8 +506,8 @@ UpdateSequence( struct sequence *pSequence )
 
 				case 0x23:
 					{
-						data8_t reg23_0 = ReadMetaDataByte(pSequence->addr++); /* Channel select */
-						data8_t reg23_1 = ReadMetaDataByte(pSequence->addr++); /* PCM bank select */
+						uint8_t reg23_0 = ReadMetaDataByte(pSequence->addr++); /* Channel select */
+						uint8_t reg23_1 = ReadMetaDataByte(pSequence->addr++); /* PCM bank select */
 						/* reg23_0: 0 = Ch. 0- 3 PCM Bank select
 						            1 = Ch. 4- 7 PCM Bank select
 						            2 = Ch. 8-11 PCM Bank select
@@ -597,7 +597,7 @@ NAMCONA_sh_start( const struct MachineSound *msound )
 	vol[1] = MIXER(intf->mixing_level, MIXER_PAN_RIGHT);
 	mSampleRate = intf->frequency;
 	mStream = stream_init_multi(2, name, vol, mSampleRate, 0, UpdateSound);
-	mpROM = (data16_t *)memory_region(REGION_CPU1);
+	mpROM = (uint16_t *)memory_region(REGION_CPU1);
 	if( namcona1_gametype==NAMCO_KNCKHEAD )
 	{ /* game-specific hack; the music metadata is in an unusual place */
 		mpMetaData = mpROM+0x10000/2;

@@ -76,8 +76,8 @@ void xexex_set_alpha(int on);
 
 MACHINE_INIT( xexex );
 
-static data16_t *xexex_workram;
-static data16_t cur_control2;
+static uint16_t *xexex_workram;
+static uint16_t cur_control2;
 static int init_eeprom_count;
 static int cur_sound_region, xexex_strip0x1a;
 static int suspension_active, resume_trigger;
@@ -149,7 +149,7 @@ static void xexex_objdma(int limiter)
 	static int frame = -1;
 
 	int counter, num_inactive;
-	data16_t *src, *dst;
+	uint16_t *src, *dst;
 
 	counter = frame;
 	frame = cpu_getcurrentframe();
@@ -591,8 +591,8 @@ static DRIVER_INIT( xexex )
 	if (!strcmp(Machine->gamedrv->name, "xexex"))
 	{
 		// Invulnerability
-//		*(data16_t *)(memory_region(REGION_CPU1) + 0x648d4) = 0x4a79;
-//		*(data16_t *)(memory_region(REGION_CPU1) + 0x00008) = 0x5500;
+//		*(uint16_t *)(memory_region(REGION_CPU1) + 0x648d4) = 0x4a79;
+//		*(uint16_t *)(memory_region(REGION_CPU1) + 0x00008) = 0x5500;
 		xexex_strip0x1a = 1;
 	}
 

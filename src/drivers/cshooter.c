@@ -85,7 +85,7 @@ Stephh's notes (based on the game Z80 code and some tests) :
 
 /* vidhrdw */
 
-data8_t* cshooter_txram;
+uint8_t* cshooter_txram;
 static struct tilemap *cshooter_txtilemap;
 
 static void get_cstx_tile_info(int tile_index)

@@ -11,7 +11,7 @@
 
 
 
-data8_t *cop01_bgvideoram,*cop01_fgvideoram;
+uint8_t *cop01_bgvideoram,*cop01_fgvideoram;
 
 static unsigned char mightguy_vreg[4];
 static struct tilemap *bg_tilemap,*fg_tilemap;

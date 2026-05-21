@@ -1,8 +1,8 @@
 #ifndef _CPS1_H_
 #define _CPS1_H_
 
-extern data16_t *cps1_gfxram;     /* Video RAM */
-extern data16_t *cps1_output;     /* Output ports */
+extern uint16_t *cps1_gfxram;     /* Video RAM */
+extern uint16_t *cps1_output;     /* Output ports */
 extern size_t cps1_gfxram_size;
 extern size_t cps1_output_size;
 

@@ -6,8 +6,8 @@ static int flipscreen;
 static struct tilemap *bg_tilemap,  *tx_tilemap;
 static unsigned char fg_color, old_fg_color;
 
-extern data8_t *jcr_sharedram;
-extern data8_t *jcr_textram;
+extern uint8_t *jcr_sharedram;
+extern uint8_t *jcr_textram;
 
 
 int jcross_vregs[5];

@@ -57,7 +57,7 @@ static INLINE void verboselog( int n_level, const char *s_fmt, ... )
 	}
 }
 
-static data32_t *namcos12_sharedram;
+static uint32_t *namcos12_sharedram;
 
 static WRITE32_HANDLER( sharedram_w )
 {
@@ -116,23 +116,23 @@ static INTERRUPT_GEN( namcos12_vblank )
 	/* kludge: protection hacks */
 	if( strcmp( Machine->gamedrv->name, "fgtlayer" ) == 0 )
 	{
-		data8_t *RAM = memory_region( REGION_CPU1 );
-		if( *( (data32_t *)&RAM[ 0x2ac494 ] ) == 0x080ab125 )
+		uint8_t *RAM = memory_region( REGION_CPU1 );
+		if( *( (uint32_t *)&RAM[ 0x2ac494 ] ) == 0x080ab125 )
 		{
-			*( (data32_t *)&RAM[ 0x2ac494 ] ) = 0;
+			*( (uint32_t *)&RAM[ 0x2ac494 ] ) = 0;
 		}
 	}
 	else if( strcmp( Machine->gamedrv->name, "pacapp" ) == 0 )
 	{
-		data8_t *RAM = memory_region( REGION_CPU1 );
-		if( *( (data32_t *)&RAM[ 0x16d50 ] ) == 0x08005b54 )
+		uint8_t *RAM = memory_region( REGION_CPU1 );
+		if( *( (uint32_t *)&RAM[ 0x16d50 ] ) == 0x08005b54 )
 		{
-			*( (data32_t *)&RAM[ 0x16d50 ] ) = 0;
+			*( (uint32_t *)&RAM[ 0x16d50 ] ) = 0;
 		}
 	}
 }
 
-static data32_t m_n_bankoffset;
+static uint32_t m_n_bankoffset;
 
 static WRITE32_HANDLER( bankoffset_w )
 {
@@ -143,7 +143,7 @@ static WRITE32_HANDLER( bankoffset_w )
 	verboselog( 1, "bankoffset_w( %08x, %08x, %08x ) %08x\n", offset, data, mem_mask, m_n_bankoffset );
 }
 
-static data32_t m_n_dmaoffset;
+static uint32_t m_n_dmaoffset;
 
 static WRITE32_HANDLER( dmaoffset_w )
 {
@@ -164,14 +164,14 @@ static void namcos12_rom_read( uint32_t n_address, int32_t n_size )
 
 	if( m_n_dmaoffset >= 0x80000000 )
 	{
-		p_n_src = (data32_t *)( memory_region( REGION_USER2 ) + ( m_n_dmaoffset & 0x003fffff ) );
+		p_n_src = (uint32_t *)( memory_region( REGION_USER2 ) + ( m_n_dmaoffset & 0x003fffff ) );
 	}
 	else
 	{
-		p_n_src = (data32_t *)( memory_region( REGION_USER3 ) + ( m_n_dmaoffset & 0x7fffffff ) );
+		p_n_src = (uint32_t *)( memory_region( REGION_USER3 ) + ( m_n_dmaoffset & 0x7fffffff ) );
 	}
 
-	p_n_dst = (data32_t *)( memory_region( REGION_CPU1 ) + n_address );
+	p_n_dst = (uint32_t *)( memory_region( REGION_CPU1 ) + n_address );
 
 	n_left = ( memory_region_length( REGION_CPU1 ) - n_address ) / 4;
 	if( n_size > n_left )
@@ -192,7 +192,7 @@ static MEMORY_WRITE32_START( namcos12_writemem )
 	{ 0x1f010000, 0x1f010003, MWA32_NOP },    /* ?? */
 	{ 0x1f018000, 0x1f018003, MWA32_NOP },    /* ?? */
 	{ 0x1f080000, 0x1f083fff, sharedram_w, &namcos12_sharedram }, /* shared ram?? */
-	{ 0x1f140000, 0x1f141fff, MWA32_RAM, (data32_t **)&generic_nvram, &generic_nvram_size }, /* flash */
+	{ 0x1f140000, 0x1f141fff, MWA32_RAM, (uint32_t **)&generic_nvram, &generic_nvram_size }, /* flash */
 	{ 0x1f1bff08, 0x1f1bff0f, MWA32_NOP },    /* ?? */
 	{ 0x1f700000, 0x1f70ffff, dmaoffset_w },  /* dma */
 	{ 0x1f800000, 0x1f8003ff, MWA32_BANK1 },  /* scratchpad */
@@ -265,11 +265,11 @@ static DRIVER_INIT( namcos12 )
 		strcmp( Machine->gamedrv->name, "mrdrillr" ) == 0 ||
 		strcmp( Machine->gamedrv->name, "pacapp" ) == 0 )
 	{
-		data8_t *RAM = memory_region( REGION_USER2 );
+		uint8_t *RAM = memory_region( REGION_USER2 );
 
-		*( (data32_t *)&RAM[ 0x20280 ] ) = 0;
-		*( (data32_t *)&RAM[ 0x20284 ] ) = 0;
-		*( (data32_t *)&RAM[ 0x20288 ] ) = 0;
+		*( (uint32_t *)&RAM[ 0x20280 ] ) = 0;
+		*( (uint32_t *)&RAM[ 0x20284 ] ) = 0;
+		*( (uint32_t *)&RAM[ 0x20288 ] ) = 0;
 	}
 }
 

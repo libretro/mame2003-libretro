@@ -87,7 +87,7 @@ codes for the ones we have (could just be protection tho)
 #include "driver.h"
 #include <time.h>
 
-data16_t *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
+uint16_t *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
 WRITE16_HANDLER( pgm_tx_videoram_w );
 WRITE16_HANDLER( pgm_bg_videoram_w );
 VIDEO_START( pgm );
@@ -520,8 +520,8 @@ MACHINE_DRIVER_END
 
 static void expand_32x32x5bpp(void)
 {
-	data8_t *src    = memory_region       ( REGION_GFX1 );
-	data8_t *dst    = memory_region       ( REGION_GFX2 );
+	uint8_t *src    = memory_region       ( REGION_GFX1 );
+	uint8_t *dst    = memory_region       ( REGION_GFX2 );
 	size_t  srcsize = memory_region_length( REGION_GFX1 );
 	int cnt, pix;
 
@@ -541,12 +541,12 @@ static void expand_32x32x5bpp(void)
 /* This function expands the sprite colour data (in the A Roms) from 3 pixels
    in each word to a byte per pixel making it easier to use */
 
-data8_t *pgm_sprite_a_region;
+uint8_t *pgm_sprite_a_region;
 size_t	pgm_sprite_a_region_allocate;
 
 static void expand_colourdata(void)
 {
-	data8_t *src    = memory_region       ( REGION_GFX3 );
+	uint8_t *src    = memory_region       ( REGION_GFX3 );
 	size_t  srcsize = memory_region_length( REGION_GFX3 );
 	int cnt;
 	size_t	needed = srcsize / 2 * 3;
@@ -562,7 +562,7 @@ static void expand_colourdata(void)
 
 	for (cnt = 0 ; cnt < srcsize/2 ; cnt++)
 	{
-		data16_t colpack;
+		uint16_t colpack;
 
 		colpack = ((src[cnt*2]) | (src[cnt*2+1] << 8));
 		pgm_sprite_a_region[cnt*3+0] = (colpack >> 0 ) & 0x1f;
@@ -600,7 +600,7 @@ static DRIVER_INIT( orlegend )
 
 static DRIVER_INIT( dragwld2 )
 {
-	data16_t *mem16 = (data16_t *)memory_region(REGION_CPU1);
+	uint16_t *mem16 = (uint16_t *)memory_region(REGION_CPU1);
 
 	pgm_basic_init();
 

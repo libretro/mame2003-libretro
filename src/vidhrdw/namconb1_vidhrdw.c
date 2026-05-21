@@ -17,7 +17,7 @@ static struct tilemap *background[6];
 /* nth_word32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of 16 bit words.
  */
-static INLINE data16_t nth_word32( const data32_t *source, int which )
+static INLINE uint16_t nth_word32( const uint32_t *source, int which )
 {
 	source += which/2;
 	if( which&1 )
@@ -33,10 +33,10 @@ static INLINE data16_t nth_word32( const data32_t *source, int which )
 /* nth_byte32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of bytes.
  */
-static INLINE data8_t
-nth_byte32( const data32_t *pSource, int which )
+static INLINE uint8_t
+nth_byte32( const uint32_t *pSource, int which )
 {
-		data32_t data = pSource[which/4];
+		uint32_t data = pSource[which/4];
 		switch( which&3 )
 		{
 		case 0: return data>>24;
@@ -46,9 +46,9 @@ nth_byte32( const data32_t *pSource, int which )
 		}
 } /* nth_byte32 */
 
-static INLINE void tilemapNB1_get_info(int tile_index,int tilemap_color,const data32_t *tilemap_videoram)
+static INLINE void tilemapNB1_get_info(int tile_index,int tilemap_color,const uint32_t *tilemap_videoram)
 {
-	data16_t tile = nth_word32( tilemap_videoram, tile_index );
+	uint16_t tile = nth_word32( tilemap_videoram, tile_index );
 	SET_TILE_INFO(
 			NAMCONB1_TILEGFX,
 			tile,
@@ -67,7 +67,7 @@ static void tilemapNB1_get_info5(int tile_index) { tilemapNB1_get_info(tile_inde
 WRITE32_HANDLER( namconb1_videoram_w )
 {
 	int layer;
-	data32_t old_data;
+	uint32_t old_data;
 
 	old_data = videoram32[offset];
 	COMBINE_DATA( &videoram32[offset] );
@@ -104,8 +104,8 @@ WRITE32_HANDLER( namconb1_videoram_w )
 static void namconb1_install_palette( void )
 {
 	int pen, page, dword_offset, byte_offset;
-	data32_t r,g,b;
-	data32_t *pSource;
+	uint32_t r,g,b;
+	uint32_t *pSource;
 
 	/* this is unnecessarily expensive.  Better would be to mark palette entries dirty as
 	 * they are modified, and only process those that have changed.
@@ -137,7 +137,7 @@ static void
 handle_mcu( void )
 {
 	static int toggle;
-	static data16_t credits;
+	static uint16_t credits;
 	static int old_coin_state;
 	static int old_p1;
 	static int old_p2;
@@ -296,9 +296,9 @@ VIDEO_START( namconb1 )
 /****************************************************************************************************/
 
 static INLINE void
-tilemapNB2_get_info(int tile_index,int which,const data32_t *tilemap_videoram)
+tilemapNB2_get_info(int tile_index,int which,const uint32_t *tilemap_videoram)
 {
-	data16_t tile = nth_word32( tilemap_videoram, tile_index );
+	uint16_t tile = nth_word32( tilemap_videoram, tile_index );
 	int mangle;
 
 	if( namcos2_gametype == NAMCONB2_MACH_BREAKERS )

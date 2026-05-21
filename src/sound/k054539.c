@@ -93,7 +93,7 @@ static double K054539_gain[MAX_K054539][8] =
 	{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
 	{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
 };
-static data8_t K054539_posreg_latch[MAX_K054539][8][3];
+static uint8_t K054539_posreg_latch[MAX_K054539][8][3];
 static int K054539_flags = K054539_RESET_FLAGS;
 
 void K054539_init_flags(int flags)
@@ -509,7 +509,7 @@ static void K054539_stop_chip(int chip)
 	free(K054539_chips.chip[chip].ram);
 }
 
-static void K054539_w(int chip, offs_t offset, data8_t data) //*
+static void K054539_w(int chip, offs_t offset, uint8_t data) //*
 {
 #if 0
 	int voice, reg;
@@ -536,7 +536,7 @@ static void K054539_w(int chip, offs_t offset, data8_t data) //*
 #endif
 
 	int latch, offs, ch, pan;
-	data8_t *regbase, *regptr, *posptr;
+	uint8_t *regbase, *regptr, *posptr;
 
 	regbase = K054539_chips.chip[chip].regs;
 	latch = (K054539_flags & K054539_UPDATE_AT_KEYON) && (regbase[0x22f] & 1);
@@ -644,12 +644,12 @@ static void reset_zones(void)
 	}
 }
 
-static data8_t K054539_r(int chip, offs_t offset)
+static uint8_t K054539_r(int chip, offs_t offset)
 {
 	switch(offset) {
 	case 0x22d:
 		if(K054539_chips.chip[chip].regs[0x22f] & 0x10) {
-			data8_t res = K054539_chips.chip[chip].cur_zone[K054539_chips.chip[chip].cur_ptr];
+			uint8_t res = K054539_chips.chip[chip].cur_zone[K054539_chips.chip[chip].cur_ptr];
 			K054539_chips.chip[chip].cur_ptr++;
 			if(K054539_chips.chip[chip].cur_ptr == K054539_chips.chip[chip].cur_limit)
 				K054539_chips.chip[chip].cur_ptr = 0;

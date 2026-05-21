@@ -2,11 +2,11 @@
 
 #include "driver.h"
 
-extern data16_t *oneshot_sprites;
-extern data16_t *oneshot_bg_videoram;
-extern data16_t *oneshot_mid_videoram;
-extern data16_t *oneshot_fg_videoram;
-extern data16_t *oneshot_scroll;
+extern uint16_t *oneshot_sprites;
+extern uint16_t *oneshot_bg_videoram;
+extern uint16_t *oneshot_mid_videoram;
+extern uint16_t *oneshot_fg_videoram;
+extern uint16_t *oneshot_scroll;
 
 extern int gun_x_p1,gun_y_p1,gun_x_p2,gun_y_p2;
 extern int gun_x_shift;

@@ -36,7 +36,7 @@ added together (=873b), subtracted [f840] (=87d9)
 #include "driver.h"
 
 #if 0
-static data8_t *sharedram;
+static uint8_t *sharedram;
 #endif
 
 /* Variables defined in vidhrdw */

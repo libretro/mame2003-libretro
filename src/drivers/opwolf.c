@@ -59,7 +59,7 @@ register. So what is controlling priority.
 #include "vidhrdw/taitoic.h"
 #include "sndhrdw/taitosnd.h"
 
-static data8_t *cchip_ram;
+static uint8_t *cchip_ram;
 
 WRITE16_HANDLER( rainbow_spritectrl_w );
 WRITE16_HANDLER( rastan_spriteflip_w );

@@ -1,7 +1,7 @@
 
 #include "driver.h"
 
-extern data8_t *xyonix_vidram;
+extern uint8_t *xyonix_vidram;
 
 static struct tilemap *xyonix_tilemap;
 

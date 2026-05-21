@@ -7,7 +7,7 @@ Omori Electric CAD (OEC) 1983
 #include "state.h"
 
 static struct tilemap *popper_p123_tilemap, *popper_p0_tilemap, *popper_ol_p123_tilemap, *popper_ol_p0_tilemap;
-data8_t *popper_videoram, *popper_attribram, *popper_ol_videoram, *popper_ol_attribram, *popper_spriteram;
+uint8_t *popper_videoram, *popper_attribram, *popper_ol_videoram, *popper_ol_attribram, *popper_spriteram;
 size_t popper_spriteram_size;
 static int popper_flipscreen, popper_e002, popper_gfx_bank;
 static struct rectangle tilemap_clip;

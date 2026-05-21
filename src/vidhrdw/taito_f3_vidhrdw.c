@@ -183,21 +183,21 @@ Line ram memory map:
 
 static struct tilemap *pf1_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static struct tilemap *pixel_layer;
-static data32_t *spriteram32_buffered;
+static uint32_t *spriteram32_buffered;
 static int vram_dirty[256];
 static int pivot_changed,vram_changed,scroll_kludge_y,scroll_kludge_x;
-static data32_t f3_control_0[8];
-static data32_t f3_control_1[8];
+static uint32_t f3_control_0[8];
+static uint32_t f3_control_1[8];
 static int flipscreen;
 
 static uint8_t *pivot_dirty;
 static int pf23_y_kludge;
 static struct rectangle pixel_layer_clip;
 
-static data32_t *f3_pf_data_1,*f3_pf_data_2,*f3_pf_data_3,*f3_pf_data_4;
+static uint32_t *f3_pf_data_1,*f3_pf_data_2,*f3_pf_data_3,*f3_pf_data_4;
 
-data32_t *f3_vram,*f3_line_ram;
-data32_t *f3_pf_data,*f3_pivot_ram;
+uint32_t *f3_vram,*f3_line_ram;
+uint32_t *f3_pf_data,*f3_pivot_ram;
 
 extern int f3_game;
 static int scroll_dirty,skip_this_frame;
@@ -266,7 +266,7 @@ static struct tempsprite *spritelist;
 static int alpha_disable=0;
 
 static const struct tempsprite *sprite_end;
-static void get_sprite_info(const data32_t *spriteram32_ptr);
+static void get_sprite_info(const uint32_t *spriteram32_ptr);
 static int sprite_lag=1;
 static uint8_t sprite_pri_usage=0;
 
@@ -324,9 +324,9 @@ static uint8_t *tile_opaque_pf;
 
 /******************************************************************************/
 
-static INLINE void get_tile_info(int tile_index, data32_t *gfx_base)
+static INLINE void get_tile_info(int tile_index, uint32_t *gfx_base)
 {
-	data32_t tile=gfx_base[tile_index];
+	uint32_t tile=gfx_base[tile_index];
 	uint8_t abtype=(tile>>(16+9))&0x1f;
 
 	{
@@ -1475,9 +1475,9 @@ static INLINE void clear_scanlines(struct mame_bitmap *bitmap,int x,int xsize,in
 static void visible_tile_check(struct f3_line_inf *line_t,
 								int line,
 								uint32_t x_index_fx,uint32_t y_index,
-								data32_t *f3_pf_data_n)
+								uint32_t *f3_pf_data_n)
 {
-	data32_t *pf_base;
+	uint32_t *pf_base;
 	int i,trans_all,tile_index,tile_num;
 	int alpha_type,alpha_mode;
 	int opaque_all;
@@ -1546,7 +1546,7 @@ static void visible_tile_check(struct f3_line_inf *line_t,
 /******************************************************************************/
 
 /* sx and sy are 16.16 fixed point numbers */
-static void get_line_ram_info(struct tilemap *tilemap,int sx,int sy,int pos,data32_t *f3_pf_data_n)
+static void get_line_ram_info(struct tilemap *tilemap,int sx,int sy,int pos,uint32_t *f3_pf_data_n)
 {
 	struct f3_line_inf *line_t=&line_inf[pos];
 	const struct mame_bitmap *srcbitmap;
@@ -2612,7 +2612,7 @@ static INLINE void f3_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct Gfx
 	/*zoom##p = p##_addition << 12;*/							\
 }
 
-static void get_sprite_info(const data32_t *spriteram32_ptr)
+static void get_sprite_info(const uint32_t *spriteram32_ptr)
 {
 	const int min_x=Machine->visible_area.min_x,max_x=Machine->visible_area.max_x;
 	const int min_y=Machine->visible_area.min_y,max_y=Machine->visible_area.max_y;
@@ -2638,7 +2638,7 @@ static void get_sprite_info(const data32_t *spriteram32_ptr)
 	{
 		/* Check if special command bit is set */
 		if (spriteram32_ptr[offs+1] & 0x8000) {
-			data32_t cntrl=(spriteram32_ptr[offs+2])&0xffff;
+			uint32_t cntrl=(spriteram32_ptr[offs+2])&0xffff;
 			flipscreen=cntrl&0x2000;
 
 			/*	cntrl&0x1000 = disabled?  (From F2 driver, doesn't seem used anywhere)
@@ -2656,7 +2656,7 @@ static void get_sprite_info(const data32_t *spriteram32_ptr)
 
 		/* Check if the sprite list jump command bit is set */
 		if ((spriteram32_ptr[offs+3]>>16) & 0x8000) {
-			data32_t jump = (spriteram32_ptr[offs+3]>>16)&0x3ff;
+			uint32_t jump = (spriteram32_ptr[offs+3]>>16)&0x3ff;
 
 			offs=((offs&0x2000)|((jump<<4)/4));
 			continue;

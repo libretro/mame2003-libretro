@@ -11,7 +11,7 @@
 
 static struct tilemap *bg_tilemap;
 static struct tilemap *txt_tilemap;
-data8_t * txt_ram;
+uint8_t * txt_ram;
 
 /***************************************************************************
 

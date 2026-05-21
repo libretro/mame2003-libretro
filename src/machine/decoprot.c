@@ -59,8 +59,8 @@
 
 #define DECO_PORT(p) (deco16_prot_ram[p/2])
 
-data16_t *deco16_prot_ram;
-data32_t *deco32_prot_ram;
+uint16_t *deco16_prot_ram;
+uint32_t *deco32_prot_ram;
 
 /***************************************************************************/
 
@@ -575,7 +575,7 @@ WRITE32_HANDLER( deco32_fghthist_prot_w )
 
 READ32_HANDLER( deco32_fghthist_prot_r )
 {
-	data16_t val;
+	uint16_t val;
 
 
 	if (activecpu_get_pc()==0x163dc || activecpu_get_pc()==0x16390)

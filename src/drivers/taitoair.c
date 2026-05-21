@@ -186,9 +186,9 @@ cpu #2 (PC=0000060E): unmapped memory word read from 0000683A & FFFF
 
 static int dsp_HOLD_signal;
 
-static data16_t *taitoh_68000_mainram;
-data16_t *taitoair_line_ram;
-static data16_t *dsp_ram;	/* Shared 68000/TMS32025 RAM */
+static uint16_t *taitoh_68000_mainram;
+uint16_t *taitoair_line_ram;
+static uint16_t *dsp_ram;	/* Shared 68000/TMS32025 RAM */
 
 VIDEO_START( taitoair );
 VIDEO_UPDATE( taitoair );

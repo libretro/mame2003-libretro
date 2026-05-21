@@ -101,8 +101,8 @@
 
 #include "driver.h"
 
-data16_t *pass_bg_videoram;
-data16_t *pass_fg_videoram;
+uint16_t *pass_bg_videoram;
+uint16_t *pass_fg_videoram;
 
 /* in vidhrdw */
 

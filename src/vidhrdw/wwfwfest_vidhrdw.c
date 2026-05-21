@@ -12,7 +12,7 @@
 static struct tilemap *fg0_tilemap, *bg0_tilemap, *bg1_tilemap;
 int wwfwfest_pri;
 int wwfwfest_bg0_scrollx, wwfwfest_bg0_scrolly, wwfwfest_bg1_scrollx, wwfwfest_bg1_scrolly;
-data16_t *wwfwfest_fg0_videoram, *wwfwfest_bg0_videoram, *wwfwfest_bg1_videoram;
+uint16_t *wwfwfest_fg0_videoram, *wwfwfest_bg0_videoram, *wwfwfest_bg1_videoram;
 
 /*******************************************************************************
  Write Handlers
@@ -74,7 +74,7 @@ static void get_fg0_tile_info(int tile_index)
 
 	**- End of Comments -*/
 
-	data16_t *tilebase;
+	uint16_t *tilebase;
 	int tileno;
 	int colbank;
 	tilebase =  &wwfwfest_fg0_videoram[tile_index*2];
@@ -104,7 +104,7 @@ static void get_bg0_tile_info(int tile_index)
 
 	**- End of Comments -*/
 
-	data16_t *tilebase;
+	uint16_t *tilebase;
 	int tileno,colbank;
 
 	tilebase =  &wwfwfest_bg0_videoram[tile_index*2];
@@ -130,7 +130,7 @@ static void get_bg1_tile_info(int tile_index)
 
 	**- End of Comments -*/
 
-	data16_t *tilebase;
+	uint16_t *tilebase;
 	int tileno;
 	int colbank;
 	tilebase =  &wwfwfest_bg1_videoram[tile_index];
@@ -172,8 +172,8 @@ static void wwfwfest_drawsprites( struct mame_bitmap *bitmap, const struct recta
 	**- End of Comments -*/
 
 	const struct GfxElement *gfx = Machine->gfx[1];
-	data16_t *source = buffered_spriteram16;
-	data16_t *finish = source + 0x2000/2;
+	uint16_t *source = buffered_spriteram16;
+	uint16_t *finish = source + 0x2000/2;
 
 	while( source<finish )
 	{

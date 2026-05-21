@@ -43,11 +43,11 @@ TODO:
 #include "vidhrdw/tlc34076.h"
 
 
-static data16_t *code_rom;
+static uint16_t *code_rom;
 
-static data16_t *ram_base;
+static uint16_t *ram_base;
 
-static data16_t dpyadr;
+static uint16_t dpyadr;
 static int dpyadrscan;
 
 VIDEO_START( coolpool )
@@ -69,7 +69,7 @@ void coolpool_from_shiftreg(unsigned int address, uint16_t* shiftreg)
 
 READ16_HANDLER( coolpool_gfxrom_r )
 {
-	data8_t *rom = memory_region(REGION_GFX1);
+	uint8_t *rom = memory_region(REGION_GFX1);
 
 	return rom[2*offset] | (rom[2*offset+1] << 8);
 }
@@ -99,7 +99,7 @@ void coolpool_dpyint_callback(int scanline)
 
 VIDEO_UPDATE( amerdart )
 {
-	data16_t *base = &ram_base[TOWORD(0x800)];
+	uint16_t *base = &ram_base[TOWORD(0x800)];
 	int x, y;
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
@@ -107,7 +107,7 @@ VIDEO_UPDATE( amerdart )
 		uint8_t scanline[320];
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
-			data16_t pixels = base[x / 4];
+			uint16_t pixels = base[x / 4];
 
 			scanline[x+0] = (pixels >> 0) & 15;
 			scanline[x+1] = (pixels >> 4) & 15;
@@ -136,7 +136,7 @@ INTERRUPT_GEN( coolpool_vblank_start )
 
 VIDEO_UPDATE( coolpool )
 {
-	data16_t dpytap, dudate, dumask;
+	uint16_t dpytap, dudate, dumask;
 	int x, y, offset;
 
 	/* if we're blank, just blank the screen */
@@ -174,7 +174,7 @@ VIDEO_UPDATE( coolpool )
 		uint8_t scanline[320];
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
-			data16_t pixels = ram_base[(offset & ~dumask & TOWORD(0x1fffff)) | ((offset + x/2) & dumask)];
+			uint16_t pixels = ram_base[(offset & ~dumask & TOWORD(0x1fffff)) | ((offset + x/2) & dumask)];
 
 			scanline[x+0] = (pixels >> 0) & 0xff;
 			scanline[x+1] = (pixels >> 8) & 0xff;
@@ -187,7 +187,7 @@ VIDEO_UPDATE( coolpool )
 
 
 
-static data16_t input_data;
+static uint16_t input_data;
 
 MACHINE_INIT( coolpool )
 {
@@ -282,7 +282,7 @@ static int romaddr;
 
 static READ16_HANDLER( dsp_rom_r )
 {
-	data8_t *rom = memory_region(REGION_USER2);
+	uint8_t *rom = memory_region(REGION_USER2);
 
 //usrintf_showmessage("read rom addr %06x",romaddr);
 	return rom[romaddr & (memory_region_length(REGION_USER2)-1)];
@@ -862,7 +862,7 @@ DRIVER_INIT( coolpool )
 static void decode_9ballsht(void)
 {
 	int a;
-	data16_t *rom;
+	uint16_t *rom;
 
 	/* decrypt the main program ROMs */
 	for (a = 0;a < memory_region_length(REGION_USER1)/2;a++)
@@ -887,11 +887,11 @@ static void decode_9ballsht(void)
 	}
 
 	/* decrypt the sub data ROMs */
-	rom = (data16_t *)memory_region(REGION_USER2);
+	rom = (uint16_t *)memory_region(REGION_USER2);
 	for (a = 1;a < memory_region_length(REGION_USER2)/2;a+=4)
 	{
 		/* just swap bits 1 and 2 of the address */
-		data16_t tmp = rom[a];
+		uint16_t tmp = rom[a];
 		rom[a] = rom[a+1];
 		rom[a+1] = tmp;
 	}

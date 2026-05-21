@@ -25,7 +25,7 @@ TODO:
 #include "vidhrdw/generic.h"
 
 
-extern data8_t *mjkjidai_videoram;
+extern uint8_t *mjkjidai_videoram;
 
 VIDEO_START( mjkjidai );
 VIDEO_UPDATE( mjkjidai );
@@ -79,7 +79,7 @@ static WRITE_HANDLER( keyboard_select_w )
 	}
 }
 
-static data8_t *nvram;
+static uint8_t *nvram;
 static size_t nvram_size;
 
 void nvram_handler_mjkjidai(mame_file *file, int read_or_write)

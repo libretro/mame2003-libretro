@@ -143,7 +143,7 @@ VIDEO_START( ssv )
 }
 
 /* Scroll values + CRT controller registers */
-data16_t *ssv_scroll;
+uint16_t *ssv_scroll;
 
 int ssv_special;	// kludge for hypreac2
 
@@ -260,7 +260,7 @@ WRITE16_HANDLER( ssv_scroll_w )
 WRITE16_HANDLER( paletteram16_xrgb_swap_word_w )
 {
 	int r, g, b;
-	data16_t data0, data1;
+	uint16_t data0, data1;
 
 	COMBINE_DATA(paletteram16 + offset);
 
@@ -463,7 +463,7 @@ static void ssv_draw_row(struct mame_bitmap *bitmap, int sx, int sy, int scroll)
 	int attr, code, color, mode, size, page, shadow;
 	int x, x1, sx1, flipx, xnum, xstart, xend, xinc;
 	int y, y1, sy1, flipy, ynum, ystart, yend, yinc;
-	data16_t *s3;
+	uint16_t *s3;
 
 	xnum	=		0x20;		// width in tiles (screen-wide)
 	ynum	=		0x8;		// height in tiles (always 64 pixels?)
@@ -594,10 +594,10 @@ static void ssv_draw_sprites(struct mame_bitmap *bitmap)
 {
 	/* Sprites list */
 
-	data16_t *s1	=	spriteram16;
-	data16_t *end1	=	spriteram16 + 0x02000/2;
-	data16_t *end2	=	spriteram16 + 0x40000/2;
-	data16_t *s2;
+	uint16_t *s1	=	spriteram16;
+	uint16_t *end1	=	spriteram16 + 0x02000/2;
+	uint16_t *end2	=	spriteram16 + 0x40000/2;
+	uint16_t *s2;
 
 	for ( ; s1 < end1; s1+=4 )
 	{

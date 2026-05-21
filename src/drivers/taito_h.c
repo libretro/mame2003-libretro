@@ -84,7 +84,7 @@ Recordbr: loads of unmapped IOC reads and writes.
 
 ***************************************************************************/
 
-static data16_t *taitoh_68000_mainram;
+static uint16_t *taitoh_68000_mainram;
 
 VIDEO_START( syvalion );
 VIDEO_START( recordbr );
@@ -153,7 +153,7 @@ static READ16_HANDLER( syvalion_input_bypass_r )
 {
 	/* Bypass TC0220IOC controller for analog input */
 
-	data8_t	port = TC0220IOC_port_r(0);	/* read port number */
+	uint8_t	port = TC0220IOC_port_r(0);	/* read port number */
 
 	switch( port )
 	{

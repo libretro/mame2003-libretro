@@ -2,7 +2,7 @@
 
 static struct tilemap *pf3_layer,*pf2_layer,*pf1_layer,*text_layer;
 static int deadangle_tilebank, deadangle_oldtilebank;
-data8_t *deadang_video_data,*deadang_scroll_ram;
+uint8_t *deadang_video_data,*deadang_scroll_ram;
 
 /******************************************************************************/
 
@@ -36,14 +36,14 @@ static uint32_t bg_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num
 
 static void get_pf3_tile_info( int tile_index )
 {
-	const data8_t *bgMap = memory_region(REGION_GFX6);
+	const uint8_t *bgMap = memory_region(REGION_GFX6);
 	int code=(bgMap[tile_index*2]<<8) | bgMap[tile_index*2+1];
 	SET_TILE_INFO(4,code&0x7ff,code>>12,0);
 }
 
 static void get_pf2_tile_info( int tile_index )
 {
-	const data8_t *bgMap = memory_region(REGION_GFX7);
+	const uint8_t *bgMap = memory_region(REGION_GFX7);
 	int code=(bgMap[tile_index*2]<<8) | bgMap[tile_index*2+1];
 	SET_TILE_INFO(3,code&0x7ff,code>>12,0);
 }

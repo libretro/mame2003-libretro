@@ -21,7 +21,7 @@ Could be bad dump ('final' romset is made of two sets marked as 'bad' )
 #include "cpu/z80/z80.h"
 #include "snk.h"
 
-data8_t *jcr_textram;
+uint8_t *jcr_textram;
 
 WRITE_HANDLER( snkwave_w );
 
@@ -38,7 +38,7 @@ WRITE_HANDLER( jcross_palettebank_w );
 
 static int sound_cpu_busy=0;
 
-data8_t *jcr_sharedram;
+uint8_t *jcr_sharedram;
 static READ_HANDLER(sharedram_r){	return jcr_sharedram[offset];}
 static WRITE_HANDLER(sharedram_w){	jcr_sharedram[offset]=data;}
 

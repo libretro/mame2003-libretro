@@ -338,9 +338,9 @@ READ32_HANDLER( psx_dma_r )
 /* Root Counters */
 
 static void *m_p_timer_root[ 7 ];
-static data16_t m_p_n_root_count[ 3 ];
-static data16_t m_p_n_root_mode[ 3 ];
-static data16_t m_p_n_root_target[ 3 ];
+static uint16_t m_p_n_root_count[ 3 ];
+static uint16_t m_p_n_root_mode[ 3 ];
+static uint16_t m_p_n_root_target[ 3 ];
 
 static void root_finished( int n_counter )
 {
@@ -403,7 +403,7 @@ WRITE32_HANDLER( psx_counter_w )
 READ32_HANDLER( psx_counter_r )
 {
 	int n_counter;
-	data32_t data;
+	uint32_t data;
 
 	n_counter = offset / 4;
 
@@ -444,13 +444,13 @@ READ32_HANDLER( psx_counter_r )
 
 /* SIO */
 
-static data16_t m_p_n_sio_status[ 2 ];
-static data16_t m_p_n_sio_mode[ 2 ];
-static data16_t m_p_n_sio_control[ 2 ];
-static data16_t m_p_n_sio_baud[ 2 ];
-static data8_t *m_p_p_n_sio_buf[ 2 ];
-static data16_t m_p_n_sio_rx[ 2 ];
-static data16_t m_p_n_sio_read[ 2 ];
+static uint16_t m_p_n_sio_status[ 2 ];
+static uint16_t m_p_n_sio_mode[ 2 ];
+static uint16_t m_p_n_sio_control[ 2 ];
+static uint16_t m_p_n_sio_baud[ 2 ];
+static uint8_t *m_p_p_n_sio_buf[ 2 ];
+static uint16_t m_p_n_sio_rx[ 2 ];
+static uint16_t m_p_n_sio_read[ 2 ];
 static psx_sio_write_handler m_p_f_sio_write[ 2 ];
 
 static void sio_interrupt( int n_port )
@@ -460,7 +460,7 @@ static void sio_interrupt( int n_port )
 	psx_irq_set( 0x80 );
 }
 
-void psx_sio_send( int n_port, data8_t n_data )
+void psx_sio_send( int n_port, uint8_t n_data )
 {
 	if( m_p_n_sio_rx[ n_port ] < 256 )
 	{
@@ -540,7 +540,7 @@ WRITE32_HANDLER( psx_sio_w )
 
 READ32_HANDLER( psx_sio_r )
 {
-	data32_t data;
+	uint32_t data;
 	int n_port;
 
 	n_port = offset / 4;

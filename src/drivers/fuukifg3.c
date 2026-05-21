@@ -95,9 +95,9 @@ FG-3J ROM-J 507KA0301P04       Rev:1.3
 static int fuuki32_raster_enable = 1; /* Enabled by default */
 
 // Described in src/vidhrdw/fuuki32.c
-extern data32_t *fuuki32_vram_0, *fuuki32_vram_1;
-extern data32_t *fuuki32_vram_2, *fuuki32_vram_3;
-extern data32_t *fuuki32_vregs, *fuuki32_priority, *fuuki32_tilebank;
+extern uint32_t *fuuki32_vram_0, *fuuki32_vram_1;
+extern uint32_t *fuuki32_vram_2, *fuuki32_vram_3;
+extern uint32_t *fuuki32_vregs, *fuuki32_priority, *fuuki32_tilebank;
 
 /* Functions defined in vidhrdw: */
 
@@ -110,7 +110,7 @@ VIDEO_START( fuuki32 );
 VIDEO_UPDATE( fuuki32 );
 VIDEO_EOF( fuuki32 );
 
-//data32_t *fuuki32_shared_ram;
+//uint32_t *fuuki32_shared_ram;
 
 static WRITE32_HANDLER( paletteram32_xRRRRRGGGGGBBBBB_dword_w )
 {
@@ -261,7 +261,7 @@ What sound chip?
 
 static WRITE_HANDLER ( fuuki32_sound_bw_w )
 {
-	data8_t *rom = memory_region(REGION_CPU2);
+	uint8_t *rom = memory_region(REGION_CPU2);
 
 	cpu_setbank(1,rom + data * 0x4000);
 }

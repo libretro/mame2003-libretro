@@ -57,7 +57,7 @@ static void irq_gen(int param)
 
 static void alpha_row_update(int scanline)
 {
-	data16_t *check = &atarigen_alpha[(scanline / 8) * 64 + 42];
+	uint16_t *check = &atarigen_alpha[(scanline / 8) * 64 + 42];
 
 	/* check for interrupts in the alpha ram */
 	/* the interrupt occurs on the HBLANK of the 6th scanline following */

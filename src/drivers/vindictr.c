@@ -30,7 +30,7 @@
  *
  *************************************/
 
-static data16_t *shared_ram;
+static uint16_t *shared_ram;
 
 static READ16_HANDLER( pfram_r ) { return atarigen_playfield[offset]; }
 static READ16_HANDLER( moram_r ) { return atarimo_0_spriteram[offset]; }

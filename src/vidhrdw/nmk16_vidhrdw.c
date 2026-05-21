@@ -1,13 +1,13 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *nmk_bgvideoram,*nmk_fgvideoram,*nmk_txvideoram;
-data16_t *gunnail_scrollram;
-static data16_t gunnail_scrolly;
+uint16_t *nmk_bgvideoram,*nmk_fgvideoram,*nmk_txvideoram;
+uint16_t *gunnail_scrollram;
+static uint16_t gunnail_scrolly;
 
 static int redraw_bitmap;
 
-static data16_t *spriteram_old,*spriteram_old2;
+static uint16_t *spriteram_old,*spriteram_old2;
 static int bgbank;
 static int videoshift;
 static int bioship_background_bank;
@@ -560,7 +560,7 @@ VIDEO_UPDATE( gunnail )
 
 VIDEO_UPDATE( bioship )
 {
-	data16_t *tilerom = (data16_t *)memory_region(REGION_GFX5);
+	uint16_t *tilerom = (uint16_t *)memory_region(REGION_GFX5);
 	int scrollx=-(bioship_scroll[1] + bioship_scroll[0]*256);
 	int scrolly=-(bioship_scroll[3] + bioship_scroll[2]*256);
 
@@ -574,7 +574,7 @@ VIDEO_UPDATE( bioship )
 
 		/* Draw background from tile rom */
 		for (offs = 0;offs <0x1000;offs++) {
-				data16_t data = tilerom[offs+bank];
+				uint16_t data = tilerom[offs+bank];
 				int numtile = data&0xfff;
 				int color = (data&0xf000)>>12;
 

@@ -117,8 +117,8 @@ WRITE16_HANDLER( cps2_qsound_sharedram_w )
 #define CODE_SIZE   0x0400000
 
 
-extern data16_t *cps2_objram1,*cps2_objram2;
-extern data16_t *cps2_output;
+extern uint16_t *cps2_objram1,*cps2_objram2;
+extern uint16_t *cps2_output;
 extern size_t cps2_output_size;
 extern VIDEO_START( cps2 );
 
@@ -287,17 +287,17 @@ READ16_HANDLER( cps2_qsound_volume_r )
 }
 
 
-static data8_t CPS2_Read8(offs_t address)
+static uint8_t CPS2_Read8(offs_t address)
 {
 	return m68k_read_pcrelative_8(address);
 }
 
-static data16_t CPS2_Read16(offs_t address)
+static uint16_t CPS2_Read16(offs_t address)
 {
 	return m68k_read_pcrelative_16(address);
 }
 
-static data32_t CPS2_Read32(offs_t address)
+static uint32_t CPS2_Read32(offs_t address)
 {
 	return m68k_read_pcrelative_32(address);
 }

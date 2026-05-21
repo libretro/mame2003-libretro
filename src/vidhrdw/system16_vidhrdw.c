@@ -124,10 +124,10 @@ static void debug_vreg( struct mame_bitmap *bitmap ){
 /* callback to poll video registers */
 void (* sys16_update_proc)( void );
 
-data16_t *sys16_tileram;
-data16_t *sys16_textram;
-data16_t *sys16_spriteram;
-data16_t *sys16_roadram;
+uint16_t *sys16_tileram;
+uint16_t *sys16_textram;
+uint16_t *sys16_spriteram;
+uint16_t *sys16_roadram;
 
 static int num_sprites;
 
@@ -177,19 +177,19 @@ int sys16_fg2_page[4];
 
 int sys18_bg2_active;
 int sys18_fg2_active;
-data16_t *sys18_splittab_bg_x;
-data16_t *sys18_splittab_bg_y;
-data16_t *sys18_splittab_fg_x;
-data16_t *sys18_splittab_fg_y;
+uint16_t *sys18_splittab_bg_x;
+uint16_t *sys18_splittab_bg_y;
+uint16_t *sys18_splittab_fg_x;
+uint16_t *sys18_splittab_fg_y;
 
-data16_t *sys16_gr_ver;
-data16_t *sys16_gr_hor;
-data16_t *sys16_gr_pal;
-data16_t *sys16_gr_flip;
+uint16_t *sys16_gr_ver;
+uint16_t *sys16_gr_hor;
+uint16_t *sys16_gr_pal;
+uint16_t *sys16_gr_flip;
 int sys16_gr_palette;
 int sys16_gr_palette_default;
 unsigned char sys16_gr_colorflip[2][4];
-data16_t *sys16_gr_second_road;
+uint16_t *sys16_gr_second_road;
 
 static struct tilemap *background, *foreground, *text_layer;
 static struct tilemap *background2, *foreground2;
@@ -365,7 +365,7 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 	const pen_t *base_pal = Machine->gfx[0]->colortable;
 	const unsigned char *base_gfx = memory_region(REGION_GFX2);
 	const int gfx_rom_size = memory_region_length(REGION_GFX2);
-	const data16_t *source = sys16_spriteram;
+	const uint16_t *source = sys16_spriteram;
 	struct sys16_sprite_attributes sprite;
 	int xpos, ypos, screen_width, width, logical_height, pitch, flipy, flipx;
 	int i, mod_h, mod_x, eos;
@@ -482,8 +482,8 @@ uint32_t sys16_text_map( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t
 /***************************************************************************/
 
 WRITE16_HANDLER( sys16_paletteram_w ){
-	data16_t oldword = paletteram16[offset];
-	data16_t newword;
+	uint16_t oldword = paletteram16[offset];
+	uint16_t newword;
 	COMBINE_DATA( &paletteram16[offset] );
 	newword = paletteram16[offset];
 	if( oldword!=newword ){ /* we can do this, because we initialize palette RAM to all black in vh_start */
@@ -734,7 +734,7 @@ static void get_fg2_tile_info( int offset ){
 }
 
 WRITE16_HANDLER( sys16_tileram_w ){
-	data16_t oldword = sys16_tileram[offset];
+	uint16_t oldword = sys16_tileram[offset];
 	COMBINE_DATA( &sys16_tileram[offset] );
 	if( oldword != sys16_tileram[offset] ){
 		int page = offset/(64*32);
@@ -767,7 +767,7 @@ WRITE16_HANDLER( sys16_tileram_w ){
 /***************************************************************************/
 
 static void get_text_tile_info( int offset ){
-	const data16_t *source = sys16_textram;
+	const uint16_t *source = sys16_textram;
 	int tile_number = source[offset];
 	int pri = tile_number >> 8;
 	if( sys16_textmode==2 ){ /* afterburner: ?---CCCT TTTTTTTT */
@@ -1786,7 +1786,7 @@ static void aburner_draw_road( struct mame_bitmap *bitmap, const struct rectangl
 }
 
 static void sys16_aburner_vh_screenrefresh_helper( void ){
-	const data16_t *vreg = &sys16_textram[0x740];
+	const uint16_t *vreg = &sys16_textram[0x740];
 	int i;
 
 	{

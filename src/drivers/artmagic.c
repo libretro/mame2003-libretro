@@ -22,8 +22,8 @@
 #include "machine/random.h"
 
 
-static data16_t *control;
-static data16_t *ram_base;
+static uint16_t *control;
+static uint16_t *ram_base;
 
 static uint8_t tms_irq, hack_irq;
 
@@ -421,7 +421,7 @@ MEMORY_END
 static MEMORY_WRITE16_START( main_writemem )
 	{ 0x000000, 0x07ffff, MWA16_ROM },
 	{ 0x220000, 0x23ffff, MWA16_RAM, &ram_base },
-	{ 0x240000, 0x240fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x240000, 0x240fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x300000, 0x300003, control_w, &control },
 	{ 0x300004, 0x300007, protection_bit_w },
 	{ 0x360000, 0x360001, OKIM6295_data_0_lsb_w },
@@ -449,7 +449,7 @@ MEMORY_END
 static MEMORY_WRITE16_START( stonebal_writemem )
 	{ 0x000000, 0x07ffff, MWA16_ROM },
 	{ 0x200000, 0x27ffff, MWA16_RAM },
-	{ 0x280000, 0x280fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x280000, 0x280fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x300000, 0x300003, control_w, &control },
 	{ 0x300004, 0x300007, protection_bit_w },
 	{ 0x340000, 0x340001, OKIM6295_data_0_lsb_w },

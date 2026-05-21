@@ -183,12 +183,12 @@ NEP-16
 // Defined in vidhrdw
 extern void skns_sprite_kludge(int x, int y);
 
-data32_t *skns_tilemapA_ram, *skns_tilemapB_ram, *skns_v3slc_ram;
-data32_t *skns_palette_ram, *skns_v3t_ram, *skns_main_ram, *skns_cache_ram;
-data32_t *skns_pal_regs, *skns_v3_regs, *skns_spc_regs;
+uint32_t *skns_tilemapA_ram, *skns_tilemapB_ram, *skns_v3slc_ram;
+uint32_t *skns_palette_ram, *skns_v3t_ram, *skns_main_ram, *skns_cache_ram;
+uint32_t *skns_pal_regs, *skns_v3_regs, *skns_spc_regs;
 
-data32_t skns_v3t_dirty[0x4000]; // allocate this elsewhere?
-data32_t skns_v3t_4bppdirty[0x8000]; // allocate this elsewhere?
+uint32_t skns_v3t_dirty[0x4000]; // allocate this elsewhere?
+uint32_t skns_v3t_4bppdirty[0x8000]; // allocate this elsewhere?
 int skns_v3t_somedirty,skns_v3t_4bpp_somedirty;
 
 static uint8_t bright_spc_b=0x00, bright_spc_g=0x00, bright_spc_r=0x00;
@@ -930,7 +930,7 @@ static WRITE32_HANDLER ( skns_palette_ram_w )
 
 static WRITE32_HANDLER( skns_v3t_w )
 {
-	data8_t *btiles = memory_region(REGION_GFX3);
+	uint8_t *btiles = memory_region(REGION_GFX3);
 
 	COMBINE_DATA(&skns_v3t_ram[offset]);
 
@@ -982,7 +982,7 @@ MEMORY_END
 static MEMORY_WRITE32_START( skns_writemem )
 	{ 0x00000000, 0x0007ffff, MWA32_ROM }, /* BIOS ROM */
 	{ 0x00400000, 0x0040000f, skns_io_w }, /* I/O Write */
-	{ 0x00800000, 0x00801fff, MWA32_RAM, (data32_t **)&generic_nvram, &generic_nvram_size }, /* 'backup' RAM */
+	{ 0x00800000, 0x00801fff, MWA32_RAM, (uint32_t **)&generic_nvram, &generic_nvram_size }, /* 'backup' RAM */
 	{ 0x00c00000, 0x00c00003, skns_ymz280_w }, /* ymz280_w (sound) */
 	{ 0x01000000, 0x0100000f, msm6242_w } ,
 	{ 0x01800000, 0x01800003, skns_hit2_w },

@@ -31,7 +31,7 @@
  *
  *************************************/
 
-static data16_t *sync_data;
+static uint16_t *sync_data;
 
 
 

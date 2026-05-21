@@ -15,8 +15,8 @@
  *
  *************************************/
 
-data32_t *	beathead_vram_bulk_latch;
-data32_t *	beathead_palette_select;
+uint32_t *	beathead_vram_bulk_latch;
+uint32_t *	beathead_palette_select;
 
 
 
@@ -30,7 +30,7 @@ static offs_t				scanline_offset[240];
 static uint8_t				scanline_palette[240];
 
 static int					current_scanline;
-static data32_t				finescroll;
+static uint32_t				finescroll;
 static offs_t				vram_latch_offset;
 
 static offs_t				hsyncram_offset;
@@ -114,8 +114,8 @@ WRITE32_HANDLER( beathead_vram_copy_w )
 
 WRITE32_HANDLER( beathead_finescroll_w )
 {
-	data32_t oldword = finescroll;
-	data32_t newword = COMBINE_DATA(&finescroll);
+	uint32_t oldword = finescroll;
+	uint32_t newword = COMBINE_DATA(&finescroll);
 
 	/* if VBLANK is going off on a non-zero scanline, suspend time */
 	if ((oldword & 8) && !(newword & 8) && current_scanline != 0)
@@ -226,7 +226,7 @@ VIDEO_UPDATE( beathead )
 
 		/* unswizzle the scanline first */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
-			scanline[x] = ((data8_t *)videoram32)[BYTE4_XOR_LE(src++)];
+			scanline[x] = ((uint8_t *)videoram32)[BYTE4_XOR_LE(src++)];
 
 		/* then draw it */
 		draw_scanline8(bitmap, cliprect->min_x, y, cliprect->max_x - cliprect->min_x + 1, &scanline[cliprect->min_x], &Machine->pens[scanline_palette[y] * 256], -1);

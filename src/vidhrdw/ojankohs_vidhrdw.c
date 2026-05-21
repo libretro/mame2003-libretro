@@ -12,9 +12,9 @@
 #include "cpu/z80/z80.h"
 
 
-static data8_t *ojankohs_videoram;
-static data8_t *ojankohs_colorram;
-static data8_t *ojankohs_paletteram;
+static uint8_t *ojankohs_videoram;
+static uint8_t *ojankohs_colorram;
+static uint8_t *ojankohs_paletteram;
 static int ojankohs_gfxreg;
 static int ojankohs_flipscreen;
 static int ojankohs_scrollx, ojankohs_scrolly;

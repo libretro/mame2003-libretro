@@ -9,7 +9,7 @@
 
 #include "driver.h"
 extern int portrait_scrollx_hi, portrait_scrollx_lo;
-data8_t *portrait_bgvideoram, *portrait_fgvideoram, *portrait_spriteram;
+uint8_t *portrait_bgvideoram, *portrait_fgvideoram, *portrait_spriteram;
 static struct tilemap *foreground, *background;
 
 WRITE_HANDLER( portrait_bgvideo_write )
@@ -30,7 +30,7 @@ WRITE_HANDLER( portrait_fgvideo_write )
 	}
 }
 
-static void get_tile_info( const data8_t *source, int tile_index )
+static void get_tile_info( const uint8_t *source, int tile_index )
 {
 	int attr    = source[tile_index*2+0];
 	int tilenum = source[tile_index*2+1];
@@ -76,8 +76,8 @@ PALETTE_INIT( portrait )
 
 static void draw_sprites( struct mame_bitmap *bitmap )
 {
-	const data8_t *source = portrait_spriteram;
-	const data8_t *finish = source + 0x200;
+	const uint8_t *source = portrait_spriteram;
+	const uint8_t *finish = source + 0x200;
 	while( source<finish )
 	{
 		int sy      = source[0];

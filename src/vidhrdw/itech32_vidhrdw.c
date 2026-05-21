@@ -120,12 +120,12 @@
  *
  *************************************/
 
-data16_t *itech32_video;
+uint16_t *itech32_video;
 uint8_t itech32_planes;
 uint16_t itech32_vram_height;
 
-static data16_t xfer_xcount, xfer_ycount;
-static data16_t xfer_xcur, xfer_ycur;
+static uint16_t xfer_xcount, xfer_ycount;
+static uint16_t xfer_xcur, xfer_ycur;
 
 static struct rectangle clip_rect, scaled_clip_rect;
 static struct rectangle clip_save;

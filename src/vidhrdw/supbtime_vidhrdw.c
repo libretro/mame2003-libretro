@@ -15,8 +15,8 @@ End sequence uses rowscroll '98 c0' on pf1 (jmp to 1d61a)
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *supbtime_pf2_data,*supbtime_pf1_data,*supbtime_pf1_row;
-static data16_t supbtime_control_0[8];
+uint16_t *supbtime_pf2_data,*supbtime_pf1_data,*supbtime_pf1_row;
+static uint16_t supbtime_control_0[8];
 static struct tilemap *pf1_tilemap,*pf2_tilemap;
 static int flipscreen;
 
@@ -90,7 +90,7 @@ static void supbtime_drawsprites(struct mame_bitmap *bitmap,const struct rectang
 
 WRITE16_HANDLER( supbtime_pf2_data_w )
 {
-	data16_t oldword=supbtime_pf2_data[offset];
+	uint16_t oldword=supbtime_pf2_data[offset];
 	COMBINE_DATA(&supbtime_pf2_data[offset]);
 	if (oldword!=supbtime_pf2_data[offset])
 		tilemap_mark_tile_dirty(pf2_tilemap,offset);
@@ -98,7 +98,7 @@ WRITE16_HANDLER( supbtime_pf2_data_w )
 
 WRITE16_HANDLER( supbtime_pf1_data_w )
 {
-	data16_t oldword=supbtime_pf1_data[offset];
+	uint16_t oldword=supbtime_pf1_data[offset];
 	COMBINE_DATA(&supbtime_pf1_data[offset]);
 	if (oldword!=supbtime_pf1_data[offset])
 		tilemap_mark_tile_dirty(pf1_tilemap,offset);

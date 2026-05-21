@@ -35,7 +35,7 @@ VIDEO_UPDATE(usg);
 extern struct tilemap *usg_tilemap;
 
 
-extern data8_t *usg_videoram,*usg_charram;
+extern uint8_t *usg_videoram,*usg_charram;
 
 
 static WRITE_HANDLER( usg_rombank_w )

@@ -16,8 +16,8 @@ Namco System II
 #include "vidhrdw/generic.h"
 #include "machine/random.h"
 
-data16_t *namcos2_68k_master_ram;
-data16_t *namcos2_68k_slave_ram;
+uint16_t *namcos2_68k_master_ram;
+uint16_t *namcos2_68k_slave_ram;
 
 int namcos2_gametype;
 
@@ -25,9 +25,9 @@ static unsigned mFinalLapProtCount;
 
 READ16_HANDLER( namcos2_flap_prot_r )
 {
-	const data16_t table0[8] = { 0x0000,0x0040,0x0440,0x2440,0x2480,0xa080,0x8081,0x8041 };
-	const data16_t table1[8] = { 0x0040,0x0060,0x0060,0x0860,0x0864,0x08e4,0x08e5,0x08a5 };
-	data16_t data;
+	const uint16_t table0[8] = { 0x0000,0x0040,0x0440,0x2440,0x2480,0xa080,0x8081,0x8041 };
+	const uint16_t table1[8] = { 0x0040,0x0060,0x0060,0x0860,0x0864,0x08e4,0x08e5,0x08a5 };
+	uint16_t data;
 
 	switch( offset )
 	{
@@ -96,7 +96,7 @@ MACHINE_INIT( namcos2 ){
 /* EEPROM Load/Save and read/write handling 				 */
 /*************************************************************/
 
-data16_t *namcos2_eeprom;
+uint16_t *namcos2_eeprom;
 size_t namcos2_eeprom_size;
 
 NVRAM_HANDLER( namcos2 ){
@@ -127,7 +127,7 @@ READ16_HANDLER( namcos2_68k_eeprom_r ){
 /* 68000 Shared memory area - Data ROM area 				 */
 /*************************************************************/
 READ16_HANDLER( namcos2_68k_data_rom_r ){
-	data16_t *ROM = (data16_t *)memory_region(REGION_USER1);
+	uint16_t *ROM = (uint16_t *)memory_region(REGION_USER1);
 	return ROM[offset];
 }
 
@@ -137,8 +137,8 @@ READ16_HANDLER( namcos2_68k_data_rom_r ){
 /* 68000 Shared serial communications processor (CPU5?) 	  */
 /**************************************************************/
 
-data16_t  namcos2_68k_serial_comms_ctrl[0x8];
-data16_t *namcos2_68k_serial_comms_ram;
+uint16_t  namcos2_68k_serial_comms_ctrl[0x8];
+uint16_t *namcos2_68k_serial_comms_ram;
 
 READ16_HANDLER( namcos2_68k_serial_comms_ram_r ){
 	return namcos2_68k_serial_comms_ram[offset];
@@ -150,7 +150,7 @@ WRITE16_HANDLER( namcos2_68k_serial_comms_ram_w ){
 
 READ16_HANDLER( namcos2_68k_serial_comms_ctrl_r )
 {
-	data16_t retval = namcos2_68k_serial_comms_ctrl[offset];
+	uint16_t retval = namcos2_68k_serial_comms_ctrl[offset];
 
 	switch(offset){
 	case 0x00:
@@ -379,14 +379,14 @@ WRITE16_HANDLER( namcos2_68k_key_w )
 #define FRAME_TIME		(1.0/60.0)
 #define LINE_LENGTH 	(FRAME_TIME/NO_OF_LINES)
 
-data16_t  namcos2_68k_master_C148[0x20];
-data16_t  namcos2_68k_slave_C148[0x20];
+uint16_t  namcos2_68k_master_C148[0x20];
+uint16_t  namcos2_68k_slave_C148[0x20];
 
-static data16_t
+static uint16_t
 ReadC148( int cpu, offs_t offset )
 {
 	offs_t addr = ((offset*2)+0x1c0000)&0x1fe000;
-	data16_t *pC148Reg;
+	uint16_t *pC148Reg;
 	if( cpu == CPU_SLAVE )
 	{
 		pC148Reg = namcos2_68k_slave_C148;
@@ -424,11 +424,11 @@ ReadC148( int cpu, offs_t offset )
 }
 
 static void
-WriteC148( int cpu, offs_t offset, data16_t data )
+WriteC148( int cpu, offs_t offset, uint16_t data )
 {
 	offs_t addr = ((offset*2)+0x1c0000)&0x1fe000;
 	int altCPU;
-	data16_t *pC148Reg;
+	uint16_t *pC148Reg;
 	if( cpu == CPU_SLAVE )
 	{
 		altCPU = CPU_MASTER;

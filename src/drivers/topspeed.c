@@ -200,12 +200,12 @@ WRITE_HANDLER( rastan_d000_w );
 static uint16_t cpua_ctrl = 0xff;
 static int ioc220_port = 0;
 
-extern data16_t *topspeed_spritemap;
+extern uint16_t *topspeed_spritemap;
 
 static size_t sharedram_size;
-static data16_t *sharedram;
+static uint16_t *sharedram;
 
-extern data16_t *topspeed_raster_ctrl;
+extern uint16_t *topspeed_raster_ctrl;
 
 
 static READ16_HANDLER( sharedram_r )

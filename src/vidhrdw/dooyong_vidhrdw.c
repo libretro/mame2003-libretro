@@ -5,7 +5,7 @@
 
 unsigned char *lastday_txvideoram;
 unsigned char *lastday_bgscroll,*lastday_fgscroll,*bluehawk_fg2scroll;
-data16_t *rshark_scroll1,*rshark_scroll2,*rshark_scroll3,*rshark_scroll4;
+uint16_t *rshark_scroll1,*rshark_scroll2,*rshark_scroll3,*rshark_scroll4;
 static int tx_pri;
 
 
@@ -215,7 +215,7 @@ static void bluehawk_draw_layer2(struct mame_bitmap *bitmap,int gfx,const unsign
 	}
 }
 
-static void rshark_draw_layer(struct mame_bitmap *bitmap,int gfx,data16_t *scroll,
+static void rshark_draw_layer(struct mame_bitmap *bitmap,int gfx,uint16_t *scroll,
 		const unsigned char *tilemap,const unsigned char *tilemap2,int transparency)
 {
 	int offs;

@@ -2,7 +2,7 @@
 
 #include "driver.h"
 
-data16_t *diverboy_spriteram;
+uint16_t *diverboy_spriteram;
 size_t diverboy_spriteram_size;
 
 
@@ -13,8 +13,8 @@ VIDEO_START(diverboy)
 
 static void diverboy_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-	data16_t *source = diverboy_spriteram;
-	data16_t *finish = source + (diverboy_spriteram_size/2);
+	uint16_t *source = diverboy_spriteram;
+	uint16_t *finish = source + (diverboy_spriteram_size/2);
 
 	while (source < finish)
 	{

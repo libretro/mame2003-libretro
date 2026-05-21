@@ -39,7 +39,7 @@ CHIP #  POSITION   TYPE
 
 #include "vidhrdw/generic.h"
 
-data8_t *flower_sharedram;
+uint8_t *flower_sharedram;
 
 READ_HANDLER( flower_sharedram_r );
 WRITE_HANDLER( flower_sharedram_w );
@@ -47,7 +47,7 @@ VIDEO_UPDATE( flower );
 VIDEO_START( flower );
 
 
-extern data8_t *flower_soundregs1,*flower_soundregs2;
+extern uint8_t *flower_soundregs1,*flower_soundregs2;
 int flower_sh_start(const struct MachineSound *msound);
 void flower_sh_stop(void);
 WRITE_HANDLER( flower_sound1_w );

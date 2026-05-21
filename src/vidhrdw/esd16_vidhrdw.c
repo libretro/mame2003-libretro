@@ -38,14 +38,14 @@ Note:	if MAME_DEBUG is defined, pressing Z with:
 
 /* Variables needed by drivers: */
 
-data16_t *esd16_vram_0, *esd16_scroll_0;
-data16_t *esd16_vram_1, *esd16_scroll_1;
+uint16_t *esd16_vram_0, *esd16_scroll_0;
+uint16_t *esd16_vram_1, *esd16_scroll_1;
 
-//extern data16_t *head_unknown1;
-extern data16_t *head_layersize;
-//extern data16_t *head_unknown3;
-//extern data16_t *head_unknown4;
-//extern data16_t *head_unknown5;
+//extern uint16_t *head_unknown1;
+extern uint16_t *head_layersize;
+//extern uint16_t *head_unknown3;
+//extern uint16_t *head_unknown4;
+//extern uint16_t *head_unknown5;
 
 /* Functions defined in vidhrdw: */
 
@@ -73,7 +73,7 @@ struct tilemap *esdtilemap_0, *esdtilemap_1, *esdtilemap_1_16x16;
 
 static void get_tile_info_0(int tile_index)
 {
-	data16_t code = esd16_vram_0[tile_index];
+	uint16_t code = esd16_vram_0[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -83,7 +83,7 @@ static void get_tile_info_0(int tile_index)
 
 static void get_tile_info_1(int tile_index)
 {
-	data16_t code = esd16_vram_1[tile_index];
+	uint16_t code = esd16_vram_1[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -93,7 +93,7 @@ static void get_tile_info_1(int tile_index)
 
 static void get_tile_info_1_16x16(int tile_index)
 {
-	data16_t code = esd16_vram_1[tile_index];
+	uint16_t code = esd16_vram_1[tile_index];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -103,15 +103,15 @@ static void get_tile_info_1_16x16(int tile_index)
 
 WRITE16_HANDLER( esd16_vram_0_w )
 {
-	data16_t old_data	=	esd16_vram_0[offset];
-	data16_t new_data	=	COMBINE_DATA(&esd16_vram_0[offset]);
+	uint16_t old_data	=	esd16_vram_0[offset];
+	uint16_t new_data	=	COMBINE_DATA(&esd16_vram_0[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(esdtilemap_0,offset);
 }
 
 WRITE16_HANDLER( esd16_vram_1_w )
 {
-	data16_t old_data	=	esd16_vram_1[offset];
-	data16_t new_data	=	COMBINE_DATA(&esd16_vram_1[offset]);
+	uint16_t old_data	=	esd16_vram_1[offset];
+	uint16_t new_data	=	COMBINE_DATA(&esd16_vram_1[offset]);
 	if (old_data != new_data)
 	{
 		tilemap_mark_tile_dirty(esdtilemap_1,offset);

@@ -60,9 +60,9 @@ DIPs
 VIDEO_START( othunder );
 VIDEO_UPDATE( othunder );
 
-static data16_t eep_latch = 0;
+static uint16_t eep_latch = 0;
 
-extern data16_t *othunder_ram;
+extern uint16_t *othunder_ram;
 
 
 /***********************************************************
@@ -83,7 +83,7 @@ The eeprom unlock command is different, and the write/clock/reset
 bits are different.
 ******************************************************************/
 
-static data8_t default_eeprom[128]=
+static uint8_t default_eeprom[128]=
 {
 	0x00,0x00,0x00,0xff,0x00,0x01,0x41,0x41,0x00,0x00,0x00,0xff,0x00,0x00,0xf0,0xf0,
 	0x00,0x00,0x00,0xff,0x00,0x01,0x41,0x41,0x00,0x00,0x00,0xff,0x00,0x00,0xf0,0xf0,

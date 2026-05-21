@@ -5,12 +5,12 @@
 ***************************************************************************/
 
 /* defined in vidhrdw/ */
-extern data8_t *lasso_videoram;
-extern data8_t *lasso_colorram;
-extern data8_t *lasso_spriteram;
+extern uint8_t *lasso_videoram;
+extern uint8_t *lasso_colorram;
+extern uint8_t *lasso_spriteram;
 extern size_t lasso_spriteram_size;
-extern data8_t *lasso_bitmap_ram;
-extern data8_t *wwjgtin_track_scroll;
+extern uint8_t *lasso_bitmap_ram;
+extern uint8_t *wwjgtin_track_scroll;
 
 WRITE_HANDLER( lasso_videoram_w );
 WRITE_HANDLER( lasso_colorram_w );

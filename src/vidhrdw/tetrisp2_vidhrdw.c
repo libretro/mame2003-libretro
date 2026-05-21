@@ -46,11 +46,11 @@ extern uint16_t tetrisp2_systemregs[0x10];
 
 /* Variables needed by driver: */
 
-data16_t *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
-data16_t *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
-data16_t *tetrisp2_vram_rot, *tetrisp2_rotregs;
+uint16_t *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
+uint16_t *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
+uint16_t *tetrisp2_vram_rot, *tetrisp2_rotregs;
 
-data16_t *tetrisp2_priority;
+uint16_t *tetrisp2_priority;
 
 
 /***************************************************************************
@@ -129,8 +129,8 @@ static struct tilemap *tilemap_bg, *tilemap_fg, *tilemap_rot;
 
 static void get_tile_info_bg(int tile_index)
 {
-	data16_t code_hi = tetrisp2_vram_bg[ 2 * tile_index + 0];
-	data16_t code_lo = tetrisp2_vram_bg[ 2 * tile_index + 1];
+	uint16_t code_hi = tetrisp2_vram_bg[ 2 * tile_index + 0];
+	uint16_t code_lo = tetrisp2_vram_bg[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			1,
 			code_hi,
@@ -140,8 +140,8 @@ static void get_tile_info_bg(int tile_index)
 
 WRITE16_HANDLER( tetrisp2_vram_bg_w )
 {
-	data16_t old_data	=	tetrisp2_vram_bg[offset];
-	data16_t new_data	=	COMBINE_DATA(&tetrisp2_vram_bg[offset]);
+	uint16_t old_data	=	tetrisp2_vram_bg[offset];
+	uint16_t new_data	=	COMBINE_DATA(&tetrisp2_vram_bg[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_bg,offset/2);
 }
 
@@ -152,8 +152,8 @@ WRITE16_HANDLER( tetrisp2_vram_bg_w )
 
 static void get_tile_info_fg(int tile_index)
 {
-	data16_t code_hi = tetrisp2_vram_fg[ 2 * tile_index + 0];
-	data16_t code_lo = tetrisp2_vram_fg[ 2 * tile_index + 1];
+	uint16_t code_hi = tetrisp2_vram_fg[ 2 * tile_index + 0];
+	uint16_t code_lo = tetrisp2_vram_fg[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			3,
 			code_hi,
@@ -163,16 +163,16 @@ static void get_tile_info_fg(int tile_index)
 
 WRITE16_HANDLER( tetrisp2_vram_fg_w )
 {
-	data16_t old_data	=	tetrisp2_vram_fg[offset];
-	data16_t new_data	=	COMBINE_DATA(&tetrisp2_vram_fg[offset]);
+	uint16_t old_data	=	tetrisp2_vram_fg[offset];
+	uint16_t new_data	=	COMBINE_DATA(&tetrisp2_vram_fg[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_fg,offset/2);
 }
 
 
 static void get_tile_info_rot(int tile_index)
 {
-	data16_t code_hi = tetrisp2_vram_rot[ 2 * tile_index + 0];
-	data16_t code_lo = tetrisp2_vram_rot[ 2 * tile_index + 1];
+	uint16_t code_hi = tetrisp2_vram_rot[ 2 * tile_index + 0];
+	uint16_t code_lo = tetrisp2_vram_rot[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			2,
 			code_hi,
@@ -182,8 +182,8 @@ static void get_tile_info_rot(int tile_index)
 
 WRITE16_HANDLER( tetrisp2_vram_rot_w )
 {
-	data16_t old_data	=	tetrisp2_vram_rot[offset];
-	data16_t new_data	=	COMBINE_DATA(&tetrisp2_vram_rot[offset]);
+	uint16_t old_data	=	tetrisp2_vram_rot[offset];
+	uint16_t new_data	=	COMBINE_DATA(&tetrisp2_vram_rot[offset]);
 	if (old_data != new_data)	tilemap_mark_tile_dirty(tilemap_rot,offset/2);
 }
 
@@ -273,7 +273,7 @@ VIDEO_START( rockntread )
 
 ***************************************************************************/
 
-static void tetrisp2_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, data16_t *sprram_top, size_t sprram_size, int gfxnum)
+static void tetrisp2_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint16_t *sprram_top, size_t sprram_size, int gfxnum)
 {
 	int x, y, tx, ty, sx, sy, flipx, flipy;
 	int xsize, ysize, xnum, ynum;
@@ -281,15 +281,15 @@ static void tetrisp2_draw_sprites(struct mame_bitmap *bitmap, const struct recta
 	int code, attr, color, size;
 	int flipscreen;
 	uint32_t primask;
-	data16_t *priority_ram;
+	uint16_t *priority_ram;
 
 	int min_x = cliprect->min_x;
 	int max_x = cliprect->max_x;
 	int min_y = cliprect->min_y;
 	int max_y = cliprect->max_y;
 
-	data16_t		*source	=	sprram_top;
-	const data16_t	*finish	=	sprram_top + (sprram_size - 0x10) / 2;
+	uint16_t		*source	=	sprram_top;
+	const uint16_t	*finish	=	sprram_top + (sprram_size - 0x10) / 2;
 
 	priority_ram = tetrisp2_priority;
 

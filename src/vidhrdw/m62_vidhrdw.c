@@ -17,9 +17,9 @@ Tile/sprite priority system (for the Kung Fu Master M62 board):
 #include "vidhrdw/generic.h"
 #include "state.h"
 
-data8_t *m62_tileram;
-data8_t *m62_textram;
-data8_t *horizon_scrollram;
+uint8_t *m62_tileram;
+uint8_t *m62_textram;
+uint8_t *horizon_scrollram;
 
 static struct tilemap *m62_background;
 static struct tilemap *m62_foreground;

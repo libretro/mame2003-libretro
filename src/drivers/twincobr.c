@@ -209,8 +209,8 @@ WRITE16_HANDLER( twincobr_control_w );
 READ16_HANDLER ( twincobr_sharedram_r );
 WRITE16_HANDLER( twincobr_sharedram_w );
 
-extern data16_t *twincobr_68k_dsp_ram;
-extern data8_t *twincobr_sharedram;
+extern uint16_t *twincobr_68k_dsp_ram;
+extern uint8_t *twincobr_sharedram;
 
 
 /**************** Video stuff ******************/
@@ -1138,8 +1138,8 @@ ROM_END
 
 static DRIVER_INIT( fshark )
 {
-	data8_t *source = memory_region(REGION_USER1);
-	data16_t *dest = (data16_t *)&memory_region(REGION_CPU3)[TMS32010_PGM_OFFSET];
+	uint8_t *source = memory_region(REGION_USER1);
+	uint16_t *dest = (uint16_t *)&memory_region(REGION_CPU3)[TMS32010_PGM_OFFSET];
 	int A;
 
 	/* The ROM loader fixes the nibble images. Here we fix the byte ordering. */

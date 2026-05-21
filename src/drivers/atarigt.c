@@ -39,10 +39,10 @@
 
 uint8_t atarigt_is_primrage;
 
-static data32_t *	mo_command;
+static uint32_t *	mo_command;
 
-static void (*protection_w)(offs_t offset, data16_t data);
-static void (*protection_r)(offs_t offset, data16_t *data);
+static void (*protection_w)(offs_t offset, uint16_t data);
+static void (*protection_r)(offs_t offset, uint16_t *data);
 
 static void cage_irq_callback(int reason);
 
@@ -243,7 +243,7 @@ static WRITE32_HANDLER( led_w )
 
 static READ32_HANDLER( sound_data_r )
 {
-	data32_t result = 0;
+	uint32_t result = 0;
 	
 	if (ACCESSING_LSW32)
 		result |= cage_control_r();
@@ -307,7 +307,7 @@ static void tmek_protection_w(offs_t offset, uint16_t data)
 	}
 }
 
-static void tmek_protection_r(offs_t offset, data16_t *data)
+static void tmek_protection_r(offs_t offset, uint16_t *data)
 {
 #if LOG_PROTECTION
 	logerror("%06X:Protection R@%06X\n", activecpu_get_previouspc(), offset);
@@ -375,7 +375,7 @@ static void primage_update_mode(offs_t offset)
 
 
 
-static void primrage_protection_w(offs_t offset, data16_t data)
+static void primrage_protection_w(offs_t offset, uint16_t data)
 {
 #if LOG_PROTECTION
 {
@@ -446,7 +446,7 @@ static void primrage_protection_w(offs_t offset, data16_t data)
 
 
 
-static void primrage_protection_r(offs_t offset, data16_t *data)
+static void primrage_protection_r(offs_t offset, uint16_t *data)
 {
 	/* track accesses */
 	primage_update_mode(offset);
@@ -564,8 +564,8 @@ static void primrage_protection_r(offs_t offset, data16_t *data)
 static READ32_HANDLER( colorram_protection_r )
 {
 	offs_t address = 0xd80000 + offset * 4;
-	data32_t result32 = 0;
-	data16_t result;
+	uint32_t result32 = 0;
+	uint16_t result;
 
 	if ((mem_mask & 0xffff0000) != 0xffff0000)
 	{
@@ -628,7 +628,7 @@ MEMORY_END
 static MEMORY_WRITE32_START( writemem )
 	{ 0x000000, 0x1fffff, MWA32_ROM },
 	{ 0xc00000, 0xc00003, sound_data_w },
-	{ 0xd20000, 0xd20fff, atarigen_eeprom32_w, (data32_t **)&atarigen_eeprom, &atarigen_eeprom_size },
+	{ 0xd20000, 0xd20fff, atarigen_eeprom32_w, (uint32_t **)&atarigen_eeprom, &atarigen_eeprom_size },
 	{ 0xd40000, 0xd4ffff, atarigen_eeprom_enable32_w },
 	{ 0xd70000, 0xd71fff, MWA32_RAM },
 	{ 0xd72000, 0xd75fff, atarigen_playfield32_w, &atarigen_playfield32 },
@@ -638,7 +638,7 @@ static MEMORY_WRITE32_START( writemem )
 	{ 0xd79000, 0xd7a1ff, MWA32_RAM },
 	{ 0xd7a200, 0xd7a203, mo_command_w, &mo_command },
 	{ 0xd7a204, 0xd7ffff, MWA32_RAM },
-	{ 0xd80000, 0xdfffff, colorram_protection_w, (data32_t **)&atarigt_colorram },
+	{ 0xd80000, 0xdfffff, colorram_protection_w, (uint32_t **)&atarigt_colorram },
 	{ 0xe04000, 0xe04003, led_w },
 	{ 0xe08000, 0xe08003, latch_w },
 	{ 0xe0a000, 0xe0a003, atarigen_scanline_int_ack32_w },

@@ -14,7 +14,7 @@ etc.
 
 #include "driver.h"
 
-data8_t *ltcasino_tile_num_ram, *ltcasino_tile_atr_ram;
+uint8_t *ltcasino_tile_num_ram, *ltcasino_tile_atr_ram;
 
 struct tilemap *ltcasino_tilemap;
 

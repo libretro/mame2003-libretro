@@ -269,7 +269,7 @@ static struct K053260_interface k053260_interface =
 static void simpsons_objdma(void)
 {
 	int counter, num_inactive;
-	data16_t *src, *dst;
+	uint16_t *src, *dst;
 
 	K053247_export_config(&dst, (struct GfxElement**)&src, (void**)&src, &counter, &counter);
 	src = spriteram16;

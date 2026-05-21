@@ -3974,7 +3974,7 @@ static DRIVER_INIT( noboranb )
 	/* Patch to get PRG ROMS ('T', 'R' and 'S) status as "GOOD" in the "test mode" */
 	/* not really needed */
 
-//	data8_t *ROM = memory_region(REGION_CPU1);
+//	uint8_t *ROM = memory_region(REGION_CPU1);
 
 //	ROM[0x3296] = 0x18;		// 'jr' instead of 'jr z' - 'T' (PRG Main ROM)
 //	ROM[0x32be] = 0x18;		// 'jr' instead of 'jr z' - 'R' (Banked ROM 1)
@@ -3986,7 +3986,7 @@ static DRIVER_INIT( noboranb )
 //	ROM[0x10000 + 0 * 0x8000 + 0x3347] = 0x18;	// 'jr' instead of 'jr z'
 
 	/* Patch to get sound in later levels(the program enters into a tight loop)*/
-	data8_t *ROM2 = memory_region(REGION_CPU2);
+	uint8_t *ROM2 = memory_region(REGION_CPU2);
 
 	ROM2[0x02f9] = 0x28;//'jr z' instead of 'jr'
 }

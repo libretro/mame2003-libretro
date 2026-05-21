@@ -175,10 +175,10 @@ Notes:
 #include "machine/mb87078.h"
 #include "sndhrdw/taitosnd.h"
 
-extern data16_t *taitob_scroll;
-extern data16_t *TC0180VCU_ram;
-extern data16_t *taitob_spriteram;
-extern data16_t *taitob_pixelram;
+extern uint16_t *taitob_scroll;
+extern uint16_t *TC0180VCU_ram;
+extern uint16_t *taitob_spriteram;
+extern uint16_t *taitob_pixelram;
 
 
 VIDEO_START( taitob_color_order0 );
@@ -419,7 +419,7 @@ static READ16_HANDLER( eeprom_r )
 	return res;
 }
 
-static data16_t eep_latch = 0;
+static uint16_t eep_latch = 0;
 
 static READ16_HANDLER( eep_latch_r )
 {
@@ -3033,7 +3033,7 @@ MACHINE_DRIVER_END
 #if 0
 static void masterw_patch(void)
 {
-	data16_t *rom = (data16_t*)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t*)memory_region(REGION_CPU1);
 	rom[ 0x3fffe/2 ] = 2; //US version
 }
 #endif
@@ -3130,7 +3130,7 @@ MACHINE_DRIVER_END
 #if 0
 static void ryujin_patch(void)
 {
-	data16_t *rom = (data16_t*)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t*)memory_region(REGION_CPU1);
 	rom[ 0x62/2 ] = 1;
 	//0 (already in rom) - Taito Corporation 1993
 	//1 - Taito America corp with blue FBI logo
@@ -3169,7 +3169,7 @@ MACHINE_DRIVER_END
 #if 0
 static void sbm_patch(void)
 {
-	data16_t *rom = (data16_t*)memory_region(REGION_CPU1);
+	uint16_t *rom = (uint16_t*)memory_region(REGION_CPU1);
 	rom[ 0x7ffff/2 ] = 2; //US version
 }
 #endif

@@ -7,10 +7,10 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-data16_t *dcon_back_data,*dcon_fore_data,*dcon_mid_data,*dcon_scroll_ram,*dcon_textram;
+uint16_t *dcon_back_data,*dcon_fore_data,*dcon_mid_data,*dcon_scroll_ram,*dcon_textram;
 
 static struct tilemap *background_layer,*foreground_layer,*midground_layer,*text_layer;
-static data16_t dcon_enable;
+static uint16_t dcon_enable;
 static int dcon_gfx_bank_select;
 
 /******************************************************************************/

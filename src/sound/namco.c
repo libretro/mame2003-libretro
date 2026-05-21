@@ -73,7 +73,7 @@ static int16_t *waveform[MAX_VOLUME];
 
 
 /* update the decoded waveform data */
-static void update_namcos1_waveform(int offset, data8_t data)
+static void update_namcos1_waveform(int offset, uint8_t data)
 {
 	int16_t wdata;
 	int v;

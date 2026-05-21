@@ -49,8 +49,8 @@ struct atarirle_info
 	int16_t 				xoffs;
 	int16_t 				yoffs;
 	uint8_t 				bpp;
-	const data16_t *	table;
-	const data16_t *	data;
+	const uint16_t *	table;
+	const uint16_t *	data;
 };
 
 /* internal structure containing the state of the motion objects */
@@ -79,7 +79,7 @@ struct atarirle_data
 	struct atarirle_mask prioritymask;		/* mask for the priority */
 	struct atarirle_mask vrammask;			/* mask for the VRAM target */
 
-	const data16_t *	rombase;			/* pointer to the base of the GFX ROM */
+	const uint16_t *	rombase;			/* pointer to the base of the GFX ROM */
 	int					romlength;			/* length of the GFX ROM */
 	int					objectcount;		/* number of objects in the ROM */
 	struct atarirle_info *info;				/* list of info records */
@@ -109,14 +109,14 @@ struct atarirle_data
 	GLOBAL VARIABLES
 ##########################################################################*/
 
-data16_t *atarirle_0_spriteram;
-data32_t *atarirle_0_spriteram32;
+uint16_t *atarirle_0_spriteram;
+uint32_t *atarirle_0_spriteram32;
 
-data16_t *atarirle_0_command;
-data32_t *atarirle_0_command32;
+uint16_t *atarirle_0_command;
+uint32_t *atarirle_0_command32;
 
-data16_t *atarirle_0_table;
-data32_t *atarirle_0_table32;
+uint16_t *atarirle_0_table;
+uint32_t *atarirle_0_table32;
 
 int atarirle_hilite_index = -1;
 
@@ -138,7 +138,7 @@ static uint16_t *rle_table[8];
 ##########################################################################*/
 
 static int build_rle_tables(void);
-static int count_objects(const data16_t *base, int length);
+static int count_objects(const uint16_t *base, int length);
 static void prescan_rle(const struct atarirle_data *mo, int which);
 static void sort_and_render(struct atarirle_data *mo);
 static void compute_checksum(struct atarirle_data *mo);
@@ -270,7 +270,7 @@ static INLINE int convert_mask(const struct atarirle_entry *input, struct atarir
 
 int atarirle_init(int map, const struct atarirle_desc *desc)
 {
-	const data16_t *base = (const data16_t *)memory_region(desc->region);
+	const uint16_t *base = (const uint16_t *)memory_region(desc->region);
 	struct atarirle_data *mo = &atarirle[map];
 	int i;
 
@@ -320,7 +320,7 @@ int atarirle_init(int map, const struct atarirle_desc *desc)
 	memset(mo->checksums, 0, sizeof(mo->checksums));
 	for (i = 0; i < mo->romlength / 0x20000; i++)
 	{
-		const data16_t *csbase = &mo->rombase[0x10000 * i];
+		const uint16_t *csbase = &mo->rombase[0x10000 * i];
 		int cursum = 0, j;
 		for (j = 0; j < 0x10000; j++)
 			cursum += *csbase++;
@@ -599,7 +599,7 @@ static int build_rle_tables(void)
 	motion object ROM.
 ---------------------------------------------------------------*/
 
-int count_objects(const data16_t *base, int length)
+int count_objects(const uint16_t *base, int length)
 {
 	int lowest_address = length;
 	int i;
@@ -627,10 +627,10 @@ int count_objects(const data16_t *base, int length)
 static void prescan_rle(const struct atarirle_data *mo, int which)
 {
 	struct atarirle_info *rledata = &mo->info[which];
-	data16_t *base = (data16_t *)&mo->rombase[which * 4];
-	const data16_t *end = mo->rombase + mo->romlength / 2;
+	uint16_t *base = (uint16_t *)&mo->rombase[which * 4];
+	const uint16_t *end = mo->rombase + mo->romlength / 2;
 	int width = 0, height, flags, offset;
-	const data16_t *table;
+	const uint16_t *table;
 
 	/* look up the offset */
 	rledata->xoffs = (int16_t)base[0];
@@ -643,7 +643,7 @@ static void prescan_rle(const struct atarirle_data *mo, int which)
 
 	/* determine the starting offset */
 	offset = ((base[2] & 0xff) << 16) | base[3];
-	rledata->data = base = (data16_t *)&mo->rombase[offset];
+	rledata->data = base = (uint16_t *)&mo->rombase[offset];
 
 	/* make sure it's valid */
 	if (offset < which * 4 || offset >= mo->romlength)

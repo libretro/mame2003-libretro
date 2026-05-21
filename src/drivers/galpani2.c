@@ -34,7 +34,7 @@ To Do:
 
 ***************************************************************************/
 
-static data16_t eeprom_word;
+static uint16_t eeprom_word;
 READ16_HANDLER(galpani2_eeprom_r)
 {
 	return (eeprom_word & ~1) | (EEPROM_read_bit() & 1);
@@ -67,7 +67,7 @@ WRITE16_HANDLER(galpani2_eeprom_w)
 
 ***************************************************************************/
 
-static data16_t *galpani2_ram, *galpani2_ram2;
+static uint16_t *galpani2_ram, *galpani2_ram2;
 
 static MACHINE_INIT( galpani2 )
 {
@@ -168,7 +168,7 @@ static void galpani2_mcu_nmi(void)
 
 static WRITE16_HANDLER( galpani2_mcu_nmi_w )
 {
-	static data16_t old = 0;
+	static uint16_t old = 0;
 	if ( (data & 1) && !(old & 1) )	galpani2_mcu_nmi();
 	old = data;
 }
@@ -201,7 +201,7 @@ WRITE16_HANDLER( galpani2_oki_0_bank_w )
 {
 	if (ACCESSING_LSB)
 	{
-		data8_t *ROM = memory_region(REGION_SOUND1);
+		uint8_t *ROM = memory_region(REGION_SOUND1);
 		logerror("CPU #0 PC %06X : OKI 0 bank %08X\n",activecpu_get_pc(),data);
 		if (Machine->sample_rate == 0)	return;
 		memcpy(ROM + 0x30000, ROM + 0x40000 + 0x10000 * (~data & 0xf), 0x10000);
@@ -281,11 +281,11 @@ MEMORY_END
 
 ***************************************************************************/
 
-static data16_t *galpani2_rombank;
+static uint16_t *galpani2_rombank;
 
 READ16_HANDLER( galpani2_bankedrom_r )
 {
-	data16_t *ROM = (data16_t *) memory_region( REGION_USER1 );
+	uint16_t *ROM = (uint16_t *) memory_region( REGION_USER1 );
 	size_t    len = memory_region_length( REGION_USER1 ) / 2;
 
 	offset += (0x800000/2) * (*galpani2_rombank & 0x0003);

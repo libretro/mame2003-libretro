@@ -98,7 +98,7 @@ INPUT_PORTS_END
 static MACHINE_INIT( truco )
 {
 	int a;
-	data8_t *	mem = memory_region( REGION_CPU1 );
+	uint8_t *	mem = memory_region( REGION_CPU1 );
 
 	/* Setup the data on the battery backed RAM */
 

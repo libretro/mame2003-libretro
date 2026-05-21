@@ -40,7 +40,7 @@ void PC080SN_tilemap_update(void);
 void PC080SN_tilemap_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int chip,int layer,int flags,uint32_t priority);
 
 /* For Topspeed */
-void PC080SN_tilemap_draw_special(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int chip,int layer,int flags,uint32_t priority,data16_t *ram);
+void PC080SN_tilemap_draw_special(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int chip,int layer,int flags,uint32_t priority,uint16_t *ram);
 
 
 /***************************************************************************/

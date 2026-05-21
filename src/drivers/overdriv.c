@@ -81,7 +81,7 @@ static WRITE16_HANDLER( K051316_ctrl_1_msb_w )
 
 ***************************************************************************/
 
-static data8_t default_eeprom[128] =
+static uint8_t default_eeprom[128] =
 {
 	0x77,0x58,0xFF,0xFF,0x00,0x78,0x90,0x00,0x00,0x78,0x70,0x00,0x00,0x78,0x50,0x00,
 	0x54,0x41,0x4B,0x51,0x31,0x36,0x46,0x55,0x4A,0xFF,0x03,0x00,0x02,0x70,0x02,0x50,
@@ -185,7 +185,7 @@ static WRITE16_HANDLER( cpuA_ctrl_w )
 }
 
 
-static data16_t cpuB_ctrl;
+static uint16_t cpuB_ctrl;
 
 static READ16_HANDLER( cpuB_ctrl_r )
 {
@@ -208,7 +208,7 @@ static WRITE16_HANDLER( cpuB_ctrl_w )
 }
 
 
-static data16_t *sharedram;
+static uint16_t *sharedram;
 
 static READ16_HANDLER( sharedram_r )
 {

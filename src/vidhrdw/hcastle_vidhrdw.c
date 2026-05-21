@@ -8,7 +8,7 @@
 #include "vidhrdw/konamiic.h"
 #include "vidhrdw/generic.h"
 
-data8_t *hcastle_pf1_videoram,*hcastle_pf2_videoram;
+uint8_t *hcastle_pf1_videoram,*hcastle_pf2_videoram;
 static int gfx_bank;
 
 static struct tilemap *fg_tilemap,*bg_tilemap;

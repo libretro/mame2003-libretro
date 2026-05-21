@@ -207,7 +207,7 @@ void ppi8255_w(int which, int offset, int data)
 }
 
 #ifdef MESS
-data8_t ppi8255_peek( int which, offs_t offset )
+uint8_t ppi8255_peek( int which, offs_t offset )
 {
 	ppi8255 *chip;
 

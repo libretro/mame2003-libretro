@@ -16,5 +16,5 @@ WRITE16_HANDLER( deco16_146_funkyjet_prot_w );
 WRITE16_HANDLER( deco16_146_nitroball_prot_w );
 WRITE32_HANDLER( deco32_fghthist_prot_w );
 
-extern data16_t *deco16_prot_ram;
-extern data32_t *deco32_prot_ram;
+extern uint16_t *deco16_prot_ram;
+extern uint32_t *deco32_prot_ram;

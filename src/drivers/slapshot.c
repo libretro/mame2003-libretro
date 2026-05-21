@@ -144,9 +144,9 @@ VIDEO_EOF( taito_no_buffer );
 VIDEO_START( slapshot );
 VIDEO_UPDATE( slapshot );
 
-static data16_t *color_ram;
+static uint16_t *color_ram;
 
-extern data16_t *taito_sprite_ext;
+extern uint16_t *taito_sprite_ext;
 extern size_t taito_spriteext_size;
 
 
@@ -297,7 +297,7 @@ static MEMORY_WRITE16_START( slapshot_writemem )
 	{ 0x800000, 0x80ffff, TC0480SCP_word_w },	  /* tilemaps */
 	{ 0x830000, 0x83002f, TC0480SCP_ctrl_word_w },
 	{ 0x900000, 0x907fff, color_ram_word_w, &color_ram },
-	{ 0xa00000, 0xa03fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0xa00000, 0xa03fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0xb00000, 0xb0001f, TC0360PRI_halfword_swap_w },	/* priority chip */
 	{ 0xc00000, 0xc0000f, TC0640FIO_halfword_byteswap_w },
 	{ 0xd00000, 0xd00003, slapshot_msb_sound_w },
@@ -326,7 +326,7 @@ static MEMORY_WRITE16_START( opwolf3_writemem )
 	{ 0x800000, 0x80ffff, TC0480SCP_word_w },	  /* tilemaps */
 	{ 0x830000, 0x83002f, TC0480SCP_ctrl_word_w },
 	{ 0x900000, 0x907fff, color_ram_word_w, &color_ram },
-	{ 0xa00000, 0xa03fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0xa00000, 0xa03fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0xb00000, 0xb0001f, TC0360PRI_halfword_swap_w },	/* priority chip */
 	{ 0xc00000, 0xc0000f, TC0640FIO_halfword_byteswap_w },
 	{ 0xd00000, 0xd00003, slapshot_msb_sound_w },

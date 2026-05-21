@@ -40,8 +40,8 @@ struct sprite
 extern int wecleman_selected_ip, wecleman_irqctrl;
 
 /* Variables that driver has acces to: */
-data16_t *wecleman_videostatus;
-data16_t *wecleman_pageram, *wecleman_txtram, *wecleman_roadram;
+uint16_t *wecleman_videostatus;
+uint16_t *wecleman_pageram, *wecleman_txtram, *wecleman_roadram;
 size_t wecleman_roadram_size;
 int wecleman_bgpage[4], wecleman_fgpage[4], *wecleman_gfx_bank;
 
@@ -127,7 +127,7 @@ static void get_sprite_info(void)
 	uint8_t *base_gfx = memory_region(REGION_GFX1);
 	int gfx_max     = memory_region_length(REGION_GFX1);
 
-	data16_t *source = spriteram16;
+	uint16_t *source = spriteram16;
 
 	struct sprite *sprite = sprite_list;
 	struct sprite *finish = sprite_list + NUM_SPRITES;
@@ -515,8 +515,8 @@ void wecleman_get_txt_tile_info( int tile_index )
 
 WRITE16_HANDLER( wecleman_txtram_w )
 {
-	data16_t old_data = wecleman_txtram[offset];
-	data16_t new_data = COMBINE_DATA(&wecleman_txtram[offset]);
+	uint16_t old_data = wecleman_txtram[offset];
+	uint16_t new_data = COMBINE_DATA(&wecleman_txtram[offset]);
 
 	if ( old_data != new_data )
 	{
@@ -581,8 +581,8 @@ void wecleman_get_fg_tile_info( int tile_index )
 /* Pages that compose both the background and the foreground */
 WRITE16_HANDLER( wecleman_pageram_w )
 {
-	data16_t old_data = wecleman_pageram[offset];
-	data16_t new_data = COMBINE_DATA(&wecleman_pageram[offset]);
+	uint16_t old_data = wecleman_pageram[offset];
+	uint16_t new_data = COMBINE_DATA(&wecleman_pageram[offset]);
 
 	if ( old_data != new_data )
 	{
@@ -794,7 +794,7 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 // blends two 8x8x16bpp direct RGB tilemaps
 static void wecleman_draw_cloud( struct mame_bitmap *bitmap,
 				 struct GfxElement *gfx,
-				 data16_t *tm_base,
+				 uint16_t *tm_base,
 				 int x0, int y0,				// target coordinate
 				 int xcount, int ycount,		// number of tiles to draw in x and y
 				 int scrollx, int scrolly,		// tilemap scroll position

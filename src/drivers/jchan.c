@@ -166,7 +166,7 @@ VIDEO_UPDATE(jchan)
 
 /* memory maps */
 
-data16_t prot_data;
+uint16_t prot_data;
 
 READ16_HANDLER ( jchan_prot_r )
 {
@@ -452,7 +452,7 @@ WRITE16_HANDLER( jchan_videoram_w )
 }
 
 	static struct tilemap *jchan_tilemap;
-	data16_t *jchan_videoram;
+	uint16_t *jchan_videoram;
 
 	jchan_tilemap = tilemap_create(get_jchan_tile_info,tilemap_scan_rows,TILEMAP_OPAUQE, 8, 8,64,64);
 

@@ -670,7 +670,7 @@ static void ioasic_fifo_reset_w(int state)
 }
 
 
-void midway_ioasic_fifo_w(data16_t data)
+void midway_ioasic_fifo_w(uint16_t data)
 {
 	/* if we have room, add it to the FIFO buffer */
 	if (ioasic.fifo_bytes < FIFO_SIZE)
@@ -698,7 +698,7 @@ void midway_ioasic_fifo_w(data16_t data)
 
 READ32_HANDLER( midway_ioasic_packed_r )
 {
-	data32_t result = 0;
+	uint32_t result = 0;
 	if ((mem_mask & 0x0000ffff) != 0x0000ffff)
 		result |= midway_ioasic_r(offset*2, 0xffff0000) & 0xffff;
 	if ((mem_mask & 0xffff0000) != 0xffff0000)
@@ -709,7 +709,7 @@ READ32_HANDLER( midway_ioasic_packed_r )
 
 READ32_HANDLER( midway_ioasic_r )
 {
-	data32_t result;
+	uint32_t result;
 
 	offset = ioasic.shuffle_active ? ioasic.shuffle_map[offset & 15] : offset;
 	result = ioasic.reg[offset];
@@ -904,7 +904,7 @@ READ32_HANDLER( midway_ide_asic_r )
 	/* convert to standard IDE offsets */
 	offs_t ideoffs = 0x1f0/4 + (offset >> 2);
 	uint8_t shift = 8 * (offset & 3);
-	data32_t result;
+	uint32_t result;
 
 	/* offset 0 is a special case */
 	if (offset == 0)

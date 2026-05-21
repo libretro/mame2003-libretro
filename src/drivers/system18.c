@@ -22,7 +22,7 @@
 
 /***************************************************************************/
 
-static data16_t sys16_coinctrl;
+static uint16_t sys16_coinctrl;
 
 static WRITE16_HANDLER( sys18_refreshenable_w ){
 	if( ACCESSING_LSB ){
@@ -199,7 +199,7 @@ static void shdancer_update_proc( void ){
 	if(sys16_bg2_scrollx | sys16_bg2_scrolly | sys16_textram[0x0e86/2]) sys18_bg2_active=1;
 
 	{
-		data16_t data = sys16_extraram[0/2];
+		uint16_t data = sys16_extraram[0/2];
 		sys16_tile_bank0 = data&0xf;
 		sys16_tile_bank1 = (data>>4)&0xf;
 	}
@@ -291,7 +291,7 @@ static void shdancbl_update_proc( void ){
 		sys18_bg2_active=1;
 
 	{
-		data16_t data = sys16_extraram[0/2];
+		uint16_t data = sys16_extraram[0/2];
 		sys16_tile_bank0 = data&0xf;
 		sys16_tile_bank1 = (data>>4)&0xf;
 	}
@@ -416,7 +416,7 @@ static void moonwalk_update_proc( void ){
 		sys18_bg2_active=0;
 
 	{
-		data16_t data = sys16_extraram3[0/2];
+		uint16_t data = sys16_extraram3[0/2];
 		sys16_tile_bank0 = data&0xf;
 		sys16_tile_bank1 = (data>>4)&0xf;
 	}
@@ -520,7 +520,7 @@ MEMORY_END
 /***************************************************************************/
 
 static void astorm_update_proc( void ){
-	data16_t data;
+	uint16_t data;
 	sys16_fg_scrollx = sys16_textram[0x0e98/2];
 	sys16_bg_scrollx = sys16_textram[0x0e9a/2];
 	sys16_fg_scrolly = sys16_textram[0x0e90/2];

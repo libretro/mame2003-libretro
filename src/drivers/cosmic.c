@@ -1473,9 +1473,9 @@ static DRIVER_INIT( cosmicg )
 
     for (offs =0; offs < memory_region_length(REGION_CPU1); offs++)
 	{
-        data8_t scrambled = memory_region(REGION_CPU1)[offs];
+        uint8_t scrambled = memory_region(REGION_CPU1)[offs];
 
-        data8_t normal = (scrambled >> 3 & 0x11)
+        uint8_t normal = (scrambled >> 3 & 0x11)
                        | (scrambled >> 1 & 0x22)
                        | (scrambled << 1 & 0x44)
                        | (scrambled << 3 & 0x88);

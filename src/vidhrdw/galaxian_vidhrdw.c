@@ -26,12 +26,12 @@ static struct rectangle* spritevisibleareaflipx;
 #define BACKGROUND_COLOR_BASE	(BULLETS_COLOR_BASE + 2)
 
 
-data8_t *galaxian_videoram;
-data8_t *galaxian_spriteram;
-data8_t *galaxian_spriteram2;
-data8_t *galaxian_attributesram;
-data8_t *galaxian_bulletsram;
-data8_t *rockclim_videoram;
+uint8_t *galaxian_videoram;
+uint8_t *galaxian_spriteram;
+uint8_t *galaxian_spriteram2;
+uint8_t *galaxian_attributesram;
+uint8_t *galaxian_bulletsram;
+uint8_t *rockclim_videoram;
 size_t galaxian_spriteram_size;
 size_t galaxian_spriteram2_size;
 size_t galaxian_bulletsram_size;
@@ -59,18 +59,18 @@ static void  batman2_modify_charcode(uint16_t *code,uint8_t x);
 static void  mariner_modify_charcode(uint16_t *code,uint8_t x);
 static void  jumpbug_modify_charcode(uint16_t *code,uint8_t x);
 
-static void (*modify_spritecode)(data8_t *spriteram,int*,int*,int*,int);	/* function to call to do sprite banking */
-static void  gmgalax_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void mooncrst_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void mooncrgx_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void  moonqsr_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void mshuttle_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void  calipso_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void   pisces_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void mimonkey_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void  batman2_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void  jumpbug_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void dkongjrm_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void (*modify_spritecode)(uint8_t *spriteram,int*,int*,int*,int);	/* function to call to do sprite banking */
+static void  gmgalax_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void mooncrst_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void mooncrgx_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void  moonqsr_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void mshuttle_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void  calipso_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void   pisces_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void mimonkey_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void  batman2_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void  jumpbug_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void dkongjrm_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
 
 static void (*modify_color)(uint8_t *color);	/* function to call to do modify how the color codes map to the PROM */
 static void frogger_modify_color(uint8_t *color);
@@ -791,7 +791,7 @@ static void rockclim_draw_background(struct mame_bitmap *bitmap)
 	tilemap_draw(bitmap,0,rockclim_tilemap, 0,0);
 }
 
-static void rockclim_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void rockclim_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	if (gfxbank[2])	*code|=0x40;
 }
@@ -1102,12 +1102,12 @@ static void jumpbug_modify_charcode(uint16_t *code,uint8_t x)
 
 /* sprite banking functions */
 
-static void gmgalax_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void gmgalax_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= (gfxbank[0] << 7) | 0x40;
 }
 
-static void mooncrst_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mooncrst_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	if (gfxbank[2] && ((*code & 0x30) == 0x20))
 	{
@@ -1115,7 +1115,7 @@ static void mooncrst_modify_spritecode(data8_t *spriteram,int *code,int *flipx,i
 	}
 }
 
-static void mooncrgx_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mooncrgx_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	if (gfxbank[2] && ((*code & 0x30) == 0x20))
 	{
@@ -1123,17 +1123,17 @@ static void mooncrgx_modify_spritecode(data8_t *spriteram,int *code,int *flipx,i
 	}
 }
 
-static void moonqsr_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void moonqsr_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= ((spriteram[offs + 2] & 0x20) << 1);
 }
 
-static void mshuttle_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mshuttle_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= ((spriteram[offs + 2] & 0x30) << 2);
 }
 
-static void calipso_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void calipso_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	/* No flips */
 	*code = spriteram[offs + 1];
@@ -1141,23 +1141,23 @@ static void calipso_modify_spritecode(data8_t *spriteram,int *code,int *flipx,in
 	*flipy = 0;
 }
 
-static void pisces_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void pisces_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= (gfxbank[0] << 6);
 }
 
-static void mimonkey_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mimonkey_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= (gfxbank[0] << 6) | (gfxbank[2] << 7);
 }
 
-static void batman2_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void batman2_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	/* only the upper 64 sprites are used */
 	*code |= 0x40;
 }
 
-static void jumpbug_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void jumpbug_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	if (((*code & 0x30) == 0x20) &&
 		 (gfxbank[2] & 0x01) != 0)
@@ -1168,7 +1168,7 @@ static void jumpbug_modify_spritecode(data8_t *spriteram,int *code,int *flipx,in
 	}
 }
 
-static void dkongjrm_modify_spritecode(data8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void dkongjrm_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	/* No x flip */
 	*code = (spriteram[offs + 1] & 0x7f) | 0x80;
@@ -1839,7 +1839,7 @@ static void draw_bullets_common(struct mame_bitmap *bitmap)
 }
 
 
-static void draw_sprites(struct mame_bitmap *bitmap, data8_t *spriteram, size_t spriteram_size)
+static void draw_sprites(struct mame_bitmap *bitmap, uint8_t *spriteram, size_t spriteram_size)
 {
 	int offs;
 

@@ -102,7 +102,7 @@ static INTERRUPT_GEN( srmp2_interrupt )
 
 static DRIVER_INIT( srmp2 )
 {
-	data16_t *RAM = (data16_t *) memory_region(REGION_CPU1);
+	uint16_t *RAM = (uint16_t *) memory_region(REGION_CPU1);
 
 	/* Fix "ERROR BACK UP" and "ERROR IOX" */
 	RAM[0x20c80 / 2] = 0x4e75;								// RTS
@@ -110,7 +110,7 @@ static DRIVER_INIT( srmp2 )
 
 static DRIVER_INIT( srmp3 )
 {
-	data8_t *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/* BANK ROM (0x08000 - 0x1ffff) Check skip [MAIN ROM side] */
 	RAM[0x00000 + 0x7b69] = 0x00;							// NOP
@@ -396,7 +396,7 @@ MEMORY_END
 
 static MEMORY_WRITE16_START( srmp2_writemem )
 	{ 0x000000, 0x03ffff, MWA16_ROM },
-	{ 0x0c0000, 0x0c3fff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0x0c0000, 0x0c3fff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 	{ 0x140000, 0x143fff, MWA16_RAM, &spriteram16_2 },	/* Sprites Code + X + Attr */
 	{ 0x180000, 0x180609, MWA16_RAM, &spriteram16 },	/* Sprites Y */
 	{ 0x1c0000, 0x1c0001, MWA16_NOP },					/* ??? */
@@ -448,7 +448,7 @@ static MEMORY_WRITE16_START( mjyuugi_writemem )
 	{ 0xd00000, 0xd00609, MWA16_RAM, &spriteram16 },	/* Sprites Y */
 	{ 0xd02000, 0xd023ff, MWA16_RAM },					/* ??? only writes $00fa */
 	{ 0xe00000, 0xe03fff, MWA16_RAM, &spriteram16_2 },	/* Sprites Code + X + Attr */
-	{ 0xffc000, 0xffffff, MWA16_RAM, (data16_t **)&generic_nvram, &generic_nvram_size },
+	{ 0xffc000, 0xffffff, MWA16_RAM, (uint16_t **)&generic_nvram, &generic_nvram_size },
 MEMORY_END
 
 

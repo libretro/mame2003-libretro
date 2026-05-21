@@ -2,8 +2,8 @@
 #include "news.h"
 
 
-data8_t *news_fgram;
-data8_t *news_bgram;
+uint8_t *news_fgram;
+uint8_t *news_bgram;
 
 static int bgpic;
 static struct tilemap *fg_tilemap, *bg_tilemap;

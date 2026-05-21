@@ -24,11 +24,11 @@
 
 static struct tilemap *bg_tilemap,*fg_tilemap;
 
-static data8_t metlclsh_write_mask, *metlclsh_otherram;
+static uint8_t metlclsh_write_mask, *metlclsh_otherram;
 
 /* Variables that driver has access to: */
 
-data8_t *metlclsh_bgram, *metlclsh_fgram, *metlclsh_scrollx;
+uint8_t *metlclsh_bgram, *metlclsh_fgram, *metlclsh_scrollx;
 
 /* Functions that driver has access to: */
 
@@ -46,7 +46,7 @@ WRITE_HANDLER( metlclsh_rambank_w )
 	}
 }
 
-static data8_t metlclsh_gfxbank;
+static uint8_t metlclsh_gfxbank;
 WRITE_HANDLER( metlclsh_gfxbank_w )
 {
 	if (!(data & 4) && (metlclsh_gfxbank != data))
@@ -124,8 +124,8 @@ WRITE_HANDLER( metlclsh_bgram_w )
 
 static void get_fg_tile_info(int tile_index)
 {
-	data8_t code = metlclsh_fgram[tile_index + 0x000];
-	data8_t attr = metlclsh_fgram[tile_index + 0x400];
+	uint8_t code = metlclsh_fgram[tile_index + 0x000];
+	uint8_t attr = metlclsh_fgram[tile_index + 0x400];
 	SET_TILE_INFO(2, code + ((attr & 0x03) << 8), (attr >> 5) & 3, 0)
 	tile_info.priority = ((attr & 0x80) ? 1 : 2);
 }

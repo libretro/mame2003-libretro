@@ -14,7 +14,7 @@
    double-buffered: the game renders into the back page, then flips the page
    select (control register $80, bit 2) to display it. We read the selected
    page directly, so no intermediate buffer or copy is needed. */
-data32_t *kinst_video_base;
+uint32_t *kinst_video_base;
 
 
 
@@ -74,7 +74,7 @@ VIDEO_UPDATE( kinst )
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			data32_t *src  = &kinst_video_base[640/4 * y];
+			uint32_t *src  = &kinst_video_base[640/4 * y];
 			uint16_t   *dest = (uint16_t *)((uint8_t *)fb + y * fb_pitch);
 			int i;
 
@@ -95,7 +95,7 @@ VIDEO_UPDATE( kinst )
 	   converts to the frontend format (and composites any UI/artwork). */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		data32_t *src = &kinst_video_base[640/4 * y];
+		uint32_t *src = &kinst_video_base[640/4 * y];
 		uint16_t *dest = (uint16_t *)bitmap->line[y];
 		int i;
 

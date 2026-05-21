@@ -29,12 +29,12 @@
 
 
 
-data16_t *midvunit_videoram;
-data32_t *midvunit_textureram;
+uint16_t *midvunit_videoram;
+uint32_t *midvunit_textureram;
 
-static data16_t dma_data[16];
+static uint16_t dma_data[16];
 static uint8_t dma_data_index;
-static data16_t page_control;
+static uint16_t page_control;
 
 static void *scanline_timer;
 

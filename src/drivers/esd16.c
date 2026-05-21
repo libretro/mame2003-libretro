@@ -32,8 +32,8 @@ Head Panic
 
 /* Variables defined in vidhrdw: */
 
-extern data16_t *esd16_vram_0, *esd16_scroll_0;
-extern data16_t *esd16_vram_1, *esd16_scroll_1;
+extern uint16_t *esd16_vram_0, *esd16_scroll_0;
+extern uint16_t *esd16_vram_1, *esd16_scroll_1;
 extern struct tilemap *esdtilemap_1_16x16;
 
 /* Functions defined in vidhrdw: */
@@ -45,9 +45,9 @@ VIDEO_START( esd16 );
 VIDEO_UPDATE( esd16 );
 VIDEO_UPDATE( hedpanic );
 
-data16_t *head_layersize;
-data16_t* headpanic_platform_x;
-data16_t* headpanic_platform_y;
+uint16_t *head_layersize;
+uint16_t* headpanic_platform_x;
+uint16_t* headpanic_platform_y;
 
 
 

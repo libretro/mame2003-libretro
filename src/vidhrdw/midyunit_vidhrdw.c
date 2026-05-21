@@ -49,7 +49,7 @@ static uint8_t	videobank_select;
 static int		last_update_scanline;
 
 /* DMA-related variables */
-static data16_t dma_register[16];
+static uint16_t dma_register[16];
 static struct
 {
 	uint32_t		offset;			/* source offset, in bits */

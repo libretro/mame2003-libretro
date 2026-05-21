@@ -6,7 +6,7 @@
 
 /*----------- defined in vidhrdw/atarisy1.c -----------*/
 
-extern data16_t *atarisy1_bankselect;
+extern uint16_t *atarisy1_bankselect;
 
 READ16_HANDLER( atarisy1_int3state_r );
 

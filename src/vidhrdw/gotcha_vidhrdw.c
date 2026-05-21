@@ -2,7 +2,7 @@
 #include "vidhrdw/generic.h"
 
 
-data16_t *gotcha_fgvideoram,*gotcha_bgvideoram;
+uint16_t *gotcha_fgvideoram,*gotcha_bgvideoram;
 
 static struct tilemap *fg_tilemap,*bg_tilemap;
 static int banksel,gfxbank[4];
@@ -19,9 +19,9 @@ uint32_t gotcha_tilemap_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_
 	return (col & 0x1f) | (row << 5) | ((col & 0x20) << 5);
 }
 
-static INLINE void get_tile_info(int tile_index,data16_t *vram,int color_offs)
+static INLINE void get_tile_info(int tile_index,uint16_t *vram,int color_offs)
 {
-	data16_t data = vram[tile_index];
+	uint16_t data = vram[tile_index];
 	int code = (data & 0x3ff) | (gfxbank[(data & 0x0c00) >> 10] << 10);
 
 	SET_TILE_INFO(0,code,(data >> 12) + color_offs,0)
@@ -91,7 +91,7 @@ WRITE16_HANDLER( gotcha_gfxbank_w )
 
 WRITE16_HANDLER( gotcha_scroll_w )
 {
-	static data16_t scroll[4];
+	static uint16_t scroll[4];
 	COMBINE_DATA(&scroll[offset]);
 
 	switch (offset)

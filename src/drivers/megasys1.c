@@ -128,7 +128,7 @@ RAM			RW		0f0000-0f3fff		0e0000-0effff?		<
 
 /* Variables only used here: */
 
-static data16_t ip_select, ip_select_values[5];
+static uint16_t ip_select, ip_select_values[5];
 
 
 /* Variables defined in vidhrdw: */
@@ -2555,7 +2555,7 @@ INPUT_PORTS_END
 
 
 
-data16_t protection_val;
+uint16_t protection_val;
 
 /* Read the input ports, through a protection device */
 static READ16_HANDLER( protection_peekaboo_r )
@@ -3192,13 +3192,13 @@ INPUT_PORTS_END
 
 void phantasm_rom_decode(int cpu)
 {
-	data16_t	*RAM	=	(data16_t *) memory_region(REGION_CPU1+cpu);
+	uint16_t	*RAM	=	(uint16_t *) memory_region(REGION_CPU1+cpu);
 	int i,		size	=	memory_region_length(REGION_CPU1+cpu);
 	if (size > 0x40000)	size = 0x40000;
 
 	for (i = 0 ; i < size/2 ; i++)
 	{
-		data16_t x,y;
+		uint16_t x,y;
 
 		x = RAM[i];
 
@@ -3226,13 +3226,13 @@ void phantasm_rom_decode(int cpu)
 
 void astyanax_rom_decode(int cpu)
 {
-	data16_t	*RAM	=	(data16_t *) memory_region(REGION_CPU1+cpu);
+	uint16_t	*RAM	=	(uint16_t *) memory_region(REGION_CPU1+cpu);
 	int i,		size	=	memory_region_length(REGION_CPU1+cpu);
 	if (size > 0x40000)	size = 0x40000;
 
 	for (i = 0 ; i < size/2 ; i++)
 	{
-		data16_t x,y;
+		uint16_t x,y;
 
 		x = RAM[i];
 
@@ -3260,13 +3260,13 @@ void astyanax_rom_decode(int cpu)
 
 void rodland_rom_decode(int cpu)
 {
-	data16_t	*RAM	=	(data16_t *) memory_region(REGION_CPU1+cpu);
+	uint16_t	*RAM	=	(uint16_t *) memory_region(REGION_CPU1+cpu);
 	int i,		size	=	memory_region_length(REGION_CPU1+cpu);
 	if (size > 0x40000)	size = 0x40000;
 
 	for (i = 0 ; i < size/2 ; i++)
 	{
-		data16_t x,y;
+		uint16_t x,y;
 
 		x = RAM[i];
 
@@ -3295,9 +3295,9 @@ void rodland_rom_decode(int cpu)
 
 static void rodlandj_gfx_unmangle(int region)
 {
-	data8_t *rom = memory_region(REGION_GFX1+region);
+	uint8_t *rom = memory_region(REGION_GFX1+region);
 	int size = memory_region_length(REGION_GFX1+region);
-	data8_t *buffer;
+	uint8_t *buffer;
 	int i;
 
 	/* data lines swap: 76543210 -> 64537210 */
@@ -3328,9 +3328,9 @@ static void rodlandj_gfx_unmangle(int region)
 
 static void jitsupro_gfx_unmangle(int region)
 {
-	data8_t *rom = memory_region(REGION_GFX1+region);
+	uint8_t *rom = memory_region(REGION_GFX1+region);
 	int size = memory_region_length(REGION_GFX1+region);
-	data8_t *buffer;
+	uint8_t *buffer;
 	int i;
 
 	/* data lines swap: 76543210 -> 43576210 */
@@ -3359,7 +3359,7 @@ static void jitsupro_gfx_unmangle(int region)
 
 static DRIVER_INIT( 64street )
 {
-//	data16_t *RAM = (data16_t *) memory_region(REGION_CPU1);
+//	uint16_t *RAM = (uint16_t *) memory_region(REGION_CPU1);
 //	RAM[0x006b8/2] = 0x6004;		// d8001 test
 //	RAM[0x10EDE/2] = 0x6012;		// watchdog
 
@@ -3372,11 +3372,11 @@ static DRIVER_INIT( 64street )
 
 static DRIVER_INIT( astyanax )
 {
-	data16_t *RAM;
+	uint16_t *RAM;
 
 	astyanax_rom_decode(0);
 
-	RAM = (data16_t *) memory_region(REGION_CPU1);
+	RAM = (uint16_t *) memory_region(REGION_CPU1);
 	RAM[0x0004e6/2] = 0x6040;	// protection
 }
 
@@ -3433,21 +3433,21 @@ static DRIVER_INIT( edf )
 
 static DRIVER_INIT( hachoo )
 {
-	data16_t *RAM;
+	uint16_t *RAM;
 
 	astyanax_rom_decode(0);
 
-	RAM  = (data16_t *) memory_region(REGION_CPU1);
+	RAM  = (uint16_t *) memory_region(REGION_CPU1);
 	RAM[0x0006da/2] = 0x6000;	// protection
 }
 
 static DRIVER_INIT( iganinju )
 {
-	data16_t *RAM;
+	uint16_t *RAM;
 
 	phantasm_rom_decode(0);
 
-	RAM  = (data16_t *) memory_region(REGION_CPU1);
+	RAM  = (uint16_t *) memory_region(REGION_CPU1);
 	RAM[0x02f000/2] = 0x835d;	// protection
 
 	RAM[0x00006e/2] = 0x0420;	// the only game that does
@@ -3467,7 +3467,7 @@ static WRITE16_HANDLER( OKIM6295_data_1_both_w )
 
 static DRIVER_INIT( jitsupro )
 {
-	data16_t *RAM  = (data16_t *) memory_region(REGION_CPU1);
+	uint16_t *RAM  = (uint16_t *) memory_region(REGION_CPU1);
 
 	astyanax_rom_decode(0);		// Code
 
@@ -3495,11 +3495,11 @@ static DRIVER_INIT( phantasm )
 
 static DRIVER_INIT( plusalph )
 {
-	data16_t *RAM;
+	uint16_t *RAM;
 
 	astyanax_rom_decode(0);
 
-	RAM  = (data16_t *) memory_region(REGION_CPU1);
+	RAM  = (uint16_t *) memory_region(REGION_CPU1);
 	RAM[0x0012b6/2] = 0x0000;	// protection
 }
 
@@ -3527,11 +3527,11 @@ static DRIVER_INIT( soldam )
 
 static DRIVER_INIT( stdragon )
 {
-	data16_t *RAM;
+	uint16_t *RAM;
 
 	phantasm_rom_decode(0);
 
-	RAM  = (data16_t *) memory_region(REGION_CPU1);
+	RAM  = (uint16_t *) memory_region(REGION_CPU1);
 	RAM[0x00045e/2] = 0x0098;	// protection
 }
 

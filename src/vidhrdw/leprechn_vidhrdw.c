@@ -11,8 +11,8 @@
 #include "vidhrdw/generic.h"
 
 
-static data8_t x,y,color;
-static data8_t graphics_command;
+static uint8_t x,y,color;
+static uint8_t graphics_command;
 static int pending;
 
 

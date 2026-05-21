@@ -33,8 +33,8 @@ Note:	if MAME_DEBUG is defined, pressing Z with:
 
 /* Variables needed by driver: */
 
-data16_t *blmbycar_vram_0, *blmbycar_scroll_0;
-data16_t *blmbycar_vram_1, *blmbycar_scroll_1;
+uint16_t *blmbycar_vram_0, *blmbycar_scroll_0;
+uint16_t *blmbycar_vram_1, *blmbycar_scroll_1;
 
 
 /***************************************************************************
@@ -82,8 +82,8 @@ static struct tilemap *tilemap_0, *tilemap_1;
 
 static void get_tile_info_0( int tile_index )
 {
-	data16_t code = blmbycar_vram_0[ tile_index * 2 + 0 ];
-	data16_t attr = blmbycar_vram_0[ tile_index * 2 + 1 ];
+	uint16_t code = blmbycar_vram_0[ tile_index * 2 + 0 ];
+	uint16_t attr = blmbycar_vram_0[ tile_index * 2 + 1 ];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -95,8 +95,8 @@ static void get_tile_info_0( int tile_index )
 
 static void get_tile_info_1( int tile_index )
 {
-	data16_t code = blmbycar_vram_1[ tile_index * 2 + 0 ];
-	data16_t attr = blmbycar_vram_1[ tile_index * 2 + 1 ];
+	uint16_t code = blmbycar_vram_1[ tile_index * 2 + 0 ];
+	uint16_t attr = blmbycar_vram_1[ tile_index * 2 + 1 ];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -109,15 +109,15 @@ static void get_tile_info_1( int tile_index )
 
 WRITE16_HANDLER( blmbycar_vram_0_w )
 {
-	data16_t oldword = blmbycar_vram_0[offset];
-	data16_t newword = COMBINE_DATA(&blmbycar_vram_0[offset]);
+	uint16_t oldword = blmbycar_vram_0[offset];
+	uint16_t newword = COMBINE_DATA(&blmbycar_vram_0[offset]);
 	if (oldword != newword)	tilemap_mark_tile_dirty(tilemap_0, offset/2);
 }
 
 WRITE16_HANDLER( blmbycar_vram_1_w )
 {
-	data16_t oldword = blmbycar_vram_1[offset];
-	data16_t newword = COMBINE_DATA(&blmbycar_vram_1[offset]);
+	uint16_t oldword = blmbycar_vram_1[offset];
+	uint16_t newword = COMBINE_DATA(&blmbycar_vram_1[offset]);
 	if (oldword != newword)	tilemap_mark_tile_dirty(tilemap_1, offset/2);
 }
 
@@ -182,7 +182,7 @@ VIDEO_START( blmbycar )
 
 static void blmbycar_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect)
 {
-	data16_t *source, *finish;
+	uint16_t *source, *finish;
 
 	source = spriteram16 + 0x6/2;				// !
 	finish = spriteram16 + spriteram_size/2 - 8/2;
