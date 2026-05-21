@@ -9,6 +9,7 @@ Functions to emulate the video hardware of the machine.
 
 
 #include "driver.h"
+#include <retro_endianness.h>
 #include "vidhrdw/generic.h"
 
 
@@ -93,7 +94,7 @@ VIDEO_UPDATE( exzisus )
 		int height;
 
 		/* Skip empty sprites. */
-		if ( !(*(UINT32 *)(&exzisus_objectram0[offs])) )
+		if ( !(retro_unaligned32(&exzisus_objectram0[offs])) )
 		{
 			continue;
 		}
@@ -164,7 +165,7 @@ VIDEO_UPDATE( exzisus )
 		int height;
 
 		/* Skip empty sprites. */
-		if ( !(*(UINT32 *)(&exzisus_objectram1[offs])) )
+		if ( !(retro_unaligned32(&exzisus_objectram1[offs])) )
 		{
 			continue;
 		}

@@ -6,6 +6,7 @@
 
 ***************************************************************************/
 #include "driver.h"
+#include <retro_endianness.h>
 #include "vidhrdw/generic.h"
 #include "ctype.h"
 
@@ -47,7 +48,7 @@ VIDEO_UPDATE( bublbobl )
 		/* skip empty sprites */
 		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
 		/* on any architecture */
-		if (*(UINT32 *)(&bublbobl_objectram[offs]) == 0)
+		if (retro_unaligned32(&bublbobl_objectram[offs]) == 0)
 			continue;
 
 		gfx_num = bublbobl_objectram[offs + 1];

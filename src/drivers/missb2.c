@@ -8,6 +8,7 @@ redesigned (8bpp!) graphics and different sound hardware... Crazy
 */
 
 #include "driver.h"
+#include <retro_endianness.h>
 #include "vidhrdw/generic.h"
 
 static data8_t *bg_paletteram,*bg_vram;
@@ -78,7 +79,7 @@ VIDEO_UPDATE( missb2 )
 		/* skip empty sprites */
 		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
 		/* on any architecture */
-		if (*(UINT32 *)(&bublbobl_objectram[offs]) == 0)
+		if (retro_unaligned32(&bublbobl_objectram[offs]) == 0)
 			continue;
 
 		gfx_num = bublbobl_objectram[offs + 1];

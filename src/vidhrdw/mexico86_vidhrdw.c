@@ -1,4 +1,5 @@
 #include "driver.h"
+#include <retro_endianness.h>
 
 unsigned char *mexico86_videoram,*mexico86_objectram;
 size_t mexico86_objectram_size;
@@ -46,7 +47,7 @@ if (offs >= mexico86_objectram_size+0x1c0) continue;
 		/* skip empty sprites */
 		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
 		/* on any architecture */
-		if (*(UINT32 *)(&mexico86_objectram[offs]) == 0)
+		if (retro_unaligned32(&mexico86_objectram[offs]) == 0)
 			continue;
 
 		gfx_num = mexico86_objectram[offs + 1];
@@ -126,7 +127,7 @@ if (offs >= mexico86_objectram_size+0x1c0) continue;
 		/* skip empty sprites */
 		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
 		/* on any architecture */
-		if (*(UINT32 *)(&mexico86_objectram[offs]) == 0)
+		if (retro_unaligned32(&mexico86_objectram[offs]) == 0)
 			continue;
 
 		gfx_num = mexico86_objectram[offs + 1];
@@ -192,7 +193,7 @@ VIDEO_UPDATE( kikikai )
 	sx = 0;
 	for (offs=0; offs<mexico86_objectram_size; offs+=4)
 	{
-		if (*(UINT32*)(mexico86_objectram + offs) == 0) continue;
+		if (retro_unaligned32(mexico86_objectram + offs) == 0) continue;
 
 		ty = mexico86_objectram[offs];
 		gfx_num = mexico86_objectram[offs + 1];

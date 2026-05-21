@@ -1,4 +1,5 @@
 #include "driver.h"
+#include <retro_endianness.h>
 #include "vidhrdw/generic.h"
 #include "snk.h"
 
@@ -202,7 +203,7 @@ void tnk3_draw_sprites( struct mame_bitmap *bitmap, int xscroll, int yscroll )
 
 	for(offs = 0; offs < 50*4; offs+=4)
 	{
-		if(*(UINT32*)(spriteram+offs) == 0 || *(UINT32*)(spriteram+offs) == -1) continue;
+		if(retro_unaligned32(spriteram+offs) == 0 || retro_unaligned32(spriteram+offs) == -1) continue;
 
 		tile_number = spriteram[offs+1];
 		attributes  = spriteram[offs+3]; /* YBBX.CCCC */
@@ -340,7 +341,7 @@ static void ikari_draw_sprites( struct mame_bitmap *bitmap, int start, int xscro
 
 	for(which = start*4; which < finish; which+=4)
 	{
-		if(*(UINT32*)(source+which) == 0 || *(UINT32*)(source+which) == -1) continue;
+		if(retro_unaligned32(source+which) == 0 || retro_unaligned32(source+which) == -1) continue;
 
 		tile_number = source[which+1];
 		attributes  = source[which+3];
@@ -482,7 +483,7 @@ static void tdfever_draw_sp( struct mame_bitmap *bitmap, int xscroll, int yscrol
 
 	for(which = 0; which < finish; which+=4)
 	{
-		if(*(UINT32*)(source+which) == 0 || *(UINT32*)(source+which) == -1) continue;
+		if(retro_unaligned32(source+which) == 0 || retro_unaligned32(source+which) == -1) continue;
 
 		tile_number = source[which+1];
 		attributes  = source[which+3];
