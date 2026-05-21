@@ -1104,7 +1104,51 @@ READ32_HANDLER( itech020_video_r )
 
 VIDEO_UPDATE( itech32 )
 {
+	const unsigned short *pal;
+	unsigned palents, fb_pitch;
+	UINT16 *fb;
 	int y;
+
+	/* Fast path: composite the indexed plane(s) straight into the frontend
+	   buffer with the core's RGB565 palette LUT, skipping the game bitmap, the
+	   per-scanline temp buffer, and the conversion pass. The pixel is used as
+	   the pen index exactly as the bitmap path does, and the visible area is
+	   0-origin, so screen (x,y) maps directly into the buffer. Falls back to
+	   the bitmap path (palette unstable, flip/rotate, UI overlay, etc.). */
+	pal = mame2003_direct_rgb565_palette(&palents);
+	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	if (fb)
+	{
+		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
+		{
+			const UINT16 *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
+			UINT16 *dst = (UINT16 *)((UINT8 *)fb + y * fb_pitch) + cliprect->min_x;
+			int x;
+
+			/* handle multi-plane case */
+			if (itech32_planes > 1)
+			{
+				const UINT16 *src2 = &videoplane[1][compute_safe_address(VIDEO_DISPLAY_XORIGIN2 + VIDEO_DISPLAY_XSCROLL2, VIDEO_DISPLAY_YORIGIN2 + VIDEO_DISPLAY_YSCROLL2 + y)];
+
+				/* blend the pixels; color xxFF is transparent */
+				for (x = cliprect->min_x; x <= cliprect->max_x; x++)
+				{
+					UINT16 pixel = src1[x];
+					if ((pixel & 0xff) == 0xff)
+						pixel = src2[x];
+					*dst++ = pal[pixel];
+				}
+			}
+
+			/* otherwise, convert directly from VRAM */
+			else
+			{
+				for (x = cliprect->min_x; x <= cliprect->max_x; x++)
+					*dst++ = pal[src1[x]];
+			}
+		}
+		return;
+	}
 
 	/* loop over height */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
