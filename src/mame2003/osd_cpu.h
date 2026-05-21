@@ -42,6 +42,23 @@ typedef int32_t  INT32;
 typedef int16_t  INT16;
 typedef int8_t   INT8;
 
+/* ---------------------------------------------------------------------------
+ * Endianness: MSB_FIRST is the single source of truth.
+ *   defined   => big-endian host
+ *   undefined => little-endian host
+ * All endian-dependent code keys off MSB_FIRST at compile time; there are no
+ * runtime byte-order checks and LSB_FIRST is never consulted. The build system
+ * may pin MSB_FIRST for known big-endian targets; if it did not, derive it from
+ * the compiler's byte-order macros here so this header alone decides.
+ * --------------------------------------------------------------------------- */
+#if !defined(MSB_FIRST)
+#  if (defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__) \
+   || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__MIPSEB__) || defined(__sparc__)
+#    define MSB_FIRST 1
+#  endif
+   /* otherwise the host is little-endian and MSB_FIRST stays undefined */
+#endif
+
 #if 0
 #define DEBUG_LOG 1
 #endif
