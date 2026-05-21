@@ -37,11 +37,9 @@ extern "C" {
 #define CLIB_DECL
 #endif
 
-#ifdef __LP64__
-#define FPTR unsigned long   /* 64bit: sizeof(void *) is sizeof(long)  */
-#else
-#define FPTR unsigned int
-#endif
+/* An unsigned integer guaranteed to be wide enough to hold a pointer on every
+   data model: ILP32, LP64 (unix64) and LLP64 (win64, where long is 32-bit). */
+#define FPTR uintptr_t
 
 
 extern void mame2003_video_get_geometry(struct retro_game_geometry *geom);
