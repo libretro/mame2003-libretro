@@ -828,18 +828,46 @@ static int game_fixed_output_rate(void)
       case SOUND_YMF262:
         if (cfg) chiprate = cfg->baseclock / 288;
         break;
-      /* Fixed-rate sources whose rate we don't derive here (and content whose
-         rate is decided at runtime): leave the choice to the configured rate. */
-      case SOUND_CUSTOM:
-      case SOUND_SAMPLES:
-      case SOUND_NAMCO:
-      case SOUND_NAMCONA:
+      /* C140interface: the second int field is the output frequency, which
+         lands in the same slot fixed_rate_intf calls 'baseclock'. */
       case SOUND_C140:
+        if (cfg) chiprate = cfg->baseclock;
+        break;
+      /* The remaining fixed-rate parts keep their clock (or rate) in the
+         first int field of their interface, so read it directly. */
+      case SOUND_NAMCONA:
+        if (cfg) chiprate = *(const int *)cfg;
+        break;
       case SOUND_VLM5030:
+        if (cfg) chiprate = (*(const int *)cfg) / 440;
+        break;
+      case SOUND_NAMCO:
+        /* base sample rate doubled until it reaches the 192000 internal rate,
+           then divided by the 4x oversampling factor */
+        if (cfg)
+        {
+          int nc = *(const int *)cfg;
+          if (nc > 0)
+          {
+            while (nc < 192000) nc *= 2;
+            chiprate = nc / 4;
+          }
+        }
+        break;
       case SOUND_SP0250:
+        chiprate = 10000;
+        break;
       case SOUND_SCSP:
+        chiprate = 44100;
+        break;
       case SOUND_GAELCO_GAE1:
       case SOUND_GAELCO_CG1V:
+        chiprate = 8000;
+        break;
+      /* Content whose rate is decided at runtime: leave the choice to the
+         configured rate. */
+      case SOUND_CUSTOM:
+      case SOUND_SAMPLES:
         return 0;
       default:
         /* already runs at the output rate: nothing to pin */

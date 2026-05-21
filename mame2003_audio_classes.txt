@@ -4,27 +4,36 @@ mame2003 per-game audio class list
 WHAT THE CLASSES MEAN
 ----------------------------------------------------------------------
 Class 1 (no resampling): every sound source in the game synthesizes audio
-  directly at the core's chosen output rate. The mixer is a 1:1 copy; there
+  directly at the core's output rate, so the mixer is a 1:1 copy and there
   is no rate conversion inside the core. (AY8910, SN76496, YM2203, YM2612,
-  OKIM6295, DAC, MSM5205/ADPCM, qsound, SEGAPCM, K-series PCM, POKEY, etc.)
+  YM2608, YM2610/B, OKIM6295, DAC, MSM5205/ADPCM, qsound, SEGAPCM,
+  K-series PCM, POKEY, etc.)
 
-Class 2 (resampling needed): the sound source runs at a fixed clock-derived
-  rate that is NOT the output rate, so the mixer must resample it. (YM2151,
-  YM3812/YM3526/Y8950, YMF262, YM2413, YM2608, YM2610/B, NAMCO wavetable,
-  C140, VLM5030, SP0250, SCSP, GAELCO.)
+Class 2 (fixed native rate): the source runs at a fixed rate derived from
+  its own clock, not the output rate. (YM2151, YM3812/YM3526/Y8950, YMF262,
+  YM2413, NAMCO/NAMCONA, C140, VLM5030, SP0250, SCSP, GAELCO.)
 
 Per game we bucket as:
-  NONE   - 0 class-2 sources              -> already no core resampling
-  SINGLE - exactly 1 class-2 native rate  -> output AT that rate, resample-free
-  MULTI  - >=2 distinct class-2 rates     -> some resample unavoidable
-  SPECIAL- SAMPLES/CUSTOM only            -> rate is runtime/driver dependent
+  NONE    - 0 class-2 sources             -> already no core resampling
+  SINGLE  - exactly 1 class-2 native rate -> output AT that rate, resample-free
+  MULTI   - >=2 distinct class-2 rates    -> some resampling unavoidable
+  SPECIAL - SAMPLES/CUSTOM only           -> rate is runtime/driver dependent
 
-Rate policy: SINGLE games drive the output rate from the chip's own native
-rate (read at runtime). All other buckets follow the user 'hint'.
+RATE POLICY
+----------------------------------------------------------------------
+SINGLE games output at the chip's own fixed rate so the core never resamples;
+the frontend performs the single conversion to the host rate. The rate is
+derived from the chip clock:
+  YM2151 = clk/64    YM3812/YM3526/Y8950/YM2413 = clk/72    YMF262 = clk/288
+  C140 = intf freq   NAMCONA = intf freq   VLM5030 = clk/440
+  NAMCO = clk doubled to 192000 then /4   SP0250 = 10000   SCSP = 44100
+  GAELCO = 8000
+NONE games are already resample-free at any rate. MULTI, SPECIAL and
+SINGLE+SAMPLES/CUSTOM games follow the 'Sample Rate (Hint)' core option.
 
 
 ######################################################################
-# SINGLE - resample-free at chip native rate   (1240 games)
+# SINGLE - output at chip native rate, resample-free   (1240 games)
 ######################################################################
 1941           machine=cps1             YM2151
 1941j          machine=cps1             YM2151
@@ -4081,7 +4090,7 @@ zzyzzyx2       machine=jack
 zzyzzyxx       machine=jack             
 
 ######################################################################
-# MULTI - >=2 rates, follows hint   (115 games)
+# MULTI - >=2 fixed rates, follows hint   (115 games)
 ######################################################################
 aircombj       machine=poly_c140_typeB  C140|YM2151
 aircombu       machine=poly_c140_typeB  C140|YM2151
