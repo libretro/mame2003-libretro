@@ -6,7 +6,7 @@
 #define TC0480SCP_GFX_NUM 1
 #define TC0100SCN_GFX_NUM 1
 
-extern UINT8 TC0360PRI_regs[16];
+extern uint8_t TC0360PRI_regs[16];
 
 struct tempsprite
 {
@@ -26,7 +26,7 @@ static data16_t *spriteram_buffered,*spriteram_delayed;
 int taito_sprite_type = 0;
 data16_t *taito_sprite_ext;
 size_t taito_spriteext_size;
-static UINT16 spritebank[8];
+static uint16_t spritebank[8];
 
 static int taito_hide_pixels;
 
@@ -527,10 +527,10 @@ a bg layer given priority over some sprites.
 
 VIDEO_UPDATE( slapshot )
 {
-	UINT8 layer[5];
-	UINT8 tilepri[5];
-	UINT8 spritepri[4];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t tilepri[5];
+	uint8_t spritepri[4];
+	uint16_t priority;
 
 #ifdef MAME_DEBUG
 	static int dislayer[5];	/* Layer toggles to help get the layers correct */

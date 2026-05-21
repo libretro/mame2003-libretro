@@ -38,8 +38,8 @@ static void sshangha_tilemap_draw(struct mame_bitmap *bitmap)
 
 	for (y=0; y<240; y++) {
 		for (x=0; x<320; x++) {
-			p=(((UINT16*)bitmap0->line[y])[x])&0xf;
-			p|=((((UINT16*)bitmap1->line[y])[x])&0xf)<<4;
+			p=(((uint16_t*)bitmap0->line[y])[x])&0xf;
+			p|=((((uint16_t*)bitmap1->line[y])[x])&0xf)<<4;
 
 			plot_pixel(bitmap, x, y, Machine->pens[p|0x300]);
 		}
@@ -151,7 +151,7 @@ WRITE16_HANDLER( sshangha_control_0_w )
 /******************************************************************************/
 
 #if 0
-static UINT32 sshangha_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t sshangha_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);

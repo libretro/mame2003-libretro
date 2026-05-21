@@ -12,8 +12,8 @@
 #define LOW_BYTE(x) ((x) & 0xff)
 
 
-UINT8 mcr68_sprite_clip;
-INT8 mcr68_sprite_xoffset;
+uint8_t mcr68_sprite_clip;
+int8_t mcr68_sprite_xoffset;
 
 static struct tilemap *bg_tilemap;
 static struct tilemap *fg_tilemap;
@@ -98,7 +98,7 @@ VIDEO_START( zwackery )
 
 PALETTE_INIT( zwackery )
 {
-	const UINT8 *colordatabase = (const UINT8 *)memory_region(REGION_GFX3);
+	const uint8_t *colordatabase = (const uint8_t *)memory_region(REGION_GFX3);
 	struct GfxElement *gfx0 = Machine->gfx[0];
 	struct GfxElement *gfx2 = Machine->gfx[2];
 	int code, y, x;
@@ -106,15 +106,15 @@ PALETTE_INIT( zwackery )
 	/* "colorize" each code */
 	for (code = 0; code < gfx0->total_elements; code++)
 	{
-		const UINT8 *coldata = colordatabase + code * 32;
-		UINT8 *gfxdata0 = gfx0->gfxdata + code * gfx0->char_modulo;
-		UINT8 *gfxdata2 = gfx2->gfxdata + code * gfx2->char_modulo;
+		const uint8_t *coldata = colordatabase + code * 32;
+		uint8_t *gfxdata0 = gfx0->gfxdata + code * gfx0->char_modulo;
+		uint8_t *gfxdata2 = gfx2->gfxdata + code * gfx2->char_modulo;
 
 		/* assume 16 rows */
 		for (y = 0; y < 16; y++)
 		{
-			UINT8 *gd0 = gfxdata0;
-			UINT8 *gd2 = gfxdata2;
+			uint8_t *gd0 = gfxdata0;
+			uint8_t *gd2 = gfxdata2;
 
 			/* 16 columns */
 			for (x = 0; x < 16; x++, gd0++, gd2++)

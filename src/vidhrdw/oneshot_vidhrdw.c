@@ -125,8 +125,8 @@ static void oneshot_drawcrosshairs( struct mame_bitmap *bitmap, const struct rec
 
 static void oneshot_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-	const UINT16 *source = oneshot_sprites;
-	const UINT16 *finish = source+(0x1000/2);
+	const uint16_t *source = oneshot_sprites;
+	const uint16_t *finish = source+(0x1000/2);
 	const struct GfxElement *gfx = Machine->gfx[1];
 
 	int xpos,ypos;

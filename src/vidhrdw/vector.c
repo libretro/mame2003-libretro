@@ -65,15 +65,15 @@ static int dirty_index;
 static vector_pixel_t *pixel;
 static int p_index=0;
 
-static UINT32 *pTcosin;            /* adjust line width */
+static uint32_t *pTcosin;            /* adjust line width */
 
 #define Tcosin(x)   pTcosin[(x)]          /* adjust line width */
 
 #define ANTIALIAS_GUNBIT  6             /* 6 bits per gun in vga (1-8 valid) */
 #define ANTIALIAS_GUNNUM  (1<<ANTIALIAS_GUNBIT)
 
-static UINT8 Tgamma[256];         /* quick gamma anti-alias table  */
-static UINT8 Tgammar[256];        /* same as above, reversed order */
+static uint8_t Tgamma[256];         /* quick gamma anti-alias table  */
+static uint8_t Tgammar[256];        /* same as above, reversed order */
 
 static struct mame_bitmap *vecbitmap;
 static int vecwidth, vecheight;
@@ -230,7 +230,7 @@ static void vector_clear_pixels (void)
 		for (i=p_index-1; i>=0; i--)
 		{
 			coords = pixel[i];
-			((UINT32 *)vecbitmap->line[VECTOR_PIXEL_Y(coords)])[VECTOR_PIXEL_X(coords)] = 0;
+			((uint32_t *)vecbitmap->line[VECTOR_PIXEL_Y(coords)])[VECTOR_PIXEL_X(coords)] = 0;
 		}
 	}
 	else
@@ -238,7 +238,7 @@ static void vector_clear_pixels (void)
 		for (i=p_index-1; i>=0; i--)
 		{
 			coords = pixel[i];
-			((UINT16 *)vecbitmap->line[VECTOR_PIXEL_Y(coords)])[VECTOR_PIXEL_X(coords)] = 0;
+			((uint16_t *)vecbitmap->line[VECTOR_PIXEL_Y(coords)])[VECTOR_PIXEL_X(coords)] = 0;
 		}
 	}
 	p_index=0;
@@ -253,15 +253,15 @@ static void vector_clear_pixels (void)
 static void vector_draw_aa_pixel_15 (int x, int y, rgb_t col, int dirty)
 {
 	vector_pixel_t coords;
-	UINT32 dst;
+	uint32_t dst;
 
 	if (x < xmin || x >= xmax)
 		return;
 	if (y < ymin || y >= ymax)
 		return;
 
-	dst = ((UINT16 *)vecbitmap->line[y])[x];
-	((UINT16 *)vecbitmap->line[y])[x] = LIMIT5((RGB_BLUE(col) >> 3) + (dst & 0x1f))
+	dst = ((uint16_t *)vecbitmap->line[y])[x];
+	((uint16_t *)vecbitmap->line[y])[x] = LIMIT5((RGB_BLUE(col) >> 3) + (dst & 0x1f))
 		| (LIMIT5((RGB_GREEN(col) >> 3) + ((dst >> 5) & 0x1f)) << 5)
 		| (LIMIT5((RGB_RED(col) >> 3) + (dst >> 10)) << 10);
 
@@ -277,15 +277,15 @@ static void vector_draw_aa_pixel_15 (int x, int y, rgb_t col, int dirty)
 static void vector_draw_aa_pixel_32 (int x, int y, rgb_t col, int dirty)
 {
 	vector_pixel_t coords;
-	UINT32 dst;
+	uint32_t dst;
 
 	if (x < xmin || x >= xmax)
 		return;
 	if (y < ymin || y >= ymax)
 		return;
 
-	dst = ((UINT32 *)vecbitmap->line[y])[x];
-	((UINT32 *)vecbitmap->line[y])[x] = LIMIT8(RGB_BLUE(col) + (dst & 0xff))
+	dst = ((uint32_t *)vecbitmap->line[y])[x];
+	((uint32_t *)vecbitmap->line[y])[x] = LIMIT8(RGB_BLUE(col) + (dst & 0xff))
 		| (LIMIT8(RGB_GREEN(col) + ((dst >> 8) & 0xff)) << 8)
 		| (LIMIT8(RGB_RED(col) + (dst >> 16)) << 16);
 

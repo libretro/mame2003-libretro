@@ -36,17 +36,17 @@ static void blendbitmaps(
 
 	{
 		pen_t *paldata = Machine->pens;
-		UINT32 *end;
+		uint32_t *end;
 
-		UINT16 *sd1 = ((UINT16 *)src1->line[0]);								/* source data   */
-		UINT16 *sd2 = ((UINT16 *)src2->line[0]);
+		uint16_t *sd1 = ((uint16_t *)src1->line[0]);								/* source data   */
+		uint16_t *sd2 = ((uint16_t *)src2->line[0]);
 
 		int sw = ex-sx+1;														/* source width  */
 		int sh = ey-sy+1;														/* source height */
-		int sm = ((UINT16 *)src1->line[1]) - ((UINT16 *)src1->line[0]);			/* source modulo */
+		int sm = ((uint16_t *)src1->line[1]) - ((uint16_t *)src1->line[0]);			/* source modulo */
 
-		UINT32 *dd = ((UINT32 *)dest->line[sy]) + sx;							/* dest data     */
-		int dm = ((UINT32 *)dest->line[1]) - ((UINT32 *)dest->line[0]);			/* dest modulo   */
+		uint32_t *dd = ((uint32_t *)dest->line[sy]) + sx;							/* dest data     */
+		int dm = ((uint32_t *)dest->line[1]) - ((uint32_t *)dest->line[0]);			/* dest modulo   */
 
 		sd1 += (sx-ox);
 		sd1 += sm * (sy-oy);
@@ -105,7 +105,7 @@ static void blendbitmaps(
 /* from gals pinball (which was in turn from ninja gaiden) */
 static int draw_sprites(struct mame_bitmap *bitmap, int priority)
 {
-	const UINT8 layout[8][8] =
+	const uint8_t layout[8][8] =
 	{
 		{ 0, 1, 4, 5,16,17,20,21},
 		{ 2, 3, 6, 7,18,19,22,23},

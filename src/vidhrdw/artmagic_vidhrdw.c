@@ -19,10 +19,10 @@ data16_t *artmagic_vram1;
 /* decryption parameters */
 int artmagic_xor[16], artmagic_is_stoneball;
 
-static UINT16 *blitter_base;
-static UINT32 blitter_mask;
-static UINT16 blitter_data[8];
-static UINT8 blitter_page;
+static uint16_t *blitter_base;
+static uint32_t blitter_mask;
+static uint16_t blitter_data[8];
+static uint8_t blitter_page;
 
 #if (!INSTANT_BLIT)
 static double blitter_busy_until;
@@ -36,7 +36,7 @@ static double blitter_busy_until;
  *
  *************************************/
 
-static INLINE UINT16 *address_to_vram(offs_t *address)
+static INLINE uint16_t *address_to_vram(offs_t *address)
 {
 	offs_t original = *address;
 	*address = TOWORD(original & 0x001fffff);
@@ -57,7 +57,7 @@ static INLINE UINT16 *address_to_vram(offs_t *address)
 
 VIDEO_START( artmagic )
 {
-	blitter_base = (UINT16 *)memory_region(REGION_GFX1);
+	blitter_base = (uint16_t *)memory_region(REGION_GFX1);
 	blitter_mask = memory_region_length(REGION_GFX1)/2 - 1;
 	return 0;
 }
@@ -72,7 +72,7 @@ VIDEO_START( artmagic )
 
 void artmagic_to_shiftreg(offs_t address, data16_t *data)
 {
-	UINT16 *vram = address_to_vram(&address);
+	uint16_t *vram = address_to_vram(&address);
 	if (vram)
 		memcpy(data, &vram[address], TOBYTE(0x2000));
 }
@@ -80,7 +80,7 @@ void artmagic_to_shiftreg(offs_t address, data16_t *data)
 
 void artmagic_from_shiftreg(offs_t address, data16_t *data)
 {
-	UINT16 *vram = address_to_vram(&address);
+	uint16_t *vram = address_to_vram(&address);
 	if (vram)
 		memcpy(&vram[address], data, TOBYTE(0x2000));
 }
@@ -95,11 +95,11 @@ void artmagic_from_shiftreg(offs_t address, data16_t *data)
 
 static void execute_blit(void)
 {
-	UINT16 *dest = blitter_page ? artmagic_vram0 : artmagic_vram1;
+	uint16_t *dest = blitter_page ? artmagic_vram0 : artmagic_vram1;
 	int offset = ((blitter_data[1] & 0xff) << 16) | blitter_data[0];
 	int color = (blitter_data[1] >> 4) & 0xf0;
-	int x = (INT16)blitter_data[2];
-	int y = (INT16)blitter_data[3];
+	int x = (int16_t)blitter_data[2];
+	int y = (int16_t)blitter_data[3];
 	int maskx = blitter_data[6] & 0xff;
 	int masky = blitter_data[6] >> 8;
 	int w = ((blitter_data[7] & 0xff) + 1) * 4;
@@ -108,7 +108,7 @@ static void execute_blit(void)
 
 #if 0
 {
-	static UINT32 hit_list[50000];
+	static uint32_t hit_list[50000];
 	static int hit_index;
 	static FILE *f;
 
@@ -248,7 +248,7 @@ static void execute_blit(void)
 
 				for (j = 0; j < w; j += 4)
 				{
-					UINT16 val = blitter_base[(offset + j/4) & blitter_mask];
+					uint16_t val = blitter_base[(offset + j/4) & blitter_mask];
 					if (sx < 508)
 					{
 						if (h == 1 && artmagic_is_stoneball)
@@ -315,7 +315,7 @@ READ16_HANDLER( artmagic_blitter_r )
 		bit 2 is tested in a similar fashion
 		bit 4 reflects the page
 	*/
-	UINT16 result = 0xffef | (blitter_page << 4);
+	uint16_t result = 0xffef | (blitter_page << 4);
 #if (!INSTANT_BLIT)
 	if (timer_get_time() < blitter_busy_until)
 		result ^= 6;
@@ -347,8 +347,8 @@ WRITE16_HANDLER( artmagic_blitter_w )
 
 VIDEO_UPDATE( artmagic )
 {
-	UINT32 offset, dpytap;
-	UINT16 *vram;
+	uint32_t offset, dpytap;
+	uint16_t *vram;
 	int x, y;
 
 	/* get the current parameters */
@@ -370,7 +370,7 @@ VIDEO_UPDATE( artmagic )
 	/* render the bitmap */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			dest[x] = vram[(offset + x) & TOWORD(0x1fffff)] & 0xff;
 		offset += TOWORD(0x2000);

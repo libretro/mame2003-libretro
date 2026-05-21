@@ -296,7 +296,7 @@ VIDEO_UPDATE( f1gp )
 			if (dirtychar[i])
 			{
 				dirtychar[i] = 0;
-				decodechar(Machine->gfx[3],i,(UINT8 *)zoomdata,&tilelayout);
+				decodechar(Machine->gfx[3],i,(uint8_t *)zoomdata,&tilelayout);
 			}
 		}
 

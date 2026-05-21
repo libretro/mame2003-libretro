@@ -134,7 +134,7 @@ WRITE_HANDLER( angelkds_bgbotscroll_write )
 	tilemap_set_scrollx(bgbot_tilemap, 0, data );
 }
 
-UINT8 angelkds_layer_ctrl;
+uint8_t angelkds_layer_ctrl;
 
 WRITE_HANDLER( angelkds_layer_ctrl_write )
 {
@@ -150,8 +150,8 @@ a split down the middle of the screen
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int enable_n)
 {
-	const UINT8 *source = spriteram;
-	const UINT8 *finish = source+0x0100;
+	const uint8_t *source = spriteram;
+	const uint8_t *finish = source+0x0100;
 	const struct GfxElement *gfx = Machine->gfx[2];
 
 	while( source<finish )
@@ -174,16 +174,16 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 	*/
 
 
-	UINT16 tile_no = source[0];
-	UINT8 attr = source[1];
-	UINT8 ypos = source[2];
-	UINT8 xpos = source[3];
+	uint16_t tile_no = source[0];
+	uint8_t attr = source[1];
+	uint8_t ypos = source[2];
+	uint8_t xpos = source[3];
 
-	UINT8 enable = attr & 0xc0;
-	UINT8 flipx = (attr & 0x10) >> 4;
-	UINT8 flipy = (attr & 0x20) >> 5;
-	UINT8 bank = attr & 0x08;
-	UINT8 color = attr & 0x03;
+	uint8_t enable = attr & 0xc0;
+	uint8_t flipx = (attr & 0x10) >> 4;
+	uint8_t flipy = (attr & 0x20) >> 5;
+	uint8_t bank = attr & 0x08;
+	uint8_t color = attr & 0x03;
 
 	if (bank) tile_no +=0x100;
 

@@ -1,9 +1,9 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *kingofb_videoram2;
-UINT8 *kingofb_colorram2;
-UINT8 *kingofb_scroll_y;
+uint8_t *kingofb_videoram2;
+uint8_t *kingofb_colorram2;
+uint8_t *kingofb_scroll_y;
 
 extern int kingofb_nmi_enable;
 

@@ -8,11 +8,11 @@ Atari Triple Hunt video emulation
 
 extern void triplhnt_hit_callback(int);
 
-UINT8* triplhnt_playfield_ram;
-UINT8* triplhnt_hpos_ram;
-UINT8* triplhnt_vpos_ram;
-UINT8* triplhnt_code_ram;
-UINT8* triplhnt_orga_ram;
+uint8_t* triplhnt_playfield_ram;
+uint8_t* triplhnt_hpos_ram;
+uint8_t* triplhnt_vpos_ram;
+uint8_t* triplhnt_code_ram;
+uint8_t* triplhnt_orga_ram;
 
 int triplhnt_sprite_zoom;
 int triplhnt_sprite_bank;
@@ -21,7 +21,7 @@ static struct mame_bitmap* helper;
 static struct tilemap* tilemap;
 
 
-static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	return num_cols * row + col;
 }

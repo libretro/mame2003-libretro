@@ -11,11 +11,11 @@
 
 extern int sidearms_gameid;
 
-UINT8 *sidearms_bg_scrollx;
-UINT8 *sidearms_bg_scrolly;
+uint8_t *sidearms_bg_scrollx;
+uint8_t *sidearms_bg_scrolly;
 
 static int tilebank_base[4] = { 0, 0x100, 0x200, 0x100 };
-static UINT8 *tilerom;
+static uint8_t *tilerom;
 static int bgon, objon, staron, charon, flipon;
 static unsigned int hflop_74a_n, hcount_191, vcount_191, latch_374;
 
@@ -159,7 +159,7 @@ static INLINE void get_fg_tile_info(int tile_index)
 	SET_TILE_INFO(0, code, color, 0)
 }
 
-static INLINE UINT32 sidearms_tilemap_scan( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static INLINE uint32_t sidearms_tilemap_scan( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	int offset = ((row << 7) + col) << 1;
@@ -245,12 +245,12 @@ static void sidearms_draw_starfield( struct mame_bitmap *bitmap )
 {
 	int x, y, i;
 	unsigned int hadd_283, vadd_283, _hflop_74a_n, _hcount_191, _vcount_191;
-	UINT8 *sf_rom;
-	UINT16 *lineptr;
+	uint8_t *sf_rom;
+	uint16_t *lineptr;
 	int pixadv, lineadv;
 
 	// clear starfield background
-	lineptr = (UINT16 *)bitmap->line[16] + 64;
+	lineptr = (uint16_t *)bitmap->line[16] + 64;
 	lineadv = bitmap->rowpixels;
 
 	for (i=224; i; i--) { memset(lineptr, 0, 768); lineptr += lineadv; }
@@ -270,13 +270,13 @@ static void sidearms_draw_starfield( struct mame_bitmap *bitmap )
 #if 0 // old loop (for reference; easier to read)
 	if (!flipon)
 	{
-		lineptr = (UINT16 *)bitmap->line[0];
+		lineptr = (uint16_t *)bitmap->line[0];
 		pixadv  = 1;
 		lineadv = lineadv - 512;
 	}
 	else
 	{
-		lineptr = (UINT16 *)bitmap->line[255] + 512 - 1;
+		lineptr = (uint16_t *)bitmap->line[255] + 512 - 1;
 		pixadv  = -1;
 		lineadv = -lineadv + 512;
 	}
@@ -306,20 +306,20 @@ static void sidearms_draw_starfield( struct mame_bitmap *bitmap )
 
 			if ((~((latch_374^hadd_283)^1) & 0x1f)) continue; // logic rejection 3
 
-			*lineptr = (UINT16)(latch_374>>5 | 0x378); // to color mixer
+			*lineptr = (uint16_t)(latch_374>>5 | 0x378); // to color mixer
 		}
 		lineptr += lineadv;
 	}
 #else // optimized loop
 	if (!flipon)
 	{
-		lineptr = (UINT16 *)bitmap->line[16] + 64;
+		lineptr = (uint16_t *)bitmap->line[16] + 64;
 		pixadv  = 1;
 		lineadv = lineadv - 384;
 	}
 	else
 	{
-		lineptr = (UINT16 *)bitmap->line[239] + 512 - 64 - 1;
+		lineptr = (uint16_t *)bitmap->line[239] + 512 - 64 - 1;
 		pixadv  = -1;
 		lineadv = -lineadv + 384;
 	}
@@ -357,7 +357,7 @@ static void sidearms_draw_starfield( struct mame_bitmap *bitmap )
 
 			if ((~((latch_374^hadd_283)^1) & 0x1f)) continue; // logic rejection 3
 
-			*lineptr = (UINT16)(latch_374>>5 | 0x378); // to color mixer
+			*lineptr = (uint16_t)(latch_374>>5 | 0x378); // to color mixer
 		}
 		lineptr += lineadv;
 	}

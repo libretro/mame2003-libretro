@@ -11,7 +11,7 @@
  * mark whole tilemaps dirty only when necessary.
  */
 static int tilemap_palette_bank[6];
-static UINT8 *mpMaskData;
+static uint8_t *mpMaskData;
 static struct tilemap *background[6];
 
 /* nth_word32 is a general-purpose utility function, which allows us to
@@ -268,7 +268,7 @@ VIDEO_START( namconb1 )
 	};
 
 	namco_obj_init(NAMCONB1_SPRITEGFX,0x0,NB1objcode2tile);
-	mpMaskData = (UINT8 *)memory_region( NAMCONB1_TILEMASKREGION );
+	mpMaskData = (uint8_t *)memory_region( NAMCONB1_TILEMASKREGION );
 	for( i=0; i<6; i++ )
 	{
 		if( i<4 )
@@ -365,7 +365,7 @@ VIDEO_START( namconb2 )
 
 	if( namco_roz_init(NAMCONB1_ROTGFX,NAMCONB1_ROTMASKREGION)!=0 ) return 1;
 
-	mpMaskData = (UINT8 *)memory_region( NAMCONB1_TILEMASKREGION );
+	mpMaskData = (uint8_t *)memory_region( NAMCONB1_TILEMASKREGION );
 	for( i=0; i<6; i++ )
 	{
 		if( i<4 )

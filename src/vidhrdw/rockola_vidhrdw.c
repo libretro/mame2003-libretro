@@ -9,8 +9,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *rockola_videoram2;
-UINT8 *rockola_charram;
+uint8_t *rockola_videoram2;
+uint8_t *rockola_charram;
 
 static int charbank;
 static int backcolor;

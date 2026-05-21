@@ -20,13 +20,13 @@ static struct tilemap *tx_tilemap,*bg_tilemap8x4,*bg_tilemap4x8;
 
 ***************************************************************************/
 
-static UINT32 bg8x4_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t bg8x4_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x0f) + ((row & 0x0f) << 4) + ((col & 0x70) << 4) + ((row & 0x30) << 7);
 }
 
-static UINT32 bg4x8_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t bg4x8_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x0f) + ((row & 0x0f) << 4) + ((col & 0x30) << 4) + ((row & 0x70) << 6);

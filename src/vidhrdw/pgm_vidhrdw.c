@@ -5,7 +5,7 @@
 
 extern data16_t *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
 static struct tilemap *pgm_tx_tilemap, *pgm_bg_tilemap;
-static UINT16 *sprite_bitmap;
+static uint16_t *sprite_bitmap;
 static data16_t *pgm_spritebufferram; // buffered spriteram
 
 extern data8_t *pgm_sprite_a_region;   /* = memory_region       ( REGION_GFX4 ); */
@@ -162,7 +162,7 @@ static void pgm_drawsprite(int wide, int high, int xpos, int ypos, int palt, int
 	}
 }
 
-static UINT16 *pgm_sprite_source;
+static uint16_t *pgm_sprite_source;
 
 static void pgm_drawsprites(int priority)
 {
@@ -173,7 +173,7 @@ static void pgm_drawsprites(int priority)
 	   wwww wwwh hhhh hhhh
 	*/
 
-	const UINT16 *finish = pgm_spritebufferram+0xa00;
+	const uint16_t *finish = pgm_spritebufferram+0xa00;
 	int y;
 
 	/* clear the sprite bitmap */
@@ -286,7 +286,7 @@ VIDEO_START( pgm )
 
 	pgm_spritebufferram = auto_malloc (0xa00);
 
-	sprite_bitmap		= auto_malloc((448+32+32) * 224 * sizeof(UINT16));
+	sprite_bitmap		= auto_malloc((448+32+32) * 224 * sizeof(uint16_t));
 	if (!sprite_bitmap) return 1;
 
 

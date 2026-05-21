@@ -2,11 +2,11 @@
 #include "vidhrdw/generic.h"
 
 
-UINT8 *mnchmobl_vreg;
-UINT8 *mnchmobl_status_vram;
-UINT8 *mnchmobl_sprite_xpos;
-UINT8 *mnchmobl_sprite_attr;
-UINT8 *mnchmobl_sprite_tile;
+uint8_t *mnchmobl_vreg;
+uint8_t *mnchmobl_status_vram;
+uint8_t *mnchmobl_sprite_xpos;
+uint8_t *mnchmobl_sprite_attr;
+uint8_t *mnchmobl_sprite_tile;
 
 static int mnchmobl_palette_bank;
 static int flipscreen;

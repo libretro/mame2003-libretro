@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 static int tile_bank;
-static UINT16 *tile_data;
+static uint16_t *tile_data;
 static struct tilemap *bg_tilemap;
 
 #define TILE_SIZE	8
@@ -33,13 +33,13 @@ PALETTE_INIT( moleattack )
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT16 code = tile_data[tile_index];
+	uint16_t code = tile_data[tile_index];
 	SET_TILE_INFO((code & 0x200) ? 1 : 0, code & 0x1ff, 0, 0)
 }
 
 VIDEO_START( moleattack )
 {
-	tile_data = (UINT16 *)auto_malloc(NUM_TILES * sizeof(UINT16));
+	tile_data = (uint16_t *)auto_malloc(NUM_TILES * sizeof(uint16_t));
 
 	if( !tile_data )
 		return 1;

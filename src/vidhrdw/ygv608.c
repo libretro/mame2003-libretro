@@ -85,12 +85,12 @@ INTERRUPT_GEN( ygv608_timed_interrupt )
 }
 
 
-static UINT32 get_tile_offset( UINT32 col, UINT32 row,
-                               UINT32 numcols, UINT32 numrows )
+static uint32_t get_tile_offset( uint32_t col, uint32_t row,
+                               uint32_t numcols, uint32_t numrows )
 {
     // this optimisation is not much good to us,
     // since we really need row,col in the get_tile_info() routines
-    // - so just pack them into a UINT32
+    // - so just pack them into a uint32_t
 
 	return( ( col << 6 ) | row );
 }
@@ -252,7 +252,7 @@ static void get_tile_info_B_8( int offset )
 		}
 		if ((ygv608.regs.s.r12 & r12_bpf) != 0)
 		{
-			UINT8 color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
+			uint8_t color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
 
 			/* assume 16 colour mode for now... */
 			attr = ( j >> ( (color - 1 ) * 2 ) ) & 0x0f;
@@ -417,7 +417,7 @@ static void get_tile_info_B_16( int offset )
 
 		if ((ygv608.regs.s.r12 & r12_bpf) != 0)
 		{
-			UINT8 color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
+			uint8_t color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
 
 			/* assume 16 colour mode for now... */
 			attr = ( j >> (color * 2)) & 0x0f;
@@ -912,8 +912,8 @@ READ16_HANDLER( ygv608_r )
 	{
 		case 0x00: /* P#0 - pattern name table data port */
 		{
-			UINT8 xTile = ygv608.regs.s.r1 & r1_pnx;
-			UINT8 yTile = ygv608.regs.s.r0 & r0_pny;
+			uint8_t xTile = ygv608.regs.s.r1 & r1_pnx;
+			uint8_t yTile = ygv608.regs.s.r0 & r0_pny;
 
 			switch (p0_state)
 			{
@@ -1027,7 +1027,7 @@ READ16_HANDLER( ygv608_r )
 
 		case 0x04: /* P#4 - register data port */
 		{
-			UINT8 regNum = (ygv608.ports.s.p5) & p5_rn;
+			uint8_t regNum = (ygv608.ports.s.p5) & p5_rn;
     		data = ygv608.regs.b[regNum];
 			if (ygv608.ports.s.p5 & p5_rrai)
 			{
@@ -1072,8 +1072,8 @@ WRITE16_HANDLER( ygv608_w )
 	{
 		case 0x00: /* P#0 - pattern name table data port */
 		{
-			UINT8 xTile = ygv608.regs.s.r1 & r1_pnx;
-			UINT8 yTile = ygv608.regs.s.r0 & r0_pny;
+			uint8_t xTile = ygv608.regs.s.r1 & r1_pnx;
+			uint8_t yTile = ygv608.regs.s.r0 & r0_pny;
 
 			switch (p0_state)
 			{
@@ -1185,7 +1185,7 @@ WRITE16_HANDLER( ygv608_w )
 
 		case 0x04: /* P#4 - register data port */
 		{
-			UINT8 regNum = (ygv608.ports.s.p5) & p5_rn;
+			uint8_t regNum = (ygv608.ports.s.p5) & p5_rn;
 #if 0
 			logerror( "R#%d = $%02X\n", regNum, data );
 #endif
@@ -1379,7 +1379,7 @@ void SetPostShortcuts( int reg )
 	{
 		case 0:
 		{
-			UINT8 yTile = ygv608.regs.s.r0 & r0_pny;
+			uint8_t yTile = ygv608.regs.s.r0 & r0_pny;
 
 			if (yTile >= ygv608.page_y)
 				logerror ("setting pny(%d) >= page_y(%d) @ $%X\n",
@@ -1392,7 +1392,7 @@ void SetPostShortcuts( int reg )
 
 		case 1:
 		{
-			UINT8 xTile = ygv608.regs.s.r1 & r1_pnx;
+			uint8_t xTile = ygv608.regs.s.r1 & r1_pnx;
 
 			if (xTile >= ygv608.page_x)
 				logerror ("setting pnx(%d) >= page_x(%d) @ $%X\n",

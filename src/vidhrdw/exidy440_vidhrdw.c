@@ -14,24 +14,24 @@
 
 
 /* globals */
-UINT8 *exidy440_scanline;
-UINT8 *exidy440_imageram;
-UINT8 exidy440_firq_vblank;
-UINT8 exidy440_firq_beam;
-UINT8 topsecex_yscroll;
+uint8_t *exidy440_scanline;
+uint8_t *exidy440_imageram;
+uint8_t exidy440_firq_vblank;
+uint8_t exidy440_firq_beam;
+uint8_t topsecex_yscroll;
 
 /* local allocated storage */
-static UINT8 exidy440_latched_x;
-static UINT8 *local_videoram;
-static UINT8 *local_paletteram;
-static UINT8 *scanline_dirty;
+static uint8_t exidy440_latched_x;
+static uint8_t *local_videoram;
+static uint8_t *local_paletteram;
+static uint8_t *scanline_dirty;
 
 /* local variables */
-static UINT8 firq_enable;
-static UINT8 firq_select;
-static UINT8 palettebank_io;
-static UINT8 palettebank_vis;
-static UINT8 topsecex_last_yscroll;
+static uint8_t firq_enable;
+static uint8_t firq_select;
+static uint8_t palettebank_io;
+static uint8_t palettebank_vis;
+static uint8_t topsecex_last_yscroll;
 
 /* function prototypes */
 void exidy440_update_firq(void);
@@ -99,7 +99,7 @@ VIDEO_START( exidy440 )
 
 READ_HANDLER( exidy440_videoram_r )
 {
-	UINT8 *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
+	uint8_t *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
 
 	/* combine the two pixel values into one byte */
 	return (base[0] << 4) | base[1];
@@ -108,7 +108,7 @@ READ_HANDLER( exidy440_videoram_r )
 
 WRITE_HANDLER( exidy440_videoram_w )
 {
-	UINT8 *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
+	uint8_t *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
 
 	/* expand the two pixel values into two bytes */
 	base[0] = (data >> 4) & 15;
@@ -340,13 +340,13 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 	int i;
 
 	/* get a pointer to the palette to look for collision flags */
-	UINT8 *palette = &local_paletteram[palettebank_vis * 512];
+	uint8_t *palette = &local_paletteram[palettebank_vis * 512];
 
 	/* start the count high for topsecret, which doesn't use collision flags */
 	int count = exidy440_topsecret ? 128 : 0;
 
 	/* draw the sprite images, checking for collisions along the way */
-	UINT8 *sprite = spriteram + (SPRITE_COUNT - 1) * 4;
+	uint8_t *sprite = spriteram + (SPRITE_COUNT - 1) * 4;
 
 	for (i = 0; i < SPRITE_COUNT; i++, sprite -= 4)
 	{
@@ -354,7 +354,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 		int xoffs = (~((sprite[1] << 8) | sprite[2]) & 0x1ff);
 		int yoffs = (~sprite[0] & 0xff) + 1;
 		int x, y, sy;
-		UINT8 *src;
+		uint8_t *src;
 
 		/* skip if out of range */
 		if (yoffs < cliprect->min_y || yoffs >= cliprect->max_y + 16)
@@ -384,7 +384,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 			/* only draw scanlines that are in this cliprect */
 			if (yoffs <= cliprect->max_y)
 			{
-				UINT8 *old = &local_videoram[sy * 512 + xoffs];
+				uint8_t *old = &local_videoram[sy * 512 + xoffs];
 				int currx = xoffs;
 
 				/* loop over x */

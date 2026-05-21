@@ -215,7 +215,7 @@ static struct {
 } view;
 
 struct spoint {
-	INT32 x, y;
+	int32_t x, y;
 };
 
 struct poly {
@@ -224,7 +224,7 @@ struct poly {
 	int col;
 };
 
-static void fill_slope(struct mame_bitmap *bitmap, int color, INT32 x1, INT32 x2, INT32 sl1, INT32 sl2, INT32 y1, INT32 y2, INT32 *nx1, INT32 *nx2)
+static void fill_slope(struct mame_bitmap *bitmap, int color, int32_t x1, int32_t x2, int32_t sl1, int32_t sl2, int32_t y1, int32_t y2, int32_t *nx1, int32_t *nx2)
 {
 	if(y1 > view.y2)
 		return;
@@ -250,7 +250,7 @@ static void fill_slope(struct mame_bitmap *bitmap, int color, INT32 x1, INT32 x2
 	}
 
 	if(x1 > x2 || (x1==x2 && sl1 > sl2)) {
-		INT32 t, *tp;
+		int32_t t, *tp;
 		t = x1;
 		x1 = x2;
 		x2 = t;
@@ -273,7 +273,7 @@ static void fill_slope(struct mame_bitmap *bitmap, int color, INT32 x1, INT32 x2
 				xx2 = view.x2;
 
 			while(xx1 <= xx2) {
-				((UINT16 *)(bitmap->line[y1]))[xx1] = color;
+				((uint16_t *)(bitmap->line[y1]))[xx1] = color;
 				xx1++;
 			}
 		}
@@ -289,7 +289,7 @@ static void fill_slope(struct mame_bitmap *bitmap, int color, INT32 x1, INT32 x2
 
 static void fill_poly(struct mame_bitmap *bitmap, const struct poly *q)
 {
-	INT32 sl1, sl2, cury, limy, x1, x2;
+	int32_t sl1, sl2, cury, limy, x1, x2;
 	int pmin, pmax, i, ps1, ps2;
 	struct spoint p[POLY_MAX_PT*2];
 	int color = q->col;

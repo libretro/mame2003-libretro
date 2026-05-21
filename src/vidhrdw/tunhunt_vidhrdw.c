@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 tunhunt_control;
+extern uint8_t tunhunt_control;
 
 /****************************************************************************************/
 
@@ -226,7 +226,7 @@ static void draw_motion_object( struct mame_bitmap *bitmap )
  *		MOBSC1	0x1081
  *			always 0x00?
  */
-	const UINT8 *pMem = memory_region( REGION_CPU1 );
+	const uint8_t *pMem = memory_region( REGION_CPU1 );
 //	int skip = pMem[MOBST];
 	int x0 = 255-pMem[MOBJV];
 	int y0 = 255-pMem[MOBJH];
@@ -316,7 +316,7 @@ static void draw_box( struct mame_bitmap *bitmap )
 		->hue 06 02 ff 		60	06 05 03 04 01 06 02 ff		d2 00	c2 ff
 */
 	int span,x,y;
-	UINT8 *pMem;
+	uint8_t *pMem;
 	int color;
 	int pen;
 //	struct rectangle bbox;
@@ -403,7 +403,7 @@ static void draw_shell(
 
 VIDEO_UPDATE( tunhunt )
 {
-	const UINT8 *pMem = memory_region( REGION_CPU1 );
+	const uint8_t *pMem = memory_region( REGION_CPU1 );
 
 	update_palette();
 

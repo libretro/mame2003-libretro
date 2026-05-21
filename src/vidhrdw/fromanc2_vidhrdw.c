@@ -99,8 +99,8 @@ READ16_HANDLER( fromanc2_paletteram_1_r )
 
 WRITE16_HANDLER( fromanc2_paletteram_0_w )
 {
-	UINT16 color;
-	UINT8 r, g, b;
+	uint16_t color;
+	uint8_t r, g, b;
 
 	COMBINE_DATA(&fromanc2_paletteram[0][offset]);
 
@@ -119,8 +119,8 @@ WRITE16_HANDLER( fromanc2_paletteram_0_w )
 
 WRITE16_HANDLER( fromanc2_paletteram_1_w )
 {
-	UINT16 color;
-	UINT8 r, g, b;
+	uint16_t color;
+	uint8_t r, g, b;
 
 	COMBINE_DATA(&fromanc2_paletteram[1][offset]);
 
@@ -150,8 +150,8 @@ READ16_HANDLER( fromancr_paletteram_1_r )
 
 WRITE16_HANDLER( fromancr_paletteram_0_w )
 {
-	UINT16 color;
-	UINT8 r, g, b;
+	uint16_t color;
+	uint8_t r, g, b;
 
 	COMBINE_DATA(&fromanc2_paletteram[0][offset]);
 
@@ -170,8 +170,8 @@ WRITE16_HANDLER( fromancr_paletteram_0_w )
 
 WRITE16_HANDLER( fromancr_paletteram_1_w )
 {
-	UINT16 color;
-	UINT8 r, g, b;
+	uint16_t color;
+	uint8_t r, g, b;
 
 	COMBINE_DATA(&fromanc2_paletteram[1][offset]);
 
@@ -201,8 +201,8 @@ READ16_HANDLER( fromanc4_paletteram_1_r )
 
 WRITE16_HANDLER( fromanc4_paletteram_0_w )
 {
-	UINT16 color;
-	UINT8 r, g, b;
+	uint16_t color;
+	uint8_t r, g, b;
 
 	COMBINE_DATA(&fromanc2_paletteram[0][offset]);
 
@@ -221,8 +221,8 @@ WRITE16_HANDLER( fromanc4_paletteram_0_w )
 
 WRITE16_HANDLER( fromanc4_paletteram_1_w )
 {
-	UINT16 color;
-	UINT8 r, g, b;
+	uint16_t color;
+	uint8_t r, g, b;
 
 	COMBINE_DATA(&fromanc2_paletteram[1][offset]);
 

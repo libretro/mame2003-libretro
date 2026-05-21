@@ -312,14 +312,14 @@ WRITE16_HANDLER( neo_game_fix_16_w )
 /******************************************************************************/
 
 
-static void NeoMVSDrawGfxLine(UINT16 **line,const struct GfxElement *gfx,
+static void NeoMVSDrawGfxLine(uint16_t **line,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int sx,int sy,
 		int zx,int yoffs,const struct rectangle *clip)
 {
-	UINT16 *bm = line[sy]+sx;
+	uint16_t *bm = line[sy]+sx;
 	int col;
 	int mydword;
-	UINT8 *fspr = memory_region(REGION_GFX3);
+	uint8_t *fspr = memory_region(REGION_GFX3);
 	const pen_t *paldata = &gfx->colortable[gfx->color_granularity * color];
 
 	if (sx <= -16) return;
@@ -457,7 +457,7 @@ profiler_mark(PROFILER_VIDEO);
 	/* Draw sprites */
 	for (count = 0; count < 0x300 >> 1; count++)
 	{
-		UINT8 *zoomy_rom;
+		uint8_t *zoomy_rom;
 		int drawn_lines;
 
 		t3 = neogeo_vidram16[(0x10000 >> 1) + count];
@@ -568,7 +568,7 @@ profiler_mark(PROFILER_VIDEO);
 
 				if (tileatr & 0x02) yoffs ^= 0x0f;	/* flip y */
 
-				NeoMVSDrawGfxLine((UINT16 **)line,
+				NeoMVSDrawGfxLine((uint16_t **)line,
 					gfx,
 					tileno,
 					tileatr >> 8,

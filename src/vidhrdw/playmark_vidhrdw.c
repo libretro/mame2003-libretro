@@ -21,8 +21,8 @@ static struct tilemap *tx_tilemap,*fg_tilemap,*bg_tilemap;
 
 static void bigtwin_get_tx_tile_info(int tile_index)
 {
-	UINT16 code = wbeachvl_videoram1[2*tile_index];
-	UINT16 color = wbeachvl_videoram1[2*tile_index+1];
+	uint16_t code = wbeachvl_videoram1[2*tile_index];
+	uint16_t color = wbeachvl_videoram1[2*tile_index+1];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -32,8 +32,8 @@ static void bigtwin_get_tx_tile_info(int tile_index)
 
 static void bigtwin_get_fg_tile_info(int tile_index)
 {
-	UINT16 code = wbeachvl_videoram2[2*tile_index];
-	UINT16 color = wbeachvl_videoram2[2*tile_index+1];
+	uint16_t code = wbeachvl_videoram2[2*tile_index];
+	uint16_t color = wbeachvl_videoram2[2*tile_index+1];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -44,8 +44,8 @@ static void bigtwin_get_fg_tile_info(int tile_index)
 
 static void wbeachvl_get_tx_tile_info(int tile_index)
 {
-	UINT16 code = wbeachvl_videoram1[2*tile_index];
-	UINT16 color = wbeachvl_videoram1[2*tile_index+1];
+	uint16_t code = wbeachvl_videoram1[2*tile_index];
+	uint16_t color = wbeachvl_videoram1[2*tile_index+1];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -55,8 +55,8 @@ static void wbeachvl_get_tx_tile_info(int tile_index)
 
 static void wbeachvl_get_fg_tile_info(int tile_index)
 {
-	UINT16 code = wbeachvl_videoram2[2*tile_index];
-	UINT16 color = wbeachvl_videoram2[2*tile_index+1];
+	uint16_t code = wbeachvl_videoram2[2*tile_index];
+	uint16_t color = wbeachvl_videoram2[2*tile_index+1];
 	SET_TILE_INFO(
 			1,
 			code & 0x7fff,
@@ -66,8 +66,8 @@ static void wbeachvl_get_fg_tile_info(int tile_index)
 
 static void wbeachvl_get_bg_tile_info(int tile_index)
 {
-	UINT16 code = wbeachvl_videoram3[2*tile_index];
-	UINT16 color = wbeachvl_videoram3[2*tile_index+1];
+	uint16_t code = wbeachvl_videoram3[2*tile_index];
+	uint16_t color = wbeachvl_videoram3[2*tile_index+1];
 	SET_TILE_INFO(
 			1,
 			code & 0x7fff,

@@ -827,32 +827,32 @@ READ_HANDLER( dec0_pf3_data_8bit_r )
 
 /******************************************************************************/
 
-static UINT32 tile_shape0_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tile_shape0_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0xf) + ((row & 0xf) << 4) + ((col & 0x30) << 4);
 }
 
-static UINT32 tile_shape1_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tile_shape1_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0xf) + ((row & 0xf) << 4) + ((row & 0x10) << 4) + ((col & 0x10) << 5);
 }
 
-static UINT32 tile_shape2_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tile_shape2_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0xf) + ((row & 0x3f) << 4);
 }
 
-static UINT32 tile_shape0_8x8_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tile_shape0_8x8_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x60) << 5);
 }
 
-static UINT32 tile_shape1_8x8_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tile_shape1_8x8_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((row & 0x20) << 5) + ((col & 0x20) << 6);
 }
 
-static UINT32 tile_shape2_8x8_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tile_shape2_8x8_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0x1f) + ((row & 0x7f) << 5);
 }

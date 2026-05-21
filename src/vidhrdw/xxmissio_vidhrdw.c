@@ -10,12 +10,12 @@ Video hardware driver by Uki
 
 #include "vidhrdw/generic.h"
 
-UINT8 *xxmissio_fgram;
+uint8_t *xxmissio_fgram;
 size_t xxmissio_fgram_size;
 
-static UINT8 xxmissio_xscroll,xxmissio_yscroll;
-static UINT8 flipscreen;
-static UINT8 xxmissio_bg_redraw;
+static uint8_t xxmissio_xscroll,xxmissio_yscroll;
+static uint8_t flipscreen;
+static uint8_t xxmissio_bg_redraw;
 
 
 WRITE_HANDLER( xxmissio_scroll_x_w )

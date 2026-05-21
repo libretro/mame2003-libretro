@@ -8,31 +8,31 @@ Atari Wolf Pack (prototype) video emulation
 
 int wolfpack_collision;
 
-UINT8* wolfpack_alpha_num_ram;
+uint8_t* wolfpack_alpha_num_ram;
 
 static unsigned current_index;
 
-static UINT8 wolfpack_video_invert;
-static UINT8 wolfpack_ship_reflect;
-static UINT8 wolfpack_pt_pos_select;
-static UINT8 wolfpack_pt_horz;
-static UINT8 wolfpack_pt_pic;
-static UINT8 wolfpack_ship_h;
-static UINT8 wolfpack_torpedo_pic;
-static UINT8 wolfpack_ship_size;
-static UINT8 wolfpack_ship_h_precess;
-static UINT8 wolfpack_ship_pic;
-static UINT8 wolfpack_torpedo_h;
-static UINT8 wolfpack_torpedo_v;
+static uint8_t wolfpack_video_invert;
+static uint8_t wolfpack_ship_reflect;
+static uint8_t wolfpack_pt_pos_select;
+static uint8_t wolfpack_pt_horz;
+static uint8_t wolfpack_pt_pic;
+static uint8_t wolfpack_ship_h;
+static uint8_t wolfpack_torpedo_pic;
+static uint8_t wolfpack_ship_size;
+static uint8_t wolfpack_ship_h_precess;
+static uint8_t wolfpack_ship_pic;
+static uint8_t wolfpack_torpedo_h;
+static uint8_t wolfpack_torpedo_v;
 
-static UINT8* LFSR;
+static uint8_t* LFSR;
 
 static struct mame_bitmap* helper;
 
 
 WRITE_HANDLER( wolfpack_ship_size_w )
 {
-	UINT8 color;
+	uint8_t color;
 
 	color = 0x48;
 
@@ -103,7 +103,7 @@ WRITE_HANDLER( wolfpack_torpedo_v_w )
 
 VIDEO_START( wolfpack )
 {
-	UINT16 val = 0;
+	uint16_t val = 0;
 
 	int i;
 
@@ -136,7 +136,7 @@ VIDEO_START( wolfpack )
 
 static void draw_ship(struct mame_bitmap* bitmap, const struct rectangle* cliprect)
 {
-	static const UINT32 scaler[] =
+	static const uint32_t scaler[] =
 	{
 		0x00000, 0x00500, 0x00A00, 0x01000,
 		0x01000, 0x01200, 0x01500, 0x01800,
@@ -257,7 +257,7 @@ static void draw_water(struct mame_bitmap* bitmap, const struct rectangle* clipr
 
 	for (y = rect.min_y; y <= rect.max_y; y++)
 	{
-		UINT16* p = bitmap->line[y];
+		uint16_t* p = bitmap->line[y];
 
 		for (x = rect.min_x; x <= rect.max_x; x++)
 		{

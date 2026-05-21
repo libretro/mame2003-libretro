@@ -10,9 +10,9 @@ extern data16_t *welltris_charvideoram;
 
 static struct tilemap *char_tilemap;
 static unsigned char gfxbank[8];
-static UINT16 charpalettebank;
-static UINT16 spritepalettebank;
-static UINT16 pixelpalettebank;
+static uint16_t charpalettebank;
+static uint16_t spritepalettebank;
+static uint16_t pixelpalettebank;
 static int welltris_scrollx, welltris_scrolly;
 
 
@@ -41,7 +41,7 @@ WRITE16_HANDLER( welltris_spriteram_w )
 /* Sprite Drawing is pretty much the same as fromance.c */
 static void welltris_draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
-	UINT8 zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
+	uint8_t zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
 	int offs;
 
 	/* draw the sprites */
@@ -199,7 +199,7 @@ WRITE16_HANDLER( welltris_scrollreg_w )
 
 static void get_welltris_tile_info(int tile_index)
 {
-	UINT16 code = welltris_charvideoram[tile_index];
+	uint16_t code = welltris_charvideoram[tile_index];
 	int bank = (code & 0x1000) >> 12;
 
 	SET_TILE_INFO(

@@ -111,7 +111,7 @@ WRITE16_HANDLER( supbtime_control_0_w )
 
 /******************************************************************************/
 
-static UINT32 supbtime_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t supbtime_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);

@@ -8,9 +8,9 @@ Atari Sky Raider video emulation
 
 int skyraid_scroll;
 
-UINT8* skyraid_alpha_num_ram;
-UINT8* skyraid_pos_ram;
-UINT8* skyraid_obj_ram;
+uint8_t* skyraid_alpha_num_ram;
+uint8_t* skyraid_pos_ram;
+uint8_t* skyraid_obj_ram;
 
 static struct mame_bitmap *helper;
 
@@ -26,7 +26,7 @@ VIDEO_START( skyraid )
 
 static void draw_text(struct mame_bitmap* bitmap, const struct rectangle* cliprect)
 {
-	const UINT8* p = skyraid_alpha_num_ram;
+	const uint8_t* p = skyraid_alpha_num_ram;
 
 	int i;
 
@@ -48,7 +48,7 @@ static void draw_text(struct mame_bitmap* bitmap, const struct rectangle* clipre
 
 static void draw_terrain(struct mame_bitmap* bitmap)
 {
-	const UINT8* p = memory_region(REGION_USER1);
+	const uint8_t* p = memory_region(REGION_USER1);
 
 	int x;
 	int y;
@@ -61,7 +61,7 @@ static void draw_terrain(struct mame_bitmap* bitmap)
 
 		while (x < bitmap->width)
 		{
-			UINT8 val = p[offset++];
+			uint8_t val = p[offset++];
 
 			int color = val / 32;
 			int count = val % 32;
@@ -128,15 +128,15 @@ static void draw_missiles(struct mame_bitmap* bitmap, const struct rectangle* cl
 
 static void draw_trapezoid(struct mame_bitmap* dst, struct mame_bitmap* src)
 {
-	const UINT8* p = memory_region(REGION_USER2);
+	const uint8_t* p = memory_region(REGION_USER2);
 
 	int x;
 	int y;
 
 	for (y = 0; y < dst->height; y++)
 	{
-		UINT16* pSrc = src->line[y];
-		UINT16* pDst = dst->line[y];
+		uint16_t* pSrc = src->line[y];
+		uint16_t* pDst = dst->line[y];
 
 		int x1 = 0x000 + p[(y & ~1) + 0];
 		int x2 = 0x100 + p[(y & ~1) + 1];

@@ -14,7 +14,7 @@
 #define BLUE  0x01
 #define WHITE RED|GREEN|BLUE
 
-static UINT8 color_display;
+static uint8_t color_display;
 static int cinemat_screenh;
 
 void CinemaVectorData(int fromx, int fromy, int tox, int toy, int color)

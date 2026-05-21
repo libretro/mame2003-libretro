@@ -56,18 +56,18 @@ data16_t *atarigt_colorram;
 static struct mame_bitmap *pf_bitmap;
 static struct mame_bitmap *an_bitmap;
 
-static UINT8 playfield_tile_bank;
-static UINT8 playfield_color_bank;
-static UINT16 playfield_xscroll;
-static UINT16 playfield_yscroll;
+static uint8_t playfield_tile_bank;
+static uint8_t playfield_color_bank;
+static uint16_t playfield_xscroll;
+static uint16_t playfield_yscroll;
 
-static UINT32 tram_checksum;
-static UINT16 *cram, *tram;
-static UINT32 *mram;
+static uint32_t tram_checksum;
+static uint16_t *cram, *tram;
+static uint32_t *mram;
 
-static UINT32 *expanded_mram;
+static uint32_t *expanded_mram;
 
-static UINT8 rshift, gshift, bshift;
+static uint8_t rshift, gshift, bshift;
 
 
 
@@ -79,7 +79,7 @@ static UINT8 rshift, gshift, bshift;
 
 static void get_alpha_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = atarigen_alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	SET_TILE_INFO(1, code, color, 0);
@@ -88,14 +88,14 @@ static void get_alpha_tile_info(int tile_index)
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = atarigen_playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = (playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (data >> 12) & 7;
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
 }
 
 
-static UINT32 atarigt_playfield_scan(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t atarigt_playfield_scan(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	int bank = 1 - (col / (num_cols / 2));
 	return bank * (num_rows * num_cols / 2) + row * (num_cols / 2) + (col % (num_cols / 2));
@@ -111,7 +111,7 @@ static UINT32 atarigt_playfield_scan(UINT32 col, UINT32 row, UINT32 num_cols, UI
 
 VIDEO_START( atarigt )
 {
-	extern UINT32 direct_rgb_components[3];
+	extern uint32_t direct_rgb_components[3];
 	static const struct atarirle_desc modesc =
 	{
 		REGION_GFX3,/* region where the GFX data lives */
@@ -133,7 +133,7 @@ VIDEO_START( atarigt )
 		{{ 0,0x8000,0,0,0,0,0,0 }}	/* mask for the VRAM target */
 	};
 	struct atarirle_desc adjusted_modesc = modesc;
-	UINT32 temp;
+	uint32_t temp;
 	int i;
 
 	/* blend the playfields and free the temporary one */
@@ -579,29 +579,29 @@ VIDEO_UPDATE( atarigt )
 
 	/* cache pointers */
 	color_latch = atarigt_colorram[0x30000/2];
-	cram = (UINT16 *)&atarigt_colorram[0x00000/2] + 0x2000 * ((color_latch >> 3) & 1);
-	tram = (UINT16 *)&atarigt_colorram[0x20000/2] + 0x1000 * ((color_latch >> 4) & 3);
+	cram = (uint16_t *)&atarigt_colorram[0x00000/2] + 0x2000 * ((color_latch >> 3) & 1);
+	tram = (uint16_t *)&atarigt_colorram[0x20000/2] + 0x1000 * ((color_latch >> 4) & 3);
 	mram = expanded_mram + 0x2000 * ((color_latch >> 6) & 3);
 
 	/* now do the nasty blend */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *an = (UINT16 *)an_bitmap->base + y * an_bitmap->rowpixels;
-		UINT16 *pf = (UINT16 *)pf_bitmap->base + y * pf_bitmap->rowpixels;
-		UINT16 *mo = (UINT16 *)mo_bitmap->base + y * mo_bitmap->rowpixels;
-		UINT16 *tm = (UINT16 *)tm_bitmap->base + y * tm_bitmap->rowpixels;
-		UINT32 *dst = (UINT32 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *an = (uint16_t *)an_bitmap->base + y * an_bitmap->rowpixels;
+		uint16_t *pf = (uint16_t *)pf_bitmap->base + y * pf_bitmap->rowpixels;
+		uint16_t *mo = (uint16_t *)mo_bitmap->base + y * mo_bitmap->rowpixels;
+		uint16_t *tm = (uint16_t *)tm_bitmap->base + y * tm_bitmap->rowpixels;
+		uint32_t *dst = (uint32_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* Primal Rage: no TRAM, slightly different priorities */
 		if (atarigt_is_primrage)
 		{
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT8 pfpri = (pf[x] >> 10) & 7;
-				UINT8 mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
-				UINT8 mgep = (mopri >= pfpri) && !(pfpri & 4);
-				UINT16 cra;
-				UINT32 rgb;
+				uint8_t pfpri = (pf[x] >> 10) & 7;
+				uint8_t mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
+				uint8_t mgep = (mopri >= pfpri) && !(pfpri & 4);
+				uint16_t cra;
+				uint32_t rgb;
 				
 				/* compute CRA -- unlike T-Mek, MVID11 enforces MO priority and is ignored */
 				if (an[x] & 0x8f)
@@ -631,12 +631,12 @@ VIDEO_UPDATE( atarigt )
 		{
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT8 pfpri = (pf[x] >> 10) & 7;
-				UINT8 mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
-				UINT8 mgep = (mopri >= pfpri) && !(pfpri & 4);
+				uint8_t pfpri = (pf[x] >> 10) & 7;
+				uint8_t mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
+				uint8_t mgep = (mopri >= pfpri) && !(pfpri & 4);
 				int no_tra = 0, no_cra = 0;
-				UINT16 cra, tra, mra;
-				UINT32 rgb;
+				uint16_t cra, tra, mra;
+				uint32_t rgb;
 				
 				/* compute CRA/TRA */
 				if (an[x] & 0x8f)

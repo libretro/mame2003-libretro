@@ -73,7 +73,7 @@ WRITE_HANDLER( metlclsh_gfxbank_w )
 
 ***************************************************************************/
 
-UINT32 metlclsh_bgtilemap_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+uint32_t metlclsh_bgtilemap_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return	(row & 7) + ((row & ~7) << 4) + ((col & 0xf) << 3) + ((col & ~0xf) << 4);
 }

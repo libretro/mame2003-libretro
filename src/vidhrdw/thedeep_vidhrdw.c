@@ -48,7 +48,7 @@ data8_t *thedeep_scroll, *thedeep_scroll2;
 
 ***************************************************************************/
 
-static UINT32 tilemap_scan_rows_back( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tilemap_scan_rows_back( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (col & 0x0f) + ((col & 0x10) << 5) + (row << 4);
 }

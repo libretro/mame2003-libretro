@@ -24,7 +24,7 @@
 
 struct sprite
 {
-	UINT8 *pen_data;	/* points to top left corner of tile data */
+	uint8_t *pen_data;	/* points to top left corner of tile data */
 	int line_offset;
 
 	pen_t *pal_data;
@@ -48,7 +48,7 @@ int wecleman_bgpage[4], wecleman_fgpage[4], *wecleman_gfx_bank;
 /* Variables only used here: */
 static struct tilemap *bg_tilemap, *fg_tilemap, *txt_tilemap;
 
-static UINT8 *screen_baseaddr;
+static uint8_t *screen_baseaddr;
 static int screen_line_offset;
 static int screen_clip_left, screen_clip_top, screen_clip_right, screen_clip_bottom;
 
@@ -56,7 +56,7 @@ static struct sprite *sprite_list;
 static struct sprite **spr_ptr_list;
 static int *spr_idx_list, *spr_pri_list, *t32x32pm;
 static int gameid, spr_offsx, spr_offsy, spr_count;
-static UINT16 *rgb_half;
+static uint16_t *rgb_half;
 
 static int cloud_blend, cloud_ds, cloud_visible;
 
@@ -124,7 +124,7 @@ static struct sprite *sprite_list_create(int num_sprites)
 static void get_sprite_info(void)
 {
 	pen_t *base_pal = Machine->remapped_colortable;
-	UINT8 *base_gfx = memory_region(REGION_GFX1);
+	uint8_t *base_gfx = memory_region(REGION_GFX1);
 	int gfx_max     = memory_region_length(REGION_GFX1);
 
 	data16_t *source = spriteram16;
@@ -223,7 +223,7 @@ static void do_blit_zoom16(struct sprite *sprite)
 
 	unsigned char *src_base;
 	pen_t *pal_base;
-	UINT16 *rgb_base, *dst_ptr, *dst_end;
+	uint16_t *rgb_base, *dst_ptr, *dst_end;
 	int src_pitch, dst_pitch, src_f0y, src_fdy, src_f0x, src_fdx, src_fpx;
 	int eax, ebx, ecx;
 	int x1, x2, y1, y2, dx, dy;
@@ -287,7 +287,7 @@ static void do_blit_zoom16(struct sprite *sprite)
 
 	src_pitch = sprite->line_offset;
 	dst_pitch = (screen_line_offset * dy) >> 1;
-	dst_end = (UINT16 *)(screen_baseaddr + screen_line_offset * y2);
+	dst_end = (uint16_t *)(screen_baseaddr + screen_line_offset * y2);
 
 	// calculate entry point decimals
 	ebx = sprite->tile_height;
@@ -303,7 +303,7 @@ static void do_blit_zoom16(struct sprite *sprite)
 	src_f0x = eax * xcount0;
 
 	// pre-loop assignments and adjustments
-	dst_ptr = (UINT16 *)(screen_baseaddr + screen_line_offset * y1);
+	dst_ptr = (uint16_t *)(screen_baseaddr + screen_line_offset * y1);
 	pal_base = sprite->pal_data;
 	src_base = sprite->pen_data;
 	rgb_base = rgb_half;
@@ -652,15 +652,15 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 
 	pen_t road_rgb[48];
 
-	UINT8 *src_base, *src_ptr;
-	UINT16 *dst_base, *dst_ptr, *dst_end, **dst_line;
-	UINT32 *dw_ptr, *dw_end;
+	uint8_t *src_base, *src_ptr;
+	uint16_t *dst_base, *dst_ptr, *dst_end, **dst_line;
+	uint32_t *dw_ptr, *dw_end;
 	pen_t *pal_ptr, *rgb_ptr;
 
 	int dst_pitch, scrollx, sy;
 	int mdy, tdy, edx, ebx, eax;
 
-	dst_line = (UINT16**)bitmap->line;
+	dst_line = (uint16_t**)bitmap->line;
 	rgb_ptr = Machine->remapped_colortable;
 
 	if (priority == 0x02)
@@ -673,7 +673,7 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 		if ((eax>>8) != 0x02) continue;
 
 		eax = (wecleman_roadram[sy+(YSIZE<<1)] & 0xf) + 0x7f0;
-		dw_ptr = (UINT32*)dst_line[sy+BMP_PAD];
+		dw_ptr = (uint32_t*)dst_line[sy+BMP_PAD];
 		eax = rgb_ptr[eax];
 		dw_ptr += BMP_PAD>>1;
 		ebx = eax;
@@ -730,8 +730,8 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 			ebx = scrollx >> 1;
 			edx = eax;
 			eax <<= 16;
-			dw_end = (UINT32*)dst_base;
-			dw_ptr = (UINT32*)dst_base;
+			dw_end = (uint32_t*)dst_base;
+			dw_ptr = (uint32_t*)dst_base;
 			dw_end -= ebx;
 			eax |= edx;
 
@@ -749,8 +749,8 @@ static void wecleman_draw_road(struct mame_bitmap *bitmap, const struct rectangl
 			ebx >>= 1;
 			edx = eax;
 			eax <<= 16;
-			dw_ptr = (UINT32*)dst_base;
-			dw_end = (UINT32*)dst_base;
+			dw_ptr = (uint32_t*)dst_base;
+			dw_end = (uint32_t*)dst_base;
 			dw_ptr += ebx;
 			dw_end += DST_WIDTH>>1;
 			eax |= edx;
@@ -801,8 +801,8 @@ static void wecleman_draw_cloud( struct mame_bitmap *bitmap,
 				 int tmw_l2, int tmh_l2,		// tilemap width and height in log(2)
 				 int alpha, int pal_offset )	// alpha(0-3f), # of color codes to shift
 {
-	UINT8 *src_base, *src_ptr;
-	UINT16 *tmap_ptr, *dst_base, *dst_charbase, *dst_ptr;
+	uint8_t *src_base, *src_ptr;
+	uint16_t *tmap_ptr, *dst_base, *dst_charbase, *dst_ptr;
 	pen_t *pal_base, *pal_ptr;
 
 	int tilew, tileh;
@@ -836,7 +836,7 @@ static void wecleman_draw_cloud( struct mame_bitmap *bitmap,
 	pal_advance_l2 = 3;	// hack to speed up multiplication
 
 	dst_pitch = bitmap->rowpixels;
-	dst_base = (UINT16 *)bitmap->base + (y0+dy)*dst_pitch + (x0+dx);
+	dst_base = (uint16_t *)bitmap->base + (y0+dy)*dst_pitch + (x0+dx);
 	dst_advance = dst_pitch * tileh;
 
 	pal_base = Machine->remapped_colortable;
@@ -1139,7 +1139,7 @@ VIDEO_START( wecleman )
 		8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15
 	};
 
-	UINT8 *buffer;
+	uint8_t *buffer;
 	int i, j;
 
 	if (Machine->color_depth > 16) return(1);
@@ -1153,7 +1153,7 @@ VIDEO_START( wecleman )
 	cloud_ds = 0;
 	cloud_visible = 0;
 
-	rgb_half     =          (UINT16*)(buffer + 0x00000);
+	rgb_half     =          (uint16_t*)(buffer + 0x00000);
 	t32x32pm     =             (int*)(buffer + 0x10020);
 	spr_ptr_list = (struct sprite **)(buffer + 0x12000);
 	spr_idx_list =            (int *)(buffer + 0x12400);
@@ -1248,7 +1248,7 @@ VIDEO_START( hotchase )
 		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 	};
 
-	UINT8 *buffer;
+	uint8_t *buffer;
 
 	if (!(buffer = auto_malloc(0x400))) return(1);	// reserve 1k for sprite list
 

@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *tp84_videoram2, *tp84_colorram2;
+uint8_t *tp84_videoram2, *tp84_colorram2;
 
 int col0;
 
@@ -17,7 +17,7 @@ int col0;
 sprites are multiplexed, so we have to buffer the spriteram
 scanline by scanline.
 */
-static UINT8 *sprite_mux_buffer;
+static uint8_t *sprite_mux_buffer;
 static int scanline;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
@@ -257,7 +257,7 @@ static void tp84_draw_sprites(struct mame_bitmap *bitmap)
 	{
 		if (line >= Machine->visible_area.min_y && line <= Machine->visible_area.max_y)
 		{
-			UINT8 *sr;
+			uint8_t *sr;
 
 			sr = sprite_mux_buffer + line * spriteram_size;
 			clip.min_y = clip.max_y = line;

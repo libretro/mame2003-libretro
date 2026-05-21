@@ -9,18 +9,18 @@
 #include "state.h"
 
 
-static UINT8 actfancr_control_1[0x20],actfancr_control_2[0x20];
+static uint8_t actfancr_control_1[0x20],actfancr_control_2[0x20];
 unsigned char *actfancr_pf1_data,*actfancr_pf2_data,*actfancr_pf1_rowscroll_data;
 static struct tilemap *pf1_tilemap,*pf1_alt_tilemap,*pf2_tilemap;
 static int flipscreen;
 
-static UINT32 actfancr_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t actfancr_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x0f) + ((row & 0x0f) << 4) + ((col & 0xf0) << 4);
 }
 
-static UINT32 actfancr_scan2(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t actfancr_scan2(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x0f) + ((row & 0x0f) << 4) + ((row & 0x10) << 4) + ((col & 0x70) << 5);
@@ -41,7 +41,7 @@ static void get_tile_info(int tile_index)
 			0)
 }
 
-static UINT32 triothep_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t triothep_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x0f) + ((row & 0x0f) << 4) + ((row & 0x10) << 4) + ((col & 0x10) << 5);

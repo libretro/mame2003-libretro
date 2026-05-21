@@ -8,16 +8,16 @@ Atari Flyball video emulation
 
 static struct tilemap* flyball_tilemap;
 
-UINT8 flyball_pitcher_vert;
-UINT8 flyball_pitcher_horz;
-UINT8 flyball_pitcher_pic;
-UINT8 flyball_ball_vert;
-UINT8 flyball_ball_horz;
+uint8_t flyball_pitcher_vert;
+uint8_t flyball_pitcher_horz;
+uint8_t flyball_pitcher_pic;
+uint8_t flyball_ball_vert;
+uint8_t flyball_ball_horz;
 
-UINT8* flyball_playfield_ram;
+uint8_t* flyball_playfield_ram;
 
 
-static UINT32 flyball_get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t flyball_get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	if (col == 0)
 	{
@@ -30,7 +30,7 @@ static UINT32 flyball_get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols,
 
 static void flyball_get_tile_info(int tile_index)
 {
-	UINT8 data = flyball_playfield_ram[tile_index];
+	uint8_t data = flyball_playfield_ram[tile_index];
 
 	int flags =
 		((data & 0x40) ? TILE_FLIPX : 0) |

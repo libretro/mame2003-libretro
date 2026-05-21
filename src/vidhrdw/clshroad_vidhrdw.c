@@ -185,7 +185,7 @@ Offset:
 ***************************************************************************/
 
 /* logical (col,row) -> memory offset */
-static UINT32 tilemap_scan_rows_extra( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tilemap_scan_rows_extra( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	// The leftmost columns come from the bottom rows
 	if (col <= 0x01)	return row + (col + 0x1e) * 0x20;

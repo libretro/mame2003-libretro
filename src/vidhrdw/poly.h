@@ -15,21 +15,21 @@
 
 struct poly_vertex
 {
-	INT32	x;							/* 16.0 screen X coordinate */
-	INT32	y;							/* 16.0 screen Y coordinate */
-	INT32	p[MAX_VERTEX_PARAMS];		/* 32.0 interpolated parameter values */
+	int32_t	x;							/* 16.0 screen X coordinate */
+	int32_t	y;							/* 16.0 screen Y coordinate */
+	int32_t	p[MAX_VERTEX_PARAMS];		/* 32.0 interpolated parameter values */
 };
 
 struct poly_scanline
 {
-	INT32	sx, ex;						/* 16.0 starting and ending X coordinates */
-	INT64	p[MAX_VERTEX_PARAMS];		/* 32.16 starting parameter values (at left) */
+	int32_t	sx, ex;						/* 16.0 starting and ending X coordinates */
+	int64_t	p[MAX_VERTEX_PARAMS];		/* 32.16 starting parameter values (at left) */
 };
 
 struct poly_scanline_data
 {
-	INT32	sy, ey;						/* 16.0 starting and ending Y coordinates */
-	INT64	dp[MAX_VERTEX_PARAMS];		/* 32.16 per-pixel deltas for each parameter */
+	int32_t	sy, ey;						/* 16.0 starting and ending Y coordinates */
+	int64_t	dp[MAX_VERTEX_PARAMS];		/* 32.16 per-pixel deltas for each parameter */
 	struct poly_scanline scanline[MAX_POLY_SCANLINES];
 };
 

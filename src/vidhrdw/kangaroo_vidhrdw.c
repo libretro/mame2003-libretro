@@ -9,10 +9,10 @@
 #include "kangaroo.h"
 
 
-UINT8 *kangaroo_video_control;
-UINT8 *kangaroo_bank_select;
-UINT8 *kangaroo_blitter;
-UINT8 *kangaroo_scroll;
+uint8_t *kangaroo_video_control;
+uint8_t *kangaroo_bank_select;
+uint8_t *kangaroo_blitter;
+uint8_t *kangaroo_scroll;
 
 static int screen_flipped;
 static struct mame_bitmap *tmpbitmap2;

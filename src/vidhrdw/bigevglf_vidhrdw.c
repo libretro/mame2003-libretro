@@ -8,14 +8,14 @@
 #include "driver.h"
 
 
-UINT8 *beg_spriteram1;
-UINT8 *beg_spriteram2;
+uint8_t *beg_spriteram1;
+uint8_t *beg_spriteram2;
 
 
-static UINT32 vidram_bank = 0;
-static UINT32 plane_selected = 0;
-static UINT32 plane_visible = 0;
-static UINT8 *vidram;
+static uint32_t vidram_bank = 0;
+static uint32_t plane_selected = 0;
+static uint32_t plane_visible = 0;
+static uint8_t *vidram;
 
 
 static struct mame_bitmap *tmp_bitmap[4];
@@ -46,7 +46,7 @@ WRITE_HANDLER( bigevglf_vidram_addr_w )
 
 WRITE_HANDLER( bigevglf_vidram_w )
 {
-	UINT32 x,y,o;
+	uint32_t x,y,o;
 	o = vidram_bank + offset;
 	vidram[ o+0x10000*plane_selected ] = data;
 	y = o >>8;

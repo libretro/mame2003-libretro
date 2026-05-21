@@ -105,7 +105,7 @@ WRITE16_HANDLER( metro_K053936_w )
 		tilemap_mark_tile_dirty(metro_K053936_tilemap,offset);
 }
 
-UINT32 tilemap_scan_gstrik2( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t tilemap_scan_gstrik2( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	int val;
@@ -173,7 +173,7 @@ WRITE16_HANDLER( metro_paletteram_w )
 
 static struct tilemap *tilemap[3];
 static struct tilemap *tilemap_16x16[3];
-static UINT8 *empty_tiles;
+static uint8_t *empty_tiles;
 
 /* A 2048 x 2048 virtual tilemap */
 
@@ -193,7 +193,7 @@ static INLINE void get_tile_info(int tile_index,int layer,data16_t *vram)
 {
 	data16_t code;
 	int      table_index;
-	UINT32   tile;
+	uint32_t   tile;
 
 	/* The actual tile index depends on the window */
 	tile_index	=	((tile_index / WIN_NX + metro_window[layer * 2 + 0] / 8) % BIG_NY) * BIG_NX +
@@ -231,7 +231,7 @@ static INLINE void get_tile_info_8bit(int tile_index,int layer,data16_t *vram)
 {
 	data16_t code;
 	int      table_index;
-	UINT32   tile;
+	uint32_t   tile;
 
 	/* The actual tile index depends on the window */
 	tile_index	=	((tile_index / WIN_NX + metro_window[layer * 2 + 0] / 8) % BIG_NY) * BIG_NX +
@@ -274,7 +274,7 @@ static INLINE void get_tile_info_16x16_8bit(int tile_index,int layer,data16_t *v
 {
 	data16_t code;
 	int      table_index;
-	UINT32   tile;
+	uint32_t   tile;
 
 	/* The actual tile index depends on the window */
 	tile_index	=	((tile_index / WIN_NX + metro_window[layer * 2 + 0] / 8) % BIG_NY) * BIG_NX +
@@ -735,7 +735,7 @@ void metro_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *clip
 
 ***************************************************************************/
 
-void metro_tilemap_draw	(struct mame_bitmap *bitmap, const struct rectangle *cliprect, struct tilemap *tmap, UINT32 flags, UINT32 priority,
+void metro_tilemap_draw	(struct mame_bitmap *bitmap, const struct rectangle *cliprect, struct tilemap *tmap, uint32_t flags, uint32_t priority,
 						 int sx, int sy, int wx, int wy)	// scroll & window values
 {
 #if 1
@@ -859,8 +859,8 @@ VIDEO_UPDATE( metro )
 		memset(dirtyindex,0,metro_tiletable_size/4);
 		for (i = 0;i < metro_tiletable_size/4;i++)
 		{
-			UINT32 tile_new = (metro_tiletable[2*i + 0] << 16 ) + metro_tiletable[2*i + 1];
-			UINT32 tile_old = (metro_tiletable_old[2*i + 0] << 16 ) + metro_tiletable_old[2*i + 1];
+			uint32_t tile_new = (metro_tiletable[2*i + 0] << 16 ) + metro_tiletable[2*i + 1];
+			uint32_t tile_old = (metro_tiletable_old[2*i + 0] << 16 ) + metro_tiletable_old[2*i + 1];
 
 			if ((tile_new ^ tile_old) & 0x0fffffff)
 			{

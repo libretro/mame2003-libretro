@@ -13,7 +13,7 @@ Functions to emulate the video hardware of the machine.
 
 
 static int man_scroll = -1;
-static UINT8 sprites[0x20];
+static uint8_t sprites[0x20];
 static int char_palette = 0;
 
 

@@ -217,7 +217,7 @@ static void draw_sprites(struct mame_bitmap *bitmap)
 				for (ch = 0;ch < 4;ch++)
 				{
 					int pos,code,realflipy;
-					const UINT8 *pendata;
+					const uint8_t *pendata;
 
 					pos = base_pos + 2*ch;
 					code = 8 * (lookup[pos] | ((lookup[pos+1] & 0x07) << 8));

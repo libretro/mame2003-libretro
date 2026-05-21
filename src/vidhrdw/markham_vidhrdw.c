@@ -10,7 +10,7 @@ Video hardware driver by Uki
 
 #include "vidhrdw/generic.h"
 
-static UINT8 markham_xscroll[2];
+static uint8_t markham_xscroll[2];
 
 static struct tilemap *bg_tilemap;
 

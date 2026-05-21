@@ -43,20 +43,20 @@ struct atarimo_entry
 /* description of the motion objects */
 struct atarimo_desc
 {
-	UINT8				gfxindex;			/* index to which gfx system */
-	UINT8				banks;				/* number of motion object banks */
-	UINT8				linked;				/* are the entries linked? */
-	UINT8				split;				/* are the entries split? */
-	UINT8				reverse;			/* render in reverse order? */
-	UINT8				swapxy;				/* render in swapped X/Y order? */
-	UINT8				nextneighbor;		/* does the neighbor bit affect the next object? */
-	UINT16				slipheight;			/* pixels per SLIP entry (0 for no-slip) */
-	UINT8				slipoffset;			/* pixel offset for SLIPs */
-	UINT16				maxlinks;			/* maximum number of links to visit/scanline (0=all) */
+	uint8_t				gfxindex;			/* index to which gfx system */
+	uint8_t				banks;				/* number of motion object banks */
+	uint8_t				linked;				/* are the entries linked? */
+	uint8_t				split;				/* are the entries split? */
+	uint8_t				reverse;			/* render in reverse order? */
+	uint8_t				swapxy;				/* render in swapped X/Y order? */
+	uint8_t				nextneighbor;		/* does the neighbor bit affect the next object? */
+	uint16_t				slipheight;			/* pixels per SLIP entry (0 for no-slip) */
+	uint8_t				slipoffset;			/* pixel offset for SLIPs */
+	uint16_t				maxlinks;			/* maximum number of links to visit/scanline (0=all) */
 
-	UINT16				palettebase;		/* base palette entry */
-	UINT16				maxcolors;			/* maximum number of colors */
-	UINT8				transpen;			/* transparent pen index */
+	uint16_t				palettebase;		/* base palette entry */
+	uint16_t				maxcolors;			/* maximum number of colors */
+	uint8_t				transpen;			/* transparent pen index */
 
 	struct atarimo_entry linkmask;			/* mask for the link */
 	struct atarimo_entry gfxmask;			/* mask for the graphics bank */
@@ -92,9 +92,9 @@ struct atarimo_rect_list
 
 /* setup/shutdown */
 int atarimo_init(int map, const struct atarimo_desc *desc);
-UINT16 *atarimo_get_code_lookup(int map, int *size);
-UINT8 *atarimo_get_color_lookup(int map, int *size);
-UINT8 *atarimo_get_gfx_lookup(int map, int *size);
+uint16_t *atarimo_get_code_lookup(int map, int *size);
+uint8_t *atarimo_get_color_lookup(int map, int *size);
+uint8_t *atarimo_get_gfx_lookup(int map, int *size);
 
 /* core processing */
 struct mame_bitmap *atarimo_render(int map, const struct rectangle *cliprect, struct atarimo_rect_list *rectlist);

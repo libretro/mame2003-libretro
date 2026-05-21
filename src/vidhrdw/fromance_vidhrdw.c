@@ -12,18 +12,18 @@
 #include "fromance.h"
 
 
-static UINT8 selected_videoram;
+static uint8_t selected_videoram;
 static data8_t *local_videoram[2];
 
-static UINT8 selected_paletteram;
+static uint8_t selected_paletteram;
 static data8_t *local_paletteram;
 
 static int scrollx[2], scrolly[2];
-static UINT8 gfxreg;
-static UINT8 flipscreen;
+static uint8_t gfxreg;
+static uint8_t flipscreen;
 
-static UINT8 crtc_register;
-static UINT8 crtc_data[0x10];
+static uint8_t crtc_register;
+static uint8_t crtc_data[0x10];
 static void *crtc_timer;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
@@ -300,7 +300,7 @@ WRITE_HANDLER( fromance_crtc_register_w )
 
 static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int draw_priority)
 {
-	UINT8 zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
+	uint8_t zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
 	int offs;
 
 	/* draw the sprites */

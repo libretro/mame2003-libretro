@@ -26,7 +26,7 @@ static void tilemap_get_info(
 #ifndef MSB_FIRST
 	data16_t *source;
 #endif
-	static UINT8 mask_data[8];
+	static uint8_t mask_data[8];
 
 	int data = tilemap_videoram[tile_index];
 	int tile = data&0xfff;
@@ -50,7 +50,7 @@ static void tilemap_get_info(
 		mask_data[7] = source[3]&0xff;
 		tile_info.mask_data = mask_data;
 #else
-		tile_info.mask_data = (UINT8 *)(shaperam+4*tile);
+		tile_info.mask_data = (uint8_t *)(shaperam+4*tile);
 #endif
 	}
 } /* tilemap_get_info */
@@ -216,8 +216,8 @@ static void update_gfx( void )
 			if( dirtychar[i] )
 			{
 				dirtychar[i] = 0;
-				decodechar(Machine->gfx[0],i,(UINT8 *)cgram,&cg_layout);
-				decodechar(Machine->gfx[1],i,(UINT8 *)shaperam,&shape_layout);
+				decodechar(Machine->gfx[0],i,(uint8_t *)cgram,&cg_layout);
+				decodechar(Machine->gfx[1],i,(uint8_t *)shaperam,&shape_layout);
 			}
 		}
 		dirtygfx = 0;
@@ -248,8 +248,8 @@ VIDEO_START( namcona1 )
 
 	if( shaperam && cgram && dirtychar )
 	{
-		gfx0 = decodegfx( (UINT8 *)cgram,&cg_layout );
-		gfx1 = decodegfx( (UINT8 *)shaperam,&shape_layout );
+		gfx0 = decodegfx( (uint8_t *)cgram,&cg_layout );
+		gfx1 = decodegfx( (uint8_t *)shaperam,&shape_layout );
 		if( gfx0 && gfx1 )
 		{
 			gfx0->colortable = Machine->remapped_colortable;
@@ -331,7 +331,7 @@ static void pdraw_masked_tile(
 			{
 				int ypos = sy+(flipy?7-y:y);
 				data8_t *pri = (data8_t *)priority_bitmap->line[ypos];
-				UINT16 *dest = (UINT16 *)bitmap->line[ypos];
+				uint16_t *dest = (uint16_t *)bitmap->line[ypos];
 				if( flipx )
 				{
 					dest += sx+7;
@@ -373,7 +373,7 @@ static void pdraw_masked_tile(
 			{
 				int ypos = sy+(flipy?7-y:y);
 				data8_t *pri = (data8_t *)priority_bitmap->line[ypos];
-				UINT16 *dest = (UINT16 *)bitmap->line[ypos];
+				uint16_t *dest = (uint16_t *)bitmap->line[ypos];
 				if( flipx )
 				{
 					dest += sx+7;
@@ -429,7 +429,7 @@ static void pdraw_opaque_tile(
 	int x,y,temp;
 	int ypos;
 	data8_t *pri;
-	UINT16 *dest;
+	uint16_t *dest;
 
 	if( Machine->orientation & ORIENTATION_SWAP_XY )
 	{
@@ -463,7 +463,7 @@ static void pdraw_opaque_tile(
 		{
 			ypos = sy+(flipy?7-y:y);
 			pri = (data8_t *)priority_bitmap->line[ypos];
-			dest = (UINT16 *)bitmap->line[ypos];
+			dest = (uint16_t *)bitmap->line[ypos];
 			if( flipx )
 			{
 				dest += sx+7;
@@ -578,7 +578,7 @@ static void draw_sprites( struct mame_bitmap *bitmap )
 	}
 } /* draw_sprites */
 
-static void draw_pixel_line( UINT16 *pDest, UINT8 *pPri, data16_t *pSource, const pen_t *paldata )
+static void draw_pixel_line( uint16_t *pDest, uint8_t *pPri, data16_t *pSource, const pen_t *paldata )
 {
 	int x;
 	data16_t data;

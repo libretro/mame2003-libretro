@@ -148,7 +148,7 @@ static void rtype2_get_fg_tile_info(int tile_index)
 }
 
 
-static UINT32 majtitle_scan_rows( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t majtitle_scan_rows( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return row*256 + col;
@@ -166,10 +166,10 @@ static void register_savestate(void)
 	state_save_register_int  ("video", 0, "rastersplit",      &rastersplit);
 	state_save_register_int  ("video", 0, "splitline",        &splitline);
 	state_save_register_int  ("video", 0, "video_off",        &video_off);
-	state_save_register_UINT8("video", 0, "scrollx1",(UINT8*) scrollx1, sizeof(scrollx1));
-	state_save_register_UINT8("video", 0, "scrolly1",(UINT8*) scrolly1, sizeof(scrolly1));
-	state_save_register_UINT8("video", 0, "scrollx2",(UINT8*) scrollx2, sizeof(scrollx2));
-	state_save_register_UINT8("video", 0, "scrolly2",(UINT8*) scrolly2, sizeof(scrolly2));
+	state_save_register_UINT8("video", 0, "scrollx1",(uint8_t*) scrollx1, sizeof(scrollx1));
+	state_save_register_UINT8("video", 0, "scrolly1",(uint8_t*) scrolly1, sizeof(scrolly1));
+	state_save_register_UINT8("video", 0, "scrollx2",(uint8_t*) scrollx2, sizeof(scrollx2));
+	state_save_register_UINT8("video", 0, "scrolly2",(uint8_t*) scrolly2, sizeof(scrolly2));
 	state_save_register_UINT8("video", 0, "m72_spriteram",    m72_spriteram, spriteram_size);
 }
 

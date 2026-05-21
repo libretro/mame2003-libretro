@@ -18,8 +18,8 @@
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data1 = atarigen_playfield[tile_index];
-	UINT16 data2 = atarigen_playfield_upper[tile_index] & 0xff;
+	uint16_t data1 = atarigen_playfield[tile_index];
+	uint16_t data2 = atarigen_playfield_upper[tile_index] & 0xff;
 	int code = data1 & 0x7fff;
 	int color = 0x20 + (data2 & 0x0f);
 	SET_TILE_INFO(0, code, color, (data1 >> 15) & 1);
@@ -28,8 +28,8 @@ static void get_playfield_tile_info(int tile_index)
 
 static void get_playfield2_tile_info(int tile_index)
 {
-	UINT16 data1 = atarigen_playfield2[tile_index];
-	UINT16 data2 = atarigen_playfield_upper[tile_index] >> 8;
+	uint16_t data1 = atarigen_playfield2[tile_index];
+	uint16_t data2 = atarigen_playfield_upper[tile_index] >> 8;
 	int code = data1 & 0x7fff;
 	int color = data2 & 0x0f;
 	SET_TILE_INFO(0, code, color, (data1 >> 15) & 1);
@@ -127,9 +127,9 @@ VIDEO_UPDATE( relief )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
-			UINT8 *pri = (UINT8 *)priority_bitmap->base + priority_bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
+			uint8_t *pri = (uint8_t *)priority_bitmap->base + priority_bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

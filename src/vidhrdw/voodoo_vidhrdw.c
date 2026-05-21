@@ -61,32 +61,32 @@ struct setup_vert
 
 
 /* core constants */
-static UINT8 tmus;
-static UINT8 voodoo2;
+static uint8_t tmus;
+static uint8_t voodoo2;
 static offs_t texram_mask;
 
 /* VRAM and various buffers */
-static UINT16 *framebuf[2];
-static UINT16 *depthbuf;
-static UINT16 *frontbuf;
-static UINT16 *backbuf;
-static UINT16 **buffer_access[4];
-static UINT8 *textureram[MAX_TMUS];
-static UINT32 *cmdfifo;
-static UINT32 cmdfifo_expected;
+static uint16_t *framebuf[2];
+static uint16_t *depthbuf;
+static uint16_t *frontbuf;
+static uint16_t *backbuf;
+static uint16_t **buffer_access[4];
+static uint8_t *textureram[MAX_TMUS];
+static uint32_t *cmdfifo;
+static uint32_t cmdfifo_expected;
 
-static UINT16 *pen_lookup;
-static UINT8 *dither_lookup;
+static uint16_t *pen_lookup;
+static uint8_t *dither_lookup;
 static float *depth_lookup;
-static UINT8 *lod_lookup;
+static uint8_t *lod_lookup;
 
 /* register pointers */
 data32_t *voodoo_regs;
 static float *fvoodoo_regs;
 
 /* color DAC fake registers */
-static UINT8 dac_regs[8];
-static UINT8 dac_read;
+static uint8_t dac_regs[8];
+static uint8_t dac_read;
 
 static data32_t init_enable;
 
@@ -96,15 +96,15 @@ static data32_t init_enable;
 static int direct_fb_ok = 1;
 
 /* texel tables */
-static UINT32 *texel_lookup[MAX_TMUS][16];
-static UINT8 texel_lookup_dirty[MAX_TMUS][16];
-static INT32 ncc_y[MAX_TMUS][2][16];
-static INT32 ncc_ir[MAX_TMUS][2][4], ncc_ig[MAX_TMUS][2][4], ncc_ib[MAX_TMUS][2][4];
-static INT32 ncc_qr[MAX_TMUS][2][4], ncc_qg[MAX_TMUS][2][4], ncc_qb[MAX_TMUS][2][4];
+static uint32_t *texel_lookup[MAX_TMUS][16];
+static uint8_t texel_lookup_dirty[MAX_TMUS][16];
+static int32_t ncc_y[MAX_TMUS][2][16];
+static int32_t ncc_ir[MAX_TMUS][2][4], ncc_ig[MAX_TMUS][2][4], ncc_ib[MAX_TMUS][2][4];
+static int32_t ncc_qr[MAX_TMUS][2][4], ncc_qg[MAX_TMUS][2][4], ncc_qb[MAX_TMUS][2][4];
 
 /* fog tables */
-static UINT8 fog_blend[64];
-static UINT8 fog_delta[64];
+static uint8_t fog_blend[64];
+static uint8_t fog_delta[64];
 
 /* VBLANK and swapping */
 static void *vblank_timer;
@@ -113,62 +113,62 @@ static int swaps_pending;
 static int vblanks_before_swap;
 static int blocked_on_swap;
 static int pending_fastfill;
-static UINT32 pending_fastfill_zaColor;
-static UINT32 pending_fastfill_color1;
+static uint32_t pending_fastfill_zaColor;
+static uint32_t pending_fastfill_color1;
 
 /* fbzMode variables */
 static struct rectangle *fbz_cliprect;
 static struct rectangle fbz_noclip;
 static struct rectangle fbz_clip;
-static UINT8 fbz_chroma_key;
-static UINT8 fbz_stipple_mask;
-static UINT8 fbz_wbuffer_select;
-static UINT8 fbz_depth_buffering;
-static UINT8 fbz_depth_buffer_func;
-static UINT8 fbz_dithering;
-static UINT8 fbz_rgb_write;
-static UINT8 fbz_depth_write;
-static const UINT8 *fbz_dither_matrix;
-static UINT16 **fbz_draw_buffer;
-static UINT8 fbz_invert_y;
+static uint8_t fbz_chroma_key;
+static uint8_t fbz_stipple_mask;
+static uint8_t fbz_wbuffer_select;
+static uint8_t fbz_depth_buffering;
+static uint8_t fbz_depth_buffer_func;
+static uint8_t fbz_dithering;
+static uint8_t fbz_rgb_write;
+static uint8_t fbz_depth_write;
+static const uint8_t *fbz_dither_matrix;
+static uint16_t **fbz_draw_buffer;
+static uint8_t fbz_invert_y;
 
 /* lfbMode variables */
-static UINT8 lfb_write_format;
-static UINT16 **lfb_write_buffer;
-static UINT16 **lfb_read_buffer;
-static UINT8 lfb_flipy;
+static uint8_t lfb_write_format;
+static uint16_t **lfb_write_buffer;
+static uint16_t **lfb_read_buffer;
+static uint8_t lfb_flipy;
 
 /* videoDimensions variables */
 static int video_width;
 static int video_height;
 
 /* fbiInit variables */
-static UINT8 triple_buffer;
-static UINT16 inverted_yorigin;
+static uint8_t triple_buffer;
+static uint16_t inverted_yorigin;
 
 /* textureMode variables */
-static UINT8 trex_perspective[3];
-static UINT8 trex_minification[3];
-static UINT8 trex_magnification[3];
-static UINT8 trex_clamps[3];
-static UINT8 trex_clampt[3];
-static UINT8 trex_format[3];
-static UINT8 trex_lodmin[3];
-static UINT8 trex_lodmax[3];
-static INT8 trex_lodbias[3];
-static UINT32 trex_width[3];
-static UINT32 trex_height[3];
-static const UINT32 *trex_lod_offset[3];
-static const UINT8 *trex_lod_width_shift[3];
+static uint8_t trex_perspective[3];
+static uint8_t trex_minification[3];
+static uint8_t trex_magnification[3];
+static uint8_t trex_clamps[3];
+static uint8_t trex_clampt[3];
+static uint8_t trex_format[3];
+static uint8_t trex_lodmin[3];
+static uint8_t trex_lodmax[3];
+static int8_t trex_lodbias[3];
+static uint32_t trex_width[3];
+static uint32_t trex_height[3];
+static const uint32_t *trex_lod_offset[3];
+static const uint8_t *trex_lod_width_shift[3];
 
 /* triangle parameters */
 struct tri_vertex { float x, y; };
 static struct tri_vertex tri_va, tri_vb, tri_vc;
-static INT32 tri_startr, tri_drdx, tri_drdy;	/* .16 */
-static INT32 tri_startg, tri_dgdx, tri_dgdy;	/* .16 */
-static INT32 tri_startb, tri_dbdx, tri_dbdy;	/* .16 */
-static INT32 tri_starta, tri_dadx, tri_dady;	/* .16 */
-static INT32 tri_startz, tri_dzdx, tri_dzdy;	/* .12 */
+static int32_t tri_startr, tri_drdx, tri_drdy;	/* .16 */
+static int32_t tri_startg, tri_dgdx, tri_dgdy;	/* .16 */
+static int32_t tri_startb, tri_dbdx, tri_dbdy;	/* .16 */
+static int32_t tri_starta, tri_dadx, tri_dady;	/* .16 */
+static int32_t tri_startz, tri_dzdx, tri_dzdy;	/* .12 */
 static float tri_startw, tri_dwdx, tri_dwdy;
 static float tri_starts0, tri_ds0dx, tri_ds0dy;
 static float tri_startt0, tri_dt0dx, tri_dt0dy;
@@ -183,9 +183,9 @@ static struct setup_vert setup_verts[3];
 static struct setup_vert setup_pending;
 
 /* debugging/stats */
-static UINT16 modes_used;
+static uint16_t modes_used;
 
-static const UINT8 dither_matrix_4x4[16] =
+static const uint8_t dither_matrix_4x4[16] =
 {
 	 0,12, 3,14,
 	 8, 4,11, 7,
@@ -193,7 +193,7 @@ static const UINT8 dither_matrix_4x4[16] =
 	10, 6, 9, 5
 };
 
-static const UINT8 dither_matrix_2x2[16] =
+static const uint8_t dither_matrix_2x2[16] =
 {
 	 0, 8, 0, 8,
 	12, 4,12, 4,
@@ -201,7 +201,7 @@ static const UINT8 dither_matrix_2x2[16] =
 	12, 4,12, 4
 };
 
-static const UINT8 lod_dither_matrix[16] =
+static const uint8_t lod_dither_matrix[16] =
 {
 	 0, 2, 1, 3,
 	 1, 0, 3, 2,
@@ -209,7 +209,7 @@ static const UINT8 lod_dither_matrix[16] =
 	 3, 1, 2, 0
 };
 
-static const UINT32 lod_offset_table[4][16] =
+static const uint32_t lod_offset_table[4][16] =
 {
 	{ 0x00000, 0x10000, 0x14000, 0x15000, 0x15400, 0x15500, 0x15540, 0x15550, 0x15554 },
 	{ 0x00000, 0x08000, 0x0a000, 0x0a800, 0x0aa00, 0x0aa80, 0x0aaa0, 0x0aaa8, 0x0aaa8 },
@@ -217,7 +217,7 @@ static const UINT32 lod_offset_table[4][16] =
 	{ 0x00000, 0x02000, 0x02800, 0x02a00, 0x02a80, 0x02aa0, 0x02aa0, 0x02aa0, 0x02aa0 }
 };
 
-static const UINT8 lod_width_shift[8][16] =
+static const uint8_t lod_width_shift[8][16] =
 {
 	{ 8,7,6,5,4,3,2,1,0 },
 	{ 8,7,6,5,4,3,2,1,0 },
@@ -451,19 +451,19 @@ static void fastfill(void);
  *
  *************************************/
 
-static INLINE void dither_to_matrix(UINT32 color, UINT16 *matrix)
+static INLINE void dither_to_matrix(uint32_t color, uint16_t *matrix)
 {
-	UINT32 rawr = (((color >> 16) & 0xff) * 0xf8*2) / 0xff;
-	UINT32 rawg = (((color >> 8) & 0xff) * 0xfc*2) / 0xff;
-	UINT32 rawb = ((color & 0xff) * 0xf8*2) / 0xff;
+	uint32_t rawr = (((color >> 16) & 0xff) * 0xf8*2) / 0xff;
+	uint32_t rawg = (((color >> 8) & 0xff) * 0xfc*2) / 0xff;
+	uint32_t rawb = ((color & 0xff) * 0xf8*2) / 0xff;
 	int i;
 	
 	for (i = 0; i < 16; i++)
 	{
-		UINT32 dither = fbz_dither_matrix[i];
-		UINT32 newr = rawr + dither;
-		UINT32 newg = rawg + dither/2;
-		UINT32 newb = rawb + dither;
+		uint32_t dither = fbz_dither_matrix[i];
+		uint32_t newr = rawr + dither;
+		uint32_t newg = rawg + dither/2;
+		uint32_t newb = rawb + dither;
 		
 		matrix[i] = ((newr >> 4) << 11) | ((newg >> 3) << 5) | (newb >> 4);
 	}
@@ -477,16 +477,16 @@ static INLINE void dither_to_matrix(UINT32 color, UINT16 *matrix)
  *
  *************************************/
 
-static INLINE UINT16 float_to_depth(float val)
+static INLINE uint16_t float_to_depth(float val)
 {
-	INT32 ival, ex;
+	int32_t ival, ex;
 	
 	if (val >= 1.0)
 		return 0x0000;
 	if (val < 0.0)
 		return 0xffff;
 	
-	ival = (INT32)(val * (float)(1 << 28));
+	ival = (int32_t)(val * (float)(1 << 28));
 	if ((ival & 0xffff000) == 0)
 		return 0xfffe;
 	ex = 0;
@@ -504,7 +504,7 @@ static INLINE UINT16 float_to_depth(float val)
  
 static void swap_buffers(void)
 {
-	UINT16 *temp;
+	uint16_t *temp;
 	force_partial_update(cpu_getscanline());
 	temp = frontbuf;
 	frontbuf = backbuf;
@@ -512,8 +512,8 @@ static void swap_buffers(void)
 	
 	if (pending_fastfill)
 	{
-		UINT32 temp_zaColor = voodoo_regs[zaColor];
-		UINT32 temp_color1 = voodoo_regs[color1];
+		uint32_t temp_zaColor = voodoo_regs[zaColor];
+		uint32_t temp_color1 = voodoo_regs[color1];
 		voodoo_regs[zaColor] = pending_fastfill_zaColor;
 		voodoo_regs[color1] = pending_fastfill_color1;
 		fastfill();
@@ -568,9 +568,9 @@ int voodoo_start_common(void)
 		return 1;
 	
 	/* allocate memory for the frame a depth buffers */
-	framebuf[0] = auto_malloc(sizeof(UINT16) * FRAMEBUF_WIDTH * FRAMEBUF_HEIGHT);
-	framebuf[1] = auto_malloc(sizeof(UINT16) * FRAMEBUF_WIDTH * FRAMEBUF_HEIGHT);
-	depthbuf = auto_malloc(sizeof(UINT16) * FRAMEBUF_WIDTH * FRAMEBUF_HEIGHT);
+	framebuf[0] = auto_malloc(sizeof(uint16_t) * FRAMEBUF_WIDTH * FRAMEBUF_HEIGHT);
+	framebuf[1] = auto_malloc(sizeof(uint16_t) * FRAMEBUF_WIDTH * FRAMEBUF_HEIGHT);
+	depthbuf = auto_malloc(sizeof(uint16_t) * FRAMEBUF_WIDTH * FRAMEBUF_HEIGHT);
 	if (!framebuf[0] || !framebuf[1] || !depthbuf)
 		return 1;
 	
@@ -594,7 +594,7 @@ int voodoo_start_common(void)
 	for (j = 0; j < tmus; j++)
 		for (i = 0; i < 16; i++)
 		{
-			texel_lookup[j][i] = auto_malloc(sizeof(UINT32) * ((i < 8) ? 256 : 65536));
+			texel_lookup[j][i] = auto_malloc(sizeof(uint32_t) * ((i < 8) ? 256 : 65536));
 			if (!texel_lookup[j][i])
 				return 1;
 		}
@@ -603,13 +603,13 @@ int voodoo_start_common(void)
 	for (i = 0; i < 16; i++)
 		for (j = 0; j < 256; j++)
 		{
-			UINT32 newval = (j * 0xf8*2) / 0xff + i;
+			uint32_t newval = (j * 0xf8*2) / 0xff + i;
 			dither_lookup[i * 256 + j] = newval / 2;
 		}
 	
 	/* initialize depth tables */
 	for (i = 0; i < 65536; i++)
-		((UINT32 *)depth_lookup)[i] = (i << 11) + (127 << 23);
+		((uint32_t *)depth_lookup)[i] = (i << 11) + (127 << 23);
 	
 	/* initialize LOD tables */
 	for (i = 0; i < 65536; i++)
@@ -783,13 +783,13 @@ VIDEO_UPDATE( voodoo )
 	   path when the output is not RGB565, the palette is unstable, or a
 	   flip/rotate/artwork/UI overlay is in the path. */
 	const uint16_t *pal = direct_fb_ok ? mame2003_direct_rgb565_palette(&palents) : NULL;
-	UINT16 *fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	uint16_t *fb  = pal ? (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			const UINT16 *source = &frontbuf[1024 * y];
-			UINT16 *dest = (UINT16 *)((UINT8 *)fb + y * fb_pitch);
+			const uint16_t *source = &frontbuf[1024 * y];
+			uint16_t *dest = (uint16_t *)((uint8_t *)fb + y * fb_pitch);
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 				*dest++ = pal[pen_lookup[*source++]];
 		}
@@ -798,8 +798,8 @@ VIDEO_UPDATE( voodoo )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = (UINT16 *)bitmap->line[y];
-		UINT16 *source = &frontbuf[1024 * y];
+		uint16_t *dest = (uint16_t *)bitmap->line[y];
+		uint16_t *source = &frontbuf[1024 * y];
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			*dest++ = pen_lookup[*source++];
 	}
@@ -831,7 +831,7 @@ void voodoo_enable_direct_fb(int enable)
  *
  *************************************/
 
-static UINT8 ramdac_r(UINT8 reg)
+static uint8_t ramdac_r(uint8_t reg)
 {
 	if (reg == 5)
 	{
@@ -847,7 +847,7 @@ static UINT8 ramdac_r(UINT8 reg)
 }
 
 
-static void ramdac_w(UINT8 reg, UINT8 data)
+static void ramdac_w(uint8_t reg, uint8_t data)
 {
 	dac_regs[reg] = data;
 }
@@ -866,8 +866,8 @@ static void fastfill(void)
 	int ex = (voodoo_regs[clipLeftRight] >> 0) & 0x3ff;
 	int sy = (voodoo_regs[clipLowYHighY] >> 16) & 0x3ff;
 	int ey = (voodoo_regs[clipLowYHighY] >> 0) & 0x3ff;
-	UINT16 *buffer = *fbz_draw_buffer;
-	UINT16 dither[16];
+	uint16_t *buffer = *fbz_draw_buffer;
+	uint16_t dither[16];
 	int x, y;
 
 	/* frame buffer clear? */
@@ -879,12 +879,12 @@ static void fastfill(void)
 		/* loop over y */
 		for (y = sy; y < ey; y++)
 		{
-			UINT16 *dest = &buffer[(fbz_invert_y ? (inverted_yorigin - y) : y) * FRAMEBUF_WIDTH + sx];
+			uint16_t *dest = &buffer[(fbz_invert_y ? (inverted_yorigin - y) : y) * FRAMEBUF_WIDTH + sx];
 
 			/* if not dithered, it's easy */
 			if (!fbz_dithering)
 			{
-				UINT16 color = dither[0];
+				uint16_t color = dither[0];
 				for (x = sx; x < ex; x++)
 					*dest++ = color;
 			}
@@ -892,7 +892,7 @@ static void fastfill(void)
 			/* dithered is a little trickier */
 			else
 			{
-				UINT16 *dbase = dither + 4 * (y & 3);
+				uint16_t *dbase = dither + 4 * (y & 3);
 				for (x = sx; x < ex; x++)
 					*dest++ = dbase[x & 3];
 			}
@@ -902,12 +902,12 @@ static void fastfill(void)
 	/* depth buffer clear? */
 	if (fbz_depth_write)
 	{
-		UINT16 color = voodoo_regs[zaColor];
+		uint16_t color = voodoo_regs[zaColor];
 
 		/* loop over y */
 		for (y = sy; y < ey; y++)
 		{
-			UINT16 *dest = &depthbuf[y * FRAMEBUF_WIDTH + sx];
+			uint16_t *dest = &depthbuf[y * FRAMEBUF_WIDTH + sx];
 			for (x = sx; x < ex; x++)
 				*dest++ = color;
 		}
@@ -925,7 +925,7 @@ static void fastfill(void)
 static void draw_triangle(void)
 {
 	int totalpix = voodoo_regs[fbiPixelsIn];
-	UINT32 temp;
+	uint32_t temp;
 	
 	voodoo_regs[fbiTrianglesOut] = (voodoo_regs[fbiTrianglesOut] + 1) & 0xffffff;
 	
@@ -1101,27 +1101,27 @@ static void setup_and_draw_triangle(void)
 	/* set up appropriate bits */
 	if (voodoo_regs[sSetupMode] & 0x0001)
 	{
-		tri_startr = (INT32)(setup_verts[0].r * 65536.0);
-		tri_drdx = (INT32)(((setup_verts[0].r - setup_verts[1].r) * dx1 - (setup_verts[0].r - setup_verts[2].r) * dx2) * divisor * 65536.0);
-		tri_drdy = (INT32)(((setup_verts[0].r - setup_verts[2].r) * dy1 - (setup_verts[0].r - setup_verts[1].r) * dy2) * divisor * 65536.0);
-		tri_startg = (INT32)(setup_verts[0].g * 65536.0);
-		tri_dgdx = (INT32)(((setup_verts[0].g - setup_verts[1].g) * dx1 - (setup_verts[0].g - setup_verts[2].g) * dx2) * divisor * 65536.0);
-		tri_dgdy = (INT32)(((setup_verts[0].g - setup_verts[2].g) * dy1 - (setup_verts[0].g - setup_verts[1].g) * dy2) * divisor * 65536.0);
-		tri_startb = (INT32)(setup_verts[0].b * 65536.0);
-		tri_dbdx = (INT32)(((setup_verts[0].b - setup_verts[1].b) * dx1 - (setup_verts[0].b - setup_verts[2].b) * dx2) * divisor * 65536.0);
-		tri_dbdy = (INT32)(((setup_verts[0].b - setup_verts[2].b) * dy1 - (setup_verts[0].b - setup_verts[1].b) * dy2) * divisor * 65536.0);
+		tri_startr = (int32_t)(setup_verts[0].r * 65536.0);
+		tri_drdx = (int32_t)(((setup_verts[0].r - setup_verts[1].r) * dx1 - (setup_verts[0].r - setup_verts[2].r) * dx2) * divisor * 65536.0);
+		tri_drdy = (int32_t)(((setup_verts[0].r - setup_verts[2].r) * dy1 - (setup_verts[0].r - setup_verts[1].r) * dy2) * divisor * 65536.0);
+		tri_startg = (int32_t)(setup_verts[0].g * 65536.0);
+		tri_dgdx = (int32_t)(((setup_verts[0].g - setup_verts[1].g) * dx1 - (setup_verts[0].g - setup_verts[2].g) * dx2) * divisor * 65536.0);
+		tri_dgdy = (int32_t)(((setup_verts[0].g - setup_verts[2].g) * dy1 - (setup_verts[0].g - setup_verts[1].g) * dy2) * divisor * 65536.0);
+		tri_startb = (int32_t)(setup_verts[0].b * 65536.0);
+		tri_dbdx = (int32_t)(((setup_verts[0].b - setup_verts[1].b) * dx1 - (setup_verts[0].b - setup_verts[2].b) * dx2) * divisor * 65536.0);
+		tri_dbdy = (int32_t)(((setup_verts[0].b - setup_verts[2].b) * dy1 - (setup_verts[0].b - setup_verts[1].b) * dy2) * divisor * 65536.0);
 	}
 	if (voodoo_regs[sSetupMode] & 0x0002)
 	{
-		tri_starta = (INT32)(setup_verts[0].a * 65536.0);
-		tri_dadx = (INT32)(((setup_verts[0].a - setup_verts[1].a) * dx1 - (setup_verts[0].a - setup_verts[2].a) * dx2) * divisor * 65536.0);
-		tri_dady = (INT32)(((setup_verts[0].a - setup_verts[2].a) * dy1 - (setup_verts[0].a - setup_verts[1].a) * dy2) * divisor * 65536.0);
+		tri_starta = (int32_t)(setup_verts[0].a * 65536.0);
+		tri_dadx = (int32_t)(((setup_verts[0].a - setup_verts[1].a) * dx1 - (setup_verts[0].a - setup_verts[2].a) * dx2) * divisor * 65536.0);
+		tri_dady = (int32_t)(((setup_verts[0].a - setup_verts[2].a) * dy1 - (setup_verts[0].a - setup_verts[1].a) * dy2) * divisor * 65536.0);
 	}
 	if (voodoo_regs[sSetupMode] & 0x0004)
 	{
-		tri_startz = (INT32)(setup_verts[0].z * 4096.0);
-		tri_dzdx = (INT32)(((setup_verts[0].z - setup_verts[1].z) * dx1 - (setup_verts[0].z - setup_verts[2].z) * dx2) * divisor * 4096.0);
-		tri_dzdy = (INT32)(((setup_verts[0].z - setup_verts[2].z) * dy1 - (setup_verts[0].z - setup_verts[1].z) * dy2) * divisor * 4096.0);
+		tri_startz = (int32_t)(setup_verts[0].z * 4096.0);
+		tri_dzdx = (int32_t)(((setup_verts[0].z - setup_verts[1].z) * dx1 - (setup_verts[0].z - setup_verts[2].z) * dx2) * divisor * 4096.0);
+		tri_dzdy = (int32_t)(((setup_verts[0].z - setup_verts[2].z) * dy1 - (setup_verts[0].z - setup_verts[1].z) * dy2) * divisor * 4096.0);
 	}
 	if (voodoo_regs[sSetupMode] & 0x0008)
 	{
@@ -1172,7 +1172,7 @@ static void setup_and_draw_triangle(void)
  *
  *************************************/
 
-static const UINT8 register_alias_map[0x40] =
+static const uint8_t register_alias_map[0x40] =
 {
 	status,		0x004/4,	vertexAx,	vertexAy,
 	vertexBx,	vertexBy,	vertexCx,	vertexCy,
@@ -1196,7 +1196,7 @@ static const UINT8 register_alias_map[0x40] =
 
 static int compute_expected_depth(void)
 {
-	UINT32 command = cmdfifo[voodoo_regs[cmdFifoRdPtr]/4];
+	uint32_t command = cmdfifo[voodoo_regs[cmdFifoRdPtr]/4];
 	int i, count = 0;
 	
 	switch (command & 7)
@@ -1257,10 +1257,10 @@ static int compute_expected_depth(void)
 }
 
 
-static UINT32 execute_cmdfifo(void)
+static uint32_t execute_cmdfifo(void)
 {
-	UINT32 *src = &cmdfifo[voodoo_regs[cmdFifoRdPtr]/4];
-	UINT32 command = *src++;
+	uint32_t *src = &cmdfifo[voodoo_regs[cmdFifoRdPtr]/4];
+	uint32_t command = *src++;
 	int count, inc, code, i;
 	offs_t target;
 
@@ -1326,7 +1326,7 @@ static UINT32 execute_cmdfifo(void)
 				{
 					if (voodoo_regs[sSetupMode] & 0x0003)
 					{
-						UINT32 argb = *src++;
+						uint32_t argb = *src++;
 						if (voodoo_regs[sSetupMode] & 0x0001)
 						{
 							setup_pending.r = (argb >> 16) & 0xff;
@@ -1529,112 +1529,112 @@ WRITE32_HANDLER( voodoo_regs_w )
 	{
 		/* fixed-point vertex data */
 		case vertexAx:
-			if (chips & 1) tri_va.x = (float)(INT16)data * (1.0f / 16.0f);
+			if (chips & 1) tri_va.x = (float)(int16_t)data * (1.0f / 16.0f);
 			break;
 		case vertexAy:
-			if (chips & 1) tri_va.y = (float)(INT16)data * (1.0f / 16.0f);
+			if (chips & 1) tri_va.y = (float)(int16_t)data * (1.0f / 16.0f);
 			break;
 		case vertexBx:
-			if (chips & 1) tri_vb.x = (float)(INT16)data * (1.0f / 16.0f);
+			if (chips & 1) tri_vb.x = (float)(int16_t)data * (1.0f / 16.0f);
 			break;
 		case vertexBy:
-			if (chips & 1) tri_vb.y = (float)(INT16)data * (1.0f / 16.0f);
+			if (chips & 1) tri_vb.y = (float)(int16_t)data * (1.0f / 16.0f);
 			break;
 		case vertexCx:
-			if (chips & 1) tri_vc.x = (float)(INT16)data * (1.0f / 16.0f);
+			if (chips & 1) tri_vc.x = (float)(int16_t)data * (1.0f / 16.0f);
 			break;
 		case vertexCy:
-			if (chips & 1) tri_vc.y = (float)(INT16)data * (1.0f / 16.0f);
+			if (chips & 1) tri_vc.y = (float)(int16_t)data * (1.0f / 16.0f);
 			break;
 		
 		/* fixed point starting data */
 		case startR:
-			if (chips & 1) tri_startr = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_startr = ((int32_t)data << 8) >> 4;
 			break;
 		case startG:
-			if (chips & 1) tri_startg = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_startg = ((int32_t)data << 8) >> 4;
 			break;
 		case startB:
-			if (chips & 1) tri_startb = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_startb = ((int32_t)data << 8) >> 4;
 			break;
 		case startA:
-			if (chips & 1) tri_starta = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_starta = ((int32_t)data << 8) >> 4;
 			break;
 		case startZ:
-			if (chips & 1) tri_startz = (INT32)data;
+			if (chips & 1) tri_startz = (int32_t)data;
 			break;
 		case startW:
-			if (chips & 1) tri_startw = (float)(INT32)data * (1.0 / (float)(1 << 30));
-			if (chips & 2) tri_startw0 = (float)(INT32)data * (1.0 / (float)(1 << 30));
-			if (chips & 4) tri_startw1 = (float)(INT32)data * (1.0 / (float)(1 << 30));
+			if (chips & 1) tri_startw = (float)(int32_t)data * (1.0 / (float)(1 << 30));
+			if (chips & 2) tri_startw0 = (float)(int32_t)data * (1.0 / (float)(1 << 30));
+			if (chips & 4) tri_startw1 = (float)(int32_t)data * (1.0 / (float)(1 << 30));
 			break;
 		case startS:
-			if (chips & 2) tri_starts0 = (float)(INT32)data * (1.0 / (float)(1 << 18));
-			if (chips & 4) tri_starts1 = (float)(INT32)data * (1.0 / (float)(1 << 18));
+			if (chips & 2) tri_starts0 = (float)(int32_t)data * (1.0 / (float)(1 << 18));
+			if (chips & 4) tri_starts1 = (float)(int32_t)data * (1.0 / (float)(1 << 18));
 			break;
 		case startT:
-			if (chips & 2) tri_startt0 = (float)(INT32)data * (1.0 / (float)(1 << 18));
-			if (chips & 4) tri_startt1 = (float)(INT32)data * (1.0 / (float)(1 << 18));
+			if (chips & 2) tri_startt0 = (float)(int32_t)data * (1.0 / (float)(1 << 18));
+			if (chips & 4) tri_startt1 = (float)(int32_t)data * (1.0 / (float)(1 << 18));
 			break;
 		
 		/* fixed point delta X data */
 		case dRdX:
-			if (chips & 1) tri_drdx = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_drdx = ((int32_t)data << 8) >> 4;
 			break;
 		case dGdX:
-			if (chips & 1) tri_dgdx = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_dgdx = ((int32_t)data << 8) >> 4;
 			break;
 		case dBdX:
-			if (chips & 1) tri_dbdx = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_dbdx = ((int32_t)data << 8) >> 4;
 			break;
 		case dAdX:
-			if (chips & 1) tri_dadx = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_dadx = ((int32_t)data << 8) >> 4;
 			break;
 		case dZdX:
-			if (chips & 1) tri_dzdx = (INT32)data;
+			if (chips & 1) tri_dzdx = (int32_t)data;
 			break;
 		case dWdX:
-			if (chips & 1) tri_dwdx = (float)(INT32)data * (1.0 / (float)(1 << 30));
-			if (chips & 2) tri_dw0dx = (float)(INT32)data * (1.0 / (float)(1 << 30));
-			if (chips & 4) tri_dw1dx = (float)(INT32)data * (1.0 / (float)(1 << 30));
+			if (chips & 1) tri_dwdx = (float)(int32_t)data * (1.0 / (float)(1 << 30));
+			if (chips & 2) tri_dw0dx = (float)(int32_t)data * (1.0 / (float)(1 << 30));
+			if (chips & 4) tri_dw1dx = (float)(int32_t)data * (1.0 / (float)(1 << 30));
 			break;
 		case dSdX:
-			if (chips & 2) tri_ds0dx = (float)(INT32)data * (1.0 / (float)(1 << 18));
-			if (chips & 4) tri_ds1dx = (float)(INT32)data * (1.0 / (float)(1 << 18));
+			if (chips & 2) tri_ds0dx = (float)(int32_t)data * (1.0 / (float)(1 << 18));
+			if (chips & 4) tri_ds1dx = (float)(int32_t)data * (1.0 / (float)(1 << 18));
 			break;
 		case dTdX:
-			if (chips & 2) tri_dt0dx = (float)(INT32)data * (1.0 / (float)(1 << 18));
-			if (chips & 4) tri_dt1dx = (float)(INT32)data * (1.0 / (float)(1 << 18));
+			if (chips & 2) tri_dt0dx = (float)(int32_t)data * (1.0 / (float)(1 << 18));
+			if (chips & 4) tri_dt1dx = (float)(int32_t)data * (1.0 / (float)(1 << 18));
 			break;
 		
 		/* fixed point delta Y data */
 		case dRdY:
-			if (chips & 1) tri_drdy = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_drdy = ((int32_t)data << 8) >> 4;
 			break;
 		case dGdY:
-			if (chips & 1) tri_dgdy = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_dgdy = ((int32_t)data << 8) >> 4;
 			break;
 		case dBdY:
-			if (chips & 1) tri_dbdy = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_dbdy = ((int32_t)data << 8) >> 4;
 			break;
 		case dAdY:
-			if (chips & 1) tri_dady = ((INT32)data << 8) >> 4;
+			if (chips & 1) tri_dady = ((int32_t)data << 8) >> 4;
 			break;
 		case dZdY:
-			if (chips & 1) tri_dzdy = (INT32)data;
+			if (chips & 1) tri_dzdy = (int32_t)data;
 			break;
 		case dWdY:
-			if (chips & 1) tri_dwdy = (float)(INT32)data * (1.0 / (float)(1 << 30));
-			if (chips & 2) tri_dw0dy = (float)(INT32)data * (1.0 / (float)(1 << 30));
-			if (chips & 4) tri_dw1dy = (float)(INT32)data * (1.0 / (float)(1 << 30));
+			if (chips & 1) tri_dwdy = (float)(int32_t)data * (1.0 / (float)(1 << 30));
+			if (chips & 2) tri_dw0dy = (float)(int32_t)data * (1.0 / (float)(1 << 30));
+			if (chips & 4) tri_dw1dy = (float)(int32_t)data * (1.0 / (float)(1 << 30));
 			break;
 		case dSdY:
-			if (chips & 2) tri_ds0dy = (float)(INT32)data * (1.0 / (float)(1 << 18));
-			if (chips & 4) tri_ds1dy = (float)(INT32)data * (1.0 / (float)(1 << 18));
+			if (chips & 2) tri_ds0dy = (float)(int32_t)data * (1.0 / (float)(1 << 18));
+			if (chips & 4) tri_ds1dy = (float)(int32_t)data * (1.0 / (float)(1 << 18));
 			break;
 		case dTdY:
-			if (chips & 2) tri_dt0dy = (float)(INT32)data * (1.0 / (float)(1 << 18));
-			if (chips & 4) tri_dt1dy = (float)(INT32)data * (1.0 / (float)(1 << 18));
+			if (chips & 2) tri_dt0dy = (float)(int32_t)data * (1.0 / (float)(1 << 18));
+			if (chips & 4) tri_dt1dy = (float)(int32_t)data * (1.0 / (float)(1 << 18));
 			break;
 		
 		/* floating-point vertex data */
@@ -1659,19 +1659,19 @@ WRITE32_HANDLER( voodoo_regs_w )
 		
 		/* floating-point starting data */
 		case fstartR:
-			if (chips & 1) tri_startr = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_startr = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fstartG:
-			if (chips & 1) tri_startg = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_startg = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fstartB:
-			if (chips & 1) tri_startb = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_startb = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fstartA:
-			if (chips & 1) tri_starta = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_starta = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fstartZ:
-			if (chips & 1) tri_startz = (INT32)(*(float *)&data * 4096.0);
+			if (chips & 1) tri_startz = (int32_t)(*(float *)&data * 4096.0);
 			break;
 		case fstartW:
 			if (chips & 1) tri_startw = *(float *)&data;
@@ -1689,19 +1689,19 @@ WRITE32_HANDLER( voodoo_regs_w )
 		
 		/* floating-point delta X data */
 		case fdRdX:
-			if (chips & 1) tri_drdx = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_drdx = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdGdX:
-			if (chips & 1) tri_dgdx = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_dgdx = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdBdX:
-			if (chips & 1) tri_dbdx = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_dbdx = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdAdX:
-			if (chips & 1) tri_dadx = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_dadx = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdZdX:
-			if (chips & 1) tri_dzdx = (INT32)(*(float *)&data * 4096.0);
+			if (chips & 1) tri_dzdx = (int32_t)(*(float *)&data * 4096.0);
 			break;
 		case fdWdX:
 			if (chips & 1) tri_dwdx = *(float *)&data;
@@ -1719,19 +1719,19 @@ WRITE32_HANDLER( voodoo_regs_w )
 		
 		/* floating-point delta Y data */
 		case fdRdY:
-			if (chips & 1) tri_drdy = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_drdy = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdGdY:
-			if (chips & 1) tri_dgdy = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_dgdy = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdBdY:
-			if (chips & 1) tri_dbdy = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_dbdy = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdAdY:
-			if (chips & 1) tri_dady = (INT32)(*(float *)&data * 65536.0);
+			if (chips & 1) tri_dady = (int32_t)(*(float *)&data * 65536.0);
 			break;
 		case fdZdY:
-			if (chips & 1) tri_dzdy = (INT32)(*(float *)&data * 4096.0);
+			if (chips & 1) tri_dzdy = (int32_t)(*(float *)&data * 4096.0);
 			break;
 		case fdWdY:
 			if (chips & 1) tri_dwdy = *(float *)&data;
@@ -2111,7 +2111,7 @@ WRITE32_HANDLER( voodoo_regs_w )
 				trex_lodmin[0] = (data >> 0) & 0x3f;
 				trex_lodmax[0] = (data >> 6) & 0x3f;
 				if (trex_lodmax[0] > (8 << 2)) trex_lodmax[0] = 8 << 2;
-				trex_lodbias[0] = ((INT16)(data >> 2) >> 10);
+				trex_lodbias[0] = ((int16_t)(data >> 2) >> 10);
 				trex_width[0] = (data & 0x00100000) ? 256 : (256 >> ((data >> 21) & 3));
 				trex_height[0] = !(data & 0x00100000) ? 256 : (256 >> ((data >> 21) & 3));
 
@@ -2123,7 +2123,7 @@ WRITE32_HANDLER( voodoo_regs_w )
 				trex_lodmin[1] = (data >> 0) & 0x3f;
 				trex_lodmax[1] = (data >> 6) & 0x3f;
 				if (trex_lodmax[1] > (8 << 2)) trex_lodmax[1] = 8 << 2;
-				trex_lodbias[1] = ((INT16)(data >> 2) >> 10);
+				trex_lodbias[1] = ((int16_t)(data >> 2) >> 10);
 				trex_width[1] = (data & 0x00100000) ? 256 : (256 >> ((data >> 21) & 3));
 				trex_height[1] = !(data & 0x00100000) ? 256 : (256 >> ((data >> 21) & 3));
 
@@ -2135,7 +2135,7 @@ WRITE32_HANDLER( voodoo_regs_w )
 				trex_lodmin[2] = (data >> 0) & 0x3f;
 				trex_lodmax[2] = (data >> 6) & 0x3f;
 				if (trex_lodmax[2] > (8 << 2)) trex_lodmax[2] = 8 << 2;
-				trex_lodbias[2] = ((INT16)(data >> 2) >> 10);
+				trex_lodbias[2] = ((int16_t)(data >> 2) >> 10);
 				trex_width[2] = (data & 0x00100000) ? 256 : (256 >> ((data >> 21) & 3));
 				trex_height[2] = !(data & 0x00100000) ? 256 : (256 >> ((data >> 21) & 3));
 
@@ -2184,9 +2184,9 @@ WRITE32_HANDLER( voodoo_regs_w )
 				else
 				{
 					int base = offset - (nccTable+4);
-					ncc_ir[0][0][base] = (INT32)(data <<  5) >> 23;
-					ncc_ig[0][0][base] = (INT32)(data << 14) >> 23;
-					ncc_ib[0][0][base] = (INT32)(data << 23) >> 23;
+					ncc_ir[0][0][base] = (int32_t)(data <<  5) >> 23;
+					ncc_ig[0][0][base] = (int32_t)(data << 14) >> 23;
+					ncc_ib[0][0][base] = (int32_t)(data << 23) >> 23;
 					texel_lookup_dirty[0][1] = 1;
 					texel_lookup_dirty[0][9] = 1;
 				}
@@ -2201,9 +2201,9 @@ WRITE32_HANDLER( voodoo_regs_w )
 				else
 				{
 					int base = offset - (nccTable+4);
-					ncc_ir[1][0][base] = (INT32)(data <<  5) >> 23;
-					ncc_ig[1][0][base] = (INT32)(data << 14) >> 23;
-					ncc_ib[1][0][base] = (INT32)(data << 23) >> 23;
+					ncc_ir[1][0][base] = (int32_t)(data <<  5) >> 23;
+					ncc_ig[1][0][base] = (int32_t)(data << 14) >> 23;
+					ncc_ib[1][0][base] = (int32_t)(data << 23) >> 23;
 					texel_lookup_dirty[1][1] = 1;
 					texel_lookup_dirty[1][9] = 1;
 				}
@@ -2224,9 +2224,9 @@ WRITE32_HANDLER( voodoo_regs_w )
 				else
 				{
 					int base = offset - (nccTable+8);
-					ncc_qr[0][0][base] = (INT32)(data <<  5) >> 23;
-					ncc_qg[0][0][base] = (INT32)(data << 14) >> 23;
-					ncc_qb[0][0][base] = (INT32)(data << 23) >> 23;
+					ncc_qr[0][0][base] = (int32_t)(data <<  5) >> 23;
+					ncc_qg[0][0][base] = (int32_t)(data << 14) >> 23;
+					ncc_qb[0][0][base] = (int32_t)(data << 23) >> 23;
 					texel_lookup_dirty[0][1] = 1;
 					texel_lookup_dirty[0][9] = 1;
 				}
@@ -2241,9 +2241,9 @@ WRITE32_HANDLER( voodoo_regs_w )
 				else
 				{
 					int base = offset - (nccTable+8);
-					ncc_qr[1][0][base] = (INT32)(data <<  5) >> 23;
-					ncc_qg[1][0][base] = (INT32)(data << 14) >> 23;
-					ncc_qb[1][0][base] = (INT32)(data << 23) >> 23;
+					ncc_qr[1][0][base] = (int32_t)(data <<  5) >> 23;
+					ncc_qg[1][0][base] = (int32_t)(data << 14) >> 23;
+					ncc_qb[1][0][base] = (int32_t)(data << 23) >> 23;
 					texel_lookup_dirty[1][1] = 1;
 					texel_lookup_dirty[1][9] = 1;
 				}
@@ -2283,18 +2283,18 @@ WRITE32_HANDLER( voodoo_regs_w )
 			if (chips & 2)
 			{
 				int base = offset - (nccTable+16);
-				ncc_ir[0][1][base] = (INT32)(data <<  5) >> 23;
-				ncc_ig[0][1][base] = (INT32)(data << 14) >> 23;
-				ncc_ib[0][1][base] = (INT32)(data << 23) >> 23;
+				ncc_ir[0][1][base] = (int32_t)(data <<  5) >> 23;
+				ncc_ig[0][1][base] = (int32_t)(data << 14) >> 23;
+				ncc_ib[0][1][base] = (int32_t)(data << 23) >> 23;
 				texel_lookup_dirty[0][7] = 1;
 				texel_lookup_dirty[0][15] = 1;
 			}
 			if (chips & 4)
 			{
 				int base = offset - (nccTable+16);
-				ncc_ir[1][1][base] = (INT32)(data <<  5) >> 23;
-				ncc_ig[1][1][base] = (INT32)(data << 14) >> 23;
-				ncc_ib[1][1][base] = (INT32)(data << 23) >> 23;
+				ncc_ir[1][1][base] = (int32_t)(data <<  5) >> 23;
+				ncc_ig[1][1][base] = (int32_t)(data << 14) >> 23;
+				ncc_ib[1][1][base] = (int32_t)(data << 23) >> 23;
 				texel_lookup_dirty[1][7] = 1;
 				texel_lookup_dirty[1][15] = 1;
 			}
@@ -2307,18 +2307,18 @@ WRITE32_HANDLER( voodoo_regs_w )
 			if (chips & 2)
 			{
 				int base = offset - (nccTable+20);
-				ncc_qr[0][1][base] = (INT32)(data <<  5) >> 23;
-				ncc_qg[0][1][base] = (INT32)(data << 14) >> 23;
-				ncc_qb[0][1][base] = (INT32)(data << 23) >> 23;
+				ncc_qr[0][1][base] = (int32_t)(data <<  5) >> 23;
+				ncc_qg[0][1][base] = (int32_t)(data << 14) >> 23;
+				ncc_qb[0][1][base] = (int32_t)(data << 23) >> 23;
 				texel_lookup_dirty[0][7] = 1;
 				texel_lookup_dirty[0][15] = 1;
 			}
 			if (chips & 4)
 			{
 				int base = offset - (nccTable+20);
-				ncc_qr[1][1][base] = (INT32)(data <<  5) >> 23;
-				ncc_qg[1][1][base] = (INT32)(data << 14) >> 23;
-				ncc_qb[1][1][base] = (INT32)(data << 23) >> 23;
+				ncc_qr[1][1][base] = (int32_t)(data <<  5) >> 23;
+				ncc_qg[1][1][base] = (int32_t)(data << 14) >> 23;
+				ncc_qb[1][1][base] = (int32_t)(data << 23) >> 23;
 				texel_lookup_dirty[1][7] = 1;
 				texel_lookup_dirty[1][15] = 1;
 			}
@@ -2433,7 +2433,7 @@ READ32_HANDLER( voodoo_regs_r )
 
 static void lfbwrite_0(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / (FRAMEBUF_WIDTH/2);
 	int x = (offset % (FRAMEBUF_WIDTH/2)) * 2;
 	if (lfb_flipy)
@@ -2446,7 +2446,7 @@ static void lfbwrite_0(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_1(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / (FRAMEBUF_WIDTH/2);
 	int x = (offset % (FRAMEBUF_WIDTH/2)) * 2;
 	if (lfb_flipy)
@@ -2459,7 +2459,7 @@ static void lfbwrite_1(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_2(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / (FRAMEBUF_WIDTH/2);
 	int x = (offset % (FRAMEBUF_WIDTH/2)) * 2;
 	if (lfb_flipy)
@@ -2476,7 +2476,7 @@ static void lfbwrite_3(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_4(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
 	int x = offset % FRAMEBUF_WIDTH;
 	if (lfb_flipy)
@@ -2486,7 +2486,7 @@ static void lfbwrite_4(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_5(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
 	int x = offset % FRAMEBUF_WIDTH;
 	if (lfb_flipy)
@@ -2520,7 +2520,7 @@ static void lfbwrite_b(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_c(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
 	int x = offset % FRAMEBUF_WIDTH;
 	if (lfb_flipy)
@@ -2533,7 +2533,7 @@ static void lfbwrite_c(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_d(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
 	int x = offset % FRAMEBUF_WIDTH;
 	if (lfb_flipy)
@@ -2546,7 +2546,7 @@ static void lfbwrite_d(offs_t offset, data32_t data, data32_t mem_mask)
 
 static void lfbwrite_e(offs_t offset, data32_t data, data32_t mem_mask)
 {
-	UINT16 *buffer = *lfb_write_buffer;
+	uint16_t *buffer = *lfb_write_buffer;
 	int y = offset / FRAMEBUF_WIDTH;
 	int x = offset % FRAMEBUF_WIDTH;
 	if (lfb_flipy)
@@ -2594,9 +2594,9 @@ WRITE32_HANDLER( voodoo_framebuf_w )
 
 READ32_HANDLER( voodoo_framebuf_r )
 {
-	UINT16 *buffer = *lfb_read_buffer;
+	uint16_t *buffer = *lfb_read_buffer;
 /*
-	UINT32 result;
+	uint32_t result;
 	if (lfb_flipy)
 	{
 		int y = offset / (1024/4);
@@ -2607,7 +2607,7 @@ READ32_HANDLER( voodoo_framebuf_r )
 */
 	int y = offset / (FRAMEBUF_WIDTH/2);
 	int x = (offset % (FRAMEBUF_WIDTH/2)) * 2;
-	UINT32 result;
+	uint32_t result;
 	if (lfb_flipy)
 		y = inverted_yorigin - y;
 	result = buffer[y * FRAMEBUF_WIDTH + x] | (buffer[y * FRAMEBUF_WIDTH + x + 1] << 16);
@@ -2667,7 +2667,7 @@ WRITE32_HANDLER( voodoo_textureram_w )
 	
 	if (trex_format[trex] < 8)
 	{
-		UINT8 *dest = textureram[trex];
+		uint8_t *dest = textureram[trex];
 		if (voodoo_regs[0x100/*trex_base -- breaks gauntleg */ + textureMode] & 0x80000000)
 			tbaseaddr += t * twidth + ((s << 1) & 0xfc);
 		else
@@ -2679,7 +2679,7 @@ WRITE32_HANDLER( voodoo_textureram_w )
 	}
 	else
 	{
-		UINT16 *dest = (UINT16 *)textureram[trex];
+		uint16_t *dest = (uint16_t *)textureram[trex];
 		tbaseaddr /= 2;
 		tbaseaddr += t * twidth + s;
 		dest[BYTE_XOR_LE(tbaseaddr + 0)] = (data >> 0) & 0xffff;

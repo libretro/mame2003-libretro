@@ -129,8 +129,8 @@ DrawQuad( struct mame_bitmap *pBitmap, struct VerTex *verTex, int vi[4], unsigne
 static void
 BlitPolyObject( struct mame_bitmap *bitmap, int code, double M[4][4] )
 {
-	const INT32 *pPointData = (INT32 *)memory_region( REGION_USER2 );
-	INT32 masterAddr = pPointData[code];
+	const int32_t *pPointData = (int32_t *)memory_region( REGION_USER2 );
+	int32_t masterAddr = pPointData[code];
 	struct VerTex vertex[MAX_VERTEX];
 	int vi[4];
 
@@ -145,14 +145,14 @@ BlitPolyObject( struct mame_bitmap *bitmap, int code, double M[4][4] )
 
 	for(;;)
 	{
-		INT32 subAddr = pPointData[masterAddr++];
+		int32_t subAddr = pPointData[masterAddr++];
 		if( subAddr<0 )
 		{
 			break;
 		}
 		else
 		{
-			INT32 vertexCount, surfaceCount;
+			int32_t vertexCount, surfaceCount;
 			unsigned color;
 			int count;
 
@@ -168,9 +168,9 @@ BlitPolyObject( struct mame_bitmap *bitmap, int code, double M[4][4] )
 			}
 			for( count=0; count<vertexCount; count++ )
 			{
-				double x = (INT16)(pPointData[subAddr++]&0xffff);
-				double y = (INT16)(pPointData[subAddr++]&0xffff);
-				double z = (INT16)(pPointData[subAddr++]&0xffff);
+				double x = (int16_t)(pPointData[subAddr++]&0xffff);
+				double y = (int16_t)(pPointData[subAddr++]&0xffff);
+				double z = (int16_t)(pPointData[subAddr++]&0xffff);
 				struct VerTex *pVertex = &vertex[count];
 				pVertex->x = M[0][0]*x + M[1][0]*y + M[2][0]*z + M[3][0];
 				pVertex->y = M[0][1]*x + M[1][1]*y + M[2][1]*z + M[3][1];
@@ -204,7 +204,7 @@ BlitPolyObject( struct mame_bitmap *bitmap, int code, double M[4][4] )
 } /* BlitPolyObject */
 
 static void
-ApplyRotation( const INT16 *pSource, double M[4][4] )
+ApplyRotation( const int16_t *pSource, double M[4][4] )
 {
 	struct RotParam param;
 	param.thx_sin = pSource[0]/(double)0x7fff;
@@ -218,16 +218,16 @@ ApplyRotation( const INT16 *pSource, double M[4][4] )
 } /* ApplyRotation */
 
 static void
-ApplyCameraTransformation( const INT16 *pCamera, double M[4][4] )
+ApplyCameraTransformation( const int16_t *pCamera, double M[4][4] )
 {
 	ApplyRotation( &pCamera[0x40/2], M );
 } /* ApplyCameraTransformation */
 
 static int
-DrawPolyObject0( struct mame_bitmap *bitmap, const INT16 *pDSPRAM, const INT16 *pCamera )
+DrawPolyObject0( struct mame_bitmap *bitmap, const int16_t *pDSPRAM, const int16_t *pCamera )
 {
-	INT16 code = 1 + pDSPRAM[1];
-	//INT16 window = pDSPRAM[2];
+	int16_t code = 1 + pDSPRAM[1];
+	//int16_t window = pDSPRAM[2];
 	double M[4][4];
 
 	matrix3d_Identity( M );
@@ -238,10 +238,10 @@ DrawPolyObject0( struct mame_bitmap *bitmap, const INT16 *pDSPRAM, const INT16 *
 } /* DrawPolyObject0 */
 
 static int
-DrawPolyObject1( struct mame_bitmap *bitmap, const INT16 *pDSPRAM, const INT16 *pCamera )
+DrawPolyObject1( struct mame_bitmap *bitmap, const int16_t *pDSPRAM, const int16_t *pCamera )
 {
-	INT16 code = 1 + pDSPRAM[1];
-	//INT16 window = pDSPRAM[2];
+	int16_t code = 1 + pDSPRAM[1];
+	//int16_t window = pDSPRAM[2];
 	double M[4][4];
 
 	matrix3d_Identity( M );
@@ -261,8 +261,8 @@ static void
 DrawPolygons( struct mame_bitmap *bitmap )
 {
 	int i,size;
-	const INT16 *pCamera;
-	const INT16 *pDSPRAM;
+	const int16_t *pCamera;
+	const int16_t *pDSPRAM;
 	int bDebug;
 
 	if( namcos21_dspram16[0x200/2]==0 ) return; /* hack */
@@ -273,11 +273,11 @@ DrawPolygons( struct mame_bitmap *bitmap )
 
 	if( namcos21_dspram16[0x206/2]&1 ) /* work page select */
 	{
-		pDSPRAM = (INT16 *)&namcos21_dspram16[0xc000/2];
+		pDSPRAM = (int16_t *)&namcos21_dspram16[0xc000/2];
 	}
 	else
 	{
-		pDSPRAM = (INT16 *)&namcos21_dspram16[0x8000/2];
+		pDSPRAM = (int16_t *)&namcos21_dspram16[0x8000/2];
 	}
 
 /*
@@ -307,7 +307,7 @@ DrawPolygons( struct mame_bitmap *bitmap )
 		for( i=0; i<0x30*1; i++ )
 		{
 			if( (i&0x7)==0 ) logerror( "\n\t%04x: ",i*2 );
-			logerror( "%04x ", (UINT16)pDSPRAM[i] );
+			logerror( "%04x ", (uint16_t)pDSPRAM[i] );
 		}
 		logerror( "\n" );
 	}
@@ -361,7 +361,7 @@ DrawPolygons( struct mame_bitmap *bitmap )
 			break;
 
 		case 0x100: /* special end-marker for CyberSled? */
-		case (INT16)0xffff: /* end-of-list marker */
+		case (int16_t)0xffff: /* end-of-list marker */
 			if( bDebug )
 			{
 				logerror( "\n\n" );
@@ -370,9 +370,9 @@ DrawPolygons( struct mame_bitmap *bitmap )
 
 		default:
 			logerror( "***unknown obj type! %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x\n",
-				(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],
-				(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],
-				(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0],(UINT16)pDSPRAM[0]);
+				(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],
+				(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],
+				(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0],(uint16_t)pDSPRAM[0]);
 			return;
 		}
 		if( mbDspError ) return;
@@ -381,7 +381,7 @@ DrawPolygons( struct mame_bitmap *bitmap )
 			logerror( "obj: ");
 			for( i=0; i<size; i++ )
 			{
-				logerror( "%04x ", (UINT16)pDSPRAM[i] );
+				logerror( "%04x ", (uint16_t)pDSPRAM[i] );
 			}
 			logerror( "\n" );
 		}
@@ -410,7 +410,7 @@ static void
 update_palette( void )
 {
 	int i;
-	INT16 data1,data2;
+	int16_t data1,data2;
 	int r,g,b;
 
 	/*

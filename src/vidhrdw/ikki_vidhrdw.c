@@ -10,7 +10,7 @@ Video hardware driver by Uki
 
 #include "vidhrdw/generic.h"
 
-static UINT8 ikki_flipscreen, ikki_scroll[2];
+static uint8_t ikki_flipscreen, ikki_scroll[2];
 
 PALETTE_INIT( ikki )
 {

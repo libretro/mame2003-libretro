@@ -54,8 +54,8 @@ static int mbDumpScene; /* used for debugging */
 static int mbSuperSystem22; /* used to conditionally support Super System22-specific features */
 
 /* mWindowPri and mMasterBias reflect modal polygon rendering parameters */
-static INT32 mWindowPri;
-static INT32 mMasterBias;
+static int32_t mWindowPri;
+static int32_t mMasterBias;
 
 #define SPRITERAM_SIZE (0x9b0000-0x980000)
 
@@ -74,10 +74,10 @@ static const data8_t *mpPolyH;
 static const data8_t *mpPolyM;
 static const data8_t *mpPolyL;
 
-static INT32
-GetPolyData( INT32 addr )
+static int32_t
+GetPolyData( int32_t addr )
 {
-	INT32 result;
+	int32_t result;
 	if( addr<0 || addr>=mPtRomSize )
 	{
 		return -1; /* HACK */
@@ -151,7 +151,7 @@ mydrawgfxzoom(
 	struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 	unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 	const struct rectangle *clip,int transparency,int transparent_color,
-	int scalex, int scaley, INT32 zcoord )
+	int scalex, int scaley, int32_t zcoord )
 {
 	struct rectangle myclip;
 	if (!scalex || !scaley) return;
@@ -172,7 +172,7 @@ mydrawgfxzoom(
 	if( gfx && gfx->colortable )
 	{
 		const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
-		UINT8 *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
+		uint8_t *source_base = gfx->gfxdata + (code % gfx->total_elements) * gfx->char_modulo;
 		int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 		int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
 		if (sprite_screen_width && sprite_screen_height)
@@ -231,9 +231,9 @@ mydrawgfxzoom(
 				int y;
 				for( y=sy; y<ey; y++ )
 				{
-					INT32 *pZBuf = namco_zbuffer + NAMCOS22_SCREEN_WIDTH*y;
-					UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-					UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+					int32_t *pZBuf = namco_zbuffer + NAMCOS22_SCREEN_WIDTH*y;
+					uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+					uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 					int x, x_index = x_index_base;
 					for( x=sx; x<ex; x++ )
 					{
@@ -330,7 +330,7 @@ DrawSprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 	pPal = &spriteram32[0x20000/4]+num_sprites*2;
 	for( i=0; i<num_sprites; i++ )
 	{
-		INT32 zcoord = pPal[0];
+		int32_t zcoord = pPal[0];
 		color = pPal[1]>>16;
 		/* pPal[1]&0xffff  CZ (color z - for depth cueing) */
 
@@ -486,7 +486,7 @@ DrawTextLayer( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 		{
 			if( cgdirty[i] )
 			{
-				decodechar( Machine->gfx[NAMCOS22_ALPHA_GFX],i,(UINT8 *)namcos22_cgram,&cg_layout );
+				decodechar( Machine->gfx[NAMCOS22_ALPHA_GFX],i,(uint8_t *)namcos22_cgram,&cg_layout );
 				cgdirty[i] = 0;
 			}
 		}
@@ -498,21 +498,21 @@ DrawTextLayer( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 /*********************************************************************************************/
 
 static void
-ApplyRotation( const INT32 *pSource, double M[4][4] )
+ApplyRotation( const int32_t *pSource, double M[4][4] )
 {
 	struct RotParam param;
-	param.thx_sin = ((INT16)pSource[0])/(double)0x7fff;
-	param.thx_cos = ((INT16)pSource[1])/(double)0x7fff;
-	param.thy_sin = ((INT16)pSource[2])/(double)0x7fff;
-	param.thy_cos = ((INT16)pSource[3])/(double)0x7fff;
-	param.thz_sin = ((INT16)pSource[4])/(double)0x7fff;
-	param.thz_cos = ((INT16)pSource[5])/(double)0x7fff;
-	param.rolt = (INT16)pSource[6];
+	param.thx_sin = ((int16_t)pSource[0])/(double)0x7fff;
+	param.thx_cos = ((int16_t)pSource[1])/(double)0x7fff;
+	param.thy_sin = ((int16_t)pSource[2])/(double)0x7fff;
+	param.thy_cos = ((int16_t)pSource[3])/(double)0x7fff;
+	param.thz_sin = ((int16_t)pSource[4])/(double)0x7fff;
+	param.thz_cos = ((int16_t)pSource[5])/(double)0x7fff;
+	param.rolt = (int16_t)pSource[6];
 	namcos3d_Rotate( M, &param );
 } /* ApplyRotation */
 
-static const INT32 *
-LoadMatrix( const INT32 *pSource, double M[4][4] )
+static const int32_t *
+LoadMatrix( const int32_t *pSource, double M[4][4] )
 {
 	double temp[4][4];
 	int r,c;
@@ -520,7 +520,7 @@ LoadMatrix( const INT32 *pSource, double M[4][4] )
 	matrix3d_Identity( M );
 	for(;;)
 	{
-		INT16 opcode = *pSource++;
+		int16_t opcode = *pSource++;
 		switch( opcode )
 		{
 		case 0x0000: /* translate */
@@ -613,7 +613,7 @@ ResetWindow( void )
 }
 
 static void
-SetupWindow( const INT32 *pWindow, int which )
+SetupWindow( const int32_t *pWindow, int which )
 {
 	if( which!=mPrevWindow )
 	{ /* only recompute if we're dealing with a new window */
@@ -653,20 +653,20 @@ SetupWindow( const INT32 *pWindow, int which )
 		matrix3d_Identity( mWindowTransform.M );
 		ApplyRotation( &pWindow[1], mWindowTransform.M );
 
-		mCamera.power   = (INT16)(pWindow[0x20/4])/(double)0xff;
-		mCamera.ambient = (INT16)(pWindow[0x24/4])/(double)0xff;
-		mCamera.x       = (INT16)(pWindow[0x28/4])/(double)0x7fff;
-		mCamera.y       = (INT16)(pWindow[0x2c/4])/(double)0x7fff;
-		mCamera.z       = (INT16)(pWindow[0x30/4])/(double)0x7fff;
+		mCamera.power   = (int16_t)(pWindow[0x20/4])/(double)0xff;
+		mCamera.ambient = (int16_t)(pWindow[0x24/4])/(double)0xff;
+		mCamera.x       = (int16_t)(pWindow[0x28/4])/(double)0x7fff;
+		mCamera.y       = (int16_t)(pWindow[0x2c/4])/(double)0x7fff;
+		mCamera.z       = (int16_t)(pWindow[0x30/4])/(double)0x7fff;
 	}
 } /* SetupWindow */
 
 static void
-BlitPolyDirect( struct mame_bitmap *pBitmap, const INT32 *pSource, double m[4][4] )
+BlitPolyDirect( struct mame_bitmap *pBitmap, const int32_t *pSource, double m[4][4] )
 {
-	INT32 zcode;
+	int32_t zcode;
 	unsigned color = (pSource[1]<<8)&0x7f00;
-	INT32 flags = pSource[3];
+	int32_t flags = pSource[3];
 	int tpage = pSource[4];
 	double zmin, zmax, zrep;
 	struct VerTex v[5];
@@ -697,7 +697,7 @@ BlitPolyDirect( struct mame_bitmap *pBitmap, const INT32 *pSource, double m[4][4
 		pVerTex->z = 1000;
 	}
 	zrep = (zmin+zmax)/2.0;
-	zcode = pSource[0]+(INT32)zrep;
+	zcode = pSource[0]+(int32_t)zrep;
 
 	mCamera.zoom = 1000; /* compensate for fake z coordinate */
 	mCamera.cx = 640/2;
@@ -718,8 +718,8 @@ BlitQuadHelper(
 		unsigned color,
 		unsigned addr,
 		double m[4][4],
-		INT32 zcode,
-		INT32 flags )
+		int32_t zcode,
+		int32_t flags )
 {
 	double zmin, zmax, zrep;
 	double kScale = 0.5;
@@ -769,8 +769,8 @@ BlitQuadHelper(
 
 	if( namcos22_gametype == NAMCOS22_PROP_CYCLE )
 	{ /* for now, assume all polygons use relative priority */
-		INT32 dw = (zcode&0x1c0000)>>18; /* window (master)priority bias */
-		INT32 dz = (zcode&0x03ffff); /* bias for representative z coordinate */
+		int32_t dw = (zcode&0x1c0000)>>18; /* window (master)priority bias */
+		int32_t dz = (zcode&0x03ffff); /* bias for representative z coordinate */
 
 		if( dw&4 )
 		{
@@ -784,7 +784,7 @@ BlitQuadHelper(
 		{
 			dz |= ~0x03ffff; /* sign extend */
 		}
-		dz += (INT32)zrep;
+		dz += (int32_t)zrep;
 		dz += mMasterBias;
 		if( dz<0 ) dz = 0; else if( dz>0x1fffff ) dz = 0x1fffff; /* cap it at min/max */
 
@@ -801,14 +801,14 @@ BlitQuadHelper(
 		 * 3b7740
 		 * --11.1011.0111.0111.0100.0000
 		 */
-		INT32 dw = mWindowPri<<24;
-		INT32 dz = zcode;
-		dz += (INT32)zrep;
+		int32_t dw = mWindowPri<<24;
+		int32_t dz = zcode;
+		dz += (int32_t)zrep;
 		zcode = dw|dz;
 	}
 	else
 	{
-		zcode = 0x10000 + (INT32)zrep;
+		zcode = 0x10000 + (int32_t)zrep;
 	}
 
 	namcos22_BlitTri( pBitmap, &v[0], color, zcode, flags, &mCamera ); /* 0,1,2 */
@@ -818,14 +818,14 @@ BlitQuadHelper(
 
 
 static void
-BlitQuads( struct mame_bitmap *pBitmap, INT32 addr, double m[4][4], INT32 base )
+BlitQuads( struct mame_bitmap *pBitmap, int32_t addr, double m[4][4], int32_t base )
 {
-//	INT32 start = addr;
-	INT32 size = GetPolyData(addr++);
-	INT32 finish = addr + (size&0xff);
-	INT32 flags;
-	INT32 color;
-	INT32 bias;
+//	int32_t start = addr;
+	int32_t size = GetPolyData(addr++);
+	int32_t finish = addr + (size&0xff);
+	int32_t flags;
+	int32_t color;
+	int32_t bias;
 
 	while( addr<finish )
 	{
@@ -921,7 +921,7 @@ BlitPolyObject( struct mame_bitmap *pBitmap, int code, double m[4][4] )
 
 	for(;;)
 	{
-		INT32 addr2 = GetPolyData(addr1++);
+		int32_t addr2 = GetPolyData(addr1++);
 		if( addr2<0 )
 		{
 			break;
@@ -1016,12 +1016,12 @@ DrawPolygons( struct mame_bitmap *bitmap )
 	int bShowOnly = 0;
 
 	double M[4][4];
-	UINT16 code, mode;
-	UINT16 window = 0;
-	INT32 xpos,ypos,zpos;
+	uint16_t code, mode;
+	uint16_t window = 0;
+	int32_t xpos,ypos,zpos;
 	int i, iSource0, iSource1, iTarget;
-	const INT32 *pSource, *pDebug;
-	const INT32 *pWindow;
+	const int32_t *pSource, *pDebug;
+	const int32_t *pWindow;
 
 	pSource=NULL;
 	pWindow=NULL;
@@ -1073,13 +1073,13 @@ DrawPolygons( struct mame_bitmap *bitmap )
 	switch( namcos22_polygonram[0x10/4]&1 )
 	{
 	case 0:
-		pWindow = (INT32 *)&namcos22_polygonram[0x10000/4];
-		pSource = (INT32 *)&namcos22_polygonram[0x10400/4];
+		pWindow = (int32_t *)&namcos22_polygonram[0x10000/4];
+		pSource = (int32_t *)&namcos22_polygonram[0x10400/4];
 		break;
 
 	case 1:
-		pWindow = (INT32 *)&namcos22_polygonram[0x18000/4];
-		pSource = (INT32 *)&namcos22_polygonram[0x18400/4];
+		pWindow = (int32_t *)&namcos22_polygonram[0x18000/4];
+		pSource = (int32_t *)&namcos22_polygonram[0x18400/4];
 		break;
 
 	default:
@@ -1413,7 +1413,7 @@ VIDEO_START( namcos22s )
 			memory_region(REGION_GFX2)	/* texture */
 		) == 0 )
 		{
-			struct GfxElement *pGfx = decodegfx( (UINT8 *)namcos22_cgram,&cg_layout );
+			struct GfxElement *pGfx = decodegfx( (uint8_t *)namcos22_cgram,&cg_layout );
 			if( pGfx )
 			{
 				Machine->gfx[NAMCOS22_ALPHA_GFX] = pGfx;

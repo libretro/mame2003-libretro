@@ -23,16 +23,16 @@
 
 struct tms34061_data
 {
-	UINT16			regs[TMS34061_REGCOUNT];
-	UINT16			xmask;
-	UINT8			yshift;
-	UINT32			vrammask;
-	UINT8 *			vram;
-	UINT8 *			latchram;
-	UINT8			latchdata;
-	UINT8 *			shiftreg;
-	UINT8 *			dirty;
-	UINT8			dirtyshift;
+	uint16_t			regs[TMS34061_REGCOUNT];
+	uint16_t			xmask;
+	uint8_t			yshift;
+	uint32_t			vrammask;
+	uint8_t *			vram;
+	uint8_t *			latchram;
+	uint8_t			latchdata;
+	uint8_t *			shiftreg;
+	uint8_t *			dirty;
+	uint8_t			dirtyshift;
 	void *			timer;
 	struct tms34061_interface intf;
 };
@@ -168,7 +168,7 @@ static void tms34061_interrupt(int param)
 static WRITE_HANDLER( register_w )
 {
 	int regnum = offset >> 2;
-	UINT16 oldval = tms34061.regs[regnum];
+	uint16_t oldval = tms34061.regs[regnum];
 
 	/* store the hi/lo half */
 	if (offset & 0x02)

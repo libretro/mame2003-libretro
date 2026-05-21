@@ -34,7 +34,7 @@ WRITE16_HANDLER( taotaido_sprite_character_bank_select_w )
 /* sprites are like the other video system / psikyo games, we can merge this with aerofgt and plenty of other
    things eventually */
 
-static void taotaido_drawsprite( UINT16 spriteno, struct mame_bitmap *bitmap, const struct rectangle *cliprect )
+static void taotaido_drawsprite( uint16_t spriteno, struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	/*- SPR RAM Format -**
 
@@ -188,7 +188,7 @@ static void taotaido_bg_tile_info(int tile_index)
 			0)
 }
 
-UINT32 taotaido_tilemap_scan_rows( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t taotaido_tilemap_scan_rows( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return row*0x40 + (col&0x3f) + ((col&0x40)<<6);

@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 
-static pen_t (*map_color)(UINT8 x, UINT8 y);
+static pen_t (*map_color)(uint8_t x, uint8_t y);
 
 static int color_registers[3];
 static int background_enable;
@@ -24,7 +24,7 @@ WRITE_HANDLER( cosmic_color_register_w )
 }
 
 
-static pen_t panic_map_color(UINT8 x, UINT8 y)
+static pen_t panic_map_color(uint8_t x, uint8_t y)
 {
 	offs_t offs;
 	pen_t pen;
@@ -39,7 +39,7 @@ static pen_t panic_map_color(UINT8 x, UINT8 y)
 	return pen & 0x0f;
 }
 
-static pen_t cosmica_map_color(UINT8 x, UINT8 y)
+static pen_t cosmica_map_color(uint8_t x, uint8_t y)
 {
 	offs_t offs;
 	pen_t pen;
@@ -54,7 +54,7 @@ static pen_t cosmica_map_color(UINT8 x, UINT8 y)
 	return pen & 0x07;
 }
 
-static pen_t cosmicg_map_color(UINT8 x, UINT8 y)
+static pen_t cosmicg_map_color(uint8_t x, uint8_t y)
 {
 	offs_t offs;
 	pen_t pen;
@@ -68,7 +68,7 @@ static pen_t cosmicg_map_color(UINT8 x, UINT8 y)
 	return pen & 0x0f;
 }
 
-static pen_t magspot2_map_color(UINT8 x, UINT8 y)
+static pen_t magspot2_map_color(uint8_t x, uint8_t y)
 {
 	offs_t offs;
 	pen_t pen;
@@ -269,8 +269,8 @@ static void draw_bitmap(struct mame_bitmap *bitmap)
 		if (data != 0)	/* optimization, not absolutely neccessary */
 		{
 			int i;
-			UINT8 x = offs << 3;
-			UINT8 y = offs >> 5;
+			uint8_t x = offs << 3;
+			uint8_t y = offs >> 5;
 
 			pen_t pen = Machine->pens[map_color(x, y)];
 
@@ -339,8 +339,8 @@ static void draw_sprites(struct mame_bitmap *bitmap, int color_mask, int extra_s
 
 static void cosmica_draw_starfield(struct mame_bitmap *bitmap)
 {
-	UINT8 y = 0;
-	UINT8 map = 0;
+	uint8_t y = 0;
+	uint8_t map = 0;
 	data8_t *PROM = memory_region(REGION_USER2);
 
 
@@ -350,11 +350,11 @@ static void cosmica_draw_starfield(struct mame_bitmap *bitmap)
 		int vb  = (y >> 1) & 0x01;
 
 
-		UINT8 x = 0;
+		uint8_t x = 0;
 
 		while (1)
 		{
-			UINT8 x1;
+			uint8_t x1;
 			int hc, hb_;
 
 
@@ -398,19 +398,19 @@ static void cosmica_draw_starfield(struct mame_bitmap *bitmap)
 
 static void devzone_draw_grid(struct mame_bitmap *bitmap)
 {
-	UINT8 y;
+	uint8_t y;
 	data8_t *horz_PROM = memory_region(REGION_USER2);
 	data8_t *vert_PROM = memory_region(REGION_USER3);
 	offs_t horz_addr = 0;
 
-	UINT8 count = 0;
-	UINT8 horz_data = 0;
-	UINT8 vert_data;
+	uint8_t count = 0;
+	uint8_t horz_data = 0;
+	uint8_t vert_data;
 
 
 	for (y = 32; y < 224; y++)
 	{
-		UINT8 x = 0;
+		uint8_t x = 0;
 
 
 		while (1)
@@ -467,8 +467,8 @@ static void devzone_draw_grid(struct mame_bitmap *bitmap)
 
 static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 {
-	UINT8 y = 0;
-	UINT8 water = cpu_getcurrentframe();
+	uint8_t y = 0;
+	uint8_t water = cpu_getcurrentframe();
 	data8_t *PROM = memory_region(REGION_USER2);
 
 
@@ -519,7 +519,7 @@ static void nomnlnd_draw_background(struct mame_bitmap *bitmap)
 		int vc_ = (y >> 6) & 0x01;
 		int vd_ =  y >> 7;
 
-		UINT8 x = 0;
+		uint8_t x = 0;
 
 
 		while (1)

@@ -13,7 +13,7 @@
 
 
 
-UINT8 *iremm15_chargen;
+uint8_t *iremm15_chargen;
 static int bottomline;
 
 
@@ -111,9 +111,9 @@ VIDEO_UPDATE( skychut )
 
 
 static void iremm15_drawgfx(struct mame_bitmap *bitmap, int ch,
-							INT16 color, INT16 back, int x, int y)
+							int16_t color, int16_t back, int x, int y)
 {
-	UINT8 mask;
+	uint8_t mask;
 	int i;
 
 	for (i=0; i<8; i++, y++) {

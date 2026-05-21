@@ -113,7 +113,7 @@ VIDEO_UPDATE( capbowl )
 	for (y = Machine->visible_area.min_y; y <= Machine->visible_area.max_y; y++)
 		if (state.dirty[y])
 		{
-			UINT8 *src = &state.vram[256 * y];
+			uint8_t *src = &state.vram[256 * y];
 
 			/* update the palette */
 			for (x = 0; x < 16; x++)
@@ -129,9 +129,9 @@ VIDEO_UPDATE( capbowl )
 	/* now regenerate the bitmap */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *src = &state.vram[256 * y + 32 + cliprect->min_x / 2];
-		UINT8 scanline[400];
-		UINT8 *dst = scanline;
+		uint8_t *src = &state.vram[256 * y + 32 + cliprect->min_x / 2];
+		uint8_t scanline[400];
+		uint8_t *dst = scanline;
 
 		/* expand row to 8bpp */
 		for (x = 0; x < halfwidth; x++)

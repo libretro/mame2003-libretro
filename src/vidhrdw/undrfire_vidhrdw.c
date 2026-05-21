@@ -5,7 +5,7 @@
 #define TC0100SCN_GFX_NUM 2
 #define TC0480SCP_GFX_NUM 1
 
-UINT16 undrfire_rotate_ctrl[8];
+uint16_t undrfire_rotate_ctrl[8];
 
 struct tempsprite
 {
@@ -236,12 +236,12 @@ logerror("Sprite number %04x had %02x invalid chunks\n",tilenum,bad_chunks);
 
 VIDEO_UPDATE( undrfire )
 {
-	UINT8 layer[5];
-	UINT8 pivlayer[3];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t pivlayer[3];
+	uint16_t priority;
 
 #ifdef MAME_DEBUG
-	static UINT8 dislayer[6];	/* Layer toggles to help get layers correct */
+	static uint8_t dislayer[6];	/* Layer toggles to help get layers correct */
 #endif
 
 #ifdef MAME_DEBUG

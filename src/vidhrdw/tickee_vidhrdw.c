@@ -106,9 +106,9 @@ VIDEO_START( tickee )
 VIDEO_UPDATE( tickee )
 {
 	int v, h, width, xoffs, beamx, beamy;
-	UINT8 *base1 = (UINT8 *)tickee_vram;
+	uint8_t *base1 = (uint8_t *)tickee_vram;
 	pen_t pen_lookup[256];
-	UINT32 offset;
+	uint32_t offset;
 
 	/* fill out the pen array based on the palette bank */
 	for (h = 0; h < 256; h++)
@@ -126,7 +126,7 @@ VIDEO_UPDATE( tickee )
 	/* loop over rows */
 	for (v = cliprect->min_y; v <= cliprect->max_y; v++)
 	{
-		UINT8 scanline[512];
+		uint8_t scanline[512];
 
 		/* extract the scanline to account for endianness */
 		for (h = 0; h < width; h++)

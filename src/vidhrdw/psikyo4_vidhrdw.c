@@ -31,13 +31,13 @@ HgKairak: 86010000 1f201918 a0000000 Large Screen
 
 #define DUAL_SCREEN 1 /* Display both screens simultaneously if 1, change in driver too */
 
-static UINT32 screen; /* for PS4 games when DUAL_SCREEN=0 */
+static uint32_t screen; /* for PS4 games when DUAL_SCREEN=0 */
 
 /* defined in drivers/psikyo4.c */
 extern data32_t *bgpen_1, *bgpen_2, *ps4_io_select, *psikyo4_vidregs;
 
 /* --- SPRITES --- */
-static void psikyo4_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT32 scr )
+static void psikyo4_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint32_t scr )
 {
 	/*- Sprite Format 0x0000 - 0x2bff -**
 

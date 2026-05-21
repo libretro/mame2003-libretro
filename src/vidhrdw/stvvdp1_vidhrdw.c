@@ -208,7 +208,7 @@ why they would want to */
 
 extern data32_t* stv_vdp2_cram;
 
-static INLINE void drawpixel(UINT16 *dest, int patterndata, int offsetcnt)
+static INLINE void drawpixel(uint16_t *dest, int patterndata, int offsetcnt)
 {
 	int pix,mode,transmask;
 	data8_t* gfxdata = memory_region(REGION_GFX2);
@@ -337,15 +337,15 @@ static INLINE void drawpixel(UINT16 *dest, int patterndata, int offsetcnt)
 enum { FRAC_SHIFT = 16 };
 
 struct spoint {
-	INT32 x, y;
-	INT32 u, v;
+	int32_t x, y;
+	int32_t u, v;
 };
 
 static void vdp1_fill_slope(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int patterndata, int xsize,
-							INT32 x1, INT32 x2, INT32 sl1, INT32 sl2, INT32 *nx1, INT32 *nx2,
-							INT32 u1, INT32 u2, INT32 slu1, INT32 slu2, INT32 *nu1, INT32 *nu2,
-							INT32 v1, INT32 v2, INT32 slv1, INT32 slv2, INT32 *nv1, INT32 *nv2,
-							INT32 _y1, INT32 y2)
+							int32_t x1, int32_t x2, int32_t sl1, int32_t sl2, int32_t *nx1, int32_t *nx2,
+							int32_t u1, int32_t u2, int32_t slu1, int32_t slu2, int32_t *nu1, int32_t *nu2,
+							int32_t v1, int32_t v2, int32_t slv1, int32_t slv2, int32_t *nv1, int32_t *nv2,
+							int32_t _y1, int32_t y2)
 {
 	if(_y1 > cliprect->max_y)
 		return;
@@ -376,7 +376,7 @@ static void vdp1_fill_slope(struct mame_bitmap *bitmap, const struct rectangle *
 	}
 
 	if(x1 > x2 || (x1==x2 && sl1 > sl2)) {
-		INT32 t, *tp;
+		int32_t t, *tp;
 		t = x1;
 		x1 = x2;
 		x2 = t;
@@ -410,11 +410,11 @@ static void vdp1_fill_slope(struct mame_bitmap *bitmap, const struct rectangle *
 
 	while(_y1 < y2) {
 		if(_y1 >= cliprect->min_y) {
-			INT32 slux = 0, slvx = 0;
+			int32_t slux = 0, slvx = 0;
 			int xx1 = x1>>FRAC_SHIFT;
 			int xx2 = x2>>FRAC_SHIFT;
-			INT32 u = u1;
-			INT32 v = v1;
+			int32_t u = u1;
+			int32_t v = v1;
 			if(xx1 != xx2) {
 				int delta = xx2-xx1;
 				slux = (u2-u1)/delta;
@@ -431,7 +431,7 @@ static void vdp1_fill_slope(struct mame_bitmap *bitmap, const struct rectangle *
 					xx2 = cliprect->max_x;
 
 				while(xx1 <= xx2) {
-					drawpixel(((UINT16 *)(bitmap->line[_y1]))+xx1,
+					drawpixel(((uint16_t *)(bitmap->line[_y1]))+xx1,
 							  patterndata,
 							  (v>>FRAC_SHIFT)*xsize+(u>>FRAC_SHIFT));
 					xx1++;
@@ -457,8 +457,8 @@ static void vdp1_fill_slope(struct mame_bitmap *bitmap, const struct rectangle *
 	*nv2 = v2;
 }
 
-static void vdp1_fill_line(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int patterndata, int xsize, INT32 y,
-						   INT32 x1, INT32 x2, INT32 u1, INT32 u2, INT32 v1, INT32 v2)
+static void vdp1_fill_line(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int patterndata, int xsize, int32_t y,
+						   int32_t x1, int32_t x2, int32_t u1, int32_t u2, int32_t v1, int32_t v2)
 {
 	int xx1 = x1>>FRAC_SHIFT;
 	int xx2 = x2>>FRAC_SHIFT;
@@ -467,9 +467,9 @@ static void vdp1_fill_line(struct mame_bitmap *bitmap, const struct rectangle *c
 		return;
 
 	if(xx1 <= cliprect->max_x || xx2 >= cliprect->min_x) {
-		INT32 slux = 0, slvx = 0;
-		INT32 u = u1;
-		INT32 v = v1;
+		int32_t slux = 0, slvx = 0;
+		int32_t u = u1;
+		int32_t v = v1;
 		if(xx1 != xx2) {
 			int delta = xx2-xx1;
 			slux = (u2-u1)/delta;
@@ -485,7 +485,7 @@ static void vdp1_fill_line(struct mame_bitmap *bitmap, const struct rectangle *c
 			xx2 = cliprect->max_x;
 
 		while(xx1 <= xx2) {
-			drawpixel(((UINT16 *)(bitmap->line[y]))+xx1,
+			drawpixel(((uint16_t *)(bitmap->line[y]))+xx1,
 					  patterndata,
 					  (v>>FRAC_SHIFT)*xsize+(u>>FRAC_SHIFT));
 			xx1++;
@@ -497,7 +497,7 @@ static void vdp1_fill_line(struct mame_bitmap *bitmap, const struct rectangle *c
 
 static void vdp1_fill_quad(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int patterndata, int xsize, const struct spoint *q)
 {
-	INT32 sl1, sl2, slu1, slu2, slv1, slv2, cury, limy, x1, x2, u1, u2, v1, v2, delta;
+	int32_t sl1, sl2, slu1, slu2, slv1, slv2, cury, limy, x1, x2, u1, u2, v1, v2, delta;
 	int pmin, pmax, i, ps1, ps2;
 	struct spoint p[8];
 
@@ -822,7 +822,7 @@ void stv_vpd1_draw_scaled_sprite(struct mame_bitmap *bitmap, const struct rectan
 
 void stv_vpd1_draw_normal_sprite(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int sprite_type)
 {
-	UINT16 *destline;
+	uint16_t *destline;
 
 	int y, ysize, ycnt, drawypos;
 	int x, xsize, xcnt, drawxpos;
@@ -862,7 +862,7 @@ void stv_vpd1_draw_normal_sprite(struct mame_bitmap *bitmap, const struct rectan
 
 		if ((drawypos >= cliprect->min_y) && (drawypos <= cliprect->max_y))
 		{
-			destline = (UINT16 *)(bitmap->line[drawypos]);
+			destline = (uint16_t *)(bitmap->line[drawypos]);
 
 			for (xcnt = 0; xcnt != xsize; xcnt ++)
 			{

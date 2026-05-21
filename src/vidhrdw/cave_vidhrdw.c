@@ -84,7 +84,7 @@ static  int cave_spritetype2;
 struct sprite_cave {
 	int priority, flags;
 
-	const UINT8 *pen_data;	/* points to top left corner of tile data */
+	const uint8_t *pen_data;	/* points to top left corner of tile data */
 	int line_offset;
 
 	const pen_t *pal_data;
@@ -111,7 +111,7 @@ static int num_sprites;
 static struct sprite_cave *sprite_cave;
 static struct sprite_cave *sprite_table[MAX_PRIORITY][MAX_SPRITE_NUM+1];
 struct mame_bitmap *sprite_zbuf;
-static UINT16 sprite_zbuf_baseval = 0x10000-MAX_SPRITE_NUM;
+static uint16_t sprite_zbuf_baseval = 0x10000-MAX_SPRITE_NUM;
 
 static void (*get_sprite_info)(void);
 static void (*cave_sprite_draw)( int priority );
@@ -231,7 +231,7 @@ PALETTE_INIT( pwrinst2 )
 
 static INLINE void get_tile_info(int GFX, data16_t *VRAM, int TDIM, int tile_index)
 {
-	UINT32 code, color, pri, tile;
+	uint32_t code, color, pri, tile;
 
 	if ( TDIM )
 	{
@@ -279,11 +279,11 @@ void sailormn_tilebank_w( int bank )
 
 void sailormn_get_tile_info_2(int tile_index)
 {
-	UINT32 code, color, pri;
+	uint32_t code, color, pri;
 
 	if ( tiledim_2 )
 	{
-		UINT32 tile;
+		uint32_t tile;
 		tile	=	(tile_index % (512/8))/2 + ((tile_index / (512/8))/2)*(512/16);
 
 		code	=	(cave_vram_2[ tile * 2 + 0x0000/2] << 16) +
@@ -734,7 +734,7 @@ static int sprite_init_cave(void)
 	blit.origin_x = 0;
 	blit.origin_y = 0;
 	blit.baseaddr = bitmap->line[0];
-	blit.line_offset = ((UINT8 *)bitmap->line[1])-((UINT8 *)bitmap->line[0]);
+	blit.line_offset = ((uint8_t *)bitmap->line[1])-((uint8_t *)bitmap->line[0]);
 
 	if (cave_spritetype == 0 || cave_spritetype == 2)	// most of the games
 	{
@@ -749,7 +749,7 @@ static int sprite_init_cave(void)
 
 	if(!(sprite_zbuf = auto_bitmap_alloc_depth( Machine->drv->screen_width, Machine->drv->screen_height, 16 ))) return 1;
 	blit.baseaddr_zbuf = sprite_zbuf->line[0];
-	blit.line_offset_zbuf = ((UINT8 *)sprite_zbuf->line[1])-((UINT8 *)sprite_zbuf->line[0]);
+	blit.line_offset_zbuf = ((uint8_t *)sprite_zbuf->line[1])-((uint8_t *)sprite_zbuf->line[0]);
 
 	num_sprites = spriteram_size / 0x10 / 2;
 	if(!(sprite_cave = auto_malloc( num_sprites * sizeof(struct sprite_cave) ))) return 1;
@@ -899,7 +899,7 @@ static void do_blit_zoom16_cave( const struct sprite_cave *sprite ){
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
-		UINT16 *dest = (UINT16 *)(blit.baseaddr + blit.line_offset*y1);
+		uint16_t *dest = (uint16_t *)(blit.baseaddr + blit.line_offset*y1);
 		int ycount = ycount0;
 
 		for( y=y1; y!=y2; y+=dy ){
@@ -991,10 +991,10 @@ static void do_blit_zoom16_cave_zb( const struct sprite_cave *sprite ){
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
-		UINT16 *dest = (UINT16 *)(blit.baseaddr + blit.line_offset*y1);
+		uint16_t *dest = (uint16_t *)(blit.baseaddr + blit.line_offset*y1);
 		int pitchz = blit.line_offset_zbuf*dy/2;
-		UINT16 *zbf = (UINT16 *)(blit.baseaddr_zbuf + blit.line_offset_zbuf*y1);
-		UINT16 pri_sp = (UINT16)(sprite - sprite_cave) + sprite_zbuf_baseval;
+		uint16_t *zbf = (uint16_t *)(blit.baseaddr_zbuf + blit.line_offset_zbuf*y1);
+		uint16_t pri_sp = (uint16_t)(sprite - sprite_cave) + sprite_zbuf_baseval;
 		int ycount = ycount0;
 
 		for( y=y1; y!=y2; y+=dy ){
@@ -1085,7 +1085,7 @@ static void do_blit_16_cave( const struct sprite_cave *sprite ){
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
-		UINT16 *dest = (UINT16 *)(blit.baseaddr + blit.line_offset*y1);
+		uint16_t *dest = (uint16_t *)(blit.baseaddr + blit.line_offset*y1);
 
 		pen_data+=sprite->line_offset*ycount0+xcount0;
 		for( y=y1; y!=y2; y+=dy ){
@@ -1162,10 +1162,10 @@ static void do_blit_16_cave_zb( const struct sprite_cave *sprite ){
 		int x,y;
 		unsigned char pen;
 		int pitch = blit.line_offset*dy/2;
-		UINT16 *dest = (UINT16 *)(blit.baseaddr + blit.line_offset*y1);
+		uint16_t *dest = (uint16_t *)(blit.baseaddr + blit.line_offset*y1);
 		int pitchz = blit.line_offset_zbuf*dy/2;
-		UINT16 *zbf = (UINT16 *)(blit.baseaddr_zbuf + blit.line_offset_zbuf*y1);
-		UINT16 pri_sp = (UINT16)(sprite - sprite_cave) + sprite_zbuf_baseval;
+		uint16_t *zbf = (uint16_t *)(blit.baseaddr_zbuf + blit.line_offset_zbuf*y1);
+		uint16_t pri_sp = (uint16_t)(sprite - sprite_cave) + sprite_zbuf_baseval;
 
 		pen_data+=sprite->line_offset*ycount0+xcount0;
 		for( y=y1; y!=y2; y+=dy ){
@@ -1288,7 +1288,7 @@ static void sprite_draw_donpachi_zbuf( int priority )
 static INLINE void cave_tilemap_draw(
 	struct mame_bitmap *bitmap, const struct rectangle *cliprect,
 	struct tilemap *TILEMAP, data16_t *VRAM, data16_t *VCTRL,
-	UINT32 flags, UINT32 priority, UINT32 priority2 )
+	uint32_t flags, uint32_t priority, uint32_t priority2 )
 {
 	int sx, sy, flipx, flipy, offs_x, offs_y, offs_row;
 
@@ -1411,13 +1411,13 @@ static INLINE void cave_tilemap_draw(
 	}
 }
 
-void cave_tilemap_0_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+void cave_tilemap_0_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {	 cave_tilemap_draw( bitmap, cliprect, tilemap_0, cave_vram_0, cave_vctrl_0, flags, priority, priority2 );	}
-void cave_tilemap_1_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+void cave_tilemap_1_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {	 cave_tilemap_draw( bitmap, cliprect, tilemap_1, cave_vram_1, cave_vctrl_1, flags, priority, priority2 );	}
-void cave_tilemap_2_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+void cave_tilemap_2_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {	 cave_tilemap_draw( bitmap, cliprect, tilemap_2, cave_vram_2, cave_vctrl_2, flags, priority, priority2 );	}
-void cave_tilemap_3_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+void cave_tilemap_3_draw( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {	 cave_tilemap_draw( bitmap, cliprect, tilemap_3, cave_vram_3, cave_vctrl_3, flags, priority, priority2 );	}
 
 

@@ -74,8 +74,8 @@ static void mcatadv_drawsprites ( struct mame_bitmap *bitmap, const struct recta
 	int global_x = mcatadv_vidregs[0]-0x184;
 	int global_y = mcatadv_vidregs[1]-0x1f1;
 
-	UINT16 *destline;
-	UINT8 *priline;
+	uint16_t *destline;
+	uint8_t *priline;
 
 	int xstart, xend, xinc;
 	int ystart, yend, yinc;
@@ -135,8 +135,8 @@ static void mcatadv_drawsprites ( struct mame_bitmap *bitmap, const struct recta
 				drawypos = y+ycnt-global_y;
 
 				if ((drawypos >= cliprect->min_y) && (drawypos <= cliprect->max_y)) {
-					destline = (UINT16 *)(bitmap->line[drawypos]);
-					priline = (UINT8 *)(priority_bitmap->line[drawypos]);
+					destline = (uint16_t *)(bitmap->line[drawypos]);
+					priline = (uint8_t *)(priority_bitmap->line[drawypos]);
 
 					for (xcnt = xstart; xcnt != xend; xcnt += xinc) {
 						drawxpos = x+xcnt-global_x;

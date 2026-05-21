@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 static int gfxbank;
-static UINT8 *superqix_bitmapram,*superqix_bitmapram2,*superqix_bitmapram_dirty,*superqix_bitmapram2_dirty;
+static uint8_t *superqix_bitmapram,*superqix_bitmapram2,*superqix_bitmapram_dirty,*superqix_bitmapram2_dirty;
 static struct mame_bitmap *tmpbitmap2;
 int sqix_minx,sqix_maxx,sqix_miny,sqix_maxy;
 int sqix_last_bitmap;
@@ -81,7 +81,7 @@ WRITE_HANDLER( superqix_bitmapram2_w )
 WRITE_HANDLER( superqix_0410_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	/* bits 0-1 select the tile bank */
 	if (gfxbank != (data & 0x03))
@@ -129,21 +129,21 @@ VIDEO_START( superqix )
 {
 	/* palette RAM is accessed thorough I/O ports, so we have to */
 	/* allocate it ourselves */
-	if ((paletteram = auto_malloc(256 * sizeof(UINT8))) == 0)
+	if ((paletteram = auto_malloc(256 * sizeof(uint8_t))) == 0)
 		return 1;
 
-	if ((superqix_bitmapram = auto_malloc(0x7000 * sizeof(UINT8))) == 0)
+	if ((superqix_bitmapram = auto_malloc(0x7000 * sizeof(uint8_t))) == 0)
 		return 1;
 
-	if ((superqix_bitmapram2 = auto_malloc(0x7000 * sizeof(UINT8))) == 0)
+	if ((superqix_bitmapram2 = auto_malloc(0x7000 * sizeof(uint8_t))) == 0)
 		return 1;
 
-	if ((superqix_bitmapram_dirty = auto_malloc(0x7000 * sizeof(UINT8))) == 0)
+	if ((superqix_bitmapram_dirty = auto_malloc(0x7000 * sizeof(uint8_t))) == 0)
 		return 1;
 
 	memset(superqix_bitmapram_dirty,1,0x7000);
 
-	if ((superqix_bitmapram2_dirty = auto_malloc(0x7000 * sizeof(UINT8))) == 0)
+	if ((superqix_bitmapram2_dirty = auto_malloc(0x7000 * sizeof(uint8_t))) == 0)
 		return 1;
 
 	memset(superqix_bitmapram2_dirty,1,0x7000);
@@ -168,7 +168,7 @@ VIDEO_START( superqix )
 static void superqix_draw_bitmap( struct mame_bitmap *bitmap )
 {
 	int i;
-	UINT8 pens[16];
+	uint8_t pens[16];
 
 	pens[0]=0;
 

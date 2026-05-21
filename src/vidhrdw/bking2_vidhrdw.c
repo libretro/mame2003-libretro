@@ -8,18 +8,18 @@
 
 #include "driver.h"
 
-extern UINT8* bking2_playfield_ram;
+extern uint8_t* bking2_playfield_ram;
 
 
 static int pc3259_output[4];
 static int pc3259_mask;
 
-static UINT8 xld1;
-static UINT8 xld2;
-static UINT8 xld3;
-static UINT8 yld1;
-static UINT8 yld2;
-static UINT8 yld3;
+static uint8_t xld1;
+static uint8_t xld2;
+static uint8_t xld3;
+static uint8_t yld1;
+static uint8_t yld2;
+static uint8_t yld3;
 
 static int ball1_pic;
 static int ball2_pic;
@@ -233,7 +233,7 @@ READ_HANDLER( bking2_pos_r )
 }
 
 
-static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	return num_cols * row + col;
 }
@@ -241,8 +241,8 @@ static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 
 
 static void get_tile_info(int tile_index)
 {
-	UINT8 code0 = bking2_playfield_ram[2 * tile_index + 0];
-	UINT8 code1 = bking2_playfield_ram[2 * tile_index + 1];
+	uint8_t code0 = bking2_playfield_ram[2 * tile_index + 0];
+	uint8_t code1 = bking2_playfield_ram[2 * tile_index + 1];
 
 	int flags = 0;
 
@@ -310,7 +310,7 @@ VIDEO_EOF( bking2 )
 	int xld = 0;
 	int yld = 0;
 
-	UINT32 latch = 0;
+	uint32_t latch = 0;
 
 	if (pc3259_mask == 6)	/* player 1 */
 	{
@@ -352,15 +352,15 @@ VIDEO_EOF( bking2 )
 
 	if (latch != 0)
 	{
-		const UINT8* MASK = memory_region(REGION_USER1) + 8 * hit;
+		const uint8_t* MASK = memory_region(REGION_USER1) + 8 * hit;
 
 		int x;
 		int y;
 
 		for (y = rect.min_y; y <= rect.max_y; y++)
 		{
-			const UINT16* p0 = helper0->line[y];
-			const UINT16* p1 = helper1->line[y];
+			const uint16_t* p0 = helper0->line[y];
+			const uint16_t* p1 = helper1->line[y];
 
 			for (x = rect.min_x; x <= rect.max_x; x++)
 			{

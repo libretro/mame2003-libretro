@@ -38,7 +38,7 @@ static int skns_rle_decode ( int romoffset, int size )
 	data8_t *dst = decodebuffer;
 
 	while(size>0) {
-		UINT8 code = *src++;
+		uint8_t code = *src++;
 		size -= (code & 0x7f) + 1;
 		if(code & 0x80) {
 			code &= 0x7f;
@@ -47,7 +47,7 @@ static int skns_rle_decode ( int romoffset, int size )
 				code--;
 			} while(code != 0xff);
 		} else {
-			UINT8 val = *src++;
+			uint8_t val = *src++;
 			do {
 				*dst++ = val;
 				code--;
@@ -67,10 +67,10 @@ void skns_sprite_kludge(int x, int y)
 /* We are working in .6 fixed point if you hadn't guessed */
 
 #define z_decls(step)				\
-	UINT16 zxs = 0x40-(zx>>10);			\
-	UINT16 zxd = 0x40-((zx>>2) & 0x3f);		\
-	UINT16 zys = 0x40-(zy>>10);			\
-	UINT16 zyd = 0x40-((zy>>2) & 0x3f);		\
+	uint16_t zxs = 0x40-(zx>>10);			\
+	uint16_t zxd = 0x40-((zx>>2) & 0x3f);		\
+	uint16_t zys = 0x40-(zy>>10);			\
+	uint16_t zyd = 0x40-((zy>>2) & 0x3f);		\
 	int xs, ys, xd, yd, old, old2;		\
 	int step_spr = step;				\
 	int bxs = 0, bys = 0;				\
@@ -140,7 +140,7 @@ void skns_sprite_kludge(int x, int y)
 	while(ys < sy && yd >= clip.min_y)
 
 #define z_draw_pixel()				\
-	UINT8 val = src[xs >> 6];			\
+	uint8_t val = src[xs >> 6];			\
 	if(val)					\
 		plot_pixel( bitmap, xd>>6, yd>>6, val + colour*256 );
 
@@ -163,7 +163,7 @@ void skns_sprite_kludge(int x, int y)
 		old2 += 0x40;				\
 	}
 
-static void blit_nf_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx, UINT16 zy, int colour)
+static void blit_nf_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx, uint16_t zy, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_min();
@@ -177,7 +177,7 @@ static void blit_nf_z(struct mame_bitmap *bitmap, const struct rectangle *clipre
 	}
 }
 
-static void blit_fy_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx, UINT16 zy, int colour)
+static void blit_fy_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx, uint16_t zy, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_min();
@@ -191,7 +191,7 @@ static void blit_fy_z(struct mame_bitmap *bitmap, const struct rectangle *clipre
 	}
 }
 
-static void blit_fx_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx, UINT16 zy, int colour)
+static void blit_fx_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx, uint16_t zy, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_max();
@@ -205,7 +205,7 @@ static void blit_fx_z(struct mame_bitmap *bitmap, const struct rectangle *clipre
 	}
 }
 
-static void blit_fxy_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx, UINT16 zy, int colour)
+static void blit_fxy_z(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx, uint16_t zy, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_max();
@@ -219,7 +219,7 @@ static void blit_fxy_z(struct mame_bitmap *bitmap, const struct rectangle *clipr
 	}
 }
 
-static void (*blit_z[4])(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx, UINT16 zy, int colour) = {
+static void (*blit_z[4])(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx, uint16_t zy, int colour) = {
 	blit_nf_z,
 	blit_fy_z,
 	blit_fx_z,
@@ -276,7 +276,7 @@ static void skns_drawsprites( struct mame_bitmap *bitmap, const struct rectangle
 	int xsize,ysize, size, xpos=0,ypos=0, pri=0, romoffset, colour=0, xflip,yflip, joint;
 	int sx,sy;
 	int endromoffs=0;
-	UINT16 zoomx, zoomy;
+	uint16_t zoomx, zoomy;
 
 	group_enable    = (skns_spc_regs[0x00/4] & 0x0040) >> 6; // RWR0
 
@@ -588,7 +588,7 @@ VIDEO_START(skns)
 static void supernova_draw_a( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int tran )
 {
 		int enable_a  = (skns_v3_regs[0x10/4] >> 0) & 0x0001;
-	UINT32 startx,starty;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 
 	if (enable_a)
@@ -640,7 +640,7 @@ static void supernova_draw_a( struct mame_bitmap *bitmap, const struct rectangle
 static void supernova_draw_b( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int tran )
 {
 		int enable_b  = (skns_v3_regs[0x34/4] >> 0) & 0x0001;
-	UINT32 startx,starty;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 
 	if (enable_b)

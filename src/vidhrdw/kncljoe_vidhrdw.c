@@ -11,7 +11,7 @@ static struct tilemap *bg_tilemap;
 static int tile_bank,sprite_bank;
 static int flipscreen;
 
-UINT8 *kncljoe_scrollregs;
+uint8_t *kncljoe_scrollregs;
 
 /***************************************************************************
 

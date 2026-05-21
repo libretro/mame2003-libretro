@@ -215,9 +215,9 @@ static int tx_flip = 0;
 
 extern int toaplan2_sub_cpu;
 
-static UINT8 top_tile_priority[2][16];
-static UINT8 fg_tile_priority[2][16];
-static UINT8 bg_tile_priority[2][16];
+static uint8_t top_tile_priority[2][16];
+static uint8_t fg_tile_priority[2][16];
+static uint8_t bg_tile_priority[2][16];
 
 
 static struct tilemap *top_tilemap[2], *fg_tilemap[2], *bg_tilemap[2];
@@ -574,7 +574,7 @@ VIDEO_START( batrider_0 )
 
 ***************************************************************************/
 
-void toaplan2_voffs_w(offs_t offset, data16_t data, UINT32 mem_mask, int controller)
+void toaplan2_voffs_w(offs_t offset, data16_t data, uint32_t mem_mask, int controller)
 {
 	if (data >= 0x1c00)
 		logerror("Hmmm, unknown video controller %01x layer being selected (%08x)\n",controller,data);
@@ -784,7 +784,7 @@ READ16_HANDLER( toaplan2_1_videoram16_r )
 	return toaplan2_videoram16_r(offset, 1);
 }
 
-void toaplan2_videoram16_w(offs_t offset, data16_t data, UINT32 mem_mask, int controller)
+void toaplan2_videoram16_w(offs_t offset, data16_t data, uint32_t mem_mask, int controller)
 {
 	data16_t oldword = 0;
 	offs_t vram_offset;
@@ -844,7 +844,7 @@ WRITE16_HANDLER( toaplan2_1_videoram16_w )
 }
 
 
-void toaplan2_scroll_reg_select_w(offs_t offset, data16_t data, UINT32 mem_mask, int controller)
+void toaplan2_scroll_reg_select_w(offs_t offset, data16_t data, uint32_t mem_mask, int controller)
 {
 	if (ACCESSING_LSB)
 	{
@@ -869,7 +869,7 @@ WRITE16_HANDLER( toaplan2_1_scroll_reg_select_w )
 }
 
 
-void toaplan2_scroll_reg_data_w(offs_t offset, data16_t data, UINT32 mem_mask, int controller)
+void toaplan2_scroll_reg_data_w(offs_t offset, data16_t data, uint32_t mem_mask, int controller)
 {
 	/************************************************************************/
 	/***** layer X and Y flips can be set independantly, so emulate it ******/

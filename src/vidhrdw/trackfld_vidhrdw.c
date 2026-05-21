@@ -9,8 +9,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *trackfld_scroll;
-UINT8 *trackfld_scroll2;
+uint8_t *trackfld_scroll;
+uint8_t *trackfld_scroll2;
 
 static struct tilemap *bg_tilemap;
 

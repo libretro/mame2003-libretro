@@ -10,7 +10,7 @@
 
 
 static struct tilemap *tilemap;
-UINT8 centiped_flipscreen;
+uint8_t centiped_flipscreen;
 
 
 

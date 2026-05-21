@@ -37,9 +37,9 @@ enum
 /* interface structure */
 struct tms34061_interface
 {
-	UINT8			rowshift;					/* VRAM address is (row << rowshift) | col */
-	UINT32			vramsize;					/* size of video RAM */
-	UINT32			dirtychunk;					/* size of dirty chunks (must be power of 2) */
+	uint8_t			rowshift;					/* VRAM address is (row << rowshift) | col */
+	uint32_t			vramsize;					/* size of video RAM */
+	uint32_t			dirtychunk;					/* size of dirty chunks (must be power of 2) */
 	void			(*interrupt)(int state);	/* interrupt gen callback */
 };
 
@@ -47,11 +47,11 @@ struct tms34061_interface
 /* display state structure */
 struct tms34061_display
 {
-	UINT8			blanked;					/* true if blanked */
-	UINT8 *			vram;						/* base of VRAM */
-	UINT8 *			latchram;					/* base of latch RAM */
-	UINT8 *			dirty;						/* pointer to array of dirty rows */
-	UINT16 *		regs;						/* pointer to array of registers */
+	uint8_t			blanked;					/* true if blanked */
+	uint8_t *			vram;						/* base of VRAM */
+	uint8_t *			latchram;					/* base of latch RAM */
+	uint8_t *			dirty;						/* pointer to array of dirty rows */
+	uint16_t *		regs;						/* pointer to array of registers */
 	offs_t			dispstart;					/* display start */
 };
 

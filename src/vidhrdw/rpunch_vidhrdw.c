@@ -23,16 +23,16 @@
 
 data16_t *rpunch_bitmapram;
 size_t rpunch_bitmapram_size;
-static UINT32 *rpunch_bitmapsum;
+static uint32_t *rpunch_bitmapsum;
 
 int rpunch_sprite_palette;
 
 static struct tilemap *background[2];
 
 static data16_t videoflags;
-static UINT8 crtc_register;
+static uint8_t crtc_register;
 static void *crtc_timer;
-static UINT8 bins, gins;
+static uint8_t bins, gins;
 
 
 /*************************************
@@ -93,7 +93,7 @@ VIDEO_START( rpunch )
 	background[1] = tilemap_create(get_bg1_tile_info,tilemap_scan_cols,TILEMAP_TRANSPARENT,8,8,64,64);
 
 	/* allocate a bitmap sum */
-	rpunch_bitmapsum = auto_malloc(BITMAP_HEIGHT * sizeof(UINT32));
+	rpunch_bitmapsum = auto_malloc(BITMAP_HEIGHT * sizeof(uint32_t));
 
 	/* if anything failed, clean up and return an error */
 	if (!background[0] || !background[1] || !rpunch_bitmapsum)
@@ -300,7 +300,7 @@ static void draw_bitmap(struct mame_bitmap *bitmap, const struct rectangle *clip
 			if (rpunch_bitmapsum[y] != (BITMAP_WIDTH/4) * 0xffff)
 			{
 				data16_t *src = &rpunch_bitmapram[y * 128 + BITMAP_XOFFSET/4];
-				UINT8 scanline[BITMAP_WIDTH], *dst = scanline;
+				uint8_t scanline[BITMAP_WIDTH], *dst = scanline;
 
 				/* extract the scanline */
 				for (x = 0; x < BITMAP_WIDTH/4; x++)

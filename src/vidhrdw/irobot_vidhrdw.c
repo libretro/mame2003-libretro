@@ -9,8 +9,8 @@
 #include "irobot.h"
 
 #define BITMAP_WIDTH	256
-static UINT8 *polybitmap1,*polybitmap2;
-static UINT8 *polybitmap;
+static uint8_t *polybitmap1,*polybitmap2;
+static uint8_t *polybitmap;
 
 static int ir_xmin, ir_ymin, ir_xmax, ir_ymax; /* clipping area */
 
@@ -173,7 +173,7 @@ VIDEO_START( irobot )
 
 void irobot_poly_clear(void)
 {
-	UINT8 *bitmap_base = irobot_bufsel ? polybitmap2 : polybitmap1;
+	uint8_t *bitmap_base = irobot_bufsel ? polybitmap2 : polybitmap1;
 	memset(bitmap_base, 0, BITMAP_WIDTH * Machine->drv->screen_height);
 }
 
@@ -236,13 +236,13 @@ static void draw_line (int x1, int y1, int x2, int y2, int col)
 
 void irobot_run_video(void)
 {
-	UINT16 *combase16 = (UINT16 *)irobot_combase;
+	uint16_t *combase16 = (uint16_t *)irobot_combase;
 	int sx,sy,ex,ey,sx2,ey2;
 	int color;
 	unsigned int d1;
 	int lpnt,spnt,spnt2;
 	int shp;
-	INT32 word1,word2;
+	int32_t word1,word2;
 
 	logerror("Starting Polygon Generator, Clear=%d\n",irvg_clear);
 
@@ -288,7 +288,7 @@ void irobot_run_video(void)
 				color = sy & 0x3F;
 				sy = ROUND_TO_PIXEL(sy);
 				sx = combase16[spnt+3];
-				word1 = (INT16)combase16[spnt+2];
+				word1 = (int16_t)combase16[spnt+2];
 				ex = sx + word1 * (ey - sy + 1);
 				draw_line(ROUND_TO_PIXEL(sx),sy,ROUND_TO_PIXEL(ex),ey,color);
 				spnt+=4;
@@ -307,7 +307,7 @@ void irobot_run_video(void)
 			sy = ROUND_TO_PIXEL(sy);
 			spnt+=4;
 
-			word1 = (INT16)combase16[spnt];
+			word1 = (int16_t)combase16[spnt];
 			ey = combase16[spnt+1];
 			if (word1 != -1 || ey != 0xFFFF)
 			{
@@ -316,7 +316,7 @@ void irobot_run_video(void)
 
 			//	sx += word1;
 
-				word2 = (INT16)combase16[spnt2];
+				word2 = (int16_t)combase16[spnt2];
 				ey2 = ROUND_TO_PIXEL(combase16[spnt2+1]);
 				spnt2+=2;
 
@@ -340,7 +340,7 @@ void irobot_run_video(void)
 
 					if (sy > ey)
 					{
-						word1 = (INT16)combase16[spnt];
+						word1 = (int16_t)combase16[spnt];
 						ey = combase16[spnt+1];
 						if (word1 == -1 && ey == 0xFFFF)
 							break;
@@ -352,7 +352,7 @@ void irobot_run_video(void)
 
 					if (sy > ey2)
 					{
-						word2 = (INT16)combase16[spnt2];
+						word2 = (int16_t)combase16[spnt2];
 						ey2 = ROUND_TO_PIXEL(combase16[spnt2+1]);
 						spnt2+=2;
 					}
@@ -377,7 +377,7 @@ void irobot_run_video(void)
 
 VIDEO_UPDATE( irobot )
 {
-	UINT8 *bitmap_base = irobot_bufsel ? polybitmap1 : polybitmap2;
+	uint8_t *bitmap_base = irobot_bufsel ? polybitmap1 : polybitmap2;
 	int x, y, offs;
 
 	/* copy the polygon bitmap */

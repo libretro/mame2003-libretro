@@ -12,9 +12,9 @@ size_t wgp_spritemap_size;
 data16_t *wgp_pivram;
 data16_t *wgp_piv_ctrlram;
 
-static UINT16 wgp_piv_ctrl_reg;
-static UINT16 wgp_piv_zoom[3],wgp_piv_scrollx[3],wgp_piv_scrolly[3];
-UINT16 wgp_rotate_ctrl[8];
+static uint16_t wgp_piv_ctrl_reg;
+static uint16_t wgp_piv_zoom[3],wgp_piv_scrollx[3],wgp_piv_scrolly[3];
+uint16_t wgp_rotate_ctrl[8];
 int wgp_piv_xoffs,wgp_piv_yoffs;
 
 
@@ -23,8 +23,8 @@ int wgp_piv_xoffs,wgp_piv_yoffs;
 
 static void common_get_piv_tile_info(int num,int tile_index)
 {
-	UINT16 tilenum  = wgp_pivram[tile_index + num*0x1000];	/* 3 blocks of $2000 */
-	UINT16 attr = wgp_pivram[tile_index + num*0x1000 + 0x8000];	/* 3 blocks of $2000 */
+	uint16_t tilenum  = wgp_pivram[tile_index + num*0x1000];	/* 3 blocks of $2000 */
+	uint16_t attr = wgp_pivram[tile_index + num*0x1000 + 0x8000];	/* 3 blocks of $2000 */
 
 	SET_TILE_INFO(
 			2,
@@ -160,7 +160,7 @@ READ16_HANDLER( wgp_pivram_word_r )
 
 WRITE16_HANDLER( wgp_pivram_word_w )
 {
-	UINT16 oldword = wgp_pivram[offset];
+	uint16_t oldword = wgp_pivram[offset];
 	COMBINE_DATA(&wgp_pivram[offset]);
 
 	if (offset<0x3000)
@@ -186,7 +186,7 @@ READ16_HANDLER( wgp_piv_ctrl_word_r )
 
 WRITE16_HANDLER( wgp_piv_ctrl_word_w )
 {
-	UINT16 a,b;
+	uint16_t a,b;
 
 	COMBINE_DATA(&wgp_piv_ctrlram[offset]);
 	data = wgp_piv_ctrlram[offset];
@@ -363,13 +363,13 @@ Memory Map
    structure for each big sprite: the hardware is probably
    constructing each 4x4 sprite from 4 2x2 sprites... */
 
-static UINT8 xlookup[16] =
+static uint8_t xlookup[16] =
 	{ 0, 1, 0, 1,
 	  2, 3, 2, 3,
 	  0, 1, 0, 1,
 	  2, 3, 2, 3 };
 
-static UINT8 ylookup[16] =
+static uint8_t ylookup[16] =
 	{ 0, 0, 1, 1,
 	  0, 0, 1, 1,
 	  2, 2, 3, 3,
@@ -380,10 +380,10 @@ static void wgp_draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *
 	int offs,i,j,k;
 	int x,y,curx,cury;
 	int zx,zy,zoomx,zoomy,priority=0;
-	UINT8 small_sprite,col,flipx,flipy;
-	UINT16 code,bigsprite,map_index;
-	UINT16 rotate=0;
-	UINT16 tile_mask = (Machine->gfx[0]->total_elements) - 1;
+	uint8_t small_sprite,col,flipx,flipy;
+	uint16_t code,bigsprite,map_index;
+	uint16_t rotate=0;
+	uint16_t tile_mask = (Machine->gfx[0]->total_elements) - 1;
 	int primasks[2] = {0x0, 0xfffc};	/* fff0 => under rhs of road only */
 
 	for (offs = 0x1ff;offs >= 0;offs--)
@@ -522,7 +522,7 @@ if (((spriteram16[i + 4]!=0xf800) && (spriteram16[i + 4]!=0xfff6))
 #undef ADJUST_FOR_ORIENTATION
 #define ADJUST_FOR_ORIENTATION(type, orientation, bitmapi, bitmapp, x, y)	\
 	type *dsti = &((type *)bitmapi->line[y])[x];							\
-	UINT8 *dstp = &((UINT8 *)bitmapp->line[y])[x];							\
+	uint8_t *dstp = &((uint8_t *)bitmapp->line[y])[x];							\
 	int xadv = 1;															\
 	if (orientation)														\
 	{																		\
@@ -545,17 +545,17 @@ if (((spriteram16[i + 4]!=0xf800) && (spriteram16[i + 4]!=0xfff6))
 		}																	\
 		/* can't lookup line because it may be negative! */					\
 		dsti = (type *)((type *)bitmapi->line[0] + dy * ty) + tx;			\
-		dstp = (UINT8 *)((UINT8 *)bitmapp->line[0] + dy * ty / sizeof(type)) + tx;	\
+		dstp = (uint8_t *)((uint8_t *)bitmapp->line[0] + dy * ty / sizeof(type)) + tx;	\
 	}
 
 static INLINE void bryan2_drawscanline(
 		struct mame_bitmap *bitmap,int x,int y,int length,
-		const UINT16 *src,int transparent,UINT32 orient,int pri)
+		const uint16_t *src,int transparent,uint32_t orient,int pri)
 {
-	ADJUST_FOR_ORIENTATION(UINT16, Machine->orientation ^ orient, bitmap, priority_bitmap, x, y);
+	ADJUST_FOR_ORIENTATION(uint16_t, Machine->orientation ^ orient, bitmap, priority_bitmap, x, y);
 	if (transparent) {
 		while (length--) {
-			UINT32 spixel = *src++;
+			uint32_t spixel = *src++;
 			if (spixel<0x7fff) {
 				*dsti = spixel;
 				*dstp = pri;
@@ -576,29 +576,29 @@ static INLINE void bryan2_drawscanline(
 
 
 
-static void wgp_piv_layer_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int layer,int flags,UINT32 priority)
+static void wgp_piv_layer_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int layer,int flags,uint32_t priority)
 {
 	struct mame_bitmap *srcbitmap = tilemap_get_pixmap(wgp_piv_tilemap[layer]);
 	struct mame_bitmap *transbitmap = tilemap_get_transparency_bitmap(wgp_piv_tilemap[layer]);
 
-	UINT16 *dst16,*src16;
-	UINT8 *tsrc;
+	uint16_t *dst16,*src16;
+	uint8_t *tsrc;
 	int i,y,y_index,src_y_index,row_index,row_zoom;
 
-	/* I have a fairly strong feeling these should be UINT32's, x_index is
+	/* I have a fairly strong feeling these should be uint32_t's, x_index is
 	   falling through from max +ve to max -ve quite a lot in this routine */
 	int sx,x_index,x_step,x_max;
 
-	UINT32 zoomx,zoomy,rot=Machine->orientation;
-	UINT16 scanline[512];
-	UINT16 row_colbank,row_scroll;
+	uint32_t zoomx,zoomy,rot=Machine->orientation;
+	uint16_t scanline[512];
+	uint16_t row_colbank,row_scroll;
 	int flipscreen = 0;	/* n/a */
 	int machine_flip = 0;	/* for  ROT 180 ? */
 
-	UINT16 screen_width = cliprect->max_x -
+	uint16_t screen_width = cliprect->max_x -
 							cliprect->min_x + 1;
-	UINT16 min_y = cliprect->min_y;
-	UINT16 max_y = cliprect->max_y;
+	uint16_t min_y = cliprect->min_y;
+	uint16_t max_y = cliprect->max_y;
 
 	int width_mask=0x3ff;
 
@@ -660,8 +660,8 @@ static void wgp_piv_layer_draw(struct mame_bitmap *bitmap,const struct rectangle
 		}
 
 		x_max = x_index + screen_width * x_step;
-		src16 = (UINT16 *)srcbitmap->line[src_y_index];
-		tsrc  = (UINT8 *)transbitmap->line[src_y_index];
+		src16 = (uint16_t *)srcbitmap->line[src_y_index];
+		tsrc  = (uint8_t *)transbitmap->line[src_y_index];
 		dst16 = scanline;
 
 		if (flags & TILEMAP_IGNORE_TRANSPARENCY)
@@ -705,10 +705,10 @@ static void wgp_piv_layer_draw(struct mame_bitmap *bitmap,const struct rectangle
 VIDEO_UPDATE( wgp )
 {
 	int i;
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 #ifdef MAME_DEBUG
-	static UINT8 dislayer[4];
+	static uint8_t dislayer[4];
 #endif
 
 #ifdef MAME_DEBUG

@@ -6,13 +6,13 @@ Atari Drag Race video emulation
 
 #include "driver.h"
 
-UINT8* dragrace_playfield_ram;
-UINT8* dragrace_position_ram;
+uint8_t* dragrace_playfield_ram;
+uint8_t* dragrace_position_ram;
 
 static struct tilemap* tilemap;
 
 
-static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	return num_cols * row + col;
 }
@@ -20,7 +20,7 @@ static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 
 
 static void get_tile_info(int tile_index)
 {
-	UINT8 code = dragrace_playfield_ram[tile_index];
+	uint8_t code = dragrace_playfield_ram[tile_index];
 
 	int num = 0;
 	int col = 0;

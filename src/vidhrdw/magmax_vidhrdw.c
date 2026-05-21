@@ -15,155 +15,155 @@ data16_t *magmax_scroll_y;
 unsigned short magmax_vreg;
 static int flipscreen = 0;
 
-static UINT32 pens_line_tab[256];
-static UINT32 *prom_tab = NULL;
+static uint32_t pens_line_tab[256];
+static uint32_t *prom_tab = NULL;
 
 
-typedef void (*blit_horiz_pixel_line_proc)(struct mame_bitmap *bitmap,int x,int y, int width, UINT32* pens);
+typedef void (*blit_horiz_pixel_line_proc)(struct mame_bitmap *bitmap,int x,int y, int width, uint32_t* pens);
 static blit_horiz_pixel_line_proc blit_horiz_pixel_line;
 
-static void bhpl_8_nd(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT8* lineadr = &(((UINT8*)b->line[y])[x]);
+	uint8_t* lineadr = &(((uint8_t*)b->line[y])[x]);
 	while(w-->0)
 	{
-		*lineadr++ = (UINT8)(*pens);
+		*lineadr++ = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_fx(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_fx(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT8* lineadr = &(((UINT8*)b->line[y])[b->width-1-x]);
+	uint8_t* lineadr = &(((uint8_t*)b->line[y])[b->width-1-x]);
 	while(w-->0)
 	{
-		*lineadr-- = (UINT8)(*pens);
+		*lineadr-- = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_fy(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_fy(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT8* lineadr = &(((UINT8*)b->line[b->height-1-y])[x]);
+	uint8_t* lineadr = &(((uint8_t*)b->line[b->height-1-y])[x]);
 	while(w-->0)
 	{
-		*lineadr++ = (UINT8)(*pens);
+		*lineadr++ = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_fxy(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_fxy(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT8* lineadr = &(((UINT8*)b->line[b->height-1-y])[b->width-1-x]);
+	uint8_t* lineadr = &(((uint8_t*)b->line[b->height-1-y])[b->width-1-x]);
 	while(w-->0)
 	{
-		*lineadr-- = (UINT8)(*pens);
+		*lineadr-- = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	while(w-->0)
 	{
-		((UINT8 *)b->line[x++])[y] = (UINT8)(*pens);
+		((uint8_t *)b->line[x++])[y] = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_fx_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_fx_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	y = b->width-1-y;
 	while(w-->0)
 	{
-		((UINT8 *)b->line[x++])[y] = (UINT8)(*pens);
+		((uint8_t *)b->line[x++])[y] = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_fy_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_fy_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	x = b->height-1-x;
 	while(w-->0)
 	{
-		((UINT8 *)b->line[x--])[y] = (UINT8)(*pens);
+		((uint8_t *)b->line[x--])[y] = (uint8_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_8_nd_fxy_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_8_nd_fxy_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	x = b->height-1-x;
 	y = b->width-1-y;
 	while(w-->0)
 	{
-		((UINT8 *)b->line[x--])[y] = (UINT8)(*pens);
+		((uint8_t *)b->line[x--])[y] = (uint8_t)(*pens);
 		pens++;
 	}
 }
 
-static void bhpl_16_nd(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT16* lineadr = &(((UINT16*)b->line[y])[x]);
+	uint16_t* lineadr = &(((uint16_t*)b->line[y])[x]);
 	while(w-->0)
 	{
-		*lineadr++ = (UINT16)(*pens);
+		*lineadr++ = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_fx(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_fx(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT16* lineadr = &(((UINT16*)b->line[y])[b->width-1-x]);
+	uint16_t* lineadr = &(((uint16_t*)b->line[y])[b->width-1-x]);
 	while(w-->0)
 	{
-		*lineadr-- = (UINT16)(*pens);
+		*lineadr-- = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_fy(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_fy(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT16* lineadr = &(((UINT16*)b->line[b->height-1-y])[x]);
+	uint16_t* lineadr = &(((uint16_t*)b->line[b->height-1-y])[x]);
 	while(w-->0)
 	{
-		*lineadr++ = (UINT16)(*pens);
+		*lineadr++ = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_fxy(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_fxy(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
-	UINT16* lineadr = &(((UINT16*)b->line[b->height-1-y])[b->width-1-x]);
+	uint16_t* lineadr = &(((uint16_t*)b->line[b->height-1-y])[b->width-1-x]);
 	while(w-->0)
 	{
-		*lineadr-- = (UINT16)(*pens);
+		*lineadr-- = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	while(w-->0)
 	{
-		((UINT16*)b->line[x++])[y] = (UINT16)(*pens);
+		((uint16_t*)b->line[x++])[y] = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_fx_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_fx_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	y = b->width-1-y;
 	while(w-->0)
 	{
-		((UINT16*)b->line[x++])[y] = (UINT16)(*pens);
+		((uint16_t*)b->line[x++])[y] = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_fy_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_fy_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	x = b->height-1-x;
 	while(w-->0)
 	{
-		((UINT16*)b->line[x--])[y] = (UINT16)(*pens);
+		((uint16_t*)b->line[x--])[y] = (uint16_t)(*pens);
 		pens++;
 	}
 }
-static void bhpl_16_nd_fxy_s(struct mame_bitmap *b,int x,int y,int w, UINT32* pens)
+static void bhpl_16_nd_fxy_s(struct mame_bitmap *b,int x,int y,int w, uint32_t* pens)
 {
 	x = b->height-1-x;
 	y = b->width-1-y;
 	while(w-->0)
 	{
-		((UINT16*)b->line[x--])[y] = (UINT16)(*pens);
+		((uint16_t*)b->line[x--])[y] = (uint16_t)(*pens);
 		pens++;
 	}
 }
@@ -251,7 +251,7 @@ VIDEO_START( magmax )
 	int i,v;
 	unsigned char * prom14D = memory_region(REGION_USER2);
 
-	if ((prom_tab = auto_malloc(256 * sizeof(UINT32))) == 0)
+	if ((prom_tab = auto_malloc(256 * sizeof(uint32_t))) == 0)
 		return 1;
 
 	/* Allocate temporary bitmap */
@@ -288,20 +288,20 @@ VIDEO_UPDATE( magmax )
 	}
 	else
 	{
-		UINT32 h,v;
+		uint32_t h,v;
 		unsigned char * rom18B = memory_region(REGION_USER1);
-		UINT32 scroll_h = (*magmax_scroll_x) & 0x3fff;
-		UINT32 scroll_v = (*magmax_scroll_y) & 0xff;
+		uint32_t scroll_h = (*magmax_scroll_x) & 0x3fff;
+		uint32_t scroll_v = (*magmax_scroll_y) & 0xff;
 
 		/*clear background-over-sprites bitmap*/
 		fillbitmap(tmpbitmap, 0, &Machine->visible_area);
 
 		for (v = 2*8; v < 30*8; v++) /*only for visible area*/
 		{
-			UINT32 map_v_scr_100 =   (scroll_v + v) & 0x100;
-			UINT32 rom18D_addr   =  ((scroll_v + v) & 0xf8)     + (map_v_scr_100<<5);
-			UINT32 rom15F_addr   = (((scroll_v + v) & 0x07)<<2) + (map_v_scr_100<<5);
-			UINT32 map_v_scr_1fe_6 =((scroll_v + v) & 0x1fe)<<6;
+			uint32_t map_v_scr_100 =   (scroll_v + v) & 0x100;
+			uint32_t rom18D_addr   =  ((scroll_v + v) & 0xf8)     + (map_v_scr_100<<5);
+			uint32_t rom15F_addr   = (((scroll_v + v) & 0x07)<<2) + (map_v_scr_100<<5);
+			uint32_t map_v_scr_1fe_6 =((scroll_v + v) & 0x1fe)<<6;
 
 			pen_t *pens = &Machine->pens[2*16 + (map_v_scr_100>>1)];
 
@@ -310,10 +310,10 @@ VIDEO_UPDATE( magmax )
 				/* we are drawing surface */
 				for (h = 0; h < 0x80; h++)
 				{
-					UINT32 graph_data;
-					UINT32 graph_color;
-					UINT32 LS283;
-					UINT32 prom_data;
+					uint32_t graph_data;
+					uint32_t graph_color;
+					uint32_t LS283;
+					uint32_t prom_data;
 
 					LS283 =	scroll_h + h + rom18B[ map_v_scr_1fe_6 + h ] + 0xff01;
 
@@ -344,10 +344,10 @@ VIDEO_UPDATE( magmax )
 				}
 				for (h = 0x80; h < 0x100; h++)
 				{
-					UINT32 graph_data;
-					UINT32 graph_color;
-					UINT32 LS283;
-					UINT32 prom_data;
+					uint32_t graph_data;
+					uint32_t graph_color;
+					uint32_t LS283;
+					uint32_t prom_data;
 
 					LS283 =	scroll_h + h + (rom18B[ (map_v_scr_1fe_6) + (h ^ 0xff) ] ^ 0xff);
 
@@ -382,10 +382,10 @@ VIDEO_UPDATE( magmax )
 				/* we are drawing underground */
 				for (h = 0; h < 0x80; h++)
 				{
-					UINT32 graph_data;
-					UINT32 graph_color;
-					UINT32 LS283;
-					UINT32 prom_data;
+					uint32_t graph_data;
+					uint32_t graph_color;
+					uint32_t LS283;
+					uint32_t prom_data;
 
 					LS283 =	scroll_h + h;
 
@@ -415,10 +415,10 @@ VIDEO_UPDATE( magmax )
 				}
 				for (h = 0x80; h < 0x100; h++)
 				{
-					UINT32 graph_data;
-					UINT32 graph_color;
-					UINT32 LS283;
-					UINT32 prom_data;
+					uint32_t graph_data;
+					uint32_t graph_color;
+					uint32_t LS283;
+					uint32_t prom_data;
 
 					LS283 =	scroll_h + h;
 
@@ -451,7 +451,7 @@ VIDEO_UPDATE( magmax )
 			if (flipscreen)
 			{
 				int i;
-				UINT32 pens_line_tab_flipped[256];
+				uint32_t pens_line_tab_flipped[256];
 				for (i=0; i<256; i++)
 					pens_line_tab_flipped[i] = pens_line_tab[255-i];
 				blit_horiz_pixel_line(bitmap,0,255-v,256,pens_line_tab_flipped);

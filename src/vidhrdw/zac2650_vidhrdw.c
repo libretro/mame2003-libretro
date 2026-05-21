@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *s2636ram;
+uint8_t *s2636ram;
 struct mame_bitmap *spritebitmap;
 
 int dirtychar[16];

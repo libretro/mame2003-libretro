@@ -56,7 +56,7 @@ Mixer:
 
 static int mbShade;
 
-INT32 *namco_zbuffer;
+int32_t *namco_zbuffer;
 
 static data16_t *mpTextureTileMap16;
 static data8_t *mpTextureTileMapAttr;
@@ -189,7 +189,7 @@ typedef struct
 #define SWAP(A,B) { const void *temp = A; A = B; B = temp; }
 
 static unsigned mColor;
-static INT32 mZSort;
+static int32_t mZSort;
 
 static unsigned texel( unsigned x, unsigned y )
 {
@@ -207,8 +207,8 @@ renderscanline( const edge *e1, const edge *e2, int sy, const struct rectangle *
 
 	{
 		struct mame_bitmap *pBitmap = Machine->scrbitmap;
-		UINT32 *pDest = (UINT32 *)pBitmap->line[sy];
-		INT32 *pZBuf = namco_zbuffer + pBitmap->width*sy;
+		uint32_t *pDest = (uint32_t *)pBitmap->line[sy];
+		int32_t *pZBuf = namco_zbuffer + pBitmap->width*sy;
 
 		int x0 = (int)e1->x;
 		int x1 = (int)e2->x;
@@ -243,7 +243,7 @@ renderscanline( const edge *e1, const edge *e2, int sy, const struct rectangle *
 			{
 				if( mZSort<pZBuf[x] )
 				{
-					UINT32 color = Machine->pens[texel(u/z,v/z)|mColor];
+					uint32_t color = Machine->pens[texel(u/z,v/z)|mColor];
 					int r = color>>16;
 					int g = (color>>8)&0xff;
 					int b = color&0xff;
@@ -475,7 +475,7 @@ void
 namcos22_BlitTri(
 	struct mame_bitmap *pBitmap,
 	const struct VerTex v[3],
-	unsigned color, INT32 zsort, INT32 flags,
+	unsigned color, int32_t zsort, int32_t flags,
 	const namcos22_camera *camera )
 {
 	struct VerTex vc[3];
@@ -607,15 +607,15 @@ namcos22_BlitTri(
  */
 static void
 BlitFlatSpan(
-	UINT16 *pDest, INT32 *pZBuf, const struct poly_scanline *scan, const INT64 *deltas, unsigned color)
+	uint16_t *pDest, int32_t *pZBuf, const struct poly_scanline *scan, const int64_t *deltas, unsigned color)
 {
-	INT64 z = scan->p[0];
-	INT64 dz = deltas[0];
-	INT32 x;
+	int64_t z = scan->p[0];
+	int64_t dz = deltas[0];
+	int32_t x;
 
 	for (x = scan->sx; x <= scan->ex; x++)
 	{
-		INT32 sz = (z >> 16);
+		int32_t sz = (z >> 16);
 		if( sz<pZBuf[x] )
 		{
 			pZBuf[x] = sz;
@@ -635,7 +635,7 @@ BlitTriFlat( struct mame_bitmap *pBitmap, const struct VerTex v[3], unsigned col
 	const struct poly_scanline *curscan;
 	struct poly_vertex pv[3];
 	struct rectangle cliprect;
-	INT32 y;
+	int32_t y;
 	int i;
 
 	cliprect.min_x = cliprect.min_y = 0;
@@ -663,8 +663,8 @@ BlitTriFlat( struct mame_bitmap *pBitmap, const struct VerTex v[3], unsigned col
 	curscan = scans->scanline;
 	for (y = scans->sy; y <= scans->ey; y++, curscan++)
 	{
-		UINT16 *pDest = (UINT16 *)pBitmap->line[y];
-		INT32 *pZBuf = namco_zbuffer + pBitmap->width*y;
+		uint16_t *pDest = (uint16_t *)pBitmap->line[y];
+		int32_t *pZBuf = namco_zbuffer + pBitmap->width*y;
 		BlitFlatSpan(pDest, pZBuf, curscan, scans->dp, color);
 	}
 } /* BlitTri */

@@ -169,7 +169,7 @@ static void bbusters_draw_block(struct mame_bitmap *dest,int x,int y,int size,in
 	while (scale_line_count) {
 
 		if (dy>=16 && dy<240) {
-			UINT16 *destline = (UINT16 *)dest->line[dy];
+			uint16_t *destline = (uint16_t *)dest->line[dy];
 			data8_t srcline=*scale_table_ptr;
 			const data8_t *srcptr=0;
 

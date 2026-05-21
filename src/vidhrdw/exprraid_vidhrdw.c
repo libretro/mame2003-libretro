@@ -53,7 +53,7 @@ WRITE_HANDLER( exprraid_scrolly_w )
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT8 *tilerom = memory_region(REGION_GFX4);
+	uint8_t *tilerom = memory_region(REGION_GFX4);
 
 	int data, attr, bank, code, color, flags;
 	int quadrant = 0, offs;

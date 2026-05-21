@@ -19,7 +19,7 @@
 unsigned char* malzak_s2636_1_ram;
 unsigned char* malzak_s2636_2_ram;
 
-static INT8 frame_count;
+static int8_t frame_count;
 
 extern int s2636_x_offset;
 extern int s2636_y_offset;
@@ -36,11 +36,11 @@ extern int s2636_y_offset;
 #define SAA5050_WHITE   7
 
 struct	{
-	UINT16	saa5050_flags;
-	UINT8	saa5050_forecol;
-	UINT8	saa5050_backcol;
-	UINT8	saa5050_prvcol;
-	UINT8	saa5050_prvchr;
+	uint16_t	saa5050_flags;
+	uint8_t	saa5050_forecol;
+	uint8_t	saa5050_backcol;
+	uint8_t	saa5050_prvcol;
+	uint8_t	saa5050_prvchr;
 } saa5050_state;
 
 

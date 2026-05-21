@@ -15,36 +15,36 @@
 #define END_OF_ROW_VALUE			0x12345678
 
 /* globals definitions */
-UINT8 *sega_sprite_position;
-UINT8 turbo_collision;
+uint8_t *sega_sprite_position;
+uint8_t turbo_collision;
 
 /* internal data */
-static UINT8 *sprite_priority, *sprite_expanded_priority;
-static UINT8 *road_gfxdata, *road_palette, *road_enable_collide;
-static UINT16 *road_expanded_palette;
-static UINT8 *fore_palette, *fore_priority;
-static UINT16 *fore_expanded_data;
-static UINT8 *back_data;
-static UINT8 *overall_priority, *collision_map;
+static uint8_t *sprite_priority, *sprite_expanded_priority;
+static uint8_t *road_gfxdata, *road_palette, *road_enable_collide;
+static uint16_t *road_expanded_palette;
+static uint8_t *fore_palette, *fore_priority;
+static uint16_t *fore_expanded_data;
+static uint8_t *back_data;
+static uint8_t *overall_priority, *collision_map;
 
 /* sprite tracking */
 struct sprite_params_data
 {
-	UINT32 *base;
-	UINT8 *enable;
+	uint32_t *base;
+	uint8_t *enable;
 	int offset, rowbytes;
 	int yscale, miny, maxy;
 	int xscale, xoffs;
 	int flip;
 };
 static struct sprite_params_data sprite_params[16];
-static UINT32 *sprite_expanded_data;
-static UINT8 *sprite_expanded_enable;
+static uint32_t *sprite_expanded_data;
+static uint8_t *sprite_expanded_enable;
 
 /* misc other stuff */
-static UINT8 *buckrog_bitmap_ram;
-static UINT8 drew_frame;
-static UINT32 sprite_mask;
+static uint8_t *buckrog_bitmap_ram;
+static uint8_t drew_frame;
+static uint32_t sprite_mask;
 
 
 /***************************************************************************
@@ -213,22 +213,22 @@ PALETTE_INIT( buckrog )
 
 ***************************************************************************/
 
-static int init_sprites(UINT32 sprite_expand[16], UINT8 sprite_enable[16], int expand_shift)
+static int init_sprites(uint32_t sprite_expand[16], uint8_t sprite_enable[16], int expand_shift)
 {
-	UINT8 *sprite_gfxdata = memory_region(REGION_GFX1);
+	uint8_t *sprite_gfxdata = memory_region(REGION_GFX1);
 	int sprite_length = memory_region_length(REGION_GFX1);
 	int sprite_bank_size = sprite_length / 8;
-	UINT8 *src, *edst;
-	UINT32 *dst;
+	uint8_t *src, *edst;
+	uint32_t *dst;
 	int i, j;
 
 	/* allocate the expanded sprite data */
-	sprite_expanded_data = auto_malloc(sprite_length * 2 * sizeof(UINT32));
+	sprite_expanded_data = auto_malloc(sprite_length * 2 * sizeof(uint32_t));
 	if (!sprite_expanded_data)
 		return 1;
 
 	/* allocate the expanded sprite enable array */
-	sprite_expanded_enable = auto_malloc(sprite_length * 2 * sizeof(UINT8));
+	sprite_expanded_enable = auto_malloc(sprite_length * 2 * sizeof(uint8_t));
 	if (!sprite_expanded_enable)
 		return 1;
 
@@ -271,10 +271,10 @@ static int init_sprites(UINT32 sprite_expand[16], UINT8 sprite_enable[16], int e
 
 static int init_fore(void)
 {
-	UINT8 *fore_gfxdata = memory_region(REGION_GFX2);
+	uint8_t *fore_gfxdata = memory_region(REGION_GFX2);
 	int fore_length = memory_region_length(REGION_GFX2);
-	UINT16 *dst;
-	UINT8 *src;
+	uint16_t *dst;
+	uint8_t *src;
 	int i, j;
 
 	/* allocate the expanded foreground data */
@@ -312,10 +312,10 @@ static int init_fore(void)
 
 VIDEO_START( turbo )
 {
-	UINT32 sprite_expand[16];
-	UINT8 sprite_enable[16];
-	UINT16 *dst;
-	UINT8 *src;
+	uint32_t sprite_expand[16];
+	uint8_t sprite_enable[16];
+	uint16_t *dst;
+	uint8_t *src;
 	int i;
 
 	/* determine ROM/PROM addresses */
@@ -333,7 +333,7 @@ VIDEO_START( turbo )
 	/* compute the sprite expansion array */
 	for (i = 0; i < 16; i++)
 	{
-		UINT32 value = 0;
+		uint32_t value = 0;
 		if (i & 1) value |= 0x00000001;
 		if (i & 2) value |= 0x00000100;
 		if (i & 4) value |= 0x00010000;
@@ -354,7 +354,7 @@ VIDEO_START( turbo )
 		return 1;
 
 	/* allocate the expanded road palette */
-	road_expanded_palette = auto_malloc(0x40 * sizeof(UINT16));
+	road_expanded_palette = auto_malloc(0x40 * sizeof(uint16_t));
 	if (!road_expanded_palette)
 		return 1;
 
@@ -375,8 +375,8 @@ VIDEO_START( turbo )
 
 VIDEO_START( subroc3d )
 {
-	UINT32 sprite_expand[16];
-	UINT8 sprite_enable[16];
+	uint32_t sprite_expand[16];
+	uint8_t sprite_enable[16];
 	int i;
 
 	/* determine ROM/PROM addresses */
@@ -423,8 +423,8 @@ VIDEO_START( subroc3d )
 
 VIDEO_START( buckrog )
 {
-	UINT32 sprite_expand[16];
-	UINT8 sprite_enable[16];
+	uint32_t sprite_expand[16];
+	uint8_t sprite_enable[16];
 	int i;
 
 	/* determine ROM/PROM addresses */
@@ -494,13 +494,13 @@ static void turbo_update_sprite_info(void)
 	/* first loop over all sprites and update those whose scanlines intersect ours */
 	for (i = 0; i < 16; i++, data++)
 	{
-		UINT8 *sprite_base = spriteram + 16 * i;
+		uint8_t *sprite_base = spriteram + 16 * i;
 
 		/* snarf all the data */
 		data->base = sprite_expanded_data + (i & 7) * 0x8000;
 		data->enable = sprite_expanded_enable + (i & 7) * 0x8000;
 		data->offset = (sprite_base[6] + 256 * sprite_base[7]) & sprite_mask;
-		data->rowbytes = (INT16)(sprite_base[4] + 256 * sprite_base[5]);
+		data->rowbytes = (int16_t)(sprite_base[4] + 256 * sprite_base[5]);
 		data->miny = sprite_base[0];
 		data->maxy = sprite_base[1];
 		data->xscale = ((5 * 256 - 4 * sprite_base[2]) << 16) / (5 * 256);
@@ -533,13 +533,13 @@ static void subroc3d_update_sprite_info(void)
 	/* first loop over all sprites and update those whose scanlines intersect ours */
 	for (i = 0; i < 16; i++, data++)
 	{
-		UINT8 *sprite_base = spriteram + 8 * i;
+		uint8_t *sprite_base = spriteram + 8 * i;
 
 		/* snarf all the data */
 		data->base = sprite_expanded_data + (i & 7) * 0x10000;
 		data->enable = sprite_expanded_enable + (i & 7) * 0x10000;
 		data->offset = ((sprite_base[6] + 256 * sprite_base[7]) * 2) & sprite_mask;
-		data->rowbytes = (INT16)(sprite_base[4] + 256 * sprite_base[5]) * 2;
+		data->rowbytes = (int16_t)(sprite_base[4] + 256 * sprite_base[5]) * 2;
 		data->miny = sprite_base[0] ^ 0xff;
 		data->maxy = (sprite_base[1] ^ 0xff) - 1;
 		data->xscale = 65536.0 * (1.0 - 0.004 * (double)(sprite_base[2] - 0x40));
@@ -571,13 +571,13 @@ static void subroc3d_update_sprite_info(void)
 
 ***************************************************************************/
 
-static void draw_one_sprite(const struct sprite_params_data *data, UINT32 *dest, UINT8 *edest, int xclip, int scanline)
+static void draw_one_sprite(const struct sprite_params_data *data, uint32_t *dest, uint8_t *edest, int xclip, int scanline)
 {
 	int xstep = data->flip ? -data->xscale : data->xscale;
 	int xoffs = data->xoffs;
-	UINT32 xcurr;
-	UINT32 *src;
-	UINT8 *esrc;
+	uint32_t xcurr;
+	uint32_t *src;
+	uint8_t *esrc;
 	int offset;
 
 	/* xoffs of -1 means don't draw */
@@ -606,8 +606,8 @@ static void draw_one_sprite(const struct sprite_params_data *data, UINT32 *dest,
 		/* loop over columns */
 		while (xoffs < VIEW_WIDTH)
 		{
-			UINT32 srcval = src[(xcurr >> 16) & sprite_mask];
-			UINT8 srcenable = esrc[(xcurr >> 16) & sprite_mask];
+			uint32_t srcval = src[(xcurr >> 16) & sprite_mask];
+			uint8_t srcenable = esrc[(xcurr >> 16) & sprite_mask];
 
 			/* stop on the end-of-row signal */
 			if (srcval == END_OF_ROW_VALUE)
@@ -629,8 +629,8 @@ static void draw_one_sprite(const struct sprite_params_data *data, UINT32 *dest,
 		while (xoffs < VIEW_WIDTH)
 		{
 			int xint = (xcurr >> 16) & sprite_mask, newxint;
-			UINT32 srcval = src[xint];
-			UINT8 srcenable = esrc[xint];
+			uint32_t srcval = src[xint];
+			uint8_t srcenable = esrc[xint];
 
 			/* stop on the end-of-row signal */
 			if (srcval == END_OF_ROW_VALUE)
@@ -651,7 +651,7 @@ static void draw_one_sprite(const struct sprite_params_data *data, UINT32 *dest,
 }
 
 
-static void draw_sprites(UINT32 *dest, UINT8 *edest, int scanline, UINT8 mask, int xclip)
+static void draw_sprites(uint32_t *dest, uint8_t *edest, int scanline, uint8_t mask, int xclip)
 {
 	int i;
 
@@ -685,10 +685,10 @@ static void draw_sprites(UINT32 *dest, UINT8 *edest, int scanline, UINT8 mask, i
 
 static void turbo_render(struct mame_bitmap *bitmap)
 {
-	UINT8 *overall_priority_base = &overall_priority[(turbo_fbpla & 8) << 6];
-	UINT8 *sprite_priority_base = &sprite_priority[(turbo_fbpla & 7) << 7];
-	UINT8 *road_gfxdata_base = &road_gfxdata[(turbo_opc << 5) & 0x7e0];
-	UINT16 *road_palette_base = &road_expanded_palette[(turbo_fbcol & 1) << 4];
+	uint8_t *overall_priority_base = &overall_priority[(turbo_fbpla & 8) << 6];
+	uint8_t *sprite_priority_base = &sprite_priority[(turbo_fbpla & 7) << 7];
+	uint8_t *road_gfxdata_base = &road_gfxdata[(turbo_opc << 5) & 0x7e0];
+	uint16_t *road_palette_base = &road_expanded_palette[(turbo_fbcol & 1) << 4];
 	pen_t *colortable;
 	int x, y, i;
 
@@ -702,9 +702,9 @@ static void turbo_render(struct mame_bitmap *bitmap)
 	for (y = 4; y < VIEW_HEIGHT - 4; y++)
 	{
 		int sel, coch, babit, slipar_acciar, area, area1, area2, area3, area4, area5, road = 0;
-		UINT32 sprite_buffer[VIEW_WIDTH];
-		UINT8 sprite_enable[VIEW_WIDTH];
-		UINT8 scanline[VIEW_WIDTH];
+		uint32_t sprite_buffer[VIEW_WIDTH];
+		uint8_t sprite_enable[VIEW_WIDTH];
+		uint8_t scanline[VIEW_WIDTH];
 
 		/* compute the Y sum between opa and the current scanline (p. 141) */
 		int va = (y + turbo_opa) & 0xff;
@@ -713,22 +713,22 @@ static void turbo_render(struct mame_bitmap *bitmap)
 		if (!(turbo_opc & 0x80)) va ^= 0xff;
 
 		/* clear the sprite buffer and draw the road sprites */
-		memset(sprite_buffer, 0, VIEW_WIDTH * sizeof(UINT32));
-		memset(sprite_enable, 0, VIEW_WIDTH * sizeof(UINT8));
+		memset(sprite_buffer, 0, VIEW_WIDTH * sizeof(uint32_t));
+		memset(sprite_enable, 0, VIEW_WIDTH * sizeof(uint8_t));
 		draw_sprites(sprite_buffer, sprite_enable, y, 0x07, 0);
 
 		/* loop over 8-pixel chunks */
 		for (x = 8; x < VIEW_WIDTH; x += 8)
 		{
 			int area5_buffer = road_gfxdata_base[0x4000 + (x >> 3)];
-			UINT8 fore_data = videoram[(y / 8) * 32 + (x / 8) - 33];
-			UINT16 forebits_buffer = fore_expanded_data[(fore_data << 3) | (y & 7)];
+			uint8_t fore_data = videoram[(y / 8) * 32 + (x / 8) - 33];
+			uint16_t forebits_buffer = fore_expanded_data[(fore_data << 3) | (y & 7)];
 
 			/* loop over columns */
 			for (i = 0; i < 8; i++)
 			{
-				UINT32 sprite = sprite_buffer[x + i];
-				UINT8 enable = sprite_enable[x + i];
+				uint32_t sprite = sprite_buffer[x + i];
+				uint8_t enable = sprite_enable[x + i];
 
 				/* compute the X sum between opb and the current column; only the carry matters (p. 141) */
 				int carry = (x + i + turbo_opb) >> 8;
@@ -818,7 +818,7 @@ static void turbo_render(struct mame_bitmap *bitmap)
 
 static void subroc3d_render(struct mame_bitmap *bitmap)
 {
-	UINT8 *sprite_priority_base = &sprite_expanded_priority[(subroc3d_ply & 15) << 8];
+	uint8_t *sprite_priority_base = &sprite_expanded_priority[(subroc3d_ply & 15) << 8];
 	pen_t *colortable;
 	int y;
 
@@ -831,21 +831,21 @@ static void subroc3d_render(struct mame_bitmap *bitmap)
 	/* loop over rows */
 	for (y = 0; y < VIEW_HEIGHT; y++)
 	{
-		UINT32 sprite_buffer[VIEW_WIDTH];
-		UINT8 sprite_enable[VIEW_WIDTH];
-		UINT8 scanline[VIEW_WIDTH];
+		uint32_t sprite_buffer[VIEW_WIDTH];
+		uint8_t sprite_enable[VIEW_WIDTH];
+		uint8_t scanline[VIEW_WIDTH];
 		int x;
 
 		/* clear the sprite buffer and draw the road sprites */
-		memset(sprite_buffer, 0, VIEW_WIDTH * sizeof(UINT32));
-		memset(sprite_enable, 0, VIEW_WIDTH * sizeof(UINT8));
+		memset(sprite_buffer, 0, VIEW_WIDTH * sizeof(uint32_t));
+		memset(sprite_enable, 0, VIEW_WIDTH * sizeof(uint8_t));
 		draw_sprites(sprite_buffer, sprite_enable, y, 0xff, 0);
 
 		/* loop over 8-pixel chunks */
 		for (x = 0; x < VIEW_WIDTH; x += 8)
 		{
-			UINT8 fore_data = videoram[(y / 8) * 32 + (((x / 8) + subroc3d_chofs) % 32)];
-			UINT16 forebits_buffer = fore_expanded_data[(fore_data << 3) | (y & 7)];
+			uint8_t fore_data = videoram[(y / 8) * 32 + (((x / 8) + subroc3d_chofs) % 32)];
+			uint16_t forebits_buffer = fore_expanded_data[(fore_data << 3) | (y & 7)];
 			int i;
 
 			/* loop over columns */
@@ -890,9 +890,9 @@ static void buckrog_render(struct mame_bitmap *bitmap)
 	/* loop over rows */
 	for (y = 0; y < VIEW_HEIGHT; y++)
 	{
-		UINT32 sprite_buffer[VIEW_WIDTH];
-		UINT8 sprite_enable[VIEW_WIDTH];
-		UINT16 scanline[VIEW_WIDTH];
+		uint32_t sprite_buffer[VIEW_WIDTH];
+		uint8_t sprite_enable[VIEW_WIDTH];
+		uint16_t scanline[VIEW_WIDTH];
 		int bgcolor;
 		int x;
 
@@ -900,17 +900,17 @@ static void buckrog_render(struct mame_bitmap *bitmap)
 		bgcolor = 1024 | 512 | back_data[(buckrog_mov << 8) | y];
 
 		/* clear the sprite buffer and draw the road sprites */
-		memset(sprite_buffer, 0, VIEW_WIDTH * sizeof(UINT32));
-		memset(sprite_enable, 0, VIEW_WIDTH * sizeof(UINT8));
+		memset(sprite_buffer, 0, VIEW_WIDTH * sizeof(uint32_t));
+		memset(sprite_enable, 0, VIEW_WIDTH * sizeof(uint8_t));
 		draw_sprites(sprite_buffer, sprite_enable, y, 0xff, 0);
 
 		/* loop over 8-pixel chunks */
 		for (x = 0; x < VIEW_WIDTH; x += 8)
 		{
-			UINT8 fore_data = videoram[(y / 8) * 32 + (x / 8)];
-			UINT16 forebits_buffer = fore_expanded_data[(fore_data << 3) | (y & 7)];
-			UINT16 forebits_upper = ((buckrog_fchg << 7) & 0x180) | ((fore_data >> 1) & 0x7c);
-			UINT8 *stars = &buckrog_bitmap_ram[y * 256];
+			uint8_t fore_data = videoram[(y / 8) * 32 + (x / 8)];
+			uint16_t forebits_buffer = fore_expanded_data[(fore_data << 3) | (y & 7)];
+			uint16_t forebits_upper = ((buckrog_fchg << 7) & 0x180) | ((fore_data >> 1) & 0x7c);
+			uint8_t *stars = &buckrog_bitmap_ram[y * 256];
 			int i;
 
 			/* loop over columns */

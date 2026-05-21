@@ -73,8 +73,8 @@ static struct poly_scanline_data scanlines;
 
 const struct poly_scanline_data *FUNC_NAME(const struct poly_vertex *v1, const struct poly_vertex *v2, const struct poly_vertex *v3, const struct rectangle *cliprect)
 {
-	INT32 i, y, dy, ey, sx, sdx, ex, edx, temp, longest_scanline;
-	INT64 pstart[MAX_VERTEX_PARAMS], pdelta[MAX_VERTEX_PARAMS];
+	int32_t i, y, dy, ey, sx, sdx, ex, edx, temp, longest_scanline;
+	int64_t pstart[MAX_VERTEX_PARAMS], pdelta[MAX_VERTEX_PARAMS];
 	const struct poly_vertex *tv;
 	struct poly_scanline *scan;
 	struct shiftclip;
@@ -126,32 +126,32 @@ const struct poly_scanline_data *FUNC_NAME(const struct poly_vertex *v1, const s
 	/* surface of the triangle, so compute those up front (16.16) */
 	if (NUM_PARAMS >= 0)
 	{
-		INT64 value = ((INT64)(v1->p[0] - v2->p[0]) << 32) + (INT64)temp * ((INT64)(v3->p[0] - v1->p[0]) << 16);
+		int64_t value = ((int64_t)(v1->p[0] - v2->p[0]) << 32) + (int64_t)temp * ((int64_t)(v3->p[0] - v1->p[0]) << 16);
 		scanlines.dp[0] = value / longest_scanline;
 	}
 	if (NUM_PARAMS >= 1)
 	{
-		INT64 value = ((INT64)(v1->p[1] - v2->p[1]) << 32) + (INT64)temp * ((INT64)(v3->p[1] - v1->p[1]) << 16);
+		int64_t value = ((int64_t)(v1->p[1] - v2->p[1]) << 32) + (int64_t)temp * ((int64_t)(v3->p[1] - v1->p[1]) << 16);
 		scanlines.dp[1] = value / longest_scanline;
 	}
 	if (NUM_PARAMS >= 2)
 	{
-		INT64 value = ((INT64)(v1->p[2] - v2->p[2]) << 32) + (INT64)temp * ((INT64)(v3->p[2] - v1->p[2]) << 16);
+		int64_t value = ((int64_t)(v1->p[2] - v2->p[2]) << 32) + (int64_t)temp * ((int64_t)(v3->p[2] - v1->p[2]) << 16);
 		scanlines.dp[2] = value / longest_scanline;
 	}
 	if (NUM_PARAMS >= 3)
 	{
-		INT64 value = ((INT64)(v1->p[3] - v2->p[3]) << 32) + (INT64)temp * ((INT64)(v3->p[3] - v1->p[3]) << 16);
+		int64_t value = ((int64_t)(v1->p[3] - v2->p[3]) << 32) + (int64_t)temp * ((int64_t)(v3->p[3] - v1->p[3]) << 16);
 		scanlines.dp[3] = value / longest_scanline;
 	}
 	if (NUM_PARAMS >= 4)
 	{
-		INT64 value = ((INT64)(v1->p[4] - v2->p[4]) << 32) + (INT64)temp * ((INT64)(v3->p[4] - v1->p[4]) << 16);
+		int64_t value = ((int64_t)(v1->p[4] - v2->p[4]) << 32) + (int64_t)temp * ((int64_t)(v3->p[4] - v1->p[4]) << 16);
 		scanlines.dp[4] = value / longest_scanline;
 	}
 	if (NUM_PARAMS >= 5)
 	{
-		INT64 value = ((INT64)(v1->p[5] - v2->p[5]) << 32) + (INT64)temp * ((INT64)(v3->p[5] - v1->p[5]) << 16);
+		int64_t value = ((int64_t)(v1->p[5] - v2->p[5]) << 32) + (int64_t)temp * ((int64_t)(v3->p[5] - v1->p[5]) << 16);
 		scanlines.dp[5] = value / longest_scanline;
 	}
 
@@ -223,33 +223,33 @@ const struct poly_scanline_data *FUNC_NAME(const struct poly_vertex *v1, const s
 	/* set up the starting values and per-scanline deltas for the parameters */
 	if (NUM_PARAMS >= 0)
 	{
-		pstart[0] = ((INT64)v1->p[0] << 16) | 0x8000;
-		pdelta[0] = ((INT64)(tv->p[0] - v1->p[0]) << 16) / temp;
+		pstart[0] = ((int64_t)v1->p[0] << 16) | 0x8000;
+		pdelta[0] = ((int64_t)(tv->p[0] - v1->p[0]) << 16) / temp;
 	}
 	if (NUM_PARAMS >= 1)
 	{
-		pstart[1] = ((INT64)v1->p[1] << 16) | 0x8000;
-		pdelta[1] = ((INT64)(tv->p[1] - v1->p[1]) << 16) / temp;
+		pstart[1] = ((int64_t)v1->p[1] << 16) | 0x8000;
+		pdelta[1] = ((int64_t)(tv->p[1] - v1->p[1]) << 16) / temp;
 	}
 	if (NUM_PARAMS >= 2)
 	{
-		pstart[2] = ((INT64)v1->p[2] << 16) | 0x8000;
-		pdelta[2] = ((INT64)(tv->p[2] - v1->p[2]) << 16) / temp;
+		pstart[2] = ((int64_t)v1->p[2] << 16) | 0x8000;
+		pdelta[2] = ((int64_t)(tv->p[2] - v1->p[2]) << 16) / temp;
 	}
 	if (NUM_PARAMS >= 3)
 	{
-		pstart[3] = ((INT64)v1->p[3] << 16) | 0x8000;
-		pdelta[3] = ((INT64)(tv->p[3] - v1->p[3]) << 16) / temp;
+		pstart[3] = ((int64_t)v1->p[3] << 16) | 0x8000;
+		pdelta[3] = ((int64_t)(tv->p[3] - v1->p[3]) << 16) / temp;
 	}
 	if (NUM_PARAMS >= 4)
 	{
-		pstart[4] = ((INT64)v1->p[4] << 16) | 0x8000;
-		pdelta[4] = ((INT64)(tv->p[4] - v1->p[4]) << 16) / temp;
+		pstart[4] = ((int64_t)v1->p[4] << 16) | 0x8000;
+		pdelta[4] = ((int64_t)(tv->p[4] - v1->p[4]) << 16) / temp;
 	}
 	if (NUM_PARAMS >= 5)
 	{
-		pstart[5] = ((INT64)v1->p[5] << 16) | 0x8000;
-		pdelta[5] = ((INT64)(tv->p[5] - v1->p[5]) << 16) / temp;
+		pstart[5] = ((int64_t)v1->p[5] << 16) | 0x8000;
+		pdelta[5] = ((int64_t)(tv->p[5] - v1->p[5]) << 16) / temp;
 	}
 
 	/* set up everything for the big loop */
@@ -354,33 +354,33 @@ const struct poly_scanline_data *FUNC_NAME(const struct poly_vertex *v1, const s
 			/* set up the starting values and per-scanline deltas for the parameters */
 			if (NUM_PARAMS >= 0)
 			{
-				pstart[0] = ((INT64)v2->p[0] << 16) | 0x8000;
-				pdelta[0] = ((INT64)(v3->p[0] - v2->p[0]) << 16) / dy;
+				pstart[0] = ((int64_t)v2->p[0] << 16) | 0x8000;
+				pdelta[0] = ((int64_t)(v3->p[0] - v2->p[0]) << 16) / dy;
 			}
 			if (NUM_PARAMS >= 1)
 			{
-				pstart[1] = ((INT64)v2->p[1] << 16) | 0x8000;
-				pdelta[1] = ((INT64)(v3->p[1] - v2->p[1]) << 16) / dy;
+				pstart[1] = ((int64_t)v2->p[1] << 16) | 0x8000;
+				pdelta[1] = ((int64_t)(v3->p[1] - v2->p[1]) << 16) / dy;
 			}
 			if (NUM_PARAMS >= 2)
 			{
-				pstart[2] = ((INT64)v2->p[2] << 16) | 0x8000;
-				pdelta[2] = ((INT64)(v3->p[2] - v2->p[2]) << 16) / dy;
+				pstart[2] = ((int64_t)v2->p[2] << 16) | 0x8000;
+				pdelta[2] = ((int64_t)(v3->p[2] - v2->p[2]) << 16) / dy;
 			}
 			if (NUM_PARAMS >= 3)
 			{
-				pstart[3] = ((INT64)v2->p[3] << 16) | 0x8000;
-				pdelta[3] = ((INT64)(v3->p[3] - v2->p[3]) << 16) / dy;
+				pstart[3] = ((int64_t)v2->p[3] << 16) | 0x8000;
+				pdelta[3] = ((int64_t)(v3->p[3] - v2->p[3]) << 16) / dy;
 			}
 			if (NUM_PARAMS >= 4)
 			{
-				pstart[4] = ((INT64)v2->p[4] << 16) | 0x8000;
-				pdelta[4] = ((INT64)(v3->p[4] - v2->p[4]) << 16) / dy;
+				pstart[4] = ((int64_t)v2->p[4] << 16) | 0x8000;
+				pdelta[4] = ((int64_t)(v3->p[4] - v2->p[4]) << 16) / dy;
 			}
 			if (NUM_PARAMS >= 5)
 			{
-				pstart[5] = ((INT64)v2->p[5] << 16) | 0x8000;
-				pdelta[5] = ((INT64)(v3->p[5] - v2->p[5]) << 16) / dy;
+				pstart[5] = ((int64_t)v2->p[5] << 16) | 0x8000;
+				pdelta[5] = ((int64_t)(v3->p[5] - v2->p[5]) << 16) / dy;
 			}
 		}
 	}

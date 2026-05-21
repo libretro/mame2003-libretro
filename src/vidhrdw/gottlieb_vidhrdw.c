@@ -10,7 +10,7 @@
 #include "common.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *gottlieb_charram;
+uint8_t *gottlieb_charram;
 
 static int background_priority = 0;
 static int spritebank;

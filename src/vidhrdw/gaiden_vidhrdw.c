@@ -22,8 +22,8 @@ static struct mame_bitmap *sprite_bitmap, *tile_bitmap_bg, *tile_bitmap_fg;
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT16 *videoram1 = &gaiden_videoram3[0x0800];
-	UINT16 *videoram2 = gaiden_videoram3;
+	uint16_t *videoram1 = &gaiden_videoram3[0x0800];
+	uint16_t *videoram2 = gaiden_videoram3;
 	SET_TILE_INFO(
 			1,
 			videoram1[tile_index] & 0x0fff,
@@ -33,8 +33,8 @@ static void get_bg_tile_info(int tile_index)
 
 static void get_fg_tile_info(int tile_index)
 {
-	UINT16 *videoram1 = &gaiden_videoram2[0x0800];
-	UINT16 *videoram2 = gaiden_videoram2;
+	uint16_t *videoram1 = &gaiden_videoram2[0x0800];
+	uint16_t *videoram2 = gaiden_videoram2;
 	SET_TILE_INFO(
 			2,
 			videoram1[tile_index] & 0x0fff,
@@ -44,8 +44,8 @@ static void get_fg_tile_info(int tile_index)
 
 static void get_fg_tile_info_raiga(int tile_index)
 {
-	UINT16 *videoram1 = &gaiden_videoram2[0x0800];
-	UINT16 *videoram2 = gaiden_videoram2;
+	uint16_t *videoram1 = &gaiden_videoram2[0x0800];
+	uint16_t *videoram2 = gaiden_videoram2;
 
 	/* bit 3 controls blending */
 	tile_info.priority = (videoram2[tile_index] & 0x08) >> 3;
@@ -59,8 +59,8 @@ static void get_fg_tile_info_raiga(int tile_index)
 
 static void get_tx_tile_info(int tile_index)
 {
-	UINT16 *videoram1 = &gaiden_videoram[0x0400];
-	UINT16 *videoram2 = gaiden_videoram;
+	uint16_t *videoram1 = &gaiden_videoram[0x0400];
+	uint16_t *videoram2 = gaiden_videoram;
 	SET_TILE_INFO(
 			0,
 			videoram1[tile_index] & 0x07ff,
@@ -250,18 +250,18 @@ static void blendbitmaps(
 
 	{
 		pen_t *paldata = Machine->pens;
-		UINT32 *end;
+		uint32_t *end;
 
-		UINT16 *sd1 = ((UINT16 *)src1->line[0]);								/* source data   */
-		UINT16 *sd2 = ((UINT16 *)src2->line[0]);
-		UINT16 *sd3 = ((UINT16 *)src3->line[0]);
+		uint16_t *sd1 = ((uint16_t *)src1->line[0]);								/* source data   */
+		uint16_t *sd2 = ((uint16_t *)src2->line[0]);
+		uint16_t *sd3 = ((uint16_t *)src3->line[0]);
 
 		int sw = ex-sx+1;														/* source width  */
 		int sh = ey-sy+1;														/* source height */
-		int sm = ((UINT16 *)src1->line[1]) - ((UINT16 *)src1->line[0]);			/* source modulo */
+		int sm = ((uint16_t *)src1->line[1]) - ((uint16_t *)src1->line[0]);			/* source modulo */
 
-		UINT32 *dd = ((UINT32 *)dest->line[sy]) + sx;							/* dest data     */
-		int dm = ((UINT32 *)dest->line[1]) - ((UINT32 *)dest->line[0]);			/* dest modulo   */
+		uint32_t *dd = ((uint32_t *)dest->line[sy]) + sx;							/* dest data     */
+		int dm = ((uint32_t *)dest->line[1]) - ((uint32_t *)dest->line[0]);			/* dest modulo   */
 
 		sd1 += (sx-ox);
 		sd1 += sm * (sy-oy);
@@ -351,7 +351,7 @@ static void blendbitmaps(
 
 static void draw_sprites(struct mame_bitmap *bitmap_bg, struct mame_bitmap *bitmap_fg, struct mame_bitmap *bitmap_sp, const struct rectangle *cliprect)
 {
-	const UINT8 layout[8][8] =
+	const uint8_t layout[8][8] =
 	{
 		{ 0, 1, 4, 5,16,17,20,21},
 		{ 2, 3, 6, 7,18,19,22,23},
@@ -365,29 +365,29 @@ static void draw_sprites(struct mame_bitmap *bitmap_bg, struct mame_bitmap *bitm
 
 	const struct GfxElement *gfx = Machine->gfx[3];
 	struct mame_bitmap *bitmap = bitmap_bg;
-	const UINT16 *source = (NUM_SPRITES - 1) * 8 + spriteram16;
-	const UINT8 blend_support = (bitmap_fg && bitmap_sp);
+	const uint16_t *source = (NUM_SPRITES - 1) * 8 + spriteram16;
+	const uint8_t blend_support = (bitmap_fg && bitmap_sp);
 	int count = NUM_SPRITES;
 
 	/* draw all sprites from front to back */
 	while (count--)
 	{
-		UINT32 attributes = source[0];
-		UINT32 priority_mask;
+		uint32_t attributes = source[0];
+		uint32_t priority_mask;
 		int col,row;
 
 		if (attributes & 0x04)
 		{
-			UINT32 priority = (attributes >> 6) & 3;
-			UINT32 flipx = (attributes & 1);
-			UINT32 flipy = (attributes & 2);
+			uint32_t priority = (attributes >> 6) & 3;
+			uint32_t flipx = (attributes & 1);
+			uint32_t flipy = (attributes & 2);
 
-			UINT32 color = source[2];
-			UINT32 sizex = 1 << ((color >> 0) & 3);						/* 1,2,4,8 */
-			UINT32 sizey = 1 << ((color >> gaiden_sprite_sizey) & 3);	/* 1,2,4,8 */
+			uint32_t color = source[2];
+			uint32_t sizex = 1 << ((color >> 0) & 3);						/* 1,2,4,8 */
+			uint32_t sizey = 1 << ((color >> gaiden_sprite_sizey) & 3);	/* 1,2,4,8 */
 
 			/* raiga needs something like this */
-			UINT32 number = (source[1] & (sizex > 2 ? 0x7ff8 : 0x7ffc));
+			uint32_t number = (source[1] & (sizex > 2 ? 0x7ff8 : 0x7ffc));
 
 			int ypos = source[3] & 0x01ff;
 			int xpos = source[4] & 0x01ff;

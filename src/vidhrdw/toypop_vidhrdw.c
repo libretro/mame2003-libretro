@@ -104,7 +104,7 @@ static INLINE void toypop_draw_sprite(struct mame_bitmap *dest,unsigned int code
 void draw_background_and_characters(struct mame_bitmap *bitmap)
 {
 	register int offs, x, y;
-	UINT8 scanline[288];
+	uint8_t scanline[288];
 
 	// copy the background image from RAM (0x190200-0x19FDFF) to bitmap
 	if (flipscreen)

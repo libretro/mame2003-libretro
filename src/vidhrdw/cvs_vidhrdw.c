@@ -590,15 +590,15 @@ VIDEO_UPDATE( cvs )
 
 	if (bitmap->depth == 16)
     {
-        UINT32 S1,S2,S3,SB,pen;
+        uint32_t S1,S2,S3,SB,pen;
 
         for(sx=255;sx>7;sx--)
         {
-        	UINT32 *sp1 = (UINT32 *)s2636_1_bitmap->line[sx];
-	    	UINT32 *sp2 = (UINT32 *)s2636_2_bitmap->line[sx];
-		    UINT32 *sp3 = (UINT32 *)s2636_3_bitmap->line[sx];
-	        UINT64 *dst = (UINT64 *)bitmap->line[sx];
-		    UINT8  *spb = (UINT8  *)scrolled_background->line[sx];
+        	uint32_t *sp1 = (uint32_t *)s2636_1_bitmap->line[sx];
+	    	uint32_t *sp2 = (uint32_t *)s2636_2_bitmap->line[sx];
+		    uint32_t *sp3 = (uint32_t *)s2636_3_bitmap->line[sx];
+	        uint64_t *dst = (uint64_t *)bitmap->line[sx];
+		    uint8_t  *spb = (uint8_t  *)scrolled_background->line[sx];
 
             for(offs=0;offs<62;offs++)
             {
@@ -610,7 +610,7 @@ VIDEO_UPDATE( cvs )
 
                  if(pen)
                  {
-             	    UINT16 *address = (UINT16 *)dst;
+             	    uint16_t *address = (uint16_t *)dst;
 				    if (pen & 0xff000000) address[BL3] = Machine->pens[(pen >> 24) & 15];
 				    if (pen & 0x00ff0000) address[BL2] = Machine->pens[(pen >> 16) & 15];
 				    if (pen & 0x0000ff00) address[BL1] = Machine->pens[(pen >>  8) & 15];
@@ -645,13 +645,13 @@ VIDEO_UPDATE( cvs )
 	{
         for(sx=255;sx>7;sx--)
         {
-	        UINT32 *sp1 = (UINT32 *)s2636_1_bitmap->line[sx];
-	        UINT32 *sp2 = (UINT32 *)s2636_2_bitmap->line[sx];
-	        UINT32 *sp3 = (UINT32 *)s2636_3_bitmap->line[sx];
-            UINT32 *dst = (UINT32 *)bitmap->line[sx];
-	        UINT8  *spb = (UINT8  *)scrolled_background->line[sx];
+	        uint32_t *sp1 = (uint32_t *)s2636_1_bitmap->line[sx];
+	        uint32_t *sp2 = (uint32_t *)s2636_2_bitmap->line[sx];
+	        uint32_t *sp3 = (uint32_t *)s2636_3_bitmap->line[sx];
+            uint32_t *dst = (uint32_t *)bitmap->line[sx];
+	        uint8_t  *spb = (uint8_t  *)scrolled_background->line[sx];
 
-            UINT32 S1,S2,S3,SB,pen;
+            uint32_t S1,S2,S3,SB,pen;
 
             for(offs=0;offs<62;offs++)
             {
@@ -663,7 +663,7 @@ VIDEO_UPDATE( cvs )
 
                  if(pen)
                  {
-             	    UINT8 *address = (UINT8 *)dst;
+             	    uint8_t *address = (uint8_t *)dst;
 				    if (pen & 0xff000000) address[BL3] = Machine->pens[(pen >> 24) & 15];
 				    if (pen & 0x00ff0000) address[BL2] = Machine->pens[(pen >> 16) & 15];
 				    if (pen & 0x0000ff00) address[BL1] = Machine->pens[(pen >>  8) & 15];

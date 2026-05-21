@@ -40,10 +40,10 @@ void RENDERFUNC(void)
 #endif
 #endif
 
-	UINT16 *buffer = *fbz_draw_buffer;
-	const UINT32 *lookup0 = NULL;
+	uint16_t *buffer = *fbz_draw_buffer;
+	const uint32_t *lookup0 = NULL;
 #if (NUM_TMUS > 1)
-	const UINT32 *lookup1 = NULL;
+	const uint32_t *lookup1 = NULL;
 #endif
 	int x, y;
 	struct tri_vertex *vmin, *vmid, *vmax;
@@ -123,11 +123,11 @@ void RENDERFUNC(void)
 		int effy = FBZMODE_BITS(17,1) ? (inverted_yorigin - y) : y;
 		if (effy >= 0 && effy < FRAMEBUF_HEIGHT)
 		{
-			UINT16 *dest = &buffer[effy * FRAMEBUF_WIDTH];
-			UINT16 *depth = &depthbuf[effy * FRAMEBUF_WIDTH];
-			INT32 dx, dy;
+			uint16_t *dest = &buffer[effy * FRAMEBUF_WIDTH];
+			uint16_t *depth = &depthbuf[effy * FRAMEBUF_WIDTH];
+			int32_t dx, dy;
 			float fdx, fdy;
-			INT32 curr, curg, curb, cura, curz;
+			int32_t curr, curg, curb, cura, curz;
 			float curw;
 			float curs0, curt0, curw0, invw0;
 #if (NUM_TMUS > 1)
@@ -173,8 +173,8 @@ void RENDERFUNC(void)
 			voodoo_regs[fbiPixelsIn] += stopx - startx;
 			for (x = startx; x < stopx; x++)
 			{
-				INT32 r = 0, g = 0, b = 0, a = 0, depthval;
-				UINT32 texel = 0, c_local = 0;
+				int32_t r = 0, g = 0, b = 0, a = 0, depthval;
+				uint32_t texel = 0, c_local = 0;
 				
 				/* rotate stipple pattern */
 				if (!FBZMODE_BITS(12,1))
@@ -216,7 +216,7 @@ void RENDERFUNC(void)
 				/* handle depth buffer testing */
 				if (FBZMODE_BITS(4,1))
 				{
-					INT32 depthsource;
+					int32_t depthsource;
 				
 					/* the source depth is either the iterated W/Z+bias or a constant value */
 					if (!FBZMODE_BITS(20,1))
@@ -226,7 +226,7 @@ void RENDERFUNC(void)
 						/* add the bias */
 						if (FBZMODE_BITS(16,1))
 						{
-							depthsource += (INT16)voodoo_regs[zaColor];
+							depthsource += (int16_t)voodoo_regs[zaColor];
 						
 							if (depthsource >= 0xffff)
 								depthsource = 0xffff;
@@ -274,11 +274,11 @@ void RENDERFUNC(void)
 				/* load the texel if necessary */
 				if (FBZCOLORPATH_BITS(0,2) == 1 || FBZCOLORPATH_BITS(2,2) == 1)
 				{
-					UINT32 c_other = 0;
-					INT32 tr, tg, tb, ta;
-					UINT8 *texturebase;
+					uint32_t c_other = 0;
+					int32_t tr, tg, tb, ta;
+					uint8_t *texturebase;
 					float fs, ft;
-					UINT8 lodshift;
+					uint8_t lodshift;
 					int lod;
 					
 #if (NUM_TMUS > 1)
@@ -333,8 +333,8 @@ void RENDERFUNC(void)
 #endif
 						{
 							/* convert to int */
-							INT32 s = TRUNC_TO_INT(fs);
-							INT32 t = TRUNC_TO_INT(ft);
+							int32_t s = TRUNC_TO_INT(fs);
+							int32_t t = TRUNC_TO_INT(ft);
 							lod >>= 2;
 
 							/* clamp W */
@@ -363,9 +363,9 @@ void RENDERFUNC(void)
 							
 							/* fetch raw texel data */
 							if (!TEXTUREMODE1_BITS(11,1))
-								texel = *((UINT8 *)texturebase + (t << lodshift) + s);
+								texel = *((uint8_t *)texturebase + (t << lodshift) + s);
 							else
-								texel = *((UINT16 *)texturebase + (t << lodshift) + s);
+								texel = *((uint16_t *)texturebase + (t << lodshift) + s);
 							
 							/* convert to ARGB */
 							c_local = lookup1[texel];
@@ -375,11 +375,11 @@ void RENDERFUNC(void)
 						/* bilinear filter */
 						else
 						{
-							INT32 ts0, tt0, ts1, tt1;
-							UINT32 factor, factorsum, ag, rb;
+							int32_t ts0, tt0, ts1, tt1;
+							uint32_t factor, factorsum, ag, rb;
 						
 							/* convert to int */
-							INT32 s, t;
+							int32_t s, t;
 							lod >>= 2;
 							s = TRUNC_TO_INT(fs * 256.0f) - (128 << lod);
 							t = TRUNC_TO_INT(ft * 256.0f) - (128 << lod);
@@ -440,9 +440,9 @@ void RENDERFUNC(void)
 							
 							/* fetch raw texel data */
 							if (!TEXTUREMODE1_BITS(11,1))
-								texel = *((UINT8 *)texturebase + (tt0 << lodshift) + ts0);
+								texel = *((uint8_t *)texturebase + (tt0 << lodshift) + ts0);
 							else
-								texel = *((UINT16 *)texturebase + (tt0 << lodshift) + ts0);
+								texel = *((uint16_t *)texturebase + (tt0 << lodshift) + ts0);
 							
 							/* convert to ARGB */
 							texel = lookup1[texel];
@@ -455,9 +455,9 @@ void RENDERFUNC(void)
 							{
 								/* fetch raw texel data */
 								if (!TEXTUREMODE1_BITS(11,1))
-									texel = *((UINT8 *)texturebase + (tt0 << lodshift) + ts1);
+									texel = *((uint8_t *)texturebase + (tt0 << lodshift) + ts1);
 								else
-									texel = *((UINT16 *)texturebase + (tt0 << lodshift) + ts1);
+									texel = *((uint16_t *)texturebase + (tt0 << lodshift) + ts1);
 								
 								/* convert to ARGB */
 								texel = lookup1[texel];
@@ -471,9 +471,9 @@ void RENDERFUNC(void)
 							{
 								/* fetch raw texel data */
 								if (!TEXTUREMODE1_BITS(11,1))
-									texel = *((UINT8 *)texturebase + (tt1 << lodshift) + ts0);
+									texel = *((uint8_t *)texturebase + (tt1 << lodshift) + ts0);
 								else
-									texel = *((UINT16 *)texturebase + (tt1 << lodshift) + ts0);
+									texel = *((uint16_t *)texturebase + (tt1 << lodshift) + ts0);
 								
 								/* convert to ARGB */
 								texel = lookup1[texel];
@@ -487,9 +487,9 @@ void RENDERFUNC(void)
 							{
 								/* fetch raw texel data */
 								if (!TEXTUREMODE1_BITS(11,1))
-									texel = *((UINT8 *)texturebase + (tt1 << lodshift) + ts1);
+									texel = *((uint8_t *)texturebase + (tt1 << lodshift) + ts1);
 								else
-									texel = *((UINT16 *)texturebase + (tt1 << lodshift) + ts1);
+									texel = *((uint16_t *)texturebase + (tt1 << lodshift) + ts1);
 								
 								/* convert to ARGB */
 								texel = lookup1[texel];
@@ -522,7 +522,7 @@ void RENDERFUNC(void)
 						/* scale RGB */
 						if (TEXTUREMODE1_BITS(14,3) != 0)			/* tc_mselect mux */
 						{
-							INT32 rm = 0, gm = 0, bm = 0;
+							int32_t rm = 0, gm = 0, bm = 0;
 							
 							switch (TEXTUREMODE1_BITS(14,3))
 							{
@@ -588,7 +588,7 @@ void RENDERFUNC(void)
 						/* scale alpha */
 						if (TEXTUREMODE1_BITS(23,3) != 0)			/* tca_mselect mux */
 						{
-							INT32 am = 0;
+							int32_t am = 0;
 							
 							switch (TEXTUREMODE1_BITS(23,3))
 							{
@@ -686,8 +686,8 @@ void RENDERFUNC(void)
 #endif
 					{
 						/* convert to int */
-						INT32 s = TRUNC_TO_INT(fs);
-						INT32 t = TRUNC_TO_INT(ft);
+						int32_t s = TRUNC_TO_INT(fs);
+						int32_t t = TRUNC_TO_INT(ft);
 						lod >>= 2;
 
 						/* clamp W */
@@ -716,9 +716,9 @@ void RENDERFUNC(void)
 						
 						/* fetch raw texel data */
 						if (!TEXTUREMODE0_BITS(11,1))
-							texel = *((UINT8 *)texturebase + (t << lodshift) + s);
+							texel = *((uint8_t *)texturebase + (t << lodshift) + s);
 						else
-							texel = *((UINT16 *)texturebase + (t << lodshift) + s);
+							texel = *((uint16_t *)texturebase + (t << lodshift) + s);
 						
 						/* convert to ARGB */
 						c_local = lookup0[texel];
@@ -728,11 +728,11 @@ void RENDERFUNC(void)
 					/* bilinear filter */
 					else
 					{
-						INT32 ts0, tt0, ts1, tt1;
-						UINT32 factor, factorsum, ag, rb;
+						int32_t ts0, tt0, ts1, tt1;
+						uint32_t factor, factorsum, ag, rb;
 					
 						/* convert to int */
-						INT32 s, t;
+						int32_t s, t;
 						lod >>= 2;
 						s = TRUNC_TO_INT(fs * 256.0f) - (128 << lod);
 						t = TRUNC_TO_INT(ft * 256.0f) - (128 << lod);
@@ -793,9 +793,9 @@ void RENDERFUNC(void)
 						
 						/* fetch raw texel data */
 						if (!TEXTUREMODE0_BITS(11,1))
-							texel = *((UINT8 *)texturebase + (tt0 << lodshift) + ts0);
+							texel = *((uint8_t *)texturebase + (tt0 << lodshift) + ts0);
 						else
-							texel = *((UINT16 *)texturebase + (tt0 << lodshift) + ts0);
+							texel = *((uint16_t *)texturebase + (tt0 << lodshift) + ts0);
 
 						/* convert to ARGB */
 						texel = lookup0[texel];
@@ -808,9 +808,9 @@ void RENDERFUNC(void)
 						{
 							/* fetch raw texel data */
 							if (!TEXTUREMODE0_BITS(11,1))
-								texel = *((UINT8 *)texturebase + (tt0 << lodshift) + ts1);
+								texel = *((uint8_t *)texturebase + (tt0 << lodshift) + ts1);
 							else
-								texel = *((UINT16 *)texturebase + (tt0 << lodshift) + ts1);
+								texel = *((uint16_t *)texturebase + (tt0 << lodshift) + ts1);
 							
 							/* convert to ARGB */
 							texel = lookup0[texel];
@@ -824,9 +824,9 @@ void RENDERFUNC(void)
 						{
 							/* fetch raw texel data */
 							if (!TEXTUREMODE0_BITS(11,1))
-								texel = *((UINT8 *)texturebase + (tt1 << lodshift) + ts0);
+								texel = *((uint8_t *)texturebase + (tt1 << lodshift) + ts0);
 							else
-								texel = *((UINT16 *)texturebase + (tt1 << lodshift) + ts0);
+								texel = *((uint16_t *)texturebase + (tt1 << lodshift) + ts0);
 							
 							/* convert to ARGB */
 							texel = lookup0[texel];
@@ -840,9 +840,9 @@ void RENDERFUNC(void)
 						{
 							/* fetch raw texel data */
 							if (!TEXTUREMODE0_BITS(11,1))
-								texel = *((UINT8 *)texturebase + (tt1 << lodshift) + ts1);
+								texel = *((uint8_t *)texturebase + (tt1 << lodshift) + ts1);
 							else
-								texel = *((UINT16 *)texturebase + (tt1 << lodshift) + ts1);
+								texel = *((uint16_t *)texturebase + (tt1 << lodshift) + ts1);
 							
 							/* convert to ARGB */
 							texel = lookup0[texel];
@@ -875,7 +875,7 @@ void RENDERFUNC(void)
 					/* scale RGB */
 					if (TEXTUREMODE0_BITS(14,3) != 0)			/* tc_mselect mux */
 					{
-						INT32 rm = 0, gm = 0, bm = 0;
+						int32_t rm = 0, gm = 0, bm = 0;
 						
 						switch (TEXTUREMODE0_BITS(14,3))
 						{
@@ -941,7 +941,7 @@ void RENDERFUNC(void)
 					/* scale alpha */
 					if (TEXTUREMODE0_BITS(23,3) != 0)			/* tca_mselect mux */
 					{
-						INT32 am = 0;
+						int32_t am = 0;
 						
 						switch (TEXTUREMODE0_BITS(23,3))
 						{
@@ -1058,7 +1058,7 @@ void RENDERFUNC(void)
 				/* scale RGB */
 				if (FBZCOLORPATH_BITS(10,3) != 0)			/* cc_mselect mux */
 				{
-					INT32 rm, gm, bm;
+					int32_t rm, gm, bm;
 					
 					switch (FBZCOLORPATH_BITS(10,3))
 					{
@@ -1142,7 +1142,7 @@ void RENDERFUNC(void)
 				/* scale alpha */
 				if (FBZCOLORPATH_BITS(19,3) != 0)			/* cca_mselect mux */
 				{
-					INT32 am;
+					int32_t am;
 					
 					switch (FBZCOLORPATH_BITS(19,3))
 					{
@@ -1239,7 +1239,7 @@ void RENDERFUNC(void)
 					}
 					else
 					{
-						INT32 fogalpha;
+						int32_t fogalpha;
 					
 						if (FOGMODE_BITS(4,1))				/* fogz */
 							fogalpha = (curz >> 20) & 0xff;
@@ -1247,7 +1247,7 @@ void RENDERFUNC(void)
 							fogalpha = (cura >> 16) & 0xff;
 						else
 						{
-							INT32 wval = float_to_depth(curw);
+							int32_t wval = float_to_depth(curw);
 							fogalpha = fog_blend[wval >> 10];
 							fogalpha += (fog_delta[wval >> 10] * ((wval >> 2) & 0xff)) >> 10;
 						}
@@ -1392,7 +1392,7 @@ void RENDERFUNC(void)
 				if (FBZMODE_BITS(8,1))
 				{
 #if 1
-					UINT8 *dith;
+					uint8_t *dith;
 					if (!FBZMODE_BITS(11,1))
 						dith = &dither_lookup[256 * dither_matrix_4x4[((y & 3) << 2) | (x & 3)]];
 					else
@@ -1402,7 +1402,7 @@ void RENDERFUNC(void)
 					b = dith[b];
 					a = dith[a];
 #else
-					UINT8 dith;
+					uint8_t dith;
 					if (!FBZMODE_BITS(11,1))
 						dith = dither_matrix_4x4[((y & 3) << 2) | (x & 3)];
 					else
@@ -1533,15 +1533,15 @@ up front:
 		curw(f32)
 
 
-static UINT32 lodsave;
-static UINT32 dummyscale[2] = { 0x00800080, 0x00800080 };
-static UINT32 _01_01_01_01[4] = { 0x00010x0001, 0x00010x0001, 0x00010x0001, 0x00010x0001 };
-static UINT32 _ff_ff_ff_ff[4] = { 0x00ff0x00ff, 0x00ff0x00ff, 0x00ff0x00ff, 0x00ff0x00ff };
+static uint32_t lodsave;
+static uint32_t dummyscale[2] = { 0x00800080, 0x00800080 };
+static uint32_t _01_01_01_01[4] = { 0x00010x0001, 0x00010x0001, 0x00010x0001, 0x00010x0001 };
+static uint32_t _ff_ff_ff_ff[4] = { 0x00ff0x00ff, 0x00ff0x00ff, 0x00ff0x00ff, 0x00ff0x00ff };
 
 
-void generate_load_texel(struct drccore *drc, UINT8 tmu)
+void generate_load_texel(struct drccore *drc, uint8_t tmu)
 {
-	UINT32 curTextureMode = voodoo_regs[0x100 + tmu*0x100 + textureMode];
+	uint32_t curTextureMode = voodoo_regs[0x100 + tmu*0x100 + textureMode];
 	#define TEXTUREMODE_BITS(a,b)	(((curTextureMode >> (a)) & ((1 << (b)) - 1)))
 	
 	/* we need EDX during this process */
@@ -1684,7 +1684,7 @@ void generate_load_texel(struct drccore *drc, UINT8 tmu)
 	/* scale alpha */
 	if (TEXTUREMODE1_BITS(23,3) != 0)			/* tca_mselect mux */
 	{
-		INT32 am = 0;
+		int32_t am = 0;
 		
 		if (TEXTUREMODE1_BITS(23,3) == 1)		/* tca_mselect mux == c_local */
 			_pextrw_r32_r128(REG_EBX, REG_XMM2, 3);							// pextrw	eax,xmm2,3
@@ -1892,7 +1892,7 @@ void generate_load_texel(struct drccore *drc, UINT8 tmu)
 		if (FBZCOLORPATH_BITS(5,2) == 0)		/* cca_localselect mux == iterated alpha */
 			_pextrw_r32_r128(REG_EAX, REG_XMM7, 7);							// pextrw	eax,xmm7,7
 		else if (FBZCOLORPATH_BITS(5,2) == 1)	/* cca_localselect mux == color0 alpha */
-			_movzx_r32_m8abs(REG_EAX, ((UINT8 *)&voodoo_regs[color0])[3]);	// movzx	eax,[color0][3]
+			_movzx_r32_m8abs(REG_EAX, ((uint8_t *)&voodoo_regs[color0])[3]);	// movzx	eax,[color0][3]
 		else if (FBZCOLORPATH_BITS(5,2) == 2)	/* cca_localselect mux == iterated Z */
 		{
 			_mov_r32_r32(REG_EAX, REG_EDX);									// mov		eax,edx

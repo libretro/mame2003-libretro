@@ -145,7 +145,7 @@ READ_HANDLER( tankbust_txtram_r )
 }
 
 
-static UINT8 xscroll[2];
+static uint8_t xscroll[2];
 
 WRITE_HANDLER( tankbust_xscroll_w )
 {
@@ -162,7 +162,7 @@ WRITE_HANDLER( tankbust_xscroll_w )
 //usrintf_showmessage("x=%02x %02x", xscroll[0], xscroll[1]);
 }
 
-static UINT8 yscroll[2];
+static uint8_t yscroll[2];
 
 WRITE_HANDLER( tankbust_yscroll_w )
 {

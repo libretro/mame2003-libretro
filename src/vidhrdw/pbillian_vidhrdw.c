@@ -59,8 +59,8 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 
 */
 
-	const UINT8 *source = spriteram;
-	const UINT8 *finish = source+40*4;
+	const uint8_t *source = spriteram;
+	const uint8_t *finish = source+40*4;
 
 	int x,y,num,col;
 	

@@ -9,9 +9,9 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *zodiack_videoram2;
-UINT8 *zodiack_attributesram;
-UINT8 *zodiack_bulletsram;
+uint8_t *zodiack_videoram2;
+uint8_t *zodiack_attributesram;
+uint8_t *zodiack_bulletsram;
 size_t zodiack_bulletsram_size;
 
 extern int percuss_hardware;

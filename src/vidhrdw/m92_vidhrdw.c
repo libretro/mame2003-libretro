@@ -496,23 +496,23 @@ VIDEO_START( m92 )
 	state_save_register_int  ("video", 0, "pf1_enable",              &pf1_enable);
 	state_save_register_int  ("video", 0, "pf1_rowscroll",           &pf1_rowscroll);
 	state_save_register_int  ("video", 0, "pf1_vram_ptr",            &pf1_vram_ptr);
-	state_save_register_UINT8("video", 0, "pf1_control",    (UINT8*) pf1_control, sizeof(pf1_control));
+	state_save_register_UINT8("video", 0, "pf1_control",    (uint8_t*) pf1_control, sizeof(pf1_control));
 
 	state_save_register_int  ("video", 0, "pf2_vram_ptr",            &pf2_vram_ptr);
 	state_save_register_int  ("video", 0, "pf2_shape",               &pf2_shape);
 	state_save_register_int  ("video", 0, "pf2_enable",              &pf2_enable);
 	state_save_register_int  ("video", 0, "pf2_rowscroll",           &pf2_rowscroll);
 	state_save_register_int  ("video", 0, "pf2_vram_ptr",            &pf2_vram_ptr);
-	state_save_register_UINT8("video", 0, "pf2_control",    (UINT8*) pf2_control, sizeof(pf2_control));
+	state_save_register_UINT8("video", 0, "pf2_control",    (uint8_t*) pf2_control, sizeof(pf2_control));
 
 	state_save_register_int  ("video", 0, "pf3_vram_ptr",            &pf3_vram_ptr);
 	state_save_register_int  ("video", 0, "pf3_shape",               &pf3_shape);
 	state_save_register_int  ("video", 0, "pf3_enable",              &pf3_enable);
 	state_save_register_int  ("video", 0, "pf3_rowscroll",           &pf3_rowscroll);
 	state_save_register_int  ("video", 0, "pf3_vram_ptr",            &pf3_vram_ptr);
-	state_save_register_UINT8("video", 0, "pf3_control",    (UINT8*) pf3_control, sizeof(pf3_control));
+	state_save_register_UINT8("video", 0, "pf3_control",    (uint8_t*) pf3_control, sizeof(pf3_control));
 
-	state_save_register_UINT8("video", 0, "pf4_control",    (UINT8*) pf4_control, sizeof(pf4_control));
+	state_save_register_UINT8("video", 0, "pf4_control",    (uint8_t*) pf4_control, sizeof(pf4_control));
 
 	state_save_register_int  ("video", 0, "m92_sprite_list",         &m92_sprite_list);
 	state_save_register_int  ("video", 0, "m92_raster_irq_position", &m92_raster_irq_position);

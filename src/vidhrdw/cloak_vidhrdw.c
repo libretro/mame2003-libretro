@@ -9,8 +9,8 @@
 #include "cloak.h"
 
 static struct mame_bitmap *tmpbitmap2;
-static UINT8 x,y,bmap;
-static UINT8 *tmpvideoram,*tmpvideoram2;
+static uint8_t x,y,bmap;
+static uint8_t *tmpvideoram,*tmpvideoram2;
 
 static struct tilemap *bg_tilemap;
 

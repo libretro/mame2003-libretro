@@ -17,7 +17,7 @@ static data8_t *quizdna_fg_ram;
 static struct tilemap *quizdna_bg_tilemap;
 static struct tilemap *quizdna_fg_tilemap;
 
-static UINT8 quizdna_bg_xscroll[2];
+static uint8_t quizdna_bg_xscroll[2];
 
 static int quizdna_flipscreen = -1;
 static int quizdna_video_enable;

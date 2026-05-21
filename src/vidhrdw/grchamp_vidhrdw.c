@@ -3,21 +3,21 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 grchamp_videoreg0;
-UINT8 grchamp_player_xpos;
-UINT8 grchamp_player_ypos;
+uint8_t grchamp_videoreg0;
+uint8_t grchamp_player_xpos;
+uint8_t grchamp_player_ypos;
 int grchamp_collision;
 
-static UINT8 grchamp_tile_number;
-static UINT8 grchamp_rain_xpos;
-static UINT8 grchamp_rain_ypos;
+static uint8_t grchamp_tile_number;
+static uint8_t grchamp_rain_xpos;
+static uint8_t grchamp_rain_ypos;
 static int palette_bank;
 static struct mame_bitmap *headlight_bitmap;
 static struct mame_bitmap *work_bitmap;
 
-UINT8 grchamp_vreg1[0x10];	/* background control registers */
-UINT8 *grchamp_videoram;	/* background tilemaps */
-UINT8 *grchamp_radar;		/* bitmap for radar */
+uint8_t grchamp_vreg1[0x10];	/* background control registers */
+uint8_t *grchamp_videoram;	/* background tilemaps */
+uint8_t *grchamp_radar;		/* bitmap for radar */
 
 struct tilemap *tilemap[3];
 
@@ -52,7 +52,7 @@ PALETTE_INIT( grchamp )
 	int i;
 	for( i=0; i<0x20; i++ )
 	{
-		UINT8 data = *color_prom++;
+		uint8_t data = *color_prom++;
 		int bit0,bit1,bit2,r,g,b;
 		/* red component */
 		bit0 = (data >> 0) & 0x01;
@@ -130,7 +130,7 @@ static void get_bg2_tile_info( int offset )
 			0)
 }
 
-static UINT32 get_memory_offset( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t get_memory_offset( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	int offset = (31-row)*32;
 	offset += 31-(col%32);
@@ -162,7 +162,7 @@ VIDEO_START( grchamp )
 static void draw_text( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	const struct GfxElement *gfx = Machine->gfx[0];
-	const UINT8 *source = videoram;
+	const uint8_t *source = videoram;
 	int bank = (grchamp_videoreg0&0x20)?256:0;
 	int offs;
 	for( offs=0; offs<0x400; offs++ )
@@ -315,7 +315,7 @@ static void draw_headlights( struct mame_bitmap *bitmap, const struct rectangle 
 	int sx, sy, color;
 	int x0 = 256-grchamp_player_xpos-64;
 	int y0 = 240-grchamp_player_ypos-64;
-	const UINT8 *source = memory_region( REGION_GFX4 );
+	const uint8_t *source = memory_region( REGION_GFX4 );
 	int x,y,bit;
 	if( !bFog ) source += 0x400;
 	for( y=0; y<128; y++ )
@@ -345,7 +345,7 @@ static void draw_headlights( struct mame_bitmap *bitmap, const struct rectangle 
 }
 
 static void draw_radar( struct mame_bitmap *bitmap, const struct rectangle *cliprect ){
-	const UINT8 *source = grchamp_radar;
+	const uint8_t *source = grchamp_radar;
 	int color = Machine->pens[3];
 	int offs;
 	for( offs=0; offs<0x400; offs++ ){
@@ -384,8 +384,8 @@ static void draw_tachometer( struct mame_bitmap *bitmap, const struct rectangle 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int bFog ){
 	const struct GfxElement *gfx = Machine->gfx[3];
 	int bank = (grchamp_videoreg0&0x20)?0x40:0x00;
-	const UINT8 *source = spriteram;
-	const UINT8 *finish = source+0x40;
+	const uint8_t *source = spriteram;
+	const uint8_t *finish = source+0x40;
 	while( source<finish ){
 		int sx = source[3];
 		int sy = 240-source[0];

@@ -22,7 +22,7 @@ static struct tilemap *fg_tilemap, *bg1_tilemap, *bg2_tilemap;
 
 ***************************************************************************/
 
-static UINT32 get_bg2_memory_offset( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t get_bg2_memory_offset( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (row * 0x800) | (col * 2);
 }
@@ -70,7 +70,7 @@ static void trojan_get_bg1_tile_info(int tile_index)
 static void get_bg2_tile_info(int tile_index)
 {
 	int code, color;
-	UINT8 *rom = memory_region(REGION_GFX5);
+	uint8_t *rom = memory_region(REGION_GFX5);
 	int mask = memory_region_length(REGION_GFX5) - 1;
 
 	tile_index = (tile_index + bg2_image * 0x20) & mask;

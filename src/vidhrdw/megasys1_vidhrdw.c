@@ -326,7 +326,7 @@ void megasys1_get_scroll_##_n_##_tile_info_16x16(int tile_index) \
 	SET_TILE_INFO( _n_ , (code & 0xfff) * megasys1_16x16_scroll_##_n_##_factor + (tile_index & 3), code >> (16-megasys1_bits_per_color_code), 0 ); \
 } \
 \
-UINT32 megasys1_##_n_##_scan_8x8(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows) \
+uint32_t megasys1_##_n_##_scan_8x8(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows) \
 { \
 	return 	(col * TILES_PER_PAGE_Y) + \
 \
@@ -334,7 +334,7 @@ UINT32 megasys1_##_n_##_scan_8x8(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 nu
 			(row % TILES_PER_PAGE_Y); \
 }\
 \
-UINT32 megasys1_##_n_##_scan_16x16(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows) \
+uint32_t megasys1_##_n_##_scan_16x16(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows) \
 { \
 	return	( ((col / 2) * (TILES_PER_PAGE_Y / 2)) + \
 \

@@ -18,8 +18,8 @@
 
 #define MAX_INT_PER_FRAME 256
 
-static UINT8 interrupt_enable;
-static UINT8 interrupt_vector;
+static uint8_t interrupt_enable;
+static uint8_t interrupt_vector;
 
 unsigned char *wow_videoram;
 static int magic_expand_color, magic_control, magic_expand_count, magic_shift_leftover;
@@ -728,7 +728,7 @@ void wow_update_line(struct mame_bitmap *bitmap,int line)
 	int i,x;
 	int data,color;
 	int rngoffs;
-	UINT8 scanline[80*4+3];
+	uint8_t scanline[80*4+3];
 
 	if (line >= MAX_LINES) return;
 

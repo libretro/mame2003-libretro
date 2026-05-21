@@ -99,7 +99,7 @@ PALETTE_INIT( carpolo )
 	/* the -1 is for the fake score color */
 	for (i = 0; i < Machine->drv->total_colors - 1; i++)
 	{
-		UINT8 r,g,b;
+		uint8_t r,g,b;
 		int bit0,bit1,bit2;
 
 		/* red component */
@@ -223,7 +223,7 @@ static void draw_alpha_line(struct mame_bitmap *bitmap, const struct rectangle *
 
 static void remap_sprite_code(int bank, int code, int *remapped_code, int *flipy)
 {
-	UINT8 *PROM;
+	uint8_t *PROM;
 
 
 	PROM = memory_region(REGION_USER1);
@@ -235,7 +235,7 @@ static void remap_sprite_code(int bank, int code, int *remapped_code, int *flipy
 
 
 static void draw_sprite(struct mame_bitmap *bitmap, const struct rectangle *cliprect,
-						UINT8 x, UINT8 y, int bank, int code, int col)
+						uint8_t x, uint8_t y, int bank, int code, int col)
 {
 	int remapped_code, flipy;
 
@@ -255,7 +255,7 @@ static void draw_sprite(struct mame_bitmap *bitmap, const struct rectangle *clip
 	drawgfx(bitmap,Machine->gfx[0],
 			remapped_code, col,
 			0, flipy,
-			(INT16)x - 256, y,
+			(int16_t)x - 256, y,
 			cliprect,TRANSPARENCY_PEN,0);
 }
 

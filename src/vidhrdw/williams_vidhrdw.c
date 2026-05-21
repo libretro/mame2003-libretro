@@ -20,36 +20,36 @@
 
 
 /* RAM globals */
-UINT8 *williams_videoram;
-UINT8 *williams2_paletteram;
+uint8_t *williams_videoram;
+uint8_t *williams2_paletteram;
 
 /* blitter variables */
-UINT8 *williams_blitterram;
-UINT8 williams_blitter_xor;
-UINT8 williams_blitter_remap;
-UINT8 williams_blitter_clip;
+uint8_t *williams_blitterram;
+uint8_t williams_blitter_xor;
+uint8_t williams_blitter_remap;
+uint8_t williams_blitter_clip;
 
 /* Blaster extra variables */
-UINT8 *blaster_video_bits;
-UINT8 *blaster_color_zero_flags;
-UINT8 *blaster_color_zero_table;
-static const UINT8 *blaster_remap;
-static UINT8 *blaster_remap_lookup;
+uint8_t *blaster_video_bits;
+uint8_t *blaster_color_zero_flags;
+uint8_t *blaster_color_zero_table;
+static const uint8_t *blaster_remap;
+static uint8_t *blaster_remap_lookup;
 static int blaster_back_color;
 
 /* tilemap variables */
-UINT8 williams2_tilemap_mask;
-const UINT8 *williams2_row_to_palette; /* take care of IC79 and J1/J2 */
-UINT8 williams2_M7_flip;
-INT8  williams2_videoshift;
-UINT8 williams2_special_bg_color;
-static UINT8 williams2_fg_color; /* IC90 */
-static UINT8 williams2_bg_color; /* IC89 */
+uint8_t williams2_tilemap_mask;
+const uint8_t *williams2_row_to_palette; /* take care of IC79 and J1/J2 */
+uint8_t williams2_M7_flip;
+int8_t  williams2_videoshift;
+uint8_t williams2_special_bg_color;
+static uint8_t williams2_fg_color; /* IC90 */
+static uint8_t williams2_bg_color; /* IC89 */
 
 /* later-Williams video control variables */
-UINT8 *williams2_blit_inhibit;
-UINT8 *williams2_xscroll_low;
-UINT8 *williams2_xscroll_high;
+uint8_t *williams2_blit_inhibit;
+uint8_t *williams2_xscroll_low;
+uint8_t *williams2_xscroll_high;
 
 /* blitter functions */
 static void williams_blit_opaque(int sstart, int dstart, int w, int h, int data);
@@ -134,10 +134,10 @@ static void copy_pixels(struct mame_bitmap *bitmap, const struct rectangle *clip
 	{
 		const unsigned short *pal;
 		unsigned palents, fb_pitch;
-		UINT16 *fb;
+		uint16_t *fb;
 
 		pal = mame2003_direct_rgb565_palette(&palents);
-		fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+		fb  = pal ? (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 		if (fb)
 		{
 			int vminx = Machine->visible_area.min_x;
@@ -145,8 +145,8 @@ static void copy_pixels(struct mame_bitmap *bitmap, const struct rectangle *clip
 
 			for (y = clip->min_y; y <= clip->max_y; y++)
 			{
-				const UINT8 *source = &williams_videoram[y + 256 * (xoffset / 2)];
-				UINT16 *dest = (UINT16 *)((UINT8 *)fb + (y - vminy) * fb_pitch) + (xoffset - vminx);
+				const uint8_t *source = &williams_videoram[y + 256 * (xoffset / 2)];
+				uint16_t *dest = (uint16_t *)((uint8_t *)fb + (y - vminy) * fb_pitch) + (xoffset - vminx);
 
 				for (x = 0; x < pairs; x++, source += 256)
 				{
@@ -162,9 +162,9 @@ static void copy_pixels(struct mame_bitmap *bitmap, const struct rectangle *clip
 	/* loop over rows */
 	for (y = clip->min_y; y <= clip->max_y; y++)
 	{
-		UINT8 *source = &williams_videoram[y + 256 * (xoffset / 2)];
-		UINT8 scanline[400];
-		UINT8 *dest = scanline;
+		uint8_t *source = &williams_videoram[y + 256 * (xoffset / 2)];
+		uint8_t scanline[400];
+		uint8_t *dest = scanline;
 		int erase_behind;
 
 		/* should we erase as we draw? */
@@ -186,7 +186,7 @@ static void copy_pixels(struct mame_bitmap *bitmap, const struct rectangle *clip
 		/* handle Blaster special case */
 		else
 		{
-			UINT8 saved_pen0;
+			uint8_t saved_pen0;
 
 			/* pick the background pen */
 			if (*blaster_video_bits & 1)
@@ -311,7 +311,7 @@ VIDEO_START( williams2 )
 
 VIDEO_UPDATE( williams2 )
 {
-	UINT8 *tileram = &memory_region(REGION_CPU1)[0xc000];
+	uint8_t *tileram = &memory_region(REGION_CPU1)[0xc000];
 	int xpixeloffset, xtileoffset;
 	int color, col, y;
 
@@ -353,18 +353,18 @@ VIDEO_UPDATE( williams2 )
 
 static void williams2_modify_color(int color, int offset)
 {
-	static const UINT8 ztable[16] =
+	static const uint8_t ztable[16] =
 	{
 		0x0, 0x3, 0x4,  0x5, 0x6, 0x7, 0x8,  0x9,
 		0xa, 0xb, 0xc,  0xd, 0xe, 0xf, 0x10, 0x11
 	};
 
-	UINT8 entry_lo = williams2_paletteram[offset * 2];
-	UINT8 entry_hi = williams2_paletteram[offset * 2 + 1];
-	UINT8 i = ztable[(entry_hi >> 4) & 15];
-	UINT8 b = ((entry_hi >> 0) & 15) * i;
-	UINT8 g = ((entry_lo >> 4) & 15) * i;
-	UINT8 r = ((entry_lo >> 0) & 15) * i;
+	uint8_t entry_lo = williams2_paletteram[offset * 2];
+	uint8_t entry_hi = williams2_paletteram[offset * 2 + 1];
+	uint8_t i = ztable[(entry_hi >> 4) & 15];
+	uint8_t b = ((entry_hi >> 0) & 15) * i;
+	uint8_t g = ((entry_lo >> 4) & 15) * i;
+	uint8_t r = ((entry_lo >> 0) & 15) * i;
 
 	palette_set_color(color, r, g, b);
 }
@@ -508,7 +508,7 @@ VIDEO_START( blaster )
 	if (blaster_remap_lookup)
 		for (i = 0; i < 256; i++)
 		{
-			const UINT8 *table = memory_region(REGION_PROMS) + (i & 0x7f) * 16;
+			const uint8_t *table = memory_region(REGION_PROMS) + (i & 0x7f) * 16;
 			for (j = 0; j < 256; j++)
 				blaster_remap_lookup[i * 256 + j] = (table[j >> 4] << 4) | table[j & 0x0f];
 		}

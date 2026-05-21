@@ -78,7 +78,7 @@ static void video_init_common(void)
 // Equites Hardware
 PALETTE_INIT( equites )
 {
-	UINT8 *clut_ptr;
+	uint8_t *clut_ptr;
 	int i, r, g, b;
 
 	for (i=0; i<256; i++)
@@ -127,7 +127,7 @@ VIDEO_START( equites )
 // Splendor Blast Hardware
 PALETTE_INIT( splndrbt )
 {
-	UINT8 *prom_ptr;
+	uint8_t *prom_ptr;
 	int i, r, g, b;
 
 	for (i=0; i<0x100; i++)

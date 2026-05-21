@@ -15,14 +15,14 @@
 extern unsigned char *spriteram;
 extern size_t spriteram_size;
 
-UINT8 *senjyo_fgscroll;
-UINT8 *senjyo_scrollx1,*senjyo_scrolly1;
-UINT8 *senjyo_scrollx2,*senjyo_scrolly2;
-UINT8 *senjyo_scrollx3,*senjyo_scrolly3;
-UINT8 *senjyo_fgvideoram,*senjyo_fgcolorram;
-UINT8 *senjyo_bg1videoram,*senjyo_bg2videoram,*senjyo_bg3videoram;
-UINT8 *senjyo_radarram;
-UINT8 *senjyo_bgstripesram;
+uint8_t *senjyo_fgscroll;
+uint8_t *senjyo_scrollx1,*senjyo_scrolly1;
+uint8_t *senjyo_scrollx2,*senjyo_scrolly2;
+uint8_t *senjyo_scrollx3,*senjyo_scrolly3;
+uint8_t *senjyo_fgvideoram,*senjyo_fgcolorram;
+uint8_t *senjyo_bg1videoram,*senjyo_bg2videoram,*senjyo_bg3videoram;
+uint8_t *senjyo_radarram;
+uint8_t *senjyo_bgstripesram;
 
 static struct tilemap *fg_tilemap,*bg1_tilemap,*bg2_tilemap,*bg3_tilemap;
 

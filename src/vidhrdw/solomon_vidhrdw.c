@@ -1,8 +1,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *solomon_videoram2;
-UINT8 *solomon_colorram2;
+uint8_t *solomon_videoram2;
+uint8_t *solomon_colorram2;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 

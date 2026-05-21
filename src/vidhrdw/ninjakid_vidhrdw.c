@@ -4,10 +4,10 @@
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 static int flipscreen;
-static UINT8 ninjakun_xscroll,ninjakun_yscroll;
+static uint8_t ninjakun_xscroll,ninjakun_yscroll;
 
-UINT8 ninjakun_io_8000_ctrl[4];
-// static UINT8 old_scroll;
+uint8_t ninjakun_io_8000_ctrl[4];
+// static uint8_t old_scroll;
 
 /*******************************************************************************
  Tilemap Callbacks
@@ -93,7 +93,7 @@ READ_HANDLER( ninjakun_io_8000_r ){
 	return 0xFF;
 }
 
-/* static void handle_scrolly( UINT8 new_scroll ){ */
+/* static void handle_scrolly( uint8_t new_scroll ){ */
 
 /*	HACK!!!
 **
@@ -212,8 +212,8 @@ VIDEO_START( ninjakid ){
 }
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect ){
-	const UINT8 *source = spriteram;
-	const UINT8 *finish = source+0x800;
+	const uint8_t *source = spriteram;
+	const uint8_t *finish = source+0x800;
 
 	const struct GfxElement *gfx = Machine->gfx[2];
 

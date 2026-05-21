@@ -121,8 +121,8 @@
  *************************************/
 
 data16_t *itech32_video;
-UINT8 itech32_planes;
-UINT16 itech32_vram_height;
+uint8_t itech32_planes;
+uint16_t itech32_vram_height;
 
 static data16_t xfer_xcount, xfer_ycount;
 static data16_t xfer_xcur, xfer_ycur;
@@ -132,17 +132,17 @@ static struct rectangle clip_save;
 
 static void *scanline_timer;
 
-static UINT8 *grom_base;
-static UINT32 grom_size;
-static UINT32 grom_bank;
-static UINT32 grom_bank_mask;
+static uint8_t *grom_base;
+static uint32_t grom_size;
+static uint32_t grom_bank;
+static uint32_t grom_bank_mask;
 
-static UINT16 color_latch[2];
-static UINT8 enable_latch[2];
+static uint16_t color_latch[2];
+static uint8_t enable_latch[2];
 
-static UINT16 *videoplane[2];
-static UINT32 vram_mask;
-static UINT32 vram_xmask, vram_ymask;
+static uint16_t *videoplane[2];
+static uint32_t vram_mask;
+static uint32_t vram_xmask, vram_ymask;
 
 static void scanline_interrupt(int param);
 
@@ -457,9 +457,9 @@ static void scanline_interrupt(int param)
  *
  *************************************/
 
-static void draw_raw(UINT16 *base, UINT16 color)
+static void draw_raw(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH << 8;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT) << 8;
@@ -488,7 +488,7 @@ static void draw_raw(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y += ysrcstep, sy += ydststep)
 	{
-		UINT8 *rowsrc = &src[(y >> 8) * (width >> 8)];
+		uint8_t *rowsrc = &src[(y >> 8) * (width >> 8)];
 
 		/* simpler case: VIDEO_YSTEP_PER_X is zero */
 		if (VIDEO_YSTEP_PER_X == 0)
@@ -496,7 +496,7 @@ static void draw_raw(UINT16 *base, UINT16 color)
 			/* clip in the Y direction */
 			if (sy >= scaled_clip_rect.min_y && sy < scaled_clip_rect.max_y)
 			{
-				UINT16 *dstbase;
+				uint16_t *dstbase;
 
 				/* direction matters here */
 				sx = startx;
@@ -611,9 +611,9 @@ do {												\
  *
  *************************************/
 
-static INLINE void draw_rle_fast(UINT16 *base, UINT16 color)
+static INLINE void draw_rle_fast(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
@@ -638,7 +638,7 @@ static INLINE void draw_rle_fast(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y++, sy += ydststep)
 	{
-		UINT16 *dstbase;
+		uint16_t *dstbase;
 
 		/* clip in the Y direction */
 		if (sy < scaled_clip_rect.min_y || sy >= scaled_clip_rect.max_y)
@@ -688,9 +688,9 @@ static INLINE void draw_rle_fast(UINT16 *base, UINT16 color)
 }
 
 
-static INLINE void draw_rle_fast_xflip(UINT16 *base, UINT16 color)
+static INLINE void draw_rle_fast_xflip(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
@@ -715,7 +715,7 @@ static INLINE void draw_rle_fast_xflip(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y++, sy += ydststep)
 	{
-		UINT16 *dstbase;
+		uint16_t *dstbase;
 
 		/* clip in the Y direction */
 		if (sy < scaled_clip_rect.min_y || sy >= scaled_clip_rect.max_y)
@@ -772,9 +772,9 @@ static INLINE void draw_rle_fast_xflip(UINT16 *base, UINT16 color)
  *
  *************************************/
 
-static INLINE void draw_rle_slow(UINT16 *base, UINT16 color)
+static INLINE void draw_rle_slow(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
@@ -797,7 +797,7 @@ static INLINE void draw_rle_slow(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y++, sy += ydststep)
 	{
-		UINT16 *dstbase;
+		uint16_t *dstbase;
 
 		/* clip in the Y direction */
 		if (sy < scaled_clip_rect.min_y || sy >= scaled_clip_rect.max_y)
@@ -850,7 +850,7 @@ static INLINE void draw_rle_slow(UINT16 *base, UINT16 color)
 
 
 
-static void draw_rle(UINT16 *base, UINT16 color)
+static void draw_rle(uint16_t *base, uint16_t color)
 {
 	/* adjust for (lack of) clipping */
 	if (!(VIDEO_TRANSFER_FLAGS & XFERFLAG_CLIP))
@@ -879,13 +879,13 @@ static void draw_rle(UINT16 *base, UINT16 color)
  *
  *************************************/
 
-static void shiftreg_clear(UINT16 *base)
+static void shiftreg_clear(uint16_t *base)
 {
 	int ydir = (VIDEO_TRANSFER_FLAGS & XFERFLAG_YFLIP) ? -1 : 1;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
 	int sx = VIDEO_TRANSFER_X & 0xfff;
 	int sy = VIDEO_TRANSFER_Y & 0xfff;
-	UINT16 *src;
+	uint16_t *src;
 	int y;
 
 	/* first line is the source */
@@ -1106,7 +1106,7 @@ VIDEO_UPDATE( itech32 )
 {
 	const unsigned short *pal;
 	unsigned palents, fb_pitch;
-	UINT16 *fb;
+	uint16_t *fb;
 	int y;
 
 	/* Fast path: composite the indexed plane(s) straight into the frontend
@@ -1116,24 +1116,24 @@ VIDEO_UPDATE( itech32 )
 	   0-origin, so screen (x,y) maps directly into the buffer. Falls back to
 	   the bitmap path (palette unstable, flip/rotate, UI overlay, etc.). */
 	pal = mame2003_direct_rgb565_palette(&palents);
-	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	fb  = pal ? (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			const UINT16 *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
-			UINT16 *dst = (UINT16 *)((UINT8 *)fb + y * fb_pitch) + cliprect->min_x;
+			const uint16_t *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
+			uint16_t *dst = (uint16_t *)((uint8_t *)fb + y * fb_pitch) + cliprect->min_x;
 			int x;
 
 			/* handle multi-plane case */
 			if (itech32_planes > 1)
 			{
-				const UINT16 *src2 = &videoplane[1][compute_safe_address(VIDEO_DISPLAY_XORIGIN2 + VIDEO_DISPLAY_XSCROLL2, VIDEO_DISPLAY_YORIGIN2 + VIDEO_DISPLAY_YSCROLL2 + y)];
+				const uint16_t *src2 = &videoplane[1][compute_safe_address(VIDEO_DISPLAY_XORIGIN2 + VIDEO_DISPLAY_XSCROLL2, VIDEO_DISPLAY_YORIGIN2 + VIDEO_DISPLAY_YSCROLL2 + y)];
 
 				/* blend the pixels; color xxFF is transparent */
 				for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 				{
-					UINT16 pixel = src1[x];
+					uint16_t pixel = src1[x];
 					if ((pixel & 0xff) == 0xff)
 						pixel = src2[x];
 					*dst++ = pal[pixel];
@@ -1153,19 +1153,19 @@ VIDEO_UPDATE( itech32 )
 	/* loop over height */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
+		uint16_t *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
 
 		/* handle multi-plane case */
 		if (itech32_planes > 1)
 		{
             int length, x, dy;
-            UINT16 *src, *src2, *dst, scanline[384];
+            uint16_t *src, *src2, *dst, scanline[384];
 			src2 = &videoplane[1][compute_safe_address(VIDEO_DISPLAY_XORIGIN2 + VIDEO_DISPLAY_XSCROLL2, VIDEO_DISPLAY_YORIGIN2 + VIDEO_DISPLAY_YSCROLL2 + y)];
 
 			/* blend the pixels in the scanline; color xxFF is transparent */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT16 pixel = src1[x];
+				uint16_t pixel = src1[x];
 				if ((pixel & 0xff) == 0xff)
 					pixel = src2[x];
 				scanline[x] = pixel;
@@ -1176,7 +1176,7 @@ VIDEO_UPDATE( itech32 )
          x = cliprect->min_x;
          src = &scanline[cliprect->min_x];
          dy = bitmap->rowpixels;
-         dst = (UINT16 *)bitmap->base + y * dy + x;
+         dst = (uint16_t *)bitmap->base + y * dy + x;
 
          while (length--)
             *dst++ = *src++;
@@ -1186,12 +1186,12 @@ VIDEO_UPDATE( itech32 )
 		else
       {
          int length, dy, x;
-         UINT16 *src, *dst;
+         uint16_t *src, *dst;
          length = cliprect->max_x - cliprect->min_x + 1;
          src = &src1[cliprect->min_x];
          dy = bitmap->rowpixels;
          x = cliprect->min_x;
-         dst = (UINT16 *)bitmap->base + y * dy + x;
+         dst = (uint16_t *)bitmap->base + y * dy + x;
 
          while (length--)
             *dst++ = *src++;

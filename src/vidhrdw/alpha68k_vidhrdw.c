@@ -401,7 +401,7 @@ static void draw_sprites2(struct mame_bitmap *bitmap, const struct rectangle *cl
 static void draw_sprites2(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int c, int d, int yshift)
 {
 	int data, offs, mx, my, tile, color, fy, i;
-	UINT8 *color_prom = memory_region(REGION_USER1);
+	uint8_t *color_prom = memory_region(REGION_USER1);
 	struct GfxElement *gfx = Machine->gfx[0];
 
 	for (offs=0; offs<0x400; offs+=0x20)
@@ -442,7 +442,7 @@ VIDEO_UPDATE( alpha68k_I )
 PALETTE_INIT( kyros )
 {
 //AT: reconstructed Super Stingry CLUT(bad ic5.5)
-	const UINT8 temp_clut[256] = {
+	const uint8_t temp_clut[256] = {
 		0x00,0x01,0x00,0x02,0x03,0xAE,0xAB,0x0C,0x00,0xA1,0xA0,0xA2,0xA3,0xA7,0xA6,0x0F,
 		0x00,0x11,0x12,0x13,0x04,0x5D,0x5B,0x44,0x00,0x19,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F,
 		0x00,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x00,0xC3,0x02,0xC4,0xC5,0xC6,0x0C,0xC7,
@@ -558,7 +558,7 @@ static void kyros_draw_sprites(struct mame_bitmap *bitmap, const struct rectangl
 					cliprect,TRANSPARENCY_PEN,0);
 */
 	int data;
-	UINT8 *color_prom = memory_region(REGION_USER1);
+	uint8_t *color_prom = memory_region(REGION_USER1);
 
 	for (offs=0; offs<0x400; offs+=0x20)
 	{

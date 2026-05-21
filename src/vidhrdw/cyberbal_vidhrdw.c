@@ -37,12 +37,12 @@ data16_t *cyberbal_paletteram_1;
  *
  *************************************/
 
-static UINT8 current_screen;
-static UINT8 total_screens;
+static uint8_t current_screen;
+static uint8_t total_screens;
 static data16_t current_slip[2];
-static UINT8 playfield_palette_bank[2];
-static UINT16 playfield_xscroll[2];
-static UINT16 playfield_yscroll[2];
+static uint8_t playfield_palette_bank[2];
+static uint16_t playfield_xscroll[2];
+static uint16_t playfield_yscroll[2];
 
 
 
@@ -54,7 +54,7 @@ static UINT16 playfield_yscroll[2];
 
 static void get_alpha_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha[tile_index];
+	uint16_t data = atarigen_alpha[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x07;
 	SET_TILE_INFO(2, code, color, (data >> 15) & 1);
@@ -63,7 +63,7 @@ static void get_alpha_tile_info(int tile_index)
 
 static void get_alpha2_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha2[tile_index];
+	uint16_t data = atarigen_alpha2[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x07;
 	SET_TILE_INFO(2, code, 0x80 | color, (data >> 15) & 1);
@@ -72,7 +72,7 @@ static void get_alpha2_tile_info(int tile_index)
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield[tile_index];
+	uint16_t data = atarigen_playfield[tile_index];
 	int code = data & 0x1fff;
 	int color = (data >> 11) & 0x0f;
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -81,7 +81,7 @@ static void get_playfield_tile_info(int tile_index)
 
 static void get_playfield2_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield2[tile_index];
+	uint16_t data = atarigen_playfield2[tile_index];
 	int code = data & 0x1fff;
 	int color = (data >> 11) & 0x0f;
 	SET_TILE_INFO(0, code, 0x80 | color, (data >> 15) & 1);
@@ -266,7 +266,7 @@ void cyberbal_set_screen(int which)
  *
  *************************************/
 
-static INLINE void set_palette_entry(int entry, UINT16 value)
+static INLINE void set_palette_entry(int entry, uint16_t value)
 {
 	int r, g, b;
 
@@ -411,8 +411,8 @@ static void update_one_screen(int screen, struct mame_bitmap *bitmap, struct rec
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y + mooffset;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y + mooffset;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

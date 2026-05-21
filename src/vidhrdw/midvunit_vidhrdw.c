@@ -33,13 +33,13 @@ data16_t *midvunit_videoram;
 data32_t *midvunit_textureram;
 
 static data16_t dma_data[16];
-static UINT8 dma_data_index;
+static uint8_t dma_data_index;
 static data16_t page_control;
 
 static void *scanline_timer;
 
 static struct poly_vertex vert[4];
-static UINT8 topleft, topright, botleft, botright;
+static uint8_t topleft, topright, botleft, botright;
 
 #if KEEP_STATISTICS
 static int polycount, pixelcount, lastfps, framecount, totalframes;
@@ -76,7 +76,7 @@ VIDEO_START( midvunit )
 
 static INLINE int quad_is_straight(void)
 {
-	INT32 x1, x2, y1, y2, t;
+	int32_t x1, x2, y1, y2, t;
 
 	x1 = vert[0].x;
 	t = vert[1].x;
@@ -170,9 +170,9 @@ static INLINE int quad_is_straight(void)
 
 static void render_straight_flat_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
-	INT32 sx, sy, ex, ey, x, y;
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	int32_t sx, sy, ex, ey, x, y;
 
 	/* compute parameters */
 	sx = vert[topleft].x;
@@ -195,7 +195,7 @@ static void render_straight_flat_quad(void)
 	/* loop over rows */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT16 *d = dest + y * 512 + sx;
+		uint16_t *d = dest + y * 512 + sx;
 		if (pixdata)
 			for (x = sx; x <= ex; x++)
 				*d++ = pixdata;
@@ -207,9 +207,9 @@ static void render_straight_flat_quad(void)
 
 static void render_straight_flat_dither_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
-	INT32 sx, sy, ex, ey, x, y;
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	int32_t sx, sy, ex, ey, x, y;
 
 	/* compute parameters */
 	sx = vert[topleft].x;
@@ -232,7 +232,7 @@ static void render_straight_flat_dither_quad(void)
 	/* loop over rows */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT16 *d = dest + y * 512;
+		uint16_t *d = dest + y * 512;
 		int tsx = sx + ((sx ^ y) & 1);
 		for (x = tsx; x <= ex; x += 2)
 			d[x] = pixdata;
@@ -249,10 +249,10 @@ static void render_straight_flat_dither_quad(void)
 
 static void render_straight_tex_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1];
-	INT32 sx, sy, ex, ey, su, sv, dudx, dvdx, dudy, dvdy, x, y, u, v;
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1];
+	int32_t sx, sy, ex, ey, su, sv, dudx, dvdx, dudy, dvdy, x, y, u, v;
 
 	/* compute parameters */
 	sx = vert[topleft].x;
@@ -301,7 +301,7 @@ static void render_straight_tex_quad(void)
 	/* loop over rows */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT16 *d = dest + y * 512;
+		uint16_t *d = dest + y * 512;
 
 		u = su;
 		v = sv;
@@ -320,10 +320,10 @@ static void render_straight_tex_quad(void)
 
 static void render_straight_textrans_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1];
-	INT32 sx, sy, ex, ey, su, sv, dudx, dvdx, dudy, dvdy, x, y, u, v;
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1];
+	int32_t sx, sy, ex, ey, su, sv, dudx, dvdx, dudy, dvdy, x, y, u, v;
 
 	/* compute parameters */
 	sx = vert[topleft].x;
@@ -372,7 +372,7 @@ static void render_straight_textrans_quad(void)
 	/* loop over rows */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT16 *d = dest + y * 512;
+		uint16_t *d = dest + y * 512;
 
 		u = su;
 		v = sv;
@@ -392,10 +392,10 @@ static void render_straight_textrans_quad(void)
 
 static void render_straight_textransmask_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
-	INT32 sx, sy, ex, ey, su, sv, dudx, dvdx, dudy, dvdy, x, y, u, v;
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	int32_t sx, sy, ex, ey, su, sv, dudx, dvdx, dudy, dvdy, x, y, u, v;
 
 	/* compute parameters */
 	sx = vert[topleft].x;
@@ -444,7 +444,7 @@ static void render_straight_textransmask_quad(void)
 	/* loop over rows */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT16 *d = dest + y * 512;
+		uint16_t *d = dest + y * 512;
 
 		u = su;
 		v = sv;
@@ -471,8 +471,8 @@ static void render_straight_textransmask_quad(void)
 
 static void render_flat_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -494,7 +494,7 @@ static void render_flat_quad(void)
 		curscan = scans->scanline;
 		for (y = scans->sy; y <= scans->ey; y++, curscan++)
 		{
-			UINT16 *d = dest + y * 512 + curscan->sx;
+			uint16_t *d = dest + y * 512 + curscan->sx;
 			int width = curscan->ex - curscan->sx + 1;
 			ADD_TO_PIXEL_COUNT(curscan->ex - curscan->sx + 1);
 			for (x = 0; x < width; x++)
@@ -506,8 +506,8 @@ static void render_flat_quad(void)
 
 static void render_flat_dither_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -530,7 +530,7 @@ static void render_flat_dither_quad(void)
 		for (y = scans->sy; y <= scans->ey; y++, curscan++)
 		{
 			int tsx = curscan->sx + ((curscan->sx ^ y) & 1);
-			UINT16 *d = dest + y * 512;
+			uint16_t *d = dest + y * 512;
 			ADD_TO_PIXEL_COUNT(curscan->ex - curscan->sx + 1);
 			for (x = tsx; x <= curscan->ex; x += 2)
 				d[x] = pixdata;
@@ -548,9 +548,9 @@ static void render_flat_dither_quad(void)
 
 static void render_tex_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1];
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1];
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -582,7 +582,7 @@ static void render_tex_quad(void)
 		curscan = scans->scanline;
 		for (y = scans->sy; y <= scans->ey; y++, curscan++)
 		{
-			UINT16 *d = dest + y * 512 + curscan->sx;
+			uint16_t *d = dest + y * 512 + curscan->sx;
 			int width = curscan->ex - curscan->sx + 1;
 			int u = curscan->p[0], dudx = scans->dp[0];
 			int v = curscan->p[1], dvdx = scans->dp[1];
@@ -600,9 +600,9 @@ static void render_tex_quad(void)
 
 static void render_textrans_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1];
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1];
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -634,7 +634,7 @@ static void render_textrans_quad(void)
 		curscan = scans->scanline;
 		for (y = scans->sy; y <= scans->ey; y++, curscan++)
 		{
-			UINT16 *d = dest + y * 512 + curscan->sx;
+			uint16_t *d = dest + y * 512 + curscan->sx;
 			int width = curscan->ex - curscan->sx + 1;
 			int u = curscan->p[0], dudx = scans->dp[0];
 			int v = curscan->p[1], dvdx = scans->dp[1];
@@ -653,9 +653,9 @@ static void render_textrans_quad(void)
 
 static void render_textransmask_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -687,7 +687,7 @@ static void render_textransmask_quad(void)
 		curscan = scans->scanline;
 		for (y = scans->sy; y <= scans->ey; y++, curscan++)
 		{
-			UINT16 *d = dest + y * 512 + curscan->sx;
+			uint16_t *d = dest + y * 512 + curscan->sx;
 			int width = curscan->ex - curscan->sx + 1;
 			int u = curscan->p[0], dudx = scans->dp[0];
 			int v = curscan->p[1], dvdx = scans->dp[1];
@@ -713,9 +713,9 @@ static void render_textransmask_quad(void)
 
 static void render_tex_dither_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1];
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1];
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -749,7 +749,7 @@ static void render_tex_dither_quad(void)
 		{
 			int u = curscan->p[0], dudx = scans->dp[0];
 			int v = curscan->p[1], dvdx = scans->dp[1];
-			UINT16 *d = dest + y * 512;
+			uint16_t *d = dest + y * 512;
 			int tsx = curscan->sx;
 
 			ADD_TO_PIXEL_COUNT(curscan->ex - curscan->sx + 1);
@@ -776,9 +776,9 @@ static void render_tex_dither_quad(void)
 
 static void render_textrans_dither_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1];
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1];
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -812,7 +812,7 @@ static void render_textrans_dither_quad(void)
 		{
 			int u = curscan->p[0], dudx = scans->dp[0];
 			int v = curscan->p[1], dvdx = scans->dp[1];
-			UINT16 *d = dest + y * 512;
+			uint16_t *d = dest + y * 512;
 			int tsx = curscan->sx;
 
 			ADD_TO_PIXEL_COUNT(curscan->ex - curscan->sx + 1);
@@ -840,9 +840,9 @@ static void render_textrans_dither_quad(void)
 
 static void render_textransmask_dither_quad(void)
 {
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
-	UINT8 *texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
-	UINT16 pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint8_t *texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
+	uint16_t pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
 	const struct poly_scanline_data *scans;
 	const struct poly_scanline *curscan;
 	int x, y, i;
@@ -876,7 +876,7 @@ static void render_textransmask_dither_quad(void)
 		{
 			int u = curscan->p[0], dudx = scans->dp[0];
 			int v = curscan->p[1], dvdx = scans->dp[1];
-			UINT16 *d = dest + y * 512;
+			uint16_t *d = dest + y * 512;
 			int tsx = curscan->sx;
 
 			ADD_TO_PIXEL_COUNT(curscan->ex - curscan->sx + 1);
@@ -920,14 +920,14 @@ static void process_dma_queue(void)
 #endif
 
 	/* fill in the vertex data */
-	vert[0].x = (INT16)dma_data[2];
-	vert[0].y = (INT16)dma_data[3];
-	vert[1].x = (INT16)dma_data[4];
-	vert[1].y = (INT16)dma_data[5];
-	vert[2].x = (INT16)dma_data[6];
-	vert[2].y = (INT16)dma_data[7];
-	vert[3].x = (INT16)dma_data[8];
-	vert[3].y = (INT16)dma_data[9];
+	vert[0].x = (int16_t)dma_data[2];
+	vert[0].y = (int16_t)dma_data[3];
+	vert[1].x = (int16_t)dma_data[4];
+	vert[1].y = (int16_t)dma_data[5];
+	vert[2].x = (int16_t)dma_data[6];
+	vert[2].y = (int16_t)dma_data[7];
+	vert[3].x = (int16_t)dma_data[8];
+	vert[3].y = (int16_t)dma_data[9];
 
 	/* determine if it's straight-on or arbitrary */
 	straight = quad_is_straight();
@@ -1145,7 +1145,7 @@ WRITE32_HANDLER( midvunit_paletteram_w )
 
 WRITE32_HANDLER( midvunit_textureram_w )
 {
-	UINT8 *base = (UINT8 *)midvunit_textureram;
+	uint8_t *base = (uint8_t *)midvunit_textureram;
 	base[offset * 2] = data;
 	base[offset * 2 + 1] = data >> 8;
 }
@@ -1153,7 +1153,7 @@ WRITE32_HANDLER( midvunit_textureram_w )
 
 READ32_HANDLER( midvunit_textureram_r )
 {
-	UINT8 *base = (UINT8 *)midvunit_textureram;
+	uint8_t *base = (uint8_t *)midvunit_textureram;
 	return (base[offset * 2 + 1] << 8) | base[offset * 2];
 }
 
@@ -1170,9 +1170,9 @@ VIDEO_UPDATE( midvunit )
 {
 	const unsigned short *pal;
 	unsigned palents, fb_pitch;
-	UINT16 *fb;
+	uint16_t *fb;
 	int x, y, width, xoffs;
-	UINT32 offset;
+	uint32_t offset;
 
 #if KEEP_STATISTICS
 	totalframes++;
@@ -1205,12 +1205,12 @@ VIDEO_UPDATE( midvunit )
 	   the buffer. Falls back to the bitmap path (palette unstable, flip/rotate,
 	   UI overlay, etc.). */
 	pal = mame2003_direct_rgb565_palette(&palents);
-	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	fb  = pal ? (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			UINT16 *dest = (UINT16 *)((UINT8 *)fb + y * fb_pitch) + cliprect->min_x;
+			uint16_t *dest = (uint16_t *)((uint8_t *)fb + y * fb_pitch) + cliprect->min_x;
 			for (x = 0; x < width; x++)
 				*dest++ = pal[midvunit_videoram[offset + x] & 0x7fff];
 			offset += 512;
@@ -1221,7 +1221,7 @@ VIDEO_UPDATE( midvunit )
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
+		uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
 		for (x = 0; x < width; x++)
 			*dest++ = midvunit_videoram[offset + x] & 0x7fff;
 		offset += 512;

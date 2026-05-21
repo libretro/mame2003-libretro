@@ -139,7 +139,7 @@ finish:
 static void reikaids_handleblit( int rom_base )
 {
 	int i;
-	UINT16 DestParam;
+	uint16_t DestParam;
 	int flipx;
 	int SourceAddr, BaseAddr;
 	int DestAddr;

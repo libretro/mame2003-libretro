@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT8 shaolins_nmi_enable;
+extern uint8_t shaolins_nmi_enable;
 
 static int palettebank;
 static struct tilemap *bg_tilemap;

@@ -32,7 +32,7 @@ static void ttl_get_tile_info(int tile_index)
 	SET_TILE_INFO(ttl_gfx_index, code, attr, tile_info.flags);
 }
 
-static UINT32 ttl_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t ttl_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 

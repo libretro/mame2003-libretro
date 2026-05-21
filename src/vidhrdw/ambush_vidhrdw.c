@@ -68,7 +68,7 @@ static void draw_chars(struct mame_bitmap *bitmap, int priority)
 	for (offs = 0; offs < videoram_size; offs++)
 	{
 		int code,sx,sy,col;
-		UINT8 scroll;
+		uint8_t scroll;
 
 
 		sy = (offs / 32);

@@ -66,8 +66,8 @@ int psikyo_ka302c_banking;
 
 static struct tilemap 	*tilemap_0_size0, *tilemap_0_size1, *tilemap_0_size2, *tilemap_0_size3,
 						*tilemap_1_size0, *tilemap_1_size1, *tilemap_1_size2, *tilemap_1_size3;
-static UINT8 tilemap_0_bank, tilemap_1_bank;
-static UINT32 *spritebuf1, *spritebuf2;
+static uint8_t tilemap_0_bank, tilemap_1_bank;
+static uint32_t *spritebuf1, *spritebuf2;
 
 /***************************************************************************
 

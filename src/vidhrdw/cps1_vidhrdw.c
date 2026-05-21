@@ -449,13 +449,13 @@ static MACHINE_INIT( cps )
 	if (strcmp(gamename, "sf2rb" )==0)
 	{
 		/* Patch out protection check */
-		UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+		uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 		rom[0xe5464/2] = 0x6012;
 	}
 	if (strcmp(gamename, "sf2rb2" )==0)
 	{
 		/* Patch out protection check */
-		UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+		uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 		rom[0xe5332/2] = 0x6014;
 	}
 
@@ -466,13 +466,13 @@ static MACHINE_INIT( cps )
 		   by the cpu core as a 32-bit branch. This branch would make the
 		   game crash (address error, since it would branch to an odd address)
 		   if location 180ca6 (outside ROM space) isn't 0. Protection check? */
-		UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+		uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 		rom[0x11756/2] = 0x4e71;
 	}
 	else if (strcmp(gamename, "ghouls" )==0)
 	{
 		/* Patch out self-test... it takes forever */
-		UINT16 *rom = (UINT16 *)memory_region(REGION_CPU1);
+		uint16_t *rom = (uint16_t *)memory_region(REGION_CPU1);
 		rom[0x61964/2] = 0x4ef9;
 		rom[0x61966/2] = 0x0000;
 		rom[0x61968/2] = 0x0400;
@@ -650,20 +650,20 @@ static void cps1_gfx_decode(void)
 {
 	int size=memory_region_length(REGION_GFX1);
 	int i,j,gfxsize;
-	UINT8 *cps1_gfx = memory_region(REGION_GFX1);
+	uint8_t *cps1_gfx = memory_region(REGION_GFX1);
 
 
 	gfxsize=size/4;
 
 	for (i = 0;i < gfxsize;i++)
 	{
-		UINT32 src = cps1_gfx[4*i] + (cps1_gfx[4*i+1]<<8) + (cps1_gfx[4*i+2]<<16) + (cps1_gfx[4*i+3]<<24);
-		UINT32 dwval = 0;
+		uint32_t src = cps1_gfx[4*i] + (cps1_gfx[4*i+1]<<8) + (cps1_gfx[4*i+2]<<16) + (cps1_gfx[4*i+3]<<24);
+		uint32_t dwval = 0;
 
 		for (j = 0;j < 8;j++)
 		{
 			int n = 0;
-			UINT32 mask = (0x80808080 >> j) & src;
+			uint32_t mask = (0x80808080 >> j) & src;
 
 			if (mask & 0x000000ff) n |= 1;
 			if (mask & 0x0000ff00) n |= 2;
@@ -679,10 +679,10 @@ static void cps1_gfx_decode(void)
 	}
 }
 
-static void unshuffle(UINT64 *buf,int len)
+static void unshuffle(uint64_t *buf,int len)
 {
 	int i;
-	UINT64 t;
+	uint64_t t;
 
 	if (len == 2) return;
 
@@ -708,7 +708,7 @@ static void cps2_gfx_decode(void)
 	int i;
 
 	for (i = 0;i < size;i += banksize)
-		unshuffle((UINT64 *)(memory_region(REGION_GFX1) + i),banksize/8);
+		unshuffle((uint64_t *)(memory_region(REGION_GFX1) + i),banksize/8);
 
 	cps1_gfx_decode();
 }
@@ -826,25 +826,25 @@ WRITE16_HANDLER( cps1_gfxram_w )
 
 ***************************************************************************/
 
-static UINT32 tilemap0_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tilemap0_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x1f) + ((col & 0x3f) << 5) + ((row & 0x20) << 6);
 }
 
-static UINT32 tilemap1_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tilemap1_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x0f) + ((col & 0x3f) << 4) + ((row & 0x30) << 6);
 }
 
-static UINT32 tilemap2_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tilemap2_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x07) + ((col & 0x3f) << 3) + ((row & 0x38) << 6);
 }
 
-static UINT8 empty_tile[32*32/2];
+static uint8_t empty_tile[32*32/2];
 
 static void get_tile0_info(int tile_index)
 {
@@ -1532,7 +1532,7 @@ void cps2_render_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 void cps1_render_stars(struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
 	int offs;
-	UINT8 *stars_rom = memory_region(REGION_GFX2);
+	uint8_t *stars_rom = memory_region(REGION_GFX2);
 
 	if (!stars_rom && (cps1_stars_enabled[0] || cps1_stars_enabled[1]))
 		return;

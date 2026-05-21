@@ -142,7 +142,7 @@ static void warriorb_draw_sprites(struct mame_bitmap *bitmap,const struct rectan
 
 VIDEO_UPDATE( warriorb )
 {
-	UINT8 layer[3], nodraw;
+	uint8_t layer[3], nodraw;
 
 	TC0100SCN_tilemap_update();
 

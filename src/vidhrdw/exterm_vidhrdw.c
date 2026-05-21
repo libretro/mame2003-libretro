@@ -50,24 +50,24 @@ PALETTE_INIT( exterm )
  *
  *************************************/
 
-void exterm_to_shiftreg_master(unsigned int address, UINT16* shiftreg)
+void exterm_to_shiftreg_master(unsigned int address, uint16_t* shiftreg)
 {
-	memcpy(shiftreg, &exterm_master_videoram[TOWORD(address)], 256 * sizeof(UINT16));
+	memcpy(shiftreg, &exterm_master_videoram[TOWORD(address)], 256 * sizeof(uint16_t));
 }
 
-void exterm_from_shiftreg_master(unsigned int address, UINT16* shiftreg)
+void exterm_from_shiftreg_master(unsigned int address, uint16_t* shiftreg)
 {
-	memcpy(&exterm_master_videoram[TOWORD(address)], shiftreg, 256 * sizeof(UINT16));
+	memcpy(&exterm_master_videoram[TOWORD(address)], shiftreg, 256 * sizeof(uint16_t));
 }
 
-void exterm_to_shiftreg_slave(unsigned int address, UINT16* shiftreg)
+void exterm_to_shiftreg_slave(unsigned int address, uint16_t* shiftreg)
 {
-	memcpy(shiftreg, &exterm_slave_videoram[TOWORD(address)], 256 * 2 * sizeof(UINT8));
+	memcpy(shiftreg, &exterm_slave_videoram[TOWORD(address)], 256 * 2 * sizeof(uint8_t));
 }
 
-void exterm_from_shiftreg_slave(unsigned int address, UINT16* shiftreg)
+void exterm_from_shiftreg_slave(unsigned int address, uint16_t* shiftreg)
 {
-	memcpy(&exterm_slave_videoram[TOWORD(address)], shiftreg, 256 * 2 * sizeof(UINT8));
+	memcpy(&exterm_slave_videoram[TOWORD(address)], shiftreg, 256 * 2 * sizeof(uint8_t));
 }
 
 
@@ -106,13 +106,13 @@ VIDEO_UPDATE( exterm )
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		data16_t *bgsrc = &exterm_master_videoram[256 * y];
-		UINT16 scanline[256];
+		uint16_t scanline[256];
 
 		/* on the top/bottom of the screen, it's all background */
 		if (y < 40 || y > 238)
 			for (x = 0; x < 256; x++)
 			{
-				UINT16 bgdata = *bgsrc++;
+				uint16_t bgdata = *bgsrc++;
 				scanline[x] = (bgdata & 0x8000) ? (bgdata & 0xfff) : (bgdata + 0x1000);
 			}
 
@@ -123,8 +123,8 @@ VIDEO_UPDATE( exterm )
 
 			for (x = 0; x < 256; x += 2)
 			{
-				UINT16 fgdata = *fgsrc++;
-				UINT16 bgdata;
+				uint16_t fgdata = *fgsrc++;
+				uint16_t bgdata;
 
 				if (fgdata & 0x00ff)
 					scanline[x] = fgdata & 0x00ff;

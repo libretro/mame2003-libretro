@@ -53,7 +53,7 @@ WRITE16_HANDLER( asuka_spritectrl_w )
 
 VIDEO_UPDATE( asuka )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -77,7 +77,7 @@ VIDEO_UPDATE( asuka )
 
 VIDEO_UPDATE( bonzeadv )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 

@@ -1516,32 +1516,32 @@ static void stv_vdp2_dynamic_res_change(void);
 /* Not sure if to use this for the rotating tilemaps as well or just use different draw functions, might add too much bloat */
 static struct stv_vdp2_tilemap_capabilities
 {
-	UINT8  enabled;
-	UINT8  trans_enabled;
-	UINT8  colour_depth;
-	UINT8  tile_size;
-	UINT8  bitmap_enable;
-	UINT8  bitmap_size;
-	UINT8  bitmap_palette_number;
-	UINT8  bitmap_map;
-	UINT16 map_offset[16];
+	uint8_t  enabled;
+	uint8_t  trans_enabled;
+	uint8_t  colour_depth;
+	uint8_t  tile_size;
+	uint8_t  bitmap_enable;
+	uint8_t  bitmap_size;
+	uint8_t  bitmap_palette_number;
+	uint8_t  bitmap_map;
+	uint16_t map_offset[16];
 
-	UINT8  pattern_data_size;
-	UINT8  character_number_supplement;
-	UINT8  special_priority_register;
-	UINT8  special_colour_control_register;
-	UINT8  supplementary_palette_bits;
-	UINT8  supplementary_character_bits;
+	uint8_t  pattern_data_size;
+	uint8_t  character_number_supplement;
+	uint8_t  special_priority_register;
+	uint8_t  special_colour_control_register;
+	uint8_t  supplementary_palette_bits;
+	uint8_t  supplementary_character_bits;
 
-	INT16 scrollx;
-	INT16 scrolly;
-	UINT8 scalex_i,scaley_i;
-	UINT16 scalex_f,scaley_f;
+	int16_t scrollx;
+	int16_t scrolly;
+	uint8_t scalex_i,scaley_i;
+	uint16_t scalex_f,scaley_f;
 
-	UINT8  plane_size;
-	UINT8  colour_ram_address_offset;
+	uint8_t  plane_size;
+	uint8_t  colour_ram_address_offset;
 
-	UINT8  real_map_offset[16];
+	uint8_t  real_map_offset[16];
 
 	int layer_name; /* just to keep track */
 } stv2_current_tilemap;
@@ -1557,7 +1557,7 @@ static void stv_vdp2_draw_basic_bitmap(struct mame_bitmap *bitmap, const struct 
 	int ysize = 0;
 	int xcnt,ycnt;
 	data8_t* gfxdata = memory_region(REGION_GFX1);
-	static UINT16 *destline;
+	static uint16_t *destline;
 
 	if (!stv2_current_tilemap.enabled) return;
 
@@ -1632,7 +1632,7 @@ static void stv_vdp2_draw_basic_bitmap(struct mame_bitmap *bitmap, const struct 
 		{
 			for (ycnt = 0; ycnt <ysize;ycnt++)
 			{
-				destline = (UINT16 *)(bitmap->line[ycnt]);
+				destline = (uint16_t *)(bitmap->line[ycnt]);
 
 				for (xcnt = 0; xcnt <xsize;xcnt++)
 				{
@@ -1660,7 +1660,7 @@ static void stv_vdp2_draw_basic_bitmap(struct mame_bitmap *bitmap, const struct 
 		{
 			for (ycnt = 0; ycnt <ysize;ycnt++)
 			{
-				destline = (UINT16 *)(bitmap->line[ycnt]);
+				destline = (uint16_t *)(bitmap->line[ycnt]);
 
 				for (xcnt = 0; xcnt <xsize;xcnt++)
 				{
@@ -2422,7 +2422,7 @@ static void stv_vdp2_draw_back(struct mame_bitmap *bitmap, const struct rectangl
 {
 	int xcnt,ycnt;
 	data8_t* gfxdata = memory_region(REGION_GFX1);
-	static UINT16 *destline;
+	static uint16_t *destline;
 
 	if(!(STV_VDP2_BDCLMD & 1))
 		fillbitmap(bitmap, get_black_pen(), cliprect);
@@ -2435,7 +2435,7 @@ static void stv_vdp2_draw_back(struct mame_bitmap *bitmap, const struct rectangl
 
 		for (ycnt = 0; ycnt <1024;ycnt++)
 		{
-			destline = (UINT16 *)(bitmap->line[ycnt]);
+			destline = (uint16_t *)(bitmap->line[ycnt]);
 
 			for (xcnt = 0; xcnt <1024;xcnt++)
 			{
@@ -2602,7 +2602,7 @@ VIDEO_START( stv_vdp2 )
 
 static void stv_vdp2_dynamic_res_change()
 {
-	static UINT16 horz,vert;
+	static uint16_t horz,vert;
 
 	switch( STV_VDP2_VRES & 3 )
 	{
@@ -2639,7 +2639,7 @@ extern data32_t *stv_vdp1_vram;
 
 VIDEO_UPDATE( stv_vdp2 )
 {
-	static UINT8 pri;
+	static uint8_t pri;
 
 //#ifndef MAME_DEBUG
 	stv_vdp2_dynamic_res_change();

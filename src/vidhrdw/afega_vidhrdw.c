@@ -92,7 +92,7 @@ PALETTE_INIT( grdnstrm )
 #define PAGES_PER_TMAP_X	(0x4)
 #define PAGES_PER_TMAP_Y	(0x4)
 
-UINT32 afega_tilemap_scan_pages(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+uint32_t afega_tilemap_scan_pages(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return	(row / TILES_PER_PAGE_Y) * TILES_PER_PAGE_X * TILES_PER_PAGE_Y * PAGES_PER_TMAP_X +
 			(row % TILES_PER_PAGE_Y) +

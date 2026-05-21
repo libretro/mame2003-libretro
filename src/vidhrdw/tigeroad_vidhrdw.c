@@ -69,8 +69,8 @@ WRITE16_HANDLER( tigeroad_scroll_w )
 
 static void tigeroad_draw_sprites( struct mame_bitmap *bitmap, int priority )
 {
-	UINT16 *source = &buffered_spriteram16[spriteram_size/2] - 4;
-	UINT16 *finish = buffered_spriteram16;
+	uint16_t *source = &buffered_spriteram16[spriteram_size/2] - 4;
+	uint16_t *finish = buffered_spriteram16;
 
 	// TODO: The Track Map should probably be drawn on top of the background tilemap...
 	//       Also convert the below into a for loop!
@@ -114,7 +114,7 @@ static void tigeroad_draw_sprites( struct mame_bitmap *bitmap, int priority )
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT8 *tilerom = memory_region(REGION_GFX4);
+	uint8_t *tilerom = memory_region(REGION_GFX4);
 
 	int data = tilerom[tile_index];
 	int attr = tilerom[tile_index + 1];
@@ -136,7 +136,7 @@ static void get_fg_tile_info(int tile_index)
 	SET_TILE_INFO(0, code, color, flags)
 }
 
-static UINT32 tigeroad_tilemap_scan( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tigeroad_tilemap_scan( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return 2 * (col % 8) + 16 * ((127 - row) % 8) + 128 * (col / 8) + 2048 * ((127 - row) / 8);

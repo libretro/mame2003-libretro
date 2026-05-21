@@ -5,7 +5,7 @@
 
 
 data16_t *suprslam_screen_videoram, *suprslam_bg_videoram,*suprslam_sp_videoram, *suprslam_spriteram;
-UINT16 screen_bank, bg_bank;
+uint16_t screen_bank, bg_bank;
 static struct tilemap *suprslam_screen_tilemap, *suprslam_bg_tilemap;
 
 /* todo, fix zooming correctly, its _not_ like aerofgt */
@@ -41,7 +41,7 @@ static void suprslam_drawsprites( struct mame_bitmap *bitmap, const struct recta
 
 	while( source<finish )
 	{
-		UINT32 sprnum = source[0] & 0x03ff;
+		uint32_t sprnum = source[0] & 0x03ff;
 		if (source[0] == 0x4000) break;
 
 		sprnum *= 4;
@@ -170,7 +170,7 @@ VIDEO_UPDATE( suprslam )
 
 WRITE16_HANDLER (suprslam_bank_w)
 {
-	UINT16 old_screen_bank, old_bg_bank;
+	uint16_t old_screen_bank, old_bg_bank;
 	old_screen_bank = screen_bank;
 	old_bg_bank = bg_bank;
 

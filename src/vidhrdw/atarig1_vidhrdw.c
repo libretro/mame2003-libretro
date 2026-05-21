@@ -16,7 +16,7 @@
  *
  *************************************/
 
-UINT8 atarig1_pitfight;
+uint8_t atarig1_pitfight;
 
 
 
@@ -27,10 +27,10 @@ UINT8 atarig1_pitfight;
  *************************************/
 
 static int pfscroll_xoffset;
-static UINT16 current_control;
-static UINT8 playfield_tile_bank;
-static UINT16 playfield_xscroll;
-static UINT16 playfield_yscroll;
+static uint16_t current_control;
+static uint8_t playfield_tile_bank;
+static uint16_t playfield_xscroll;
+static uint16_t playfield_yscroll;
 
 
 
@@ -42,7 +42,7 @@ static UINT16 playfield_yscroll;
 
 static void get_alpha_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha[tile_index];
+	uint16_t data = atarigen_alpha[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	int opaque = data & 0x8000;
@@ -52,7 +52,7 @@ static void get_alpha_tile_info(int tile_index)
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield[tile_index];
+	uint16_t data = atarigen_playfield[tile_index];
 	int code = (playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (data >> 12) & 7;
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);

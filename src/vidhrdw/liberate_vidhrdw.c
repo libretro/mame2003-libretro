@@ -35,13 +35,13 @@ void debug_print(struct mame_bitmap *bitmap)
 }
 #endif
 
-static UINT32 back_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t back_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return ((row & 0xf)) + ((15-(col &0xf))<<4) + ((row&0x10)<<5) + ((col&0x10)<<4);
 }
 
-static UINT32 fix_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t fix_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x1f) + ((31-(col &0x1f))<<5);

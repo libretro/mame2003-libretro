@@ -190,7 +190,7 @@ static data32_t f3_control_0[8];
 static data32_t f3_control_1[8];
 static int flipscreen;
 
-static UINT8 *pivot_dirty;
+static uint8_t *pivot_dirty;
 static int pf23_y_kludge;
 static struct rectangle pixel_layer_clip;
 
@@ -268,7 +268,7 @@ static int alpha_disable=0;
 static const struct tempsprite *sprite_end;
 static void get_sprite_info(const data32_t *spriteram32_ptr);
 static int sprite_lag=1;
-static UINT8 sprite_pri_usage=0;
+static uint8_t sprite_pri_usage=0;
 
 struct f3_line_inf
 {
@@ -276,13 +276,13 @@ struct f3_line_inf
 	int alpha_level[256];
 	int pri[256];
 	int spri[256];
-	UINT16 sprite_alpha[256];
+	uint16_t sprite_alpha[256];
 
 	/* use for draw_scanlines */
-	UINT16 *src[256],*src_s[256],*src_e[256];
-	UINT8 *tsrc[256],*tsrc_s[256];
+	uint16_t *src[256],*src_s[256],*src_e[256];
+	uint8_t *tsrc[256],*tsrc_s[256];
 	int x_count[256];
-	UINT32 x_zoom[256];
+	uint32_t x_zoom[256];
 };
 /*
 alpha_mode
@@ -319,15 +319,15 @@ static void init_alpha_blend_func(void);
 
 static int width_mask=0x1ff;
 static int twidth_mask=0x1f,twidth_mask_bit=5;
-static UINT8 *tile_opaque_sp;
-static UINT8 *tile_opaque_pf;
+static uint8_t *tile_opaque_sp;
+static uint8_t *tile_opaque_pf;
 
 /******************************************************************************/
 
 static INLINE void get_tile_info(int tile_index, data32_t *gfx_base)
 {
 	data32_t tile=gfx_base[tile_index];
-	UINT8 abtype=(tile>>(16+9))&0x1f;
+	uint8_t abtype=(tile>>(16+9))&0x1f;
 
 	{
 		SET_TILE_INFO(
@@ -466,15 +466,15 @@ VIDEO_START( f3 )
 		twidth_mask_bit=5;
 	}
 
-	spriteram32_buffered = (UINT32 *)auto_malloc(0x10000);
+	spriteram32_buffered = (uint32_t *)auto_malloc(0x10000);
 	spritelist = auto_malloc(0x400 * sizeof(*spritelist));
 	sprite_end = spritelist;
 	pixel_layer = tilemap_create(get_tile_info_pixel,tilemap_scan_cols,TILEMAP_TRANSPARENT,8,8,64,32);
-	pivot_dirty = (UINT8 *)auto_malloc(2048);
+	pivot_dirty = (uint8_t *)auto_malloc(2048);
 	line_inf = auto_malloc(4 * sizeof(struct f3_line_inf));
 	pri_alp_bitmap = auto_bitmap_alloc_depth( Machine->scrbitmap->width, Machine->scrbitmap->height, -8 );
-	tile_opaque_sp = (UINT8 *)auto_malloc(Machine->gfx[2]->total_elements);
-	tile_opaque_pf = (UINT8 *)auto_malloc(Machine->gfx[1]->total_elements);
+	tile_opaque_sp = (uint8_t *)auto_malloc(Machine->gfx[2]->total_elements);
+	tile_opaque_pf = (uint8_t *)auto_malloc(Machine->gfx[1]->total_elements);
 
 	if (!pf1_tilemap || !pf2_tilemap || !pf3_tilemap || !pf4_tilemap || !line_inf || !pri_alp_bitmap
 		 || !spritelist || !pixel_layer || !spriteram32_buffered || !pivot_dirty || !tile_opaque_sp || !tile_opaque_pf)
@@ -532,7 +532,7 @@ VIDEO_START( f3 )
 		{
 			int x,y;
 			int chk_trans_or_opa=0;
-			UINT8 *dp = sprite_gfx->gfxdata + c * sprite_gfx->char_modulo;
+			uint8_t *dp = sprite_gfx->gfxdata + c * sprite_gfx->char_modulo;
 			for (y = 0;y < sprite_gfx->height;y++)
 			{
 				for (x = 0;x < sprite_gfx->width;x++)
@@ -556,7 +556,7 @@ VIDEO_START( f3 )
 		{
 			int x,y;
 			int chk_trans_or_opa=0;
-			UINT8 *dp = pf_gfx->gfxdata + c * pf_gfx->char_modulo;
+			uint8_t *dp = pf_gfx->gfxdata + c * pf_gfx->char_modulo;
 			for (y = 0;y < pf_gfx->height;y++)
 			{
 				for (x = 0;x < pf_gfx->width;x++)
@@ -713,48 +713,48 @@ WRITE32_HANDLER( f3_palette_24bit_w )
 
 /******************************************************************************/
 
-static UINT8 add_sat[256][256];
+static uint8_t add_sat[256][256];
 
-static const UINT8 *alpha_s_1_1;
-static const UINT8 *alpha_s_1_2;
-static const UINT8 *alpha_s_1_4;
-static const UINT8 *alpha_s_1_5;
-static const UINT8 *alpha_s_1_6;
-static const UINT8 *alpha_s_1_8;
-static const UINT8 *alpha_s_1_9;
-static const UINT8 *alpha_s_1_a;
+static const uint8_t *alpha_s_1_1;
+static const uint8_t *alpha_s_1_2;
+static const uint8_t *alpha_s_1_4;
+static const uint8_t *alpha_s_1_5;
+static const uint8_t *alpha_s_1_6;
+static const uint8_t *alpha_s_1_8;
+static const uint8_t *alpha_s_1_9;
+static const uint8_t *alpha_s_1_a;
 
-static const UINT8 *alpha_s_2a_0;
-static const UINT8 *alpha_s_2a_4;
-static const UINT8 *alpha_s_2a_8;
+static const uint8_t *alpha_s_2a_0;
+static const uint8_t *alpha_s_2a_4;
+static const uint8_t *alpha_s_2a_8;
 
-static const UINT8 *alpha_s_2b_0;
-static const UINT8 *alpha_s_2b_4;
-static const UINT8 *alpha_s_2b_8;
+static const uint8_t *alpha_s_2b_0;
+static const uint8_t *alpha_s_2b_4;
+static const uint8_t *alpha_s_2b_8;
 
-static const UINT8 *alpha_s_3a_0;
-static const UINT8 *alpha_s_3a_1;
-static const UINT8 *alpha_s_3a_2;
+static const uint8_t *alpha_s_3a_0;
+static const uint8_t *alpha_s_3a_1;
+static const uint8_t *alpha_s_3a_2;
 
-static const UINT8 *alpha_s_3b_0;
-static const UINT8 *alpha_s_3b_1;
-static const UINT8 *alpha_s_3b_2;
+static const uint8_t *alpha_s_3b_0;
+static const uint8_t *alpha_s_3b_1;
+static const uint8_t *alpha_s_3b_2;
 
-static UINT32 dval;
-static UINT8 pval;
-static UINT8 tval;
-static UINT8 pdest_2a = 0x10;
-static UINT8 pdest_2b = 0x20;
+static uint32_t dval;
+static uint8_t pval;
+static uint8_t tval;
+static uint8_t pdest_2a = 0x10;
+static uint8_t pdest_2b = 0x20;
 static int tr_2a = 0;
 static int tr_2b = 1;
-static UINT8 pdest_3a = 0x40;
-static UINT8 pdest_3b = 0x80;
+static uint8_t pdest_3a = 0x40;
+static uint8_t pdest_3b = 0x80;
 static int tr_3a = 0;
 static int tr_3b = 1;
 
-static int (*dpix_n[8][16])(UINT32 s_pix);
-static int (**dpix_lp[4])(UINT32 s_pix);
-static int (**dpix_sp[9])(UINT32 s_pix);
+static int (*dpix_n[8][16])(uint32_t s_pix);
+static int (**dpix_lp[4])(uint32_t s_pix);
+static int (**dpix_sp[9])(uint32_t s_pix);
 
 /*============================================================================*/
 
@@ -812,19 +812,19 @@ static INLINE void f3_alpha_set_level(void)
 #define COLOR3 2
 #endif
 
-static INLINE void f3_alpha_blend32_s( const UINT8 *alphas, UINT32 s )
+static INLINE void f3_alpha_blend32_s( const uint8_t *alphas, uint32_t s )
 {
-	UINT8 *sc = (UINT8 *)&s;
-	UINT8 *dc = (UINT8 *)&dval;
+	uint8_t *sc = (uint8_t *)&s;
+	uint8_t *dc = (uint8_t *)&dval;
 	dc[COLOR1] = alphas[sc[COLOR1]];
 	dc[COLOR2] = alphas[sc[COLOR2]];
 	dc[COLOR3] = alphas[sc[COLOR3]];
 }
 
-static INLINE void f3_alpha_blend32_d( const UINT8 *alphas, UINT32 s )
+static INLINE void f3_alpha_blend32_d( const uint8_t *alphas, uint32_t s )
 {
-	UINT8 *sc = (UINT8 *)&s;
-	UINT8 *dc = (UINT8 *)&dval;
+	uint8_t *sc = (uint8_t *)&s;
+	uint8_t *dc = (uint8_t *)&dval;
 	dc[COLOR1] = add_sat[dc[COLOR1]][alphas[sc[COLOR1]]];
 	dc[COLOR2] = add_sat[dc[COLOR2]][alphas[sc[COLOR2]]];
 	dc[COLOR3] = add_sat[dc[COLOR3]][alphas[sc[COLOR3]]];
@@ -832,128 +832,128 @@ static INLINE void f3_alpha_blend32_d( const UINT8 *alphas, UINT32 s )
 
 /*============================================================================*/
 
-static INLINE void f3_alpha_blend_1_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_1,s);}
-static INLINE void f3_alpha_blend_1_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_2,s);}
-static INLINE void f3_alpha_blend_1_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_4,s);}
-static INLINE void f3_alpha_blend_1_5( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_5,s);}
-static INLINE void f3_alpha_blend_1_6( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_6,s);}
-static INLINE void f3_alpha_blend_1_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_8,s);}
-static INLINE void f3_alpha_blend_1_9( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_9,s);}
-static INLINE void f3_alpha_blend_1_a( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_a,s);}
+static INLINE void f3_alpha_blend_1_1( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_1,s);}
+static INLINE void f3_alpha_blend_1_2( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_2,s);}
+static INLINE void f3_alpha_blend_1_4( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_4,s);}
+static INLINE void f3_alpha_blend_1_5( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_5,s);}
+static INLINE void f3_alpha_blend_1_6( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_6,s);}
+static INLINE void f3_alpha_blend_1_8( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_8,s);}
+static INLINE void f3_alpha_blend_1_9( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_9,s);}
+static INLINE void f3_alpha_blend_1_a( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_a,s);}
 
-static INLINE void f3_alpha_blend_2a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2a_0,s);}
-static INLINE void f3_alpha_blend_2a_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_4,s);}
-static INLINE void f3_alpha_blend_2a_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_8,s);}
+static INLINE void f3_alpha_blend_2a_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_2a_0,s);}
+static INLINE void f3_alpha_blend_2a_4( uint32_t s ){f3_alpha_blend32_d(alpha_s_2a_4,s);}
+static INLINE void f3_alpha_blend_2a_8( uint32_t s ){f3_alpha_blend32_d(alpha_s_2a_8,s);}
 
-static INLINE void f3_alpha_blend_2b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2b_0,s);}
-static INLINE void f3_alpha_blend_2b_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_4,s);}
-static INLINE void f3_alpha_blend_2b_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_8,s);}
+static INLINE void f3_alpha_blend_2b_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_2b_0,s);}
+static INLINE void f3_alpha_blend_2b_4( uint32_t s ){f3_alpha_blend32_d(alpha_s_2b_4,s);}
+static INLINE void f3_alpha_blend_2b_8( uint32_t s ){f3_alpha_blend32_d(alpha_s_2b_8,s);}
 
-static INLINE void f3_alpha_blend_3a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3a_0,s);}
-static INLINE void f3_alpha_blend_3a_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_1,s);}
-static INLINE void f3_alpha_blend_3a_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_2,s);}
+static INLINE void f3_alpha_blend_3a_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_3a_0,s);}
+static INLINE void f3_alpha_blend_3a_1( uint32_t s ){f3_alpha_blend32_d(alpha_s_3a_1,s);}
+static INLINE void f3_alpha_blend_3a_2( uint32_t s ){f3_alpha_blend32_d(alpha_s_3a_2,s);}
 
-static INLINE void f3_alpha_blend_3b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3b_0,s);}
-static INLINE void f3_alpha_blend_3b_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_1,s);}
-static INLINE void f3_alpha_blend_3b_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_2,s);}
+static INLINE void f3_alpha_blend_3b_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_3b_0,s);}
+static INLINE void f3_alpha_blend_3b_1( uint32_t s ){f3_alpha_blend32_d(alpha_s_3b_1,s);}
+static INLINE void f3_alpha_blend_3b_2( uint32_t s ){f3_alpha_blend32_d(alpha_s_3b_2,s);}
 
 /*============================================================================*/
 
-static int dpix_1_noalpha(UINT32 s_pix) {dval = s_pix; return 1;}
-static int dpix_ret1(UINT32 s_pix) {return 1;}
-static int dpix_ret0(UINT32 s_pix) {return 0;}
-static int dpix_1_1(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_1(s_pix); return 1;}
-static int dpix_1_2(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_2(s_pix); return 1;}
-static int dpix_1_4(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_4(s_pix); return 1;}
-static int dpix_1_5(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_5(s_pix); return 1;}
-static int dpix_1_6(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_6(s_pix); return 1;}
-static int dpix_1_8(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_8(s_pix); return 1;}
-static int dpix_1_9(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_9(s_pix); return 1;}
-static int dpix_1_a(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_a(s_pix); return 1;}
+static int dpix_1_noalpha(uint32_t s_pix) {dval = s_pix; return 1;}
+static int dpix_ret1(uint32_t s_pix) {return 1;}
+static int dpix_ret0(uint32_t s_pix) {return 0;}
+static int dpix_1_1(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_1(s_pix); return 1;}
+static int dpix_1_2(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_2(s_pix); return 1;}
+static int dpix_1_4(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_4(s_pix); return 1;}
+static int dpix_1_5(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_5(s_pix); return 1;}
+static int dpix_1_6(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_6(s_pix); return 1;}
+static int dpix_1_8(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_8(s_pix); return 1;}
+static int dpix_1_9(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_9(s_pix); return 1;}
+static int dpix_1_a(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_a(s_pix); return 1;}
 
-static int dpix_2a_0(UINT32 s_pix)
+static int dpix_2a_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2a_0(s_pix);
 	else	  dval = 0;
 	if(pdest_2a) {pval |= pdest_2a;return 0;}
 	return 1;
 }
-static int dpix_2a_4(UINT32 s_pix)
+static int dpix_2a_4(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2a_4(s_pix);
 	if(pdest_2a) {pval |= pdest_2a;return 0;}
 	return 1;
 }
-static int dpix_2a_8(UINT32 s_pix)
+static int dpix_2a_8(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2a_8(s_pix);
 	if(pdest_2a) {pval |= pdest_2a;return 0;}
 	return 1;
 }
 
-static int dpix_3a_0(UINT32 s_pix)
+static int dpix_3a_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3a_0(s_pix);
 	else	  dval = 0;
 	if(pdest_3a) {pval |= pdest_3a;return 0;}
 	return 1;
 }
-static int dpix_3a_1(UINT32 s_pix)
+static int dpix_3a_1(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3a_1(s_pix);
 	if(pdest_3a) {pval |= pdest_3a;return 0;}
 	return 1;
 }
-static int dpix_3a_2(UINT32 s_pix)
+static int dpix_3a_2(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3a_2(s_pix);
 	if(pdest_3a) {pval |= pdest_3a;return 0;}
 	return 1;
 }
 
-static int dpix_2b_0(UINT32 s_pix)
+static int dpix_2b_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2b_0(s_pix);
 	else	  dval = 0;
 	if(pdest_2b) {pval |= pdest_2b;return 0;}
 	return 1;
 }
-static int dpix_2b_4(UINT32 s_pix)
+static int dpix_2b_4(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2b_4(s_pix);
 	if(pdest_2b) {pval |= pdest_2b;return 0;}
 	return 1;
 }
-static int dpix_2b_8(UINT32 s_pix)
+static int dpix_2b_8(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2b_8(s_pix);
 	if(pdest_2b) {pval |= pdest_2b;return 0;}
 	return 1;
 }
 
-static int dpix_3b_0(UINT32 s_pix)
+static int dpix_3b_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3b_0(s_pix);
 	else	  dval = 0;
 	if(pdest_3b) {pval |= pdest_3b;return 0;}
 	return 1;
 }
-static int dpix_3b_1(UINT32 s_pix)
+static int dpix_3b_1(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3b_1(s_pix);
 	if(pdest_3b) {pval |= pdest_3b;return 0;}
 	return 1;
 }
-static int dpix_3b_2(UINT32 s_pix)
+static int dpix_3b_2(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3b_2(s_pix);
 	if(pdest_3b) {pval |= pdest_3b;return 0;}
 	return 1;
 }
 
-static int dpix_2_0(UINT32 s_pix)
+static int dpix_2_0(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_2b)		{f3_alpha_blend_2b_0(s_pix);if(pdest_2b) pval |= pdest_2b;else return 1;}
@@ -966,9 +966,9 @@ static int dpix_2_0(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_2_4(UINT32 s_pix)
+static int dpix_2_4(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_2b)		{f3_alpha_blend_2b_4(s_pix);if(pdest_2b) pval |= pdest_2b;else return 1;}
@@ -981,9 +981,9 @@ static int dpix_2_4(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_2_8(UINT32 s_pix)
+static int dpix_2_8(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_2b)		{f3_alpha_blend_2b_8(s_pix);if(pdest_2b) pval |= pdest_2b;else return 1;}
@@ -997,9 +997,9 @@ static int dpix_2_8(UINT32 s_pix)
 	return 0;
 }
 
-static int dpix_3_0(UINT32 s_pix)
+static int dpix_3_0(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_3b)		{f3_alpha_blend_3b_0(s_pix);if(pdest_3b) pval |= pdest_3b;else return 1;}
@@ -1012,9 +1012,9 @@ static int dpix_3_0(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_3_1(UINT32 s_pix)
+static int dpix_3_1(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_3b)		{f3_alpha_blend_3b_1(s_pix);if(pdest_3b) pval |= pdest_3b;else return 1;}
@@ -1027,9 +1027,9 @@ static int dpix_3_1(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_3_2(UINT32 s_pix)
+static int dpix_3_2(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_3b)		{f3_alpha_blend_3b_2(s_pix);if(pdest_3b) pval |= pdest_3b;else return 1;}
@@ -1043,11 +1043,11 @@ static int dpix_3_2(UINT32 s_pix)
 	return 0;
 }
 
-static INLINE void dpix_1_sprite(UINT32 s_pix)
+static INLINE void dpix_1_sprite(uint32_t s_pix)
 {
 	if(s_pix)
 	{
-		UINT8 p1 = pval&0xf0;
+		uint8_t p1 = pval&0xf0;
 		if     (p1==0x10)	f3_alpha_blend_1_1(s_pix);
 		else if(p1==0x20)	f3_alpha_blend_1_2(s_pix);
 		else if(p1==0x40)	f3_alpha_blend_1_4(s_pix);
@@ -1059,9 +1059,9 @@ static INLINE void dpix_1_sprite(UINT32 s_pix)
 	}
 }
 
-static INLINE void dpix_bg(UINT32 bgcolor)
+static INLINE void dpix_bg(uint32_t bgcolor)
 {
-	UINT8 p1 = pval&0xf0;
+	uint8_t p1 = pval&0xf0;
 	if(!p1)			dval = bgcolor;
 	else if(p1==0x10)	f3_alpha_blend_1_1(bgcolor);
 	else if(p1==0x20)	f3_alpha_blend_1_2(bgcolor);
@@ -1249,39 +1249,39 @@ static void init_alpha_blend_func(void)
 /*============================================================================*/
 
 static INLINE void f3_drawscanlines(
-		struct mame_bitmap *bitmap,int x,int xsize,INT16 *draw_line_num,
+		struct mame_bitmap *bitmap,int x,int xsize,int16_t *draw_line_num,
 		const struct f3_line_inf **line_t,
 		const int *sprite,
-		UINT32 orient,
+		uint32_t orient,
 		int skip_layer_num)
 {
 	pen_t *clut = &Machine->remapped_colortable[0];
-	UINT32 bgcolor=clut[0];
+	uint32_t bgcolor=clut[0];
 	int length;
 
-	UINT32 sprite_noalp_0=sprite[0]&0x100;
-	UINT32 sprite_noalp_1=sprite[1]&0x100;
-	UINT32 sprite_noalp_2=sprite[2]&0x100;
-	UINT32 sprite_noalp_3=sprite[3]&0x100;
-	UINT32 sprite_noalp_4=sprite[4]&0x100;
+	uint32_t sprite_noalp_0=sprite[0]&0x100;
+	uint32_t sprite_noalp_1=sprite[1]&0x100;
+	uint32_t sprite_noalp_2=sprite[2]&0x100;
+	uint32_t sprite_noalp_3=sprite[3]&0x100;
+	uint32_t sprite_noalp_4=sprite[4]&0x100;
 
-	static UINT16 *src0=0,*src_s0=0,*src_e0=0;
-	static UINT8 *tsrc0=0,*tsrc_s0=0;
-	static UINT32 x_count0=0,x_zoom0=0;
+	static uint16_t *src0=0,*src_s0=0,*src_e0=0;
+	static uint8_t *tsrc0=0,*tsrc_s0=0;
+	static uint32_t x_count0=0,x_zoom0=0;
 
-	static UINT16 *src1=0,*src_s1=0,*src_e1=0;
-	static UINT8 *tsrc1=0,*tsrc_s1=0;
-	static UINT32 x_count1=0,x_zoom1=0;
+	static uint16_t *src1=0,*src_s1=0,*src_e1=0;
+	static uint8_t *tsrc1=0,*tsrc_s1=0;
+	static uint32_t x_count1=0,x_zoom1=0;
 
-	static UINT16 *src2=0,*src_s2=0,*src_e2=0;
-	static UINT8 *tsrc2=0,*tsrc_s2=0;
-	static UINT32 x_count2=0,x_zoom2=0;
+	static uint16_t *src2=0,*src_s2=0,*src_e2=0;
+	static uint8_t *tsrc2=0,*tsrc_s2=0;
+	static uint32_t x_count2=0,x_zoom2=0;
 
-	static UINT16 *src3=0,*src_s3=0,*src_e3=0;
-	static UINT8 *tsrc3=0,*tsrc_s3=0;
-	static UINT32 x_count3=0,x_zoom3=0;
+	static uint16_t *src3=0,*src_s3=0,*src_e3=0;
+	static uint8_t *tsrc3=0,*tsrc_s3=0;
+	static uint32_t x_count3=0,x_zoom3=0;
 
-	UINT8 *dstp0,*dstp;
+	uint8_t *dstp0,*dstp;
 
 	int yadv = bitmap->rowpixels;
 	int i=0,y=draw_line_num[0];
@@ -1293,7 +1293,7 @@ static INLINE void f3_drawscanlines(
 		yadv = -yadv;
 	}
 
-	dstp0 = (UINT8 *)pri_alp_bitmap->line[ty] + x;
+	dstp0 = (uint8_t *)pri_alp_bitmap->line[ty] + x;
 
 	pdest_2a = f3_alpha_level_2ad ? 0x10 : 0;
 	pdest_2b = f3_alpha_level_2bd ? 0x20 : 0;
@@ -1307,8 +1307,8 @@ static INLINE void f3_drawscanlines(
 
 //	if (bitmap->depth == 32)
 	{
-		UINT32 *dsti0,*dsti;
-		dsti0 = (UINT32 *)bitmap->line[ty] + x;
+		uint32_t *dsti0,*dsti;
+		dsti0 = (uint32_t *)bitmap->line[ty] + x;
 		while(1)
 		{
 			length=xsize;
@@ -1328,7 +1328,7 @@ static INLINE void f3_drawscanlines(
 				pval=*dstp;
 				if (pval!=0xff)
 				{
-					UINT8 sprite_pri;
+					uint8_t sprite_pri;
 					switch(skip_layer_num)
 					{
 						case 0: if((sprite_pri=sprite[0]&pval))
@@ -1424,7 +1424,7 @@ static INLINE void f3_drawscanlines(
 
 /******************************************************************************/
 
-static INLINE void clear_scanlines(struct mame_bitmap *bitmap,int x,int xsize,INT16 *draw_line_num,UINT32 orient)
+static INLINE void clear_scanlines(struct mame_bitmap *bitmap,int x,int xsize,int16_t *draw_line_num,uint32_t orient)
 {
 	int length;
 
@@ -1440,8 +1440,8 @@ static INLINE void clear_scanlines(struct mame_bitmap *bitmap,int x,int xsize,IN
 
 //	if (bitmap->depth == 32)
 	{
-		UINT32 *dsti0,*dsti;
-		dsti0 = (UINT32 *)bitmap->line[ty] + x;
+		uint32_t *dsti0,*dsti;
+		dsti0 = (uint32_t *)bitmap->line[ty] + x;
 
 		while (1)
 		{
@@ -1474,7 +1474,7 @@ static INLINE void clear_scanlines(struct mame_bitmap *bitmap,int x,int xsize,IN
 
 static void visible_tile_check(struct f3_line_inf *line_t,
 								int line,
-								UINT32 x_index_fx,UINT32 y_index,
+								uint32_t x_index_fx,uint32_t y_index,
 								data32_t *f3_pf_data_n)
 {
 	data32_t *pf_base;
@@ -1504,7 +1504,7 @@ static void visible_tile_check(struct f3_line_inf *line_t,
 	alpha_type=0;
 	for(i=0;i<tile_num;i++)
 	{
-		UINT32 tile=pf_base[(tile_index)&twidth_mask];
+		uint32_t tile=pf_base[(tile_index)&twidth_mask];
 		if(tile&0xffff)
 		{
 			trans_all=0;
@@ -1557,17 +1557,17 @@ static void get_line_ram_info(struct tilemap *tilemap,int sx,int sy,int pos,data
 
 	int line_enable;
 	int colscroll=0,x_offset=0;
-	UINT32 x_zoom=0x10000;
-	UINT32 y_zoom=0;
-	UINT16 pri=0;
-	UINT16 spri=0;
+	uint32_t x_zoom=0x10000;
+	uint32_t y_zoom=0;
+	uint16_t pri=0;
+	uint16_t spri=0;
 	int alpha_level=0;
 	int bit_select0=0x10000<<pos;
 	int bit_select1=1<<pos;
-	UINT16 sprite_alpha=0;
+	uint16_t sprite_alpha=0;
 
 	int _colscroll[256];
-	UINT32 _x_offset[256];
+	uint32_t _x_offset[256];
 	int y_index_fx;
 
 	sx+=(46<<16);//+scroll_kludge_x;
@@ -1713,13 +1713,13 @@ static void get_line_ram_info(struct tilemap *tilemap,int sx,int sy,int pos,data
 	y=y_start;
 	while(y!=y_end)
 	{
-		UINT32 x_index_fx;
-		UINT32 y_index;
+		uint32_t x_index_fx;
+		uint32_t y_index;
 
 		if(line_t->alpha_mode[y]!=0)
 		{
-			UINT16 *src_s;
-			UINT8 *tsrc_s;
+			uint16_t *src_s;
+			uint8_t *tsrc_s;
 
 			x_index_fx = (sx+_x_offset[y]-(10*0x10000)+10*line_t->x_zoom[y])&((width_mask<<16)|0xffff);
 			y_index = ((y_index_fx>>16)+_colscroll[y])&0x1ff;
@@ -1753,10 +1753,10 @@ static void f3_tilemap_draw(struct mame_bitmap *bitmap,
 {
 	int i,j,y,ys,ye;
 	int y_start,y_end,y_start_next,y_end_next;
-	UINT8 draw_line[256];
-	INT16 draw_line_num[256];
+	uint8_t draw_line[256];
+	int16_t draw_line_num[256];
 
-	UINT32 rot=0;
+	uint32_t rot=0;
 
 	if (flipscreen)
 	{
@@ -1779,9 +1779,9 @@ static void f3_tilemap_draw(struct mame_bitmap *bitmap,
 		static int alpha_level_last=-1;
 		int pos;
 		int pri[4],alpha_mode[4],alpha_mode_flag[4],alpha_level;
-		UINT16 sprite_alpha;
-		UINT8 sprite_alpha_check;
-		UINT8 sprite_alpha_all_2a;
+		uint16_t sprite_alpha;
+		uint8_t sprite_alpha_check;
+		uint8_t sprite_alpha_all_2a;
 		int spri;
 		int alpha;
 		int layer_tmp[4];
@@ -1907,8 +1907,8 @@ static void f3_tilemap_draw(struct mame_bitmap *bitmap,
 			dpix_sp[8]=0;
 			for(i=0;i<4;i++)	/* i = sprite priority offset */
 			{
-				UINT8 sprite_alpha_mode=(sprite_alpha>>(i*2))&3;
-				UINT8 sftbit=1<<i;
+				uint8_t sprite_alpha_mode=(sprite_alpha>>(i*2))&3;
+				uint8_t sftbit=1<<i;
 				if(sprite_pri_usage&sftbit)
 				{
 					if(sprite_alpha_mode==1)
@@ -2228,7 +2228,7 @@ static void f3_update_pivot_layer(void)
 	if (pivot_changed)
 		for (tile = 0;tile < 2048;tile++)
 			if (pivot_dirty[tile]) {
-				decodechar(Machine->gfx[3],tile,(UINT8 *)f3_pivot_ram,Machine->drv->gfxdecodeinfo[3].gfxlayout);
+				decodechar(Machine->gfx[3],tile,(uint8_t *)f3_pivot_ram,Machine->drv->gfxdecodeinfo[3].gfxlayout);
 				tilemap_mark_tile_dirty(pixel_layer,tile);
 				pivot_dirty[tile]=0;
 			}
@@ -2318,7 +2318,7 @@ static INLINE void f3_drawgfx( struct mame_bitmap *dest_bmp,const struct GfxElem
 		int flipx,int flipy,
 		int sx,int sy,
 		const struct rectangle *clip,
-		UINT8 pri_dst)
+		uint8_t pri_dst)
 {
 	struct rectangle myclip;
 
@@ -2411,21 +2411,21 @@ static INLINE void f3_drawgfx( struct mame_bitmap *dest_bmp,const struct GfxElem
 				{
 					int y=ey-sy;
 					int x=(ex-sx-1)|(tile_opaque_sp[code]<<4);
-					UINT8 *source0 = gfx->gfxdata + (source_base+y_index) * 16 + x_index_base;
-					UINT32 *dest0 = (UINT32 *)dest_bmp->line[sy]+sx;
-					UINT8 *pri0 = (UINT8 *)pri_alp_bitmap->line[sy]+sx;
+					uint8_t *source0 = gfx->gfxdata + (source_base+y_index) * 16 + x_index_base;
+					uint32_t *dest0 = (uint32_t *)dest_bmp->line[sy]+sx;
+					uint8_t *pri0 = (uint8_t *)pri_alp_bitmap->line[sy]+sx;
 					int yadv = dest_bmp->rowpixels;
 					dy=dy*16;
 					while(1)
 					{
-						UINT8 *source = source0;
-						UINT32 *dest = dest0;
-						UINT8 *pri = pri0;
+						uint8_t *source = source0;
+						uint32_t *dest = dest0;
+						uint8_t *pri = pri0;
 
 						switch(x)
 						{
 							int c;
-							UINT8 p;
+							uint8_t p;
 							case 31: PSET_O NEXT_P
 							case 30: PSET_O NEXT_P
 							case 29: PSET_O NEXT_P
@@ -2483,7 +2483,7 @@ static INLINE void f3_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct Gfx
 		int sx,int sy,
 		const struct rectangle *clip,
 		int scalex, int scaley,
-		UINT8 pri_dst)
+		uint8_t pri_dst)
 {
 	struct rectangle myclip;
 
@@ -2577,9 +2577,9 @@ static INLINE void f3_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct Gfx
 					int y;
 					for( y=sy; y<ey; y++ )
 					{
-						UINT8 *source = gfx->gfxdata + (source_base+(y_index>>16)) * 16;
-						UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-						UINT8 *pri = pri_alp_bitmap->line[y];
+						uint8_t *source = gfx->gfxdata + (source_base+(y_index>>16)) * 16;
+						uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+						uint8_t *pri = pri_alp_bitmap->line[y];
 
 						int x, x_index = x_index_base;
 						for( x=sx; x<ex; x++ )
@@ -2587,7 +2587,7 @@ static INLINE void f3_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct Gfx
 							int c = source[x_index>>16];
 							if(c)
 							{
-								UINT8 p=pri[x];
+								uint8_t p=pri[x];
 								if (p == 0 || p == 0xff)
 								{
 									dest[x] = pal[c];
@@ -2925,7 +2925,7 @@ VIDEO_UPDATE( f3 )
 	if (vram_changed)
 		for (tile = 0;tile < 256;tile++)
 			if (vram_dirty[tile]) {
-				decodechar(Machine->gfx[0],tile,(UINT8 *)f3_vram,Machine->drv->gfxdecodeinfo[0].gfxlayout);
+				decodechar(Machine->gfx[0],tile,(uint8_t *)f3_vram,Machine->drv->gfxdecodeinfo[0].gfxlayout);
 				vram_dirty[tile]=0;
 			}
 	vram_changed=0;

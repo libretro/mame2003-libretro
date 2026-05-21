@@ -147,7 +147,7 @@ static void ninjaw_draw_sprites(struct mame_bitmap *bitmap,const struct rectangl
 
 VIDEO_UPDATE( ninjaw )
 {
-	UINT8 layer[3], nodraw;
+	uint8_t layer[3], nodraw;
 
 	TC0100SCN_tilemap_update();
 

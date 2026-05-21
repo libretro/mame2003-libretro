@@ -54,11 +54,11 @@ static void vdp_dma_68k(void);
 static void vdp_dma_fill(int);
 static void vdp_dma_copy(void);
 
-static void drawline(UINT16 *bitmap, int line);
-static void get_scroll_tiles(int line, int scrollnum, UINT32 scrollbase, UINT32 *tiles, int *offset);
-static void get_window_tiles(int line, UINT32 scrollbase, UINT32 *tiles);
-static void drawline_tiles(UINT32 *tiles, UINT16 *bmap, int pri, int offset, int lclip, int rclip);
-static void drawline_sprite(int line, UINT16 *bmap, int priority, UINT8 *spritebase);
+static void drawline(uint16_t *bitmap, int line);
+static void get_scroll_tiles(int line, int scrollnum, uint32_t scrollbase, uint32_t *tiles, int *offset);
+static void get_window_tiles(int line, uint32_t scrollbase, uint32_t *tiles);
+static void drawline_tiles(uint32_t *tiles, uint16_t *bmap, int pri, int offset, int lclip, int rclip);
+static void drawline_sprite(int line, uint16_t *bmap, int priority, uint8_t *spritebase);
 
 
 
@@ -70,41 +70,41 @@ static void drawline_sprite(int line, UINT16 *bmap, int priority, UINT8 *spriteb
        int			segac2_bg_palbase;			/* base of background palette */
        int			segac2_sp_palbase;			/* base of sprite palette */
        int			segac2_palbank;				/* global palette bank */
-       UINT8		segac2_vdp_regs[32];		/* VDP registers */
-	   UINT16		scanbase;
+       uint8_t		segac2_vdp_regs[32];		/* VDP registers */
+	   uint16_t		scanbase;
 
 /* LOCAL */
-static UINT8 *		vdp_vram;					/* VDP video RAM */
-static UINT8 *		vdp_vsram;					/* VDP vertical scroll RAM */
-static UINT8		display_enable;				/* is the display enabled? */
+static uint8_t *		vdp_vram;					/* VDP video RAM */
+static uint8_t *		vdp_vsram;					/* VDP vertical scroll RAM */
+static uint8_t		display_enable;				/* is the display enabled? */
 
 /* updates */
-static UINT8		internal_vblank;			/* state of the VBLANK line */
-static UINT16 *		transparent_lookup;			/* fast transparent mapping table */
+static uint8_t		internal_vblank;			/* state of the VBLANK line */
+static uint16_t *		transparent_lookup;			/* fast transparent mapping table */
 
 /* vram bases */
-static UINT32		vdp_scrollabase;			/* base address of scroll A tiles */
-static UINT32		vdp_scrollbbase;			/* base address of scroll B tiles */
-static UINT32		vdp_windowbase;				/* base address of window tiles */
-static UINT32		vdp_spritebase;				/* base address of sprite data */
-static UINT32		vdp_hscrollbase;			/* base address of H scroll values */
+static uint32_t		vdp_scrollabase;			/* base address of scroll A tiles */
+static uint32_t		vdp_scrollbbase;			/* base address of scroll B tiles */
+static uint32_t		vdp_windowbase;				/* base address of window tiles */
+static uint32_t		vdp_spritebase;				/* base address of sprite data */
+static uint32_t		vdp_hscrollbase;			/* base address of H scroll values */
 
 /* other vdp variables */
 static int			vdp_hscrollmask;			/* mask for H scrolling */
-static UINT32		vdp_hscrollsize;			/* size of active H scroll values */
-static UINT8		vdp_vscrollmode;			/* current V scrolling mode */
+static uint32_t		vdp_hscrollsize;			/* size of active H scroll values */
+static uint8_t		vdp_vscrollmode;			/* current V scrolling mode */
 
-static UINT8		vdp_cmdpart;				/* partial command flag */
-static UINT8		vdp_code;					/* command code value */
-static UINT32		vdp_address;				/* current I/O address */
-static UINT8		vdp_dmafill;				/* DMA filling flag */
-static UINT8		scrollheight;				/* height of the scroll area in tiles */
-static UINT8		scrollwidth;				/* width of the scroll area in tiles */
-static UINT8		bgcol;						/* current background color */
-static UINT8		window_down;				/* window Y direction */
-static UINT32		window_vpos;				/* window Y position */
-static UINT8		window_right;				/* window X direction */
-static UINT32		window_hpos;				/* window X position */
+static uint8_t		vdp_cmdpart;				/* partial command flag */
+static uint8_t		vdp_code;					/* command code value */
+static uint32_t		vdp_address;				/* current I/O address */
+static uint8_t		vdp_dmafill;				/* DMA filling flag */
+static uint8_t		scrollheight;				/* height of the scroll area in tiles */
+static uint8_t		scrollwidth;				/* width of the scroll area in tiles */
+static uint8_t		bgcol;						/* current background color */
+static uint8_t		window_down;				/* window Y direction */
+static uint32_t		window_vpos;				/* window Y position */
+static uint8_t		window_right;				/* window X direction */
+static uint32_t		window_hpos;				/* window X position */
 
 
 #define GEN_TILEMAP_WIP			0
@@ -195,7 +195,7 @@ static struct GfxLayout genvdp_charlayout =
 
 VIDEO_START( segac2 )
 {
-	static const UINT8 vdp_init[24] =
+	static const uint8_t vdp_init[24] =
 	{
 		0x04, 0x44, 0x30, 0x3C, 0x07, 0x6C, 0x00, 0x00,
 		0x00, 0x00, 0xFF, 0x00, 0x01, 0x37, 0x00, 0x02,
@@ -206,7 +206,7 @@ VIDEO_START( segac2 )
 	/* allocate memory for the VDP, the lookup table, and the buffer bitmap */
 	vdp_vram			= auto_malloc(VRAM_SIZE);
 	vdp_vsram			= auto_malloc(VSRAM_SIZE);
-	transparent_lookup	= auto_malloc(0x1000 * sizeof(UINT16));
+	transparent_lookup	= auto_malloc(0x1000 * sizeof(uint16_t));
 
 	/* check for errors */
 	if (!vdp_vram || !vdp_vsram || !transparent_lookup)
@@ -287,7 +287,7 @@ VIDEO_START( segac2 )
 			return 1;
 
 			/* create the char set (gfx will then be updated dynamically from RAM) */
-			Machine->gfx[gfx_index] = decodegfx((UINT8 *)vdp_vram,&genvdp_charlayout);
+			Machine->gfx[gfx_index] = decodegfx((uint8_t *)vdp_vram,&genvdp_charlayout);
 			if (!Machine->gfx[gfx_index])
 				return 1;
 
@@ -389,7 +389,7 @@ VIDEO_EOF( segac2 )
 		int tile;
 
 		for (tile = 0;tile < 2048;tile++)
-			decodechar(Machine->gfx[0],tile,(UINT8 *)vdp_vram,&genvdp_charlayout);
+			decodechar(Machine->gfx[0],tile,(uint8_t *)vdp_vram,&genvdp_charlayout);
 	}
 #endif
 
@@ -449,7 +449,7 @@ if (keyboard_pressed(KEYCODE_D)) segac2_sp_palbase ^= 0x100;
 
 	/* generate the final screen */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
-		drawline((UINT16 *)bitmap->line[y], y);
+		drawline((uint16_t *)bitmap->line[y], y);
 
 	segac2_bg_palbase = old_bg;
 	segac2_sp_palbase = old_sp;
@@ -487,7 +487,7 @@ if (keyboard_pressed(KEYCODE_D)) segac2_sp_palbase ^= 0x100;
 
 	/* generate the final screen */
 	for (y = cliprect->min_y+192; y <= cliprect->max_y; y++)
-		drawline((UINT16 *)bitmap->line[y], y-192);
+		drawline((uint16_t *)bitmap->line[y], y-192);
 
 	segac2_bg_palbase = old_bg;
 	segac2_sp_palbase = old_sp;
@@ -534,7 +534,7 @@ if (keyboard_pressed(KEYCODE_D)) segac2_sp_palbase ^= 0x100;
 	if(keyboard_pressed(KEYCODE_G))
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
-			drawline((UINT16 *)bitmap->line[y], y);
+			drawline((uint16_t *)bitmap->line[y], y);
 	}
 	else 
 		update_megatech_video_normal(bitmap, cliprect);
@@ -826,10 +826,10 @@ static void vdp_control_w(int data)
 
 static void vdp_register_w(int data)
 {
-	static const UINT8 is_important[32] = { 0,0,1,1,1,1,0,1,0,0,0,1,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	static const uint8_t is_important[32] = { 0,0,1,1,1,1,0,1,0,0,0,1,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-	UINT8 regnum = (data & 0x1f00) >> 8; /* ---R RRRR ---- ---- */
-	UINT8 regdat = (data & 0x00ff);      /* ---- ---- DDDD DDDD */
+	uint8_t regnum = (data & 0x1f00) >> 8; /* ---R RRRR ---- ---- */
+	uint8_t regdat = (data & 0x00ff);      /* ---- ---- DDDD DDDD */
 
 	segac2_vdp_regs[regnum] = regdat;
 
@@ -869,7 +869,7 @@ static void vdp_register_w(int data)
 
 		case 0x0b: /* Scroll Modes */
 		{
-			static const UINT16 mask_table[4] = { 0x000, 0x007, 0xff8, 0xfff };
+			static const uint16_t mask_table[4] = { 0x000, 0x007, 0xff8, 0xfff };
 			vdp_vscrollmode = (regdat & 0x04) >> 2;
 
 			vdp_hscrollmask = mask_table[regdat & 3];
@@ -888,7 +888,7 @@ static void vdp_register_w(int data)
 
 		case 0x10: /* Scroll Size */
 		{
-			static const UINT8 size_table[4] = { 32, 64, 128, 128 };
+			static const uint8_t size_table[4] = { 32, 64, 128, 128 };
 			scrollwidth = size_table[regdat & 0x03];
 			scrollheight = size_table[(regdat & 0x30) >> 4];
 			break;
@@ -1020,7 +1020,7 @@ static INLINE int vdp_gethscroll(int plane, int line)
    A Column is 8 Pixels Wide                                     */
 static int vdp_getvscroll(int plane, int column)
 {
-	UINT32 vsramoffset;
+	uint32_t vsramoffset;
 
 	switch (vdp_vscrollmode)
 	{
@@ -1057,12 +1057,12 @@ static int vdp_getvscroll(int plane, int column)
 
 ******************************************************************************/
 
-static void drawline(UINT16 *bitmap, int line)
+static void drawline(uint16_t *bitmap, int line)
 {
 	int lowsprites, highsprites, link;
-	UINT32 scrolla_tiles[41], scrollb_tiles[41], window_tiles[41];
+	uint32_t scrolla_tiles[41], scrollb_tiles[41], window_tiles[41];
 	int scrolla_offset, scrollb_offset;
-	UINT8 *lowlist[81], *highlist[81];
+	uint8_t *lowlist[81], *highlist[81];
 	int bgcolor = bgcol + segac2_palbank;
 	int window_lclip, window_rclip;
 	int scrolla_lclip, scrolla_rclip;
@@ -1080,7 +1080,7 @@ static void drawline(UINT16 *bitmap, int line)
 	link = lowsprites = highsprites = 0;
 	for (sprite = 0; sprite < 80; sprite++)
 	{
-		UINT8 *spritebase = &VDP_VRAM_BYTE(vdp_spritebase + 8 * link);
+		uint8_t *spritebase = &VDP_VRAM_BYTE(vdp_spritebase + 8 * link);
 
 		/* sort into high/low priorities */
 		if (spritebase[4] & 0x0080)
@@ -1162,7 +1162,7 @@ static void drawline(UINT16 *bitmap, int line)
 ******************************************************************************/
 
 /* determine the tiles we will draw on a scrolling layer */
-static void get_scroll_tiles(int line, int scrollnum, UINT32 scrollbase, UINT32 *tiles, int *offset)
+static void get_scroll_tiles(int line, int scrollnum, uint32_t scrollbase, uint32_t *tiles, int *offset)
 {
 	int linehscroll = vdp_gethscroll(scrollnum, line);
 	int column;
@@ -1191,7 +1191,7 @@ static void get_scroll_tiles(int line, int scrollnum, UINT32 scrollbase, UINT32 
 
 
 /* determine the tiles we will draw on a non-scrolling window layer */
-static void get_window_tiles(int line, UINT32 scrollbase, UINT32 *tiles)
+static void get_window_tiles(int line, uint32_t scrollbase, uint32_t *tiles)
 {
 	int column;
 
@@ -1209,7 +1209,7 @@ static void get_window_tiles(int line, UINT32 scrollbase, UINT32 *tiles)
 
 
 /* draw a line of tiles */
-static void drawline_tiles(UINT32 *tiles, UINT16 *bmap, int pri, int offset, int lclip, int rclip)
+static void drawline_tiles(uint32_t *tiles, uint16_t *bmap, int pri, int offset, int lclip, int rclip)
 {
 	/* adjust for the 8-pixel slop */
 	bmap += offset;
@@ -1219,14 +1219,14 @@ static void drawline_tiles(UINT32 *tiles, UINT16 *bmap, int pri, int offset, int
 	/* loop over columns */
 	for ( ; offset < BITMAP_WIDTH; offset += 8, bmap += 8)
 	{
-		UINT32 tile = *tiles++;
+		uint32_t tile = *tiles++;
 
 		/* if the tile is the correct priority, draw it */
 		if (((tile >> 15) & 1) == pri && offset < BITMAP_WIDTH)
 		{
 			int colbase = 16 * ((tile & 0x6000) >> 13) + segac2_bg_palbase + segac2_palbank;
-			UINT32 *tp = (UINT32 *)&VDP_VRAM_BYTE((tile & 0x7ff) * 32);
-			UINT32 mytile;
+			uint32_t *tp = (uint32_t *)&VDP_VRAM_BYTE((tile & 0x7ff) * 32);
+			uint32_t mytile;
 			int col;
 
 			/* vertical flipping */
@@ -1313,9 +1313,9 @@ static void drawline_tiles(UINT32 *tiles, UINT16 *bmap, int pri, int offset, int
 ******************************************************************************/
 
 /* draw a non-horizontally-flipped section of a sprite */
-static INLINE void draw8pixs(UINT16 *bmap, int patno, int priority, int colbase, int patline)
+static INLINE void draw8pixs(uint16_t *bmap, int patno, int priority, int colbase, int patline)
 {
-	UINT32 tile = *(UINT32 *)&VDP_VRAM_BYTE(patno * 32 + 4 * patline);
+	uint32_t tile = *(uint32_t *)&VDP_VRAM_BYTE(patno * 32 + 4 * patline);
 	int col;
 
 	/* skip if all-transparent */
@@ -1391,9 +1391,9 @@ static INLINE void draw8pixs(UINT16 *bmap, int patno, int priority, int colbase,
 
 
 /* draw a horizontally-flipped section of a sprite */
-static INLINE void draw8pixs_hflip(UINT16 *bmap, int patno, int priority, int colbase, int patline)
+static INLINE void draw8pixs_hflip(uint16_t *bmap, int patno, int priority, int colbase, int patline)
 {
-	UINT32 tile = *(UINT32 *)&VDP_VRAM_BYTE(patno * 32 + 4 * patline);
+	uint32_t tile = *(uint32_t *)&VDP_VRAM_BYTE(patno * 32 + 4 * patline);
 	int col;
 
 	/* skip if all-transparent */
@@ -1468,7 +1468,7 @@ static INLINE void draw8pixs_hflip(UINT16 *bmap, int patno, int priority, int co
 }
 
 
-static void drawline_sprite(int line, UINT16 *bmap, int priority, UINT8 *spritebase)
+static void drawline_sprite(int line, uint16_t *bmap, int priority, uint8_t *spritebase)
 {
 	int spriteypos   = (((spritebase[0] & 0x01) << 8) | spritebase[1]) - 0x80;
 	int spritexpos   = (((spritebase[6] & 0x01) << 8) | spritebase[7]) - 0x80;

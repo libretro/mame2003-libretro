@@ -18,7 +18,7 @@ static void diverboy_drawsprites( struct mame_bitmap *bitmap, const struct recta
 
 	while (source < finish)
 	{
-		INT16 xpos,ypos,number,colr,bank,flash;
+		int16_t xpos,ypos,number,colr,bank,flash;
 
 		ypos = source[4];
 		xpos = source[0];

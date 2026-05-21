@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *ironhors_scroll;
+uint8_t *ironhors_scroll;
 static int palettebank, charbank, spriterambank;
 
 static struct tilemap *bg_tilemap;
@@ -175,7 +175,7 @@ VIDEO_START( ironhors )
 static void ironhors_draw_sprites( struct mame_bitmap *bitmap )
 {
 	int offs;
-	UINT8 *sr;
+	uint8_t *sr;
 
 	if (spriterambank != 0)
 		sr = spriteram;

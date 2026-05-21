@@ -5,7 +5,7 @@
 #define TC0100SCN_GFX_NUM 2
 #define TC0480SCP_GFX_NUM 1
 
-UINT16 groundfx_rotate_ctrl[8];
+uint16_t groundfx_rotate_ctrl[8];
 
 struct tempsprite
 {
@@ -228,9 +228,9 @@ static void groundfx_draw_sprites_16x16(struct mame_bitmap *bitmap,const struct 
 
 VIDEO_UPDATE( groundfx )
 {
-	UINT8 layer[5];
-	UINT8 pivlayer[3];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t pivlayer[3];
+	uint16_t priority;
 
 	TC0100SCN_tilemap_update();
 	TC0480SCP_tilemap_update();

@@ -127,83 +127,83 @@ enum {
 
 
 typedef struct _ygv_ports {
-	UINT8 na;			// P#0 - pattern name table data port (read/write)
-	UINT8 p1;			// P#1 - sprite data port (read/write)
-	UINT8 p2;			// P#2 - scroll data port (read/write)
-	UINT8 p3;			// P#3 - colour palette data port (read/write)
-	UINT8 p4;			// P#4 - register data port (read/write)
-	UINT8 p5;			// P#5 - register select port (write only)
-	UINT8 p6;			// P#6 - status port (read/write)
-	UINT8 p7;			// P#7 - system control port (read/write)
+	uint8_t na;			// P#0 - pattern name table data port (read/write)
+	uint8_t p1;			// P#1 - sprite data port (read/write)
+	uint8_t p2;			// P#2 - scroll data port (read/write)
+	uint8_t p3;			// P#3 - colour palette data port (read/write)
+	uint8_t p4;			// P#4 - register data port (read/write)
+	uint8_t p5;			// P#5 - register select port (write only)
+	uint8_t p6;			// P#6 - status port (read/write)
+	uint8_t p7;			// P#7 - system control port (read/write)
 } YGV_PORTS, *pYGV_PORTS;
 
 typedef struct _ygv_regs {
-	UINT8 r0;			// R#0 - pattern name table access ptr (r/w)
-	UINT8 r1;			// R#1 - pattern name table access ptr (r/w)
-	UINT8 r2;			// R#2 - built in ram access control
-	UINT8 saa;			// R#3 - sprite attribute table access ptr (r/w)
-	UINT8 sca;			// R#4 - scroll table access ptr (r/w)
-	UINT8 cc;			// R#5 - color palette access ptr (r/w)
-	UINT8 sba;			// R#6 - sprite generator base address (r/w)
+	uint8_t r0;			// R#0 - pattern name table access ptr (r/w)
+	uint8_t r1;			// R#1 - pattern name table access ptr (r/w)
+	uint8_t r2;			// R#2 - built in ram access control
+	uint8_t saa;			// R#3 - sprite attribute table access ptr (r/w)
+	uint8_t sca;			// R#4 - scroll table access ptr (r/w)
+	uint8_t cc;			// R#5 - color palette access ptr (r/w)
+	uint8_t sba;			// R#6 - sprite generator base address (r/w)
 
 	// R#7 - R#11 - screen control (r/w)
-	UINT8 r7;			// misc screen control (r/w)
-	UINT8 r8;			// misc screen control (r/w)
-	UINT8 r9;			// misc screen control (r/w)
-	UINT8 r10;			// misc screen control (r/w)
-	UINT8 r11;			// misc screen control (r/w)
+	uint8_t r7;			// misc screen control (r/w)
+	uint8_t r8;			// misc screen control (r/w)
+	uint8_t r9;			// misc screen control (r/w)
+	uint8_t r10;			// misc screen control (r/w)
+	uint8_t r11;			// misc screen control (r/w)
 
-	UINT8 r12;			// R#12 - color palette selection (r/w)
-	UINT8 bdc;			// R#13 - border colour (wo)
+	uint8_t r12;			// R#12 - color palette selection (r/w)
+	uint8_t bdc;			// R#13 - border colour (wo)
 
 	// R#14 - R#16 - interrupt control
-	UINT8 r14;
-	UINT8 il;
-	UINT8 r16;
+	uint8_t r14;
+	uint8_t il;
+	uint8_t r16;
 
 	// R#17 - R#24 - base address (wo)
-	UINT8 r17;
-	UINT8 r18;
-	UINT8 r19;
-	UINT8 r20;
-	UINT8 r21;
-	UINT8 r22;
-	UINT8 r23;
-	UINT8 r24;
+	uint8_t r17;
+	uint8_t r18;
+	uint8_t r19;
+	uint8_t r20;
+	uint8_t r21;
+	uint8_t r22;
+	uint8_t r23;
+	uint8_t r24;
 
 	// R#25 - R#38 - enlargement, contraction and rotation parameters (wo)
-	UINT8 ax0;
-	UINT8 ax8;
-	UINT8 ax16;
+	uint8_t ax0;
+	uint8_t ax8;
+	uint8_t ax16;
 
-	UINT8 dx0;
-	UINT8 dx8;
-	UINT8 dxy0;
-	UINT8 dxy8;
+	uint8_t dx0;
+	uint8_t dx8;
+	uint8_t dxy0;
+	uint8_t dxy8;
 
-	UINT8 ay0;
-	UINT8 ay8;
-	UINT8 ay16;
+	uint8_t ay0;
+	uint8_t ay8;
+	uint8_t ay16;
 
-	UINT8 dy0;
-	UINT8 dy8;
-	UINT8 dyx0;
-	UINT8 dyx8;
+	uint8_t dy0;
+	uint8_t dy8;
+	uint8_t dyx0;
+	uint8_t dyx8;
 
 	// R#39 - R#46 - display scan control (wo)
-	UINT8 r39;
-	UINT8 r40;
-	UINT8 hdsp;
-	UINT8 htl;
-	UINT8 r43;
-	UINT8 r44;
-	UINT8 r45;
-	UINT8 vtl;
+	uint8_t r39;
+	uint8_t r40;
+	uint8_t hdsp;
+	uint8_t htl;
+	uint8_t r43;
+	uint8_t r44;
+	uint8_t r45;
+	uint8_t vtl;
 
 	// R#47 - R#49 - rom transfer control (wo)
-	UINT8 tb5;
-	UINT8 tb13;
-	UINT8 tn4;
+	uint8_t tb5;
+	uint8_t tb13;
+	uint8_t tn4;
 
 } YGV_REGS, *pYGV_REGS;
 
@@ -273,22 +273,22 @@ typedef struct _ygv_regs {
 #define VDW_MASK          0x3f
 
 typedef struct {
-	UINT8 sy;		// y dot position 7:0
-	UINT8 sx;		// x dot position 7:0
-	UINT8 attr;		// 0xf0 = color, 0x0c = size, reverse, 0x02 = x hi bit, 0x01 = y hi bit
-	UINT8 sn;    // pattern name (0-255)
+	uint8_t sy;		// y dot position 7:0
+	uint8_t sx;		// x dot position 7:0
+	uint8_t attr;		// 0xf0 = color, 0x0c = size, reverse, 0x02 = x hi bit, 0x01 = y hi bit
+	uint8_t sn;    // pattern name (0-255)
 } SPRITE_ATTR, *PSPRITE_ATTR;
 
 
 typedef struct _ygv608 {
 
   union {
-    UINT8		b[8];
+    uint8_t		b[8];
     YGV_PORTS	s;
   } ports;
 
   union {
-    UINT8		b[50];
+    uint8_t		b[50];
     YGV_REGS	s;
   } regs;
 
@@ -296,15 +296,15 @@ typedef struct _ygv608 {
    *  Built in ram
    */
 
-  UINT8 pattern_name_table[4096];
+  uint8_t pattern_name_table[4096];
 
   union {
-    UINT8			b[YGV608_SPRITE_ATTR_TABLE_SIZE];
+    uint8_t			b[YGV608_SPRITE_ATTR_TABLE_SIZE];
     SPRITE_ATTR		s[YGV608_MAX_SPRITES];
   } sprite_attribute_table;
 
-  UINT8 scroll_data_table[2][256];
-  UINT8 colour_palette[256][3];
+  uint8_t scroll_data_table[2][256];
+  uint8_t colour_palette[256][3];
 
   /*
    *  Shortcut variables
@@ -313,18 +313,18 @@ typedef struct _ygv608 {
   unsigned int bits16;          // bits per pattern (8/16)
   unsigned int page_x, page_y;  // pattern page size
   unsigned int pny_shift;       // y coord multiplier
-  UINT8 na8_mask;       // mask on/off na11/9:8
+  uint8_t na8_mask;       // mask on/off na11/9:8
   int col_shift;                // shift in scroll table column index
 
   // rotation, zoom shortcuts
-  UINT32 ax, dx, dxy, ay, dy, dyx;
+  uint32_t ax, dx, dxy, ay, dy, dyx;
 
   // base address shortcuts
   unsigned int base_addr[2][8];
   unsigned int base_y_shift;    // for extracting pattern y coord 'base'
 
-  UINT8 screen_resize;  // screen requires resize
-  UINT8 tilemap_resize; // tilemap requires resize
+  uint8_t screen_resize;  // screen requires resize
+  uint8_t tilemap_resize; // tilemap requires resize
 
 } YGV608, *pYGV608;
 

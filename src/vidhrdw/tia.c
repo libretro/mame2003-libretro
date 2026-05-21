@@ -9,8 +9,8 @@
 
 extern WRITE_HANDLER( tia_sound_w );
 
-static UINT32 frame_cycles;
-static UINT32 paddle_cycles;
+static uint32_t frame_cycles;
+static uint32_t paddle_cycles;
 
 static int horzP0;
 static int horzP1;
@@ -23,49 +23,49 @@ static int current_bitmap;
 static int prev_x;
 static int prev_y;
 
-static UINT8 VSYNC;
-static UINT8 VBLANK;
-static UINT8 COLUP0;
-static UINT8 COLUP1;
-static UINT8 COLUBK;
-static UINT8 COLUPF;
-static UINT8 CTRLPF;
-static UINT8 GRP0;
-static UINT8 GRP1;
-static UINT8 REFP0;
-static UINT8 REFP1;
-static UINT8 HMP0;
-static UINT8 HMP1;
-static UINT8 HMM0;
-static UINT8 HMM1;
-static UINT8 HMBL;
-static UINT8 VDELP0;
-static UINT8 VDELP1;
-static UINT8 VDELBL;
-static UINT8 NUSIZ0;
-static UINT8 NUSIZ1;
-static UINT8 ENAM0;
-static UINT8 ENAM1;
-static UINT8 ENABL;
-static UINT8 CXM0P;
-static UINT8 CXM1P;
-static UINT8 CXP0FB;
-static UINT8 CXP1FB;
-static UINT8 CXM0FB;
-static UINT8 CXM1FB;
-static UINT8 CXBLPF;
-static UINT8 CXPPMM;
-static UINT8 RESMP0;
-static UINT8 RESMP1;
-static UINT8 PF0;
-static UINT8 PF1;
-static UINT8 PF2;
-static UINT8 INPT4;
-static UINT8 INPT5;
+static uint8_t VSYNC;
+static uint8_t VBLANK;
+static uint8_t COLUP0;
+static uint8_t COLUP1;
+static uint8_t COLUBK;
+static uint8_t COLUPF;
+static uint8_t CTRLPF;
+static uint8_t GRP0;
+static uint8_t GRP1;
+static uint8_t REFP0;
+static uint8_t REFP1;
+static uint8_t HMP0;
+static uint8_t HMP1;
+static uint8_t HMM0;
+static uint8_t HMM1;
+static uint8_t HMBL;
+static uint8_t VDELP0;
+static uint8_t VDELP1;
+static uint8_t VDELBL;
+static uint8_t NUSIZ0;
+static uint8_t NUSIZ1;
+static uint8_t ENAM0;
+static uint8_t ENAM1;
+static uint8_t ENABL;
+static uint8_t CXM0P;
+static uint8_t CXM1P;
+static uint8_t CXP0FB;
+static uint8_t CXP1FB;
+static uint8_t CXM0FB;
+static uint8_t CXM1FB;
+static uint8_t CXBLPF;
+static uint8_t CXPPMM;
+static uint8_t RESMP0;
+static uint8_t RESMP1;
+static uint8_t PF0;
+static uint8_t PF1;
+static uint8_t PF2;
+static uint8_t INPT4;
+static uint8_t INPT5;
 
-static UINT8 prevGRP0;
-static UINT8 prevGRP1;
-static UINT8 prevENABL;
+static uint8_t prevGRP0;
+static uint8_t prevGRP1;
+static uint8_t prevENABL;
 
 static struct mame_bitmap *helper[2];
 
@@ -133,9 +133,9 @@ PALETTE_INIT( tia_NTSC )
 			if (B > 1) B = 1;
 
 			palette_set_color(8 * i + j,
-				(UINT8) (255 * R + 0.5),
-				(UINT8) (255 * G + 0.5),
-				(UINT8) (255 * B + 0.5));
+				(uint8_t) (255 * R + 0.5),
+				(uint8_t) (255 * G + 0.5),
+				(uint8_t) (255 * B + 0.5));
 		}
 	}
 }
@@ -191,9 +191,9 @@ PALETTE_INIT( tia_PAL )
 			if (B > 1) B = 1;
 
 			palette_set_color(8 * i + j,
-				(UINT8) (255 * R + 0.5),
-				(UINT8) (255 * G + 0.5),
-				(UINT8) (255 * B + 0.5));
+				(uint8_t) (255 * R + 0.5),
+				(uint8_t) (255 * G + 0.5),
+				(uint8_t) (255 * B + 0.5));
 		}
 	}
 }
@@ -223,8 +223,8 @@ VIDEO_UPDATE( tia )
 }
 
 
-static void draw_sprite_helper(UINT8* p, int horz,
-	UINT8 GRP, UINT8 NUSIZ, UINT8 COLUP, UINT8 REFP)
+static void draw_sprite_helper(uint8_t* p, int horz,
+	uint8_t GRP, uint8_t NUSIZ, uint8_t COLUP, uint8_t REFP)
 {
 	int num = nusiz[NUSIZ & 7][0];
 	int siz = nusiz[NUSIZ & 7][1];
@@ -264,8 +264,8 @@ static void draw_sprite_helper(UINT8* p, int horz,
 }
 
 
-static void draw_missile_helper(UINT8* p, int horz,
-	UINT8 RESMP, UINT8 ENAM, UINT8 NUSIZ, UINT8 COLUM)
+static void draw_missile_helper(uint8_t* p, int horz,
+	uint8_t RESMP, uint8_t ENAM, uint8_t NUSIZ, uint8_t COLUM)
 {
 	int num = nusiz[NUSIZ & 7][0];
 	int skp = nusiz[NUSIZ & 7][2];
@@ -292,10 +292,10 @@ static void draw_missile_helper(UINT8* p, int horz,
 }
 
 
-static void draw_playfield_helper(UINT8* p, int horz, 
-	UINT8 COLU, UINT8 REFPF)
+static void draw_playfield_helper(uint8_t* p, int horz, 
+	uint8_t COLU, uint8_t REFPF)
 {
-	UINT32 PF =
+	uint32_t PF =
 		(BITSWAP8(PF0, 0, 1, 2, 3, 4, 5, 6, 7) << 0x10) |
 		(BITSWAP8(PF1, 7, 6, 5, 4, 3, 2, 1, 0) << 0x08) |
 		(BITSWAP8(PF2, 0, 1, 2, 3, 4, 5, 6, 7) << 0x00);
@@ -305,7 +305,7 @@ static void draw_playfield_helper(UINT8* p, int horz,
 
 	if (REFPF)
 	{
-		UINT32 swap = 0;
+		uint32_t swap = 0;
 
 		for (i = 0; i < 20; i++)
 		{
@@ -337,7 +337,7 @@ static void draw_playfield_helper(UINT8* p, int horz,
 }
 
 
-static void draw_ball_helper(UINT8* p, int horz, UINT8 ENAB)
+static void draw_ball_helper(uint8_t* p, int horz, uint8_t ENAB)
 {
 	int width = 1 << ((CTRLPF >> 4) & 3);
 
@@ -355,39 +355,39 @@ static void draw_ball_helper(UINT8* p, int horz, UINT8 ENAB)
 }
 
 
-static void drawS0(UINT8* p)
+static void drawS0(uint8_t* p)
 {
 	draw_sprite_helper(p, horzP0,
 		(VDELP0 & 1) ? prevGRP0 : GRP0, NUSIZ0, COLUP0, REFP0);
 }
 
 
-static void drawS1(UINT8* p)
+static void drawS1(uint8_t* p)
 {
 	draw_sprite_helper(p, horzP1,
 		(VDELP1 & 1) ? prevGRP1 : GRP1, NUSIZ1, COLUP1, REFP1);
 }
 
 
-static void drawM0(UINT8* p)
+static void drawM0(uint8_t* p)
 {
 	draw_missile_helper(p, horzM0, RESMP0, ENAM0, NUSIZ0, COLUP0);
 }
 
 
-static void drawM1(UINT8* p)
+static void drawM1(uint8_t* p)
 {
 	draw_missile_helper(p, horzM1, RESMP1, ENAM1, NUSIZ1, COLUP1);
 }
 
 
-static void drawBL(UINT8* p)
+static void drawBL(uint8_t* p)
 {
 	draw_ball_helper(p, horzBL, (VDELBL & 1) ? prevENABL : ENABL);
 }
 
 
-static void drawPF(UINT8* p)
+static void drawPF(uint8_t* p)
 {
 	draw_playfield_helper(p, 0,
 		(CTRLPF & 2) ? COLUP0 : COLUPF, 0);
@@ -397,7 +397,7 @@ static void drawPF(UINT8* p)
 }
 
 
-static int collision_check(UINT8* p1, UINT8* p2, int x1, int x2)
+static int collision_check(uint8_t* p1, uint8_t* p2, int x1, int x2)
 {
 	int i;
 
@@ -430,14 +430,14 @@ static void update_bitmap(int next_x, int next_y)
 	int x;
 	int y;
 
-	UINT8 linePF[160];
-	UINT8 lineP0[160];
-	UINT8 lineP1[160];
-	UINT8 lineM0[160];
-	UINT8 lineM1[160];
-	UINT8 lineBL[160];
+	uint8_t linePF[160];
+	uint8_t lineP0[160];
+	uint8_t lineP1[160];
+	uint8_t lineM0[160];
+	uint8_t lineM1[160];
+	uint8_t lineBL[160];
 
-	UINT8 temp[160];
+	uint8_t temp[160];
 
 	if (prev_y >= next_y && prev_x >= next_x)
 	{
@@ -488,7 +488,7 @@ static void update_bitmap(int next_x, int next_y)
 
 	for (y = prev_y; y <= next_y; y++)
 	{
-		UINT16* p;
+		uint16_t* p;
 
 		int x1 = prev_x;
 		int x2 = next_x;
@@ -800,7 +800,7 @@ static WRITE_HANDLER( GRP1_w )
 
 static READ_HANDLER( INPT_r )
 {
-	UINT32 elapsed = activecpu_gettotalcycles() - paddle_cycles;
+	uint32_t elapsed = activecpu_gettotalcycles() - paddle_cycles;
 
 	return elapsed > 76 * readinputport(offset & 3) ? 0x80 : 0x00;
 }
@@ -808,7 +808,7 @@ static READ_HANDLER( INPT_r )
 
 READ_HANDLER( tia_r )
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	if (!(offset & 0x8))
 	{

@@ -24,17 +24,17 @@
 FILE	*sprite_log;
 #endif
 
-UINT8 exerion_cocktail_flip;
+uint8_t exerion_cocktail_flip;
 
-static UINT8 char_palette, sprite_palette;
-static UINT8 char_bank;
+static uint8_t char_palette, sprite_palette;
+static uint8_t char_bank;
 
-static UINT8 *background_latches;
-static UINT16 *background_gfx[4];
-static UINT8 current_latches[16];
+static uint8_t *background_latches;
+static uint16_t *background_gfx[4];
+static uint8_t current_latches[16];
 static int last_scanline_update;
 
-static UINT8 *background_mixer;
+static uint8_t *background_mixer;
 
 
 /***************************************************************************
@@ -112,8 +112,8 @@ PALETTE_INIT( exerion )
 
 VIDEO_START( exerion )
 {
-	UINT16 *dst;
-	UINT8 *src;
+	uint16_t *dst;
+	uint8_t *src;
 	int i, x, y;
 
 #ifdef DEBUG_SPRITES
@@ -160,8 +160,8 @@ VIDEO_START( exerion )
 		{
 			for (x = 0; x < 128; x += 4)
 			{
-				UINT8 data = *src++;
-				UINT16 val;
+				uint8_t data = *src++;
+				uint16_t val;
 
 				val = ((data >> 3) & 2) | ((data >> 0) & 1);
 				if (val) val |= 0x100 >> i;
@@ -240,7 +240,7 @@ READ_HANDLER( exerion_video_timing_r )
 
 	int xbeam = cpu_gethorzbeampos();
 	int ybeam = cpu_getscanline();
-	UINT8 result = 0;
+	uint8_t result = 0;
 
 	if (ybeam >= VISIBLE_Y_MAX)
 		result |= 2;
@@ -259,16 +259,16 @@ READ_HANDLER( exerion_video_timing_r )
 
 void draw_background(struct mame_bitmap *bitmap, const struct rectangle *cliprect)
 {
-	UINT8 *latches = &background_latches[cliprect->min_y * 16];
+	uint8_t *latches = &background_latches[cliprect->min_y * 16];
 	int x, y;
 
 	/* loop over all visible scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++, latches += 16)
 	{
-		UINT16 *src0 = &background_gfx[0][latches[1] * 256];
-		UINT16 *src1 = &background_gfx[1][latches[3] * 256];
-		UINT16 *src2 = &background_gfx[2][latches[5] * 256];
-		UINT16 *src3 = &background_gfx[3][latches[7] * 256];
+		uint16_t *src0 = &background_gfx[0][latches[1] * 256];
+		uint16_t *src1 = &background_gfx[1][latches[3] * 256];
+		uint16_t *src2 = &background_gfx[2][latches[5] * 256];
+		uint16_t *src3 = &background_gfx[3][latches[7] * 256];
 		int xoffs0 = latches[0];
 		int xoffs1 = latches[2];
 		int xoffs2 = latches[4];
@@ -281,8 +281,8 @@ void draw_background(struct mame_bitmap *bitmap, const struct rectangle *cliprec
 		int stop1 = latches[9] >> 4;
 		int stop2 = latches[10] >> 4;
 		int stop3 = latches[11] >> 4;
-		UINT8 *mixer = &background_mixer[(latches[12] << 4) & 0xf0];
-		UINT8 scanline[VISIBLE_X_MAX];
+		uint8_t *mixer = &background_mixer[(latches[12] << 4) & 0xf0];
+		uint8_t scanline[VISIBLE_X_MAX];
 		pen_t *pens;
 
 		/* the cocktail flip flag controls whether we count up or down in X */
@@ -300,8 +300,8 @@ void draw_background(struct mame_bitmap *bitmap, const struct rectangle *cliprec
 			/* draw the rest of the scanline fully */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT16 combined = 0;
-				UINT8 lookupval;
+				uint16_t combined = 0;
+				uint8_t lookupval;
 
 				/* the output enable is controlled by the carries on the start/stop counters */
 				/* they are only active when the start has carried but the stop hasn't */
@@ -337,8 +337,8 @@ void draw_background(struct mame_bitmap *bitmap, const struct rectangle *cliprec
 			/* draw the rest of the scanline fully */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT16 combined = 0;
-				UINT8 lookupval;
+				uint16_t combined = 0;
+				uint8_t lookupval;
 
 				/* the output enable is controlled by the carries on the start/stop counters */
 				/* they are only active when the start has carried but the stop hasn't */

@@ -41,40 +41,40 @@ enum
 
 
 /* graphics-related variables */
-       UINT8	midtunit_gfx_rom_large;
+       uint8_t	midtunit_gfx_rom_large;
 static data16_t	midtunit_control;
-static UINT8	midtunit_using_34020;
+static uint8_t	midtunit_using_34020;
 
 /* videoram-related variables */
-static UINT32 	gfxbank_offset[2];
-static UINT16 *	local_videoram;
-static UINT8	videobank_select;
+static uint32_t 	gfxbank_offset[2];
+static uint16_t *	local_videoram;
+static uint8_t	videobank_select;
 
 /* DMA-related variables */
 static data16_t	dma_register[18];
 static struct
 {
-	UINT32		offset;			/* source offset, in bits */
-	INT32 		rowbits;		/* source bits to skip each row */
-	INT32 		xpos;			/* x position, clipped */
-	INT32		ypos;			/* y position, clipped */
-	INT32		width;			/* horizontal pixel count */
-	INT32		height;			/* vertical pixel count */
-	UINT16		palette;		/* palette base */
-	UINT16		color;			/* current foreground color with palette */
+	uint32_t		offset;			/* source offset, in bits */
+	int32_t 		rowbits;		/* source bits to skip each row */
+	int32_t 		xpos;			/* x position, clipped */
+	int32_t		ypos;			/* y position, clipped */
+	int32_t		width;			/* horizontal pixel count */
+	int32_t		height;			/* vertical pixel count */
+	uint16_t		palette;		/* palette base */
+	uint16_t		color;			/* current foreground color with palette */
 
-	UINT8		yflip;			/* yflip? */
-	UINT8		bpp;			/* bits per pixel */
-	UINT8		preskip;		/* preskip scale */
-	UINT8		postskip;		/* postskip scale */
-	INT32		topclip;		/* top clipping scanline */
-	INT32		botclip;		/* bottom clipping scanline */
-	INT32		leftclip;		/* left clipping column */
-	INT32		rightclip;		/* right clipping column */
-	INT32		startskip;		/* pixels to skip at start */
-	INT32		endskip;		/* pixels to skip at end */
-	UINT16		xstep;			/* 8.8 fixed number scale x factor */
-	UINT16		ystep;			/* 8.8 fixed number scale y factor */
+	uint8_t		yflip;			/* yflip? */
+	uint8_t		bpp;			/* bits per pixel */
+	uint8_t		preskip;		/* preskip scale */
+	uint8_t		postskip;		/* postskip scale */
+	int32_t		topclip;		/* top clipping scanline */
+	int32_t		botclip;		/* bottom clipping scanline */
+	int32_t		leftclip;		/* left clipping column */
+	int32_t		rightclip;		/* right clipping column */
+	int32_t		startskip;		/* pixels to skip at start */
+	int32_t		endskip;		/* pixels to skip at end */
+	uint16_t		xstep;			/* 8.8 fixed number scale x factor */
+	uint16_t		ystep;			/* 8.8 fixed number scale y factor */
 } dma_state;
 
 
@@ -142,7 +142,7 @@ VIDEO_START( midxunit )
 
 READ16_HANDLER( midtunit_gfxrom_r )
 {
-	UINT8 *base = &midyunit_gfx_rom[gfxbank_offset[(offset >> 21) & 1]];
+	uint8_t *base = &midyunit_gfx_rom[gfxbank_offset[(offset >> 21) & 1]];
 	offset = (offset & 0x01fffff) * 2;
 	return base[offset] | (base[offset + 1] << 8);
 }
@@ -150,7 +150,7 @@ READ16_HANDLER( midtunit_gfxrom_r )
 
 READ16_HANDLER( midwunit_gfxrom_r )
 {
-	UINT8 *base = &midyunit_gfx_rom[gfxbank_offset[0]];
+	uint8_t *base = &midyunit_gfx_rom[gfxbank_offset[0]];
 	offset *= 2;
 	return base[offset] | (base[offset + 1] << 8);
 }
@@ -234,15 +234,15 @@ READ16_HANDLER( midtunit_vram_color_r )
  *
  *************************************/
 
-void midtunit_to_shiftreg(UINT32 address, UINT16 *shiftreg)
+void midtunit_to_shiftreg(uint32_t address, uint16_t *shiftreg)
 {
-	memcpy(shiftreg, &local_videoram[address >> 3], 2 * 512 * sizeof(UINT16));
+	memcpy(shiftreg, &local_videoram[address >> 3], 2 * 512 * sizeof(uint16_t));
 }
 
 
-void midtunit_from_shiftreg(UINT32 address, UINT16 *shiftreg)
+void midtunit_from_shiftreg(uint32_t address, uint16_t *shiftreg)
 {
-	memcpy(&local_videoram[address >> 3], shiftreg, 2 * 512 * sizeof(UINT16));
+	memcpy(&local_videoram[address >> 3], shiftreg, 2 * 512 * sizeof(uint16_t));
 }
 
 
@@ -365,10 +365,10 @@ typedef void (*dma_draw_func)(void);
 #define DMA_DRAW_FUNC_BODY(name, bitsperpixel, extractor, xflip, skip, scale, zero, nonzero) \
 {																				\
 	int height = dma_state.height << 8;											\
-	UINT8 *base = midyunit_gfx_rom;													\
-	UINT32 offset = dma_state.offset;											\
-	UINT16 pal = dma_state.palette;												\
-	UINT16 color = pal | dma_state.color;										\
+	uint8_t *base = midyunit_gfx_rom;													\
+	uint32_t offset = dma_state.offset;											\
+	uint16_t pal = dma_state.palette;												\
+	uint16_t color = pal | dma_state.color;										\
 	int sy = dma_state.ypos, iy = 0, ty;										\
 	int bpp = bitsperpixel;														\
 	int mask = (1 << bpp) - 1;													\
@@ -381,14 +381,14 @@ typedef void (*dma_draw_func)(void);
 		int endskip = dma_state.endskip << 8;									\
 		int width = dma_state.width << 8;										\
 		int sx = dma_state.xpos, ix = 0, tx;									\
-		UINT32 o = offset;														\
+		uint32_t o = offset;														\
 		int pre, post;															\
-		UINT16 *d;																\
+		uint16_t *d;																\
 																				\
 		/* handle skipping */													\
 		if (skip)																\
 		{																		\
-			UINT8 value = EXTRACTGEN(0xff);										\
+			uint8_t value = EXTRACTGEN(0xff);										\
 			o += 8;																\
 																				\
 			/* adjust for preskip */											\
@@ -519,7 +519,7 @@ typedef void (*dma_draw_func)(void);
 				if (width > 0) o += width * bpp;								\
 				while (ty--)													\
 				{																\
-					UINT8 value = EXTRACTGEN(0xff);								\
+					uint8_t value = EXTRACTGEN(0xff);								\
 					o += 8;														\
 					pre = (value & 0x0f) << dma_state.preskip;					\
 					post = ((value >> 4) & 0x0f) << dma_state.postskip;			\
@@ -684,14 +684,14 @@ READ16_HANDLER( midtunit_dma_r )
 
 WRITE16_HANDLER( midtunit_dma_w )
 {
-	static const UINT8 register_map[2][16] =
+	static const uint8_t register_map[2][16] =
 	{
 		{ 0,1,2,3,4,5,6,7,8,9,10,11,16,17,14,15 },
 		{ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 }
 	};
 	int regbank = (dma_register[DMA_CONFIG] >> 5) & 1;
 	int command, bpp, regnum;
-	UINT32 gfxoffset;
+	uint32_t gfxoffset;
 	int pixels = 0;
 
 	/* blend with the current register contents */
@@ -851,10 +851,10 @@ skipdma:
 VIDEO_UPDATE( midtunit )
 {
 	int v, width, xoffs, dpytap;
-	UINT32 offset;
+	uint32_t offset;
 	const unsigned short *pal;
 	unsigned palents, fb_pitch;
-	UINT16 *fb;
+	uint16_t *fb;
 
 #if LOG_DMA
 	if (keyboard_pressed(KEYCODE_L))
@@ -888,13 +888,13 @@ VIDEO_UPDATE( midtunit )
 	   accessor); the visible area is 0-origin, so screen row v maps to buffer
 	   row v. */
 	pal = mame2003_direct_rgb565_palette(&palents);
-	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	fb  = pal ? (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
 		for (v = cliprect->min_y; v <= cliprect->max_y; v++)
 		{
-			const UINT16 *src = &local_videoram[offset];
-			UINT16 *dst = (UINT16 *)((UINT8 *)fb + v * fb_pitch) + xoffs;
+			const uint16_t *src = &local_videoram[offset];
+			uint16_t *dst = (uint16_t *)((uint8_t *)fb + v * fb_pitch) + xoffs;
 			int length = width;
 
 			while (length--)
@@ -909,7 +909,7 @@ VIDEO_UPDATE( midtunit )
 	for (v = cliprect->min_y; v <= cliprect->max_y; v++)
    {
       const uint16_t *src = &local_videoram[offset];
-      UINT16 *dst = (UINT16 *)bitmap->base + v * bitmap->rowpixels + xoffs;
+      uint16_t *dst = (uint16_t *)bitmap->base + v * bitmap->rowpixels + xoffs;
       int length = width;
 
       while (length--)

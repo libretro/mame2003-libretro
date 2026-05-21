@@ -12,7 +12,7 @@ WRITE_HANDLER( K007121_ctrl_0_w );
 WRITE_HANDLER( K007121_ctrl_1_w );
 void K007121_sprites_draw(int chip,struct mame_bitmap *bitmap,const struct rectangle *cliprect,
 		const unsigned char *source,int base_color,int global_x_offset,int bank_base,
-		UINT32 pri_mask);
+		uint32_t pri_mask);
 
 
 int K007342_vh_start(int gfx_index, void (*callback)(int layer,int bank,int *code,int *color));
@@ -23,7 +23,7 @@ WRITE_HANDLER( K007342_scroll_w );
 void K007342_tilemap_update(void);
 WRITE_HANDLER( K007342_vreg_w );
 void K007342_tilemap_set_enable(int layer, int enable);
-void K007342_tilemap_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int num,int flags,UINT32 priority);
+void K007342_tilemap_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int num,int flags,uint32_t priority);
 int K007342_is_INT_enabled(void);
 
 
@@ -205,17 +205,17 @@ READ_HANDLER( K051316_rom_2_r );
 WRITE_HANDLER( K051316_ctrl_0_w );
 WRITE_HANDLER( K051316_ctrl_1_w );
 WRITE_HANDLER( K051316_ctrl_2_w );
-void K051316_zoom_draw_0(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority);
-void K051316_zoom_draw_1(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority);
-void K051316_zoom_draw_2(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority);
+void K051316_zoom_draw_0(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority);
+void K051316_zoom_draw_1(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority);
+void K051316_zoom_draw_2(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority);
 void K051316_wraparound_enable(int chip, int status);
 void K051316_set_offset(int chip, int xoffs, int yoffs);
 
 
 extern data16_t *K053936_0_ctrl,*K053936_0_linectrl;
 extern data16_t *K053936_1_ctrl,*K053936_1_linectrl;
-void K053936_0_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,UINT32 priority);
-void K053936_1_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,UINT32 priority);
+void K053936_0_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority);
+void K053936_1_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority);
 void K053936_wraparound_enable(int chip, int status);
 void K053936_set_offset(int chip, int xoffs, int yoffs);
 
@@ -255,7 +255,7 @@ READ16_HANDLER( K054157_rom_word_8000_r );
 WRITE16_HANDLER( K054157_word_w );
 WRITE16_HANDLER( K054157_b_word_w );
 void K054157_tilemap_update(void);
-void K054157_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, UINT32 priority);
+void K054157_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, uint32_t priority);
 void K054157_tilemap_draw_alpha(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, int alpha);
 int K054157_is_IRQ_enabled(void);
 int K054157_get_lookup(int bits);
@@ -276,8 +276,8 @@ WRITE16_HANDLER( K056832_word_w ); // "VRAM" registers
 WRITE16_HANDLER( K056832_b_word_w );
 void K056832_mark_plane_dirty(int num);
 void K056832_MarkAllTilemapsDirty(void);
-void K056832_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, UINT32 priority);
-void K056832_tilemap_draw_dj(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int layer, int flags, UINT32 priority);
+void K056832_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, uint32_t priority);
+void K056832_tilemap_draw_dj(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int layer, int flags, uint32_t priority);
 void K056832_set_LayerAssociation(int status);
 int  K056832_get_LayerAssociation(void);
 void K056832_set_LayerOffset(int layer, int offsx, int offsy);

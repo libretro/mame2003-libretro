@@ -5,12 +5,12 @@
 
 static struct mame_bitmap* pixel_layer = 0;
 
-static UINT16* video_ram = NULL;
+static uint16_t* video_ram = NULL;
 
-static UINT16 video_ctrl = 0;
-static UINT16 video_mask = 0;
+static uint16_t video_ctrl = 0;
+static uint16_t video_mask = 0;
 
-static UINT8* line_dirty = NULL;
+static uint8_t* line_dirty = NULL;
 
 static void mark_all_dirty(void)
 {
@@ -32,7 +32,7 @@ VIDEO_START( volfied )
 	if (line_dirty == NULL)
 		return 1;
 
-	video_ram = auto_malloc(0x40000 * sizeof (UINT16));
+	video_ram = auto_malloc(0x40000 * sizeof (uint16_t));
 	if (video_ram == NULL)
 		return 1;
 
@@ -119,7 +119,7 @@ static void refresh_pixel_layer(void)
 
 	*********************************************************/
 
-	UINT16* p = video_ram;
+	uint16_t* p = video_ram;
 
 	if (video_ctrl & 1)
 	{

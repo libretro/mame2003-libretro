@@ -12,10 +12,10 @@ static int tilebank=0;
 static struct tilemap *tilemap;
 static int palette_bank,gfxctrl;
 
-UINT8 *ladyfrog_scrlram;
+uint8_t *ladyfrog_scrlram;
 
-UINT8 *ladyfrog_spriteram;
-extern UINT8 *ladyfrog_sharedram;
+uint8_t *ladyfrog_spriteram;
+extern uint8_t *ladyfrog_sharedram;
 
 WRITE_HANDLER(ladyfrog_spriteram_w)
 {

@@ -86,7 +86,7 @@ static int layer_layout;
 static int trigger_irq;	// some games trigger IRQ at blitter end, some don't
 
 // 4 layers, 2 images per layer (interleaved on screen)
-static UINT8 *dynax_pixmap[4][2];
+static uint8_t *dynax_pixmap[4][2];
 
 
 
@@ -652,16 +652,16 @@ void hanamai_copylayer(struct mame_bitmap *bitmap,const struct rectangle *clipre
 
 	{
 		int dy,length,pen,offs;
-		UINT8 *src1 = dynax_pixmap[i][1];
-		UINT8 *src2 = dynax_pixmap[i][0];
+		uint8_t *src1 = dynax_pixmap[i][1];
+		uint8_t *src2 = dynax_pixmap[i][0];
 
 		int palbase = 16*color;
 		offs = 0;
 
 		for (dy = 0; dy < 256; dy++)
 		{
-			UINT16 *dst;
-			UINT16 *dstbase = (UINT16 *)bitmap->base + ((dy - scrolly) & 0xff) * bitmap->rowpixels;
+			uint16_t *dst;
+			uint16_t *dstbase = (uint16_t *)bitmap->base + ((dy - scrolly) & 0xff) * bitmap->rowpixels;
 
 			length = scrollx;
 			dst = dstbase + 2*(256 - length);
@@ -709,15 +709,15 @@ void mjdialq2_copylayer(struct mame_bitmap *bitmap,const struct rectangle *clipr
 
 	{
 		int dy,length,pen,offs;
-		UINT8 *src = dynax_pixmap[i][0];
+		uint8_t *src = dynax_pixmap[i][0];
 
 		int palbase = 16*color;
 		offs = 0;
 
 		for (dy = 0; dy < 256; dy++)
 		{
-			UINT16 *dst;
-			UINT16 *dstbase = (UINT16 *)bitmap->base + ((dy - scrolly) & 0xff) * bitmap->rowpixels;
+			uint16_t *dst;
+			uint16_t *dstbase = (uint16_t *)bitmap->base + ((dy - scrolly) & 0xff) * bitmap->rowpixels;
 
 			length = scrollx;
 			dst = dstbase + 256 - length;
@@ -770,8 +770,8 @@ if (toggle)	{
 	dynax_blit_dest = 1;
 
 	fillbitmap(bitmap,Machine->pens[0],&Machine->visible_area);
-	memset(dynax_pixmap[0][0],0,sizeof(UINT8)*0x100*0x100);
-	memset(dynax_pixmap[0][1],0,sizeof(UINT8)*0x100*0x100);
+	memset(dynax_pixmap[0][0],0,sizeof(uint8_t)*0x100*0x100);
+	memset(dynax_pixmap[0][1],0,sizeof(uint8_t)*0x100*0x100);
 	hanamai_layer_half = 0;
 	sprtmtch_drawgfx(i, Machine->visible_area.min_x + Machine->visible_area.min_y*256, 0);
 	hanamai_layer_half = 1;

@@ -138,7 +138,7 @@ int sys16_MaxShadowColors;
 
 /* video driver constants (potentially different for each game) */
 int sys16_gr_bitmap_width;
-int (*sys16_spritesystem)( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor );
+int (*sys16_spritesystem)( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor );
 int *sys16_obj_bank;
 int sys16_sprxoffset;
 int sys16_bgxoffset;
@@ -232,15 +232,15 @@ static void draw_sprite( //*
 	int shadow_pen, int eos )
 {
 	const pen_t *shadow_base = Machine->gfx[0]->colortable + (Machine->drv->total_colors/2);
-	const UINT8 *source;
+	const uint8_t *source;
 	int full_shadow=shadow&SYS16_SPR_SHADOW;
 	int partial_shadow=shadow&SYS16_SPR_PARTIAL_SHADOW;
 	int shadow_mask=(Machine->drv->total_colors/2)-1;
 	int sx, x, xcount;
 	int sy, y, ycount = 0;
 	int dx,dy;
-	UINT16 *dest;
-	UINT8 *pri;
+	uint16_t *dest;
+	uint8_t *pri;
 	unsigned pen, data;
 
 	priority = 1<<priority;
@@ -269,7 +269,7 @@ static void draw_sprite( //*
 			while( ycount>=height ){
 				if( sy>=cliprect->min_y && sy<=cliprect->max_y ){
 					source = addr;
-					dest = (UINT16 *)bitmap->line[sy];
+					dest = (uint16_t *)bitmap->line[sy];
 					pri = priority_bitmap->line[sy];
 					sx = x0;
 					xcount = 0;
@@ -325,7 +325,7 @@ static void draw_sprite( //*
 			while( ycount>=height ){
 				if( sy>=cliprect->min_y && sy<=cliprect->max_y ){
 					source = addr;
-					dest = (UINT16 *)bitmap->line[sy];
+					dest = (uint16_t *)bitmap->line[sy];
 					pri = priority_bitmap->line[sy];
 					sx = x0;
 					xcount = 0;
@@ -462,7 +462,7 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 
 /***************************************************************************/
 
-UINT32 sys16_bg_map( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows ){
+uint32_t sys16_bg_map( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows ){
 	int page = 0;
 	if( row<32 ){ /* top */
 		if( col<64 ) page = 0; else page = 1;
@@ -475,7 +475,7 @@ UINT32 sys16_bg_map( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows ){
 	return page*64*32+row*64+col;
 }
 
-UINT32 sys16_text_map( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows ){
+uint32_t sys16_text_map( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows ){
 	return row*64+col+(64-40);
 }
 
@@ -490,9 +490,9 @@ WRITE16_HANDLER( sys16_paletteram_w ){
 		/*	   byte 0    byte 1 */
 		/*	GBGR BBBB GGGG RRRR */
 		/*	5444 3210 3210 3210 */
-		UINT8 r = (newword & 0x00f)<<1;
-		UINT8 g = (newword & 0x0f0)>>2;
-		UINT8 b = (newword & 0xf00)>>7;
+		uint8_t r = (newword & 0x00f)<<1;
+		uint8_t g = (newword & 0x0f0)>>2;
+		uint8_t b = (newword & 0xf00)>>7;
 		if( sys16_dactype == 0 ){ /* we should really use two distinct paletteram_w handlers */
 			/* dac_type == 0 (from GCS file) */
 			if (newword&0x1000) r|=1;
@@ -587,7 +587,7 @@ static void update_page( void ){
 }
 
 static void get_bg_tile_info( int offset ){
-	const UINT16 *source = 64*32*sys16_bg_page[offset/(64*32)] + sys16_tileram;
+	const uint16_t *source = 64*32*sys16_bg_page[offset/(64*32)] + sys16_tileram;
 	int data = source[offset%(64*32)];
 	int tile_number = (data&0xfff) + 0x1000*((data&sys16_tilebank_switch)?sys16_tile_bank1:sys16_tile_bank0);
 
@@ -632,7 +632,7 @@ static void get_bg_tile_info( int offset ){
 }
 
 static void get_fg_tile_info( int offset ){
-	const UINT16 *source = 64*32*sys16_fg_page[offset/(64*32)] + sys16_tileram;
+	const uint16_t *source = 64*32*sys16_fg_page[offset/(64*32)] + sys16_tileram;
 	int data = source[offset%(64*32)];
 	int tile_number = (data&0xfff) + 0x1000*((data&sys16_tilebank_switch)?sys16_tile_bank1:sys16_tile_bank0);
 
@@ -675,7 +675,7 @@ static void get_fg_tile_info( int offset ){
 }
 
 static void get_bg2_tile_info( int offset ){
-	const UINT16 *source = 64*32*sys16_bg2_page[offset/(64*32)] + sys16_tileram;
+	const uint16_t *source = 64*32*sys16_bg2_page[offset/(64*32)] + sys16_tileram;
 	int data = source[offset%(64*32)];
 	int tile_number = (data&0xfff) + 0x1000*((data&0x1000)?sys16_tile_bank1:sys16_tile_bank0);
 
@@ -704,7 +704,7 @@ static void get_bg2_tile_info( int offset ){
 }
 
 static void get_fg2_tile_info( int offset ){
-	const UINT16 *source = 64*32*sys16_fg2_page[offset/(64*32)] + sys16_tileram;
+	const uint16_t *source = 64*32*sys16_fg2_page[offset/(64*32)] + sys16_tileram;
 	int data = source[offset%(64*32)];
 	int tile_number = (data&0xfff) + 0x1000*((data&0x1000)?sys16_tile_bank1:sys16_tile_bank0);
 
@@ -1201,12 +1201,12 @@ VIDEO_UPDATE( system18 ){
 static void render_gr(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int priority){
 	/* the road is a 4 color bitmap */
 	int i,j;
-	UINT8 *data = memory_region(REGION_GFX3);
-	UINT8 *source;
-	UINT16 *line16;
-	UINT16 *data_ver=sys16_gr_ver;
-	UINT32 ver_data,hor_pos;
-	UINT16 colors[5];
+	uint8_t *data = memory_region(REGION_GFX3);
+	uint8_t *source;
+	uint16_t *line16;
+	uint16_t *data_ver=sys16_gr_ver;
+	uint32_t ver_data,hor_pos;
+	uint16_t colors[5];
 	int colorflip;
 	int yflip=0, ypos;
 	int dx=1,xoff=0;
@@ -1225,7 +1225,7 @@ if( keyboard_pressed( KEYCODE_S ) ){
 	fcount++;
 	f = fopen( fname,"w" );
 	if( f ){
-		const UINT16 *source = sys16_gr_ver;
+		const uint16_t *source = sys16_gr_ver;
 		for( i=0; i<0x1000; i++ ){
 			if( (i&0x1f)==0 ) fprintf( f, "\n %04x: ", i );
 			fprintf( f, "%04x ", source[i] );
@@ -1261,7 +1261,7 @@ if( keyboard_pressed( KEYCODE_S ) ){
 						// fill line
 						for(j=cliprect->min_x;j<=cliprect->max_x;j++)
 						{
-							line16=(UINT16 *)bitmap->line[j]+ypos;
+							line16=(uint16_t *)bitmap->line[j]+ypos;
 							*line16=colors[0];
 						}
 					}
@@ -1294,7 +1294,7 @@ if( keyboard_pressed( KEYCODE_S ) ){
 
 						for(j=cliprect->min_x;j<cliprect->max_x;j++)
 						{
-							line16=(UINT16 *)bitmap->line[xoff+j*dx]+ypos;
+							line16=(uint16_t *)bitmap->line[xoff+j*dx]+ypos;
 							*line16 = colors[*source++];
 						}
 					}
@@ -1335,14 +1335,14 @@ if( keyboard_pressed( KEYCODE_S ) ){
 					colors[0] = paldata1[ sys16_gr_pal[ver_data&0xff]&0xff ];
 
 					if((ver_data & 0x500) == 0x100 || (ver_data & 0x300) == 0x200){
-						line16 = (UINT16 *)bitmap->line[ypos]; /* dest for drawing */
+						line16 = (uint16_t *)bitmap->line[ypos]; /* dest for drawing */
 						for(j=cliprect->min_x;j<=cliprect->max_x;j++){
 							*line16++=colors[0]; /* opaque fill with background color */
 						}
 					}
 					else {
 						// copy line
-						line16 = (UINT16 *)bitmap->line[ypos]+xoff; /* dest for drawing */
+						line16 = (uint16_t *)bitmap->line[ypos]+xoff; /* dest for drawing */
 						ver_data &= 0xff;
 
 						colorflip = (sys16_gr_flip[ver_data] >> 3) & 1;
@@ -1398,12 +1398,12 @@ VIDEO_UPDATE( hangon ){
 static void render_grv2(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int priority)
 {
 	int i,j;
-	UINT8 *data = memory_region(REGION_GFX3);
-	UINT8 *source,*source2,*temp;
-	UINT16 *line16;
-	UINT16 *data_ver=sys16_gr_ver;
-	UINT32 ver_data,hor_pos,hor_pos2;
-	UINT16 colors[5];
+	uint8_t *data = memory_region(REGION_GFX3);
+	uint8_t *source,*source2,*temp;
+	uint16_t *line16;
+	uint16_t *data_ver=sys16_gr_ver;
+	uint32_t ver_data,hor_pos,hor_pos2;
+	uint16_t colors[5];
 	int colorflip,colorflip_info;
 	int yflip=0,ypos;
 	int dx=1,xoff=0;
@@ -1441,7 +1441,7 @@ static void render_grv2(struct mame_bitmap *bitmap,const struct rectangle *clipr
 						// fill line
 						for(j=cliprect->min_x;j<=cliprect->max_x;j++)
 						{
-							line16=(UINT16 *)bitmap->line[j]+ypos;
+							line16=(uint16_t *)bitmap->line[j]+ypos;
 							*line16=colors[0];
 						}
 					}
@@ -1481,7 +1481,7 @@ static void render_grv2(struct mame_bitmap *bitmap,const struct rectangle *clipr
 
 						for(j=cliprect->min_x;j<=cliprect->max_x;j++)
 						{
-							line16=(UINT16 *)bitmap->line[xoff+j*dx]+ypos;
+							line16=(uint16_t *)bitmap->line[xoff+j*dx]+ypos;
 							if(*source2 <= *source)
 								*line16 = colors[*source];
 							else
@@ -1512,14 +1512,14 @@ static void render_grv2(struct mame_bitmap *bitmap,const struct rectangle *clipr
 					if(ver_data & 0x800){
 						colors[0] = paldata1[ ver_data&0x3f ];
 						// fill line
-						line16 = (UINT16 *)bitmap->line[ypos];
+						line16 = (uint16_t *)bitmap->line[ypos];
 						for(j=cliprect->min_x;j<=cliprect->max_x;j++){
 							*line16++ = colors[0];
 						}
 					}
 					else {
 						// copy line
-						line16 = (UINT16 *)bitmap->line[ypos]+xoff;
+						line16 = (uint16_t *)bitmap->line[ypos]+xoff;
 						ver_data &= 0x01ff;		//???
 						colorflip_info = sys16_gr_flip[ver_data];
 						colors[0] = paldata2[ ((colorflip_info >> 8) & 0x1f) + 0x20 ];		//??
@@ -1597,15 +1597,15 @@ VIDEO_UPDATE( outrun ){
 
 /***************************************************************************/
 
-static UINT8 *aburner_backdrop;
+static uint8_t *aburner_backdrop;
 
-UINT8 *aburner_unpack_backdrop( const UINT8 *baseaddr ){
-	UINT8 *result = auto_malloc(512*256*2);
+uint8_t *aburner_unpack_backdrop( const uint8_t *baseaddr ){
+	uint8_t *result = auto_malloc(512*256*2);
 	if( result ){
 		int page;
 		for( page=0; page<2; page++ ){
-			UINT8 *dest = result + 512*256*page;
-			const UINT8 *source = baseaddr + 0x8000*page;
+			uint8_t *dest = result + 512*256*page;
+			const uint8_t *source = baseaddr + 0x8000*page;
 			int y;
 			for( y=0; y<256; y++ ){
 				int x;
@@ -1696,7 +1696,7 @@ static void aburner_draw_road( struct mame_bitmap *bitmap, const struct rectangl
 	**		0x1780	background color(16)
 	*/
 
-	const UINT16 *vreg = sys16_roadram;
+	const uint16_t *vreg = sys16_roadram;
 	/*	0x000..0x0ff: 0x800: disable; 0x100: enable
 		0x100..0x1ff: color/line_select
 		0x200..0x2ff: xscroll
@@ -1707,14 +1707,14 @@ static void aburner_draw_road( struct mame_bitmap *bitmap, const struct rectangl
 	int sy;
 
 	for( sy=cliprect->min_y; sy<=cliprect->max_y; sy++ ){
-		UINT16 *dest = (UINT16 *)bitmap->line[sy] + cliprect->min_x; /* assume 16bpp */
+		uint16_t *dest = (uint16_t *)bitmap->line[sy] + cliprect->min_x; /* assume 16bpp */
 		int sx;
-		UINT16 line = vreg[0x100+sy];
+		uint16_t line = vreg[0x100+sy];
 
 		if( page&4 ){ /* flying */
 			int xscroll = vreg[0x200+sy] - 0x552;
-			UINT16 sky = Machine->pens[0x1720];
-			UINT16 ground = Machine->pens[0x1700];
+			uint16_t sky = Machine->pens[0x1720];
+			uint16_t ground = Machine->pens[0x1700];
 			for( sx=cliprect->min_x; sx<=cliprect->max_x; sx++ ){
 				int temp = xscroll+sx;
 				if( temp<0 ){
@@ -1736,11 +1736,11 @@ static void aburner_draw_road( struct mame_bitmap *bitmap, const struct rectangl
 			}
 		}
 		else if( page&0xc0 ){ /* road */
-			const UINT8 *source = aburner_backdrop+(line&0xff)*512 + 512*256*(page&1);
-			UINT16 xscroll = (512-320)/2;
+			const uint8_t *source = aburner_backdrop+(line&0xff)*512 + 512*256*(page&1);
+			uint16_t xscroll = (512-320)/2;
 			// 040d 04b0 0552: normal: sky,horizon,sea
 
-			UINT16 flip = vreg[0x600+sy];
+			uint16_t flip = vreg[0x600+sy];
 			int clut[5];
 			{
 				int road_color = 0x1708+(flip&0x1);
@@ -1756,7 +1756,7 @@ static void aburner_draw_road( struct mame_bitmap *bitmap, const struct rectangl
 			}
 		}
 		else { /* rocky canyon */
-			UINT16 flip = vreg[0x600+sy];
+			uint16_t flip = vreg[0x600+sy];
 			unsigned short color = Machine->pens[(flip&0x100)?0x1730:0x1731];
 			for( sx=cliprect->min_x; sx<=cliprect->max_x; sx++ ){
 				*dest++ = color;
@@ -1774,7 +1774,7 @@ static void aburner_draw_road( struct mame_bitmap *bitmap, const struct rectangl
 		fcount++;
 		f = fopen( fname,"w" );
 		if( f ){
-			const UINT16 *source = sys16_roadram;
+			const uint16_t *source = sys16_roadram;
 			for( i=0; i<0x1000; i++ ){
 				if( (i&0x1f)==0 ) fprintf( f, "\n %04x: ", i );
 				fprintf( f, "%04x ", source[i] );
@@ -1790,7 +1790,7 @@ static void sys16_aburner_vh_screenrefresh_helper( void ){
 	int i;
 
 	{
-		UINT16 data = vreg[0];
+		uint16_t data = vreg[0];
 		sys16_fg_page[0] = data>>12;
 		sys16_fg_page[1] = (data>>8)&0xf;
 		sys16_fg_page[2] = (data>>4)&0xf;
@@ -1800,7 +1800,7 @@ static void sys16_aburner_vh_screenrefresh_helper( void ){
 	}
 
 	{
-		UINT16 data = vreg[0+1];
+		uint16_t data = vreg[0+1];
 		sys16_bg_page[0] = data>>12;
 		sys16_bg_page[1] = (data>>8)&0xf;
 		sys16_bg_page[2] = (data>>4)&0xf;
@@ -1810,7 +1810,7 @@ static void sys16_aburner_vh_screenrefresh_helper( void ){
 	}
 
 	{
-		UINT16 data = vreg[0+2];
+		uint16_t data = vreg[0+2];
 		sys16_fg2_page[0] = data>>12;
 		sys16_fg2_page[1] = (data>>8)&0xf;
 		sys16_fg2_page[2] = (data>>4)&0xf;
@@ -1820,7 +1820,7 @@ static void sys16_aburner_vh_screenrefresh_helper( void ){
 	}
 
 	{
-		UINT16 data = vreg[0+3];
+		uint16_t data = vreg[0+3];
 		sys16_bg2_page[0] = data>>12;
 		sys16_bg2_page[1] = (data>>8)&0xf;
 		sys16_bg2_page[2] = (data>>4)&0xf;

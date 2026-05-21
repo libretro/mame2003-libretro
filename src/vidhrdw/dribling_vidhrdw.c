@@ -18,7 +18,7 @@
 
 PALETTE_INIT( dribling )
 {
-	const UINT8 *prom = memory_region(REGION_PROMS) + 0x400;
+	const uint8_t *prom = memory_region(REGION_PROMS) + 0x400;
 	int i;
 
 	for (i = 0; i < 256; i++)
@@ -59,14 +59,14 @@ WRITE_HANDLER( dribling_colorram_w )
 
 VIDEO_UPDATE( dribling )
 {
-	UINT8 *prombase = memory_region(REGION_PROMS);
-	UINT8 *gfxbase = memory_region(REGION_GFX1);
+	uint8_t *prombase = memory_region(REGION_PROMS);
+	uint8_t *gfxbase = memory_region(REGION_GFX1);
 	int x, y;
 
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dst = bitmap->line[y];
+		uint16_t *dst = bitmap->line[y];
 
 		/* loop over columns */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)

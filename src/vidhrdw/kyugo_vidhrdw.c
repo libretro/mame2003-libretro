@@ -22,7 +22,7 @@ static struct tilemap *fg_tilemap;
 static struct tilemap *bg_tilemap;
 static int bgpalbank,fgcolor;
 static int flipscreen;
-static const UINT8 *color_codes;
+static const uint8_t *color_codes;
 
 
 /***************************************************************************

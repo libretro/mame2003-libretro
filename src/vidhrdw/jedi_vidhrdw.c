@@ -10,17 +10,17 @@
 
 
 /* globals */
-UINT8 *jedi_backgroundram;
+uint8_t *jedi_backgroundram;
 size_t jedi_backgroundram_size;
-UINT8 *jedi_PIXIRAM;
+uint8_t *jedi_PIXIRAM;
 
 
 /* local variables */
-static UINT32 jedi_vscroll;
-static UINT32 jedi_hscroll;
-static UINT32 jedi_alpha_bank;
+static uint32_t jedi_vscroll;
+static uint32_t jedi_hscroll;
+static uint32_t jedi_alpha_bank;
 static int video_off, smooth_table;
-static UINT8 *fgdirty, *bgdirty;
+static uint8_t *fgdirty, *bgdirty;
 static struct mame_bitmap *fgbitmap, *mobitmap, *bgbitmap, *bgexbitmap;
 
 
@@ -102,7 +102,7 @@ VIDEO_START( jedi )
 WRITE_HANDLER( jedi_paletteram_w )
 {
     int r, g, b, bits, intensity;
-    UINT32 color;
+    uint32_t color;
 
 	paletteram[offset] = data;
 	color = paletteram[offset & 0x3FF] | (paletteram[offset | 0x400] << 8);
@@ -201,9 +201,9 @@ WRITE_HANDLER( jedi_PIXIRAM_w )
 
 static void update_smoothing(int bgtilerow, int first, int last)
 {
-	UINT8 *prom = memory_region(REGION_PROMS) + smooth_table * 0x100;
-	UINT8 bgscan[2][256];
-	UINT8 *bgcurr = bgscan[0], *bglast = bgscan[1];
+	uint8_t *prom = memory_region(REGION_PROMS) + smooth_table * 0x100;
+	uint8_t bgscan[2][256];
+	uint8_t *bgcurr = bgscan[0], *bglast = bgscan[1];
 	int xstart, xstop, x, y;
 
 	/*
@@ -230,7 +230,7 @@ static void update_smoothing(int bgtilerow, int first, int last)
 		int curry = (bgtilerow * 16 + y) & 0x1ff;
 
 		/* swap background buffers */
-		UINT8 *bgtemp = bgcurr;
+		uint8_t *bgtemp = bgcurr;
 		bgcurr = bglast;
 		bglast = bgtemp;
 

@@ -11,7 +11,7 @@
 
 static int gfx_bank, palette_bank;
 static int grid_on;
-static const UINT8 *color_codes;
+static const uint8_t *color_codes;
 
 static struct tilemap *bg_tilemap;
 
@@ -328,7 +328,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, unsigned int mask_bank, uns
 
 static void draw_grid(struct mame_bitmap *bitmap)
 {
-	const UINT8 *table = memory_region(REGION_GFX3);
+	const uint8_t *table = memory_region(REGION_GFX3);
 	int x,y,counter;
 
 	counter = flip_screen ? 0x000 : 0x400;

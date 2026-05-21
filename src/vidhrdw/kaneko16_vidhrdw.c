@@ -568,7 +568,7 @@ void kaneko16_draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *c
 	{
 		int curr_pri = s->priority;
 
-		UINT32 primask = kaneko16_priority.sprite[curr_pri];
+		uint32_t primask = kaneko16_priority.sprite[curr_pri];
 
 		/* You can choose which sprite priorities get displayed (for debug) */
 		if ( ((1 << curr_pri) & pri) == 0 )	continue;

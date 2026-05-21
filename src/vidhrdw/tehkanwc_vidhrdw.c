@@ -14,9 +14,9 @@ robbiex@rocketmail.com
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *tehkanwc_videoram2;
-static UINT8 scroll_x[2];
-static UINT8 led0,led1;
+uint8_t *tehkanwc_videoram2;
+static uint8_t scroll_x[2];
+static uint8_t led0,led1;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 
@@ -137,12 +137,12 @@ VIDEO_START( tehkanwc )
    bit 7 = enable (0 = display off)
  */
 
-static void gridiron_drawled(struct mame_bitmap *bitmap,UINT8 led,int player)
+static void gridiron_drawled(struct mame_bitmap *bitmap,uint8_t led,int player)
 {
 	int i;
 
 
-	static UINT8 ledvalues[] =
+	static uint8_t ledvalues[] =
 			{ 0x86, 0xdb, 0xcf, 0xe6, 0xed, 0xfd, 0x87, 0xff, 0xf3, 0xf1 };
 
 

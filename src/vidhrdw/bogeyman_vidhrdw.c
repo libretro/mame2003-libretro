@@ -1,7 +1,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *bogeyman_videoram2, *bogeyman_colorram2;
+uint8_t *bogeyman_videoram2, *bogeyman_colorram2;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 

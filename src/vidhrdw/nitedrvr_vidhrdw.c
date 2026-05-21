@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *nitedrvr_hvc;
+uint8_t *nitedrvr_hvc;
 
 static struct tilemap *bg_tilemap;
 

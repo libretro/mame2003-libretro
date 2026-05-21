@@ -12,14 +12,14 @@
 #include "mcr.h"
 
 
-INT8 mcr12_sprite_xoffs;
-INT8 mcr12_sprite_xoffs_flip;
+int8_t mcr12_sprite_xoffs;
+int8_t mcr12_sprite_xoffs_flip;
 
-static UINT8 *spritebitmap;
-static UINT32 spritebitmap_width;
-static UINT32 spritebitmap_height;
+static uint8_t *spritebitmap;
+static uint32_t spritebitmap_width;
+static uint32_t spritebitmap_height;
 
-static UINT8 xtiles, ytiles;
+static uint8_t xtiles, ytiles;
 static struct tilemap *bg_tilemap;
 
 
@@ -82,7 +82,7 @@ static int video_start_common(void)
 	/* but that's not what we want, so we swap it back here */
 	if (gfx && (Machine->orientation & ORIENTATION_SWAP_XY) && !(gfx->flags & GFX_SWAPXY))
 	{
-		UINT8 *base = gfx->gfxdata;
+		uint8_t *base = gfx->gfxdata;
 		int c, x, y;
 		for (c = 0; c < gfx->total_elements; c++)
 		{
@@ -222,7 +222,7 @@ WRITE_HANDLER( twotigra_videoram_w )
 static void render_one_sprite(int code, int sx, int sy, int hflip, int vflip)
 {
 	const struct GfxElement *gfx = Machine->gfx[1];
-	UINT8 *src = gfx->gfxdata + gfx->char_modulo * code;
+	uint8_t *src = gfx->gfxdata + gfx->char_modulo * code;
 	int y, x;
 	
 	/* offset for the extra top/left area */
@@ -236,7 +236,7 @@ static void render_one_sprite(int code, int sx, int sy, int hflip, int vflip)
 	/* loop over lines in the sprite */
 	for (y = 0; y < 32; y++, sy++)
 	{
-		UINT8 *dst = spritebitmap + spritebitmap_width * sy + sx;
+		uint8_t *dst = spritebitmap + spritebitmap_width * sy + sx;
 
 		/* redraw the line */
 		if (!hflip)
@@ -347,7 +347,7 @@ static void render_sprite_tile(struct mame_bitmap *bitmap, pen_t *pens, int tile
 	/* draw any dirty scanlines from the VRAM directly */
 	for (y = 0; y < 16; y++, sy++)
 	{
-		UINT8 *src = &spritebitmap[(sy + 32) * spritebitmap_width + (sx + 32)];
+		uint8_t *src = &spritebitmap[(sy + 32) * spritebitmap_width + (sx + 32)];
 
 		/* redraw the sprite scanline, erasing as we go */
 		for (x = 0; x < 16; x++)

@@ -23,7 +23,7 @@ static int b_sp_color_base = 0;
 static int b_tx_color_base = 0;
 
 
-static UINT8 video_control = 0;
+static uint8_t video_control = 0;
 static data16_t TC0180VCU_ctrl[0x10] = {0};
 
 /* TC0180VCU control registers:
@@ -533,21 +533,21 @@ profiler_mark(PROFILER_USER1);
 			/*usrintf_showmessage("1. X[%3i;%3i] Y[%3i;%3i]", myclip.min_x, myclip.max_x, myclip.min_y, myclip.max_y);*/
 			for (y = myclip.min_y;y <= myclip.max_y;y++)
 			{
-				UINT16 *src = ((UINT16 *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
-				UINT16 *dst;
+				uint16_t *src = ((uint16_t *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
+				uint16_t *dst;
 
 				if (!(Machine->orientation & ORIENTATION_FLIP_Y))	/*only for ROT_0 games*/
 				{
-					dst = ((UINT16 *)bitmap->line[bitmap->height-1-y]) + myclip.max_x;
+					dst = ((uint16_t *)bitmap->line[bitmap->height-1-y]) + myclip.max_x;
 				}
 				else	/*for ROT_270 games */
 				{
-					dst = ((UINT16 *)bitmap->line[bitmap->height-1-y+24*8]) + myclip.max_x;
+					dst = ((uint16_t *)bitmap->line[bitmap->height-1-y+24*8]) + myclip.max_x;
 				}
 
 				for (x = myclip.min_x;x <= myclip.max_x;x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0)
 						*dst = Machine->pens[b_sp_color_base + c];
@@ -560,12 +560,12 @@ profiler_mark(PROFILER_USER1);
 		{
 			for (y = myclip.min_y;y <= myclip.max_y;y++)
 			{
-				UINT16 *src = ((UINT16 *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
-				UINT16 *dst = ((UINT16 *)bitmap->line[y]) + myclip.min_x;
+				uint16_t *src = ((uint16_t *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
+				uint16_t *dst = ((uint16_t *)bitmap->line[y]) + myclip.min_x;
 
 				for (x = myclip.min_x;x <= myclip.max_x;x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0)
 						*dst = Machine->pens[b_sp_color_base + c];
@@ -582,21 +582,21 @@ profiler_mark(PROFILER_USER1);
 			/*usrintf_showmessage("3. X[%3i;%3i] Y[%3i;%3i]", myclip.min_x, myclip.max_x, myclip.min_y, myclip.max_y);*/
 			for (y = myclip.min_y;y <= myclip.max_y;y++)
 			{
-				UINT16 *src = ((UINT16 *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
-				UINT16 *dst;
+				uint16_t *src = ((uint16_t *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
+				uint16_t *dst;
 
 				if (!(Machine->orientation & ORIENTATION_FLIP_Y))	/*only for ROT_0 games*/
 				{
-					dst = ((UINT16 *)bitmap->line[bitmap->height-1-y]) + myclip.max_x;
+					dst = ((uint16_t *)bitmap->line[bitmap->height-1-y]) + myclip.max_x;
 				}
 				else	/*for ROT_270 games*/
 				{
-					dst = ((UINT16 *)bitmap->line[bitmap->height-1-y+24*8]) + myclip.max_x;
+					dst = ((uint16_t *)bitmap->line[bitmap->height-1-y+24*8]) + myclip.max_x;
 				}
 
 				for (x = myclip.min_x;x <= myclip.max_x;x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0 && (c & 0x10) == priority)
 						*dst = Machine->pens[b_sp_color_base + c];
@@ -609,12 +609,12 @@ profiler_mark(PROFILER_USER1);
 	    {
 	        for (y = myclip.min_y;y <= myclip.max_y;y++)
 			{
-				UINT16 *src = ((UINT16 *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
-				UINT16 *dst = ((UINT16 *)bitmap->line[y]) + myclip.min_x;
+				uint16_t *src = ((uint16_t *)framebuffer[framebuffer_page]->line[y]) + myclip.min_x;
+				uint16_t *dst = ((uint16_t *)bitmap->line[y]) + myclip.min_x;
 
 				for (x = myclip.min_x;x <= myclip.max_x;x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0 && (c & 0x10) == priority)
 						*dst = Machine->pens[b_sp_color_base + c];

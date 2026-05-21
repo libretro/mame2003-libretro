@@ -9,10 +9,10 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *exedexes_bg_scroll;
+uint8_t *exedexes_bg_scroll;
 
-UINT8 *exedexes_nbg_yscroll;
-UINT8 *exedexes_nbg_xscroll;
+uint8_t *exedexes_nbg_yscroll;
+uint8_t *exedexes_nbg_xscroll;
 
 static int chon,objon,sc1on,sc2on;
 
@@ -142,7 +142,7 @@ WRITE_HANDLER( exedexes_gfxctrl_w )
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT8 *tilerom = memory_region(REGION_GFX5);
+	uint8_t *tilerom = memory_region(REGION_GFX5);
 
 	int attr = tilerom[tile_index];
 	int code = attr & 0x3f;
@@ -167,13 +167,13 @@ static void get_tx_tile_info(int tile_index)
 	SET_TILE_INFO(0, code, color, 0)
 }
 
-static UINT32 exedexes_bg_tilemap_scan( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t exedexes_bg_tilemap_scan( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return ((col * 32 & 0xe0) >> 5) + ((row * 32 & 0xe0) >> 2) + ((col * 32 & 0x3f00) >> 1) + 0x4000;
 }
 
-static UINT32 exedexes_fg_tilemap_scan( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t exedexes_fg_tilemap_scan( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return ((col * 16 & 0xf0) >> 4) + (row * 16 & 0xf0) + (col * 16 & 0x700) + ((row * 16 & 0x700) << 3);

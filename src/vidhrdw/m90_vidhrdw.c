@@ -68,7 +68,7 @@ VIDEO_START( m90 )
 	tilemap_set_transparent_pen(pf1_layer,0);
 	tilemap_set_transparent_pen(pf1_wide_layer,0);
 
-	state_save_register_UINT32("video", 0, "m90_video_control_data", (UINT32*) m90_video_control_data, 16);
+	state_save_register_UINT32("video", 0, "m90_video_control_data", (uint32_t*) m90_video_control_data, 16);
 
 	return 0;
 }

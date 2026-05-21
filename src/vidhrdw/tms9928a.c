@@ -118,7 +118,7 @@ static void _TMS9928A_mode3 (struct mame_bitmap*);
 static void _TMS9928A_mode23 (struct mame_bitmap*);
 static void _TMS9928A_modebogus (struct mame_bitmap*);
 static void _TMS9928A_sprites (struct mame_bitmap*);
-static void _TMS9928A_change_register (int reg, UINT8 data);
+static void _TMS9928A_change_register (int reg, uint8_t data);
 static void _TMS9928A_set_dirty (char);
 
 static void (*ModeHandlers[])(struct mame_bitmap*) = {
@@ -145,13 +145,13 @@ static void (*ModeHandlers[])(struct mame_bitmap*) = {
 
 typedef struct {
     /* TMS9928A internal settings */
-    UINT8 ReadAhead,Regs[8],StatusReg,oldStatusReg,FirstByte,latch,INT;
+    uint8_t ReadAhead,Regs[8],StatusReg,oldStatusReg,FirstByte,latch,INT;
     int Addr,BackColour,Change,mode;
     int colour,pattern,nametbl,spriteattribute,spritepattern;
     int colourmask,patternmask;
     void (*INTCallback)(int);
     /* memory */
-    UINT8 *vMem, *dBackMem;
+    uint8_t *vMem, *dBackMem;
     struct mame_bitmap *tmpbmp;
     int vramsize, model;
     /* emulation settings */
@@ -206,13 +206,13 @@ static int TMS9928A_start (const TMS9928a_interface *intf) {
 
     /* Video RAM */
     tms.vramsize = intf->vram;
-    tms.vMem = (UINT8*) auto_malloc (intf->vram);
+    tms.vMem = (uint8_t*) auto_malloc (intf->vram);
     if (!tms.vMem)
 		return 1;
     memset (tms.vMem, 0, intf->vram);
 
     /* Sprite back buffer */
-    tms.dBackMem = (UINT8*)auto_malloc (IMAGE_SIZE);
+    tms.dBackMem = (uint8_t*)auto_malloc (IMAGE_SIZE);
     if (!tms.dBackMem)
         return 1;
 
@@ -249,7 +249,7 @@ static int TMS9928A_start (const TMS9928a_interface *intf) {
 	state_save_register_UINT8 ("tms9928a", 0, "read_ahead", &tms.ReadAhead, 1);
 	state_save_register_UINT8 ("tms9928a", 0, "first_byte", &tms.FirstByte, 1);
 	state_save_register_UINT8 ("tms9928a", 0, "latch", &tms.latch, 1);
-	state_save_register_UINT16 ("tms9928a", 0, "vram_latch", (UINT16*)&tms.Addr, 1);
+	state_save_register_UINT16 ("tms9928a", 0, "vram_latch", (uint16_t*)&tms.Addr, 1);
 	state_save_register_UINT8 ("tms9928a", 0, "interrupt_line", &tms.INT, 1);
 	state_save_register_UINT8 ("tms9928a", 0, "VRAM", tms.vMem, intf->vram);
 
@@ -287,7 +287,7 @@ static void _TMS9928A_set_dirty (char dirty) {
 ** The I/O functions.
 */
 READ_HANDLER (TMS9928A_vram_r) {
-    UINT8 b;
+    uint8_t b;
     b = tms.ReadAhead;
     tms.ReadAhead = tms.vMem[tms.Addr];
     tms.Addr = (tms.Addr + 1) & (tms.vramsize - 1);
@@ -326,7 +326,7 @@ WRITE_HANDLER (TMS9928A_vram_w) {
 }
 
 READ_HANDLER (TMS9928A_register_r) {
-    UINT8 b;
+    uint8_t b;
     b = tms.StatusReg;
     tms.StatusReg = 0x1f;
     if (tms.INT) {
@@ -348,7 +348,7 @@ WRITE_HANDLER (TMS9928A_register_w) {
 	            _TMS9928A_change_register (reg, tms.FirstByte);
         } else {
             /* set read/write address */
-            tms.Addr = ((UINT16)data << 8 | tms.FirstByte) & (tms.vramsize - 1);
+            tms.Addr = ((uint16_t)data << 8 | tms.FirstByte) & (tms.vramsize - 1);
             if ( !(data & 0x40) ) {
 				/* read ahead */
 				TMS9928A_vram_r	(0);
@@ -361,15 +361,15 @@ WRITE_HANDLER (TMS9928A_register_w) {
     }
 }
 
-static void _TMS9928A_change_register (int reg, UINT8 val) {
-    static const UINT8 Mask[8] =
+static void _TMS9928A_change_register (int reg, uint8_t val) {
+    static const uint8_t Mask[8] =
         { 0x03, 0xfb, 0x0f, 0xff, 0x07, 0x7f, 0x07, 0xff };
     static const char *modes[] = {
         "Mode 0 (GRAPHIC 1)", "Mode 1 (TEXT 1)", "Mode 2 (GRAPHIC 2)",
         "Mode 1+2 (TEXT 1 variation)", "Mode 3 (MULTICOLOR)",
         "Mode 1+3 (BOGUS)", "Mode 2+3 (MULTICOLOR variation)",
         "Mode 1+2+3 (BOGUS)" };
-    UINT8 b;
+    uint8_t b;
     int mode;
 
     val &= Mask[reg];
@@ -544,7 +544,7 @@ int TMS9928A_interrupt () {
 
 static void _TMS9928A_mode1 (struct mame_bitmap *bmp) {
     int pattern,x,y,yy,xx,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
 	struct rectangle rt;
 
     if ( !(tms.anyDirtyColour || tms.anyDirtyName || tms.anyDirtyPattern) )
@@ -586,7 +586,7 @@ static void _TMS9928A_mode1 (struct mame_bitmap *bmp) {
 
 static void _TMS9928A_mode12 (struct mame_bitmap *bmp) {
     int pattern,x,y,yy,xx,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
 	struct rectangle rt;
 
     if ( !(tms.anyDirtyColour || tms.anyDirtyName || tms.anyDirtyPattern) )
@@ -628,7 +628,7 @@ static void _TMS9928A_mode12 (struct mame_bitmap *bmp) {
 
 static void _TMS9928A_mode0 (struct mame_bitmap *bmp) {
     int pattern,x,y,yy,xx,name,charcode,colour;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
 
     name = 0;
     for (y=0;y<24;y++) {
@@ -656,8 +656,8 @@ static void _TMS9928A_mode0 (struct mame_bitmap *bmp) {
 
 static void _TMS9928A_mode2 (struct mame_bitmap *bmp) {
     int colour,name,x,y,yy,pattern,xx,charcode;
-    UINT8 fg,bg;
-    UINT8 *colourptr,*patternptr;
+    uint8_t fg,bg;
+    uint8_t *colourptr,*patternptr;
 
     if ( !(tms.anyDirtyColour || tms.anyDirtyName || tms.anyDirtyPattern) )
          return;
@@ -691,7 +691,7 @@ static void _TMS9928A_mode2 (struct mame_bitmap *bmp) {
 
 static void _TMS9928A_mode3 (struct mame_bitmap *bmp) {
     int x,y,yy,yyy,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
 
     if ( !(tms.anyDirtyColour || tms.anyDirtyName || tms.anyDirtyPattern) )
          return;
@@ -725,7 +725,7 @@ static void _TMS9928A_mode3 (struct mame_bitmap *bmp) {
 
 static void _TMS9928A_mode23 (struct mame_bitmap *bmp) {
     int x,y,yy,yyy,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
 
     if ( !(tms.anyDirtyColour || tms.anyDirtyName || tms.anyDirtyPattern) )
          return;
@@ -759,7 +759,7 @@ static void _TMS9928A_mode23 (struct mame_bitmap *bmp) {
 }
 
 static void _TMS9928A_modebogus (struct mame_bitmap *bmp) {
-    UINT8 fg,bg;
+    uint8_t fg,bg;
     int x,y,n,xx;
 
     if ( !(tms.anyDirtyColour || tms.anyDirtyName || tms.anyDirtyPattern) )
@@ -791,10 +791,10 @@ static void _TMS9928A_modebogus (struct mame_bitmap *bmp) {
 ** This code should be optimized. One day.
 */
 static void _TMS9928A_sprites (struct mame_bitmap *bmp) {
-    UINT8 *attributeptr,*patternptr,c;
+    uint8_t *attributeptr,*patternptr,c;
     int p,x,y,size,i,j,large,yy,xx,limit[192],
         illegalsprite,illegalspriteline;
-    UINT16 line,line2;
+    uint16_t line,line2;
 
     attributeptr = tms.vMem + tms.spriteattribute;
     size = (tms.Regs[1] & 2) ? 16 : 8;

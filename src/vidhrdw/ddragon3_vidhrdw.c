@@ -7,15 +7,15 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT16 *ddragon3_bg_videoram16;
-UINT16 *ddragon3_fg_videoram16;
-UINT16 ddragon3_vreg;
+uint16_t *ddragon3_bg_videoram16;
+uint16_t *ddragon3_fg_videoram16;
+uint16_t ddragon3_vreg;
 
-static UINT16 ddragon3_bg_scrollx;
-static UINT16 ddragon3_bg_scrolly;
-static UINT16 ddragon3_fg_scrollx;
-static UINT16 ddragon3_fg_scrolly;
-static UINT16 ddragon3_bg_tilebase;
+static uint16_t ddragon3_bg_scrollx;
+static uint16_t ddragon3_bg_scrolly;
+static uint16_t ddragon3_fg_scrollx;
+static uint16_t ddragon3_fg_scrolly;
+static uint16_t ddragon3_bg_tilebase;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 
@@ -55,7 +55,7 @@ READ16_HANDLER( ddragon3_scroll16_r )
 
 WRITE16_HANDLER( ddragon3_bg_videoram16_w )
 {
-	UINT16 oldword = ddragon3_bg_videoram16[offset];
+	uint16_t oldword = ddragon3_bg_videoram16[offset];
 
 	COMBINE_DATA(&ddragon3_bg_videoram16[offset]);
 
@@ -67,7 +67,7 @@ WRITE16_HANDLER( ddragon3_bg_videoram16_w )
 
 WRITE16_HANDLER( ddragon3_fg_videoram16_w )
 {
-	UINT16 oldword = ddragon3_fg_videoram16[offset];
+	uint16_t oldword = ddragon3_fg_videoram16[offset];
 
 	COMBINE_DATA(&ddragon3_fg_videoram16[offset]);
 
@@ -79,7 +79,7 @@ WRITE16_HANDLER( ddragon3_fg_videoram16_w )
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT16 attr = ddragon3_bg_videoram16[tile_index];
+	uint16_t attr = ddragon3_bg_videoram16[tile_index];
 	int code = (attr & 0x0fff) | ((ddragon3_bg_tilebase & 0x01) << 12);
 	int color = ((attr & 0xf000) >> 12) + 16;
 
@@ -89,7 +89,7 @@ static void get_bg_tile_info(int tile_index)
 static void get_fg_tile_info(int tile_index)
 {
 	int offs = tile_index * 2;
-	UINT16 attr = ddragon3_fg_videoram16[offs];
+	uint16_t attr = ddragon3_fg_videoram16[offs];
 	int code = ddragon3_fg_videoram16[offs + 1] & 0x1fff;
 	int color = attr & 0xf;
 	int flags = (attr & 0x40) ? TILE_FLIPX : 0;
@@ -143,12 +143,12 @@ VIDEO_START( ddragon3 )
 
 static void ddragon3_draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-	UINT16 *source = spriteram16;
-	UINT16 *finish = source + 0x800;
+	uint16_t *source = spriteram16;
+	uint16_t *finish = source + 0x800;
 
 	while (source < finish)
 	{
-		UINT16 attr = source[1];
+		uint16_t attr = source[1];
 
 		if (attr & 0x01)	/* enable */
 		{

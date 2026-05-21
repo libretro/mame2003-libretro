@@ -15,7 +15,7 @@
  *
  *************************************/
 
-UINT8 thunderj_alpha_tile_bank;
+uint8_t thunderj_alpha_tile_bank;
 
 
 
@@ -27,7 +27,7 @@ UINT8 thunderj_alpha_tile_bank;
 
 static void get_alpha_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha[tile_index];
+	uint16_t data = atarigen_alpha[tile_index];
 	int code = ((data & 0x200) ? (thunderj_alpha_tile_bank * 0x200) : 0) + (data & 0x1ff);
 	int color = ((data >> 10) & 0x0f) | ((data >> 9) & 0x20);
 	int opaque = data & 0x8000;
@@ -37,8 +37,8 @@ static void get_alpha_tile_info(int tile_index)
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data1 = atarigen_playfield[tile_index];
-	UINT16 data2 = atarigen_playfield_upper[tile_index] & 0xff;
+	uint16_t data1 = atarigen_playfield[tile_index];
+	uint16_t data2 = atarigen_playfield_upper[tile_index] & 0xff;
 	int code = data1 & 0x7fff;
 	int color = 0x10 + (data2 & 0x0f);
 	SET_TILE_INFO(0, code, color, (data1 >> 15) & 1);
@@ -48,8 +48,8 @@ static void get_playfield_tile_info(int tile_index)
 
 static void get_playfield2_tile_info(int tile_index)
 {
-	UINT16 data1 = atarigen_playfield2[tile_index];
-	UINT16 data2 = atarigen_playfield_upper[tile_index] >> 8;
+	uint16_t data1 = atarigen_playfield2[tile_index];
+	uint16_t data2 = atarigen_playfield_upper[tile_index] >> 8;
 	int code = data1 & 0x7fff;
 	int color = data2 & 0x0f;
 	SET_TILE_INFO(0, code, color, (data1 >> 15) & 1);
@@ -137,7 +137,7 @@ VIDEO_START( thunderj )
  *
  *************************************/
 
-void thunderj_mark_high_palette(struct mame_bitmap *bitmap, UINT16 *pf, UINT16 *mo, int x, int y)
+void thunderj_mark_high_palette(struct mame_bitmap *bitmap, uint16_t *pf, uint16_t *mo, int x, int y)
 {
 	#define START_MARKER	((4 << ATARIMO_PRIORITY_SHIFT) | 2)
 	#define END_MARKER		((4 << ATARIMO_PRIORITY_SHIFT) | 4)
@@ -182,9 +182,9 @@ VIDEO_UPDATE( thunderj )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
-			UINT8 *pri = (UINT8 *)priority_bitmap->base + priority_bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
+			uint8_t *pri = (uint8_t *)priority_bitmap->base + priority_bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -281,8 +281,8 @@ VIDEO_UPDATE( thunderj )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

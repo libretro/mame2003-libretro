@@ -96,8 +96,8 @@ static int jump_x, jump_y; /* these are set during a jump command and sometimes 
 static data16_t *spritedata_source; /* a pointer into spriteram */
 
 #if !NEW_DRAWSPRITE
-static UINT32 sys32sprite_x_zoom;
-static UINT32 sys32sprite_y_zoom;
+static uint32_t sys32sprite_x_zoom;
+static uint32_t sys32sprite_y_zoom;
 #else
 static int sys32mon_old4, sys32mon_old8;
 #endif
@@ -120,8 +120,8 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 // FP entry vaule(FPENT) should normally be 0.5(FPHALF) but it causes sprite gaps occationally.
 #define FPENT  0
 
-	static UINT32 idp_cache8[256];
-	static UINT32 idp_cache4[16];
+	static uint32_t idp_cache8[256];
+	static uint32_t idp_cache4[16];
 	static data16_t *idp_base, *idb_old=0;
 	static int idi_old=-1;
 
@@ -132,17 +132,17 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 	int flipx, flipy;
 
 	// inner loop
-	UINT8 *src_ptr;
+	uint8_t *src_ptr;
 	register int edx, eax, ecx;
 	int src_fx, src_fdx, transparent_pen;
-	UINT32 *pal_base;
-	UINT32 *dst_ptr;
+	uint32_t *pal_base;
+	uint32_t *dst_ptr;
 
 	// outter loop
 	int src_fby, src_fdy;
 	int dst_pitch;
 	int src_pitch, src_fbx;
-	UINT8 *src_base;
+	uint8_t *src_base;
 	int dst_w, dst_h;
 
 
@@ -314,7 +314,7 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 					{
 						eax = dst_ptr[ecx];
 						eax = (eax>>9&0x7c00) | (eax>>6&0x03e0) | (eax>>3&0x001f);
-						dst_ptr[ecx] = ((UINT32*)palette_shadow_table)[eax];
+						dst_ptr[ecx] = ((uint32_t*)palette_shadow_table)[eax];
 					}
 
 				} while (++ecx);
@@ -367,7 +367,7 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 					if (!eax || eax == transparent_pen) continue;
 					eax = dst_ptr[ecx];
 					eax = (eax>>9&0x7c00) | (eax>>6&0x03e0) | (eax>>3&0x001f);
-					dst_ptr[ecx] = ((UINT32*)palette_shadow_table)[eax];
+					dst_ptr[ecx] = ((uint32_t*)palette_shadow_table)[eax];
 
 				} while (++ecx);
 
@@ -403,7 +403,7 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 					{
 						eax = dst_ptr[ecx];
 						eax = (eax>>9&0x7c00) | (eax>>6&0x03e0) | (eax>>3&0x001f);
-						dst_ptr[ecx] = ((UINT32*)palette_shadow_table)[eax];
+						dst_ptr[ecx] = ((uint32_t*)palette_shadow_table)[eax];
 					}
 
 				} while (++ecx);
@@ -452,7 +452,7 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 					if (!eax || eax == transparent_pen) continue;
 					eax = dst_ptr[ecx];
 					eax = (eax>>9&0x7c00) | (eax>>6&0x03e0) | (eax>>3&0x001f);
-					dst_ptr[ecx] = ((UINT32*)palette_shadow_table)[eax];
+					dst_ptr[ecx] = ((uint32_t*)palette_shadow_table)[eax];
 
 				} while (++ecx);
 
@@ -477,8 +477,8 @@ static INLINE void system32_draw_sprite ( struct mame_bitmap *bitmap, const stru
 // old drawsprite (working and proven)
 void system32_draw_sprite ( struct mame_bitmap *bitmap, const struct rectangle *cliprect ) {
 	data8_t *sprite_gfxdata = memory_region ( REGION_GFX2 );
-	UINT32 xsrc,ysrc;
-	UINT32 xdst,ydst;
+	uint32_t xsrc,ysrc;
+	uint32_t xdst,ydst;
 	/* um .. probably a better way to do this */
 	struct GfxElement *gfx=Machine->gfx[0];
 	const pen_t *paldata = &gfx->colortable[0];
@@ -507,7 +507,7 @@ void system32_draw_sprite ( struct mame_bitmap *bitmap, const struct rectangle *
 		}
 
 		if ((drawypos >= cliprect->min_y) && (drawypos <= cliprect->max_y)) {
-			UINT32 *destline = (bitmap->line[drawypos]);
+			uint32_t *destline = (bitmap->line[drawypos]);
 
 			while ( xsrc < (sys32sprite_rom_width<<16) ) {
 
@@ -1167,7 +1167,7 @@ each window is 32x16 in size
 
 */
 
-UINT32 sys32_bg_map( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows ) {
+uint32_t sys32_bg_map( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows ) {
 	int page = 0;
 	if( row<16 ) { /* top */
 		if( col<32 ) page = 0; else page = 1;

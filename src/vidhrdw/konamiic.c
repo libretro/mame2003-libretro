@@ -1159,10 +1159,10 @@ Registers (word-wise):
 	(it could be easily converted into an iterative one).
 	It's called shuffle because it mimics the shuffling of a deck of cards.
 */
-static void shuffle(UINT16 *buf,int len)
+static void shuffle(uint16_t *buf,int len)
 {
 	int i;
-	UINT16 t;
+	uint16_t t;
 
 	if (len == 2) return;
 
@@ -1185,7 +1185,7 @@ static void shuffle(UINT16 *buf,int len)
 /* helper function to join two 16-bit ROMs and form a 32-bit data stream */
 void konami_rom_deinterleave_2(int mem_region)
 {
-	shuffle((UINT16 *)memory_region(mem_region),memory_region_length(mem_region)/2);
+	shuffle((uint16_t *)memory_region(mem_region),memory_region_length(mem_region)/2);
 }
 
 /* helper function to join four 16-bit ROMs and form a 64-bit data stream */
@@ -1275,7 +1275,7 @@ WRITE_HANDLER( K007121_ctrl_1_w )
 
 void K007121_sprites_draw(int chip,struct mame_bitmap *bitmap,const struct rectangle *cliprect,
 		const unsigned char *source,int base_color,int global_x_offset,int bank_base,
-		UINT32 pri_mask)
+		uint32_t pri_mask)
 {
 	const struct GfxElement *gfx = Machine->gfx[chip];
 	int flipscreen = K007121_flipscreen[chip];
@@ -1459,7 +1459,7 @@ static struct tilemap *K007342_tilemap[2];
   color RAM     ----xxxx    depends on external connections (usually color and banking)
 */
 
-static UINT32 K007342_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t K007342_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
@@ -1649,7 +1649,7 @@ void K007342_tilemap_set_enable(int tilemap, int enable)
 	tilemap_set_enable(K007342_tilemap[tilemap], enable);
 }
 
-void K007342_tilemap_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int num,int flags,UINT32 priority)
+void K007342_tilemap_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int num,int flags,uint32_t priority)
 {
 	tilemap_draw(bitmap,cliprect,K007342_tilemap[num],flags,priority);
 }
@@ -4537,17 +4537,17 @@ void K051316_set_offset(int chip, int xoffs, int yoffs)
 }
 
 
-void K051316_zoom_draw(int chip, struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority)
+void K051316_zoom_draw(int chip, struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority)
 {
-	UINT32 startx,starty;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 
-	startx = 256 * ((INT16)(256 * K051316_ctrlram[chip][0x00] + K051316_ctrlram[chip][0x01]));
-	incxx  =        (INT16)(256 * K051316_ctrlram[chip][0x02] + K051316_ctrlram[chip][0x03]);
-	incyx  =        (INT16)(256 * K051316_ctrlram[chip][0x04] + K051316_ctrlram[chip][0x05]);
-	starty = 256 * ((INT16)(256 * K051316_ctrlram[chip][0x06] + K051316_ctrlram[chip][0x07]));
-	incxy  =        (INT16)(256 * K051316_ctrlram[chip][0x08] + K051316_ctrlram[chip][0x09]);
-	incyy  =        (INT16)(256 * K051316_ctrlram[chip][0x0a] + K051316_ctrlram[chip][0x0b]);
+	startx = 256 * ((int16_t)(256 * K051316_ctrlram[chip][0x00] + K051316_ctrlram[chip][0x01]));
+	incxx  =        (int16_t)(256 * K051316_ctrlram[chip][0x02] + K051316_ctrlram[chip][0x03]);
+	incyx  =        (int16_t)(256 * K051316_ctrlram[chip][0x04] + K051316_ctrlram[chip][0x05]);
+	starty = 256 * ((int16_t)(256 * K051316_ctrlram[chip][0x06] + K051316_ctrlram[chip][0x07]));
+	incxy  =        (int16_t)(256 * K051316_ctrlram[chip][0x08] + K051316_ctrlram[chip][0x09]);
+	incyy  =        (int16_t)(256 * K051316_ctrlram[chip][0x0a] + K051316_ctrlram[chip][0x0b]);
 
 	startx -= (16 + K051316_offset[chip][1]) * incyx;
 	starty -= (16 + K051316_offset[chip][1]) * incyy;
@@ -4581,17 +4581,17 @@ void K051316_zoom_draw(int chip, struct mame_bitmap *bitmap,const struct rectang
 #endif
 }
 
-void K051316_zoom_draw_0(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority)
+void K051316_zoom_draw_0(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority)
 {
 	K051316_zoom_draw(0,bitmap,cliprect,flags,priority);
 }
 
-void K051316_zoom_draw_1(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority)
+void K051316_zoom_draw_1(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority)
 {
 	K051316_zoom_draw(1,bitmap,cliprect,flags,priority);
 }
 
-void K051316_zoom_draw_2(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,UINT32 priority)
+void K051316_zoom_draw_2(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int flags,uint32_t priority)
 {
 	K051316_zoom_draw(2,bitmap,cliprect,flags,priority);
 }
@@ -4612,11 +4612,11 @@ static int K053936_offset[K053936_MAX_CHIPS][2];
 static int K053936_wraparound[K053936_MAX_CHIPS];
 
 
-static void K053936_zoom_draw(int chip,data16_t *ctrl,data16_t *linectrl,struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,UINT32 priority)
+static void K053936_zoom_draw(int chip,data16_t *ctrl,data16_t *linectrl,struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority)
 {
 	if (ctrl[0x07] & 0x0040)	/* "super" mode */
 	{
-		UINT32 startx,starty;
+		uint32_t startx,starty;
 		int incxx,incxy;
 		struct rectangle my_clip;
 		int y,maxy;
@@ -4651,10 +4651,10 @@ static void K053936_zoom_draw(int chip,data16_t *ctrl,data16_t *linectrl,struct 
 			data16_t *lineaddr = linectrl + 4*((y - K053936_offset[chip][1]) & 0x1ff);
 			my_clip.min_y = my_clip.max_y = y;
 
-			startx = 256 * (INT16)(lineaddr[0] + ctrl[0x00]);
-			starty = 256 * (INT16)(lineaddr[1] + ctrl[0x01]);
-			incxx  =       (INT16)(lineaddr[2]);
-			incxy  =       (INT16)(lineaddr[3]);
+			startx = 256 * (int16_t)(lineaddr[0] + ctrl[0x00]);
+			starty = 256 * (int16_t)(lineaddr[1] + ctrl[0x01]);
+			incxx  =       (int16_t)(lineaddr[2]);
+			incxy  =       (int16_t)(lineaddr[3]);
 
 			if (ctrl[0x06] & 0x8000) incxx *= 256;
 			if (ctrl[0x06] & 0x0080) incxy *= 256;
@@ -4672,15 +4672,15 @@ static void K053936_zoom_draw(int chip,data16_t *ctrl,data16_t *linectrl,struct 
 	}
 	else	/* "simple" mode */
 	{
-		UINT32 startx,starty;
+		uint32_t startx,starty;
 		int incxx,incxy,incyx,incyy;
 
-		startx = 256 * (INT16)(ctrl[0x00]);
-		starty = 256 * (INT16)(ctrl[0x01]);
-		incyx  =       (INT16)(ctrl[0x02]);
-		incyy  =       (INT16)(ctrl[0x03]);
-		incxx  =       (INT16)(ctrl[0x04]);
-		incxy  =       (INT16)(ctrl[0x05]);
+		startx = 256 * (int16_t)(ctrl[0x00]);
+		starty = 256 * (int16_t)(ctrl[0x01]);
+		incyx  =       (int16_t)(ctrl[0x02]);
+		incyy  =       (int16_t)(ctrl[0x03]);
+		incxx  =       (int16_t)(ctrl[0x04]);
+		incxy  =       (int16_t)(ctrl[0x05]);
 
 		if (ctrl[0x06] & 0x4000) { incyx *= 256; incyy *= 256; }
 		if (ctrl[0x06] & 0x0040) { incxx *= 256; incxy *= 256; }
@@ -4720,12 +4720,12 @@ if (keyboard_pressed(KEYCODE_D))
 }
 
 
-void K053936_0_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,UINT32 priority)
+void K053936_0_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority)
 {
 	K053936_zoom_draw(0,K053936_0_ctrl,K053936_0_linectrl,bitmap,cliprect,tilemap,flags,priority);
 }
 
-void K053936_1_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,UINT32 priority)
+void K053936_1_zoom_draw(struct mame_bitmap *bitmap,const struct rectangle *cliprect,struct tilemap *tilemap,int flags,uint32_t priority)
 {
 	K053936_zoom_draw(1,K053936_1_ctrl,K053936_1_linectrl,bitmap,cliprect,tilemap,flags,priority);
 }
@@ -4939,9 +4939,9 @@ WRITE_HANDLER( K051733_w )
 }
 
 
-static int int_sqrt(UINT32 op)
+static int int_sqrt(uint32_t op)
 {
-	UINT32 i,step;
+	uint32_t i,step;
 
 	i = 0x8000;
 	step = 0x4000;
@@ -5426,7 +5426,7 @@ WRITE16_HANDLER( K054157_ram_half_word_w )
 
 WRITE16_HANDLER( K054157_word_w )
 {
-	UINT16 old = K054157_regs[offset];
+	uint16_t old = K054157_regs[offset];
 	COMBINE_DATA (K054157_regs + offset);
 
 	if(K054157_regs[offset] != old)
@@ -5486,7 +5486,7 @@ void K054157_tilemap_update(void)
 	}
 }
 
-void K054157_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, UINT32 priority)
+void K054157_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int num, int flags, uint32_t priority)
 {
 	tilemap_draw(bitmap,cliprect, K054157_tilemap[num], flags, priority);
 }
@@ -5568,10 +5568,10 @@ static int K056832_W[4];	// 0..3 width  -> 1..4 pages
 static int K056832_H[4];	// 0..3 height -> 1..4 pages
 static int K056832_dx[4];	// scroll
 static int K056832_dy[4];	// scroll
-static UINT32 K056832_LineDirty[K056832_PAGE_COUNT][8];
-static UINT8 K056832_AllLinesDirty[K056832_PAGE_COUNT];
-static UINT8 K056832_PageTileMode[K056832_PAGE_COUNT];
-static UINT8 K056832_LayerTileMode[4];
+static uint32_t K056832_LineDirty[K056832_PAGE_COUNT][8];
+static uint8_t K056832_AllLinesDirty[K056832_PAGE_COUNT];
+static uint8_t K056832_PageTileMode[K056832_PAGE_COUNT];
+static uint8_t K056832_LayerTileMode[4];
 static int K056832_DefaultLayerAssociation;
 static int K056832_LayerAssociation;
 static int K056832_ActiveLayer;
@@ -5671,7 +5671,7 @@ if (strcasecmp(Machine->gamedrv->source_file+12, "djmain.c") || K056832_LayerAss
 
 static void (*K056832_callback)(int, int *, int *);
 
-static INLINE UINT32 K056832_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static INLINE uint32_t K056832_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (row<<6) + col;
 }
@@ -5905,7 +5905,7 @@ int K056832_vh_start(int gfx_memory_region, int bpp, int big, int (*scrolld)[4][
 	K056832_UpdateMode = 0;
 	K056832_linemap_enabled = 0;
 
-	memset(K056832_LineDirty, 0, sizeof(UINT32) * K056832_PAGE_COUNT * 8);
+	memset(K056832_LineDirty, 0, sizeof(uint32_t) * K056832_PAGE_COUNT * 8);
 
 	for (i=0; i<K056832_PAGE_COUNT; i++)
 	{
@@ -6184,7 +6184,7 @@ WRITE32_HANDLER( K056832_ram_long_w )
 WRITE16_HANDLER( K056832_word_w )
 {
 	int layer, flip, mask, i;
-	UINT32 old_data, new_data;
+	uint32_t old_data, new_data;
 
 	old_data = K056832_regs[offset];
 	COMBINE_DATA(&K056832_regs[offset]);
@@ -6281,12 +6281,12 @@ WRITE16_HANDLER( K056832_word_w )
 
 				if (offset >= 0x20/2 && offset <= 0x26/2)
 				{
-					K056832_dy[layer] = (INT16)data;
+					K056832_dy[layer] = (int16_t)data;
 				} else
 
 				if (offset >= 0x28/2 && offset <= 0x2e/2)
 				{
-					K056832_dx[layer] = (INT16)data;
+					K056832_dx[layer] = (int16_t)data;
 				}
 			break;
 		}
@@ -6332,22 +6332,22 @@ static int K056832_update_linemap(struct mame_bitmap *bitmap, int page, int flag
 	struct rectangle zerorect;
 	struct tilemap *tilemap;
 	struct mame_bitmap *pixmap, *xprmap;
-	UINT8 *xprdata;
+	uint8_t *xprdata;
 	const struct GfxElement *src_gfx;
 
-	UINT32 *dirty;
+	uint32_t *dirty;
 	int all_dirty, line;
 	int offs, mask;
 
 	pen_t *pal_ptr;
-	const UINT8  *src_base, *src_ptr;
-	UINT8  *xpr_ptr;
-	UINT16 *dst_ptr;
-	UINT16 pen, basepen;
+	const uint8_t  *src_base, *src_ptr;
+	uint8_t  *xpr_ptr;
+	uint16_t *dst_ptr;
+	uint16_t pen, basepen;
 	int count, src_pitch, src_modulo;
 	int	dst_pitch;
 
-	UINT8 code_transparent, code_opaque;
+	uint8_t code_transparent, code_opaque;
 
 	if (K056832_PageTileMode[page]) return(0);
 	if (!K056832_linemap_enabled) return(1);
@@ -6382,8 +6382,8 @@ static int K056832_update_linemap(struct mame_bitmap *bitmap, int page, int flag
 	src_base   = src_gfx->gfxdata;
 	src_pitch  = src_gfx->line_modulo;
 	src_modulo = src_gfx->char_modulo;
-	xpr_ptr    = (UINT8*)xprmap->base + LINE_WIDTH;
-	dst_ptr    = (UINT16*)pixmap->base + LINE_WIDTH;
+	xpr_ptr    = (uint8_t*)xprmap->base + LINE_WIDTH;
+	dst_ptr    = (uint16_t*)pixmap->base + LINE_WIDTH;
 	dst_pitch  = pixmap->rowpixels;
 
 	for (line=0; line<256; xpr_ptr+=dst_pitch, dst_ptr+=dst_pitch, line++)
@@ -6425,11 +6425,11 @@ static int K056832_update_linemap(struct mame_bitmap *bitmap, int page, int flag
 #undef DRAW_PIX
 }
 
-void K056832_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int layer, int flags, UINT32 priority)
+void K056832_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int layer, int flags, uint32_t priority)
 {
 	static int last_colorbase[K056832_PAGE_COUNT];
 
-	UINT32 last_dx, last_visible, new_colorbase, last_active;
+	uint32_t last_dx, last_visible, new_colorbase, last_active;
 	int sx, sy, ay, tx, ty, width, height;
 	int clipw, clipx, cliph, clipy, clipmaxy;
 	int line_height, line_endy, line_starty, line_y;
@@ -6700,11 +6700,11 @@ void K056832_tilemap_draw(struct mame_bitmap *bitmap, const struct rectangle *cl
 
 } // end of function
 
-void K056832_tilemap_draw_dj(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int layer, int flags, UINT32 priority) //*
+void K056832_tilemap_draw_dj(struct mame_bitmap *bitmap, const struct rectangle *cliprect, int layer, int flags, uint32_t priority) //*
 {
 	static int last_colorbase[K056832_PAGE_COUNT];
 
-	UINT32 last_dx, last_visible, new_colorbase, last_active;
+	uint32_t last_dx, last_visible, new_colorbase, last_active;
 	int sx, sy, ay, tx, ty, width, height;
 	int clipw, clipx, cliph, clipy, clipmaxy;
 	int line_height, line_endy, line_starty, line_y;
@@ -7160,8 +7160,8 @@ void K054338_update_all_shadows(void)
 // K054338 BG color fill
 void K054338_fill_solid_bg(struct mame_bitmap *bitmap)
 {
-	UINT32 bgcolor;
-	UINT32 *pLine;
+	uint32_t bgcolor;
+	uint32_t *pLine;
 	int x, y;
 
 	bgcolor = (K054338_read_register(K338_REG_BGC_R)&0xff)<<16;
@@ -7170,7 +7170,7 @@ void K054338_fill_solid_bg(struct mame_bitmap *bitmap)
 	/* and fill the screen with it */
 	for (y = 0; y < bitmap->height; y++)
 	{
-		pLine = (UINT32 *)bitmap->base;
+		pLine = (uint32_t *)bitmap->base;
 		pLine += ((bitmap->rowbytes / 4)*y);
 		for (x = 0; x < bitmap->width; x++)
 			*pLine++ = bgcolor;
@@ -7182,7 +7182,7 @@ void K054338_fill_backcolor(struct mame_bitmap *bitmap, int mode) // (see p.67)
 {
 	int clipx, clipy, clipw, cliph, i, dst_pitch;
 	int BGC_CBLK, BGC_SET;
-	UINT32 *dst_ptr, *pal_ptr;
+	uint32_t *dst_ptr, *pal_ptr;
 	register int bgcolor;
 
 	clipx = Machine->visible_area.min_x & ~3;
@@ -7190,7 +7190,7 @@ void K054338_fill_backcolor(struct mame_bitmap *bitmap, int mode) // (see p.67)
 	clipw = (Machine->visible_area.max_x - clipx + 4) & ~3;
 	cliph = Machine->visible_area.max_y - clipy + 1;
 
-	dst_ptr = (UINT32 *)bitmap->line[clipy];
+	dst_ptr = (uint32_t *)bitmap->line[clipy];
 	dst_pitch = bitmap->rowpixels;
 	dst_ptr += clipx;
 
@@ -7334,7 +7334,7 @@ static struct
 		data8_t *base;
 		data16_t *ram, *rammax;
 		data16_t *buffer[2];
-		UINT32 rommask;
+		uint32_t rommask;
 		int page[2];
 		int frame, offsx, offsy;
 	} chip[2];
@@ -7368,7 +7368,7 @@ void K053250_dma(int chip, int limiter)
 // Pixel data of the K053250 is nibble packed. It's preferable to be unpacked into byte format.
 void K053250_unpack_pixels(int region)
 {
-	UINT8 *src_ptr, *dst_ptr;
+	uint8_t *src_ptr, *dst_ptr;
 	int hi_nibble, lo_nibble, offset;
 
 	dst_ptr = src_ptr = memory_region(region);
@@ -7484,9 +7484,9 @@ READ16_HANDLER( K053250_1_rom_r )
 // old code (for reference; do not remove)
 #define ADJUST_FOR_ORIENTATION(type, orientation, bitmapi, bitmapp, x, y)	\
 	int dy = ((type *)bitmap->line[1]) - ((type *)bitmap->line[0]);			\
-	int dyp = ((UINT8 *)bitmapp->line[1]) - ((UINT8 *)bitmapp->line[0]);	\
+	int dyp = ((uint8_t *)bitmapp->line[1]) - ((uint8_t *)bitmapp->line[0]);	\
 	type *dsti = (type *)bitmapi->line[0] + y * dy + x;						\
-	UINT8 *dstp = (UINT8 *)bitmapp->line[0] + y * dyp + x;					\
+	uint8_t *dstp = (uint8_t *)bitmapp->line[0] + y * dyp + x;					\
 	int xadv = 1;															\
 	if (orientation)														\
 	{																		\
@@ -7508,18 +7508,18 @@ READ16_HANDLER( K053250_1_rom_r )
 		}																	\
 		/* can't lookup line because it may be negative! */					\
 		dsti = ((type *)bitmapi->line[0]) + dy * ty + tx;					\
-		dstp = ((UINT8 *)bitmapp->line[0]) + dyp * ty + tx;					\
+		dstp = ((uint8_t *)bitmapp->line[0]) + dyp * ty + tx;					\
 	}
 
 static void K053250_pdraw_scanline8(
 		struct mame_bitmap *bitmap,int x,int y,int length,
-		const UINT8 *src,pen_t *pens,int transparent_pen,UINT32 orient,int pri)
+		const uint8_t *src,pen_t *pens,int transparent_pen,uint32_t orient,int pri)
 {
 	/* 8bpp destination */
 	if (bitmap->depth == 8)
 	{
 		/* adjust in case we're oddly oriented */
-		ADJUST_FOR_ORIENTATION(UINT8, orient, bitmap, priority_bitmap, x, y);
+		ADJUST_FOR_ORIENTATION(uint8_t, orient, bitmap, priority_bitmap, x, y);
 
 		/* with pen lookups */
 		if (pens)
@@ -7535,7 +7535,7 @@ static void K053250_pdraw_scanline8(
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = pens[spixel];
@@ -7560,7 +7560,7 @@ static void K053250_pdraw_scanline8(
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = spixel;
@@ -7576,7 +7576,7 @@ static void K053250_pdraw_scanline8(
 	else if(bitmap->depth == 15 || bitmap->depth == 16)
 	{
 		/* adjust in case we're oddly oriented */
-		ADJUST_FOR_ORIENTATION(UINT16, orient, bitmap, priority_bitmap, x, y);
+		ADJUST_FOR_ORIENTATION(uint16_t, orient, bitmap, priority_bitmap, x, y);
 		/* with pen lookups */
 		if (pens)
 		{
@@ -7591,7 +7591,7 @@ static void K053250_pdraw_scanline8(
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = pens[spixel];
@@ -7616,7 +7616,7 @@ static void K053250_pdraw_scanline8(
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = spixel;
@@ -7632,7 +7632,7 @@ static void K053250_pdraw_scanline8(
 	else
 	{
 		/* adjust in case we're oddly oriented */
-		ADJUST_FOR_ORIENTATION(UINT32, orient, bitmap, priority_bitmap, x, y);
+		ADJUST_FOR_ORIENTATION(uint32_t, orient, bitmap, priority_bitmap, x, y);
 		/* with pen lookups */
 		if (pens)
 		{
@@ -7647,7 +7647,7 @@ static void K053250_pdraw_scanline8(
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = pens[spixel];
@@ -7672,7 +7672,7 @@ static void K053250_pdraw_scanline8(
 			else
 				while (length--)
 				{
-					UINT32 spixel = *src++;
+					uint32_t spixel = *src++;
 					if (spixel != transparent_pen)
 					{
 						*dsti = spixel;
@@ -7693,7 +7693,7 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 	const struct rectangle area = Machine->visible_area;
 	data16_t *line;
 	int delta, dim1, dim1_max, dim2_max;
-	UINT32 mask1, mask2;
+	uint32_t mask1, mask2;
 	int sp;
 #if 1
 	int orientation = ((K053250_info.chip[chip].regs[4] &  8) ? ORIENTATION_FLIP_X : 0)
@@ -7705,8 +7705,8 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 		| (!(K053250_info.chip[chip].regs[4] & 1) ? 0 : ORIENTATION_SWAP_XY);
 #endif
 
-	INT16 cur_x = (K053250_info.chip[chip].regs[0] << 8) | K053250_info.chip[chip].regs[1];
-	INT16 cur_y = (K053250_info.chip[chip].regs[2] << 8) | K053250_info.chip[chip].regs[3];
+	int16_t cur_x = (K053250_info.chip[chip].regs[0] << 8) | K053250_info.chip[chip].regs[1];
+	int16_t cur_y = (K053250_info.chip[chip].regs[2] << 8) | K053250_info.chip[chip].regs[3];
 
 	if(pmode[chip] != K053250_info.chip[chip].regs[4]) {
 		pmode[chip] = K053250_info.chip[chip].regs[4];
@@ -7774,7 +7774,7 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 		}
 #if 0
 		if(kx) {
-			UINT16 *l1 = line + ((4*kc) & 0x7ff);
+			uint16_t *l1 = line + ((4*kc) & 0x7ff);
 			usrintf_showmessage("Line %d [%02x] (%04x %04x %04x %04x)", kc,
 								K053250_info.chip[chip].regs[4],
 								l1[0],
@@ -7828,12 +7828,12 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 
 	for(dim1 = 0; dim1 < dim1_max; dim1++) {
 		data16_t color  = *line++;
-		UINT16   start  = *line++;
+		uint16_t   start  = *line++;
 		data16_t inc    = *line++;
-		INT16    offset = *line++;
+		int16_t    offset = *line++;
 		int dim2;
 		unsigned char *pixel;
-		UINT32 cpos;
+		uint32_t cpos;
 		unsigned char scanline[512];
 		unsigned char *gbase = K053250_info.chip[chip].base + (((start & 0xff00) << 7) % K053250_info.chip[chip].rommask);
 
@@ -7853,7 +7853,7 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 
 		for(dim2 = 0; dim2 < dim2_max; dim2++) {
 			int romp;
-			UINT32 rcpos = cpos;
+			uint32_t rcpos = cpos;
 
 			if(sp && (rcpos & mask1))
 				rcpos += inc << 9;
@@ -7887,9 +7887,9 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 #else
 
 // utility function to render a clipped scanline vertically or horizontally
-static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *palette, UINT8 *source,
+static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *palette, uint8_t *source,
 		const struct rectangle *cliprect, int linepos, int scroll, int zoom,
-		UINT32 clipmask, UINT32 wrapmask, UINT32 orientation, int priority)
+		uint32_t clipmask, uint32_t wrapmask, uint32_t orientation, int priority)
 {
 // a sixteen-bit fixed point resolution should be adequate to our application
 #define FIXPOINT_PRECISION		16
@@ -7897,16 +7897,16 @@ static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *p
 
 	int end_pixel, flip, dst_min, dst_max, dst_start, dst_length;
 
-	UINT32 src_wrapmask;
-	UINT8  *src_base;
+	uint32_t src_wrapmask;
+	uint8_t  *src_base;
 	int src_x;
 	int src_fx, src_fdx;
 	int pix_data, dst_offset;
 	pen_t  *pal_base;
-	UINT8  *pri_base;
-	UINT32 *dst_base;
+	uint8_t  *pri_base;
+	uint32_t *dst_base;
 	int dst_adv;
-	UINT8 pri;
+	uint8_t pri;
 
 	// flip X and flip Y also switch role when the X Y coordinates are swapped
 	if (!(orientation & ORIENTATION_SWAP_XY))
@@ -7993,16 +7993,16 @@ static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *p
 		// calculate target increment for horizontal scanlines which is exactly one
 		dst_adv = 1;
 		dst_offset = dst_length;
-		pri_base = (UINT8 *)priority_bitmap->line[linepos] + dst_start + dst_offset;
-		dst_base = (UINT32 *)bitmap->line[linepos] + dst_start + dst_length;
+		pri_base = (uint8_t *)priority_bitmap->line[linepos] + dst_start + dst_offset;
+		dst_base = (uint32_t *)bitmap->line[linepos] + dst_start + dst_length;
 	}
 	else
 	{
 		// calculate target increment for vertical scanlines which is the bitmap's pitch value
 		dst_adv = bitmap->rowpixels;
 		dst_offset= dst_length * dst_adv;
-		pri_base = (UINT8 *)priority_bitmap->line[dst_start] + linepos + dst_offset;
-		dst_base = (UINT32 *)bitmap->line[dst_start] + linepos + dst_offset;
+		pri_base = (uint8_t *)priority_bitmap->line[dst_start] + linepos + dst_offset;
+		dst_base = (uint32_t *)bitmap->line[dst_start] + linepos + dst_offset;
 	}
 
 #if 0
@@ -8015,7 +8015,7 @@ static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *p
 	src_wrapmask = (clipmask) ? ~0 : wrapmask;
 
 	pal_base = palette;
-	pri = (UINT8)priority;
+	pri = (uint8_t)priority;
 	dst_offset = -dst_offset; // negate target offset in order to terminated draw loop at zero condition
 
 	if (pri)
@@ -8053,7 +8053,7 @@ static INLINE void K053250_pdraw_scanline32(struct mame_bitmap *bitmap, pen_t *p
 #else
 	// register efficient
 	pal_base = palette;
-	pri = (UINT8)priority;
+	pri = (uint8_t)priority;
 	dst_offset = -dst_offset; // negate target offset in order to terminated draw loop at zero condition
 
 // advance and convert source offset from fixed point to integer
@@ -8120,7 +8120,7 @@ void K053250_draw(struct mame_bitmap *bitmap, const struct rectangle *cliprect, 
 	data16_t *line_ram;
 	data8_t *pix_base, *pix_ptr, *regs;
 	pen_t *pal_base, *pal_ptr;
-	UINT32 rommask, src_clipmask, src_wrapmask, dst_wrapmask;
+	uint32_t rommask, src_clipmask, src_wrapmask, dst_wrapmask;
 	int map_scrollx, map_scrolly, ctrl, orientation;
 	int dst_minx, dst_maxx, dst_miny, dst_maxy;
 	int linedata_offs, linedata_adv, line_pos, line_start, line_end, scroll_corr;

@@ -26,7 +26,7 @@ void armedf_setgfxtype( int type )
 
 ***************************************************************************/
 
-static UINT32 armedf_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t armedf_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 { /* col: 0..63; row: 0..31 */
 	switch( scroll_type )
 	{

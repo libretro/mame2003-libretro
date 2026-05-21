@@ -9,9 +9,9 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *popeye_background_pos;
-UINT8 *popeye_palettebank;
-static UINT8 *popeye_bitmapram;
+uint8_t *popeye_background_pos;
+uint8_t *popeye_palettebank;
+static uint8_t *popeye_bitmapram;
 static size_t popeye_bitmapram_size = 0x2000;
 
 static struct mame_bitmap *tmpbitmap2;
@@ -154,7 +154,7 @@ PALETTE_INIT( popeyebl )
 static void set_background_palette(int bank)
 {
 	int i;
-	UINT8 *color_prom = memory_region(REGION_PROMS) + 16 * bank;
+	uint8_t *color_prom = memory_region(REGION_PROMS) + 16 * bank;
 
 	for (i = 0;i < 16;i++)
 	{

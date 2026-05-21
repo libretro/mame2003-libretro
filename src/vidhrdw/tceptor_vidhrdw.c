@@ -197,7 +197,7 @@ WRITE_HANDLER( tceptor_tile_attr_w )
 
 static void get_bg1_tile_info(int tile_index)
 {
-	UINT16 data = tceptor_bg_ram[tile_index * 2] | (tceptor_bg_ram[tile_index * 2 + 1] << 8);
+	uint16_t data = tceptor_bg_ram[tile_index * 2] | (tceptor_bg_ram[tile_index * 2 + 1] << 8);
 	int code = (data & 0x3ff) | 0x000;
 	int color = (data & 0xfc00) >> 10;
 
@@ -206,7 +206,7 @@ static void get_bg1_tile_info(int tile_index)
 
 static void get_bg2_tile_info(int tile_index)
 {
-	UINT16 data = tceptor_bg_ram[tile_index * 2 + 0x1000] | (tceptor_bg_ram[tile_index * 2 + 1 + 0x1000] << 8);
+	uint16_t data = tceptor_bg_ram[tile_index * 2 + 0x1000] | (tceptor_bg_ram[tile_index * 2 + 1 + 0x1000] << 8);
 	int code = (data & 0x3ff) | 0x400;
 	int color = (data & 0xfc00) >> 10;
 

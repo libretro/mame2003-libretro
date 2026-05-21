@@ -74,7 +74,7 @@ int ppu2c03b_init( struct ppu2c03b_interface *interface );
 
 void ppu2c03b_reset( int num, int scan_scale );
 void ppu2c03b_set_videorom_bank( int num, int start_page, int num_pages, int bank, int bank_size );
-void ppu2c03b_spriteram_dma( int num, const UINT8 *source );
+void ppu2c03b_spriteram_dma( int num, const uint8_t *source );
 void ppu2c03b_render( int num, struct mame_bitmap *bitmap, int flipx, int flipy, int sx, int sy );
 int ppu2c03b_get_pixel( int num, int x, int y );
 int ppu2c03b_get_colorbase( int num );

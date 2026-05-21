@@ -1,8 +1,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *jailbrek_scroll_x;
-UINT8 *jailbrek_scroll_dir;
+uint8_t *jailbrek_scroll_x;
+uint8_t *jailbrek_scroll_dir;
 
 static struct tilemap *bg_tilemap;
 

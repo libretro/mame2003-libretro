@@ -14,7 +14,7 @@ static int banksel,gfxbank[4];
 
 ***************************************************************************/
 
-UINT32 gotcha_tilemap_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+uint32_t gotcha_tilemap_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col & 0x1f) | (row << 5) | ((col & 0x20) << 5);
 }

@@ -24,7 +24,7 @@ static unsigned char *dirtychar;
 
 static void get_tile_info(int tile_index)
 {
-	UINT16 code = tail2nos_bgvideoram[tile_index];
+	uint16_t code = tail2nos_bgvideoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x1fff) + (charbank << 13),
@@ -204,7 +204,7 @@ VIDEO_UPDATE( tail2nos )
 			if (dirtychar[i])
 			{
 				dirtychar[i] = 0;
-				decodechar(Machine->gfx[2],i,(UINT8 *)zoomdata,&tilelayout);
+				decodechar(Machine->gfx[2],i,(uint8_t *)zoomdata,&tilelayout);
 			}
 		}
 

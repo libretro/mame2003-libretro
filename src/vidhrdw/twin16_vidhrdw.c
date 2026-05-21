@@ -18,17 +18,17 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-extern UINT16 twin16_custom_vidhrdw;
-extern UINT16 *twin16_gfx_rom;
-extern UINT16 *twin16_videoram2;
-extern UINT16 *twin16_sprite_gfx_ram;
-extern UINT16 *twin16_tile_gfx_ram;
+extern uint16_t twin16_custom_vidhrdw;
+extern uint16_t *twin16_gfx_rom;
+extern uint16_t *twin16_videoram2;
+extern uint16_t *twin16_sprite_gfx_ram;
+extern uint16_t *twin16_tile_gfx_ram;
 extern int twin16_spriteram_process_enable( void );
 
 static int need_process_spriteram;
-static UINT16 gfx_bank;
-static UINT16 scrollx[3], scrolly[3];
-static UINT16 video_register;
+static uint16_t gfx_bank;
+static uint16_t scrollx[3], scrolly[3];
+static uint16_t video_register;
 
 enum {
 	TWIN16_SCREEN_FLIPY		= 0x01,	/* ? breaks devils world text layer */
@@ -107,7 +107,7 @@ WRITE16_HANDLER( twin16_video_register_w )
 
 static void draw_sprite( /* slow slow slow, but it's ok for now */
 	struct mame_bitmap *bitmap,
-	const UINT16 *pen_data,
+	const uint16_t *pen_data,
 	const pen_t *pal_data,
 	int xpos, int ypos,
 	int width, int height,
@@ -127,15 +127,15 @@ static void draw_sprite( /* slow slow slow, but it's ok for now */
 				int sy = (flipy)?(ypos+height-1-y):(ypos+y);
 				if( sy>=16 && sy<256-16 )
 				{
-					UINT16 *dest = (UINT16 *)bitmap->line[sy];
-					UINT8 *pdest = (UINT8 *)priority_bitmap->line[sy];
+					uint16_t *dest = (uint16_t *)bitmap->line[sy];
+					uint8_t *pdest = (uint8_t *)priority_bitmap->line[sy];
 
 					for( x=0; x<width; x++ )
 					{
 						int sx = (flipx)?(xpos+width-1-x):(xpos+x);
 						if( sx>=0 && sx<320 )
 						{
-							UINT16 pen = pen_data[x/4];
+							uint16_t pen = pen_data[x/4];
 							switch( x%4 )
 							{
 							case 0: pen = pen>>12; break;
@@ -155,22 +155,22 @@ static void draw_sprite( /* slow slow slow, but it's ok for now */
 
 void twin16_spriteram_process( void )
 {
-	UINT16 dx = scrollx[0];
-	UINT16 dy = scrolly[0];
+	uint16_t dx = scrollx[0];
+	uint16_t dy = scrolly[0];
 
-	const UINT16 *source = &spriteram16[0x0000];
-	const UINT16 *finish = &spriteram16[0x1800];
+	const uint16_t *source = &spriteram16[0x0000];
+	const uint16_t *finish = &spriteram16[0x1800];
 
 	memset( &spriteram16[0x1800], 0, 0x800 );
 	while( source<finish ){
-		UINT16 priority = source[0];
+		uint16_t priority = source[0];
 		if( priority & 0x8000 ){
-			UINT16 *dest = &spriteram16[0x1800 + 4*(priority&0xff)];
+			uint16_t *dest = &spriteram16[0x1800 + 4*(priority&0xff)];
 
-			INT32 xpos = (0x10000*source[4])|source[5];
-			INT32 ypos = (0x10000*source[6])|source[7];
+			int32_t xpos = (0x10000*source[4])|source[5];
+			int32_t ypos = (0x10000*source[6])|source[7];
 
-			UINT16 attributes = source[2]&0x03ff; /* scale,size,color */
+			uint16_t attributes = source[2]&0x03ff; /* scale,size,color */
 			if( priority & 0x0200 ) attributes |= 0x4000;
 			/* Todo:  priority & 0x0100 is also used */
 			attributes |= 0x8000;
@@ -213,12 +213,12 @@ static void draw_sprites( struct mame_bitmap *bitmap)
 {
 	int count = 0;
 
-	const UINT16 *source = 0x1800+buffered_spriteram16 + 0x800 -4;
-	const UINT16 *finish = 0x1800+buffered_spriteram16;
+	const uint16_t *source = 0x1800+buffered_spriteram16 + 0x800 -4;
+	const uint16_t *finish = 0x1800+buffered_spriteram16;
 
 	while( source>=finish ){
-		UINT16 attributes = source[3];
-		UINT16 code = source[0];
+		uint16_t attributes = source[3];
+		uint16_t code = source[0];
 
 		if( code!=0xffff && (attributes&0x8000)){
 			int xpos = source[1];
@@ -227,7 +227,7 @@ static void draw_sprites( struct mame_bitmap *bitmap)
 			const pen_t *pal_data = Machine->pens+((attributes&0xf)+0x10)*16;
 			int height	= 16<<((attributes>>6)&0x3);
 			int width	= 16<<((attributes>>4)&0x3);
-			const UINT16 *pen_data = 0;
+			const uint16_t *pen_data = 0;
 			int flipy = attributes&0x0200;
 			int flipx = attributes&0x0100;
 
@@ -278,8 +278,8 @@ static void draw_sprites( struct mame_bitmap *bitmap)
 }
 
 static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
-	const UINT16 *gfx_base;
-	const UINT16 *source = videoram16;
+	const uint16_t *gfx_base;
+	const uint16_t *source = videoram16;
 	int i, y1, y2, yd;
 	int bank_table[4];
 	int dx, dy, palette;
@@ -351,13 +351,13 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 				---xx-----------	tile bank
 				-----xxxxxxxxxxx	tile number
 			*/
-			const UINT16 *gfx_data = gfx_base + (code&0x7ff)*16 + bank_table[(code>>11)&0x3]*0x8000;
+			const uint16_t *gfx_data = gfx_base + (code&0x7ff)*16 + bank_table[(code>>11)&0x3]*0x8000;
 			int color = (code>>13);
 			pen_t *pal_data = Machine->pens + 16*(0x20+color+8*palette);
 
 			{
 				int y;
-				UINT16 data;
+				uint16_t data;
 				int pen;
 
 				if( tile_flipx )
@@ -367,8 +367,8 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 						{
 							for( y=y1; y!=y2; y+=yd )
 							{
-								UINT16 *dest = ((UINT16 *)bitmap->line[ypos+y])+xpos;
-								UINT8 *pdest = ((UINT8 *)priority_bitmap->line[ypos+y])+xpos;
+								uint16_t *dest = ((uint16_t *)bitmap->line[ypos+y])+xpos;
+								uint8_t *pdest = ((uint8_t *)priority_bitmap->line[ypos+y])+xpos;
 
 								data = *gfx_data++;
 								dest[7] = pal_data[(data>>4*3)&0xf];
@@ -397,8 +397,8 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 						{
 							for( y=y1; y!=y2; y+=yd )
 							{
-								UINT16 *dest = ((UINT16 *)bitmap->line[ypos+y])+xpos;
-								UINT8 *pdest = ((UINT8 *)priority_bitmap->line[ypos+y])+xpos;
+								uint16_t *dest = ((uint16_t *)bitmap->line[ypos+y])+xpos;
+								uint8_t *pdest = ((uint8_t *)priority_bitmap->line[ypos+y])+xpos;
 
 								data = *gfx_data++;
 								if( data )
@@ -427,8 +427,8 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 						{
 							for( y=y1; y!=y2; y+=yd )
 							{
-								UINT16 *dest = ((UINT16 *)bitmap->line[ypos+y])+xpos;
-								UINT8 *pdest = ((UINT8 *)priority_bitmap->line[ypos+y])+xpos;
+								uint16_t *dest = ((uint16_t *)bitmap->line[ypos+y])+xpos;
+								uint8_t *pdest = ((uint8_t *)priority_bitmap->line[ypos+y])+xpos;
 
 								data = *gfx_data++;
 								*dest++ = pal_data[(data>>4*3)&0xf];
@@ -458,8 +458,8 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 						{
 							for( y=y1; y!=y2; y+=yd )
 							{
-								UINT16 *dest = ((UINT16 *)bitmap->line[ypos+y])+xpos;
-								UINT8 *pdest = ((UINT8 *)priority_bitmap->line[ypos+y])+xpos;
+								uint16_t *dest = ((uint16_t *)bitmap->line[ypos+y])+xpos;
+								uint8_t *pdest = ((uint8_t *)priority_bitmap->line[ypos+y])+xpos;
 
 								data = *gfx_data++;
 								if( data )
@@ -488,7 +488,7 @@ static void draw_layer( struct mame_bitmap *bitmap, int opaque ){
 
 static void get_fg_tile_info(int tile_index)
 {
-	const UINT16 *source = twin16_videoram2;
+	const uint16_t *source = twin16_videoram2;
 	int attr = source[tile_index];
 	int code = attr & 0x1ff;
 	int color = (attr >> 9) & 0x0f;

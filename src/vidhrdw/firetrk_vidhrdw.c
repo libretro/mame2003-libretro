@@ -7,8 +7,8 @@ Atari Fire Truck + Super Bug + Monte Carlo video emulation
 #include "driver.h"
 #include "firetrk.h"
 
-UINT8* firetrk_alpha_num_ram;
-UINT8* firetrk_playfield_ram;
+uint8_t* firetrk_alpha_num_ram;
+uint8_t* firetrk_playfield_ram;
 
 int firetrk_skid[2];
 int firetrk_crash[2];
@@ -94,7 +94,7 @@ void firetrk_set_blink(int flag)
 }
 
 
-static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	return num_cols * row + col;
 }
@@ -102,7 +102,7 @@ static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 
 
 static void get_tile_info1(int tile_index)
 {
-	UINT8 code = firetrk_playfield_ram[tile_index];
+	uint8_t code = firetrk_playfield_ram[tile_index];
 
 	int color = code >> 6;
 
@@ -121,7 +121,7 @@ static void get_tile_info1(int tile_index)
 
 static void get_tile_info2(int tile_index)
 {
-	UINT8 code = firetrk_playfield_ram[tile_index];
+	uint8_t code = firetrk_playfield_ram[tile_index];
 
 	int color = 0;
 
@@ -361,7 +361,7 @@ static void calc_car_positions(void)
 
 static void draw_text(struct mame_bitmap* bitmap, const struct rectangle* cliprect)
 {
-	const UINT8* p = firetrk_alpha_num_ram;
+	const uint8_t* p = firetrk_alpha_num_ram;
 
 	int i;
 

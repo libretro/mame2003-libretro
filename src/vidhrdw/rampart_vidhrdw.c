@@ -27,7 +27,7 @@ data16_t *rampart_bitmap;
  *
  *************************************/
 
-static UINT8 *pfdirty;
+static uint8_t *pfdirty;
 static struct mame_bitmap *pfbitmap;
 static int xdim, ydim;
 
@@ -113,8 +113,8 @@ VIDEO_UPDATE( rampart )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -199,8 +199,8 @@ void rampart_bitmap_render(struct mame_bitmap *bitmap, const struct rectangle *c
 		if (pfdirty[y])
 		{
 			const data16_t *src = &rampart_bitmap[256 * y];
-			UINT8 scanline[512];
-			UINT8 *dst = scanline;
+			uint8_t scanline[512];
+			uint8_t *dst = scanline;
 
 			/* regenerate the line */
 			for (x = 0; x < xdim / 2; x++)

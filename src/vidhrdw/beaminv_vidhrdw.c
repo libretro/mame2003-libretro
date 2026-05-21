@@ -16,7 +16,7 @@
 
 WRITE_HANDLER( beaminv_videoram_w )
 {
-	UINT8 x,y;
+	uint8_t x,y;
 	int i;
 
 

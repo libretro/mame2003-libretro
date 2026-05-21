@@ -18,7 +18,7 @@
  *
  *************************************/
 
-UINT8 gridlee_cocktail_flip;
+uint8_t gridlee_cocktail_flip;
 
 
 
@@ -28,9 +28,9 @@ UINT8 gridlee_cocktail_flip;
  *
  *************************************/
 
-static UINT8 *local_videoram;
+static uint8_t *local_videoram;
 
-static UINT8 palettebank_vis;
+static uint8_t palettebank_vis;
 
 
 
@@ -150,7 +150,7 @@ VIDEO_UPDATE( gridlee )
 		else
 		{
 			int srcy = 239 - y;
-			UINT8 temp[256];
+			uint8_t temp[256];
 			int xx;
 
 			for (xx = 0; xx < 256; xx++)
@@ -162,8 +162,8 @@ VIDEO_UPDATE( gridlee )
 	/* draw the sprite images */
 	for (i = 0; i < 32; i++)
 	{
-		UINT8 *sprite = spriteram + i * 4;
-		UINT8 *src;
+		uint8_t *sprite = spriteram + i * 4;
+		uint8_t *src;
 		int image = sprite[0];
 		int ypos = sprite[2] + 17;
 		int xpos = sprite[3];

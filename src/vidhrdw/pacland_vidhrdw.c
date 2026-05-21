@@ -1,10 +1,10 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *pacland_videoram2;
+uint8_t *pacland_videoram2;
 
 static int palette_bank;
-static const UINT8 *pacland_color_prom;
+static const uint8_t *pacland_color_prom;
 
 static struct rectangle spritevisiblearea =
 {
@@ -122,7 +122,7 @@ WRITE_HANDLER( pacland_scroll1_w )
 WRITE_HANDLER( pacland_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(REGION_CPU1);
+	uint8_t *RAM = memory_region(REGION_CPU1);
 
 	bankaddress = 0x10000 + ((data & 0x07) << 13);
 	cpu_setbank(1,&RAM[bankaddress]);
@@ -132,7 +132,7 @@ WRITE_HANDLER( pacland_bankswitch_w )
 	if (palette_bank != ((data & 0x18) >> 3))
 	{
 		int i;
-		const UINT8 *color_prom;
+		const uint8_t *color_prom;
 
 		palette_bank = (data & 0x18) >> 3;
 		color_prom = pacland_color_prom + 256 * palette_bank;

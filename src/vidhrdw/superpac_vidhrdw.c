@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 
-static UINT8 color15_mask[64];
+static uint8_t color15_mask[64];
 
 
 /***************************************************************************

@@ -33,17 +33,17 @@ enum
 
 
 /* graphics-related variables */
-       UINT8 *	midyunit_gfx_rom;
+       uint8_t *	midyunit_gfx_rom;
        size_t	midyunit_gfx_rom_size;
-static UINT8	autoerase_enable;
+static uint8_t	autoerase_enable;
 
 /* palette-related variables */
-static UINT32	palette_mask;
+static uint32_t	palette_mask;
 static pen_t *	pen_map;
 
 /* videoram-related variables */
-static UINT16 *	local_videoram;
-static UINT8	videobank_select;
+static uint16_t *	local_videoram;
+static uint8_t	videobank_select;
 
 /* update-related variables */
 static int		last_update_scanline;
@@ -52,14 +52,14 @@ static int		last_update_scanline;
 static data16_t dma_register[16];
 static struct
 {
-	UINT32		offset;			/* source offset, in bits */
-	INT32 		rowbytes;		/* source bytes to skip each row */
-	INT32 		xpos;			/* x position, clipped */
-	INT32		ypos;			/* y position, clipped */
-	INT32		width;			/* horizontal pixel count */
-	INT32		height;			/* vertical pixel count */
-	UINT16		palette;		/* palette base */
-	UINT16		color;			/* current foreground color with palette */
+	uint32_t		offset;			/* source offset, in bits */
+	int32_t 		rowbytes;		/* source bytes to skip each row */
+	int32_t 		xpos;			/* x position, clipped */
+	int32_t		ypos;			/* y position, clipped */
+	int32_t		width;			/* horizontal pixel count */
+	int32_t		height;			/* vertical pixel count */
+	uint16_t		palette;		/* palette base */
+	uint16_t		color;			/* current foreground color with palette */
 } dma_state;
 
 
@@ -221,15 +221,15 @@ READ16_HANDLER( midyunit_vram_r )
  *
  *************************************/
 
-void midyunit_to_shiftreg(UINT32 address, UINT16 *shiftreg)
+void midyunit_to_shiftreg(uint32_t address, uint16_t *shiftreg)
 {
-	memcpy(shiftreg, &local_videoram[address >> 3], 2 * 512 * sizeof(UINT16));
+	memcpy(shiftreg, &local_videoram[address >> 3], 2 * 512 * sizeof(uint16_t));
 }
 
 
-void midyunit_from_shiftreg(UINT32 address, UINT16 *shiftreg)
+void midyunit_from_shiftreg(uint32_t address, uint16_t *shiftreg)
 {
-	memcpy(&local_videoram[address >> 3], shiftreg, 2 * 512 * sizeof(UINT16));
+	memcpy(&local_videoram[address >> 3], shiftreg, 2 * 512 * sizeof(uint16_t));
 }
 
 
@@ -327,10 +327,10 @@ typedef void (*dma_draw_func)(void);
 {																				\
 	int height = dma_state.height;												\
 	int width = dma_state.width;												\
-	UINT8 *base = midyunit_gfx_rom;													\
-	UINT32 offset = dma_state.offset >> 3;										\
-	UINT16 pal = dma_state.palette;												\
-	UINT16 color = pal | dma_state.color;										\
+	uint8_t *base = midyunit_gfx_rom;													\
+	uint32_t offset = dma_state.offset >> 3;										\
+	uint16_t pal = dma_state.palette;												\
+	uint16_t color = pal | dma_state.color;										\
 	int x, y;																	\
 																				\
 	/* loop over the height */													\
@@ -338,8 +338,8 @@ typedef void (*dma_draw_func)(void);
 	{																			\
 		int tx = dma_state.xpos;												\
 		int ty = dma_state.ypos;												\
-		UINT32 o = offset;														\
-		UINT16 *dest;															\
+		uint32_t o = offset;														\
+		uint16_t *dest;															\
 																				\
 		/* determine Y position */												\
 		ty = (ty + y) & 0x1ff;													\
@@ -548,7 +548,7 @@ READ16_HANDLER( midyunit_dma_r )
 
 WRITE16_HANDLER( midyunit_dma_w )
 {
-	UINT32 gfxoffset;
+	uint32_t gfxoffset;
 	int command;
 
 	/* blend with the current register contents */
@@ -574,7 +574,7 @@ WRITE16_HANDLER( midyunit_dma_w )
 				command, (command >> 4) & 1, (command >> 5) & 1);
 		logerror("  offset=%08X pos=(%d,%d) w=%d h=%d\n",
 				dma_register[DMA_OFFSETLO] | (dma_register[DMA_OFFSETHI] << 16),
-				(INT16)dma_register[DMA_XSTART], (INT16)dma_register[DMA_YSTART],
+				(int16_t)dma_register[DMA_XSTART], (int16_t)dma_register[DMA_YSTART],
 				dma_register[DMA_WIDTH], dma_register[DMA_HEIGHT]);
 		logerror("  palette=%04X color=%04X\n",
 				dma_register[DMA_PALETTE], dma_register[DMA_COLOR]);
@@ -584,9 +584,9 @@ WRITE16_HANDLER( midyunit_dma_w )
 	profiler_mark(PROFILER_USER1);
 
 	/* fill in the basic data */
-	dma_state.rowbytes = (INT16)dma_register[DMA_ROWBYTES];
-	dma_state.xpos = (INT16)dma_register[DMA_XSTART];
-	dma_state.ypos = (INT16)dma_register[DMA_YSTART];
+	dma_state.rowbytes = (int16_t)dma_register[DMA_ROWBYTES];
+	dma_state.xpos = (int16_t)dma_register[DMA_XSTART];
+	dma_state.ypos = (int16_t)dma_register[DMA_YSTART];
 	dma_state.width = dma_register[DMA_WIDTH];
 	dma_state.height = dma_register[DMA_HEIGHT];
 	dma_state.palette = dma_register[DMA_PALETTE] << 8;
@@ -680,7 +680,7 @@ static void update_partial(int scanline, int render)
 	{
 		int starty, stopy;
 		int v, width, xoffs;
-		UINT32 offset;
+		uint32_t offset;
 
 		/* autoerase the lines here */
 		starty = (last_update_scanline > Machine->visible_area.min_y) ? last_update_scanline : Machine->visible_area.min_y;
@@ -698,7 +698,7 @@ static void update_partial(int scanline, int render)
 		/* loop over rows */
 		for (v = starty; v <= stopy; v++)
 		{
-			memcpy(&local_videoram[offset & 0x3ffff], &local_videoram[510 * 512], width * sizeof(UINT16));
+			memcpy(&local_videoram[offset & 0x3ffff], &local_videoram[510 * 512], width * sizeof(uint16_t));
 			offset += 512;
 		}
 	}
@@ -715,7 +715,7 @@ static void update_partial(int scanline, int render)
  *
  *************************************/
 
-void midyunit_display_addr_changed(UINT32 offs, int rowbytes, int scanline)
+void midyunit_display_addr_changed(uint32_t offs, int rowbytes, int scanline)
 {
 }
 
@@ -787,10 +787,10 @@ VIDEO_UPDATE( midyunit )
 {
 	int hsblnk, heblnk, leftscroll;
 	int v, width, xoffs;
-	UINT32 offset;
+	uint32_t offset;
 	const unsigned short *pal;
 	unsigned palents, fb_pitch;
-	UINT16 *fb;
+	uint16_t *fb;
 
 	/* get the current blanking values */
 	cpuintrf_push_context(0);
@@ -821,15 +821,15 @@ VIDEO_UPDATE( midyunit )
 	   bitmap and the conversion pass. The visible area is 0-origin, so screen
 	   row v / column x map directly into the buffer. */
 	pal = mame2003_direct_rgb565_palette(&palents);
-	fb  = pal ? (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
+	fb  = pal ? (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch) : NULL;
 	if (fb)
 	{
-		UINT16 black = pal[get_black_pen()];
+		uint16_t black = pal[get_black_pen()];
 
 		for (v = cliprect->min_y; v <= cliprect->max_y; v++)
 		{
-			const UINT16 *src = &local_videoram[offset & 0x3ffff];
-			UINT16 *dst = (UINT16 *)((UINT8 *)fb + v * fb_pitch) + xoffs;
+			const uint16_t *src = &local_videoram[offset & 0x3ffff];
+			uint16_t *dst = (uint16_t *)((uint8_t *)fb + v * fb_pitch) + xoffs;
 			int x;
 
 			for (x = 0; x < width; x++)
@@ -842,7 +842,7 @@ VIDEO_UPDATE( midyunit )
 		{
 			for (v = cliprect->min_y; v <= cliprect->max_y; v++)
 			{
-				UINT16 *dst = (UINT16 *)((UINT8 *)fb + v * fb_pitch);
+				uint16_t *dst = (uint16_t *)((uint8_t *)fb + v * fb_pitch);
 				int x;
 
 				for (x = cliprect->min_x; x < leftscroll; x++)

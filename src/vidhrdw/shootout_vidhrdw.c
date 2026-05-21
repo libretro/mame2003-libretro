@@ -89,7 +89,7 @@ VIDEO_START( shootout ){
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, int bank_bits ){
 	static int bFlicker;
 	const struct GfxElement *gfx = Machine->gfx[1];
-	const UINT8 *source = spriteram+127*4;
+	const uint8_t *source = spriteram+127*4;
 	int count;
 
 	bFlicker = !bFlicker;

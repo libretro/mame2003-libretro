@@ -45,13 +45,13 @@ struct atarirle_entry
 /* description of the motion objects */
 struct atarirle_desc
 {
-	UINT8				region;				/* region where the GFX data lives */
-	UINT16				spriteramentries;	/* number of entries in sprite RAM */
-	UINT16				leftclip;			/* left clip coordinate */
-	UINT16				rightclip;			/* right clip coordinate */
+	uint8_t				region;				/* region where the GFX data lives */
+	uint16_t				spriteramentries;	/* number of entries in sprite RAM */
+	uint16_t				leftclip;			/* left clip coordinate */
+	uint16_t				rightclip;			/* right clip coordinate */
 	
-	UINT16				palettebase;		/* base palette entry */
-	UINT16				maxcolors;			/* maximum number of colors */
+	uint16_t				palettebase;		/* base palette entry */
+	uint16_t				maxcolors;			/* maximum number of colors */
 	
 	struct atarirle_entry codemask;			/* mask for the code index */
 	struct atarirle_entry colormask;		/* mask for the color */
@@ -74,8 +74,8 @@ struct atarirle_desc
 int atarirle_init(int map, const struct atarirle_desc *desc);
 
 /* control handlers */
-void atarirle_control_w(int map, UINT8 bits);
-void atarirle_command_w(int map, UINT8 command);
+void atarirle_control_w(int map, uint8_t bits);
+void atarirle_command_w(int map, uint8_t command);
 VIDEO_EOF( atarirle );
 
 /* write handlers */

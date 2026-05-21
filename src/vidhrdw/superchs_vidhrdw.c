@@ -220,8 +220,8 @@ logerror("Sprite number %04x had %02x invalid chunks\n",tilenum,bad_chunks);
 
 VIDEO_UPDATE( superchs )
 {
-	UINT8 layer[5];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint16_t priority;
 	int primasks[4] = {0xfffc, 0xfff0, 0xff00, 0x0};
 
 	TC0480SCP_tilemap_update();

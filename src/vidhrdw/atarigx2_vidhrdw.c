@@ -31,9 +31,9 @@
  *
  *************************************/
 
-UINT16 atarigx2_playfield_base;
-UINT16 atarigx2_motion_object_base;
-UINT16 atarigx2_motion_object_mask;
+uint16_t atarigx2_playfield_base;
+uint16_t atarigx2_motion_object_base;
+uint16_t atarigx2_motion_object_mask;
 
 
 
@@ -44,10 +44,10 @@ UINT16 atarigx2_motion_object_mask;
  *************************************/
 
 static data16_t current_control;
-static UINT8 playfield_tile_bank;
-static UINT8 playfield_color_bank;
-static UINT16 playfield_xscroll;
-static UINT16 playfield_yscroll;
+static uint8_t playfield_tile_bank;
+static uint8_t playfield_color_bank;
+static uint16_t playfield_xscroll;
+static uint16_t playfield_yscroll;
 
 
 
@@ -59,7 +59,7 @@ static UINT16 playfield_yscroll;
 
 static void get_alpha_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = atarigen_alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	int opaque = data & 0x8000;
@@ -69,7 +69,7 @@ static void get_alpha_tile_info(int tile_index)
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = atarigen_playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = (playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (atarigx2_playfield_base >> 5) + ((playfield_color_bank << 3) & 0x18) + ((data >> 12) & 7);
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -77,7 +77,7 @@ static void get_playfield_tile_info(int tile_index)
 }
 
 
-static UINT32 atarigx2_playfield_scan(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t atarigx2_playfield_scan(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	int bank = 1 - (col / (num_cols / 2));
 	return bank * (num_rows * num_cols / 2) + row * (num_cols / 2) + (col % (num_cols / 2));
@@ -269,9 +269,9 @@ VIDEO_UPDATE( atarigx2 )
 		/* now blend with the playfield */
 		for (y = top; y < bottom; y++)
 		{
-			UINT16 *pf = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
-			UINT16 *mo = (UINT16 *)mo_bitmap->base + y * mo_bitmap->rowpixels;
-			UINT8 *pri = (UINT8 *)priority_bitmap->base + y * priority_bitmap->rowpixels;
+			uint16_t *pf = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
+			uint16_t *mo = (uint16_t *)mo_bitmap->base + y * mo_bitmap->rowpixels;
+			uint8_t *pri = (uint8_t *)priority_bitmap->base + y * priority_bitmap->rowpixels;
 			for (x = left; x < right; x++)
 				if (mo[x] && (mo[x] >> ATARIRLE_PRIORITY_SHIFT) >= pri[x])
 					pf[x] = mo[x] & ATARIRLE_DATA_MASK;

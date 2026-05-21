@@ -108,8 +108,8 @@ WRITE16_HANDLER( stlforce_tx_videoram_w )
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 
-	const UINT16 *source = stlforce_spriteram+0x0;
-	const UINT16 *finish = stlforce_spriteram+0x800;
+	const uint16_t *source = stlforce_spriteram+0x0;
+	const uint16_t *finish = stlforce_spriteram+0x800;
 	const struct GfxElement *gfx = Machine->gfx[2];
 
 	while( source<finish )

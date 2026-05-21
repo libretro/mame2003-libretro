@@ -42,7 +42,7 @@ To Do:
 #include "vidhrdw/generic.h"
 
 
-extern UINT16 tetrisp2_systemregs[0x10];
+extern uint16_t tetrisp2_systemregs[0x10];
 
 /* Variables needed by driver: */
 
@@ -280,7 +280,7 @@ static void tetrisp2_draw_sprites(struct mame_bitmap *bitmap, const struct recta
 	int xstart, ystart, xend, yend, xinc, yinc;
 	int code, attr, color, size;
 	int flipscreen;
-	UINT32 primask;
+	uint32_t primask;
 	data16_t *priority_ram;
 
 	int min_x = cliprect->min_x;

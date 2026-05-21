@@ -57,8 +57,8 @@ static void djmain_draw_sprites(struct mame_bitmap *bitmap, const struct rectang
 		flipy = (djmain_obj_ram[offs] >> 11) & 1;
 		size = sizetab[(djmain_obj_ram[offs] >> 8) & 3];
 
-		ox = (INT16)(djmain_obj_ram[offs + 1] & 0xffff);
-		oy = (INT16)(djmain_obj_ram[offs + 1] >> 16);
+		ox = (int16_t)(djmain_obj_ram[offs + 1] & 0xffff);
+		oy = (int16_t)(djmain_obj_ram[offs + 1] >> 16);
 
 		xscale = djmain_obj_ram[offs + 2] >> 16;
 		yscale = djmain_obj_ram[offs + 2] & 0xffff;

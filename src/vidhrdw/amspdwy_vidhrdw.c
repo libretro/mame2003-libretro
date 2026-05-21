@@ -77,7 +77,7 @@ WRITE_HANDLER( amspdwy_colorram_w )
 
 
 /* logical (col,row) -> memory offset */
-UINT32 tilemap_scan_cols_back( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t tilemap_scan_cols_back( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return col*num_rows + (num_rows - row - 1);
 }

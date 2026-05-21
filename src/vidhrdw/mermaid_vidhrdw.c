@@ -194,7 +194,7 @@ VIDEO_UPDATE( mermaid )
 #ifdef MAME_DEBUG
 		extern int debug_key_pressed;
 #endif
-		UINT8 flipx,flipy,sx,sy,code,bank = 0;
+		uint8_t flipx,flipy,sx,sy,code,bank = 0;
 
 
 		sx = spriteram[offs + 3] + 1;

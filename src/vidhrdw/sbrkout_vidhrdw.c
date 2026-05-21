@@ -8,8 +8,8 @@
 #include "vidhrdw/generic.h"
 #include "artwork.h"
 
-UINT8 *sbrkout_horiz_ram;
-UINT8 *sbrkout_vert_ram;
+uint8_t *sbrkout_horiz_ram;
+uint8_t *sbrkout_vert_ram;
 
 static struct tilemap *bg_tilemap;
 

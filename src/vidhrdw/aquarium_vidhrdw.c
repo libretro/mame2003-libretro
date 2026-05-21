@@ -21,8 +21,8 @@ static void aquarium_draw_sprites(struct mame_bitmap *bitmap,const struct rectan
 	int offs,chain_pos;
 	int x,y,curx,cury;
 	int priority=0;
-	UINT8 col,flipx,flipy,chain;
-	UINT16 code;
+	uint8_t col,flipx,flipy,chain;
+	uint16_t code;
 
 	/* According to Raine, word in ioc_ram determines sprite/tile priority... */
 	priority = (aquarium_priority[0x0/2] & 0x8800) ? 0 : 1;

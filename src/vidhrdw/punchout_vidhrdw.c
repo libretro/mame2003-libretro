@@ -466,7 +466,7 @@ VIDEO_UPDATE( punchout )
 		if (zoom)
 		{
 			int sx,sy;
-			UINT32 startx,starty;
+			uint32_t startx,starty;
 			int incxx,incyy;
 
 			sx = 4096 - (punchout_bigsprite1[2] + 256 * (punchout_bigsprite1[3] & 0x0f));
@@ -633,7 +633,7 @@ VIDEO_UPDATE( armwrest )
 		if (zoom)
 		{
 			int sx,sy;
-			UINT32 startx,starty;
+			uint32_t startx,starty;
 			int incxx,incyy;
 
 			sx = 4096 - (punchout_bigsprite1[2] + 256 * (punchout_bigsprite1[3] & 0x0f));

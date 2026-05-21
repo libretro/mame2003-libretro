@@ -117,17 +117,17 @@ static void drgnmst_draw_sprites(struct mame_bitmap *bitmap,const struct rectang
 }
 
 
-UINT32 drgnmst_fg_tilemap_scan_cols( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t drgnmst_fg_tilemap_scan_cols( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (col*32)+(row&0x1f)+((row&0xe0)>>5)*2048;
 }
 
-UINT32 drgnmst_md_tilemap_scan_cols( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t drgnmst_md_tilemap_scan_cols( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (col*16)+(row&0x0f)+((row&0xf0)>>4)*1024;
 }
 
-UINT32 drgnmst_bg_tilemap_scan_cols( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+uint32_t drgnmst_bg_tilemap_scan_cols( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (col*8)+(row&0x07)+((row&0xf8)>>3)*512;
 }

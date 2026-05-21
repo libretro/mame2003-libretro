@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *tankbatt_bulletsram;
+uint8_t *tankbatt_bulletsram;
 size_t tankbatt_bulletsram_size;
 
 static struct tilemap *bg_tilemap;

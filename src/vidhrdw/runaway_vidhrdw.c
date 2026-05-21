@@ -9,8 +9,8 @@
 
 static struct tilemap *tilemap;
 
-UINT8* runaway_video_ram;
-UINT8* runaway_sprite_ram;
+uint8_t* runaway_video_ram;
+uint8_t* runaway_sprite_ram;
 
 static int tile_bank = 0;
 
@@ -63,7 +63,7 @@ WRITE_HANDLER( runaway_tile_bank_w )
 
 static void runaway_get_tile_info(int tile_index)
 {
-	UINT8 code = runaway_video_ram[tile_index];
+	uint8_t code = runaway_video_ram[tile_index];
 
 	SET_TILE_INFO(0, ((code & 0x3f) << 1) | ((code & 0x40) >> 6) | (tile_bank << 7), 0, (code & 0x80) ? TILE_FLIPY : 0);
 }
@@ -71,7 +71,7 @@ static void runaway_get_tile_info(int tile_index)
 
 static void qwak_get_tile_info(int tile_index)
 {
-	UINT8 code = runaway_video_ram[tile_index];
+	uint8_t code = runaway_video_ram[tile_index];
 
 	SET_TILE_INFO(0, ((code & 0x7f) << 1) | ((code & 0x80) >> 7), 0, 0);
 }

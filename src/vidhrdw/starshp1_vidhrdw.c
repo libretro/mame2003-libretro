@@ -32,14 +32,14 @@ int starshp1_phasor;
 int starshp1_collision_latch;
 int starshp1_mux;
 
-static UINT16* LSFR;
+static uint16_t* LSFR;
 
 static struct mame_bitmap* helper;
 
 static struct tilemap* tilemap;
 
 
-static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	return num_cols * row + col;
 }
@@ -47,7 +47,7 @@ static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 
 
 static void get_tile_info(int tile_index)
 {
-	UINT8 code = starshp1_playfield_ram[tile_index];
+	uint8_t code = starshp1_playfield_ram[tile_index];
 
 	SET_TILE_INFO(0, code & 0x3f, 0, 0)
 }
@@ -55,7 +55,7 @@ static void get_tile_info(int tile_index)
 
 VIDEO_START( starshp1 )
 {
-	UINT16 val = 0;
+	uint16_t val = 0;
 
 	int i;
 
@@ -105,7 +105,7 @@ READ_HANDLER( starshp1_rng_r )
 	if (y > Machine->drv->screen_height - 1)
 		y = Machine->drv->screen_height - 1;
 
-	return LSFR[x + (UINT16) (512 * y)];
+	return LSFR[x + (uint16_t) (512 * y)];
 }
 
 
@@ -169,9 +169,9 @@ static void draw_starfield(struct mame_bitmap* bitmap)
 
 	for (y = 0; y < bitmap->height; y++)
 	{
-		const UINT16* p = LSFR + (UINT16) (512 * y);
+		const uint16_t* p = LSFR + (uint16_t) (512 * y);
 
-		UINT16* pLine = bitmap->line[y];
+		uint16_t* pLine = bitmap->line[y];
 
 		for (x = 0; x < bitmap->width; x++)
 		{
@@ -277,9 +277,9 @@ static void draw_circle_line(struct mame_bitmap *bitmap, int x, int y, int l)
 {
 	if (y >= 0 && y <= bitmap->height - 1)
 	{
-		const UINT16* p = LSFR + (UINT16) (512 * y);
+		const uint16_t* p = LSFR + (uint16_t) (512 * y);
 
-		UINT16* pLine = bitmap->line[y];
+		uint16_t* pLine = bitmap->line[y];
 
 		int h1 = x - 2 * l;
 		int h2 = x + 2 * l;
@@ -347,7 +347,7 @@ static int spaceship_collision(struct mame_bitmap* bitmap, struct rectangle* rec
 
 	for (y = rect->min_y; y <= rect->max_y; y++)
 	{
-		const UINT16* pLine = helper->line[y];
+		const uint16_t* pLine = helper->line[y];
 
 		for (x = rect->min_x; x <= rect->max_x; x++)
 		{

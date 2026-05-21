@@ -161,7 +161,7 @@ VIDEO_START( exctsccr )
 
 static void exctsccr_draw_sprites( struct mame_bitmap *bitmap ) {
 	int offs;
-	UINT8 *OBJ1, *OBJ2;
+	uint8_t *OBJ1, *OBJ2;
 
 	OBJ1 = videoram;
 	OBJ2 = &(spriteram[0x20]);

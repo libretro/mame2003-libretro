@@ -838,7 +838,7 @@ logerror("Sprite number %04x had %02x invalid chunks\n",tilenum,bad_chunks);
 
 VIDEO_UPDATE( contcirc )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -864,7 +864,7 @@ VIDEO_UPDATE( contcirc )
 
 VIDEO_UPDATE( chasehq )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -888,7 +888,7 @@ VIDEO_UPDATE( chasehq )
 
 VIDEO_UPDATE( bshark )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -912,7 +912,7 @@ VIDEO_UPDATE( bshark )
 
 VIDEO_UPDATE( sci )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -936,7 +936,7 @@ VIDEO_UPDATE( sci )
 
 VIDEO_UPDATE( aquajack )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -960,7 +960,7 @@ VIDEO_UPDATE( aquajack )
 
 VIDEO_UPDATE( spacegun )
 {
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	TC0100SCN_tilemap_update();
 
@@ -1088,8 +1088,8 @@ VIDEO_UPDATE( spacegun )
 
 VIDEO_UPDATE( dblaxle )
 {
-	UINT8 layer[5];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint16_t priority;
 
 	TC0480SCP_tilemap_update();
 

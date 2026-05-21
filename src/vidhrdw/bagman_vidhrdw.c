@@ -11,7 +11,7 @@
 #include "res_net.h"
 
 
-UINT8 *bagman_video_enable;
+uint8_t *bagman_video_enable;
 
 static struct tilemap *bg_tilemap;
 

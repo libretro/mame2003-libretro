@@ -8,7 +8,7 @@
 #define TC0280GRD_GFX_NUM 2
 #define TC0430GRW_GFX_NUM 2
 
-extern UINT8 TC0360PRI_regs[16];
+extern uint8_t TC0360PRI_regs[16];
 
 struct tempsprite
 {
@@ -43,10 +43,10 @@ int f2_sprite_type = 0;
 data16_t *f2_sprite_extension;
 size_t f2_spriteext_size;
 
-static UINT16 spritebank[8];
-//static UINT16 spritebank_eof[8];
-static UINT16 spritebank_buffered[8];
-static UINT16 koshien_spritebank;
+static uint16_t spritebank[8];
+//static uint16_t spritebank_eof[8];
+static uint16_t spritebank_buffered[8];
+static uint16_t koshien_spritebank;
 
 int sprites_disabled,sprites_active_area,sprites_master_scrollx,sprites_master_scrolly;
 /* remember flip status over frames because driftout can fail to set it */
@@ -1214,10 +1214,10 @@ and it changes these (and the sprite pri settings) a lot.
 
 VIDEO_UPDATE( metalb )
 {
-	UINT8 layer[5];
-	UINT8 tilepri[5];
-	UINT8 spritepri[4];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t tilepri[5];
+	uint8_t spritepri[4];
+	uint16_t priority;
 
 	taitof2_handle_sprite_buffering();
 
@@ -1280,10 +1280,10 @@ VIDEO_UPDATE( metalb )
 /* Deadconx, Footchmp */
 VIDEO_UPDATE( deadconx )
 {
-	UINT8 layer[5];
-	UINT8 tilepri[5];
-	UINT8 spritepri[4];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t tilepri[5];
+	uint8_t spritepri[4];
+	uint16_t priority;
 
 	taitof2_handle_sprite_buffering();
 

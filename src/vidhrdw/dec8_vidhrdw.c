@@ -486,7 +486,7 @@ static void get_bac1_tile_info( int tile_index )
 			0)
 }
 
-static UINT32 bac0_scan_rows(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t bac0_scan_rows(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return ((col & 0x0f) + ((row & 0x0f) << 4)) + ((col & 0x10) << 5) + ((row & 0x10) << 4);
@@ -643,7 +643,7 @@ VIDEO_UPDATE( shackled )
 	tilemap_draw(bitmap,cliprect,dec8_fix_tilemap,0,0);
 }
 
-static UINT32 lastmiss_scan_rows(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t lastmiss_scan_rows(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return ((col & 0x0f) + ((row & 0x0f) << 4)) + ((col & 0x10) << 4) + ((row & 0x10) << 5);

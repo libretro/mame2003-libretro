@@ -1,8 +1,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *gotya_scroll;
-UINT8 *gotya_videoram2;
+uint8_t *gotya_scroll;
+uint8_t *gotya_videoram2;
 
 static int scroll_bit_8;
 

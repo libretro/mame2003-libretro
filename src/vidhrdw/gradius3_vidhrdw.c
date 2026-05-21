@@ -109,7 +109,7 @@ VIDEO_START( gradius3 )
 
 READ16_HANDLER( gradius3_gfxrom_r )
 {
-	UINT8 *gfxdata = memory_region(REGION_GFX2);
+	uint8_t *gfxdata = memory_region(REGION_GFX2);
 
 	return (gfxdata[2*offset+1] << 8) | gfxdata[2*offset];
 }
@@ -170,7 +170,7 @@ VIDEO_UPDATE( gradius3 )
 			if (dirtychar[i])
 			{
 				dirtychar[i] = 0;
-				decodechar(Machine->gfx[0],i,(UINT8 *)gradius3_gfxram,&charlayout);
+				decodechar(Machine->gfx[0],i,(uint8_t *)gradius3_gfxram,&charlayout);
 			}
 		}
 

@@ -13,11 +13,11 @@ data8_t *tbowl_spriteram;
 
 ***/
 
-static UINT16 tbowl_xscroll;
-static UINT16 tbowl_yscroll;
+static uint16_t tbowl_xscroll;
+static uint16_t tbowl_yscroll;
 
-static UINT16 tbowl_bg2xscroll;
-static UINT16 tbowl_bg2yscroll;
+static uint16_t tbowl_bg2xscroll;
+static uint16_t tbowl_bg2yscroll;
 
 /* Foreground Layer (tx) Tilemap */
 
@@ -137,7 +137,7 @@ tilemap_set_scrolly(bg2_tilemap, 0, tbowl_bg2yscroll );
 static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
 	int offs;
-	const UINT8 layout[8][8] =
+	const uint8_t layout[8][8] =
 	{
 		{0,1,4,5,16,17,20,21},
 		{2,3,6,7,18,19,22,23},

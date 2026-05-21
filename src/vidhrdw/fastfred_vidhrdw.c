@@ -34,7 +34,7 @@ static data8_t colorbank;
 static int flip_screen_x;
 static int flip_screen_y;
 int fastfred_hardware_type;
-static const UINT8 *fastfred_color_prom;
+static const uint8_t *fastfred_color_prom;
 static struct tilemap *bg_tilemap, *fg_tilemap;
 
 /***************************************************************************
@@ -50,7 +50,7 @@ static struct tilemap *bg_tilemap, *fg_tilemap;
 
 static void set_color(pen_t pen, int i)
 {
-	UINT8 r,g,b;
+	uint8_t r,g,b;
 	int bit0, bit1, bit2, bit3;
 
 	pen_t total = Machine->drv->total_colors;
@@ -271,7 +271,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 
 	for (offs = fastfred_spriteram_size - 4; offs >= 0; offs -= 4)
 	{
-		UINT8 code,sx,sy;
+		uint8_t code,sx,sy;
 		int flipx,flipy;
 
 		sx = fastfred_spriteram[offs + 3];

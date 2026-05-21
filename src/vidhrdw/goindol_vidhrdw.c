@@ -8,10 +8,10 @@
 #include "driver.h"
 #include "generic.h"
 
-UINT8 *goindol_bg_videoram;
-UINT8 *goindol_fg_videoram;
-UINT8 *goindol_fg_scrollx;
-UINT8 *goindol_fg_scrolly;
+uint8_t *goindol_bg_videoram;
+uint8_t *goindol_fg_videoram;
+uint8_t *goindol_fg_scrollx;
+uint8_t *goindol_fg_scrolly;
 
 size_t goindol_fg_videoram_size;
 size_t goindol_bg_videoram_size;

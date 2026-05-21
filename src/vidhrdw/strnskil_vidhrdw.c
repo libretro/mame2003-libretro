@@ -10,8 +10,8 @@ Video hardware driver by Uki
 
 #include "vidhrdw/generic.h"
 
-static UINT8 strnskil_scrl_ctrl;
-static UINT8 strnskil_xscroll[2];
+static uint8_t strnskil_scrl_ctrl;
+static uint8_t strnskil_xscroll[2];
 
 static struct tilemap *bg_tilemap;
 

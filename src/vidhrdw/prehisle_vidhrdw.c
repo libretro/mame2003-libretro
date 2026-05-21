@@ -10,7 +10,7 @@
 #include "vidhrdw/generic.h"
 
 
-UINT16 *prehisle_bg_videoram16;
+uint16_t *prehisle_bg_videoram16;
 
 static int invert_controls;
 
@@ -19,7 +19,7 @@ static struct tilemap *bg2_tilemap, *bg_tilemap, *fg_tilemap;
 
 WRITE16_HANDLER( prehisle_bg_videoram16_w )
 {
-	UINT16 oldword = prehisle_bg_videoram16[offset];
+	uint16_t oldword = prehisle_bg_videoram16[offset];
 	COMBINE_DATA(&prehisle_bg_videoram16[offset]);
 	if (oldword != prehisle_bg_videoram16[offset])
 	{
@@ -29,7 +29,7 @@ WRITE16_HANDLER( prehisle_bg_videoram16_w )
 
 WRITE16_HANDLER( prehisle_fg_videoram16_w )
 {
-	UINT16 oldword = videoram16[offset];
+	uint16_t oldword = videoram16[offset];
 	COMBINE_DATA(&videoram16[offset]);
 	if (oldword != videoram16[offset])
 	{
@@ -69,7 +69,7 @@ WRITE16_HANDLER( prehisle_control16_w )
 
 static void get_bg2_tile_info(int tile_index)
 {
-	UINT8 *tilerom = memory_region(REGION_GFX5);
+	uint8_t *tilerom = memory_region(REGION_GFX5);
 
 	int offs = tile_index * 2;
 	int attr = tilerom[offs + 1] + (tilerom[offs] << 8);

@@ -476,7 +476,7 @@ WRITE_HANDLER( combasc_scrollram_w )
 
 ***************************************************************************/
 
-static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const unsigned char *source,int circuit,UINT32 pri_mask)
+static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cliprect, const unsigned char *source,int circuit,uint32_t pri_mask)
 {
 	int base_color = (circuit*4)*16+(K007121_ctrlram[circuit][6]&0x10)*2;
 

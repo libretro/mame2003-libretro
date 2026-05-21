@@ -102,7 +102,7 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 
 	for (offs = 3;offs <= 0x400-5;offs += 4)
 	{
-		UINT16 data = spriteram16[offs+2];
+		uint16_t data = spriteram16[offs+2];
 
 		y = spriteram16[offs+0];
 

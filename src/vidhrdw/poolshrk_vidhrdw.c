@@ -6,14 +6,14 @@ Atari Poolshark video emulation
 
 #include "driver.h"
 
-UINT8* poolshrk_playfield_ram;
-UINT8* poolshrk_hpos_ram;
-UINT8* poolshrk_vpos_ram;
+uint8_t* poolshrk_playfield_ram;
+uint8_t* poolshrk_hpos_ram;
+uint8_t* poolshrk_vpos_ram;
 
 static struct tilemap* tilemap;
 
 
-static UINT32 get_memory_offset(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t get_memory_offset(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	return num_cols * row + col;
 }

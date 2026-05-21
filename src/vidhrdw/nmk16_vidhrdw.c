@@ -11,7 +11,7 @@ static data16_t *spriteram_old,*spriteram_old2;
 static int bgbank;
 static int videoshift;
 static int bioship_background_bank;
-static UINT8 bioship_scroll[4];
+static uint8_t bioship_scroll[4];
 
 static struct tilemap *bg_tilemap,*fg_tilemap,*tx_tilemap;
 static struct mame_bitmap *background_bitmap;
@@ -22,13 +22,13 @@ static struct mame_bitmap *background_bitmap;
 
 ***************************************************************************/
 
-static UINT32 bg_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t bg_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x0f) + ((col & 0xff) << 4) + ((row & 0x70) << 8);
 }
 
-static UINT32 bg_scan_td2(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t bg_scan_td2(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x0f) + ((col & 0x3ff) << 4) + ((row & 0x70) << 10);
@@ -298,7 +298,7 @@ WRITE16_HANDLER( nmk_txvideoram_w )
 
 WRITE16_HANDLER( mustang_scroll_w )
 {
-	static UINT8 scroll[4];
+	static uint8_t scroll[4];
 
 	if (ACCESSING_MSB)
 	{
@@ -315,7 +315,7 @@ WRITE16_HANDLER( nmk_scroll_w )
 {
 	if (ACCESSING_LSB)
 	{
-		static UINT8 scroll[4];
+		static uint8_t scroll[4];
 
 		scroll[offset] = data & 0xff;
 
@@ -330,7 +330,7 @@ WRITE16_HANDLER( nmk_scroll_2_w )
 {
 	if (ACCESSING_LSB)
 	{
-		static UINT8 scroll[4];
+		static uint8_t scroll[4];
 
 		scroll[offset] = data & 0xff;
 
@@ -355,7 +355,7 @@ WRITE16_HANDLER( nmk_scroll_3_w )
 
 WRITE16_HANDLER( vandyke_scroll_w )
 {
-	static UINT16 scroll[4];
+	static uint16_t scroll[4];
 
 	scroll[offset] = data;
 

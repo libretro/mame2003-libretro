@@ -10,8 +10,8 @@ Driver by Takahiro Nogi (nogi@kt.rim.or.jp) 1999/10/04
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *ssozumo_videoram2;
-UINT8 *ssozumo_colorram2;
+uint8_t *ssozumo_videoram2;
+uint8_t *ssozumo_colorram2;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 

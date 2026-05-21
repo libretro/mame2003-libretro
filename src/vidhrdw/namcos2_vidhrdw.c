@@ -234,12 +234,12 @@ DrawROZ(struct mame_bitmap *bitmap,const struct rectangle *cliprect)
 {
 	const int xoffset = 38,yoffset = 0;
 
-	int incxx =  (INT16)namcos2_68k_roz_ctrl[0];
-	int incxy =  (INT16)namcos2_68k_roz_ctrl[1];
-	int incyx =  (INT16)namcos2_68k_roz_ctrl[2];
-	int incyy =  (INT16)namcos2_68k_roz_ctrl[3];
-	UINT32 startx = (INT16)namcos2_68k_roz_ctrl[4];
-	UINT32 starty = (INT16)namcos2_68k_roz_ctrl[5];
+	int incxx =  (int16_t)namcos2_68k_roz_ctrl[0];
+	int incxy =  (int16_t)namcos2_68k_roz_ctrl[1];
+	int incyx =  (int16_t)namcos2_68k_roz_ctrl[2];
+	int incyy =  (int16_t)namcos2_68k_roz_ctrl[3];
+	uint32_t startx = (int16_t)namcos2_68k_roz_ctrl[4];
+	uint32_t starty = (int16_t)namcos2_68k_roz_ctrl[5];
 
 #if 0 /* TBA */
 	switch( namcos2_68k_roz_ctrl[7] )

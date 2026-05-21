@@ -27,7 +27,7 @@ static int pitnrun_char_bank;
 static int pitnrun_color_select;
 static struct mame_bitmap *tmp_bitmap[4];
 static struct tilemap *bg, *fg;
-UINT8* videoram2;
+uint8_t* videoram2;
 
 
 static void get_tile_info1(int tile_index)

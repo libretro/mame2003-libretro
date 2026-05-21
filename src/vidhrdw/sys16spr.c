@@ -28,7 +28,7 @@
 #include "driver.h"
 #include "system16.h"
 
-int sys16_sprite_shinobi( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_shinobi( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /* standard sprite hardware (Shinobi, Altered Beast, Golden Axe
 	0	YYYYYYYY	YYYYYYYY	top, bottom (screen coordinates)
 	1	-------X	XXXXXXXX	left (screen coordinate)
@@ -40,16 +40,16 @@ int sys16_sprite_shinobi( struct sys16_sprite_attributes *sprite, const UINT16 *
 	7	--------	--------
 */
 	extern int sys16_wwfix; //*
-	UINT16 ypos = source[0];
-	UINT16 width = source[2];
+	uint16_t ypos = source[0];
+	uint16_t width = source[2];
 	int top = ypos&0xff;
 	int bottom = ypos>>8;
 	if( bottom == 0xff || width ==sys16_spritelist_end ) return 1; /* ? */
 	/* end of spritelist */
 	if( bottom !=0 && bottom > top ){
-		UINT16 attributes = source[4];
-		UINT16 zoomx = source[5]&0x3ff;
-		UINT16 zoomy = (source[6]&0x3ff);
+		uint16_t attributes = source[4];
+		uint16_t zoomx = source[5]&0x3ff;
+		uint16_t zoomy = (source[6]&0x3ff);
 		if( zoomy==0 || source[6]==0xffff ) zoomy = zoomx; /* if zoomy is 0, use zoomx instead */
 		sprite->x = source[1] + sys16_sprxoffset;
 		sprite->y = top;
@@ -69,7 +69,7 @@ int sys16_sprite_shinobi( struct sys16_sprite_attributes *sprite, const UINT16 *
 	return 0;
 }
 
-int sys16_sprite_passshot( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_passshot( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /* Passing shot 4p needs:	passshot_y=-0x23; passshot_width=1;
 	0	-------X	XXXXXXXX	left (screen coordinate)
 	1	YYYYYYYY	YYYYYYYY	bottom, top (screen coordinates)
@@ -82,14 +82,14 @@ int sys16_sprite_passshot( struct sys16_sprite_attributes *sprite, const UINT16 
 */
 	int passshot_y=0;
 	int passshot_width=0;
-	UINT16 attributes = source[5];
-	UINT16 ypos = source[1];
+	uint16_t attributes = source[5];
+	uint16_t ypos = source[1];
 	int bottom = (ypos>>8)+passshot_y;
 	int top = (ypos&0xff)+passshot_y;
 	if( bottom>top && ypos!=0xffff ){
 		int bank = (attributes>>4)&0xf;
-		UINT16 number = source[2];
-		UINT16 width = source[3];
+		uint16_t number = source[2];
+		uint16_t width = source[3];
 		int zoom = source[4]&0x3ff;
 		int xpos = source[0] + sys16_sprxoffset;
 		sprite->screen_height = bottom - top;
@@ -118,7 +118,7 @@ int sys16_sprite_passshot( struct sys16_sprite_attributes *sprite, const UINT16 
 	return 0;
 }
 
-int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /* Aurail, Bay Route, riotcity
 	0	YYYYYYYY	YYYYYYYY	(screen coordinates)
 	1	-------X	XXXXXXXX	(screen coordinate)
@@ -129,9 +129,9 @@ int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const UINT16 *s
 	6	------ZZ	ZZZZZZZZ	zoomy (defaults to zoomx)
 	7	--------	--------
 */
-	UINT16 ypos = source[0];
-	UINT16 width = source[2];
-	UINT16 attributes = source[4];
+	uint16_t ypos = source[0];
+	uint16_t width = source[2];
+	uint16_t attributes = source[4];
 	int top = ypos&0xff;
 	int bottom = ypos>>8;
 	if( width == sys16_spritelist_end) return 1;
@@ -141,8 +141,8 @@ int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const UINT16 *s
 	if(bottom !=0 && bottom > top && (attributes&0x3f) !=0x3f)
 #endif
 	{
-		UINT16 zoomx = source[5]&0x3ff;
-		UINT16 zoomy = (source[6]&0x3ff);
+		uint16_t zoomx = source[5]&0x3ff;
+		uint16_t zoomy = (source[6]&0x3ff);
 		if( zoomy==0 ) zoomy = zoomx; /* if zoomy is 0, use zoomx instead */
 		sprite->color = 1024/16 + (attributes&0x3f);
 		sprite->x = source[1] + sys16_sprxoffset;;
@@ -164,7 +164,7 @@ int sys16_sprite_aurail( struct sys16_sprite_attributes *sprite, const UINT16 *s
 	return 0;
 }
 
-int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /*	0	YYYYYYYY	YYYYYYYY	bottom,top (screen coordinates)
 	1	-------X	XXXXXXXX	left (screen coordinate)
 	2	--------	FWWWWWWW	pitch
@@ -174,8 +174,8 @@ int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const UINT16 
 	6	--------	--------
 	7	--------	--------
 */
-	UINT16 ypos = source[0];
-	UINT16 pal = (source[4]>>8)&0x3f;
+	uint16_t ypos = source[0];
+	uint16_t pal = (source[4]>>8)&0x3f;
 	int top = ypos&0xff;
 	int bottom = ypos>>8;
 	if( bottom == 0xff ) return 1; /* end of spritelist marker */
@@ -185,7 +185,7 @@ int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const UINT16 
 	if(bottom !=0 && bottom > top && pal !=0x3f)
 #endif
 	{
-		UINT16 bank=(source[4]>>4)&0x3;
+		uint16_t bank=(source[4]>>4)&0x3;
 		int gfx = 4*(source[3]&0x7fff);
 		sprite->priority = source[4]&0x3;
 		sprite->flags = SYS16_SPR_VISIBLE;
@@ -209,7 +209,7 @@ int sys16_sprite_fantzone( struct sys16_sprite_attributes *sprite, const UINT16 
 	return 0;
 }
 
-int sys16_sprite_quartet2( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_quartet2( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /* Quartet2, Alexkidd, Bodyslam, mjleague, shinobibl
 	0	YYYYYYYY YYYYYYYY	bottom, top
 	1	-------X XXXXXXXX	xpos
@@ -220,16 +220,16 @@ int sys16_sprite_quartet2( struct sys16_sprite_attributes *sprite, const UINT16 
 	6	-------- --------
 	7	-------- --------
 */
-	UINT16 ypos = source[0];
+	uint16_t ypos = source[0];
 	int top = ypos&0xff;
 	int bottom = ypos>>8;
 	if( bottom == 0xff ) return 1;
 	if(bottom !=0 && bottom > top){
-		UINT16 spr_pri=(source[4])&0xf; /* ?? */
-		UINT16 bank=(source[4]>>4) &0xf;
-		UINT16 pal=(source[4]>>8)&0x3f;
-		UINT16 tsource[4];
-		UINT16 width;
+		uint16_t spr_pri=(source[4])&0xf; /* ?? */
+		uint16_t bank=(source[4]>>4) &0xf;
+		uint16_t pal=(source[4]>>8)&0x3f;
+		uint16_t tsource[4];
+		uint16_t width;
 		int gfx;
 
 		if (spr_pri) { /* MASH - ?? */
@@ -269,7 +269,7 @@ int sys16_sprite_quartet2( struct sys16_sprite_attributes *sprite, const UINT16 
 	return 0;
 }
 
-int sys16_sprite_hangon( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_hangon( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /*
 	0	YYYYYYYY YYYYYYYY	bottom, top
 	1	-------X XXXXXXXX	xpos
@@ -280,15 +280,15 @@ int sys16_sprite_hangon( struct sys16_sprite_attributes *sprite, const UINT16 *s
 	6	-------- --------
 	7	-------- --------
 */
-	UINT16 ypos = source[0];
+	uint16_t ypos = source[0];
 	int top = ypos&0xff;
 	int bottom = ypos>>8;
 	if( bottom == 0xff ) return 1; /* end of spritelist marker */
 	if(bottom !=0 && bottom > top){
-		UINT16 bank=(source[1]>>12);
-		UINT16 pal=(source[4]>>8)&0x3f;
-		UINT16 tsource[4];
-		UINT16 width;
+		uint16_t bank=(source[1]>>12);
+		uint16_t pal=(source[4]>>8)&0x3f;
+		uint16_t tsource[4];
+		uint16_t width;
 		int gfx;
 		int zoomx,zoomy;
 		tsource[2]=source[2];
@@ -323,7 +323,7 @@ int sys16_sprite_hangon( struct sys16_sprite_attributes *sprite, const UINT16 *s
 	return 0;
 }
 
-int sys16_sprite_sharrier( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_sharrier( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /*
 	0	YYYYYYYY	YYYYYYYY	bottom, top
 	1	BBBB---X	XXXXXXXX	bank, xpos
@@ -334,7 +334,7 @@ int sys16_sprite_sharrier( struct sys16_sprite_attributes *sprite, const UINT16 
 	6	--------	--------
 	7	--------	--------
 */
-	UINT16 ypos = source[0];
+	uint16_t ypos = source[0];
 	int top = ypos&0xff;
 	int bottom = ypos>>8;
 	if( bottom == 0xff ) return 1; /* end of spritelist marker */
@@ -368,7 +368,7 @@ int sys16_sprite_sharrier( struct sys16_sprite_attributes *sprite, const UINT16 
 	return 0;
 }
 
-int sys16_sprite_outrun( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_outrun( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /*		case 7: // Outrun
 	0	??---BBB	YYYYYYYY
 	1	TTTTTTTT	TTTTTTTT
@@ -419,7 +419,7 @@ int sys16_sprite_outrun( struct sys16_sprite_attributes *sprite, const UINT16 *s
 	return 0;
 }
 
-int sys16_sprite_aburner( struct sys16_sprite_attributes *sprite, const UINT16 *source, int bJustGetColor ){
+int sys16_sprite_aburner( struct sys16_sprite_attributes *sprite, const uint16_t *source, int bJustGetColor ){
 /*		case 9: aburner
 	0	EH--BBB1	YYYYYYYY	end-of-list, hide, bank, screen ypos
 	1	TTTTTTTT	TTTTTTTT	gfx dword offset

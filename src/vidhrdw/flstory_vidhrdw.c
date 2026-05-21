@@ -12,7 +12,7 @@
 static struct tilemap *tilemap;
 static int char_bank,palette_bank,flipscreen,gfxctrl;
 
-UINT8 *flstory_scrlram;
+uint8_t *flstory_scrlram;
 
 
 static void get_tile_info(int tile_index)

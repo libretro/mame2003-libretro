@@ -8,10 +8,10 @@ Atari Sprint 8 video emulation
 
 extern void sprint8_collision_callback(int n);
 
-UINT8* sprint8_video_ram;
-UINT8* sprint8_pos_h_ram;
-UINT8* sprint8_pos_v_ram;
-UINT8* sprint8_pos_d_ram;
+uint8_t* sprint8_video_ram;
+uint8_t* sprint8_pos_h_ram;
+uint8_t* sprint8_pos_v_ram;
+uint8_t* sprint8_pos_d_ram;
 
 static struct tilemap* tilemap1;
 static struct tilemap* tilemap2;
@@ -22,7 +22,7 @@ static struct mame_bitmap* helper2;
 
 static void get_tile_info1(int tile_index)
 {
-	UINT8 code = sprint8_video_ram[tile_index];
+	uint8_t code = sprint8_video_ram[tile_index];
 
 	int color = 0;
 
@@ -52,7 +52,7 @@ static void get_tile_info1(int tile_index)
 
 static void get_tile_info2(int tile_index)
 {
-	UINT8 code = sprint8_video_ram[tile_index];
+	uint8_t code = sprint8_video_ram[tile_index];
 
 	int color = 0;
 
@@ -120,7 +120,7 @@ static void draw_sprites(struct mame_bitmap* bitmap, const struct rectangle* rec
 
 	for (i = 0; i < 16; i++)
 	{
-		UINT8 code = sprint8_pos_d_ram[i];
+		uint8_t code = sprint8_pos_d_ram[i];
 
 		int x = sprint8_pos_h_ram[i];
 		int y = sprint8_pos_v_ram[i];
@@ -161,8 +161,8 @@ VIDEO_EOF( sprint8 )
 
 	for (y = Machine->visible_area.min_y; y <= Machine->visible_area.max_y; y++)
 	{
-		const UINT16* p1 = (UINT16*) helper1->line[y];
-		const UINT16* p2 = (UINT16*) helper2->line[y];
+		const uint16_t* p1 = (uint16_t*) helper1->line[y];
+		const uint16_t* p2 = (uint16_t*) helper2->line[y];
 
 		for (x = Machine->visible_area.min_x; x <= Machine->visible_area.max_x; x++)
 		{

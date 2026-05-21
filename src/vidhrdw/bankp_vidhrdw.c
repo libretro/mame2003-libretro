@@ -9,8 +9,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *bankp_videoram2;
-UINT8 *bankp_colorram2;
+uint8_t *bankp_videoram2;
+uint8_t *bankp_colorram2;
 
 static int scroll_x;
 static int priority;

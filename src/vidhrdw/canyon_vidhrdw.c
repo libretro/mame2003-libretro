@@ -8,7 +8,7 @@ Atari Canyon Bomber video emulation
 
 static struct tilemap *tilemap;
 
-UINT8* canyon_videoram;
+uint8_t* canyon_videoram;
 
 
 WRITE_HANDLER( canyon_videoram_w )
@@ -24,7 +24,7 @@ WRITE_HANDLER( canyon_videoram_w )
 
 static void get_bg_tile_info(int tile_index)
 {
-	UINT8 code = canyon_videoram[tile_index];
+	uint8_t code = canyon_videoram[tile_index];
 
 	SET_TILE_INFO(0, code & 0x3f, code >> 7, 0)
 }

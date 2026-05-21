@@ -273,8 +273,8 @@ static void ripcord_draw_skydiver( struct mame_bitmap *bitmap )
 	const struct GfxElement *gfx;
 	const struct rectangle *clip;
 	pen_t *pal_ptr;
-	UINT8  *src_lineptr, *src_pixptr;
-	UINT16 *dst_lineptr, *dst_lineend;
+	uint8_t  *src_lineptr, *src_pixptr;
+	uint16_t *dst_lineptr, *dst_lineend;
 	unsigned int code, color;
 	int sx, sy;
 	int src_pitch, dst_width, dst_height, dst_pitch, dst_pixoffs, dst_pixend;
@@ -311,7 +311,7 @@ static void ripcord_draw_skydiver( struct mame_bitmap *bitmap )
 		dst_pitch = -dst_pitch;
 	}
 
-	dst_lineptr = (UINT16*)bitmap->line[sy];
+	dst_lineptr = (uint16_t*)bitmap->line[sy];
 	dst_pixend = (sx + dst_width) & 0xff;
 	dst_lineend = dst_lineptr + dst_pitch * dst_height;
 

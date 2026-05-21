@@ -16,13 +16,13 @@
 
 
 /* Globals */
-UINT8 *qix_videoaddress;
-UINT8 qix_cocktail_flip;
+uint8_t *qix_videoaddress;
+uint8_t qix_cocktail_flip;
 
 
 /* Local variables */
-static UINT8 vram_mask;
-static UINT8 qix_palettebank;
+static uint8_t vram_mask;
+static uint8_t qix_palettebank;
 
 
 
@@ -176,7 +176,7 @@ WRITE_HANDLER( qix_paletteram_w )
 	/* this conversion table should be about right. It gives a reasonable */
 	/* gray scale in the test screen, and the red, green and blue squares */
 	/* in the same screen are barely visible, as the manual requires. */
-	static UINT8 table[16] =
+	static uint8_t table[16] =
 	{
 		0x00,	/* value = 0, intensity = 0 */
 		0x12,	/* value = 0, intensity = 1 */

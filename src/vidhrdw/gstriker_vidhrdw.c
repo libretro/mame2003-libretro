@@ -333,11 +333,11 @@ Abstracts the VS9210
 tCG10103 CG10103[MAX_CG10103];
 static tCG10103* CG10103_cur_chip;
 
-static void CG10103_draw_sprite(struct mame_bitmap* screen, const struct rectangle* cliprect, UINT16* spr, int drawpri)
+static void CG10103_draw_sprite(struct mame_bitmap* screen, const struct rectangle* cliprect, uint16_t* spr, int drawpri)
 {
 	int ypos = spr[0] & 0x1FF;
 	int xpos = (spr[1] & 0x1FF);
-	UINT32 tile = (spr[3] & 0xFFFF) | ((spr[2] & 1) << 16);
+	uint32_t tile = (spr[3] & 0xFFFF) | ((spr[2] & 1) << 16);
 	int ynum = (spr[0] >> 9) & 0x7;
 	int xnum = (spr[1] >> 9) & 0x7;
 	int color = (spr[2] >> 8) & 0x1F;
@@ -421,7 +421,7 @@ static void CG10103_draw(int numchip, struct mame_bitmap* screen, const struct r
 	// Parse the sorting list
 	for (i=0;i<0x400;i++)
 	{
-		UINT16 cmd = *splist++;
+		uint16_t cmd = *splist++;
 
 		// End of list
 		if (cmd & 0x4000)
@@ -491,8 +491,8 @@ VIDEO_UPDATE(gstriker)
 
 #if 0
 	usrintf_showmessage("%04x %04x %04x %04x %04x %04x %04x %04x",
-		(UINT16)gs_mixer_regs[8], (UINT16)gs_mixer_regs[9], (UINT16)gs_mixer_regs[10], (UINT16)gs_mixer_regs[11],
-		(UINT16)gs_mixer_regs[12], (UINT16)gs_mixer_regs[13], (UINT16)gs_mixer_regs[14], (UINT16)gs_mixer_regs[15]
+		(uint16_t)gs_mixer_regs[8], (uint16_t)gs_mixer_regs[9], (uint16_t)gs_mixer_regs[10], (uint16_t)gs_mixer_regs[11],
+		(uint16_t)gs_mixer_regs[12], (uint16_t)gs_mixer_regs[13], (uint16_t)gs_mixer_regs[14], (uint16_t)gs_mixer_regs[15]
 	);
 #endif
 }

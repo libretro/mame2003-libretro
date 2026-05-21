@@ -211,7 +211,7 @@ WRITE_HANDLER( cloud9_bitmap_regs_w )
 ***************************************************************************/
 WRITE_HANDLER( cloud9_bitmap_w )
 {
-	UINT8 x, y;
+	uint8_t x, y;
 
 	y = ((offset + 0x600) >> 6);
 	x = ((offset + 0x600) & 0x3f) << 2;

@@ -14,8 +14,8 @@
 #include "vidhrdw/taitoic.h"
 
 
-static UINT16 sprite_ctrl = 0;
-static UINT16 sprites_flipscreen = 0;
+static uint16_t sprite_ctrl = 0;
+static uint16_t sprites_flipscreen = 0;
 
 /***************************************************************************/
 

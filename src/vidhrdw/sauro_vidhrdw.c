@@ -9,10 +9,10 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *tecfri_videoram;
-UINT8 *tecfri_colorram;
-UINT8 *tecfri_videoram2;
-UINT8 *tecfri_colorram2;
+uint8_t *tecfri_videoram;
+uint8_t *tecfri_colorram;
+uint8_t *tecfri_videoram2;
+uint8_t *tecfri_colorram2;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 

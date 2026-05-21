@@ -33,8 +33,8 @@
  *************************************/
 
 /* externally accessible */
-UINT8 hdgsp_multisync;
-UINT8 *hdgsp_vram;
+uint8_t hdgsp_multisync;
+uint8_t *hdgsp_vram;
 data16_t *hdgsp_control_lo;
 data16_t *hdgsp_control_hi;
 data16_t *hdgsp_paletteram_lo;
@@ -51,16 +51,16 @@ size_t hdgsp_vram_size;
 
 static offs_t vram_mask;
 
-static UINT8 shiftreg_enable;
+static uint8_t shiftreg_enable;
 
-static UINT32 *mask_table;
-static UINT8 *gsp_shiftreg_source;
+static uint32_t *mask_table;
+static uint8_t *gsp_shiftreg_source;
 
 static offs_t gfx_offset;
 static offs_t gfx_rowbytes;
 static int gfx_offsetscan;
-static INT8 gfx_finescroll;
-static UINT8 gfx_palettebank;
+static int8_t gfx_finescroll;
+static uint8_t gfx_palettebank;
 
 
 
@@ -72,7 +72,7 @@ static UINT8 gfx_palettebank;
 
 VIDEO_START( harddriv )
 {
-	UINT32 *destmask, mask;
+	uint32_t *destmask, mask;
 	int i;
 
 	shiftreg_enable = 0;
@@ -84,7 +84,7 @@ VIDEO_START( harddriv )
 	gfx_palettebank = 0;
 
 	/* allocate the mask table */
-	mask_table = auto_malloc(sizeof(UINT32) * 4 * 65536);
+	mask_table = auto_malloc(sizeof(uint32_t) * 4 * 65536);
 	if (!mask_table)
 		return 1;
 
@@ -152,7 +152,7 @@ VIDEO_START( harddriv )
  *
  *************************************/
 
-void hdgsp_write_to_shiftreg(UINT32 address, UINT16 *shiftreg)
+void hdgsp_write_to_shiftreg(uint32_t address, uint16_t *shiftreg)
 {
 	/* access to the 1bpp/2bpp area */
 	if (address >= 0x02000000 && address <= 0x020fffff)
@@ -178,7 +178,7 @@ void hdgsp_write_to_shiftreg(UINT32 address, UINT16 *shiftreg)
 }
 
 
-void hdgsp_read_from_shiftreg(UINT32 address, UINT16 *shiftreg)
+void hdgsp_read_from_shiftreg(uint32_t address, uint16_t *shiftreg)
 {
 	if (!shiftreg_enable)
 		return;
@@ -214,7 +214,7 @@ void hdgsp_read_from_shiftreg(UINT32 address, UINT16 *shiftreg)
  *
  *************************************/
 
-void hdgsp_display_update(UINT32 offs, int rowbytes, int scanline)
+void hdgsp_display_update(uint32_t offs, int rowbytes, int scanline)
 {
 	if (scanline == 0) scanline--;
 	force_partial_update(scanline);
@@ -345,10 +345,10 @@ READ16_HANDLER( hdgsp_vram_2bpp_r )
 
 WRITE16_HANDLER( hdgsp_vram_1bpp_w )
 {
-	UINT32 *dest = (UINT32 *)&hdgsp_vram[offset * 16];
-	UINT32 *mask = &mask_table[data * 4];
-	UINT32 color = hdgsp_control_lo[0] & 0xff;
-	UINT32 curmask;
+	uint32_t *dest = (uint32_t *)&hdgsp_vram[offset * 16];
+	uint32_t *mask = &mask_table[data * 4];
+	uint32_t color = hdgsp_control_lo[0] & 0xff;
+	uint32_t curmask;
 
 	color |= color << 8;
 	color |= color << 16;
@@ -373,10 +373,10 @@ WRITE16_HANDLER( hdgsp_vram_1bpp_w )
 
 WRITE16_HANDLER( hdgsp_vram_2bpp_w )
 {
-	UINT32 *dest = (UINT32 *)&hdgsp_vram[offset * 8];
-	UINT32 *mask = &mask_table[data * 2];
-	UINT32 color = hdgsp_control_lo[0];
-	UINT32 curmask;
+	uint32_t *dest = (uint32_t *)&hdgsp_vram[offset * 8];
+	uint32_t *mask = &mask_table[data * 2];
+	uint32_t color = hdgsp_control_lo[0];
+	uint32_t curmask;
 
 	color |= color << 16;
 
@@ -519,8 +519,8 @@ VIDEO_UPDATE( harddriv )
 	/* loop over scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT32 offset = adjusted_offs + gfx_rowbytes * (y - gfx_offsetscan);
-		UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
+		uint32_t offset = adjusted_offs + gfx_rowbytes * (y - gfx_offsetscan);
+		uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
 
 		/* render */
 		for (x = 0; x < lzero; x++)

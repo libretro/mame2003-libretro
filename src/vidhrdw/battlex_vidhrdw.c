@@ -97,8 +97,8 @@ VIDEO_START( battlex )
 static void battlex_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
 	const struct GfxElement *gfx = Machine->gfx[1];
-	UINT8 *source = spriteram;
-	UINT8 *finish = spriteram + 0x200;
+	uint8_t *source = spriteram;
+	uint8_t *finish = spriteram + 0x200;
 
 	while( source<finish )
 	{

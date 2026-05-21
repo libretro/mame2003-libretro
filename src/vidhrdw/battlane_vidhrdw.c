@@ -7,8 +7,8 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *battlane_spriteram;
-UINT8 *battlane_tileram;
+uint8_t *battlane_spriteram;
+uint8_t *battlane_tileram;
 
 static struct tilemap *bg_tilemap;
 
@@ -91,11 +91,11 @@ WRITE_HANDLER( battlane_bitmap_w )
 	{
 		if (data & 1 << i)
 		{
-			((UINT8 *)screen_bitmap->line[offset % 0x100])[(offset / 0x100) * 8 + i] |= orval;
+			((uint8_t *)screen_bitmap->line[offset % 0x100])[(offset / 0x100) * 8 + i] |= orval;
 		}
 		else
 		{
-			((UINT8 *)screen_bitmap->line[offset % 0x100])[(offset / 0x100) * 8 + i] &= ~orval;
+			((uint8_t *)screen_bitmap->line[offset % 0x100])[(offset / 0x100) * 8 + i] &= ~orval;
 		}
 	}
 }
@@ -115,7 +115,7 @@ static void get_tile_info_bg(int tile_index)
 	SET_TILE_INFO(gfxn, code, color, 0)
 }
 
-static UINT32 battlane_tilemap_scan_rows_2x2( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t battlane_tilemap_scan_rows_2x2( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* 
 			Tilemap Memory Organization
@@ -234,7 +234,7 @@ static void battlane_draw_fg_bitmap( struct mame_bitmap *bitmap )
 	{
 		for (x = 0; x < 32 * 8; x++)
 		{
-			data = ((UINT8 *)screen_bitmap->line[y])[x];
+			data = ((uint8_t *)screen_bitmap->line[y])[x];
 
 			if (data)
 			{

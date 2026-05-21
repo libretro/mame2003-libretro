@@ -22,13 +22,13 @@ static int bg_clip_mode;
 static int title_screen;
 
 /* Paged RAM 0 */
-static UINT8 *psychic5_bg_videoram;
-static UINT8 *ps5_dummy_bg_ram;
+static uint8_t *psychic5_bg_videoram;
+static uint8_t *ps5_dummy_bg_ram;
 
 /* Paged RAM 1 */
-static UINT8 *ps5_io_ram;
-static UINT8 *ps5_palette_ram;
-static UINT8 *psychic5_fg_videoram;
+static uint8_t *ps5_io_ram;
+static uint8_t *ps5_palette_ram;
+static uint8_t *psychic5_fg_videoram;
 
 static struct tilemap *bg_tilemap, *fg_tilemap;
 
@@ -135,7 +135,7 @@ void set_background_palette_intensity(void)
 
 		if (ps5_io_ram[BG_SCREEN_MODE] & 2)
 		{
-			val = (UINT8)(0.299*r + 0.587*g + 0.114*b);
+			val = (uint8_t)(0.299*r + 0.587*g + 0.114*b);
 
  			if (ix==2)		/* purple background enable */
 			 palette_set_color(256+i,val*0.6,0,val*0.8);

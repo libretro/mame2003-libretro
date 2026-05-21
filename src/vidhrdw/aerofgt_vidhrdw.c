@@ -23,7 +23,7 @@ static int sprite_gfx;
 
 static void get_pspikes_tile_info(int tile_index)
 {
-	UINT16 code = aerofgt_bg1videoram[tile_index];
+	uint16_t code = aerofgt_bg1videoram[tile_index];
 	int bank = (code & 0x1000) >> 12;
 	SET_TILE_INFO(
 			0,
@@ -34,7 +34,7 @@ static void get_pspikes_tile_info(int tile_index)
 
 static void karatblz_bg1_tile_info(int tile_index)
 {
-	UINT16 code = aerofgt_bg1videoram[tile_index];
+	uint16_t code = aerofgt_bg1videoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x1fff) + (gfxbank[0] << 13),
@@ -45,7 +45,7 @@ static void karatblz_bg1_tile_info(int tile_index)
 /* also spinlbrk */
 static void karatblz_bg2_tile_info(int tile_index)
 {
-	UINT16 code = aerofgt_bg2videoram[tile_index];
+	uint16_t code = aerofgt_bg2videoram[tile_index];
 	SET_TILE_INFO(
 			1,
 			(code & 0x1fff) + (gfxbank[1] << 13),
@@ -55,7 +55,7 @@ static void karatblz_bg2_tile_info(int tile_index)
 
 static void spinlbrk_bg1_tile_info(int tile_index)
 {
-	UINT16 code = aerofgt_bg1videoram[tile_index];
+	uint16_t code = aerofgt_bg1videoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x0fff) + (gfxbank[0] << 12),
@@ -65,7 +65,7 @@ static void spinlbrk_bg1_tile_info(int tile_index)
 
 static void get_bg1_tile_info(int tile_index)
 {
-	UINT16 code = aerofgt_bg1videoram[tile_index];
+	uint16_t code = aerofgt_bg1videoram[tile_index];
 	int bank = (code & 0x1800) >> 11;
 	SET_TILE_INFO(
 			0,
@@ -76,7 +76,7 @@ static void get_bg1_tile_info(int tile_index)
 
 static void get_bg2_tile_info(int tile_index)
 {
-	UINT16 code = aerofgt_bg2videoram[tile_index];
+	uint16_t code = aerofgt_bg2videoram[tile_index];
 	int bank = 4 + ((code & 0x1800) >> 11);
 	SET_TILE_INFO(
 			1,

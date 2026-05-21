@@ -35,10 +35,10 @@ pen_t default_colortable_mono[] =
 /* our chip state */
 typedef struct {
 	struct mame_bitmap		*bitmap;				/* target bitmap */
-	UINT8					*videoram;				/* video ram */
-	UINT8					*spriteram;				/* sprite ram */
+	uint8_t					*videoram;				/* video ram */
+	uint8_t					*spriteram;				/* sprite ram */
 	pen_t					*colortable_mono;		/* monochromatic color table modified at run time */
-	UINT8					*dirtychar;				/* an array flagging dirty characters */
+	uint8_t					*dirtychar;				/* an array flagging dirty characters */
 	int						chars_are_dirty;		/* master flag to check if theres any dirty character */
 	void 					*scanline_timer;		/* scanline timer */
 	int						scanline;				/* scanline count */
@@ -58,7 +58,7 @@ typedef struct {
 	int						tile_page;				/* current tile page */
 	int						sprite_page;			/* current sprite page */
 	int						back_color;				/* background color */
-	UINT8					*ppu_page[4];			/* ppu pages */
+	uint8_t					*ppu_page[4];			/* ppu pages */
 	int						nes_vram[8];			/* keep track of 8 .5k vram pages to speed things up */
 	int						scan_scale;				/* scan scale */
 	int						scanlines_per_frame;	/* number of scanlines per frame */
@@ -255,7 +255,7 @@ int ppu2c03b_init( struct ppu2c03b_interface *interface )
 
 		/* now create the gfx region */
 		{
-			UINT8 *src = chips[i].has_videorom ? memory_region( intf->vrom_region[i] ) : chips[i].videoram;
+			uint8_t *src = chips[i].has_videorom ? memory_region( intf->vrom_region[i] ) : chips[i].videoram;
 			Machine->gfx[intf->gfx_layout_number[i]] = decodegfx( src, &ppu_charlayout );
 
 			if ( Machine->gfx[intf->gfx_layout_number[i]] == 0 )
@@ -275,7 +275,7 @@ int ppu2c03b_init( struct ppu2c03b_interface *interface )
 	return 0;
 }
 
-static void draw_background( const int num, UINT8 *line_priority )
+static void draw_background( const int num, uint8_t *line_priority )
 {
 	/* cache some values locally */
 	struct mame_bitmap *bitmap = chips[num].bitmap;
@@ -288,18 +288,18 @@ static void draw_background( const int num, UINT8 *line_priority )
 	const int tile_page = chips[num].tile_page;
 	const int char_modulo = Machine->gfx[gfx_bank]->char_modulo;
 	const int line_modulo = Machine->gfx[gfx_bank]->line_modulo;
-	UINT8 *gfx_data = Machine->gfx[gfx_bank]->gfxdata;
-	UINT8 **ppu_page = chips[num].ppu_page;
+	uint8_t *gfx_data = Machine->gfx[gfx_bank]->gfxdata;
+	uint8_t **ppu_page = chips[num].ppu_page;
 	int	start_x = ( chips[num].x_fine ^ 0x07 ) - 7;
-	UINT16 back_pen;
-	UINT16 *dest;
+	uint16_t back_pen;
+	uint16_t *dest;
 
-	UINT8 scroll_x_coarse, scroll_y_coarse, scroll_y_fine, color_mask;
+	uint8_t scroll_x_coarse, scroll_y_coarse, scroll_y_fine, color_mask;
 	int x, tile_index, start, i;
 
 	const pen_t *color_table;
 	const pen_t *paldata;
-	const UINT8 *sd;
+	const uint8_t *sd;
 
 	/* setup the color mask and colortable to use */
 	if ( ppu_regs[PPU_CONTROL1] & PPU_CONTROL1_DISPLAY_MONO )
@@ -328,7 +328,7 @@ static void draw_background( const int num, UINT8 *line_priority )
 	tile_index = ( ( refresh_data & 0xc00 ) | 0x2000 ) + scroll_y_coarse * 32;
 
 	/* set up dest */
-	dest = ((UINT16 *) bitmap->base) + (bitmap->rowpixels * scanline) + start_x;
+	dest = ((uint16_t *) bitmap->base) + (bitmap->rowpixels * scanline) + start_x;
 
 	/* draw the 32 or 33 tiles that make up a line */
 	while ( start_x < VISIBLE_SCREEN_WIDTH )
@@ -339,7 +339,7 @@ static void draw_background( const int num, UINT8 *line_priority )
 		int index1;
 		int page, page2, address;
 		int index2;
-		UINT16 pen;
+		uint16_t pen;
 
 		index1 = tile_index + x;
 
@@ -399,7 +399,7 @@ static void draw_background( const int num, UINT8 *line_priority )
 	/* if the left 8 pixels for the background are off, blank 'em */
 	if ( !( ppu_regs[PPU_CONTROL1] & PPU_CONTROL1_BACKGROUND_L8 ) )
 	{
-		dest = ((UINT16 *) bitmap->base) + (bitmap->rowpixels * scanline);
+		dest = ((uint16_t *) bitmap->base) + (bitmap->rowpixels * scanline);
 		for( i = 0; i < 8; i++ )
 			*(dest++) = back_pen;
 	}
@@ -407,7 +407,7 @@ static void draw_background( const int num, UINT8 *line_priority )
 	/* done updating, whew */
 }
 
-static void draw_sprites( const int num, UINT8 *line_priority )
+static void draw_sprites( const int num, uint8_t *line_priority )
 {
 	/* cache some values locally */
 	struct mame_bitmap *bitmap = chips[num].bitmap;
@@ -417,9 +417,9 @@ static void draw_sprites( const int num, UINT8 *line_priority )
 	const int sprite_page = chips[num].sprite_page;
 	const int char_modulo = Machine->gfx[gfx_bank]->char_modulo;
 	const int line_modulo = Machine->gfx[gfx_bank]->line_modulo;
-	const UINT8 *sprites = chips[num].spriteram;
+	const uint8_t *sprites = chips[num].spriteram;
 	pen_t *color_table = Machine->gfx[gfx_bank]->colortable;
-	UINT8 *gfx_data = Machine->gfx[gfx_bank]->gfxdata;
+	uint8_t *gfx_data = Machine->gfx[gfx_bank]->gfxdata;
 	int *ppu_regs = &chips[num].regs[0];
 
 	int x,y, i;
@@ -434,7 +434,7 @@ static void draw_sprites( const int num, UINT8 *line_priority )
 	int start;
 
 	const pen_t *paldata;
-	const UINT8 *sd;
+	const uint8_t *sd;
 
 	/* determine if the sprites are 8x8 or 8x16 */
 	size = ( ppu_regs[PPU_CONTROL0] & PPU_CONTROL0_SPRITE_SIZE ) ? 16 : 8;
@@ -621,7 +621,7 @@ static void draw_sprites( const int num, UINT8 *line_priority )
  *************************************/
 static void render_scanline( int num )
 {
-	UINT8	line_priority[VISIBLE_SCREEN_WIDTH];
+	uint8_t	line_priority[VISIBLE_SCREEN_WIDTH];
 	int		*ppu_regs = &chips[num].regs[0];
 	int 	i;
 	int		refresh_data = chips[num].refresh_data;
@@ -656,7 +656,7 @@ static void render_scanline( int num )
 	/* if it's rolled, increment the coarse y-scroll */
 	if ( refresh_data & 0x8000 )
 	{
-		UINT16 tmp;
+		uint16_t tmp;
 		tmp = ( refresh_data & 0x03e0 ) + 0x20;
 		refresh_data &= 0x7c1f;
 		/* handle bizarro scrolling rollover at the 30th (not 32nd) vertical tile */
@@ -745,8 +745,8 @@ static void scanline_callback( int num )
 	if ( !chips[num].has_videorom && chips[num].chars_are_dirty )
 	{
 		/* cache some values */
-		UINT8 *dirtyarray = chips[num].dirtychar;
-		UINT8 *vram = chips[num].videoram;
+		uint8_t *dirtyarray = chips[num].dirtychar;
+		uint8_t *vram = chips[num].videoram;
 		struct GfxElement *gfx = Machine->gfx[intf->gfx_layout_number[num]];
 
 		/* then iterate and decode */
@@ -1124,7 +1124,7 @@ void ppu2c03b_w( int num, int offset, int data )
  *	Sprite DMA
  *
  *************************************/
-void ppu2c03b_spriteram_dma( int num, const UINT8 *source )
+void ppu2c03b_spriteram_dma( int num, const uint8_t *source )
 {
 	/* check bounds */
 	if ( num >= intf->num )

@@ -23,10 +23,10 @@
 static struct tilemap *tilemap;
 static int char_bank,palette_bank,gfxctrl;
 
-UINT8 *nycaptor_scrlram;
+uint8_t *nycaptor_scrlram;
 
-UINT8 *nycaptor_spriteram;
-extern UINT8 *nycaptor_sharedram;
+uint8_t *nycaptor_spriteram;
+extern uint8_t *nycaptor_sharedram;
 WRITE_HANDLER(nycaptor_spriteram_w)
 {
 	nycaptor_spriteram[offset]=data;

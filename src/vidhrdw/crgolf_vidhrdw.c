@@ -34,7 +34,7 @@ WRITE_HANDLER( crgolf_videoram_bit0_w )
 	struct mame_bitmap *screen = (*crgolf_screen_select & 1) ? screenb : screena;
 	int x = (offset % 32) * 8;
 	int y = offset / 32;
-	UINT16 *dest = (UINT16 *)screen->base + screen->rowpixels * y + x;
+	uint16_t *dest = (uint16_t *)screen->base + screen->rowpixels * y + x;
 
 	dest[0] = (dest[0] & ~0x01) | ((data >> 7) & 0x01);
 	dest[1] = (dest[1] & ~0x01) | ((data >> 6) & 0x01);
@@ -52,7 +52,7 @@ WRITE_HANDLER( crgolf_videoram_bit1_w )
 	struct mame_bitmap *screen = (*crgolf_screen_select & 1) ? screenb : screena;
 	int x = (offset % 32) * 8;
 	int y = offset / 32;
-	UINT16 *dest = (UINT16 *)screen->base + screen->rowpixels * y + x;
+	uint16_t *dest = (uint16_t *)screen->base + screen->rowpixels * y + x;
 
 	dest[0] = (dest[0] & ~0x02) | ((data >> 6) & 0x02);
 	dest[1] = (dest[1] & ~0x02) | ((data >> 5) & 0x02);
@@ -70,7 +70,7 @@ WRITE_HANDLER( crgolf_videoram_bit2_w )
 	struct mame_bitmap *screen = (*crgolf_screen_select & 1) ? screenb : screena;
 	int x = (offset % 32) * 8;
 	int y = offset / 32;
-	UINT16 *dest = (UINT16 *)screen->base + screen->rowpixels * y + x;
+	uint16_t *dest = (uint16_t *)screen->base + screen->rowpixels * y + x;
 
 	dest[0] = (dest[0] & ~0x04) | ((data >> 5) & 0x04);
 	dest[1] = (dest[1] & ~0x04) | ((data >> 4) & 0x04);
@@ -95,7 +95,7 @@ READ_HANDLER( crgolf_videoram_bit0_r )
 	struct mame_bitmap *screen = (*crgolf_screen_select & 1) ? screenb : screena;
 	int x = (offset % 32) * 8;
 	int y = offset / 32;
-	UINT16 *source = (UINT16 *)screen->base + screen->rowpixels * y + x;
+	uint16_t *source = (uint16_t *)screen->base + screen->rowpixels * y + x;
 
 	return	((source[0] & 0x01) << 7) |
 			((source[1] & 0x01) << 6) |
@@ -113,7 +113,7 @@ READ_HANDLER( crgolf_videoram_bit1_r )
 	struct mame_bitmap *screen = (*crgolf_screen_select & 1) ? screenb : screena;
 	int x = (offset % 32) * 8;
 	int y = offset / 32;
-	UINT16 *source = (UINT16 *)screen->base + screen->rowpixels * y + x;
+	uint16_t *source = (uint16_t *)screen->base + screen->rowpixels * y + x;
 
 	return	((source[0] & 0x02) << 6) |
 			((source[1] & 0x02) << 5) |
@@ -131,7 +131,7 @@ READ_HANDLER( crgolf_videoram_bit2_r )
 	struct mame_bitmap *screen = (*crgolf_screen_select & 1) ? screenb : screena;
 	int x = (offset % 32) * 8;
 	int y = offset / 32;
-	UINT16 *source = (UINT16 *)screen->base + screen->rowpixels * y + x;
+	uint16_t *source = (uint16_t *)screen->base + screen->rowpixels * y + x;
 
 	return	((source[0] & 0x04) << 5) |
 			((source[1] & 0x04) << 4) |

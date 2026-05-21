@@ -50,7 +50,7 @@ DRIVER_INIT( karianx )
 
 ***************************************************************************/
 
-static UINT32 scan_pages(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t scan_pages(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x3f) + ((row & 0x1f) << 6) + ((col & 0x40) << 5) + ((row & 0x20) << 7);
@@ -59,7 +59,7 @@ static UINT32 scan_pages(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
 static void get_bg_tile_info(int tile_index)
 {
 	int page = tile_index >> 11;
-	UINT16 attr = deniam_videoram[bg_page[page] * 0x0800 + (tile_index & 0x7ff)];
+	uint16_t attr = deniam_videoram[bg_page[page] * 0x0800 + (tile_index & 0x7ff)];
 	SET_TILE_INFO(
 			0,
 			attr,
@@ -70,7 +70,7 @@ static void get_bg_tile_info(int tile_index)
 static void get_fg_tile_info(int tile_index)
 {
 	int page = tile_index >> 11;
-	UINT16 attr = deniam_videoram[fg_page[page] * 0x0800 + (tile_index & 0x7ff)];
+	uint16_t attr = deniam_videoram[fg_page[page] * 0x0800 + (tile_index & 0x7ff)];
 	SET_TILE_INFO(
 			0,
 			attr,
@@ -80,7 +80,7 @@ static void get_fg_tile_info(int tile_index)
 
 static void get_tx_tile_info(int tile_index)
 {
-	UINT16 attr = deniam_textram[tile_index];
+	uint16_t attr = deniam_textram[tile_index];
 	SET_TILE_INFO(
 			0,
 			attr & 0xf1ff,
@@ -225,7 +225,7 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 	for (offs = spriteram_size/2-8;offs >= 0;offs -= 8)
 	{
 		int sx,starty,endy,x,y,start,color,width,flipx,primask;
-		UINT8 *rom = memory_region(REGION_GFX2);
+		uint8_t *rom = memory_region(REGION_GFX2);
 
 
 		sx = (spriteram16[offs+1] & 0x01ff) + 16*8 - 1;
@@ -275,9 +275,9 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 							if (sx+x >= cliprect->min_x && sx+x <= cliprect->max_x && 
 								y >= cliprect->min_y && y <= cliprect->max_y)
 							{
-								if ((((UINT8 *)priority_bitmap->line[y])[sx+x] & primask) == 0)
+								if ((((uint8_t *)priority_bitmap->line[y])[sx+x] & primask) == 0)
 									plot_pixel(bitmap,sx+x,y,Machine->pens[color*16+(rom[i]&0x0f)]);
-								((UINT8 *)priority_bitmap->line[y])[sx+x] = 8;
+								((uint8_t *)priority_bitmap->line[y])[sx+x] = 8;
 							}
 						}
 						x++;
@@ -295,9 +295,9 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 							if (sx+x >= cliprect->min_x && sx+x <= cliprect->max_x && 
 								y >= cliprect->min_y && y <= cliprect->max_y)
 							{
-								if ((((UINT8 *)priority_bitmap->line[y])[sx+x] & primask) == 0)
+								if ((((uint8_t *)priority_bitmap->line[y])[sx+x] & primask) == 0)
 									plot_pixel(bitmap,sx+x,y,Machine->pens[color*16+(rom[i]>>4)]);
-								((UINT8 *)priority_bitmap->line[y])[sx+x] = 8;
+								((uint8_t *)priority_bitmap->line[y])[sx+x] = 8;
 							}
 						}
 						x++;
@@ -319,9 +319,9 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 							if (sx+x >= cliprect->min_x && sx+x <= cliprect->max_x && 
 								y >= cliprect->min_y && y <= cliprect->max_y)
 							{
-								if ((((UINT8 *)priority_bitmap->line[y])[sx+x] & primask) == 0)
+								if ((((uint8_t *)priority_bitmap->line[y])[sx+x] & primask) == 0)
 									plot_pixel(bitmap,sx+x,y,Machine->pens[color*16+(rom[i]>>4)]);
-								((UINT8 *)priority_bitmap->line[y])[sx+x] = 8;
+								((uint8_t *)priority_bitmap->line[y])[sx+x] = 8;
 							}
 						}
 						x++;
@@ -339,9 +339,9 @@ static void draw_sprites(struct mame_bitmap *bitmap, const struct rectangle *cli
 							if (sx+x >= cliprect->min_x && sx+x <= cliprect->max_x && 
 								y >= cliprect->min_y && y <= cliprect->max_y)
 							{
-								if ((((UINT8 *)priority_bitmap->line[y])[sx+x] & primask) == 0)
+								if ((((uint8_t *)priority_bitmap->line[y])[sx+x] & primask) == 0)
 									plot_pixel(bitmap,sx+x,y,Machine->pens[color*16+(rom[i]&0x0f)]);
-								((UINT8 *)priority_bitmap->line[y])[sx+x] = 8;
+								((uint8_t *)priority_bitmap->line[y])[sx+x] = 8;
 							}
 						}
 						x++;

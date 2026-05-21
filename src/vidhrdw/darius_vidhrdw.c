@@ -23,8 +23,8 @@ static struct tempsprite *spritelist;
 
 static void actual_get_fg_tile_info(data16_t *ram,int gfxnum,int tile_index)
 {
-	UINT16 code = (ram[tile_index + 0x2000] & 0x7ff);
-	UINT16 attr = ram[tile_index];
+	uint16_t code = (ram[tile_index + 0x2000] & 0x7ff);
+	uint16_t attr = ram[tile_index];
 
 	SET_TILE_INFO(
 			gfxnum,
@@ -96,8 +96,8 @@ WRITE16_HANDLER( darius_fg_layer_w )
 void darius_draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cliprect,int primask, int y_offs)
 {
 	int offs,curx,cury;
-	UINT16 code,data,sx,sy;
-	UINT8 flipx,flipy,color,priority;
+	uint16_t code,data,sx,sy;
+	uint8_t flipx,flipy,color,priority;
 
 	/* pdrawgfx() needs us to draw sprites front to back, so we have to build a list
 	   while processing sprite ram and then draw them all at the end */

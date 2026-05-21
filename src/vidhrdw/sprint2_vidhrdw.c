@@ -6,7 +6,7 @@
 
 #include "driver.h"
 
-UINT8* sprint2_video_ram;
+uint8_t* sprint2_video_ram;
 
 static struct tilemap* tilemap;
 static struct mame_bitmap* helper;
@@ -16,7 +16,7 @@ static int collision[2];
 
 static void get_tile_info(int tile_index)
 {
-	UINT8 code = sprint2_video_ram[tile_index];
+	uint8_t code = sprint2_video_ram[tile_index];
 
 	SET_TILE_INFO(0, code & 0x3f, code >> 7, 0)
 }
@@ -73,9 +73,9 @@ WRITE_HANDLER( sprint2_video_ram_w )
 }
 
 
-static UINT8 collision_check(struct rectangle* rect)
+static uint8_t collision_check(struct rectangle* rect)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	int x;
 	int y;

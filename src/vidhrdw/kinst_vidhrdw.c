@@ -68,24 +68,24 @@ VIDEO_UPDATE( kinst )
 	   0BGR1555 (red in the low 5 bits, blue in the high 5), matching the
 	   palette: red/blue land in their RGB565 slots and green expands 5->6
 	   bits exactly as the palette path does. */
-	UINT16 *fb = (UINT16 *)mame2003_direct_rgb565_begin(&fb_pitch);
+	uint16_t *fb = (uint16_t *)mame2003_direct_rgb565_begin(&fb_pitch);
 
 	if (fb)
 	{
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
 			data32_t *src  = &kinst_video_base[640/4 * y];
-			UINT16   *dest = (UINT16 *)((UINT8 *)fb + y * fb_pitch);
+			uint16_t   *dest = (uint16_t *)((uint8_t *)fb + y * fb_pitch);
 			int i;
 
 			for (i = 0; i < 320; i += 2)
 			{
-				UINT16 v0 = (UINT16)(*src & 0x7fff);
-				UINT16 v1 = (UINT16)((*src++ >> 16) & 0x7fff);
-				UINT16 g0 = (UINT16)((v0 >> 5) & 0x1F);
-				UINT16 g1 = (UINT16)((v1 >> 5) & 0x1F);
-				*dest++ = (UINT16)(((v0 & 0x1F) << 11) | (((g0 << 1) | (g0 >> 4)) << 5) | ((v0 >> 10) & 0x1F));
-				*dest++ = (UINT16)(((v1 & 0x1F) << 11) | (((g1 << 1) | (g1 >> 4)) << 5) | ((v1 >> 10) & 0x1F));
+				uint16_t v0 = (uint16_t)(*src & 0x7fff);
+				uint16_t v1 = (uint16_t)((*src++ >> 16) & 0x7fff);
+				uint16_t g0 = (uint16_t)((v0 >> 5) & 0x1F);
+				uint16_t g1 = (uint16_t)((v1 >> 5) & 0x1F);
+				*dest++ = (uint16_t)(((v0 & 0x1F) << 11) | (((g0 << 1) | (g0 >> 4)) << 5) | ((v0 >> 10) & 0x1F));
+				*dest++ = (uint16_t)(((v1 & 0x1F) << 11) | (((g1 << 1) | (g1 >> 4)) << 5) | ((v1 >> 10) & 0x1F));
 			}
 		}
 		return;
@@ -96,7 +96,7 @@ VIDEO_UPDATE( kinst )
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		data32_t *src = &kinst_video_base[640/4 * y];
-		UINT16 *dest = (UINT16 *)bitmap->line[y];
+		uint16_t *dest = (uint16_t *)bitmap->line[y];
 		int i;
 
 		for (i = 0; i < 320; i += 2)

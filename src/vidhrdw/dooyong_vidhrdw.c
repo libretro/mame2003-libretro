@@ -373,7 +373,7 @@ static void rshark_draw_sprites(struct mame_bitmap *bitmap)
 			int flipx=0,flipy=0,width,height,x,y;
 
 			sx = buffered_spriteram16[offs+4] & 0x01ff;
-			sy = (INT16)buffered_spriteram16[offs+6];
+			sy = (int16_t)buffered_spriteram16[offs+6];
 			code = buffered_spriteram16[offs+3];
 			color = buffered_spriteram16[offs+7];
 			width = buffered_spriteram16[offs+1] & 0x000f;

@@ -35,7 +35,7 @@ data32_t *fuuki32_vram_0, *fuuki32_vram_1;
 data32_t *fuuki32_vram_2, *fuuki32_vram_3;
 data32_t *fuuki32_vregs,  *fuuki32_priority, *fuuki32_tilebank;
 
-static UINT32 spr_buffered_tilebank[2];
+static uint32_t spr_buffered_tilebank[2];
 
 
 /***************************************************************************

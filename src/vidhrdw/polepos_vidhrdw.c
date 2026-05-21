@@ -16,12 +16,12 @@ static data16_t polepos_vertical_position_modifier[256];
 static data16_t view16_hscroll;
 static data16_t road16_vscroll;
 
-static const UINT8 *road_control;
-static const UINT8 *road_bits1;
-static const UINT8 *road_bits2;
+static const uint8_t *road_control;
+static const uint8_t *road_bits1;
+static const uint8_t *road_bits2;
 
 static struct mame_bitmap *view_bitmap;
-static UINT8 *view_dirty;
+static uint8_t *view_dirty;
 
 
 
@@ -333,8 +333,8 @@ static void draw_road(struct mame_bitmap *bitmap)
 	for (y = 128; y < 256; y++)
 	{
 		int xoffs, yoffs, xscroll, roadpal;
-		UINT8 scanline[256 + 8];
-		UINT8 *dest = scanline;
+		uint8_t scanline[256 + 8];
+		uint8_t *dest = scanline;
 		pen_t *colortable;
 
 		/* first add the vertical position modifier and the vertical scroll */

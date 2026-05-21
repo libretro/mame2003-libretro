@@ -204,7 +204,7 @@ static void get_text_tile_info(int tile_index)
 static void get_sl_tile_info(int tile_index)
 {
 	int code, sl_flipx, flipx;
-	UINT8* sl_map;
+	uint8_t* sl_map;
 
 	sl_map = &memory_region(REGION_USER1)[(sl_image & 0x07) * 0x0200];
 
@@ -365,7 +365,7 @@ VIDEO_UPDATE( dday )
 		{
 			for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 			{
-				UINT32 src_pixel;
+				uint32_t src_pixel;
 
 
 				src_pixel = read_pixel(main_bitmap, x, y);

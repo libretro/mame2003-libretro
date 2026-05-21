@@ -25,7 +25,7 @@ static struct tilemap *bg_tilemap,*fg_tilemap;
 
 ***************************************************************************/
 
-static UINT32 citycon_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t citycon_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x60) << 5);

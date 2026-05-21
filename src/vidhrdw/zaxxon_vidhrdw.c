@@ -16,12 +16,12 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *zaxxon_char_color_bank;
-UINT8 *zaxxon_background_position;
-UINT8 *zaxxon_background_color_bank;
-UINT8 *zaxxon_background_enable;
+uint8_t *zaxxon_char_color_bank;
+uint8_t *zaxxon_background_position;
+uint8_t *zaxxon_background_color_bank;
+uint8_t *zaxxon_background_enable;
 static struct mame_bitmap *backgroundbitmap1,*backgroundbitmap2;
-static const UINT8 *color_codes;
+static const uint8_t *color_codes;
 
 int zaxxon_vid_type;	/* set by init_machine; 0 = zaxxon; 1 = congobongo */
 

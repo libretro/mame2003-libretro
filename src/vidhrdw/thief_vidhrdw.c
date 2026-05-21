@@ -8,14 +8,14 @@
 struct mame_bitmap *thief_page0;
 struct mame_bitmap *thief_page1;
 
-static UINT8 thief_read_mask, thief_write_mask;
-static UINT8 thief_video_control;
+static uint8_t thief_read_mask, thief_write_mask;
+static uint8_t thief_video_control;
 
 static struct {
-	UINT8 *context_ram;
-	UINT8 bank;
-	UINT8 *image_ram;
-	UINT8 param[0x9];
+	uint8_t *context_ram;
+	uint8_t bank;
+	uint8_t *image_ram;
+	uint8_t param[0x9];
 } thief_coprocessor;
 
 enum {
@@ -72,7 +72,7 @@ WRITE_HANDLER( thief_color_map_w ){
 	----xx--	green
 	------xx	red
 */
-	const UINT8 intensity[4] = {0x00,0x55,0xAA,0xFF};
+	const uint8_t intensity[4] = {0x00,0x55,0xAA,0xFF};
 	int r = intensity[(data & 0x03) >> 0];
     int g = intensity[(data & 0x0C) >> 2];
     int b = intensity[(data & 0x30) >> 4];
@@ -97,7 +97,7 @@ READ_HANDLER( thief_videoram_r ){
 }
 
 WRITE_HANDLER( thief_videoram_w ){
-	UINT8 *dest = &videoram[offset];
+	uint8_t *dest = &videoram[offset];
 	if( thief_video_control&0x02 ){
 		dest+=0x2000*4; /* foreground/background */
 		dirtybuffer[offset+0x2000] = 1;
@@ -140,8 +140,8 @@ VIDEO_UPDATE( thief ){
 	unsigned int offs;
 	int flipscreen = thief_video_control&1;
 	const pen_t *pal_data = Machine->pens;
-	UINT8 *dirty = dirtybuffer;
-	const UINT8 *source = videoram;
+	uint8_t *dirty = dirtybuffer;
+	const uint8_t *source = videoram;
 	struct mame_bitmap *page;
 
 	if( thief_video_control&4 ){ /* visible page */
@@ -194,7 +194,7 @@ VIDEO_UPDATE( thief ){
 
 /***************************************************************************/
 
-static UINT16 fetch_image_addr( void ){
+static uint16_t fetch_image_addr( void ){
 	int addr = thief_coprocessor.param[IMAGE_ADDR_LO]+256*thief_coprocessor.param[IMAGE_ADDR_HI];
 	/* auto-increment */
 	thief_coprocessor.param[IMAGE_ADDR_LO]++;
@@ -206,14 +206,14 @@ static UINT16 fetch_image_addr( void ){
 
 WRITE_HANDLER( thief_blit_w ){
 	int i, offs, xoffset, dy;
-	UINT8 *gfx_rom = memory_region( REGION_GFX1 );
-	UINT8 x = thief_coprocessor.param[SCREEN_XPOS];
-	UINT8 y = thief_coprocessor.param[SCREEN_YPOS];
-	UINT8 width = thief_coprocessor.param[BLIT_WIDTH];
-	UINT8 height = thief_coprocessor.param[BLIT_HEIGHT];
-	UINT8 attributes = thief_coprocessor.param[BLIT_ATTRIBUTES];
+	uint8_t *gfx_rom = memory_region( REGION_GFX1 );
+	uint8_t x = thief_coprocessor.param[SCREEN_XPOS];
+	uint8_t y = thief_coprocessor.param[SCREEN_YPOS];
+	uint8_t width = thief_coprocessor.param[BLIT_WIDTH];
+	uint8_t height = thief_coprocessor.param[BLIT_HEIGHT];
+	uint8_t attributes = thief_coprocessor.param[BLIT_ATTRIBUTES];
 
-	UINT8 old_data;
+	uint8_t old_data;
 	int xor_blit = data;
 		/* making the xor behavior selectable fixes score display,
 		but causes minor glitches on the playfield */
@@ -283,7 +283,7 @@ READ_HANDLER( thief_coprocessor_r ){
 				return thief_coprocessor.image_ram[addr];
 			}
 			else {
-				UINT8 *gfx_rom = memory_region( REGION_GFX1 );
+				uint8_t *gfx_rom = memory_region( REGION_GFX1 );
 				addr -= 0x2000;
 				if( addr<0x6000 ) return gfx_rom[addr];
 			}

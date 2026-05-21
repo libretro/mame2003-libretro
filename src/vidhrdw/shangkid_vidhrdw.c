@@ -5,7 +5,7 @@
 #include "cpu/z80/z80.h"
 
 static struct tilemap *background;
-UINT8 *shangkid_videoreg;
+uint8_t *shangkid_videoreg;
 int shangkid_gfx_type;
 
 
@@ -63,7 +63,7 @@ WRITE_HANDLER( shangkid_videoram_w )
 	}
 }
 
-static void draw_sprite( const UINT8 *source, struct mame_bitmap *bitmap, const struct rectangle *cliprect ){
+static void draw_sprite( const uint8_t *source, struct mame_bitmap *bitmap, const struct rectangle *cliprect ){
 	const struct GfxElement *gfx;
 	int transparent_pen;
 	int bank_index;
@@ -158,7 +158,7 @@ static void draw_sprite( const UINT8 *source, struct mame_bitmap *bitmap, const 
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-	const UINT8 *source, *finish;
+	const uint8_t *source, *finish;
 
 	finish = spriteram;
 	source = spriteram+0x200;

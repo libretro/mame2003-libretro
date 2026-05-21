@@ -9,10 +9,10 @@
 #include "segar.h"
 
 
-UINT8 *segar_characterram;
-UINT8 *segar_characterram2;
-UINT8 *segar_mem_colortable;
-UINT8 *segar_mem_bcolortable;
+uint8_t *segar_characterram;
+uint8_t *segar_characterram2;
+uint8_t *segar_mem_colortable;
+uint8_t *segar_mem_bcolortable;
 
 typedef struct
 {

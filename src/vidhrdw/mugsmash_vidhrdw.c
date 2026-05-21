@@ -29,8 +29,8 @@ static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cl
 
 	*/
 
-	const UINT16 *source = mugs_spriteram;
-	const UINT16 *finish = source+0x2000;
+	const uint16_t *source = mugs_spriteram;
+	const uint16_t *finish = source+0x2000;
 	const struct GfxElement *gfx = Machine->gfx[0];
 
 	while( source<finish )

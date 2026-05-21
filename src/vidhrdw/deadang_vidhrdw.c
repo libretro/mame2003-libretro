@@ -29,7 +29,7 @@ WRITE_HANDLER( deadang_bank_w )
 
 /******************************************************************************/
 
-static UINT32 bg_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t bg_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return (col&0xf) | ((row&0xf)<<4) | ((col&0x70)<<4) | ((row&0xf0)<<7);
 }

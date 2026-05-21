@@ -9,9 +9,9 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *sbasketb_scroll;
-UINT8 *sbasketb_palettebank;
-UINT8 *sbasketb_spriteram_select;
+uint8_t *sbasketb_scroll;
+uint8_t *sbasketb_palettebank;
+uint8_t *sbasketb_spriteram_select;
 
 static struct tilemap *bg_tilemap;
 

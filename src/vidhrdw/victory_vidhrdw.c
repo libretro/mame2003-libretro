@@ -9,34 +9,34 @@
 
 
 /* globally-accessible storage */
-UINT8 *victory_charram;
+uint8_t *victory_charram;
 
 /* local allocated storage */
-static UINT8 *bgbitmap;
-static UINT8 *fgbitmap;
-static UINT8 *bgdirty;
-static UINT8 *chardirty;
-static UINT8 *scandirty;
-static UINT8 *rram, *gram, *bram;
+static uint8_t *bgbitmap;
+static uint8_t *fgbitmap;
+static uint8_t *bgdirty;
+static uint8_t *chardirty;
+static uint8_t *scandirty;
+static uint8_t *rram, *gram, *bram;
 
 /* interrupt, collision, and control states */
-static UINT8 vblank_irq;
-static UINT8 fgcoll, fgcollx, fgcolly;
-static UINT8 bgcoll, bgcollx, bgcolly;
-static UINT8 scrollx, scrolly;
-static UINT8 update_complete;
-static UINT8 video_control;
+static uint8_t vblank_irq;
+static uint8_t fgcoll, fgcollx, fgcolly;
+static uint8_t bgcoll, bgcollx, bgcolly;
+static uint8_t scrollx, scrolly;
+static uint8_t update_complete;
+static uint8_t video_control;
 
 /* microcode state */
 static struct
 {
-	UINT16	i;
-	UINT16	pc;
-	UINT8	r,g,b;
-	UINT8	x,xp,y,yp;
-	UINT8	cmd,cmdlo;
+	uint16_t	i;
+	uint16_t	pc;
+	uint8_t	r,g,b;
+	uint8_t	x,xp,y,yp;
+	uint8_t	cmd,cmdlo;
 	void *	timer;
-	UINT8	timer_active;
+	uint8_t	timer_active;
 	double	endtime;
 } micro;
 
@@ -666,7 +666,7 @@ static int command3(void)
 		{
 			int srcoffs = micro.i++ & 0x3fff;
 			int dstoffs = (sy++ & 0xff) * 32 + micro.xp / 8;
-			UINT8 src;
+			uint8_t src;
 
 			/* non-collision-detect case */
 			if (!(micro.cmd & 0x08) || fgcoll)
@@ -836,7 +836,7 @@ static int command5(void)
 		case 7: 1011 -> X++, Y		1111 -> X++, Y++
 
 */
-	static const INT8 inctable[8][4] =
+	static const int8_t inctable[8][4] =
 	{
 		{  1, 0, 1,-1 },
 		{  0,-1, 1,-1 },
@@ -852,8 +852,8 @@ static int command5(void)
 	int yinc = inctable[(micro.cmd >> 4) & 7][1];
 	int xincc = inctable[(micro.cmd >> 4) & 7][2];
 	int yincc = inctable[(micro.cmd >> 4) & 7][3];
-	UINT8 x = micro.xp;
-	UINT8 y = micro.yp;
+	uint8_t x = micro.xp;
+	uint8_t y = micro.yp;
 	int acc = 0x80;
 	int i = micro.i >> 8;
 	int c;
@@ -1088,10 +1088,10 @@ static void update_background(void)
 			{
 				for (row = 0; row < 8; row++)
 				{
-					UINT8 pix2 = victory_charram[0x0000 + 8 * code + row];
-					UINT8 pix1 = victory_charram[0x0800 + 8 * code + row];
-					UINT8 pix0 = victory_charram[0x1000 + 8 * code + row];
-					UINT8 *dst = &bgbitmap[(y * 8 + row) * 256 + x * 8];
+					uint8_t pix2 = victory_charram[0x0000 + 8 * code + row];
+					uint8_t pix1 = victory_charram[0x0800 + 8 * code + row];
+					uint8_t pix0 = victory_charram[0x1000 + 8 * code + row];
+					uint8_t *dst = &bgbitmap[(y * 8 + row) * 256 + x * 8];
 
 					*dst++ = ((pix2 & 0x80) >> 5) | ((pix1 & 0x80) >> 6) | ((pix0 & 0x80) >> 7);
 					*dst++ = ((pix2 & 0x40) >> 4) | ((pix1 & 0x40) >> 5) | ((pix0 & 0x40) >> 6);
@@ -1125,14 +1125,14 @@ static void update_foreground(void)
 	for (y = 0; y < 256; y++)
 		if (scandirty[y])
 		{
-			UINT8 *dst = &fgbitmap[y * 256];
+			uint8_t *dst = &fgbitmap[y * 256];
 
 			/* assemble the RGB bits for each 8-pixel chunk */
 			for (x = 0; x < 256; x += 8)
 			{
-				UINT8 g = gram[y * 32 + x / 8];
-				UINT8 b = bram[y * 32 + x / 8];
-				UINT8 r = rram[y * 32 + x / 8];
+				uint8_t g = gram[y * 32 + x / 8];
+				uint8_t b = bram[y * 32 + x / 8];
+				uint8_t r = rram[y * 32 + x / 8];
 
 				*dst++ = ((r & 0x80) >> 5) | ((b & 0x80) >> 6) | ((g & 0x80) >> 7);
 				*dst++ = ((r & 0x40) >> 4) | ((b & 0x40) >> 5) | ((g & 0x40) >> 6);
@@ -1201,8 +1201,8 @@ VIDEO_EOF( victory )
 	for (y = 0; y < 256; y++)
 	{
 		int sy = (scrolly + y) & 255;
-		UINT8 *fg = &fgbitmap[y * 256];
-		UINT8 *bg = &bgbitmap[sy * 256];
+		uint8_t *fg = &fgbitmap[y * 256];
+		uint8_t *bg = &bgbitmap[sy * 256];
 
 		/* do the blending */
 		for (x = 0; x < 256; x++)
@@ -1237,9 +1237,9 @@ VIDEO_UPDATE( victory )
 	for (y = 0; y < 256; y++)
 	{
 		int sy = (scrolly + y) & 255;
-		UINT8 *fg = &fgbitmap[y * 256];
-		UINT8 *bg = &bgbitmap[sy * 256];
-		UINT8 scanline[256];
+		uint8_t *fg = &fgbitmap[y * 256];
+		uint8_t *bg = &bgbitmap[sy * 256];
+		uint8_t scanline[256];
 
 		/* do the blending */
 		for (x = 0; x < 256; x++)

@@ -16,12 +16,12 @@
 
 static data16_t blitter_data[8];
 
-static UINT16 *screenram;
-static UINT16 *blitter_base;
+static uint16_t *screenram;
+static uint16_t *blitter_base;
 static int blitter_rows;
 
-static UINT16 gunx, guny;
-static UINT8 blank_palette;
+static uint16_t gunx, guny;
+static uint8_t blank_palette;
 
 
 
@@ -106,7 +106,7 @@ VIDEO_START( lethalj )
 		return 1;
 
 	/* predetermine blitter info */
-	blitter_base = (UINT16 *)memory_region(REGION_GFX1);
+	blitter_base = (uint16_t *)memory_region(REGION_GFX1);
 	blitter_rows = memory_region_length(REGION_GFX1) / (2*BLITTER_SOURCE_WIDTH);
 	return 0;
 }
@@ -128,12 +128,12 @@ static void gen_ext1_int(int param)
 
 static void do_blit(void)
 {
-	int dsty = (INT16)blitter_data[1];
-	int srcx = (UINT16)blitter_data[2];
-	int srcy = (UINT16)blitter_data[3];
-	int width = (UINT16)blitter_data[5];
-	int dstx = (INT16)blitter_data[6];
-	int height = (UINT16)blitter_data[7];
+	int dsty = (int16_t)blitter_data[1];
+	int srcx = (uint16_t)blitter_data[2];
+	int srcy = (uint16_t)blitter_data[3];
+	int width = (uint16_t)blitter_data[5];
+	int dstx = (int16_t)blitter_data[6];
+	int height = (uint16_t)blitter_data[7];
 	int y;
 
 /*	logerror("blitter data = %04X %04X %04X %04X %04X %04X %04X %04X\n",
@@ -143,8 +143,8 @@ static void do_blit(void)
 	/* loop over Y coordinates */
 	for (y = 0; y <= height; y++, srcy++, dsty++)
 	{
-		UINT16 *source = blitter_base + srcy * BLITTER_SOURCE_WIDTH;
-		UINT16 *dest = screenram + dsty * BLITTER_DEST_WIDTH;
+		uint16_t *source = blitter_base + srcy * BLITTER_SOURCE_WIDTH;
+		uint16_t *dest = screenram + dsty * BLITTER_DEST_WIDTH;
 		
 		/* clip in Y */
 		if (dsty >= 0 && dsty < BLITTER_DEST_HEIGHT)
@@ -206,8 +206,8 @@ VIDEO_UPDATE( lethalj )
 		int x, y;
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			UINT16 *source = screenram + y * BLITTER_DEST_WIDTH + cliprect->min_x;
-			UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
+			uint16_t *source = screenram + y * BLITTER_DEST_WIDTH + cliprect->min_x;
+			uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 				*dest++ = *source++ & 0x7fff;
 		}

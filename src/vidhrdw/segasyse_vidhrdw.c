@@ -22,43 +22,43 @@
 
 #define CHIPS 2							/* There are 2 VDP Chips */
 
-UINT8  segae_vdp_cmdpart[CHIPS];		/* VDP Command Part Counter */
-UINT16 segae_vdp_command[CHIPS];		/* VDP Command Word */
+uint8_t  segae_vdp_cmdpart[CHIPS];		/* VDP Command Part Counter */
+uint16_t segae_vdp_command[CHIPS];		/* VDP Command Word */
 
-UINT8  segae_vdp_accessmode[CHIPS];		/* VDP Access Mode (VRAM, CRAM)	*/
-UINT16 segae_vdp_accessaddr[CHIPS];		/* VDP Access Address */
-UINT8  segae_vdp_readbuffer[CHIPS];		/* VDP Read Buffer */
+uint8_t  segae_vdp_accessmode[CHIPS];		/* VDP Access Mode (VRAM, CRAM)	*/
+uint16_t segae_vdp_accessaddr[CHIPS];		/* VDP Access Address */
+uint8_t  segae_vdp_readbuffer[CHIPS];		/* VDP Read Buffer */
 
-UINT8 *segae_vdp_vram[CHIPS];			/* Pointer to VRAM */
-UINT8 *segae_vdp_cram[CHIPS];			/* Pointer to the VDP's CRAM */
-UINT8 *segae_vdp_regs[CHIPS];			/* Pointer to the VDP's Registers */
+uint8_t *segae_vdp_vram[CHIPS];			/* Pointer to VRAM */
+uint8_t *segae_vdp_cram[CHIPS];			/* Pointer to the VDP's CRAM */
+uint8_t *segae_vdp_regs[CHIPS];			/* Pointer to the VDP's Registers */
 
-UINT8 segae_vdp_vrambank[CHIPS];		/* Current VRAM Bank number (from writes to Port 0xf7) */
+uint8_t segae_vdp_vrambank[CHIPS];		/* Current VRAM Bank number (from writes to Port 0xf7) */
 
-UINT8 *cache_bitmap;					/* 8bpp bitmap with raw pen values */
+uint8_t *cache_bitmap;					/* 8bpp bitmap with raw pen values */
 
 static int segasyse_palettebase; // needed for megatech for now..
 
 /*- in (drivers/segasyse.c) -*/
 
-extern UINT8 vintpending;
-extern UINT8 hintpending;
+extern uint8_t vintpending;
+extern uint8_t hintpending;
 
 /*-- Prototypes --*/
 
-int	segae_vdp_start( UINT8 chip );
-void segae_vdp_stop( UINT8 chip );
+int	segae_vdp_start( uint8_t chip );
+void segae_vdp_stop( uint8_t chip );
 
-void segae_vdp_processcmd ( UINT8 chip, UINT16 cmd );
-void segae_vdp_setregister ( UINT8 chip, UINT16 cmd );
+void segae_vdp_processcmd ( uint8_t chip, uint16_t cmd );
+void segae_vdp_setregister ( uint8_t chip, uint16_t cmd );
 
-void segae_drawtilesline(UINT8 *dest, int line, UINT8 chip, UINT8 pri);
-void segae_drawspriteline(UINT8 *dest, UINT8 chip, UINT8 line);
+void segae_drawtilesline(uint8_t *dest, int line, uint8_t chip, uint8_t pri);
+void segae_drawspriteline(uint8_t *dest, uint8_t chip, uint8_t line);
 void segae_drawscanline(int line, int chips, int blank);
 
-static void segae_draw8pix_solid16(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line, UINT8 flipx, UINT8 col);
-static void segae_draw8pix(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line, UINT8 flipx, UINT8 col);
-static void segae_draw8pixsprite(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line);
+static void segae_draw8pix_solid16(uint8_t *dest, uint8_t chip, uint16_t tile, uint8_t line, uint8_t flipx, uint8_t col);
+static void segae_draw8pix(uint8_t *dest, uint8_t chip, uint16_t tile, uint8_t line, uint8_t flipx, uint8_t col);
+static void segae_draw8pixsprite(uint8_t *dest, uint8_t chip, uint16_t tile, uint8_t line);
 
 /*******************************************************************************
  vhstart, vhstop and vhrefresh functions
@@ -66,7 +66,7 @@ static void segae_draw8pixsprite(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 lin
 
 VIDEO_START( segae )
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	segasyse_palettebase = 0;
 
@@ -127,9 +127,9 @@ void update_megatech_video_normal(struct mame_bitmap *bitmap, const struct recta
 	   successful then if one allocation fails we can free up the previous ones
 *******************************************************************************/
 
-int	segae_vdp_start( UINT8 chip )
+int	segae_vdp_start( uint8_t chip )
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	/*- VRAM -*/
 
@@ -193,7 +193,7 @@ int	segae_vdp_start( UINT8 chip )
 /*-- Reads --*/
 
 /***************************************
- segae_vdp_ctrl_r ( UINT8 chip )
+ segae_vdp_ctrl_r ( uint8_t chip )
 ****************************************
  reading the vdp control port will
  return the following
@@ -211,9 +211,9 @@ int	segae_vdp_start( UINT8 chip )
   bits 5,6,7 are cleared after a read
 ***************************************/
 
-unsigned char segae_vdp_ctrl_r ( UINT8 chip )
+unsigned char segae_vdp_ctrl_r ( uint8_t chip )
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	temp = 0;
 
@@ -225,9 +225,9 @@ unsigned char segae_vdp_ctrl_r ( UINT8 chip )
 	return temp;
 }
 
-unsigned char segae_vdp_data_r ( UINT8 chip )
+unsigned char segae_vdp_data_r ( uint8_t chip )
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	segae_vdp_cmdpart[chip] = 0;
 
@@ -245,7 +245,7 @@ unsigned char segae_vdp_data_r ( UINT8 chip )
 
 /*-- Writes --*/
 
-void segae_vdp_ctrl_w ( UINT8 chip, UINT8 data )
+void segae_vdp_ctrl_w ( uint8_t chip, uint8_t data )
 {
 	if (!segae_vdp_cmdpart[chip]) {
 		segae_vdp_cmdpart[chip] = 1;
@@ -257,12 +257,12 @@ void segae_vdp_ctrl_w ( UINT8 chip, UINT8 data )
 	}
 }
 
-void segae_vdp_data_w ( UINT8 chip, UINT8 data )
+void segae_vdp_data_w ( uint8_t chip, uint8_t data )
 {
 	segae_vdp_cmdpart[chip] = 0;
 
 	if (segae_vdp_accessmode[chip]==0x03) { /* CRAM Access */
-		UINT8 r,g,b, temp;
+		uint8_t r,g,b, temp;
 
 		temp = segae_vdp_cram[chip][segae_vdp_accessaddr[chip]];
 
@@ -310,7 +310,7 @@ general command format
 
 ***************************************/
 
-void segae_vdp_processcmd ( UINT8 chip, UINT16 cmd )
+void segae_vdp_processcmd ( uint8_t chip, uint16_t cmd )
 {
 	if ( (cmd & 0xf000) == 0x8000 ) { /*  1 0 0 0 - - - - - - - - - - - -  VDP Register Set */
 		segae_vdp_setregister (chip, cmd);
@@ -340,10 +340,10 @@ void segae_vdp_processcmd ( UINT8 chip, UINT16 cmd )
 
 ***************************************/
 
-void segae_vdp_setregister ( UINT8 chip, UINT16 cmd )
+void segae_vdp_setregister ( uint8_t chip, uint16_t cmd )
 {
-	UINT8 regnumber;
-	UINT8 regdata;
+	uint8_t regnumber;
+	uint8_t regdata;
 
 	regnumber = (cmd & 0x0f00) >> 8;
 	regdata   = (cmd & 0x00ff);
@@ -391,7 +391,7 @@ void segae_vdp_setregister ( UINT8 chip, UINT16 cmd )
 void segae_drawscanline(int line, int chips, int blank)
 {
 
-	UINT8* dest;
+	uint8_t* dest;
 
 	if (osd_skip_this_frame())
 		return;
@@ -424,16 +424,16 @@ void segae_drawscanline(int line, int chips, int blank)
 
 /*-- Drawing a line of tiles --*/
 
-void segae_drawtilesline(UINT8 *dest, int line, UINT8 chip, UINT8 pri)
+void segae_drawtilesline(uint8_t *dest, int line, uint8_t chip, uint8_t pri)
 {
 	/* todo: fix vscrolling (or is it something else causing the glitch on the hi-score screen of hangonjr, seems to be ..  */
 
-	UINT8 hscroll;
-	UINT8 vscroll;
-	UINT16 tmbase;
-	UINT8 tilesline, tilesline2;
-	UINT8 coloffset, coloffset2;
-	UINT8 loopcount;
+	uint8_t hscroll;
+	uint8_t vscroll;
+	uint16_t tmbase;
+	uint8_t tilesline, tilesline2;
+	uint8_t coloffset, coloffset2;
+	uint8_t loopcount;
 
 	hscroll = (256-segae_vdp_regs[chip][8]);
 	vscroll = segae_vdp_regs[chip][9];
@@ -453,9 +453,9 @@ void segae_drawtilesline(UINT8 *dest, int line, UINT8 chip, UINT8 pri)
 
 	for (loopcount=0;loopcount<33;loopcount++) {
 
-		UINT16 vram_offset, vram_word;
-		UINT16 tile_no;
-		UINT8  palette, priority, flipx, flipy;
+		uint16_t vram_offset, vram_word;
+		uint16_t tile_no;
+		uint8_t  palette, priority, flipx, flipy;
 
 		vram_offset = tmbase
 					+ (2 * (32*tilesline + ((coloffset+loopcount)&0x1f) ) );
@@ -475,14 +475,14 @@ void segae_drawtilesline(UINT8 *dest, int line, UINT8 chip, UINT8 pri)
 	}
 }
 
-void segae_drawspriteline(UINT8 *dest, UINT8 chip, UINT8 line)
+void segae_drawspriteline(uint8_t *dest, uint8_t chip, uint8_t line)
 {
 	/* todo: figure out what riddle of pythagoras hates about this */
 
 	int nosprites;
 	int loopcount;
 
-	UINT16 spritebase;
+	uint16_t spritebase;
 
 	nosprites = 0;
 
@@ -492,7 +492,7 @@ void segae_drawspriteline(UINT8 *dest, UINT8 chip, UINT8 line)
 	/*- find out how many sprites there are -*/
 
 	for (loopcount=0;loopcount<64;loopcount++) {
-		UINT8 ypos;
+		uint8_t ypos;
 
 		ypos = segae_vdp_vram[chip][spritebase+loopcount];
 
@@ -508,7 +508,7 @@ void segae_drawspriteline(UINT8 *dest, UINT8 chip, UINT8 line)
 
 	for (loopcount = nosprites; loopcount >= 0;loopcount--) {
 		int ypos;
-		UINT8 sheight;
+		uint8_t sheight;
 
 		ypos = segae_vdp_vram[chip][spritebase+loopcount] +1;
 
@@ -516,8 +516,8 @@ void segae_drawspriteline(UINT8 *dest, UINT8 chip, UINT8 line)
 
 		if ( (line >= ypos) && (line < ypos+sheight) ) {
 			int xpos;
-			UINT8 sprnum;
-			UINT8 spline;
+			uint8_t sprnum;
+			uint8_t spline;
 
 			spline = line - ypos;
 
@@ -533,11 +533,11 @@ void segae_drawspriteline(UINT8 *dest, UINT8 chip, UINT8 line)
 	}
 }
 
-static void segae_draw8pix_solid16(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line, UINT8 flipx, UINT8 col)
+static void segae_draw8pix_solid16(uint8_t *dest, uint8_t chip, uint16_t tile, uint8_t line, uint8_t flipx, uint8_t col)
 {
 
-	UINT32 pix8 = retro_get_unaligned_32le(&segae_vdp_vram[chip][(32)*tile + (4)*line + (0x4000) * segae_vdp_vrambank[chip]]);
-	UINT8  pix, coladd;
+	uint32_t pix8 = retro_get_unaligned_32le(&segae_vdp_vram[chip][(32)*tile + (4)*line + (0x4000) * segae_vdp_vrambank[chip]]);
+	uint8_t  pix, coladd;
 
 	if (!pix8 && !col) return; /*note only the colour 0 of each vdp is transparent NOT colour 16???, fixes sky in HangonJr */
 
@@ -564,11 +564,11 @@ static void segae_draw8pix_solid16(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 l
 	}
 }
 
-static void segae_draw8pix(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line, UINT8 flipx, UINT8 col)
+static void segae_draw8pix(uint8_t *dest, uint8_t chip, uint16_t tile, uint8_t line, uint8_t flipx, uint8_t col)
 {
 
-	UINT32 pix8 = retro_get_unaligned_32le(&segae_vdp_vram[chip][(32)*tile + (4)*line + (0x4000) * segae_vdp_vrambank[chip]]);
-	UINT8  pix, coladd;
+	uint32_t pix8 = retro_get_unaligned_32le(&segae_vdp_vram[chip][(32)*tile + (4)*line + (0x4000) * segae_vdp_vrambank[chip]]);
+	uint8_t  pix, coladd;
 
 	if (!pix8) return;
 
@@ -595,11 +595,11 @@ static void segae_draw8pix(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line, UIN
 	}
 }
 
-static void segae_draw8pixsprite(UINT8 *dest, UINT8 chip, UINT16 tile, UINT8 line)
+static void segae_draw8pixsprite(uint8_t *dest, uint8_t chip, uint16_t tile, uint8_t line)
 {
 
-	UINT32 pix8 = retro_get_unaligned_32le(&segae_vdp_vram[chip][(32)*tile + (4)*line + (0x4000) * segae_vdp_vrambank[chip]]);
-	UINT8  pix;
+	uint32_t pix8 = retro_get_unaligned_32le(&segae_vdp_vram[chip][(32)*tile + (4)*line + (0x4000) * segae_vdp_vrambank[chip]]);
+	uint8_t  pix;
 
 	if (!pix8) return; /*note only the colour 0 of each vdp is transparent NOT colour 16, fixes sky in HangonJr */
 

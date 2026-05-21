@@ -203,8 +203,8 @@ static void bionicc_draw_sprites( struct mame_bitmap *bitmap, const struct recta
 			int color = (attr&0x3C)>>2;
 			int flipx = attr&0x02;
 			int flipy = 0;
-			int sx = (INT16)buffered_spriteram16[offs+3];	/* signed */
-			int sy = (INT16)buffered_spriteram16[offs+2];	/* signed */
+			int sx = (int16_t)buffered_spriteram16[offs+3];	/* signed */
+			int sy = (int16_t)buffered_spriteram16[offs+2];	/* signed */
 			if(sy>512-16) sy-=512;
 			if (flip_screen)
 			{

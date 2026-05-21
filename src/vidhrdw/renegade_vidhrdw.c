@@ -7,7 +7,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *renegade_videoram2;
+uint8_t *renegade_videoram2;
 int renegade_scrollx;
 static struct tilemap *bg_tilemap;
 static struct tilemap *fg_tilemap;
@@ -49,8 +49,8 @@ WRITE_HANDLER( renegade_scroll1_w )
 
 static void get_bg_tilemap_info(int tile_index)
 {
-	const UINT8 *source = &videoram[tile_index];
-	UINT8 attributes = source[0x400]; /* CCC??BBB */
+	const uint8_t *source = &videoram[tile_index];
+	uint8_t attributes = source[0x400]; /* CCC??BBB */
 	SET_TILE_INFO(
 			1+(attributes&0x7),
 			source[0],
@@ -60,8 +60,8 @@ static void get_bg_tilemap_info(int tile_index)
 
 static void get_fg_tilemap_info(int tile_index)
 {
-	const UINT8 *source = &renegade_videoram2[tile_index];
-	UINT8 attributes = source[0x400];
+	const uint8_t *source = &renegade_videoram2[tile_index];
+	uint8_t attributes = source[0x400];
 	SET_TILE_INFO(
 			0,
 			(attributes&3)*256 + source[0],
@@ -84,8 +84,8 @@ VIDEO_START( renegade )
 
 static void draw_sprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect )
 {
-	UINT8 *source = spriteram;
-	UINT8 *finish = source+96*4;
+	uint8_t *source = spriteram;
+	uint8_t *finish = source+96*4;
 
 	while( source<finish )
 	{

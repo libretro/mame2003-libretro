@@ -33,7 +33,7 @@
 #define Tinten(intensity, col) \
 	MAKE_RGB((RGB_RED(col) * (intensity)) >> 8, (RGB_GREEN(col) * (intensity)) >> 8, (RGB_BLUE(col) * (intensity)) >> 8)
 
-typedef UINT32 vector_pixel_t;
+typedef uint32_t vector_pixel_t;
 #define VECTOR_PIXEL_END	0xffffffff
 #define VECTOR_PIXEL(x,y)	((x) | ((y) << 16))
 #define VECTOR_PIXEL_X(p)	((p) & 0xffff)

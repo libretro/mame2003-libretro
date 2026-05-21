@@ -26,28 +26,28 @@
 
 struct vram_state_data
 {
-	UINT16	addr;
-	UINT8	latch[2];
+	uint16_t	addr;
+	uint8_t	latch[2];
 };
 
 
 /* video RAM */
-UINT8 *ataxx_qram;
-UINT8 leland_last_scanline_int;
+uint8_t *ataxx_qram;
+uint8_t leland_last_scanline_int;
 static struct mame_bitmap *fgbitmap;
-static UINT8 *leland_video_ram;
+static uint8_t *leland_video_ram;
 
 /* video RAM bitmap drawing */
 static struct vram_state_data vram_state[2];
-static UINT8 sync_next_write;
+static uint8_t sync_next_write;
 
 /* partial screen updating */
 static int next_update_scanline;
 
 /* scroll background registers */
-static UINT16 xscroll;
-static UINT16 yscroll;
-static UINT8 gfxbank;
+static uint16_t xscroll;
+static uint16_t yscroll;
+static uint8_t gfxbank;
 
 
 
@@ -185,13 +185,13 @@ static void update_for_scanline(int scanline)
 	for (i = next_update_scanline; i < scanline; i++)
 		if (i < VIDEO_HEIGHT * 8)
 		{
-			UINT8 scandata[VIDEO_WIDTH * 8];
-			UINT8 *dst = scandata;
-			UINT8 *src = &leland_video_ram[i * 256];
+			uint8_t scandata[VIDEO_WIDTH * 8];
+			uint8_t *dst = scandata;
+			uint8_t *src = &leland_video_ram[i * 256];
 
 			for (j = 0; j < VIDEO_WIDTH * 8 / 2; j++)
 			{
-				UINT8 pix = *src++;
+				uint8_t pix = *src++;
 				*dst++ = pix >> 4;
 				*dst++ = pix & 15;
 			}
@@ -496,7 +496,7 @@ VIDEO_EOF( leland )
 
 VIDEO_UPDATE( leland )
 {
-	const UINT8 *background_prom = memory_region(REGION_USER1);
+	const uint8_t *background_prom = memory_region(REGION_USER1);
 	const struct GfxElement *gfx = Machine->gfx[0];
 	int char_bank = ((gfxbank >> 4) & 0x03) * 0x0400;
 	int prom_bank = ((gfxbank >> 3) & 0x01) * 0x2000;

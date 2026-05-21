@@ -128,13 +128,13 @@ WRITE32_HANDLER( deco32_ace_ram_w )
 static void updateAceRam(void)
 {
 	int r,g,b,i;
-	UINT8 fadeptr=deco32_ace_ram[0x20];
-	UINT8 fadeptg=deco32_ace_ram[0x21];
-	UINT8 fadeptb=deco32_ace_ram[0x22];
-	UINT8 fadepsr=deco32_ace_ram[0x23];
-	UINT8 fadepsg=deco32_ace_ram[0x24];
-	UINT8 fadepsb=deco32_ace_ram[0x25];
-/*  UINT8 mode=deco32_ace_ram[0x26];*/
+	uint8_t fadeptr=deco32_ace_ram[0x20];
+	uint8_t fadeptg=deco32_ace_ram[0x21];
+	uint8_t fadeptb=deco32_ace_ram[0x22];
+	uint8_t fadepsr=deco32_ace_ram[0x23];
+	uint8_t fadepsg=deco32_ace_ram[0x24];
+	uint8_t fadepsb=deco32_ace_ram[0x25];
+/*  uint8_t mode=deco32_ace_ram[0x26];*/
 
 	deco32_ace_ram_dirty=0;
 
@@ -148,9 +148,9 @@ static void updateAceRam(void)
 		if (i>255) /* Screenshots seem to suggest ACE fades do not affect playfield 1 palette (0-255) */
 		{
 			/* Yeah, this should really be fixed point, I know */
-			b = (UINT8)((float)b + (((float)fadeptb - (float)b) * (float)fadepsb/255.0f));
-			g = (UINT8)((float)g + (((float)fadeptg - (float)g) * (float)fadepsg/255.0f));
-			r = (UINT8)((float)r + (((float)fadeptr - (float)r) * (float)fadepsr/255.0f));
+			b = (uint8_t)((float)b + (((float)fadeptb - (float)b) * (float)fadepsb/255.0f));
+			g = (uint8_t)((float)g + (((float)fadeptg - (float)g) * (float)fadepsg/255.0f));
+			r = (uint8_t)((float)r + (((float)fadeptr - (float)r) * (float)fadepsr/255.0f));
 		}
 
 		palette_set_color(i,r,g,b);
@@ -356,11 +356,11 @@ static void fghthist_draw_sprites(struct mame_bitmap *bitmap, const data32_t *sp
 }
 
 static void deco32_draw_sprite(struct mame_bitmap *dest,const struct rectangle *clip,const struct GfxElement *gfx,
-		UINT32 code,UINT32 priority,int flipx,int flipy,int sx,int sy)
+		uint32_t code,uint32_t priority,int flipx,int flipy,int sx,int sy)
 {
 /*	priority = (priority >> 8) & 0x1f;*/
 /*	const pen_t *pal = &gfx->colortable[gfx->color_granularity * (priority % gfx->total_colors)];*/
-	const UINT8 *code_base = gfx->gfxdata + (((code % gfx->total_elements) * gfx->height) * gfx->line_modulo);
+	const uint8_t *code_base = gfx->gfxdata + (((code % gfx->total_elements) * gfx->height) * gfx->line_modulo);
 	int ox,oy,cx,cy;
 	int x_index,y_index,x,y;
 
@@ -382,9 +382,9 @@ static void deco32_draw_sprite(struct mame_bitmap *dest,const struct rectangle *
 
 	for( y=0; y<16-cy; y++ )
 	{
-		const UINT8 *source = code_base + y_index * gfx->line_modulo;
-		/*UINT16 *destb = BITMAP_ADDR16(dest, sy, 0);*/
-		UINT16 *destb = (UINT16 *)dest->line[sy];
+		const uint8_t *source = code_base + y_index * gfx->line_modulo;
+		/*uint16_t *destb = BITMAP_ADDR16(dest, sy, 0);*/
+		uint16_t *destb = (uint16_t *)dest->line[sy];
 
 		if (flipx) { source+=15-(sx-ox); x_index=-1; } else { x_index=1; source+=(sx-ox); }
 
@@ -545,7 +545,7 @@ static void tattass_drawsprites(struct mame_bitmap *bitmap, const data32_t *spri
 static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		const struct rectangle *clip,int transparency,int transparent_color,
-		int scalex, int scaley,struct mame_bitmap *pri_buffer,UINT32 pri_mask, int sprite_screen_width, int  sprite_screen_height )
+		int scalex, int scaley,struct mame_bitmap *pri_buffer,uint32_t pri_mask, int sprite_screen_width, int  sprite_screen_height )
 {
 	struct rectangle myclip;
 
@@ -653,9 +653,9 @@ static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const stru
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -677,8 +677,8 @@ static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const stru
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -700,9 +700,9 @@ static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const stru
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT8 *pri = pri_buffer->line[y];
+								uint8_t *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint8_t *pri = pri_buffer->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -724,8 +724,8 @@ static INLINE void dragngun_drawgfxzoom( struct mame_bitmap *dest_bmp,const stru
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = gfx->gfxdata + (source_base+(y_index>>16)) * gfx->line_modulo;
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -921,7 +921,7 @@ static void dragngun_drawsprites(struct mame_bitmap *bitmap, const data32_t *spr
 
 /******************************************************************************/
 
-static UINT32 deco16_scan_rows(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t deco16_scan_rows(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
@@ -1619,20 +1619,20 @@ static void mixDualAlphaSprites( struct mame_bitmap *bitmap, const struct rectan
 
 	/* Mix sprites into main bitmap, based on priority & alpha */
 	for (y=8; y<248; y++) {
-		UINT8* tilemapPri=priority_bitmap->line[y]; /*BITMAP_ADDR8(machine->priority_bitmap, y, 0);*/
-		UINT16* sprite0=(UINT16*)sprite0_mix_bitmap->line[y]; /*BITMAP_ADDR16(sprite0_mix_bitmap, y, 0);*/
-		UINT16* sprite1=(UINT16*)sprite1_mix_bitmap->line[y]; /*BITMAP_ADDR16(sprite1_mix_bitmap, y, 0);*/
-		UINT32* destLine=(UINT32 *)bitmap->line[y];/*BITMAP_ADDR32(bitmap, y, 0);*/
-		UINT16* alphaTilemap=(UINT16*)tilemap_alpha_bitmap->line[y]; /*BITMAP_ADDR16(tilemap_alpha_bitmap, y, 0);*/
+		uint8_t* tilemapPri=priority_bitmap->line[y]; /*BITMAP_ADDR8(machine->priority_bitmap, y, 0);*/
+		uint16_t* sprite0=(uint16_t*)sprite0_mix_bitmap->line[y]; /*BITMAP_ADDR16(sprite0_mix_bitmap, y, 0);*/
+		uint16_t* sprite1=(uint16_t*)sprite1_mix_bitmap->line[y]; /*BITMAP_ADDR16(sprite1_mix_bitmap, y, 0);*/
+		uint32_t* destLine=(uint32_t *)bitmap->line[y];/*BITMAP_ADDR32(bitmap, y, 0);*/
+		uint16_t* alphaTilemap=(uint16_t*)tilemap_alpha_bitmap->line[y]; /*BITMAP_ADDR16(tilemap_alpha_bitmap, y, 0);*/
 
 		for (x=0; x<320; x++) {
-			UINT16 priColAlphaPal0=sprite0[x];
-			UINT16 priColAlphaPal1=sprite1[x];
-			UINT16 pri0=(priColAlphaPal0&0x6000)>>13;
-			UINT16 pri1=(priColAlphaPal1&0x6000)>>13;
-			UINT16 col0=((priColAlphaPal0&0x1f00)>>8) % gfx0->total_colors;
-			UINT16 col1=((priColAlphaPal1&0x0f00)>>8) % gfx1->total_colors;
-			UINT16 alpha1=priColAlphaPal1&0x8000;
+			uint16_t priColAlphaPal0=sprite0[x];
+			uint16_t priColAlphaPal1=sprite1[x];
+			uint16_t pri0=(priColAlphaPal0&0x6000)>>13;
+			uint16_t pri1=(priColAlphaPal1&0x6000)>>13;
+			uint16_t col0=((priColAlphaPal0&0x1f00)>>8) % gfx0->total_colors;
+			uint16_t col1=((priColAlphaPal1&0x0f00)>>8) % gfx1->total_colors;
+			uint16_t alpha1=priColAlphaPal1&0x8000;
 
 			/* Apply sprite bitmap 0 according to priority rules*/
 			if ((priColAlphaPal0&0xff)!=0)
@@ -1717,7 +1717,7 @@ static void mixDualAlphaSprites( struct mame_bitmap *bitmap, const struct rectan
 			/* Optionally mix in alpha tilemap */
 			if (mixAlphaTilemap)
 			{
-				UINT16 p=alphaTilemap[x];
+				uint16_t p=alphaTilemap[x];
 				if (p&0xf)
 				{
 					/* Alpha tilemap under top two sprite 0 priorities */

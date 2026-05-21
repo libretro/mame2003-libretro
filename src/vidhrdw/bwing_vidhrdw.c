@@ -187,7 +187,7 @@ static INLINE void get_charinfo(int i)
 	SET_TILE_INFO(0, videoram[i], 0, 0)
 }
 
-static INLINE UINT32 bwing_scan_cols(UINT32 col, UINT32 row, UINT32 nc, UINT32 nr)
+static INLINE uint32_t bwing_scan_cols(uint32_t col, uint32_t row, uint32_t nc, uint32_t nr)
 {
 	return((col<<6) + row);
 }
@@ -195,7 +195,7 @@ static INLINE UINT32 bwing_scan_cols(UINT32 col, UINT32 row, UINT32 nc, UINT32 n
 
 VIDEO_START( bwing )
 {
-	UINT32 *dwptr;
+	uint32_t *dwptr;
 	int i;
 
 	if (!(charmap = tilemap_create(get_charinfo,tilemap_scan_cols,TILEMAP_TRANSPARENT, 8, 8,32,32))) return(1);

@@ -16,10 +16,10 @@ static int screen_red;
 static int screen_red_enabled;		/* 1 for games that can turn the screen red */
 static int color_map_select;
 static int background_color;
-static UINT8 cloud_pos;
+static uint8_t cloud_pos;
 static data8_t bowler_bonus_display;
 static int helifire_mv2_offset;
-static UINT32 helifire_star_rng;
+static uint32_t helifire_star_rng;
 
 static mem_write_handler videoram_w_p;
 static void (*video_update_p)(struct mame_bitmap *bitmap,const struct rectangle *cliprect);
@@ -362,7 +362,7 @@ static WRITE_HANDLER( bw_videoram_w )
 
 static WRITE_HANDLER( schaser_videoram_w )
 {
-	UINT8 x,y,col;
+	uint8_t x,y,col;
 
 	videoram[offset] = data;
 
@@ -376,7 +376,7 @@ static WRITE_HANDLER( schaser_videoram_w )
 
 static WRITE_HANDLER( lupin3_videoram_w )
 {
-	UINT8 x,y,col;
+	uint8_t x,y,col;
 
 	videoram[offset] = data;
 
@@ -391,7 +391,7 @@ static WRITE_HANDLER( lupin3_videoram_w )
 static WRITE_HANDLER( polaris_videoram_w )
 {
 	int x,i,col,back_color,fore_color,color_map;
-	UINT8 y, cloud_y;
+	uint8_t y, cloud_y;
 
 	videoram[offset] = data;
 
@@ -506,8 +506,8 @@ static WRITE_HANDLER( phantom2_videoram_w )
 	                             0x10, 0x10, 0x20, 0x20, 0x40, 0x40, 0x80, 0x80 };
 
 	int i,col;
-	UINT8 x,y,cloud_x;
-	UINT8 *cloud_region;
+	uint8_t x,y,cloud_x;
+	uint8_t *cloud_region;
 	offs_t cloud_offs;
 
 
@@ -530,7 +530,7 @@ static WRITE_HANDLER( phantom2_videoram_w )
 		}
 		else
 		{
-			UINT8 cloud_data;
+			uint8_t cloud_data;
 
 
 			cloud_offs = (cloud_offs & 0xfff0) | (cloud_x >> 4);
@@ -586,7 +586,7 @@ static VIDEO_UPDATE( 8080bw_common )
 static int sea_waveform[8] = {0,70,90,97,99,30,10,3}; /* percentage of RC charge (charging and discharging curve)*/
 static int helifire_star_latch = 0;
 static int MVx_count = 0;
-static UINT16 scanline[256];
+static uint16_t scanline[256];
 
 static int last_colors_change = -1;
 static int b_to_g = 0;
@@ -978,7 +978,7 @@ PALETTE_INIT( sflush )
 
 static WRITE_HANDLER( invadpt2_videoram_w )
 {
-	UINT8 x,y,col;
+	uint8_t x,y,col;
 
 	videoram[offset] = data;
 
@@ -988,7 +988,7 @@ static WRITE_HANDLER( invadpt2_videoram_w )
 	/* 32 x 32 colormap */
 	if (!screen_red)
 	{
-		UINT16 colbase;
+		uint16_t colbase;
 
 		colbase = color_map_select ? 0x0400 : 0;
 		col = memory_region(REGION_PROMS)[colbase | (y >> 3 << 5) | (x >> 3)] & 0x07;
@@ -1030,7 +1030,7 @@ WRITE_HANDLER( cosmo_colorram_w )
 
 static WRITE_HANDLER( cosmo_videoram_w )
 {
-	UINT8 x,y,col;
+	uint8_t x,y,col;
 
 	videoram[offset] = data;
 
@@ -1045,7 +1045,7 @@ static WRITE_HANDLER( cosmo_videoram_w )
 
 static WRITE_HANDLER( sstrngr2_videoram_w )
 {
-	UINT8 x,y,col;
+	uint8_t x,y,col;
 
 	videoram[offset] = data;
 
@@ -1055,7 +1055,7 @@ static WRITE_HANDLER( sstrngr2_videoram_w )
 	/* 16 x 32 colormap */
 	if (!screen_red)
 	{
-		UINT16 colbase;
+		uint16_t colbase;
 
 		colbase = color_map_select ? 0 : 0x0200;
 		col = memory_region(REGION_PROMS)[colbase | (y >> 4 << 5) | (x >> 3)] & 0x0f;

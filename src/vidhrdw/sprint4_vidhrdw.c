@@ -6,7 +6,7 @@ Atari Sprint 4 video emulation
 
 #include "driver.h"
 
-UINT8* sprint4_video_ram;
+uint8_t* sprint4_video_ram;
 
 int sprint4_collision[4];
 
@@ -16,7 +16,7 @@ static struct mame_bitmap* helper;
 
 static void get_tile_info(int tile_index)
 {
-	UINT8 code = sprint4_video_ram[tile_index];
+	uint8_t code = sprint4_video_ram[tile_index];
 
 	if ((code & 0x30) == 0x30)
 	{
@@ -70,10 +70,10 @@ VIDEO_UPDATE( sprint4 )
 	{
 		int bank = 0;
 
-		UINT8 hrz = sprint4_video_ram[0x390 + 2 * i + 0];
-		UINT8 col = sprint4_video_ram[0x390 + 2 * i + 1];
-		UINT8 vrt = sprint4_video_ram[0x398 + 2 * i + 0];
-		UINT8 rot = sprint4_video_ram[0x398 + 2 * i + 1];
+		uint8_t hrz = sprint4_video_ram[0x390 + 2 * i + 0];
+		uint8_t col = sprint4_video_ram[0x390 + 2 * i + 1];
+		uint8_t vrt = sprint4_video_ram[0x398 + 2 * i + 0];
+		uint8_t rot = sprint4_video_ram[0x398 + 2 * i + 1];
 
 		if (i & 1)
 		{
@@ -107,9 +107,9 @@ VIDEO_EOF( sprint4 )
 
 		int bank = 0;
 
-		UINT8 hrz = sprint4_video_ram[0x390 + 2 * i + 0];
-		UINT8 vrt = sprint4_video_ram[0x398 + 2 * i + 0];
-		UINT8 rot = sprint4_video_ram[0x398 + 2 * i + 1];
+		uint8_t hrz = sprint4_video_ram[0x390 + 2 * i + 0];
+		uint8_t vrt = sprint4_video_ram[0x398 + 2 * i + 0];
+		uint8_t rot = sprint4_video_ram[0x398 + 2 * i + 1];
 
 		rect.min_x = hrz - 15;
 		rect.min_y = vrt - 15;

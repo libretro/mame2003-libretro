@@ -9,9 +9,9 @@ Atari Destroyer video emulation
 int destroyr_wavemod;
 int destroyr_cursor;
 
-UINT8* destroyr_major_obj_ram;
-UINT8* destroyr_minor_obj_ram;
-UINT8* destroyr_alpha_num_ram;
+uint8_t* destroyr_major_obj_ram;
+uint8_t* destroyr_minor_obj_ram;
+uint8_t* destroyr_alpha_num_ram;
 
 
 VIDEO_UPDATE( destroyr )

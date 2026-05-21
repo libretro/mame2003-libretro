@@ -50,8 +50,8 @@ data16_t *atarisy1_bankselect;
  *************************************/
 
 /* playfield parameters */
-static UINT16 playfield_lookup[256];
-static UINT8 playfield_tile_bank;
+static uint16_t playfield_lookup[256];
+static uint8_t playfield_tile_bank;
 static data16_t playfield_priority_pens;
 static void *yscroll_reset_timer;
 
@@ -61,8 +61,8 @@ static void *scanline_timer;
 static void *int3off_timer;
 
 /* graphics bank tracking */
-static UINT8 bank_gfx[3][8];
-static UINT8 bank_color_shift[MAX_GFX_ELEMENTS];
+static uint8_t bank_gfx[3][8];
+static uint8_t bank_color_shift[MAX_GFX_ELEMENTS];
 
 /* basic form of a graphics bank */
 static struct GfxLayout objlayout =
@@ -85,8 +85,8 @@ static struct GfxLayout objlayout =
  *************************************/
 
 static void update_timers(int scanline);
-static int decode_gfx(UINT16 *pflookup, UINT16 *molookup);
-static int get_bank(UINT8 prom1, UINT8 prom2, int bpp);
+static int decode_gfx(uint16_t *pflookup, uint16_t *molookup);
+static int get_bank(uint8_t prom1, uint8_t prom2, int bpp);
 static void int3_callback(int scanline);
 static void int3off_callback(int param);
 static void reset_yscroll_callback(int param);
@@ -101,7 +101,7 @@ static void reset_yscroll_callback(int param);
 
 static void get_alpha_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_alpha[tile_index];
+	uint16_t data = atarigen_alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = (data >> 10) & 0x07;
 	int opaque = data & 0x2000;
@@ -111,8 +111,8 @@ static void get_alpha_tile_info(int tile_index)
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield[tile_index];
-	UINT16 lookup = playfield_lookup[((data >> 8) & 0x7f) | (playfield_tile_bank << 7)];
+	uint16_t data = atarigen_playfield[tile_index];
+	uint16_t lookup = playfield_lookup[((data >> 8) & 0x7f) | (playfield_tile_bank << 7)];
 	int gfxindex = (lookup >> 8) & 15;
 	int code = ((lookup & 0xff) << 8) | (data & 0xff);
 	int color = 0x20 + (((lookup >> 12) & 15) << bank_color_shift[gfxindex]);
@@ -166,9 +166,9 @@ VIDEO_START( atarisy1 )
 		0					/* callback routine for special entries */
 	};
 
-	UINT16 motable[256];
-	UINT16 *codelookup;
-	UINT8 *colorlookup, *gfxlookup;
+	uint16_t motable[256];
+	uint16_t *codelookup;
+	uint8_t *colorlookup, *gfxlookup;
 	int i, size;
 
 	/* first decode the graphics */
@@ -432,9 +432,9 @@ READ16_HANDLER( atarisy1_int3state_r )
 
 static void update_timers(int scanline)
 {
-	UINT16 *base = &atarimo_0_spriteram[atarimo_get_bank(0) * 64 * 4];
+	uint16_t *base = &atarimo_0_spriteram[atarimo_get_bank(0) * 64 * 4];
 	int link = 0, best = scanline, found = 0;
-	UINT8 spritevisit[64];
+	uint8_t spritevisit[64];
 
 	/* track which ones we've visited */
 	memset(spritevisit, 0, sizeof(spritevisit));
@@ -509,8 +509,8 @@ VIDEO_UPDATE( atarisy1 )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -547,10 +547,10 @@ VIDEO_UPDATE( atarisy1 )
  *
  *************************************/
 
-static int decode_gfx(UINT16 *pflookup, UINT16 *molookup)
+static int decode_gfx(uint16_t *pflookup, uint16_t *molookup)
 {
-	UINT8 *prom1 = &memory_region(REGION_PROMS)[0x000];
-	UINT8 *prom2 = &memory_region(REGION_PROMS)[0x200];
+	uint8_t *prom1 = &memory_region(REGION_PROMS)[0x000];
+	uint8_t *prom2 = &memory_region(REGION_PROMS)[0x200];
 	int obj, i;
 
 	/* reset the globals */
@@ -612,7 +612,7 @@ static int decode_gfx(UINT16 *pflookup, UINT16 *molookup)
  *
  *************************************/
 
-static int get_bank(UINT8 prom1, UINT8 prom2, int bpp)
+static int get_bank(uint8_t prom1, uint8_t prom2, int bpp)
 {
 	int bank_offset[8] = { 0, 0x00000, 0x30000, 0x60000, 0x90000, 0xc0000, 0xe0000, 0x100000 };
 	int bank_index, i, gfx_index;

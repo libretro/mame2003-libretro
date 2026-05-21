@@ -35,7 +35,7 @@ PALETTE_INIT( berzerk )
 }
 
 
-static INLINE void copy_byte(UINT8 x, UINT8 y, data8_t data, data8_t col)
+static INLINE void copy_byte(uint8_t x, uint8_t y, data8_t data, data8_t col)
 {
 	pen_t fore, back;
 
@@ -60,7 +60,7 @@ static INLINE void copy_byte(UINT8 x, UINT8 y, data8_t data, data8_t col)
 WRITE_HANDLER( berzerk_videoram_w )
 {
 	offs_t coloroffset;
-	UINT8 x, y;
+	uint8_t x, y;
 
 
 	videoram[offset] = data;
@@ -78,7 +78,7 @@ WRITE_HANDLER( berzerk_videoram_w )
 WRITE_HANDLER( berzerk_colorram_w )
 {
 	int i;
-	UINT8 x, y;
+	uint8_t x, y;
 
 
 	colorram[offset] = data;

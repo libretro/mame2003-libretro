@@ -9,12 +9,12 @@ data16_t *gcpinbal_tilemapram;
 data16_t *gcpinbal_ioc_ram;
 
 //data16_t *gcpinbal_ctrlram;
-//static UINT16 gcpinbal_ctrl_reg;
+//static uint16_t gcpinbal_ctrl_reg;
 
-static UINT16 gcpinbal_scrollx[3],gcpinbal_scrolly[3];
+static uint16_t gcpinbal_scrollx[3],gcpinbal_scrolly[3];
 
-static UINT16 bg0_gfxset = 0;
-static UINT16 bg1_gfxset = 0;
+static uint16_t bg0_gfxset = 0;
+static uint16_t bg1_gfxset = 0;
 
 
 
@@ -23,8 +23,8 @@ static UINT16 bg1_gfxset = 0;
 
 static void get_bg0_tile_info(int tile_index)
 {
-	UINT16 tilenum = gcpinbal_tilemapram[0 + tile_index*2];
-	UINT16 attr    = gcpinbal_tilemapram[1 + tile_index*2];
+	uint16_t tilenum = gcpinbal_tilemapram[0 + tile_index*2];
+	uint16_t attr    = gcpinbal_tilemapram[1 + tile_index*2];
 
 	SET_TILE_INFO(
 			1,
@@ -35,8 +35,8 @@ static void get_bg0_tile_info(int tile_index)
 
 static void get_bg1_tile_info(int tile_index)
 {
-	UINT16 tilenum = gcpinbal_tilemapram[0x800 + tile_index*2];
-	UINT16 attr    = gcpinbal_tilemapram[0x801 + tile_index*2];
+	uint16_t tilenum = gcpinbal_tilemapram[0x800 + tile_index*2];
+	uint16_t attr    = gcpinbal_tilemapram[0x801 + tile_index*2];
 
 	SET_TILE_INFO(
 			1,
@@ -47,7 +47,7 @@ static void get_bg1_tile_info(int tile_index)
 
 static void get_fg_tile_info(int tile_index)
 {
-	UINT16 tilenum = gcpinbal_tilemapram[0x1000 + tile_index];
+	uint16_t tilenum = gcpinbal_tilemapram[0x1000 + tile_index];
 
 	SET_TILE_INFO(
 			2,
@@ -113,7 +113,7 @@ READ16_HANDLER( gcpinbal_tilemaps_word_r )
 
 WRITE16_HANDLER( gcpinbal_tilemaps_word_w )
 {
-	UINT16 oldword = gcpinbal_tilemapram[offset];
+	uint16_t oldword = gcpinbal_tilemapram[offset];
 	COMBINE_DATA(&gcpinbal_tilemapram[offset]);
 
 	if (offset<0x800)	/* BG0 */
@@ -212,8 +212,8 @@ static void gcpinbal_draw_sprites(struct mame_bitmap *bitmap,const struct rectan
 	int offs,chain_pos;
 	int x,y,curx,cury;
 	int priority=0;
-	UINT8 col,flipx,flipy,chain;
-	UINT16 code;
+	uint8_t col,flipx,flipy,chain;
+	uint16_t code;
 
 	/* According to Raine, word in ioc_ram determines sprite/tile priority... */
 	priority = (gcpinbal_ioc_ram[0x68/2] & 0x8800) ? 0 : 1;
@@ -286,12 +286,12 @@ static void gcpinbal_draw_sprites(struct mame_bitmap *bitmap,const struct rectan
 
 VIDEO_UPDATE( gcpinbal )
 {
-	static UINT16 tile_sets = 0;
+	static uint16_t tile_sets = 0;
 	int i;
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 #ifdef MAME_DEBUG
-	static UINT8 dislayer[4];
+	static uint8_t dislayer[4];
 #endif
 
 #ifdef MAME_DEBUG

@@ -37,8 +37,8 @@ WRITE_HANDLER( mrflea_spriteram_w ){
 
 static void draw_sprites( struct mame_bitmap *bitmap ){
 	const struct GfxElement *gfx = Machine->gfx[0];
-	const UINT8 *source = spriteram;
-	const UINT8 *finish = source+0x100;
+	const uint8_t *source = spriteram;
+	const uint8_t *finish = source+0x100;
 	struct rectangle clip = Machine->visible_area;
 	clip.max_x -= 24;
 	clip.min_x += 16;
@@ -64,7 +64,7 @@ static void draw_sprites( struct mame_bitmap *bitmap ){
 }
 
 static void draw_background( struct mame_bitmap *bitmap ){
-	const UINT8 *source = videoram;
+	const uint8_t *source = videoram;
 	const struct GfxElement *gfx = Machine->gfx[1];
 	int sx,sy;
 	int base = 0;

@@ -5,7 +5,7 @@
 data8_t *speedspn_attram;
 
 static struct tilemap *speedspn_tilemap;
-static UINT8 speedspn_display_disable = 0;
+static uint8_t speedspn_display_disable = 0;
 static int speedspn_bank_vidram = 0;
 static data8_t* speedspn_vidram;
 

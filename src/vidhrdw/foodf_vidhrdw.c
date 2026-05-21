@@ -10,7 +10,7 @@
 #include "foodf.h"
 
 
-static UINT8 playfield_flip;
+static uint8_t playfield_flip;
 
 
 
@@ -22,7 +22,7 @@ static UINT8 playfield_flip;
 
 static void get_playfield_tile_info(int tile_index)
 {
-	UINT16 data = atarigen_playfield[tile_index];
+	uint16_t data = atarigen_playfield[tile_index];
 	int code = (data & 0xff) | ((data >> 7) & 0x100);
 	int color = (data >> 8) & 0x3f;
 	SET_TILE_INFO(0, code, color, playfield_flip ? (TILE_FLIPX | TILE_FLIPY) : 0);

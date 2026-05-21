@@ -144,7 +144,7 @@ WRITE16_HANDLER( powerins_vram_0_w )
 		tilemap_mark_tile_dirty(tilemap_0, offset);
 }
 
-UINT32 powerins_get_memory_offset_0(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+uint32_t powerins_get_memory_offset_0(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	return 	(col * TILES_PER_PAGE_Y) +
 

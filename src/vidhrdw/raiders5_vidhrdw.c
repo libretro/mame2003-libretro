@@ -10,11 +10,11 @@ Video hardware driver by Uki
 
 #include "vidhrdw/generic.h"
 
-UINT8 *raiders5_fgram;
+uint8_t *raiders5_fgram;
 size_t raiders5_fgram_size;
 
-static UINT8 raiders5_xscroll,raiders5_yscroll;
-static UINT8 flipscreen;
+static uint8_t raiders5_xscroll,raiders5_yscroll;
+static uint8_t flipscreen;
 
 
 WRITE_HANDLER( raiders5_scroll_x_w )

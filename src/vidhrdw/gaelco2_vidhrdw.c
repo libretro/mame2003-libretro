@@ -441,12 +441,12 @@ static void gaelco2_draw_sprites(struct mame_bitmap *bitmap, const struct rectan
 					} else { /* last palette entry is reserved for shadows and highlights */
 
 						/* get a pointer to the current sprite's gfx data */
-						UINT8 *gfx_src = gfx->gfxdata + (number % gfx->total_elements)*gfx->char_modulo;
+						uint8_t *gfx_src = gfx->gfxdata + (number % gfx->total_elements)*gfx->char_modulo;
 
 						for (py = 0; py < gfx->height; py++){
 							/* get a pointer to the current line in the screen bitmap */
 							int ypos = ((sy + ey*16 + py) & 0x1ff);
-							UINT16 *srcy = ((UINT16 *)bitmap->line[ypos]);
+							uint16_t *srcy = ((uint16_t *)bitmap->line[ypos]);
 
 							int gfx_py = yflip ? (gfx->height - 1 - py) : py;
 
@@ -455,7 +455,7 @@ static void gaelco2_draw_sprites(struct mame_bitmap *bitmap, const struct rectan
 							for (px = 0; px < gfx->width; px++){
 								/* get current pixel */
 								int xpos = (((sx + ex*16 + px) & 0x3ff) + spr_x_adjust) & 0x3ff;
-								UINT16 *pixel = srcy + xpos;
+								uint16_t *pixel = srcy + xpos;
 								int src_color = *pixel;
 
 								int gfx_px = xflip ? (gfx->width - 1 - px) : px;

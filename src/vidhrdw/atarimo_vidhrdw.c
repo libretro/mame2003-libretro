@@ -36,7 +36,7 @@ struct atarimo_data
 	int					split;				/* are entries split or together? */
 	int					reverse;			/* render in reverse order? */
 	int					swapxy;				/* render in swapped X/Y order? */
-	UINT8				nextneighbor;		/* does the neighbor bit affect the next object? */
+	uint8_t				nextneighbor;		/* does the neighbor bit affect the next object? */
 	int					slipshift;			/* log2(pixels_per_SLIP) */
 	int					slipoffset;			/* pixel offset for SLIP */
 
@@ -90,15 +90,15 @@ struct atarimo_data
 
 	struct atarimo_entry *spriteram;		/* pointer to sprite RAM */
 	data16_t **			slipram;			/* pointer to the SLIP RAM pointer */
-	UINT16 *			codelookup;			/* lookup table for codes */
-	UINT8 *				colorlookup;		/* lookup table for colors */
-	UINT8 *				gfxlookup;			/* lookup table for graphics */
+	uint16_t *			codelookup;			/* lookup table for codes */
+	uint8_t *				colorlookup;		/* lookup table for colors */
+	uint8_t *				gfxlookup;			/* lookup table for graphics */
 
 	struct atarimo_entry *activelist[ATARIMO_MAXPERBANK];	/* pointers to active motion objects */
 	struct atarimo_entry **activelast;		/* pointer to the last pointer in the active list */
 	int					last_link;			/* previous starting point */
 
-	UINT8 *				dirtygrid;			/* grid of dirty rects for blending */
+	uint8_t *				dirtygrid;			/* grid of dirty rects for blending */
 	int					dirtywidth;			/* width of dirty grid */
 	int					dirtyheight;		/* height of dirty grid */
 
@@ -409,7 +409,7 @@ int atarimo_init(int map, const struct atarimo_desc *desc)
 	lookup table.
 ---------------------------------------------------------------*/
 
-UINT16 *atarimo_get_code_lookup(int map, int *size)
+uint16_t *atarimo_get_code_lookup(int map, int *size)
 {
 	struct atarimo_data *mo = &atarimo[map];
 
@@ -424,7 +424,7 @@ UINT16 *atarimo_get_code_lookup(int map, int *size)
 	lookup table.
 ---------------------------------------------------------------*/
 
-UINT8 *atarimo_get_color_lookup(int map, int *size)
+uint8_t *atarimo_get_color_lookup(int map, int *size)
 {
 	struct atarimo_data *mo = &atarimo[map];
 
@@ -439,7 +439,7 @@ UINT8 *atarimo_get_color_lookup(int map, int *size)
 	lookup table.
 ---------------------------------------------------------------*/
 
-UINT8 *atarimo_get_gfx_lookup(int map, int *size)
+uint8_t *atarimo_get_gfx_lookup(int map, int *size)
 {
 	struct atarimo_data *mo = &atarimo[map];
 
@@ -457,7 +457,7 @@ UINT8 *atarimo_get_gfx_lookup(int map, int *size)
 static void update_active_list(struct atarimo_data *mo, int link)
 {
 	struct atarimo_entry *bankbase = &mo->spriteram[mo->bank << mo->entrybits];
-	UINT8 movisit[ATARIMO_MAXPERBANK];
+	uint8_t movisit[ATARIMO_MAXPERBANK];
 	struct atarimo_entry **current;
 	int i;
 
@@ -493,9 +493,9 @@ static void update_active_list(struct atarimo_data *mo, int link)
 	X and Y position.
 ---------------------------------------------------------------*/
 
-static INLINE UINT8 *get_dirty_base(struct atarimo_data *mo, int x, int y)
+static INLINE uint8_t *get_dirty_base(struct atarimo_data *mo, int x, int y)
 {
-	UINT8 *result = mo->dirtygrid;
+	uint8_t *result = mo->dirtygrid;
 	result += ((y >> mo->tileyshift) + 1) * mo->dirtywidth;
 	result += (x >> mo->tilexshift) + 1;
 	return result;
@@ -519,7 +519,7 @@ static void erase_dirty_grid(struct atarimo_data *mo, const struct rectangle *cl
 	for (y = sy; y <= ey; y++)
 	{
 		/* get the base pointer and memset the row */
-		UINT8 *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
+		uint8_t *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
 		memset(dirtybase, 0, ex - sx + 1);
 	}
 }
@@ -549,7 +549,7 @@ static void convert_dirty_grid_to_rects(struct atarimo_data *mo, const struct re
 	/* loop over all grid rows that intersect our cliprect */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT8 *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
+		uint8_t *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
 		int can_add_to_existing = 0;
 
 		/* loop over all grid columns that intersect our cliprect */
@@ -715,13 +715,13 @@ static int mo_render_object(struct atarimo_data *mo, const struct atarimo_entry 
 	int height = EXTRACT_DATA(entry, mo->heightmask) + 1;
 	int priority = EXTRACT_DATA(entry, mo->prioritymask);
 	int xadv, yadv, rendered = 0;
-	UINT8 *dirtybase;
+	uint8_t *dirtybase;
 
 #ifdef TEMPDEBUG
 int temp = EXTRACT_DATA(entry, mo->codemask);
 if ((temp & 0xff00) == 0xc800)
 {
-	static UINT8 hits[256];
+	static uint8_t hits[256];
 	if (!hits[temp & 0xff])
 	{
 		fprintf(stderr, "code = %04X\n", temp);

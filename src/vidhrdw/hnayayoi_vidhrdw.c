@@ -12,7 +12,7 @@ The blitter reads compressed data from ROM and copies it to the bitmap RAM.
 #include "driver.h"
 
 
-static UINT8 *pixmap[8];
+static uint8_t *pixmap[8];
 static int palbank;
 static int total_pixmaps;
 
@@ -90,9 +90,9 @@ up blit_src for the second call.
 
 ***************************************************************************/
 
-static UINT8 blit_layer;
-static UINT16 blit_dest;
-static UINT32 blit_src;
+static uint8_t blit_layer;
+static uint16_t blit_dest;
+static uint32_t blit_src;
 
 WRITE_HANDLER( dynax_blitter_rev1_param_w )
 {
@@ -220,16 +220,16 @@ static void draw_layer_interleaved(struct mame_bitmap *bitmap, const struct rect
 		int left_pixmap, int right_pixmap, int palbase, int transp)
 {
 	int county,countx,pen,offs;
-	UINT8 *src1 = pixmap[left_pixmap];
-	UINT8 *src2 = pixmap[right_pixmap];
-	UINT16 *dstbase = (UINT16 *)bitmap->base;
+	uint8_t *src1 = pixmap[left_pixmap];
+	uint8_t *src2 = pixmap[right_pixmap];
+	uint16_t *dstbase = (uint16_t *)bitmap->base;
 
 	palbase *= 16;
 	offs = 0;
 
 	for (county = 255; county >= 0; county--, dstbase += bitmap->rowpixels)
 	{
-		UINT16 *dst = dstbase;
+		uint16_t *dst = dstbase;
 
 		if (transp)
 		{

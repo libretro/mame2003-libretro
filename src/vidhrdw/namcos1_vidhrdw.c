@@ -72,7 +72,7 @@ static data8_t namcos1_playfield_control[0x100];
 struct playfield playfields[MAX_PLAYFIELDS];
 
 static struct tilemap *tilemap[MAX_PLAYFIELDS];
-static UINT8 *mpMaskData;
+static uint8_t *mpMaskData;
 
 static int sprite_fixed_sx;
 static int sprite_fixed_sy;
@@ -576,7 +576,7 @@ VIDEO_START( namcos1 )
 {
 	int i;
 
-	mpMaskData = (UINT8 *)memory_region( REGION_GFX1 );
+	mpMaskData = (uint8_t *)memory_region( REGION_GFX1 );
 
 	/* set table for sprite color == 0x7f */
 	for(i=0;i<=15;i++)

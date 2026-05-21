@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *pbaction_videoram2, *pbaction_colorram2;
+uint8_t *pbaction_videoram2, *pbaction_colorram2;
 
 static int scroll;
 

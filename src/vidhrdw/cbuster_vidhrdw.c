@@ -19,7 +19,7 @@ data16_t *twocrude_pf1_rowscroll,*twocrude_pf2_rowscroll;
 data16_t *twocrude_pf3_rowscroll,*twocrude_pf4_rowscroll;
 
 /* Function for all 16x16 1024 by 512 layers */
-static UINT32 back_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t back_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
@@ -83,11 +83,11 @@ VIDEO_START( twocrude )
 
 static void update_24bitcol(int offset)
 {
-	UINT8 r,g,b; /* The highest palette value seems to be 0x8e */
+	uint8_t r,g,b; /* The highest palette value seems to be 0x8e */
 
-	r = (UINT8)((float)((paletteram16[offset] >> 0) & 0xff)*1.75);
-	g = (UINT8)((float)((paletteram16[offset] >> 8) & 0xff)*1.75);
-	b = (UINT8)((float)((paletteram16_2[offset] >> 0) & 0xff)*1.75);
+	r = (uint8_t)((float)((paletteram16[offset] >> 0) & 0xff)*1.75);
+	g = (uint8_t)((float)((paletteram16[offset] >> 8) & 0xff)*1.75);
+	b = (uint8_t)((float)((paletteram16_2[offset] >> 0) & 0xff)*1.75);
 
 	palette_set_color(offset,r,g,b);
 }

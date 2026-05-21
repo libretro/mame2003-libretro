@@ -17,13 +17,13 @@
 
 
 /* Local variables */
-static UINT8 *main_bitmap;
-static UINT8 *converted_gfx;
+static uint8_t *main_bitmap;
+static uint8_t *converted_gfx;
 
 
 /* Globals */
-UINT8 arabian_video_control;
-UINT8 arabian_flip_screen;
+uint8_t arabian_video_control;
+uint8_t arabian_flip_screen;
 
 
 
@@ -163,7 +163,7 @@ PALETTE_INIT( arabian )
 
 VIDEO_START( arabian )
 {
-	UINT8 *gfxbase = memory_region(REGION_GFX1);
+	uint8_t *gfxbase = memory_region(REGION_GFX1);
 	int offs;
 
 	/* allocate a common bitmap to use for both planes */
@@ -231,20 +231,20 @@ VIDEO_START( arabian )
  *
  *************************************/
 
-static void blit_area(UINT8 plane, UINT16 src, UINT8 x, UINT8 y, UINT8 sx, UINT8 sy)
+static void blit_area(uint8_t plane, uint16_t src, uint8_t x, uint8_t y, uint8_t sx, uint8_t sy)
 {
-	UINT8 *srcdata = &converted_gfx[src * 4];
+	uint8_t *srcdata = &converted_gfx[src * 4];
 	int i,j;
 
 	/* loop over X, then Y */
 	for (i = 0; i <= sx; i++, x += 4)
 		for (j = 0; j <= sy; j++)
 		{
-			UINT8 p1 = *srcdata++;
-			UINT8 p2 = *srcdata++;
-			UINT8 p3 = *srcdata++;
-			UINT8 p4 = *srcdata++;
-			UINT8 *base;
+			uint8_t p1 = *srcdata++;
+			uint8_t p2 = *srcdata++;
+			uint8_t p3 = *srcdata++;
+			uint8_t p4 = *srcdata++;
+			uint8_t *base;
 
 			/* get a pointer to the bitmap */
 			base = &main_bitmap[((y + j) & 0xff) * BITMAP_WIDTH + (x & 0xff)];
@@ -309,8 +309,8 @@ WRITE_HANDLER( arabian_blitter_w )
 
 WRITE_HANDLER( arabian_videoram_w )
 {
-	UINT8 *base;
-	UINT8 x, y;
+	uint8_t *base;
+	uint8_t x, y;
 
 	/* determine X/Y and mark the area dirty */
 	x = (offset >> 8) << 2;
@@ -391,7 +391,7 @@ VIDEO_UPDATE( arabian )
 		/* flipped case */
 		else
 		{
-			UINT8 scanline[BITMAP_WIDTH];
+			uint8_t scanline[BITMAP_WIDTH];
 			int x;
 			for (x = 0; x < BITMAP_WIDTH; x++)
 				scanline[BITMAP_WIDTH - 1 - x] = main_bitmap[y * BITMAP_WIDTH + x];

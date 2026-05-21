@@ -315,7 +315,7 @@ static void m107_drawsprites(struct mame_bitmap *bitmap, const struct rectangle 
 		}
 		else
 		{
-			UINT8 *rom = memory_region(REGION_USER1);
+			uint8_t *rom = memory_region(REGION_USER1);
 			int rom_offs = sprite*8;
 
 			if (rom[rom_offs+1] || rom[rom_offs+3] || rom[rom_offs+5] || rom[rom_offs+7])

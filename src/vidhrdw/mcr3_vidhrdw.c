@@ -18,11 +18,11 @@
  *************************************/
 
 /* Spy Hunter hardware extras */
-UINT8 spyhunt_sprite_color_mask;
-INT16 spyhunt_scrollx, spyhunt_scrolly;
-INT16 spyhunt_scroll_offset;
+uint8_t spyhunt_sprite_color_mask;
+int16_t spyhunt_scrollx, spyhunt_scrolly;
+int16_t spyhunt_scroll_offset;
 
-UINT8 *spyhunt_alpharam;
+uint8_t *spyhunt_alpharam;
 size_t spyhunt_alpharam_size;
 
 
@@ -62,7 +62,7 @@ static void mcrmono_get_bg_tile_info(int tile_index)
 }
 
 
-static UINT32 spyhunt_bg_scan(UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows)
+static uint32_t spyhunt_bg_scan(uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x0f) | ((col & 0x3f) << 4) | ((row & 0x10) << 6);

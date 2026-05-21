@@ -35,19 +35,19 @@ static void get_kickgoal_bg2_tile_info(int tile_index)
 }
 
 
-static UINT32 tilemap_scan_kicksbg2( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tilemap_scan_kicksbg2( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return col*8 + (row & 0x7) + ((row & 0x3c) >> 3) * 0x200;
 }
 
-static UINT32 tilemap_scan_kicksbg( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tilemap_scan_kicksbg( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return col*16 + (row & 0xf) + ((row & 0x70) >> 4) * 0x400;
 }
 
-static UINT32 tilemap_scan_kicksfg( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tilemap_scan_kicksfg( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	/* logical (col,row) -> memory offset */
 	return col*32 + (row & 0x1f) + ((row & 0x20) >> 5) * 0x800;

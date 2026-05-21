@@ -253,8 +253,8 @@ void ojankoc_flipscreen(int data)
 WRITE_HANDLER( ojankoc_videoram_w )
 {
 	int i;
-	UINT8 x, y, xx, px, py ;
-	UINT8 color, color1, color2;
+	uint8_t x, y, xx, px, py ;
+	uint8_t color, color1, color2;
 
 	ojankohs_videoram[offset] = data;
 

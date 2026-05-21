@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *seicross_row_scroll;
+uint8_t *seicross_row_scroll;
 
 static struct tilemap *bg_tilemap;
 

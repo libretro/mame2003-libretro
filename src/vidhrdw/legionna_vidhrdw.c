@@ -14,9 +14,9 @@ static struct tilemap *background_layer,*foreground_layer,*midground_layer,*text
 
 /******************************************************************************/
 
-static UINT16 gfx_bank = 0;
+static uint16_t gfx_bank = 0;
 
-void heatbrl_setgfxbank(UINT16 data)
+void heatbrl_setgfxbank(uint16_t data)
 {
 	gfx_bank = (data &0x4000) >> 2;
 }
@@ -207,7 +207,7 @@ static void draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 
 	for (offs = 0x400-4;offs >= 0;offs -= 4)
 	{
-		UINT16 data = spriteram16[offs];
+		uint16_t data = spriteram16[offs];
 		if (!(data &0x8000)) continue;
 
 		sprite = spriteram16[offs+1];

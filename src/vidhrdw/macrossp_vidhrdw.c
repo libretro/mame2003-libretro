@@ -28,7 +28,7 @@ WRITE32_HANDLER( macrossp_scra_videoram_w )
 
 static void get_macrossp_scra_tile_info(int tile_index)
 {
-	UINT32 attr,tileno,color;
+	uint32_t attr,tileno,color;
 
 	attr = macrossp_scra_videoram[tile_index];
 	tileno = attr & 0x0000ffff;
@@ -63,7 +63,7 @@ WRITE32_HANDLER( macrossp_scrb_videoram_w )
 
 static void get_macrossp_scrb_tile_info(int tile_index)
 {
-	UINT32 attr,tileno,color;
+	uint32_t attr,tileno,color;
 
 	attr = macrossp_scrb_videoram[tile_index];
 	tileno = attr & 0x0000ffff;
@@ -98,7 +98,7 @@ WRITE32_HANDLER( macrossp_scrc_videoram_w )
 
 static void get_macrossp_scrc_tile_info(int tile_index)
 {
-	UINT32 attr,tileno,color;
+	uint32_t attr,tileno,color;
 
 	attr = macrossp_scrc_videoram[tile_index];
 	tileno = attr & 0x0000ffff;
@@ -133,7 +133,7 @@ WRITE32_HANDLER( macrossp_text_videoram_w )
 
 static void get_macrossp_text_tile_info(int tile_index)
 {
-	UINT32 tileno, colour;
+	uint32_t tileno, colour;
 
 	tileno = macrossp_text_videoram[tile_index] & 0x0000ffff;
 	colour = (macrossp_text_videoram[tile_index] & 0x00fe0000) >> 17;

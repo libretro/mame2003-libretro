@@ -117,7 +117,7 @@ WRITE16_HANDLER( hyprduel_paletteram_w )
 ***************************************************************************/
 
 static struct tilemap *tilemap[3];
-static UINT8 *empty_tiles;
+static uint8_t *empty_tiles;
 
 /* A 2048 x 2048 virtual tilemap */
 
@@ -137,7 +137,7 @@ static INLINE void get_tile_info(int tile_index,int layer,data16_t *vram)
 {
 	data16_t code;
 	int      table_index;
-	UINT32   tile;
+	uint32_t   tile;
 
 	/* The actual tile index depends on the window */
 	tile_index	=	((tile_index / WIN_NX + hyprduel_window[layer * 2 + 0] / 8) % BIG_NY) * BIG_NX +
@@ -175,7 +175,7 @@ static INLINE void get_tile_info_8bit(int tile_index,int layer,data16_t *vram)
 {
 	data16_t code;
 	int      table_index;
-	UINT32   tile;
+	uint32_t   tile;
 
 	/* The actual tile index depends on the window */
 	tile_index	=	((tile_index / WIN_NX + hyprduel_window[layer * 2 + 0] / 8) % BIG_NY) * BIG_NX +
@@ -218,7 +218,7 @@ static INLINE void get_tile_info_16x16_8bit(int tile_index,int layer,data16_t *v
 {
 	data16_t code;
 	int      table_index;
-	UINT32   tile;
+	uint32_t   tile;
 
 	/* The actual tile index depends on the window */
 	tile_index	=	((tile_index / WIN_NX + hyprduel_window[layer * 2 + 0] / 8) % BIG_NY) * BIG_NX +
@@ -613,8 +613,8 @@ VIDEO_UPDATE( hyprduel )
 		memset(dirtyindex,0,hyprduel_tiletable_size/4);
 		for (i = 0;i < hyprduel_tiletable_size/4;i++)
 		{
-			UINT32 tile_new = (hyprduel_tiletable[2*i + 0] << 16 ) + hyprduel_tiletable[2*i + 1];
-			UINT32 tile_old = (hypr_tiletable_old[2*i + 0] << 16 ) + hypr_tiletable_old[2*i + 1];
+			uint32_t tile_new = (hyprduel_tiletable[2*i + 0] << 16 ) + hyprduel_tiletable[2*i + 1];
+			uint32_t tile_old = (hypr_tiletable_old[2*i + 0] << 16 ) + hypr_tiletable_old[2*i + 1];
 
 			if ((tile_new ^ tile_old) & 0x0fffffff)
 			{

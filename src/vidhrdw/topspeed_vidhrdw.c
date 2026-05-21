@@ -43,9 +43,9 @@ void topspeed_draw_sprites(struct mame_bitmap *bitmap,const struct rectangle *cl
 {
 	int offs,map_offset,x,y,curx,cury,sprite_chunk;
 	data16_t *spritemap = topspeed_spritemap;
-	UINT16 data,tilenum,code,color;
-	UINT8 flipx,flipy,priority,bad_chunks;
-	UINT8 j,k,px,py,zx,zy,zoomx,zoomy;
+	uint16_t data,tilenum,code,color;
+	uint8_t flipx,flipy,priority,bad_chunks;
+	uint8_t j,k,px,py,zx,zy,zoomx,zoomy;
 	int primasks[2] = {0xff00,0xfffc};	/* Sprites are over bottom layer or under top layer */
 
 	/* Most of spriteram is not used by the 68000: rest is scratch space for the h/w perhaps ? */
@@ -123,10 +123,10 @@ logerror("Sprite number %04x had %02x invalid chunks\n",tilenum,bad_chunks);
 
 VIDEO_UPDATE( topspeed )
 {
-	UINT8 layer[4];
+	uint8_t layer[4];
 
 #ifdef MAME_DEBUG
-	static UINT8 dislayer[5];
+	static uint8_t dislayer[5];
 #endif
 
 #ifdef MAME_DEBUG

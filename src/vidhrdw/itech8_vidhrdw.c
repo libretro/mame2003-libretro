@@ -62,14 +62,14 @@ data8_t *itech8_grom_bank;
 data8_t *itech8_display_page;
 
 
-static UINT8 blitter_data[16];
-static UINT8 blit_in_progress;
+static uint8_t blitter_data[16];
+static uint8_t blit_in_progress;
 
-static UINT8 slikshot;
+static uint8_t slikshot;
 
 static struct tms34061_display tms_state;
-static UINT8 *grom_base;
-static UINT32 grom_size;
+static uint8_t *grom_base;
+static uint32_t grom_size;
 
 
 
@@ -150,14 +150,14 @@ WRITE_HANDLER( itech8_palette_w )
  *
  *************************************/
 
-static INLINE void draw_byte(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	tms_state.vram[addr] = val & mask;
 	tms_state.latchram[addr] = latch;
 }
 
 
-static INLINE void draw_byte_trans4(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_trans4(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (!val)
 		return;
@@ -183,7 +183,7 @@ static INLINE void draw_byte_trans4(offs_t addr, UINT8 val, UINT8 mask, UINT8 la
 }
 
 
-static INLINE void draw_byte_trans8(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_trans8(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (val) draw_byte(addr, val, mask, latch);
 }
@@ -196,7 +196,7 @@ static INLINE void draw_byte_trans8(offs_t addr, UINT8 val, UINT8 mask, UINT8 la
  *
  *************************************/
 
-static INLINE void draw_byte_shift(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_shift(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	tms_state.vram[addr] = (tms_state.vram[addr] & 0xf0) | ((val & mask) >> 4);
 	tms_state.latchram[addr] = (tms_state.latchram[addr] & 0xf0) | (latch >> 4);
@@ -205,7 +205,7 @@ static INLINE void draw_byte_shift(offs_t addr, UINT8 val, UINT8 mask, UINT8 lat
 }
 
 
-static INLINE void draw_byte_shift_trans4(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_shift_trans4(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (!val)
 		return;
@@ -223,7 +223,7 @@ static INLINE void draw_byte_shift_trans4(offs_t addr, UINT8 val, UINT8 mask, UI
 }
 
 
-static INLINE void draw_byte_shift_trans8(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_shift_trans8(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	if (val) draw_byte_shift(addr, val, mask, latch);
 }
@@ -236,28 +236,28 @@ static INLINE void draw_byte_shift_trans8(offs_t addr, UINT8 val, UINT8 mask, UI
  *
  *************************************/
 
-static INLINE void draw_byte_xflip(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte(addr, val, mask, latch);
 }
 
 
-static INLINE void draw_byte_trans4_xflip(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_trans4_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte_trans4(addr, val, mask, latch);
 }
 
 
-static INLINE void draw_byte_shift_xflip(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_shift_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte_shift(addr, val, mask, latch);
 }
 
 
-static INLINE void draw_byte_shift_trans4_xflip(offs_t addr, UINT8 val, UINT8 mask, UINT8 latch)
+static INLINE void draw_byte_shift_trans4_xflip(offs_t addr, uint8_t val, uint8_t mask, uint8_t latch)
 {
 	val = (val >> 4) | (val << 4);
 	draw_byte_shift_trans4(addr, val, mask, latch);
@@ -274,15 +274,15 @@ static INLINE void draw_byte_shift_trans4_xflip(offs_t addr, UINT8 val, UINT8 ma
 #define DRAW_RAW_MACRO(NAME, TRANSPARENT, OPERATION) 										\
 static void NAME(void)																		\
 {																							\
-	UINT8 *src = &grom_base[((*itech8_grom_bank << 16) | (BLITTER_ADDRHI << 8) | BLITTER_ADDRLO) % grom_size];\
+	uint8_t *src = &grom_base[((*itech8_grom_bank << 16) | (BLITTER_ADDRHI << 8) | BLITTER_ADDRLO) % grom_size];\
 	offs_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);\
 	int ydir = (BLITTER_FLAGS & BLITFLAG_YFLIP) ? -1 : 1;									\
 	int xdir = (BLITTER_FLAGS & BLITFLAG_XFLIP) ? -1 : 1;									\
 	int color = tms34061_latch_r(0);														\
 	int width = BLITTER_WIDTH;																\
 	int height = BLITTER_HEIGHT;															\
-	UINT8 mask = BLITTER_MASK;																\
-	UINT8 skip[3];																			\
+	uint8_t mask = BLITTER_MASK;																\
+	uint8_t skip[3];																			\
 	int x, y;																				\
 																							\
 	/* compute horiz skip counts */															\
@@ -354,7 +354,7 @@ static void NAME(void)																		\
 #define DRAW_RLE_MACRO(NAME, TRANSPARENT, OPERATION) 										\
 static void NAME(void)																		\
 {																							\
-	UINT8 *src = &grom_base[((*itech8_grom_bank << 16) | (BLITTER_ADDRHI << 8) | BLITTER_ADDRLO) % grom_size];\
+	uint8_t *src = &grom_base[((*itech8_grom_bank << 16) | (BLITTER_ADDRHI << 8) | BLITTER_ADDRLO) % grom_size];\
 	offs_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);\
 	int ydir = (BLITTER_FLAGS & BLITFLAG_YFLIP) ? -1 : 1;									\
 	int xdir = (BLITTER_FLAGS & BLITFLAG_XFLIP) ? -1 : 1;									\
@@ -362,8 +362,8 @@ static void NAME(void)																		\
 	int color = tms34061_latch_r(0);														\
 	int width = BLITTER_WIDTH;																\
 	int height = BLITTER_HEIGHT;															\
-	UINT8 mask = BLITTER_MASK;																\
-	UINT8 skip[3];																			\
+	uint8_t mask = BLITTER_MASK;																\
+	uint8_t skip[3];																			\
 	int xleft, y;																			\
 																							\
 	/* skip past the double-0's */															\
@@ -764,8 +764,8 @@ VIDEO_UPDATE( itech8 )
 	if (BLITTER_OUTPUT & 0x40)
 	{
 		int halfwidth = (Machine->visible_area.max_x + 2) / 2;
-		UINT8 *base = &tms_state.vram[(~*itech8_display_page & 0x80) << 10];
-		UINT8 *latch = &tms_state.latchram[(~*itech8_display_page & 0x80) << 10];
+		uint8_t *base = &tms_state.vram[(~*itech8_display_page & 0x80) << 10];
+		uint8_t *latch = &tms_state.latchram[(~*itech8_display_page & 0x80) << 10];
 
 		base += (cliprect->min_y - Machine->visible_area.min_y) * 256;
 		latch += (cliprect->min_y - Machine->visible_area.min_y) * 256;
@@ -773,7 +773,7 @@ VIDEO_UPDATE( itech8 )
 		/* now regenerate the bitmap */
 		for (ty = 0, y = cliprect->min_y; y <= cliprect->max_y; y++, ty++)
 		{
-			UINT8 scanline[512];
+			uint8_t scanline[512];
 			int x;
 
 			for (x = 0; x < halfwidth; x++)
@@ -791,7 +791,7 @@ VIDEO_UPDATE( itech8 )
 	/* width can be up to 256 pixels */
 	else
 	{
-		UINT8 *base = &tms_state.vram[tms_state.dispstart & ~0x30000];
+		uint8_t *base = &tms_state.vram[tms_state.dispstart & ~0x30000];
 
 		base += (cliprect->min_y - Machine->visible_area.min_y) * 256;
 

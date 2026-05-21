@@ -16,7 +16,7 @@
 #include "vidhrdw/generic.h"
 
 
-UINT8 *mystston_videoram2;
+uint8_t *mystston_videoram2;
 
 static int mystston_fgcolor, mystston_bgpage;
 

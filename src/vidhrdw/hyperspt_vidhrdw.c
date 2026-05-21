@@ -9,7 +9,7 @@
 #include "driver.h"
 #include "vidhrdw/generic.h"
 
-UINT8 *hyperspt_scroll;
+uint8_t *hyperspt_scroll;
 
 static struct tilemap *bg_tilemap;
 

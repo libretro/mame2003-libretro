@@ -17,15 +17,15 @@
  *
  *************************************/
 
-static UINT8 *local_videoram;
-static UINT8 *scanline_dirty;
-static UINT8 *scanline_palette;
-static UINT8 *sprite_data;
-static UINT32 sprite_mask;
+static uint8_t *local_videoram;
+static uint8_t *scanline_dirty;
+static uint8_t *scanline_palette;
+static uint8_t *sprite_data;
+static uint32_t sprite_mask;
 
-static UINT8 last_scanline_palette;
-static UINT8 screen_refresh_counter;
-static UINT8 palettebank_vis;
+static uint8_t last_scanline_palette;
+static uint8_t screen_refresh_counter;
+static uint8_t palettebank_vis;
 
 
 
@@ -180,14 +180,14 @@ WRITE_HANDLER( balsente_paletteram_w )
  *
  *************************************/
 
-static void draw_one_sprite(struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT8 *sprite)
+static void draw_one_sprite(struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint8_t *sprite)
 {
 	struct rectangle finalclip = *cliprect;
 	int flags = sprite[0];
 	int image = sprite[1] | ((flags & 7) << 8);
 	int ypos = sprite[2] + 17;
 	int xpos = sprite[3];
-	UINT8 *src;
+	uint8_t *src;
 	int x, y;
 	
 	if (finalclip.min_y < 16)
@@ -204,8 +204,8 @@ static void draw_one_sprite(struct mame_bitmap *bitmap, const struct rectangle *
 	{
 		if (ypos >= finalclip.min_y && ypos <= finalclip.max_y)
 		{
-			UINT32 *pens = &Machine->pens[scanline_palette[y] * 256];
-			UINT8 *old = &local_videoram[ypos * 256 + xpos];
+			uint32_t *pens = &Machine->pens[scanline_palette[y] * 256];
+			uint8_t *old = &local_videoram[ypos * 256 + xpos];
 			int currx = xpos;
 
 			/* standard case */

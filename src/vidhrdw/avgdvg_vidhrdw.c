@@ -87,9 +87,9 @@
  *
  *************************************/
 
-static UINT8 vector_engine;
-static UINT8 flipword;
-static UINT8 busy;
+static uint8_t vector_engine;
+static uint8_t flipword;
+static uint8_t busy;
 static rgb_t colorram[32];
 
 static int width, height;
@@ -118,7 +118,7 @@ static rgb_t sparkle_callback(void);
 
 static INLINE int twos_comp_val(int num, int bits)
 {
-	return (INT32)(num << (32 - bits)) >> (32 - bits);
+	return (int32_t)(num << (32 - bits)) >> (32 - bits);
 }
 
 
@@ -129,9 +129,9 @@ static INLINE int twos_comp_val(int num, int bits)
  *
  *************************************/
 
-static INLINE UINT16 vector_word(UINT16 offset)
+static INLINE uint16_t vector_word(uint16_t offset)
 {
-	UINT8 *base;
+	uint8_t *base;
 
 	/* convert from word offset to byte */
 	offset *= 2;

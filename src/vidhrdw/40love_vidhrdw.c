@@ -11,8 +11,8 @@
 
 unsigned char *fortyl_video_ctrl;
 
-static UINT8 fortyl_flipscreen,fortyl_pix_redraw;
-static UINT8 fortyl_xoffset = 128;
+static uint8_t fortyl_flipscreen,fortyl_pix_redraw;
+static uint8_t fortyl_xoffset = 128;
 
 static data8_t *fortyl_pixram1;
 static data8_t *fortyl_pixram2;

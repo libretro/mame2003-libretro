@@ -309,7 +309,7 @@ static void psikyosh_drawbglayerscroll( int layer, struct mame_bitmap *bitmap, c
 }
 
 /* 3 BG layers, with priority */
-static void psikyosh_drawbackground( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT8 req_pri )
+static void psikyosh_drawbackground( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint8_t req_pri )
 {
 	int i;
 
@@ -489,9 +489,9 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							if( z > 0 )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
-								UINT32 *dest = (UINT32 *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
-								UINT16 *pri = (UINT16 *)z_bitmap->base + sy*z_bitmap->rowpixels + sx;
+								uint8_t *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
+								uint32_t *dest = (uint32_t *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
+								uint16_t *pri = (uint16_t *)z_bitmap->base + sy*z_bitmap->rowpixels + sx;
 								int src_modulo = yinc*gfx->line_modulo - xinc*(ex-sx);
 								int dst_modulo = dest_bmp->rowpixels - (ex-sx);
 
@@ -520,8 +520,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 							}
 							else
 							{
-								UINT8 *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
-								UINT32 *dest = (UINT32 *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
+								uint8_t *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
+								uint32_t *dest = (uint32_t *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
 								int src_modulo = yinc*gfx->line_modulo - xinc*(ex-sx);
 								int dst_modulo = dest_bmp->rowpixels - (ex-sx);
 
@@ -547,9 +547,9 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							if ( z > 0 )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
-								UINT32 *dest = (UINT32 *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
-								UINT16 *pri = (UINT16 *)z_bitmap->base + sy*z_bitmap->rowpixels + sx;
+								uint8_t *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
+								uint32_t *dest = (uint32_t *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
+								uint16_t *pri = (uint16_t *)z_bitmap->base + sy*z_bitmap->rowpixels + sx;
 								int src_modulo = yinc*gfx->line_modulo - xinc*(ex-sx);
 								int dst_modulo = dest_bmp->rowpixels - (ex-sx);
 
@@ -578,8 +578,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 							}
 							else
 							{
-								UINT8 *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
-								UINT32 *dest = (UINT32 *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
+								uint8_t *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
+								uint32_t *dest = (uint32_t *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
 								int src_modulo = yinc*gfx->line_modulo - xinc*(ex-sx);
 								int dst_modulo = dest_bmp->rowpixels - (ex-sx);
 
@@ -606,9 +606,9 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							if ( z > 0 )
 							{
-								UINT8 *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
-								UINT32 *dest = (UINT32 *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
-								UINT16 *pri = (UINT16 *)z_bitmap->base + sy*z_bitmap->rowpixels + sx;
+								uint8_t *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
+								uint32_t *dest = (uint32_t *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
+								uint16_t *pri = (uint16_t *)z_bitmap->base + sy*z_bitmap->rowpixels + sx;
 								int src_modulo = yinc*gfx->line_modulo - xinc*(ex-sx);
 								int dst_modulo = dest_bmp->rowpixels - (ex-sx);
 
@@ -641,8 +641,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 							}
 							else
 							{
-								UINT8 *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
-								UINT32 *dest = (UINT32 *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
+								uint8_t *source = gfx->gfxdata + (source_base + y_index)*gfx->line_modulo + x_index_base;
+								uint32_t *dest = (uint32_t *)dest_bmp->base + sy*dest_bmp->rowpixels + sx;
 								int src_modulo = yinc*gfx->line_modulo - xinc*(ex-sx);
 								int dst_modulo = dest_bmp->rowpixels - (ex-sx);
 
@@ -684,8 +684,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 				int source_base = ((code + code_offset++) % gfx->total_elements) * gfx->height;
 				for( ypixel=0; ypixel<gfx->height; ypixel++ )
 				{
-					UINT8 *source = gfx->gfxdata + (source_base+ypixel) * gfx->line_modulo;
-					UINT8 *dest = (UINT8 *)zoom_bitmap->line[ypixel + ytile*gfx->height];
+					uint8_t *source = gfx->gfxdata + (source_base+ypixel) * gfx->line_modulo;
+					uint8_t *dest = (uint8_t *)zoom_bitmap->line[ypixel + ytile*gfx->height];
 
 					for( xpixel=0; xpixel<gfx->width; xpixel++ )
 					{
@@ -763,9 +763,9 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = (UINT8 *)zoom_bitmap->line[y_index>>10];
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT16 *pri = (UINT16 *)z_bitmap->line[y];
+								uint8_t *source = (uint8_t *)zoom_bitmap->line[y_index>>10];
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint16_t *pri = (uint16_t *)z_bitmap->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -789,8 +789,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = (UINT8 *)zoom_bitmap->line[y_index>>10];
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = (uint8_t *)zoom_bitmap->line[y_index>>10];
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -812,9 +812,9 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = (UINT8 *)zoom_bitmap->line[y_index>>10];
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT16 *pri = (UINT16 *)z_bitmap->line[y];
+								uint8_t *source = (uint8_t *)zoom_bitmap->line[y_index>>10];
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint16_t *pri = (uint16_t *)z_bitmap->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -838,8 +838,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = (UINT8 *)zoom_bitmap->line[y_index>>10];
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = (uint8_t *)zoom_bitmap->line[y_index>>10];
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -861,9 +861,9 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = (UINT8 *)zoom_bitmap->line[y_index>>10];
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
-								UINT16 *pri = (UINT16 *)z_bitmap->line[y];
+								uint8_t *source = (uint8_t *)zoom_bitmap->line[y_index>>10];
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
+								uint16_t *pri = (uint16_t *)z_bitmap->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -891,8 +891,8 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								UINT8 *source = (UINT8 *)zoom_bitmap->line[y_index>>10];
-								UINT32 *dest = (UINT32 *)dest_bmp->line[y];
+								uint8_t *source = (uint8_t *)zoom_bitmap->line[y_index>>10];
+								uint32_t *dest = (uint32_t *)dest_bmp->line[y];
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -921,7 +921,7 @@ void psikyosh_drawgfxzoom( struct mame_bitmap *dest_bmp,const struct GfxElement 
 
 #define SPRITE_PRI(n) (((psikyosh_vidregs[2] << (4*n)) & 0xf0000000 ) >> 28)
 
-static void psikyosh_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, UINT8 req_pri )
+static void psikyosh_drawsprites( struct mame_bitmap *bitmap, const struct rectangle *cliprect, uint8_t req_pri )
 {
 	/*- Sprite Format 0x0000 - 0x37ff -**
 
@@ -1013,7 +1013,7 @@ static void psikyosh_drawsprites( struct mame_bitmap *bitmap, const struct recta
 			if( zoom_table[BYTE_XOR_BE(zoomy)] && zoom_table[BYTE_XOR_BE(zoomx)] ) /* Avoid division-by-zero when table contains 0 (Uninitialised/Bug) */
 			{
 				psikyosh_drawgfxzoom(bitmap,gfx,tnum,colr,flpx,flpy,xpos,ypos,cliprect,trans,0,
-									(UINT32)zoom_table[BYTE_XOR_BE(zoomx)], (UINT32)zoom_table[BYTE_XOR_BE(zoomy)], wide, high, listcntr);
+									(uint32_t)zoom_table[BYTE_XOR_BE(zoomx)], (uint32_t)zoom_table[BYTE_XOR_BE(zoomy)], wide, high, listcntr);
 
 #if 0
 #ifdef MAME_DEBUG
@@ -1077,7 +1077,7 @@ static void psikyosh_prelineblend( struct mame_bitmap *bitmap, const struct rect
 	/* I suspect that it should be blended against black by the amount specified as
 	   gnbarich sets the 0x000000ff to 0x7f in test mode whilst the others use 0x80.
 	   As it's only used in testmode I'll just leave it as a toggle for now */
-	UINT32 *dstline;
+	uint32_t *dstline;
 	data32_t *linefill = psikyosh_bgram; /* Per row */
 	int x,y;
 
@@ -1090,7 +1090,7 @@ static void psikyosh_prelineblend( struct mame_bitmap *bitmap, const struct rect
 	profiler_mark(PROFILER_USER1);
 	for (y = cliprect->min_y; y <= cliprect->max_y; y += 1) {
 
-		dstline = (UINT32 *)(bitmap->line[y]);
+		dstline = (uint32_t *)(bitmap->line[y]);
 
 		if(linefill[y]&0xff) /* Row */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x += 1)
@@ -1110,14 +1110,14 @@ static void psikyosh_postlineblend( struct mame_bitmap *bitmap, const struct rec
 	if (alpha_active)
 	{
 	/* There are 224 values for post-lineblending. Using one for every row currently */
-	UINT32 *dstline;
+	uint32_t *dstline;
 	data32_t *lineblend = psikyosh_bgram+0x400/4; /* Per row */
 	int x,y;
 
 	profiler_mark(PROFILER_USER2);
 	for (y = cliprect->min_y; y <= cliprect->max_y; y += 1) {
 
-		dstline = (UINT32 *)(bitmap->line[y]);
+		dstline = (uint32_t *)(bitmap->line[y]);
 
 		if(lineblend[y]&0x80) /* Row */
 		{
