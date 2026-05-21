@@ -81,7 +81,6 @@ extern "C" {
 
 struct mame_display;		/* declared elsewhere */
 
-typedef uint32_t pen_t;
 typedef uint32_t rgb_t;
 typedef uint16_t rgb15_t;
 

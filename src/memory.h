@@ -75,12 +75,6 @@ extern "C" {
 
 ***************************************************************************/
 
-/* ----- typedefs for data and offset types ----- */
-typedef uint8_t			data8_t;
-typedef uint16_t			data16_t;
-typedef uint32_t			data32_t;
-typedef uint32_t			offs_t;
-
 /* ----- typedefs for the various common memory/port handlers ----- */
 typedef uint8_t			(*read8_handler)  (UNUSEDARG uint32_t offset);
 typedef void			(*write8_handler) (UNUSEDARG uint32_t offset, UNUSEDARG uint8_t data);
