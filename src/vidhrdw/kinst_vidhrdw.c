@@ -10,39 +10,11 @@
 #include "kinst.h"
 
 
-static UINT16 *vram_buffer;
-
-
-
-/*************************************
- *
- *	Video RAM buffering
- *
- *************************************/
-
-void kinst_buffer_vram(data32_t *base)
-{
-	UINT16 *dest = vram_buffer;
-	int y;
-
-	/*  it is not at all understood how this really works; it breaks in
-		the disk test, but this seems to be a close approximation to the
-		real thing otherwise */
-
-	/* loop over rows */
-	for (y = 0; y < 240; y++)
-	{
-		data32_t *src = &base[640/4 * y];
-		int i;
-
-		/* loop over columns */
-		for (i = 0; i < 320; i += 2)
-		{
-			*dest++ = *src & 0x7fff;
-			*dest++ = (*src++ >> 16) & 0x7fff;
-		}
-	}
-}
+/* Pointer to the VRAM page currently selected for scanout. The hardware is
+   double-buffered: the game renders into the back page, then flips the page
+   select (control register $80, bit 2) to display it. We read the selected
+   page directly, so no intermediate buffer or copy is needed. */
+data32_t *kinst_video_base;
 
 
 
@@ -76,9 +48,6 @@ PALETTE_INIT( kinst )
 
 VIDEO_START( kinst )
 {
-	vram_buffer = auto_malloc(320 * 240 * sizeof(UINT16));
-	if (!vram_buffer)
-		return 1;
 	return 0;
 }
 
@@ -94,7 +63,19 @@ VIDEO_UPDATE( kinst )
 {
 	int y;
 
-	/* loop over rows and copy to the destination */
+	/* Convert the currently selected VRAM page straight into the bitmap.
+	   Two 15-bit pixels are packed per 32-bit word; the palette is a 1:1
+	   5-5-5 map, so the masked value is used directly as the pixel index. */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
-		memcpy(bitmap->line[y], &vram_buffer[y * 320], 320 * sizeof(UINT16));
+	{
+		data32_t *src = &kinst_video_base[640/4 * y];
+		UINT16 *dest = (UINT16 *)bitmap->line[y];
+		int i;
+
+		for (i = 0; i < 320; i += 2)
+		{
+			*dest++ = *src & 0x7fff;
+			*dest++ = (*src++ >> 16) & 0x7fff;
+		}
+	}
 }

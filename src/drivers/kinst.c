@@ -48,6 +48,9 @@ static MACHINE_INIT( kinst )
 	cpu_setbank(3, rambase1);
 	cpu_setbank(4, rambase2 + 0x90000/4);
 
+	/* default to the first VRAM page until the game flips */
+	kinst_video_base = &rambase1[0x30000/4];
+
 	ide_controller_reset(0);
 }
 
@@ -167,8 +170,9 @@ static WRITE32_HANDLER( kinst_control_w )
 
 	switch (offset)
 	{
-		case 0:		/* $80 - VRAM buffer control?? */
-			kinst_buffer_vram(&rambase1[0x30000/4]);
+		case 0:		/* $80 - VRAM page select (double-buffer flip) */
+			kinst_video_base = (kinst_control[offset] & 0x04) ?
+				&rambase1[0x58000/4] : &rambase1[0x30000/4];
 			break;
 
 		case 1: 	/* $88 - sound reset */

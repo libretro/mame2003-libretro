@@ -6,7 +6,7 @@
 
 /*----------- defined in vidhrdw/kinst.c -----------*/
 
-void kinst_buffer_vram(data32_t *base);
+extern data32_t *kinst_video_base;
 
 PALETTE_INIT( kinst );
 VIDEO_START( kinst );
