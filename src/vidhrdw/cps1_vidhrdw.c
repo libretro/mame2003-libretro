@@ -182,8 +182,6 @@ The games seem to use them to mark platforms, kill zones and no-go areas.
 
 #define VERBOSE 0
 
-#define CPS1_DUMP_VIDEO 0
-
 /********************************************************************
 
 			Configuration table:
@@ -547,36 +545,9 @@ WRITE16_HANDLER( cps1_output_w )
 
 	/* To mark scanlines for raster effects */
 	if(offset == 0x52/2)
-	{
 		scanline2 = (data & 0x1ff);
-	}
 	if(offset == 0x50/2)
-	{
 		scanline1 = (data & 0x1ff);
-	}
-
-
-#ifdef MAME_DEBUG
-if (cps1_game_config->control_reg && offset == cps1_game_config->control_reg/2 && data != 0x3f)
-	logerror("control_reg = %04x",data);
-#endif
-#if VERBOSE
-if (offset > 0x22/2 &&
-        offset != cps1_game_config->layer_control/2 &&
-		offset != cps1_game_config->priority[0]/2 &&
-		offset != cps1_game_config->priority[1]/2 &&
-		offset != cps1_game_config->priority[2]/2 &&
-		offset != cps1_game_config->priority[3]/2 &&
-		offset != cps1_game_config->control_reg/2)
-	logerror("PC %06x: write %02x to output port %02x\n",activecpu_get_pc(),data,offset*2);
-
-#ifdef MAME_DEBUG
-if (offset == 0x22/2 && (data & ~0x8001) != 0x0e)
-	logerror("port 22 = %04x",data);
-if (cps1_game_config->priority[0] && offset == cps1_game_config->priority[0]/2 && data != 0x00)
-	usrintf_showmessage("priority0 %04x",data);
-#endif
-#endif
 }
 
 
@@ -768,90 +739,6 @@ DRIVER_INIT( cps2 )
 	scancalls = 0;
 }
 
-
-
-
-
-#if CPS1_DUMP_VIDEO
-void cps1_dump_video(void)
-{
-	FILE *fp;
-	fp=fopen("SCROLL1.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_scroll1, cps1_scroll_size, 1, fp);
-		fclose(fp);
-	}
-	fp=fopen("SCROLL2.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_scroll2, cps1_scroll_size, 1, fp);
-		fclose(fp);
-	}
-	fp=fopen("SCROLL3.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_scroll3, cps1_scroll_size, 1, fp);
-		fclose(fp);
-	}
-
-    fp=fopen("OBJ.DMP", "w+b");
-    if (fp)
-    {
-        fwrite(cps1_obj, cps1_obj_size, 1, fp);
-        fclose(fp);
-    }
-    if (cps_version == 2)
-    {
-        /* PSL: CPS2 support */
-        fp=fopen("OBJCPS2.DMP", "w+b");
-        if (fp)
-        {
-            fwrite(cps2_objram1, cps2_obj_size, 1, fp);
-            fwrite(cps2_objram2, cps2_obj_size, 1, fp);
-            fclose(fp);
-        }
-        fp=fopen("CPS2OUTP.DMP", "w+b");
-        if (fp)
-        {
-            fwrite(cps2_output, cps2_output_size, 1, fp);
-            fclose(fp);
-        }
-
-    }
-
-
-	fp=fopen("OTHER.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_other, cps1_other_size, 1, fp);
-		fclose(fp);
-	}
-
-	fp=fopen("PALETTE.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_palette, cps1_palette_size, 1, fp);
-		fclose(fp);
-	}
-
-	fp=fopen("OUTPUT.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_output, cps1_output_size, 1, fp);
-		fclose(fp);
-	}
-	fp=fopen("VIDEO.DMP", "w+b");
-	if (fp)
-	{
-		fwrite(cps1_gfxram, cps1_gfxram_size, 1, fp);
-		fclose(fp);
-	}
-
-}
-#endif
-
-
 static void cps1_get_video_base(void )
 {
 	int layercontrol, scroll1xoff, scroll2xoff, scroll3xoff;
@@ -911,57 +798,6 @@ static void cps1_get_video_base(void )
 	tilemap_set_enable(tilemap[2],layercontrol & cps1_game_config->layer_enable_mask[2]);
 	cps1_stars_enabled[0] = layercontrol & cps1_game_config->layer_enable_mask[3];
 	cps1_stars_enabled[1] = layercontrol & cps1_game_config->layer_enable_mask[4];
-
-
-#ifdef MAME_DEBUG
-{
-	int enablemask;
-
-#if 0
-if (keyboard_pressed(KEYCODE_Z))
-{
-	if (keyboard_pressed(KEYCODE_Q)) cps1_layer_enabled[3]=0;
-	if (keyboard_pressed(KEYCODE_W)) cps1_layer_enabled[2]=0;
-	if (keyboard_pressed(KEYCODE_E)) cps1_layer_enabled[1]=0;
-	if (keyboard_pressed(KEYCODE_R)) cps1_layer_enabled[0]=0;
-	if (keyboard_pressed(KEYCODE_T))
-	{
-		usrintf_showmessage("%d %d %d %d layer %02x",
-			(layercontrol>>0x06)&03,
-			(layercontrol>>0x08)&03,
-			(layercontrol>>0x0a)&03,
-			(layercontrol>>0x0c)&03,
-			layercontrol&0xc03f
-			);
-	}
-
-}
-#endif
-
-	enablemask = 0;
-	if (cps1_game_config->layer_enable_mask[0] == cps1_game_config->layer_enable_mask[1])
-		enablemask = cps1_game_config->layer_enable_mask[0];
-	if (cps1_game_config->layer_enable_mask[0] == cps1_game_config->layer_enable_mask[2])
-		enablemask = cps1_game_config->layer_enable_mask[0];
-	if (cps1_game_config->layer_enable_mask[1] == cps1_game_config->layer_enable_mask[2])
-		enablemask = cps1_game_config->layer_enable_mask[1];
-	if (enablemask)
-	{
-		if (((layercontrol & enablemask) && (layercontrol & enablemask) != enablemask))
-			usrintf_showmessage("layer %02x",layercontrol&0xc03f);
-	}
-}
-#endif
-
-{
-	int enablemask;
-	enablemask = cps1_game_config->layer_enable_mask[0] | cps1_game_config->layer_enable_mask[1]
-			| cps1_game_config->layer_enable_mask[2]
-			| cps1_game_config->layer_enable_mask[3] | cps1_game_config->layer_enable_mask[4];
-	if (((layercontrol & ~enablemask) & 0xc03e) != 0)
-		usrintf_showmessage("layer %02x contact MAMEDEV",layercontrol&0xc03f);
-}
-
 }
 
 
@@ -1578,13 +1414,6 @@ void cps2_render_sprites(struct mame_bitmap *bitmap,const struct rectangle *clip
 	int xoffs = 64-cps2_port(CPS2_OBJ_XOFFS);
 	int yoffs = 16-cps2_port(CPS2_OBJ_YOFFS);
 
-#ifdef MAME_DEBUG
-	if (keyboard_pressed(KEYCODE_Z) && keyboard_pressed(KEYCODE_R))
-	{
-		return;
-	}
-#endif
-
 	for (i=cps2_last_sprite_offset; i>=0; i-=4)
 	{
 		int x=base[i+0];
@@ -1706,12 +1535,7 @@ void cps1_render_stars(struct mame_bitmap *bitmap,const struct rectangle *clipre
 	UINT8 *stars_rom = memory_region(REGION_GFX2);
 
 	if (!stars_rom && (cps1_stars_enabled[0] || cps1_stars_enabled[1]))
-	{
-#ifdef MAME_DEBUG
-		usrintf_showmessage("stars enabled but no stars ROM");
-#endif
 		return;
-	}
 
 	if (cps1_stars_enabled[0])
 	{
@@ -1929,13 +1753,6 @@ if (0 && keyboard_pressed(KEYCODE_Z))
 		cps1_render_layer(bitmap,cliprect,l2,4);
 		cps2_render_sprites(bitmap,cliprect,primasks);
 	}
-
-#if CPS1_DUMP_VIDEO
-	if (keyboard_pressed(KEYCODE_F))
-	{
-		cps1_dump_video();
-	}
-#endif
 }
 
 VIDEO_EOF( cps1 )
