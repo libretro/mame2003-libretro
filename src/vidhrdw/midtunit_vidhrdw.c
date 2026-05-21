@@ -5,6 +5,7 @@
 **************************************************************************/
 
 #include "driver.h"
+#include <retro_endianness.h>
 #include "cpu/tms34010/tms34010.h"
 #include "cpu/tms34010/34010ops.h"
 #include "midtunit.h"
@@ -353,13 +354,12 @@ typedef void (*dma_draw_func)(void);
 
 
 /*** fast pixel extractors ***/
-#if !defined(ALIGN_SHORTS) && !defined(MSB_FIRST)
-#define EXTRACTGEN(m)	((*(UINT16 *)&base[o >> 3] >> (o & 7)) & (m))
-#elif defined(powerc)
-#define EXTRACTGEN(m)	((__lhbrx(base, o >> 3) >> (o & 7)) & (m))
-#else
-#define EXTRACTGEN(m)	(((base[o >> 3] | (base[(o >> 3) + 1] << 8)) >> (o & 7)) & (m))
-#endif
+/* o is a bit position, so base[o >> 3] lands on an arbitrary byte boundary:
+   this is a genuinely unaligned 16-bit fetch of little-endian gfx data.
+   retro_get_unaligned_16le() is correct and alignment-safe on every host,
+   replacing the old per-target #if (x86 unaligned cast / PPC __lhbrx / byte
+   assembly), and it covers modern big-endian PPC, which never defined powerc. */
+#define EXTRACTGEN(m)	((retro_get_unaligned_16le(&base[o >> 3]) >> (o & 7)) & (m))
 
 /*** core blitter routine macro ***/
 #define DMA_DRAW_FUNC_BODY(name, bitsperpixel, extractor, xflip, skip, scale, zero, nonzero) \
