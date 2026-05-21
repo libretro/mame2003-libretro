@@ -209,6 +209,13 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
      info->timing.sample_rate = options.samplerate;
   }
 
+  /* Machine->sample_rate is the rate the audio pipeline was actually set up to
+     run at (see init_game_options); for games with a single fixed-rate sound
+     source it is that source's native rate rather than the configured hint.
+     Report it verbatim so the frontend resamples from the true rate and the
+     core never converts. */
+  if (Machine->sample_rate > 0)
+    info->timing.sample_rate = Machine->sample_rate;
 }
 
 

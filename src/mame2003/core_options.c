@@ -509,9 +509,9 @@ static struct retro_core_option_v2_definition option_def_nvram_bootstraps = {
 
 static struct retro_core_option_v2_definition option_def_sample_rate = {
    APPNAME"_sample_rate",
-   "Sample Rate",
+   "Sample Rate (Hint)",
    NULL,
-   "Number of audio samples taken per second. Higher rates provide better quality audio.",
+   "Preferred output sample rate. This is only a hint: games whose sound hardware has a fixed native rate are always output at that rate so no resampling is needed, and ignore this setting. It applies to the remaining games, where it trades audio quality for performance (lower rates are lighter).",
    NULL,
    "cat_key_audio",
    {

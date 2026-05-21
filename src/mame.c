@@ -788,6 +788,75 @@ static void compute_aspect_ratio(const struct InternalMachineDriver *drv, int *a
 	game options
 -------------------------------------------------*/
 
+/* The FM interface structs all begin { int num; int baseclock; ... }, so this
+   prefix is enough to read a chip's clock from its interface pointer. */
+struct fixed_rate_intf { int num; int baseclock; };
+
+/* Some sound sources emit audio at a fixed rate derived from their own clock
+   rather than at whatever output rate we ask for; those have to be rate
+   converted before mixing. When such a source is the ONLY one with a fixed
+   rate (and there is just one distinct fixed rate), we can instead run the
+   whole audio pipeline at that rate, so no conversion is needed at all and the
+   samples reach the frontend untouched. This returns that rate, or 0 when it
+   cannot be pinned down (no fixed-rate source, more than one distinct rate, or
+   a fixed-rate source whose rate we do not compute here), in which case the
+   configured rate is used. */
+static int game_fixed_output_rate(void)
+{
+  int i;
+  int rate = 0;
+
+  for (i = 0; i < MAX_SOUND && Machine->drv->sound[i].sound_type != 0; i++)
+  {
+    const struct fixed_rate_intf *cfg =
+      (const struct fixed_rate_intf *)Machine->drv->sound[i].sound_interface;
+    int chiprate = 0;
+
+    switch (Machine->drv->sound[i].sound_type)
+    {
+#if (HAS_YM2151_ALT)
+      case SOUND_YM2151:
+        if (cfg) chiprate = cfg->baseclock / 64;
+        break;
+#endif
+      case SOUND_YM3812:
+      case SOUND_YM3526:
+      case SOUND_Y8950:
+      case SOUND_YM2413:
+        if (cfg) chiprate = cfg->baseclock / 72;
+        break;
+      case SOUND_YMF262:
+        if (cfg) chiprate = cfg->baseclock / 288;
+        break;
+      /* Fixed-rate sources whose rate we don't derive here (and content whose
+         rate is decided at runtime): leave the choice to the configured rate. */
+      case SOUND_CUSTOM:
+      case SOUND_SAMPLES:
+      case SOUND_NAMCO:
+      case SOUND_NAMCONA:
+      case SOUND_C140:
+      case SOUND_VLM5030:
+      case SOUND_SP0250:
+      case SOUND_SCSP:
+      case SOUND_GAELCO_GAE1:
+      case SOUND_GAELCO_CG1V:
+        return 0;
+      default:
+        /* already runs at the output rate: nothing to pin */
+        continue;
+    }
+
+    if (chiprate <= 0)
+      return 0;
+    if (rate == 0)
+      rate = chiprate;
+    else if (rate != chiprate)
+      return 0; /* two different fixed rates -> one must still be converted */
+  }
+
+  return rate;
+}
+
 static void init_game_options(void)
 {
   /* copy some settings into easier-to-handle variables */
@@ -846,6 +915,15 @@ static void init_game_options(void)
 
     else
       Machine->sample_rate = options.samplerate;
+  }
+
+  /* If the game has a single fixed-rate sound source, run the whole pipeline
+     at that rate so the audio is mixed and delivered with no rate conversion.
+     The configured rate is only a hint for the games where this can't apply. */
+  {
+    int fixed_rate = game_fixed_output_rate();
+    if (fixed_rate > 0)
+      Machine->sample_rate = fixed_rate;
   }
 
 }
