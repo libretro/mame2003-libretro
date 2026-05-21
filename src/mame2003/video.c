@@ -206,12 +206,18 @@ void mame2003_video_init_conversion(UINT32 *rgb_components)
 
    /* Case III: 16-bit 0RGB1555. RetroArch's 0RGB1555 path is not a fast path,
       so convert up to RGB565 (a single shift per pixel) and let the frontend
-      use its optimized RGB565 pipeline. */
+      use its optimized RGB565 pipeline. The game bitmap itself is still packed
+      as 0RGB1555, so the component masks below (used by MAME to build direct
+      RGB pixels) must stay 5-5-5; only the delivered frame is RGB565. */
    else if (video_config.depth == 15)
    {
       video_stride_in = 2; video_stride_out = 2;
       video_conversion_type = VCT_1555TO565;
       color_mode = RETRO_PIXEL_FORMAT_RGB565;
+
+      rgb_components[0] = 0x00007C00; /* red   bits 14-10 */
+      rgb_components[1] = 0x000003E0; /* green bits  9-5  */
+      rgb_components[2] = 0x0000001F; /* blue  bits  4-0  */
    }
 
    /* Otherwise bail out on unknown video mode */
