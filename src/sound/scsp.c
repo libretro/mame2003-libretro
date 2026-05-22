@@ -382,7 +382,7 @@ static void SCSP_Init(int n, struct SCSPinterface *intf)
 	for (i = 0; i < n; i++)
 	{
 		SCSP = &SCSPs[i];
-		memset(SCSP,0,sizeof(SCSP));
+		memset(SCSP,0,sizeof(*SCSP));
 
 		if (!i)
 		{

@@ -2086,7 +2086,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			case 9: case 10: case 11:
 				if (CH->extended)
 				{
-					uint8_t conn = (CH->SLOT[SLOT1].CON<<1) || ((CH+3)->SLOT[SLOT1].CON<<0);
+					uint8_t conn = (CH->SLOT[SLOT1].CON<<1) | ((CH+3)->SLOT[SLOT1].CON<<0);
 					switch(conn)
 					{
 					case 0:
@@ -2138,7 +2138,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			case 12: case 13: case 14:
 				if ((CH-3)->extended)
 				{
-					uint8_t conn = ((CH-3)->SLOT[SLOT1].CON<<1) || (CH->SLOT[SLOT1].CON<<0);
+					uint8_t conn = ((CH-3)->SLOT[SLOT1].CON<<1) | (CH->SLOT[SLOT1].CON<<0);
 					switch(conn)
 					{
 					case 0:
