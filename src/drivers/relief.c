@@ -463,7 +463,6 @@ static void init_common(const uint16_t *def_eeprom)
 	memcpy(&sound_base[0x060000], &sound_base[0x120000], 0x20000);
 	memcpy(&sound_base[0x0a0000], &sound_base[0x120000], 0x20000);
 	memcpy(&sound_base[0x0e0000], &sound_base[0x120000], 0x20000);
-	memcpy(&sound_base[0x120000], &sound_base[0x120000], 0x20000);
 	memcpy(&sound_base[0x160000], &sound_base[0x120000], 0x20000);
 	memcpy(&sound_base[0x1a0000], &sound_base[0x120000], 0x20000);
 	memcpy(&sound_base[0x1e0000], &sound_base[0x120000], 0x20000);
