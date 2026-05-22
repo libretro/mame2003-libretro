@@ -23,8 +23,6 @@
 
 static int interrupt_enable;
 
-typedef unsigned short word;
-typedef unsigned char byte;
 
 #ifndef _WIN32
 #define PreDecryptedRoms
@@ -152,11 +150,11 @@ unsigned jrpacman_decode_roms(int address)
 	return RAM[address]; // this should never happen!
 }
 #else
-static INLINE WordBit(word theWord, int theBit)
+static INLINE WordBit(uint16_t theWord, int theBit)
 {
 	return (theWord >> theBit)&1;
 }
-static INLINE ByteBit(byte theByte, int theBit)
+static INLINE ByteBit(uint8_t theByte, int theBit)
 {
 	return (theByte >> theBit)&1;
 }
@@ -443,7 +441,7 @@ INTERRUPT_GEN( jrpacman_interrupt )
   we have to remember the value passed.
 
 ***************************************************************************/
-void jrpacman_out(byte Port,byte Value)
+void jrpacman_out(uint8_t Port,uint8_t Value)
 {
 	/* OUT to port $0 is used to set the interrupt vector */
 	if (Port == 0) IntVector = Value;
@@ -465,13 +463,12 @@ the top of this file. It is included here for completeness.
 
 #include <stdio.h>
 
-typedef unsigned char byte;
 
-void CreateJrDecodeTable(byte *x, int length);
-void Load(char *name,byte *buffer,int from, int length);
+void CreateJrDecodeTable(uint8_t *x, int length);
+void Load(char *name,uint8_t *buffer,int from, int length);
 
-byte encrypted[0x10000],decrypted[0x10000];
-byte xored[0x10000];
+uint8_t encrypted[0x10000],decrypted[0x10000];
+uint8_t xored[0x10000];
 void main()
 {
 	int i;
@@ -494,7 +491,7 @@ void main()
 	CreateJrDecodeTable(xored,0x10000);
 }
 
-void Load(char *name,byte *buffer,int from, int length)
+void Load(char *name,uint8_t *buffer,int from, int length)
 {
 	void *file = mame_fopen(Machine->gamedrv->name,0,FILETYPE_HIGHSCORE,0);
 	if (!file)
@@ -504,10 +501,10 @@ void Load(char *name,byte *buffer,int from, int length)
 	fclose(file);
 }
 
-void CreateJrDecodeTable(byte *x, int length)
+void CreateJrDecodeTable(uint8_t *x, int length)
 {
 	int i=0;
-	byte last = 0;
+	uint8_t last = 0;
 	int count = 0;
 
 	printf(	"struct {\n"

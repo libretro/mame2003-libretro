@@ -201,17 +201,14 @@ Video sync   6 F   Video sync                 Post   6 F   Post
 #define CLIP_H              (VIS_MAXY - VIS_MINY + 1)
 #define CLIP_BYTEW          (CLIP_W << 1)
 
-typedef uint8_t  BYTE;
-typedef uint16_t WORD;
-typedef uint32_t DWORD;
 
-static WORD *render_layer[MAX_LAYERS];
-static BYTE sound_fifo[MAX_SOUNDS];
-static BYTE *gfx_plane02, *gfx_plane13, *collision_list;
-static BYTE *scrolly0, *scrollx0, *scrolly1, *scrollx1;
-static DWORD *internal_palette, *alpha_table;
+static uint16_t *render_layer[MAX_LAYERS];
+static uint8_t sound_fifo[MAX_SOUNDS];
+static uint8_t *gfx_plane02, *gfx_plane13, *collision_list;
+static uint8_t *scrolly0, *scrollx0, *scrolly1, *scrollx1;
+static uint32_t *internal_palette, *alpha_table;
 
-static BYTE *cpu1_base, *gfx1_base, *blitter_ram, *io_ram;
+static uint8_t *cpu1_base, *gfx1_base, *blitter_ram, *io_ram;
 static size_t blitter_ramsize, io_ramsize;
 
 static int game_id, init_success, blitter_busy, collision_count, stars_enabled, bgcolor, ffcount, ffhead, fftail;
@@ -289,21 +286,21 @@ static void blit(int offset)
 #define XMASK (SCREEN_WIDTH-1)
 #define YMASK (SCREEN_HEIGHT-1)
 
-	static BYTE penxlat[16]={0x03,0x07,0x0b,0x0f,0x02,0x06,0x0a,0x0e,0x01,0x05,0x09,0x0d,0x00,0x04,0x08,0x0c};
-	static BYTE rgbmask[16]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xfc,0xff,0xff,0xff,0xff,0xff};
-	static BYTE tyremap[ 8]={ 0, 5, 9,13,16,20,24,28};
+	static uint8_t penxlat[16]={0x03,0x07,0x0b,0x0f,0x02,0x06,0x0a,0x0e,0x01,0x05,0x09,0x0d,0x00,0x04,0x08,0x0c};
+	static uint8_t rgbmask[16]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xfc,0xff,0xff,0xff,0xff,0xff};
+	static uint8_t tyremap[ 8]={ 0, 5, 9,13,16,20,24,28};
 
-	BYTE *param, *src_base;
-	WORD *dst_base;
+	uint8_t *param, *src_base;
+	uint16_t *dst_base;
 	int stptr, mode, color, code, y, x, h, w, src1, src2;
 	int status, flags, group, command, bank, layer, pen0, pen1;
 	int yclip, xclip, src_yskip, src_xskip, dst_skip, hclip, wclip, src_dy, src_dx;
-	DWORD *pal_ptr;
-	BYTE *src1_ptr, *src2_ptr; // esi alias, ebx alias
-	WORD *dst_ptr;             // edi alias
+	uint32_t *pal_ptr;
+	uint8_t *src1_ptr, *src2_ptr; // esi alias, ebx alias
+	uint16_t *dst_ptr;             // edi alias
 	void *edi;                 // scratch
 	int eax, ebx, ecx, edx;    // scratch
-	WORD ax; BYTE al, ah;      // partial regs
+	uint16_t ax; uint8_t al, ah;      // partial regs
 
 
 	param = blitter_ram + offset;
@@ -427,7 +424,7 @@ if (0) {
 	if (src1 == src2)
 	{
 		flags |= SINGLE_PEN;
-		eax = (DWORD)penxlat[color & PENCOLOR];
+		eax = (uint32_t)penxlat[color & PENCOLOR];
 		if (eax) pen1 = pen0 + eax;
 	}
 	else if (color & PENCOLOR) flags |= RGB_MASK;
@@ -439,7 +436,7 @@ if (0) {
 	eax = wclip<<1; \
 	ecx = hclip; \
 	edi = dst_ptr; \
-	do { memset((BYTE*)edi, 0, eax); edi = (BYTE*)edi + SCREEN_BYTEWIDTH; } while (--ecx); }
+	do { memset((uint8_t*)edi, 0, eax); edi = (uint8_t*)edi + SCREEN_BYTEWIDTH; } while (--ecx); }
 
 //--------------------------------------------------------------------------
 
@@ -454,7 +451,7 @@ if (0) {
 
 		if (flags & PPCD_ON) goto COLLISION_MODE;
 
-		al = ah = (BYTE)pen0;
+		al = ah = (uint8_t)pen0;
 
 		if (!(flags & BACKMODE))
 		{
@@ -464,7 +461,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { dst_ptr[ecx] = (WORD)al;  al = ah;}
+					if (al & 0xf) { dst_ptr[ecx] = (uint16_t)al;  al = ah;}
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -479,7 +476,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { dst_ptr[ecx] = (WORD)al | SP_2BACK;  al = ah; }
+					if (al & 0xf) { dst_ptr[ecx] = (uint16_t)al | SP_2BACK;  al = ah; }
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -500,7 +497,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { dst_ptr[ecx] = (WORD)al | SP_COLLD; } // set collision flag on group one pixels
+					if (al & 0xf) { dst_ptr[ecx] = (uint16_t)al | SP_COLLD; } // set collision flag on group one pixels
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -515,7 +512,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { ax |= dst_ptr[ecx]; dst_ptr[ecx] = (WORD)al; } // combine collision flags in ax
+					if (al & 0xf) { ax |= dst_ptr[ecx]; dst_ptr[ecx] = (uint16_t)al; } // combine collision flags in ax
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -545,7 +542,7 @@ if (0) {
 
 		dst_ptr += wclip;
 		ecx = wclip = -wclip;
-		al = ah = (BYTE)pen0;
+		al = ah = (uint8_t)pen0;
 		ebx = rgbmask[color & PENCOLOR] | 0xffffff00;
 
 		do {
@@ -554,7 +551,7 @@ if (0) {
 				src1_ptr += src_dx;
 				al |= *src2_ptr;
 				src2_ptr += src_dx;
-				if (al & 0xf) { edx = (DWORD)al;  al = ah;  dst_ptr[ecx] = pal_ptr[edx] & ebx; }
+				if (al & 0xf) { edx = (uint32_t)al;  al = ah;  dst_ptr[ecx] = pal_ptr[edx] & ebx; }
 			}
 			while (++ecx);
 			ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -574,7 +571,7 @@ if (0) {
 		ebx = hclip;
 		ecx = wclip = -wclip;
 		edx = src_dx;
-		ax = (WORD)pen1;
+		ax = (uint16_t)pen1;
 
 		do {
 			do {
@@ -744,12 +741,12 @@ COMMAND_MODE:
 		for (yclip=y+h; y<yclip; y+=16)
 		for (xclip=x+w; x<xclip; x+=16)
 		{
-			edx = (DWORD)*src2_ptr;
+			edx = (uint32_t)*src2_ptr;
 			src2_ptr++;
 			if (edx)
 			{
-				ax = (WORD)*(src2_ptr-0x100 -1);
-				ebx = (DWORD)ax;
+				ax = (uint16_t)*(src2_ptr-0x100 -1);
+				ebx = (uint32_t)ax;
 				ax |= BG_MONO;
 				if (edx & 0x01) {                    dst_base[C2S(x,y,ebx)] = ax; }
 				if (edx & 0x02) { ecx = RORB(ebx,1); dst_base[C2S(x,y,ecx)] = ax; }
@@ -777,7 +774,7 @@ COMMAND_MODE:
 		edx = SCREEN_WIDTH - x - w;
 		w = -w;
 
-		ax = (WORD)(~src_base[src2] & 0xff);
+		ax = (uint16_t)(~src_base[src2] & 0xff);
 
 		for (yclip=y+h; y<yclip; y++)
 		{
@@ -786,12 +783,12 @@ COMMAND_MODE:
 			if (edx < 0)
 			{
 				ecx = edx;
-				dst_ptr = (WORD*)edi - edx;
+				dst_ptr = (uint16_t*)edi - edx;
 				do { if (dst_ptr[ecx]) dst_ptr[ecx] ^= ax; } while (++ecx);
 				ecx = x - SCREEN_WIDTH;
 			} else ecx = w;
 
-			dst_ptr = (WORD*)edi + x - ecx;
+			dst_ptr = (uint16_t*)edi + x - ecx;
 			do { if (dst_ptr[ecx]) dst_ptr[ecx] ^= ax; } while (++ecx);
 		}
 
@@ -838,7 +835,7 @@ COMMAND_MODE:
 		{
 			dst_ptr += x;
 			do {
-				ax = (WORD)src1_ptr[edx];
+				ax = (uint16_t)src1_ptr[edx];
 				al = src1_ptr[edx+0x10000];
 				ax |= BG_RGB;
 				if (al & 0x01) *dst_ptr   = ax;
@@ -857,7 +854,7 @@ COMMAND_MODE:
 			#define WARPMASK ((SCREEN_WIDTH<<1)-1)
 			do {
 				ecx = x & WARPMASK;
-				ax = (WORD)src1_ptr[edx];
+				ax = (uint16_t)src1_ptr[edx];
 				al = src1_ptr[edx+0x10000];
 				ax |= BG_RGB;
 				if (al & 0x01) dst_ptr[ecx] = ax;  ecx++; ecx &= WARPMASK;
@@ -881,9 +878,9 @@ COMMAND_MODE:
 	if (command == HORIZBAR && flags & COLOR_ON && !(layer & 1))
 	{
 		#define WARP_LINE_COMMON { \
-			if (ecx & 1) { ecx--; *dst_ptr = (WORD)eax; dst_ptr++; } \
+			if (ecx & 1) { ecx--; *dst_ptr = (uint16_t)eax; dst_ptr++; } \
 			dst_ptr += ecx; ecx = -ecx; \
-			while (ecx) { *(DWORD*)(dst_ptr+ecx) = eax; ecx += 2; } }
+			while (ecx) { *(uint32_t*)(dst_ptr+ecx) = eax; ecx += 2; } }
 
 		src1_ptr = src_base + src1;
 		src2_ptr = src_base + src2;
@@ -910,7 +907,7 @@ COMMAND_MODE:
 
 			for (yclip=y; yclip<hclip; yclip++)
 			{
-				eax = (DWORD)*src1_ptr;
+				eax = (uint32_t)*src1_ptr;
 				src1_ptr += src_dx;
 				if (!eax) continue;
 				eax = eax | (eax<<16) | ((BG_RGB<<16)|BG_RGB);
@@ -919,16 +916,16 @@ COMMAND_MODE:
 				if (edx > 0)
 				{
 					ecx = edx;
-					dst_ptr = (WORD*)edi;
+					dst_ptr = (uint16_t*)edi;
 					WARP_LINE_COMMON
 					ecx = SCREEN_WIDTH - xclip;
 				} else ecx = w;
 
-				dst_ptr = (WORD*)edi + xclip;
+				dst_ptr = (uint16_t*)edi + xclip;
 				WARP_LINE_COMMON
 			}
 
-			edi = src1_ptr; src1_ptr = src2_ptr; src2_ptr = (BYTE*)edi;
+			edi = src1_ptr; src1_ptr = src2_ptr; src2_ptr = (uint8_t*)edi;
 		}
 
 		#undef WARP_LINE_COMMON
@@ -944,8 +941,8 @@ COMMAND_MODE:
 static WRITE_HANDLER( bgtile_w )
 {
 	int yskip, xskip, ecx;
-	WORD *edi;
-	WORD ax;
+	uint16_t *edi;
+	uint16_t ax;
 
 	cpu1_base[0x1f00+offset] = data;
 	offset -= 0x18;
@@ -960,7 +957,7 @@ static WRITE_HANDLER( bgtile_w )
 
 	edi = render_layer[2] + (yskip<<SCREEN_WIDTH_L2) + xskip + (48<<SCREEN_WIDTH_L2);
 	ecx = -(48<<SCREEN_WIDTH_L2);
-	ax = (WORD)data | BG_RGB;
+	ax = (uint16_t)data | BG_RGB;
 
 	do { edi[ecx] = edi[ecx+1] = edi[ecx+2] = edi[ecx+3] = edi[ecx+4] = ax; } while (ecx += SCREEN_WIDTH);
 }
@@ -1054,8 +1051,8 @@ static READ_HANDLER( collision_id_r )
 
 static PALETTE_INIT( halleys )
 {
-	DWORD d, r, g, b, i, j, count;
-	DWORD *pal_ptr = internal_palette;
+	uint32_t d, r, g, b, i, j, count;
+	uint32_t *pal_ptr = internal_palette;
 
 	for (count=0; count<1024; count++)
 	{
@@ -1100,7 +1097,7 @@ static PALETTE_INIT( halleys )
 	}
 }
 
-static void halleys_decode_rgb(DWORD *r, DWORD *g, DWORD *b, int addr, int data)
+static void halleys_decode_rgb(uint32_t *r, uint32_t *g, uint32_t *b, int addr, int data)
 {
 /*
 	proms contain:
@@ -1147,11 +1144,11 @@ static void halleys_decode_rgb(DWORD *r, DWORD *g, DWORD *b, int addr, int data)
 
 static WRITE_HANDLER( halleys_paletteram_IIRRGGBB_w )
 {
-	DWORD d, r, g, b, i, j;
-	DWORD *pal_ptr = internal_palette;
+	uint32_t d, r, g, b, i, j;
+	uint32_t *pal_ptr = internal_palette;
 
 	paletteram[offset] = data;
-	d = (DWORD)data;
+	d = (uint32_t)data;
 	j = d | BG_RGB;
 	pal_ptr[offset] = j;
 	pal_ptr[offset+SP_2BACK] = j;
@@ -1211,20 +1208,20 @@ static VIDEO_START( halleys )
 }
 
 
-static void copy_scroll_op(struct mame_bitmap *bitmap, WORD *source, int sx, int sy)
+static void copy_scroll_op(struct mame_bitmap *bitmap, uint16_t *source, int sx, int sy)
 {
 
 //--------------------------------------------------------------------------
 
 #define OPCOPY_COMMON { \
 	memcpy(edi, esi+sx, rcw); \
-	memcpy((BYTE*)edi+rcw, esi, CLIP_BYTEW-rcw); \
+	memcpy((uint8_t*)edi+rcw, esi, CLIP_BYTEW-rcw); \
 	esi += SCREEN_WIDTH; \
 	edi += edx; }
 
 //--------------------------------------------------------------------------
 
-	WORD *esi, *edi;
+	uint16_t *esi, *edi;
 	int rcw, bch, ecx, edx;
 
 	sx = -sx & 0xff;
@@ -1234,7 +1231,7 @@ static void copy_scroll_op(struct mame_bitmap *bitmap, WORD *source, int sx, int
 	if ((bch = CLIP_H - sy) < 0) bch = 0;
 
 	esi = source + CLIP_SKIP + (sy << SCREEN_WIDTH_L2);
-	edi = (WORD*)bitmap->line[VIS_MINY] + VIS_MINX;
+	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX;
 	edx = bitmap->rowpixels;
 
 	// draw top split
@@ -1249,7 +1246,7 @@ static void copy_scroll_op(struct mame_bitmap *bitmap, WORD *source, int sx, int
 }
 
 
-static void copy_scroll_xp(struct mame_bitmap *bitmap, WORD *source, int sx, int sy)
+static void copy_scroll_xp(struct mame_bitmap *bitmap, uint16_t *source, int sx, int sy)
 {
 
 //--------------------------------------------------------------------------
@@ -1277,9 +1274,9 @@ static void copy_scroll_xp(struct mame_bitmap *bitmap, WORD *source, int sx, int
 
 	int rcw, bch, dst_adv;
 
-	WORD *src_base, *esi, *edi;
+	uint16_t *src_base, *esi, *edi;
 	int ecx, edx;
-	WORD ax, bx;
+	uint16_t ax, bx;
 
 	sx = -sx & 0xff;
 	sy = -sy & 0xff;
@@ -1288,7 +1285,7 @@ static void copy_scroll_xp(struct mame_bitmap *bitmap, WORD *source, int sx, int
 	if ((bch = CLIP_H - sy) < 0) bch = 0;
 
 	src_base = source + CLIP_SKIP + (sy << SCREEN_WIDTH_L2);
-	edi = (WORD*)bitmap->line[VIS_MINY] + VIS_MINX;
+	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX;
 	dst_adv = bitmap->rowpixels - CLIP_W;
 
 	// draw top split
@@ -1304,13 +1301,13 @@ static void copy_scroll_xp(struct mame_bitmap *bitmap, WORD *source, int sx, int
 }
 
 
-static void copy_fixed_op(struct mame_bitmap *bitmap, WORD *source)
+static void copy_fixed_op(struct mame_bitmap *bitmap, uint16_t *source)
 {
-	WORD *esi, *edi;
+	uint16_t *esi, *edi;
 	int ecx, edx;
 
 	esi = source + CLIP_SKIP;
-	edi = (WORD*)bitmap->line[VIS_MINY] + VIS_MINX;
+	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX;
 	ecx = CLIP_H;
 	edx = bitmap->rowpixels;
 
@@ -1318,14 +1315,14 @@ static void copy_fixed_op(struct mame_bitmap *bitmap, WORD *source)
 }
 
 
-static void copy_fixed_xp(struct mame_bitmap *bitmap, WORD *source)
+static void copy_fixed_xp(struct mame_bitmap *bitmap, uint16_t *source)
 {
-	WORD *esi, *edi;
+	uint16_t *esi, *edi;
 	int dst_pitch, ecx, edx;
-	WORD ax, bx;
+	uint16_t ax, bx;
 
 	esi = source + CLIP_SKIP + CLIP_W;
-	edi = (WORD*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
+	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
 	dst_pitch = bitmap->rowpixels;
 	ecx = -CLIP_W;
 	edx = CLIP_H;
@@ -1353,20 +1350,20 @@ static void copy_fixed_xp(struct mame_bitmap *bitmap, WORD *source)
 }
 
 
-static void copy_fixed_ab(struct mame_bitmap *bitmap, WORD *source)
+static void copy_fixed_ab(struct mame_bitmap *bitmap, uint16_t *source)
 {
 #define STRIP_RGB ((BG_RGB<<8)+BG_RGB)
 
 	int dst_pitch, i;
 
-	DWORD *pal_ptr, *ebx;
-	WORD *esi, *edi;
+	uint32_t *pal_ptr, *ebx;
+	uint16_t *esi, *edi;
 	int eax, ecx, edx;
 
 
 	pal_ptr = internal_palette;
 	esi = source + CLIP_SKIP + CLIP_W;
-	edi = (WORD*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
+	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
 	dst_pitch = bitmap->rowpixels;
 	ebx = alpha_table;
 	ecx = -CLIP_W;
@@ -1374,18 +1371,18 @@ static void copy_fixed_ab(struct mame_bitmap *bitmap, WORD *source)
 
 	do {
 		do {
-			eax = (DWORD)esi[ecx];
+			eax = (uint32_t)esi[ecx];
 			if (eax)
 			{
 				if (eax & SP_ALPHA)
 				{
-					edx = (DWORD)edi[ecx];
+					edx = (uint32_t)edi[ecx];
 					eax = pal_ptr[eax];
 					edx = pal_ptr[edx];
 					eax <<= 8;
 					eax = ebx[eax+edx-STRIP_RGB];
 				}
-				edi[ecx] = (WORD)eax;
+				edi[ecx] = (uint16_t)eax;
 			}
 		}
 		while (++ecx);
@@ -1400,14 +1397,14 @@ static void copy_fixed_ab(struct mame_bitmap *bitmap, WORD *source)
 }
 
 
-static void copy_fixed_2b(struct mame_bitmap *bitmap, WORD *source)
+static void copy_fixed_2b(struct mame_bitmap *bitmap, uint16_t *source)
 {
-	WORD *esi, *edi;
+	uint16_t *esi, *edi;
 	int dst_pitch, ecx, edx;
-	WORD ax, bx;
+	uint16_t ax, bx;
 
 	esi = source + CLIP_SKIP + CLIP_W;
-	edi = (WORD*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
+	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
 	dst_pitch = bitmap->rowpixels;
 	ecx = -CLIP_W;
 	edx = CLIP_H;
@@ -1451,12 +1448,12 @@ static void filter_bitmap(struct mame_bitmap *bitmap, int mask)
 {
 	int dst_pitch;
 
-	DWORD *pal_ptr, *edi;
+	uint32_t *pal_ptr, *edi;
 	int esi, eax, ebx, ecx, edx;
 
 	pal_ptr = internal_palette;
 	esi = mask | 0xffffff00;
-	edi = (DWORD*)((WORD*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W);
+	edi = (uint32_t*)((uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W);
 	dst_pitch = bitmap->rowpixels >> 1;
 	ecx = -(CLIP_W>>1);
 	edx = CLIP_H;
@@ -1541,7 +1538,7 @@ static READ_HANDLER( debug_r ) { return(io_ram[offset]); }
 static INTERRUPT_GEN( halleys_interrupt )
 {
 	static int latch_delay = 0;
-	BYTE latch_data;
+	uint8_t latch_data;
 
 	switch (cpu_getiloops())
 	{
@@ -1594,7 +1591,7 @@ static INTERRUPT_GEN( halleys_interrupt )
 static INTERRUPT_GEN( benberob_interrupt )
 {
 	static int latch_delay = 0;
-	BYTE latch_data;
+	uint8_t latch_data;
 
 	switch (cpu_getiloops())
 	{
@@ -2177,9 +2174,9 @@ ROM_END
 
 static int init_common(void)
 {
-	BYTE *buf, *rom;
+	uint8_t *buf, *rom;
 	int addr, i;
-	BYTE al, ah, dl, dh;
+	uint8_t al, ah, dl, dh;
 
 
 	// allocate memory for unpacked graphics
@@ -2190,7 +2187,7 @@ static int init_common(void)
 
 	// allocate memory for render layers
 	if (!(buf = auto_malloc(SCREEN_BYTESIZE * MAX_LAYERS))) return(0);
-	for (i=0; i<MAX_LAYERS; buf+=SCREEN_BYTESIZE, i++) render_layer[i] = (WORD*)buf;
+	for (i=0; i<MAX_LAYERS; buf+=SCREEN_BYTESIZE, i++) render_layer[i] = (uint16_t*)buf;
 
 
 	// allocate memory for pre-processed ROMs
@@ -2198,11 +2195,11 @@ static int init_common(void)
 
 
 	// allocate memory for alpha table
-	if (!(alpha_table = auto_malloc(sizeof(DWORD) * 0x10000))) return(0);
+	if (!(alpha_table = auto_malloc(sizeof(uint32_t) * 0x10000))) return(0);
 
 
 	// allocate memory for internal palette
-	if (!(internal_palette = auto_malloc(sizeof(DWORD) * PALETTE_SIZE))) return(0);
+	if (!(internal_palette = auto_malloc(sizeof(uint32_t) * PALETTE_SIZE))) return(0);
 
 
 	// allocate memory for hardware collision list
