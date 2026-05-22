@@ -59,17 +59,14 @@ Debug defines
 
 #if QSOUND_8BIT_SAMPLES
 /* 8 bit source ROM samples */
-typedef signed char QSOUND_SRC_SAMPLE;
 #define LENGTH_DIV 1
 #else
 /* 8 bit source ROM samples */
-typedef signed short QSOUND_SRC_SAMPLE;
 #define LENGTH_DIV 2
 #endif
 
 #define QSOUND_CLOCKDIV 166			 /* Clock divider */
 #define QSOUND_CHANNELS 16
-typedef int16_t QSOUND_SAMPLE;
 
 struct QSOUND_CHANNEL
 {
@@ -92,7 +89,7 @@ struct QSOUND_CHANNEL
 	int lastdt;	 /* last sample value */
 	int offset;	 /* current offset counter */
 #else
-	QSOUND_SRC_SAMPLE *buffer;
+	int8_t *buffer;
 	int factor;		   /*step factor (fixed point 8-bit)*/
 	int mixl,mixr;		/*mixing factor (fixed point)*/
 	int cursor;		   /*current sample position (fixed point)*/
@@ -108,7 +105,7 @@ static struct QSound_interface *intf;	/* Interface  */
 static int qsound_stream;				/* Audio stream */
 static struct QSOUND_CHANNEL qsound_channel[QSOUND_CHANNELS];
 static int qsound_data;				  /* register latch data */
-QSOUND_SRC_SAMPLE *qsound_sample_rom;	/* Q sound sample ROM */
+int8_t *qsound_sample_rom;	/* Q sound sample ROM */
 
 #if QSOUND_DRIVER1
 static int qsound_pan_table[33];		 /* Pan volume table */
@@ -139,7 +136,7 @@ int qsound_sh_start(const struct MachineSound *msound)
 
 	intf = msound->sound_interface;
 
-	qsound_sample_rom = (QSOUND_SRC_SAMPLE *)memory_region(intf->region);
+	qsound_sample_rom = (int8_t *)memory_region(intf->region);
 
 	memset(qsound_channel, 0, sizeof(qsound_channel));
 
@@ -378,22 +375,22 @@ void qsound_update( int num, int16_t **buffer, int length )
 	int i,j;
 	int rvol, lvol, count;
 	struct QSOUND_CHANNEL *pC=&qsound_channel[0];
-	QSOUND_SRC_SAMPLE * pST;
-	QSOUND_SAMPLE  *datap[2];
+	int8_t * pST;
+	int16_t  *datap[2];
 
 	if (Machine->sample_rate == 0) return;
 
 	datap[0] = buffer[0];
 	datap[1] = buffer[1];
-	memset( datap[0], 0x00, length * sizeof(QSOUND_SAMPLE) );
-	memset( datap[1], 0x00, length * sizeof(QSOUND_SAMPLE) );
+	memset( datap[0], 0x00, length * sizeof(int16_t) );
+	memset( datap[1], 0x00, length * sizeof(int16_t) );
 
 	for (i=0; i<QSOUND_CHANNELS; i++)
 	{
 		if (pC->key)
 		{
-			QSOUND_SAMPLE *pOutL=datap[0];
-			QSOUND_SAMPLE *pOutR=datap[1];
+			int16_t *pOutL=datap[0];
+			int16_t *pOutR=datap[1];
 			pST=qsound_sample_rom+pC->bank;
 			rvol=(pC->rvol*pC->vol)>>(8*LENGTH_DIV);
 			lvol=(pC->lvol*pC->vol)>>(8*LENGTH_DIV);
@@ -430,8 +427,8 @@ void qsound_update( int num, int16_t **buffer, int length )
 	}
 
 #if LOG_WAVE
-	fwrite(datap[0], length*sizeof(QSOUND_SAMPLE), 1, fpRawDataL);
-	fwrite(datap[1], length*sizeof(QSOUND_SAMPLE), 1, fpRawDataR);
+	fwrite(datap[0], length*sizeof(int16_t), 1, fpRawDataL);
+	fwrite(datap[1], length*sizeof(int16_t), 1, fpRawDataR);
 #endif
 }
 
@@ -465,16 +462,16 @@ void calcula_mix(int channel)
 void qsound_update(int num,void **buffer,int length)
 {
 	int i,j;
-	QSOUND_SAMPLE *bufL,*bufR, sample;
+	int16_t *bufL,*bufR, sample;
 	struct QSOUND_CHANNEL *pC=qsound_channel;
 
-	memset( buffer[0], 0x00, length * sizeof(QSOUND_SAMPLE) );
-	memset( buffer[1], 0x00, length * sizeof(QSOUND_SAMPLE) );
+	memset( buffer[0], 0x00, length * sizeof(int16_t) );
+	memset( buffer[1], 0x00, length * sizeof(int16_t) );
 
 	for(j=0;j<QSOUND_CHANNELS;++j)
 	{
-		  bufL=(QSOUND_SAMPLE *) buffer[0];
-		  bufR=(QSOUND_SAMPLE *) buffer[1];
+		  bufL=(int16_t *) buffer[0];
+		  bufR=(int16_t *) buffer[1];
 		  if(pC->key)
 		  {
 				for(i=0;i<length;++i)

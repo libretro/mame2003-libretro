@@ -78,12 +78,6 @@
   #define YM2151UpdateReq(chip) YM2151UpdateRequest(chip);
 #endif
 
-#if (FM_SAMPLE_BITS==16)
-typedef int16_t FMSAMPLE;
-#endif
-#if (FM_SAMPLE_BITS==8)
-typedef unsigned char  FMSAMPLE;
-#endif
 
 typedef void (*FM_TIMERHANDLER)(int n,int c,int cnt,double stepTime);
 typedef void (*FM_IRQHANDLER)(int n,int irq);

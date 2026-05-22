@@ -2023,7 +2023,7 @@ void YM2203UpdateOne(int num, int16_t *buffer, int length)
 	YM2203 *F2203 = &(FM2203[num]);
 	FM_OPN *OPN =   &(FM2203[num].OPN);
 	int i;
-	FMSAMPLE *buf = buffer;
+	int16_t *buf = buffer;
 
 	cur_chip = (void *)F2203;
 	State    = &F2203->OPN.ST;
@@ -3217,7 +3217,7 @@ void YM2608UpdateOne(int num, int16_t **buffer, int length)
 	FM_OPN *OPN   = &(FM2608[num].OPN);
 	YM_DELTAT *DELTAT = &(F2608[num].deltaT);
 	int i,j;
-	FMSAMPLE  *bufL,*bufR;
+	int16_t  *bufL,*bufR;
 
 	/* set bufer */
 	bufL = buffer[0];
@@ -3787,7 +3787,7 @@ void YM2610UpdateOne(int num, int16_t **buffer, int length)
 	FM_OPN *OPN   = &(FM2610[num].OPN);
 	YM_DELTAT *DELTAT = &(F2610[num].deltaT);
 	int i,j;
-	FMSAMPLE  *bufL,*bufR;
+	int16_t  *bufL,*bufR;
 
 	/* buffer setup */
 	bufL = buffer[0];
@@ -3927,7 +3927,7 @@ void YM2610BUpdateOne(int num, int16_t **buffer, int length)
 	FM_OPN *OPN   = &(FM2610[num].OPN);
 	YM_DELTAT *DELTAT = &(FM2610[num].deltaT);
 	int i,j;
-	FMSAMPLE  *bufL,*bufR;
+	int16_t  *bufL,*bufR;
 
 	/* buffer setup */
 	bufL = buffer[0];
@@ -4496,7 +4496,7 @@ void YM2612UpdateOne(int num, int16_t **buffer, int length)
 	YM2612 *F2612 = &(FM2612[num]);
 	FM_OPN *OPN   = &(FM2612[num].OPN);
 	int i;
-	FMSAMPLE  *bufL,*bufR;
+	int16_t  *bufL,*bufR;
 	int32_t dacout  = F2612->dacout;
 
 	/* set bufer */
@@ -5411,7 +5411,7 @@ void OPMUpdateOne(int num, int16_t **buffer, int length)
 	int i;
 	int amd,pmd;
 	FM_CH *ch;
-	FMSAMPLE  *bufL,*bufR;
+	int16_t  *bufL,*bufR;
 
 	/* set bufer */
 	bufL = buffer[0];
