@@ -86,48 +86,6 @@ static uint32_t *speedup_ram;
 #define SPORT_DATA_TX			0x48
 #define SPORT_DATA_RX			0x4c
 
-static const char *register_names[] =
-{
-	"TMS32031-DMA global control", NULL, NULL, NULL,
-	"TMS32031-DMA source address", NULL, "TMS32031-DMA destination address", NULL,
-	"TMS32031-DMA transfer counter", NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-
-	"TMS32031-Timer 0 global control", NULL, NULL, NULL,
-	"TMS32031-Timer 0 counter", NULL, NULL, NULL,
-	"TMS32031-Timer 0 period", NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-
-	"TMS32031-Timer 1 global control", NULL, NULL, NULL,
-	"TMS32031-Timer 1 counter", NULL, NULL, NULL,
-	"TMS32031-Timer 1 period", NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-
-	"TMS32031-Serial port global control", NULL, "TMS32031-Serial port TX control", "TMS32031-Serial port RX control",
-	"TMS32031-Serial port timer control", "TMS32031-Serial port timer counter", "TMS32031-Serial port timer period", NULL,
-	"TMS32031-Serial port data TX", NULL, NULL, NULL,
-	"TMS32031-Serial port data RX", NULL, NULL, NULL,
-
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-
-	NULL, NULL, NULL, NULL,
-	"TMS32031-Primary bus control", NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL,
-	NULL, NULL, NULL, NULL
-};
 
 
 

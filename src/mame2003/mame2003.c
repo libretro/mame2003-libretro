@@ -53,7 +53,6 @@ extern int16_t      mouse_y[4];
 extern int16_t      analogjoy[4][4];
 struct ipd          *default_inputs; /* pointer the array of structs with default MAME input mappings and labels */
 
-static struct retro_input_descriptor empty[] = { { 0 } };
 
 retro_log_printf_t                 log_cb;
 static struct retro_message        frontend_message;
@@ -304,7 +303,6 @@ static char *mame2003_strdup(const char *src)
 bool retro_load_game(const struct retro_game_info *game)
 {
   int              driverIndex    = 0;
-  int              port_index;
   char             *driver_lookup = NULL;
 
   if(string_is_empty(game->path))

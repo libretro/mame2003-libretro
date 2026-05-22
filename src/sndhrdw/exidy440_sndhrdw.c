@@ -286,7 +286,7 @@ static void mix_to_16(int length, int16_t *dest_left, int16_t *dest_right)
 {
 	int32_t *mixer_left = mixer_buffer_left;
 	int32_t *mixer_right = mixer_buffer_right;
-	int i, clippers = 0;
+	int i;
 
 	for (i = 0; i < length; i++)
 	{

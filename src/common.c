@@ -470,7 +470,6 @@ static struct GameSample *read_wav_sample(mame_file *f, const char *gamename, co
 void readsample(struct GameSample *SampleInfo, int channel, struct GameSamples *SamplesData, int load)
 {
 	mame_file *f;
-	struct GameSample *SampleFile;
 
 	// Try opening the file.
 	f = mame_fopen(SampleInfo->gamename,SampleInfo->filename,SampleInfo->filetype,0);
