@@ -9,7 +9,6 @@ CPU_ARCH      ?= 0 # as of November 2018 this flag doesn't seem to be used but i
 
 LIBS          ?=
 
-HIDE ?= @
 
 ifneq ($(SANITIZER),)
 	CFLAGS   := -fsanitize=$(SANITIZER) $(CFLAGS)
@@ -890,38 +889,36 @@ all:	$(TARGET)
 $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING),1)
 ifeq ($(SPLIT_UP_LINK), 1)
-	$(HIDE)$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
+	$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
 else
-	$(HIDE)$(AR) rcs $@ $(OBJECTS)
+	$(AR) rcs $@ $(OBJECTS)
 endif
 else
 ifeq ($(SPLIT_UP_LINK), 1)
-	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
-	$(HIDE)$(file >$@.in,$(OBJECTS))
-	$(HIDE)$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
-	@rm $@.in
+	$(file >$@.in,$(OBJECTS))
+	$(LD) $(LDFLAGS) $(LINKOUT)$@ @$@.in $(LIBS)
+	rm $@.in
 else
-	$(HIDE)$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 endif
 
 CFLAGS += $(PLATCFLAGS) $(CDEFS)
 
 %.o: %.c
-	$(HIDE)$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
+	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 %.o: %.s
 	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 $(OBJ)/%.a:
-	@$(RM) $@
-	$(HIDE)$(AR) cr $@ $^
+	$(RM) $@
+	$(AR) cr $@ $^
 
 clean:
 ifeq ($(SPLIT_UP_LINK), 1)
-	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
-	$(HIDE)$(file >$@.in,$(OBJECTS))
-	$(HIDE)rm -f @$@.in $(TARGET)
-	@rm $@.in
+	$(file >$@.in,$(OBJECTS))
+	rm -f @$@.in $(TARGET)
+	rm $@.in
 endif
-	$(HIDE)rm -f $(OBJECTS) $(TARGET)
+	rm -f $(OBJECTS) $(TARGET)
