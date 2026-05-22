@@ -173,7 +173,6 @@ static void equites_synth_callback (int param)
 
 // Optimized Mersenne Twister - courtesy of Shawn J. Cokus, University of Washington
 
-typedef unsigned long uint32;
 
 #define N              (624)                 // length of state vector
 #define M              (397)                 // a period parameter
@@ -183,22 +182,22 @@ typedef unsigned long uint32;
 #define loBits(u)      ((u) & 0x7FFFFFFFU)   // mask     the highest   bit of u
 #define mixBits(u, v)  (hiBit(u)|loBits(v))  // move hi bit of u to hi bit of v
 
-static uint32   state[N+1];     // state vector + 1 extra to not violate ANSI C
-static uint32   *next;          // next random value is computed from here
+static uint32_t   state[N+1];     // state vector + 1 extra to not violate ANSI C
+static uint32_t   *next;          // next random value is computed from here
 static int      left = -1;      // can *next++ this many times before reloading
 
-static void seedMT(uint32 seed)
+static void seedMT(uint32_t seed)
 {
-	register uint32 x = (seed | 1U) & 0xFFFFFFFFU, *s = state;
+	register uint32_t x = (seed | 1U) & 0xFFFFFFFFU, *s = state;
 	register int    j;
 
 	for(left=0, *s++=x, j=N; --j;
 		*s++ = (x*=69069U) & 0xFFFFFFFFU);
 }
 
-static uint32 reloadMT(void)
+static uint32_t reloadMT(void)
 {
-	register uint32 *p0=state, *p2=state+2, *pM=state+M, s0, s1;
+	register uint32_t *p0=state, *p2=state+2, *pM=state+M, s0, s1;
 	register int    j;
 
 	if(left < -1)
@@ -219,9 +218,9 @@ static uint32 reloadMT(void)
 	return(s1 ^ (s1 >> 18));
 }
 
-static INLINE uint32 randomMT(void)
+static INLINE uint32_t randomMT(void)
 {
-	uint32 y;
+	uint32_t y;
 
 	if(--left < 0)
 		return(reloadMT());

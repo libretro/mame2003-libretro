@@ -31,12 +31,7 @@
 #endif
 
 /* REGULAR TYPE DEFINITIONS */
-typedef char          int8;
-typedef int           int16;
-typedef long          int32;
-typedef unsigned char uint8;
-typedef unsigned int  uint16;
-typedef unsigned long uint32;
+#include <stdint.h>
 typedef char          boolean;
 
 
@@ -84,28 +79,28 @@ typedef struct queue_s
 /* Square Wave */
 typedef struct square_s
 {
-   uint8 regs[4];
+   uint8_t regs[4];
    int vbl_length;
    int freq;
    float phaseacc;
    float output_vol;
    float env_phase;
    float sweep_phase;
-   uint8 adder;
-   uint8 env_vol;
+   uint8_t adder;
+   uint8_t env_vol;
    boolean enabled;
 } square_t;
 
 /* Triangle Wave */
 typedef struct triangle_s
 {
-   uint8 regs[4]; /* regs[1] unused */
+   uint8_t regs[4]; /* regs[1] unused */
    int linear_length;
    int vbl_length;
    int write_latency;
    float phaseacc;
    float output_vol;
-   uint8 adder;
+   uint8_t adder;
    boolean counter_started;
    boolean enabled;
 } triangle_t;
@@ -113,29 +108,29 @@ typedef struct triangle_s
 /* Noise Wave */
 typedef struct noise_s
 {
-   uint8 regs[4]; /* regs[1] unused */
+   uint8_t regs[4]; /* regs[1] unused */
    int cur_pos;
    int vbl_length;
    float phaseacc;
    float output_vol;
    float env_phase;
-   uint8 env_vol;
+   uint8_t env_vol;
    boolean enabled;
 } noise_t;
 
 /* DPCM Wave */
 typedef struct dpcm_s
 {
-   uint8 regs[4];
-   uint32 address;
-   uint32 length;
+   uint8_t regs[4];
+   uint32_t address;
+   uint32_t length;
    int bits_left;
    float phaseacc;
    float output_vol;
-   uint8 cur_byte;
+   uint8_t cur_byte;
    boolean enabled;
    boolean irq_occurred;
-   uint8 *cpu_mem;
+   uint8_t *cpu_mem;
    signed char vol;
 } dpcm_t;
 
@@ -171,7 +166,7 @@ typedef struct apu
 /* CONSTANTS */
 
 /* vblank length table used for squares, triangle, noise */
-static const uint8 vbl_length[32] =
+static const uint8_t vbl_length[32] =
 {
    5, 127, 10, 1, 19,  2, 40,  3, 80,  4, 30,  5, 7,  6, 13,  7,
    6,   8, 12, 9, 24, 10, 48, 11, 96, 12, 36, 13, 8, 14, 16, 15
