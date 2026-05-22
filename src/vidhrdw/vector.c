@@ -59,10 +59,10 @@ static int new_index;
 static int old_index;
 
 /* coordinates of pixels are stored here for faster removal */
-vector_pixel_t *vector_dirty_list;
+uint32_t *vector_dirty_list;
 static int dirty_index;
 
-static vector_pixel_t *pixel;
+static uint32_t *pixel;
 static int p_index=0;
 
 static uint32_t *pTcosin;            /* adjust line width */
@@ -222,7 +222,7 @@ VIDEO_START( vector )
  */
 static void vector_clear_pixels (void)
 {
-	vector_pixel_t coords;
+	uint32_t coords;
 	int i;
 
 	if (Machine->color_depth == 32)
@@ -252,7 +252,7 @@ static void vector_clear_pixels (void)
 
 static void vector_draw_aa_pixel_15 (int x, int y, uint32_t col, int dirty)
 {
-	vector_pixel_t coords;
+	uint32_t coords;
 	uint32_t dst;
 
 	if (x < xmin || x >= xmax)
@@ -276,7 +276,7 @@ static void vector_draw_aa_pixel_15 (int x, int y, uint32_t col, int dirty)
 
 static void vector_draw_aa_pixel_32 (int x, int y, uint32_t col, int dirty)
 {
-	vector_pixel_t coords;
+	uint32_t coords;
 	uint32_t dst;
 
 	if (x < xmin || x >= xmax)

@@ -26,11 +26,6 @@
 #undef INLINE
 #define INLINE static
 
-/* ---- basic types the core expects --------------------------------------- */
-/* The core (descended from the g65816) uses a lowercase "uint" throughout. */
-typedef unsigned int m37710_uint_t;
-#define uint m37710_uint_t
-
 /* ---- address space identification --------------------------------------- */
 /* The core holds two "const address_space *" (program, io) and hands them to
    the byte accessors. We make address_space a tiny tag the accessor switches

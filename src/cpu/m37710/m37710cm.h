@@ -37,8 +37,8 @@
 /* ======================================================================== */
 
 /* This should be set to the default size of your processor (min 16 bit) */
-#undef uint
-#define uint unsigned int
+#undef uint32_t
+#define uint32_t unsigned int
 
 #undef uint8
 #define uint8 unsigned char
@@ -76,51 +76,51 @@ INLINE int MAKE_INT_8(int A) {return (A & 0x80) ? A | ~0xff : A & 0xff;}
 typedef struct _m37710i_cpu_struct m37710i_cpu_struct;
 struct _m37710i_cpu_struct
 {
-	uint a;			/* Accumulator */
-	uint b;			/* holds high byte of accumulator */
-	uint ba;		/* Secondary Accumulator */
-	uint bb;		/* holds high byte of secondary accumulator */
-	uint x;			/* Index Register X */
-	uint y;			/* Index Register Y */
-	uint s;			/* Stack Pointer */
-	uint pc;		/* Program Counter */
-	uint ppc;		/* Previous Program Counter */
-	uint pb;		/* Program Bank (shifted left 16) */
-	uint db;		/* Data Bank (shifted left 16) */
-	uint d;			/* Direct Register */
-	uint flag_e;		/* Emulation Mode Flag */
-	uint flag_m;		/* Memory/Accumulator Select Flag */
-	uint flag_x;		/* Index Select Flag */
-	uint flag_n;		/* Negative Flag */
-	uint flag_v;		/* Overflow Flag */
-	uint flag_d;		/* Decimal Mode Flag */
-	uint flag_i;		/* Interrupt Mask Flag */
-	uint flag_z;		/* Zero Flag (inverted) */
-	uint flag_c;		/* Carry Flag */
-	uint line_irq;		/* Bitmask of pending IRQs */
-	uint ipl;		/* Interrupt priority level (top of PSW) */
-	uint ir;		/* Instruction Register */
-	uint im;		/* Immediate load value */
-	uint im2;		/* Immediate load target */
-	uint im3;		/* Immediate load target */
-	uint im4;		/* Immediate load target */
-	uint irq_delay;		/* delay 1 instruction before checking irq */
-	uint irq_level;		/* irq level */
+	uint32_t a;			/* Accumulator */
+	uint32_t b;			/* holds high byte of accumulator */
+	uint32_t ba;		/* Secondary Accumulator */
+	uint32_t bb;		/* holds high byte of secondary accumulator */
+	uint32_t x;			/* Index Register X */
+	uint32_t y;			/* Index Register Y */
+	uint32_t s;			/* Stack Pointer */
+	uint32_t pc;		/* Program Counter */
+	uint32_t ppc;		/* Previous Program Counter */
+	uint32_t pb;		/* Program Bank (shifted left 16) */
+	uint32_t db;		/* Data Bank (shifted left 16) */
+	uint32_t d;			/* Direct Register */
+	uint32_t flag_e;		/* Emulation Mode Flag */
+	uint32_t flag_m;		/* Memory/Accumulator Select Flag */
+	uint32_t flag_x;		/* Index Select Flag */
+	uint32_t flag_n;		/* Negative Flag */
+	uint32_t flag_v;		/* Overflow Flag */
+	uint32_t flag_d;		/* Decimal Mode Flag */
+	uint32_t flag_i;		/* Interrupt Mask Flag */
+	uint32_t flag_z;		/* Zero Flag (inverted) */
+	uint32_t flag_c;		/* Carry Flag */
+	uint32_t line_irq;		/* Bitmask of pending IRQs */
+	uint32_t ipl;		/* Interrupt priority level (top of PSW) */
+	uint32_t ir;		/* Instruction Register */
+	uint32_t im;		/* Immediate load value */
+	uint32_t im2;		/* Immediate load target */
+	uint32_t im3;		/* Immediate load target */
+	uint32_t im4;		/* Immediate load target */
+	uint32_t irq_delay;		/* delay 1 instruction before checking irq */
+	uint32_t irq_level;		/* irq level */
 	int ICount;		/* cycle count */
-	uint source;		/* temp register */
-	uint destination;	/* temp register */
+	uint32_t source;		/* temp register */
+	uint32_t destination;	/* temp register */
 	device_irq_callback int_ack;
 	legacy_cpu_device *device;
 	uint32_t clock;	/* input clock in Hz, used by the internal timers */
 	int cpunum;	/* mame2003 cpu index, used by cpu_triggerint */
 	const address_space *program;
 	const address_space *io;
-	uint stopped;		/* Sets how the CPU is stopped */
+	uint32_t stopped;		/* Sets how the CPU is stopped */
 	void (*const *opcodes)(m37710i_cpu_struct *cpustate);		/* opcodes with no prefix */
 	void (*const *opcodes42)(m37710i_cpu_struct *cpustate);	/* opcodes with 0x42 prefix */
 	void (*const *opcodes89)(m37710i_cpu_struct *cpustate);	/* opcodes with 0x89 prefix */
-	uint (*get_reg)(m37710i_cpu_struct *cpustate, int regnum);
-	void (*set_reg)(m37710i_cpu_struct *cpustate, int regnum, uint val);
+	uint32_t (*get_reg)(m37710i_cpu_struct *cpustate, int regnum);
+	void (*set_reg)(m37710i_cpu_struct *cpustate, int regnum, uint32_t val);
 	void (*set_line)(m37710i_cpu_struct *cpustate, int line, int state);
 	int  (*execute)(m37710i_cpu_struct *cpustate, int cycles);
 
@@ -133,14 +133,14 @@ struct _m37710i_cpu_struct
 /* get_safe_token() is provided by m37710_compat.h as a macro returning the
    single global instance; the original C++ downcast definition is removed. */
 
-extern uint m37710i_adc_tbl[];
-extern uint m37710i_sbc_tbl[];
+extern uint32_t m37710i_adc_tbl[];
+extern uint32_t m37710i_sbc_tbl[];
 
 extern void (*const *const m37710i_opcodes[])(m37710i_cpu_struct *cpustate);
 extern void (*const *const m37710i_opcodes2[])(m37710i_cpu_struct *cpustate);
 extern void (*const *const m37710i_opcodes3[])(m37710i_cpu_struct *cpustate);
-extern uint (*const m37710i_get_reg[])(m37710i_cpu_struct *cpustate,int regnum);
-extern void (*const m37710i_set_reg[])(m37710i_cpu_struct *cpustate,int regnum, uint val);
+extern uint32_t (*const m37710i_get_reg[])(m37710i_cpu_struct *cpustate,int regnum);
+extern void (*const m37710i_set_reg[])(m37710i_cpu_struct *cpustate,int regnum, uint32_t val);
 extern void (*const m37710i_set_line[])(m37710i_cpu_struct *cpustate,int line, int state);
 extern int (*const m37710i_execute[])(m37710i_cpu_struct *cpustate, int cycles);
 
@@ -190,7 +190,7 @@ extern int (*const m37710i_execute[])(m37710i_cpu_struct *cpustate, int cycles);
 #define EXECUTION_MODE_M1X0	2
 #define EXECUTION_MODE_M1X1	3
 
-INLINE void m37710i_set_execution_mode(m37710i_cpu_struct *cpustate, uint mode)
+INLINE void m37710i_set_execution_mode(m37710i_cpu_struct *cpustate, uint32_t mode)
 {
 	cpustate->opcodes = m37710i_opcodes[mode];
 	cpustate->opcodes42 = m37710i_opcodes2[mode];

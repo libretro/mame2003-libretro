@@ -569,32 +569,32 @@ static WRITE16_HANDLER( m37710_internal_word_w )
 extern void (*const m37710i_opcodes_M0X0[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes42_M0X0[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes89_M0X0[])(m37710i_cpu_struct *cpustate);
-extern uint m37710i_get_reg_M0X0(m37710i_cpu_struct *cpustate, int regnum);
-extern void m37710i_set_reg_M0X0(m37710i_cpu_struct *cpustate, int regnum, uint val);
+extern uint32_t m37710i_get_reg_M0X0(m37710i_cpu_struct *cpustate, int regnum);
+extern void m37710i_set_reg_M0X0(m37710i_cpu_struct *cpustate, int regnum, uint32_t val);
 extern void m37710i_set_line_M0X0(m37710i_cpu_struct *cpustate, int line, int state);
 extern int  m37710i_execute_M0X0(m37710i_cpu_struct *cpustate, int cycles);
 
 extern void (*const m37710i_opcodes_M0X1[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes42_M0X1[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes89_M0X1[])(m37710i_cpu_struct *cpustate);
-extern uint m37710i_get_reg_M0X1(m37710i_cpu_struct *cpustate, int regnum);
-extern void m37710i_set_reg_M0X1(m37710i_cpu_struct *cpustate, int regnum, uint val);
+extern uint32_t m37710i_get_reg_M0X1(m37710i_cpu_struct *cpustate, int regnum);
+extern void m37710i_set_reg_M0X1(m37710i_cpu_struct *cpustate, int regnum, uint32_t val);
 extern void m37710i_set_line_M0X1(m37710i_cpu_struct *cpustate, int line, int state);
 extern int  m37710i_execute_M0X1(m37710i_cpu_struct *cpustate, int cycles);
 
 extern void (*const m37710i_opcodes_M1X0[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes42_M1X0[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes89_M1X0[])(m37710i_cpu_struct *cpustate);
-extern uint m37710i_get_reg_M1X0(m37710i_cpu_struct *cpustate, int regnum);
-extern void m37710i_set_reg_M1X0(m37710i_cpu_struct *cpustate, int regnum, uint val);
+extern uint32_t m37710i_get_reg_M1X0(m37710i_cpu_struct *cpustate, int regnum);
+extern void m37710i_set_reg_M1X0(m37710i_cpu_struct *cpustate, int regnum, uint32_t val);
 extern void m37710i_set_line_M1X0(m37710i_cpu_struct *cpustate, int line, int state);
 extern int  m37710i_execute_M1X0(m37710i_cpu_struct *cpustate, int cycles);
 
 extern void (*const m37710i_opcodes_M1X1[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes42_M1X1[])(m37710i_cpu_struct *cpustate);
 extern void (*const m37710i_opcodes89_M1X1[])(m37710i_cpu_struct *cpustate);
-extern uint m37710i_get_reg_M1X1(m37710i_cpu_struct *cpustate, int regnum);
-extern void m37710i_set_reg_M1X1(m37710i_cpu_struct *cpustate, int regnum, uint val);
+extern uint32_t m37710i_get_reg_M1X1(m37710i_cpu_struct *cpustate, int regnum);
+extern void m37710i_set_reg_M1X1(m37710i_cpu_struct *cpustate, int regnum, uint32_t val);
 extern void m37710i_set_line_M1X1(m37710i_cpu_struct *cpustate, int line, int state);
 extern int  m37710i_execute_M1X1(m37710i_cpu_struct *cpustate, int cycles);
 
@@ -622,7 +622,7 @@ void (*const *const m37710i_opcodes3[4])(m37710i_cpu_struct *cpustate) =
 	m37710i_opcodes89_M1X1,
 };
 
-uint (*const m37710i_get_reg[4])(m37710i_cpu_struct *cpustate, int regnum) =
+uint32_t (*const m37710i_get_reg[4])(m37710i_cpu_struct *cpustate, int regnum) =
 {
 	m37710i_get_reg_M0X0,
 	m37710i_get_reg_M0X1,
@@ -630,7 +630,7 @@ uint (*const m37710i_get_reg[4])(m37710i_cpu_struct *cpustate, int regnum) =
 	m37710i_get_reg_M1X1,
 };
 
-void (*const m37710i_set_reg[4])(m37710i_cpu_struct *cpustate, int regnum, uint val) =
+void (*const m37710i_set_reg[4])(m37710i_cpu_struct *cpustate, int regnum, uint32_t val) =
 {
 	m37710i_set_reg_M0X0,
 	m37710i_set_reg_M0X1,
@@ -656,19 +656,19 @@ int (*const m37710i_execute[4])(m37710i_cpu_struct *cpustate, int cycles) =
 
 /* internal functions */
 
-INLINE void m37710i_push_8(m37710i_cpu_struct *cpustate, uint value)
+INLINE void m37710i_push_8(m37710i_cpu_struct *cpustate, uint32_t value)
 {
 	m37710_write_8(REG_S, value);
 	REG_S = MAKE_UINT_16(REG_S-1);
 }
 
-INLINE void m37710i_push_16(m37710i_cpu_struct *cpustate, uint value)
+INLINE void m37710i_push_16(m37710i_cpu_struct *cpustate, uint32_t value)
 {
 	m37710i_push_8(cpustate, value>>8);
 	m37710i_push_8(cpustate, value&0xff);
 }
 
-INLINE uint m37710i_get_reg_p(m37710i_cpu_struct *cpustate)
+INLINE uint32_t m37710i_get_reg_p(m37710i_cpu_struct *cpustate)
 {
 	return	(FLAG_N&0x80)		|
 			((FLAG_V>>1)&0x40)	|

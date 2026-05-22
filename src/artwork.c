@@ -1435,15 +1435,15 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const uint32_t *palet
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
 	{
-		vector_pixel_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
-		vector_pixel_t *list = display->vector_dirty_pixels;
+		uint32_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
+		uint32_t *list = display->vector_dirty_pixels;
 
 		/* 16/15bpp case */
 		if (bitmap->depth != 32)
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1456,7 +1456,7 @@ static void render_game_bitmap(struct mame_bitmap *bitmap, const uint32_t *palet
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1561,15 +1561,15 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const uint32
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
 	{
-		vector_pixel_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
-		vector_pixel_t *list = display->vector_dirty_pixels;
+		uint32_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
+		uint32_t *list = display->vector_dirty_pixels;
 
 		/* 16/15bpp case */
 		if (bitmap->depth != 32)
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1582,7 +1582,7 @@ static void render_game_bitmap_underlay(struct mame_bitmap *bitmap, const uint32
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1694,15 +1694,15 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const uint32_
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
 	{
-		vector_pixel_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
-		vector_pixel_t *list = display->vector_dirty_pixels;
+		uint32_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
+		uint32_t *list = display->vector_dirty_pixels;
 
 		/* 16/15bpp case */
 		if (bitmap->depth != 32)
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1715,7 +1715,7 @@ static void render_game_bitmap_overlay(struct mame_bitmap *bitmap, const uint32_
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1835,15 +1835,15 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 	/* vector case */
 	if (display->changed_flags & VECTOR_PIXELS_CHANGED)
 	{
-		vector_pixel_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
-		vector_pixel_t *list = display->vector_dirty_pixels;
+		uint32_t offset = VECTOR_PIXEL(gamerect.min_x, gamerect.min_y);
+		uint32_t *list = display->vector_dirty_pixels;
 
 		/* 16/15bpp case */
 		if (bitmap->depth != 32)
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;
@@ -1856,7 +1856,7 @@ static void render_game_bitmap_underlay_overlay(struct mame_bitmap *bitmap, cons
 		{
 			while (*list != VECTOR_PIXEL_END)
 			{
-				vector_pixel_t coords = *list;
+				uint32_t coords = *list;
 				x = VECTOR_PIXEL_X(coords);
 				y = VECTOR_PIXEL_Y(coords);
 				*list++ = coords + offset;

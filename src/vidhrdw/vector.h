@@ -33,13 +33,12 @@
 #define Tinten(intensity, col) \
 	MAKE_RGB((RGB_RED(col) * (intensity)) >> 8, (RGB_GREEN(col) * (intensity)) >> 8, (RGB_BLUE(col) * (intensity)) >> 8)
 
-typedef uint32_t vector_pixel_t;
 #define VECTOR_PIXEL_END	0xffffffff
 #define VECTOR_PIXEL(x,y)	((x) | ((y) << 16))
 #define VECTOR_PIXEL_X(p)	((p) & 0xffff)
 #define VECTOR_PIXEL_Y(p)	((p) >> 16)
 
-extern vector_pixel_t *vector_dirty_list;
+extern uint32_t *vector_dirty_list;
 
 extern unsigned char *vectorram;
 extern size_t vectorram_size;
