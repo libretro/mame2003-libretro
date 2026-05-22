@@ -889,15 +889,12 @@ endef
 all:	$(TARGET)
 $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING),1)
-	@echo Archiving $@...
 ifeq ($(SPLIT_UP_LINK), 1)
 	$(HIDE)$(AR) rcs $@ $(foreach OBJECTS,$(OBJECTS),$(NEWLINE) $(AR) q $@ $(OBJECTS))
 else
 	$(HIDE)$(AR) rcs $@ $(OBJECTS)
 endif
 else
-	@echo Linking $@...
-	@echo platform $(system_platform)
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
 	$(HIDE)$(file >$@.in,$(OBJECTS))
@@ -911,19 +908,16 @@ endif
 CFLAGS += $(PLATCFLAGS) $(CDEFS)
 
 %.o: %.c
-	@echo Compiling $<...
 	$(HIDE)$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 %.o: %.s
 	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS)
 
 $(OBJ)/%.a:
-	@echo Archiving $@...
 	@$(RM) $@
 	$(HIDE)$(AR) cr $@ $^
 
 clean:
-	@echo Cleaning project...
 ifeq ($(SPLIT_UP_LINK), 1)
 	# Use a temporary file to hold the list of objects, as it can exceed windows shell command limits
 	$(HIDE)$(file >$@.in,$(OBJECTS))
