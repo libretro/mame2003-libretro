@@ -750,8 +750,6 @@ SCSPNAME(_8bit,lfo,alfo,loop)\
 		else\
 		{\
 			signed short *p=(signed short *) (slot->base+((slot->cur_addr>>(SHIFT-1))&(~1)));\
-			signed int fpart;\
-			fpart=slot->cur_addr&((1<<SHIFT)-1);\
 			sample=p[0];\
 		}\
 		slot->cur_addr+=step;\
