@@ -332,11 +332,6 @@ static struct GfxDecodeInfo malzak_gfxdecodeinfo[] =
 
 static int val = -1;
 
-static INTERRUPT_GEN( malzak_interrupt )
-{
-//	if(irqenable != 0)
-//		cpu_set_irq_line_and_vector(0,0,HOLD_LINE,0x0300);
-}
 
 static PALETTE_INIT( malzak )
 {

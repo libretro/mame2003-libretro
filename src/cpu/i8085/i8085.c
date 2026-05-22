@@ -177,13 +177,6 @@ static void WM(uint32_t a, uint8_t v)
 	cpu_writemem16(a, v);
 }
 
-static	void illegal(void)
-{
-#if VERBOSE
-	uint16_t pc = I.PC.w.l - 1;
-	LOG(("i8085 illegal instruction %04X $%02X\n", pc, cpu_readop(pc)));
-#endif
-}
 
 static INLINE void execute_one(int opcode)
 {

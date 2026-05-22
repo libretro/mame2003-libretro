@@ -99,13 +99,6 @@ static INTERRUPT_GEN( lwings_interrupt )
 		cpu_set_irq_line_and_vector(0,0,HOLD_LINE,0xd7); /* RST 10h */
 }
 
-static INTERRUPT_GEN( avengers_interrupt )
-{
-	if( cpu_getiloops()==0 )
-		irq0_line_hold();
-	else
-		nmi_line_pulse();
-}
 
 static WRITE_HANDLER( avengers_protection_w )
 {

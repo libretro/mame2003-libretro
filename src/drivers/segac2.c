@@ -1337,13 +1337,6 @@ WRITE16_HANDLER ( genesis_io_w )
 
 }
 
-static READ16_HANDLER( megaplay_instr_r )
-{
-	unsigned char* instr = memory_region(REGION_USER1);
-//	unsigned char* ram = memory_region(REGION_CPU3);
-
-	return instr[offset/2] | instr[offset/2] << 8;
-}
 
 
 static MEMORY_READ16_START( genesis_readmem )
@@ -1497,14 +1490,6 @@ static READ_HANDLER ( genesis_z80_bank_r )
 	return -1;
 }
 
-static WRITE16_HANDLER ( genesis_z80_ram_w )
-{
-	if (z80running) logerror("Z80 written whilst running!\n");
-	logerror("68000->z80 sound write, %x to %x\n", data, offset);
-
-	if (ACCESSING_LSB) genesis_z80_ram[(offset<<1)+1] = data & 0xff;
-	if (ACCESSING_MSB) genesis_z80_ram[offset<<1] = (data >> 8) & 0xff;
-}
 
 static MEMORY_READ_START(genesis_z80_readmem)
  	{ 0x0000, 0x1fff, MRA_BANK1 },

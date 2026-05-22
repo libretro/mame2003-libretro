@@ -120,7 +120,6 @@ static void hal21_sound_scheduler(int mode, int data)
 
 /**************************************************************************/
 
-static READ_HANDLER( hal21_videoram_r ){ return videoram[offset]; }
 static WRITE_HANDLER( hal21_videoram_w ){ videoram[offset] = data; }
 static READ_HANDLER( hal21_spriteram_r ){ return spriteram[offset]; }
 static WRITE_HANDLER( hal21_spriteram_w ){ spriteram[offset] = data; }

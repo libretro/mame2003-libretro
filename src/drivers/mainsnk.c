@@ -28,12 +28,6 @@ static int sound_cpu_ready;
 static int sound_command;
 static int sound_fetched; 
 
-static void init_sound( int busy_bit )
-{
-	sound_cpu_ready = 1;
-	sound_command = 0x00;
-	sound_fetched = 1;
-}
 
 static WRITE_HANDLER( sound_command_w )
 {

@@ -61,10 +61,6 @@ static WRITE_HANDLER ( funybubl_paldatawrite )
 }
 
 
-static READ_HANDLER ( unk_port_r )
-{
-	return 0xff;
-}
 
 static MEMORY_READ_START( readmem )
 	{ 0x0000, 0x7fff, MRA_ROM },

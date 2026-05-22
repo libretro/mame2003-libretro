@@ -643,17 +643,6 @@ static void print_game_sound(FILE* out, const struct GameDriver* game)
 
 #define HISTORY_BUFFER_MAX 16384
 
-static void print_game_history(FILE* out, const struct GameDriver* game)
-{
-	char buffer[HISTORY_BUFFER_MAX];
-
-	if (load_driver_history(game,buffer,HISTORY_BUFFER_MAX)==0)
-	{
-		fprintf(out, "\t\t<history>");
-		print_free_string(out, buffer);
-		fprintf(out, "</history>\n");
-	}
-}
 
 static void print_game_driver(FILE* out, const struct GameDriver* game)
 {

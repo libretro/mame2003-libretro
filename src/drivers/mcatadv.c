@@ -86,16 +86,6 @@ static WRITE16_HANDLER( mcat_soundlatch_w )
 	cpu_set_nmi_line(1,PULSE_LINE);
 }
 
-static WRITE16_HANDLER( mcat_coin_w )
-{
-	if(ACCESSING_MSB16)
-	{
-		coin_counter_w(0, data & 0x1000);
-		coin_counter_w(1, data & 0x2000);
-		coin_lockout_w(0, ~data & 0x4000);
-		coin_lockout_w(1, ~data & 0x8000);
-	}
-}
 
 static READ16_HANDLER( mcat_wd_r )
 {

@@ -1126,44 +1126,6 @@ WRITE_HANDLER( snes_w_io )
 
 /* This function checks everything is in a valid range and returns how
  * 'valid' this section is as an information block. */
-static int snes_validate_infoblock( uint8_t *infoblock, uint16_t offset )
-{
-	int8_t valid = 6;
-
-	/* Check the CRC and inverse CRC */
-	if( ((infoblock[offset + 0x1c] + (infoblock[offset + 0x1d] << 8)) |
-		(infoblock[offset + 0x1e] + (infoblock[offset + 0x1f] << 8))) != 0xffff )
-	{
-		valid -= 3;
-	}
-	/* Check the ROM Size is in a valid range */
-	if( infoblock[offset + 0x17] > 13 )
-	{
-		valid--;
-	}
-	/* Check the SRAM size */
-	if( infoblock[offset + 0x18] > 8 )
-	{
-		valid--;
-	}
-	/* Check the Country is in a valid range */
-	if( infoblock[offset + 0x19] > 13 )
-	{
-		valid--;
-	}
-	/* Check the game version */
-	if( infoblock[offset + 0x1b] >= 128 )
-	{
-		valid--;
-	}
-
-	if( valid < 0 )
-	{
-		valid = 0;
-	}
-
-	return valid;
-}
 
 #ifdef MESS
 DEVICE_LOAD(snes_cart)

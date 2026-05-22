@@ -453,11 +453,6 @@ uint32_t iso_get_status(void){
 ////////////////////////////////////////////////////////////////
 // Local Procedures
 
-static void iso_build_disc_bin(void){
-
-//	logerror("loading BIN: %s\n", config.cdrom_image);
-	exit(1);
-}
 
 static void iso_build_disc_iso(void){
 

@@ -74,10 +74,6 @@ static MEMORY_WRITE_START( writemem )
 	{ 0x7100, 0x7aff, MWA_RAM },	// ???
 MEMORY_END
 
-static READ_HANDLER( pip_r )
-{
-	return rand();
-}
 
 static PORT_READ_START( readport )
 	{ 0x30, 0x30, input_port_0_r },

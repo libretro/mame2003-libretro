@@ -308,12 +308,6 @@ DRIVER_INIT(cotton2)
 	init_stv();
 }
 
-static READ32_HANDLER( dnmtdeka_speedup_r )
-{
-	if (activecpu_get_pc()==0x6027c93) cpu_spinuntil_time(TIME_IN_USEC(20));
-
-	return stv_workram_h[0x0985a0/4];
-}
 
 
 DRIVER_INIT(dnmtdeka)

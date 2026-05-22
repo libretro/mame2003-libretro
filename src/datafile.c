@@ -366,21 +366,6 @@ static uint8_t ParseSeek(long offset, int whence)
  *
  *      Returns zero if s1 and s2 are equal, ignoring case
  **************************************************************************/
-static int ci_strcmp (const char *s1, const char *s2)
-{
-        int c1, c2;
-
-        while ((c1 = tolower(*s1)) == (c2 = tolower(*s2)))
-        {
-                if (!c1)
-                        return 0;
-
-                s1++;
-                s2++;
-        }
-
-        return (c1 - c2);
-}
 
 
 /**************************************************************************

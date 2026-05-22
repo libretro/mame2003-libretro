@@ -79,33 +79,6 @@ static void nitedrvr_draw_road( struct mame_bitmap *bitmap )
 	}
 }
 
-static void nitedrvr_draw_hacks( struct mame_bitmap *bitmap )
-{
-	int offs;
-
-	extern int nitedrvr_gear;
-	extern int nitedrvr_track;
-
-	char gear_buf[] =  {0x07,0x05,0x01,0x12,0x00,0x00}; /* "GEAR  " */
-	char track_buf[] = {0x0e,0x0f,0x16,0x09,0x03,0x05, /* "NOVICE" */
-						0x05,0x18,0x10,0x05,0x12,0x14, /* "EXPERT" */
-						0x00,0x00,0x00,0x10,0x12,0x0f};/* "   PRO" */
-
-	/* gear shift indicator - not a part of the original game!!! */
-	gear_buf[5]=0x30 + nitedrvr_gear;
-	for (offs = 0; offs < 6; offs++)
-		drawgfx(bitmap,Machine->gfx[0],
-				gear_buf[offs],0,
-				0,0,(offs)*8,31*8,
-				&Machine->visible_area,TRANSPARENCY_NONE,0);
-
-	/* track indicator - not a part of the original game!!! */
-	for (offs = 0; offs < 6; offs++)
-		drawgfx(bitmap,Machine->gfx[0],
-				track_buf[offs + 6*nitedrvr_track],0,
-				0,0,(offs+26)*8,31*8,
-				&Machine->visible_area,TRANSPARENCY_NONE,0);
-}
 
 VIDEO_UPDATE( nitedrvr )
 {

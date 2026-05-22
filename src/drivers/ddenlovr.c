@@ -2087,10 +2087,6 @@ static INTERRUPT_GEN( quizchq_irq )
 		cpu_set_irq_line_and_vector(0, 0, HOLD_LINE, 0xee);
 }
 
-static INTERRUPT_GEN( rtc_irq )
-{
-//	cpu_set_irq_line_and_vector(0, 0, HOLD_LINE, 0xfc);
-}
 
 static MACHINE_DRIVER_START( quizchq )
 

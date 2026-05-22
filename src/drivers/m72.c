@@ -133,23 +133,6 @@ the NMI handler in the other games.
 ***************************************************************************/
 
 
-static int find_sample(int num)
-{
-	uint8_t *rom = memory_region(REGION_SOUND1);
-	int len = memory_region_length(REGION_SOUND1);
-	int addr = 0;
-
-	while (num--)
-	{
-		/* find end of sample */
-		while (addr < len &&  rom[addr]) addr++;
-
-		/* skip 0 filler between samples */
-		while (addr < len && !rom[addr]) addr++;
-	}
-
-	return addr;
-}
 
 static INTERRUPT_GEN(fake_nmi)
 {

@@ -108,25 +108,9 @@ static NVRAM_HANDLER( system32 )
 	}
 }
 
-static READ16_HANDLER(system32_eeprom_r)
-{
-	return (EEPROM_read_bit() << 7) | input_port_0_r(0);
-}
-
-static WRITE16_HANDLER(system32_eeprom_w)
-{
-	if(ACCESSING_LSB) {
-		EEPROM_write_bit(data & 0x80);
-		EEPROM_set_cs_line((data & 0x20) ? CLEAR_LINE : ASSERT_LINE);
-		EEPROM_set_clock_line((data & 0x40) ? ASSERT_LINE : CLEAR_LINE);
-	}
-}
 
 
-static READ16_HANDLER(sys32_read_ff)
-{
-	return 0xffff;
-}
+
 
 static READ16_HANDLER(sys32_read_random)
 {

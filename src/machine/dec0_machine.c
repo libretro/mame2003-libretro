@@ -459,14 +459,6 @@ static void birdtry_i8751_write(int data)
 
 static void *i8751_timer;
 
-static void i8751_callback(int param)
-{
-	/* Signal main cpu microcontroller task is complete */
-	cpu_set_irq_line(0,5,HOLD_LINE);
-	i8751_timer=NULL;
-
-	logerror("i8751:  Timer called!!!\n");
-}
 
 void dec0_i8751_write(int data)
 {

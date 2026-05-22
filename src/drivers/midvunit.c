@@ -308,28 +308,10 @@ WRITE32_HANDLER( tms32031_control_w )
  *
  *************************************/
 
-static READ32_HANDLER( crusnwld_serial_status_r )
-{
-	int status = midway_serial_pic_status_r();
-	return (port1_r(offset, mem_mask) & 0x7fff7fff) | (status << 31) | (status << 15);
-}
 
 
-static READ32_HANDLER( crusnwld_serial_data_r )
-{
-	return midway_serial_pic_r() << 16;
-}
 
 
-static WRITE32_HANDLER( crusnwld_serial_data_w )
-{
-	if ((data & 0xf0000) == 0x10000)
-	{
-		midway_serial_pic_reset_w(1);
-		midway_serial_pic_reset_w(0);
-	}
-	midway_serial_pic_w(data >> 16);
-}
 
 
 

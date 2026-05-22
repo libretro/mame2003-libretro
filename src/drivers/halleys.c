@@ -1301,18 +1301,6 @@ static void copy_scroll_xp(struct mame_bitmap *bitmap, uint16_t *source, int sx,
 }
 
 
-static void copy_fixed_op(struct mame_bitmap *bitmap, uint16_t *source)
-{
-	uint16_t *esi, *edi;
-	int ecx, edx;
-
-	esi = source + CLIP_SKIP;
-	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX;
-	ecx = CLIP_H;
-	edx = bitmap->rowpixels;
-
-	do { memcpy(edi, esi, CLIP_W<<1); esi += SCREEN_WIDTH; edi += edx; } while (--ecx);
-}
 
 
 static void copy_fixed_xp(struct mame_bitmap *bitmap, uint16_t *source)
@@ -1350,51 +1338,6 @@ static void copy_fixed_xp(struct mame_bitmap *bitmap, uint16_t *source)
 }
 
 
-static void copy_fixed_ab(struct mame_bitmap *bitmap, uint16_t *source)
-{
-#define STRIP_RGB ((BG_RGB<<8)+BG_RGB)
-
-	int dst_pitch, i;
-
-	uint32_t *pal_ptr, *ebx;
-	uint16_t *esi, *edi;
-	int eax, ecx, edx;
-
-
-	pal_ptr = internal_palette;
-	esi = source + CLIP_SKIP + CLIP_W;
-	edi = (uint16_t*)bitmap->line[VIS_MINY] + VIS_MINX + CLIP_W;
-	dst_pitch = bitmap->rowpixels;
-	ebx = alpha_table;
-	ecx = -CLIP_W;
-	i = CLIP_H;
-
-	do {
-		do {
-			eax = (uint32_t)esi[ecx];
-			if (eax)
-			{
-				if (eax & SP_ALPHA)
-				{
-					edx = (uint32_t)edi[ecx];
-					eax = pal_ptr[eax];
-					edx = pal_ptr[edx];
-					eax <<= 8;
-					eax = ebx[eax+edx-STRIP_RGB];
-				}
-				edi[ecx] = (uint16_t)eax;
-			}
-		}
-		while (++ecx);
-
-		ecx = -CLIP_W;
-		esi += SCREEN_WIDTH;
-		edi += dst_pitch;
-	}
-	while (--i);
-
-#undef STRIP_RGB
-}
 
 
 static void copy_fixed_2b(struct mame_bitmap *bitmap, uint16_t *source)

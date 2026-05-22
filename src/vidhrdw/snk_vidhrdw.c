@@ -34,13 +34,6 @@ int snk_blink_parity = 0;
 #define MAX_VRAM_SIZE (64*64*2) /* 0x2000 */
 
 
-static void print( struct mame_bitmap *bitmap, int num, int row )
-{
-	const char *digit = "0123456789abcdef";
-
-	drawgfx( bitmap,Machine->uifont,digit[(num>>4)&0xf],0,0,0,24,row*8+8,0,TRANSPARENCY_NONE,0);
-	drawgfx( bitmap,Machine->uifont,digit[num&0xf],     0,0,0,32,row*8+8,0,TRANSPARENCY_NONE,0);
-}
 
 PALETTE_INIT( snk_3bpp_shadow )
 {

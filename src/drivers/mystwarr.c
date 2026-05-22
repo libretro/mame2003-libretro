@@ -820,10 +820,6 @@ static WRITE_HANDLER( sound_bankswitch_w )
 	reset_sound_region();
 }
 
-static INTERRUPT_GEN(audio_interrupt)
-{
-	cpu_set_nmi_line(1, PULSE_LINE);
-}
 
 /* sound memory maps
 

@@ -155,21 +155,7 @@ static WRITE32_HANDLER( paletteram32_xRRRRRGGGGGBBBBB_dword_w )
 
 ***************************************************************************/
 
-static WRITE32_HANDLER( fuuki32_sound_command_w )
-{
-	if (!(mem_mask & 0x00ff0000))
-	{
-		soundlatch_w(0,(data>>16) & 0xff);
-//		cpu_set_nmi_line(1,PULSE_LINE);
-		cpu_spinuntil_time(TIME_IN_USEC(50));	// Allow the other CPU to reply
-	}
-}
 
-static READ32_HANDLER( fuuki32_sound_command_r )
-{
-	/* should this be synced? */
-	return soundlatch2_r(0) << 16;
-}
 
 #define FUUKI32_INPUT( _N_ ) \
 \

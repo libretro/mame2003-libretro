@@ -292,11 +292,6 @@ static WRITE_HANDLER( ddragon_spriteram_w )
 
 /*****************************************************************************/
 
-static WRITE_HANDLER( cpu_sound_command_w )
-{
-	soundlatch_w( offset, data );
-	cpu_set_irq_line( snd_cpu, sound_irq, (sound_irq == IRQ_LINE_NMI) ? PULSE_LINE : HOLD_LINE );
-}
 
 static WRITE_HANDLER( dd_adpcm_w )
 {

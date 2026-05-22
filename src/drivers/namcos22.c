@@ -599,36 +599,6 @@ static READ32_HANDLER( namcos22_C139_SCI_r )
 	}
 }
 
-static WRITE32_HANDLER( namcos22_C139_SCI_w )
-{
-	COMBINE_DATA( &namcos22_C139_SCI[offset] );
-	/*
-	20020000  2	R/W	RX Status
-				0x01 : Frame Error
-				0x02 : Frame Received
-				0x04 : ?
-
-	20020002  2	R/W	Status/Control Flags
-				0x01 :
-				0x02 : RX flag? (cleared every vsync)
-				0x04 : RX flag? (cleared every vsync)
-				0x08 :
-
-	20020004  2	W	FIFO Control Register
-				0x01 : sync bit enable?
-				0x02 : TX FIFO sync bit (bit-8)
-
-	20020006  2	W	TX Control Register
-				0x01 : TX start/stop
-				0x02 : ?
-				0x10 : ?
-
-	20020008  2	W	-
-	2002000a  2	W	TX Frame Size
-	2002000c  2	R/W	RX FIFO Pointer (0x0000 - 0x0fff)
-	2002000e  2	W	TX FIFO Pointer (0x0000 - 0x1fff)
-	*/
-}
 
 /*********************************************************************************/
 

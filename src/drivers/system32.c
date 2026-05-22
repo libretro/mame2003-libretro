@@ -484,19 +484,7 @@ static NVRAM_HANDLER( system32 )
 	}
 }
 
-static READ16_HANDLER(system32_eeprom_r)
-{
-	return (EEPROM_read_bit() << 7) | input_port_0_r(0);
-}
 
-static WRITE16_HANDLER(system32_eeprom_w)
-{
-	if(ACCESSING_LSB) {
-		EEPROM_write_bit(data & 0x80);
-		EEPROM_set_cs_line((data & 0x20) ? CLEAR_LINE : ASSERT_LINE);
-		EEPROM_set_clock_line((data & 0x40) ? ASSERT_LINE : CLEAR_LINE);
-	}
-}
 
 static READ16_HANDLER(ga2_sprite_protection_r)
 {
@@ -622,10 +610,6 @@ static READ16_HANDLER(arf_wakeup_protection_r)
 	return prot[offset];
 }
 
-static READ16_HANDLER(sys32_read_ff)
-{
-	return 0xffff;
-}
 
 static READ16_HANDLER(sys32_read_random)
 {
@@ -866,11 +850,6 @@ static READ16_HANDLER( jp_v60_read_cab )
 	return fromcab;
 }
 
-static WRITE16_HANDLER( jp_v60_write_cab )
-{
-	tocab = data;
-	cpu_set_irq_line(1, 0, HOLD_LINE);
-}
 
 
 static MEMORY_READ16_START( system32_readmem )

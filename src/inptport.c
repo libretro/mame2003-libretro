@@ -1587,39 +1587,7 @@ const char *generic_ctrl_label(int input)
 /***************************************************************************/
 /* Generic IO */
 
-static int readint(mame_file *f,uint32_t *num)
-{
-	unsigned i;
 
-	*num = 0;
-	for (i = 0;i < sizeof(uint32_t);i++)
-	{
-		unsigned char c;
-
-
-		*num <<= 8;
-		if (mame_fread(f,&c,1) != 1)
-			return -1;
-		*num |= c;
-	}
-
-	return 0;
-}
-
-static void writeint(mame_file *f,uint32_t num)
-{
-	unsigned i;
-
-	for (i = 0;i < sizeof(uint32_t);i++)
-	{
-		unsigned char c;
-
-
-		c = (num >> 8 * (sizeof(uint32_t)-1)) & 0xff;
-		mame_fwrite(f,&c,1);
-		num <<= 8;
-	}
-}
 
 static int readword(mame_file *f,uint16_t *num)
 {

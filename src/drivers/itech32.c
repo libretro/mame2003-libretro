@@ -196,13 +196,6 @@ static READ16_HANDLER( trackball_r )
 }
 
 
-static READ32_HANDLER( trackball32_8bit_r )
-{
-	int lower = readinputport(6);
-	int upper = readinputport(7);
-
-	return (lower & 255) | ((upper & 255) << 8);
-}
 
 
 static READ32_HANDLER( trackball32_4bit_r )
@@ -539,10 +532,6 @@ static READ32_HANDLER( input_port_4_msw_r )
 	return special_port4_r(offset,0) << 16;
 }
 
-static READ32_HANDLER( input_port_5_msw_r )
-{
-	return input_port_5_word_r(offset,0) << 16;
-}
 
 static WRITE32_HANDLER( int1_ack32_w )
 {

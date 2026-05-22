@@ -205,10 +205,6 @@ static struct sprite_entry {
 	unsigned int adr;
 } sprites[0x100];
 
-static int pri_comp(const void *s1, const void *s2)
-{
-	return ((struct sprite_entry *)s1)->pri - ((struct sprite_entry *)s2)->pri;
-}
 
 static void generate_sprites(uint32_t src, uint32_t spr, int count)
 {
@@ -649,19 +645,6 @@ static WRITE32_HANDLER( ccu_w )
 }
 
 
-static int konamigx_irq_callback(int irqline)
-{
-	switch (irqline)
-	{
-		// IRQ 3 ACK (object DMA end)
-		case 2: gx_rdport1_3 |= 0x80; break;
-
-		// IRQ 4 ACK (ESC)
-		case 3: gx_rdport1_3 |= 0x8; break;
-	}
-
-	return(0); // DUMMY: really don't know how to return appropriate values as in irq_line_vector[0][irqline]
-}
 
 /*
 	GX object DMA timings:
@@ -1396,10 +1379,6 @@ static MEMORY_WRITE16_START( sndwritemem )
 MEMORY_END
 
 /* 68000 timer interrupt controller */
-static INTERRUPT_GEN(gxaudio_interrupt)
-{
-	cpu_set_irq_line(1, 2, HOLD_LINE);
-}
 
 static struct K054539interface k054539_interface =
 {
