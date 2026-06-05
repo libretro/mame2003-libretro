@@ -101,8 +101,13 @@ static unsigned accum_base;
 static int left_accum[ACCUMULATOR_SAMPLES];
 static int right_accum[ACCUMULATOR_SAMPLES];
 
-/* 16-bit mix buffers */
-static int16_t mix_buffer[ACCUMULATOR_SAMPLES*2]; /* *2 for stereo */
+/* mixer output goes directly to the libretro-facing audio buffer
+ * (src/mame2003/mame2003.c).  samples_buffer is always allocated
+ * stereo-sized regardless of is_stereo; the mono path here duplicates
+ * each sample to both channels at clip time, which folds the old
+ * libretro-side mono->stereo conversion loop into the existing
+ * clip/store loop. */
+extern int16_t *samples_buffer;
 
 /* global sample tracking */
 static unsigned samples_this_frame;
@@ -756,17 +761,20 @@ void mixer_sh_update(void)
 			channel->samples_available -= samples_this_frame;
 	}
 
-	/* copy the mono 32-bit data to a 16-bit buffer, clipping along the way */
+	/* copy the mono 32-bit data to a 16-bit stereo buffer, clipping
+	 * along the way; duplicate the L sample into R so the libretro-side
+	 * mono->stereo conversion loop isn't needed. */
 	if (!is_stereo)
 	{
-		mix = mix_buffer;
+		mix = samples_buffer;
 		for (i = 0; i < samples_this_frame; i++)
 		{
 			/* fetch and clip the sample */
 			sample = left_accum[accum_pos];
          MAME_CLAMP_SAMPLE(sample);
 
-			/* store and zero out behind us */
+			/* store interleaved L,R (duplicated) and zero out behind us */
+			*mix++ = sample;
 			*mix++ = sample;
 			left_accum[accum_pos] = 0;
 
@@ -778,7 +786,7 @@ void mixer_sh_update(void)
 	/* copy the stereo 32-bit data to a 16-bit buffer, clipping along the way */
 	else
 	{
-		mix = mix_buffer;
+		mix = samples_buffer;
 		for (i = 0; i < samples_this_frame; i++)
 		{
 			/* fetch and clip the left sample */
@@ -803,7 +811,7 @@ void mixer_sh_update(void)
 	}
 
 	/* play the result */
-	samples_this_frame = osd_update_audio_stream(mix_buffer);
+	samples_this_frame = osd_update_audio_stream(samples_buffer);
 
 	accum_base = accum_pos;
 
