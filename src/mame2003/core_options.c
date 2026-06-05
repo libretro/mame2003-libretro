@@ -541,6 +541,21 @@ static struct retro_core_option_v2_definition option_def_dcs_speedhack = {
    "enabled"
 };
 
+static struct retro_core_option_v2_definition option_def_qsound_filter = {
+   APPNAME"_qsound_output_filter",
+   "QSound Output Filter",
+   NULL,
+   "Apply the QSound DSP's output post-processing: a 95-tap windowed-sinc low-pass (8 kHz cutoff) plus the algorithm's slight left/right output delay. Smooths the upper-band aliasing the 8-bit samples produce on transients and adds a subtle stereo offset, at roughly 15-20% extra CPU cost during active QSound audio. Only shown for QSound games (CPS1.5/CPS Dash: Dino, Punisher, Slammasters, etc.).",
+   NULL,
+   "cat_key_audio",
+   {
+      { "disabled", NULL },
+      { "enabled",  NULL },
+      { NULL, NULL },
+   },
+   "disabled"
+};
+
 static struct retro_core_option_v2_definition option_def_input_interface = {
    APPNAME"_input_interface",
    "Input Interface",
@@ -808,6 +823,7 @@ void init_core_options(void)
   default_options[OPT_NVRAM_BOOTSTRAP]           = option_def_nvram_bootstraps;
   default_options[OPT_SAMPLE_RATE]               = option_def_sample_rate;
   default_options[OPT_DCS_SPEEDHACK]             = option_def_dcs_speedhack;
+  default_options[OPT_QSOUND_FILTER]             = option_def_qsound_filter;
   default_options[OPT_INPUT_INTERFACE]           = option_def_input_interface;
   default_options[OPT_MAME_REMAPPING]            = option_def_mame_remapping;
   default_options[OPT_FRAMESKIP]                 = option_def_frameskip;
@@ -874,6 +890,10 @@ static void set_variables()
       case OPT_DCS_SPEEDHACK:
          if(!options.content_flags[CONTENT_DCS_SPEEDHACK])
            continue;
+         break;
+      case OPT_QSOUND_FILTER:
+         if(!options.content_flags[CONTENT_QSOUND])
+           continue; /* only offer the QSound output filter for QSound drivers */
          break;
       case OPT_NVRAM_BOOTSTRAP:
          if(!options.content_flags[CONTENT_NVRAM_BOOTSTRAP])
@@ -1142,6 +1162,26 @@ void update_variables(bool first_time)
             options.activate_dcs_speedhack = 0;
           break;
 
+        case OPT_QSOUND_FILTER:
+          {
+            /* This flag lives in src/sound/qsound.c and is read once
+             * per output sample in qsound_update to bypass the FIR and
+             * output-delay processing when zero.  It is only meaningful
+             * for QSound drivers; the option is hidden for other games
+             * (see set_variables / CONTENT_QSOUND) but the value still
+             * updates harmlessly since qsound_update isn't called.
+             * Guarded on HAS_QSOUND because the flag (and qsound.c) are
+             * only compiled into QSound-enabled builds. */
+#if (HAS_QSOUND)
+            extern int qsound_output_filter_enabled;
+            if(strcmp(var.value, "enabled") == 0)
+              qsound_output_filter_enabled = 1;
+            else
+              qsound_output_filter_enabled = 0;
+#endif
+          }
+          break;
+
         case OPT_MAME_REMAPPING:
           if(strcmp(var.value, "enabled") == 0)
             options.mame_remapping = true;
@@ -1260,6 +1300,12 @@ void set_content_flags(void)
       {
         options.content_flags[CONTENT_ALT_SOUND] = true;
       }
+
+    /************ DRIVERS USING THE CAPCOM QSOUND DSP ************/
+#if (HAS_QSOUND)
+    if (Machine->drv->sound[i].sound_type == SOUND_QSOUND)
+      options.content_flags[CONTENT_QSOUND] = true;
+#endif
   }
 
   /************ DRIVERS WITH MULTIPLE BIOS OPTIONS ************/

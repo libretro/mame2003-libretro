@@ -186,6 +186,7 @@ enum /* used to index content-specific flags */
   CONTENT_DCS_SPEEDHACK,
   CONTENT_NVRAM_BOOTSTRAP,
   CONTENT_CHEAT_INPUT_PORT,
+  CONTENT_QSOUND,
   CONTENT_end,
 };
 
