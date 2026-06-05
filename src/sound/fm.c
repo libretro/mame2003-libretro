@@ -1,5 +1,3 @@
-#define YM2610B_WARNING
-
 /*
 **
 ** File: fm.c -- software implementation of Yamaha FM sound generator
@@ -3805,15 +3803,6 @@ void YM2610UpdateOne(int num, int16_t **buffer, int length)
 		pcmsizeA = F2610->pcm_size;
 
 	}
-#ifdef YM2610B_WARNING
-#define FM_KEY_IS(SLOT) ((SLOT)->key)
-#define FM_MSG_YM2610B "YM2610-%d.CH%d is playing,Check whether the type of the chip is YM2610B\n"
-	/* Check YM2610B warning message */
-	if( FM_KEY_IS(&F2610->CH[0].SLOT[3]) )
-		LOG(LOG_WAR,(FM_MSG_YM2610B,num,0));
-	if( FM_KEY_IS(&F2610->CH[3].SLOT[3]) )
-		LOG(LOG_WAR,(FM_MSG_YM2610B,num,3));
-#endif
 
 	/* refresh PG and EG */
 	refresh_fc_eg_chan( cch[0] );
