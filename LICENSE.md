@@ -93,6 +93,7 @@ Without the Repository, I would never have even tried to write an emulator. Unfo
 * Many thanks to Eric Smith, Hedley Rainnie and Sean Trowbridge for information on the Pokey random number generator.
 * NES sound hardware info by Matthew Conte.
 * YM2610 emulation by Hiromitsu Shioya.
+* QSound spatial output stage (pan-curve and FIR coefficient data) from the qsound-hle project, Copyright (c) 2018 ValleyBell, Ian Karlsson, BSD 3-Clause license; see https://github.com/ValleyBell/qsound-hle and the notice in src/sound/qsound.c.
 * Background art by Peter Hirschberg (PeterH@cronuscom.com).
 * Allegro library by Shawn Hargreaves, 1994/97
 * SEAL Synthetic Audio Library API Interface Copyright (C) 1995, 1996 Carlos Hasan. All Rights Reserved.
