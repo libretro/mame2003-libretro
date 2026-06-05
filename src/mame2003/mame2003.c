@@ -38,7 +38,6 @@ static float              delta_samples;
 int                       samples_per_frame = 0;
 int                       orig_samples_per_frame =0;
 short*                    samples_buffer;
-short*                    conversion_buffer;
 int                       usestereo = 1;
 int16_t                   prev_pointer_x;
 int16_t                   prev_pointer_y;
@@ -740,12 +739,16 @@ int osd_start_audio_stream(int stereo)
   /* free any buffers left over from a previous stream (e.g. after a reset or
      a sample-rate change) before allocating new ones */
   free(samples_buffer);
-  free(conversion_buffer);
   samples_buffer    = NULL;
-  conversion_buffer = NULL;
 
-  samples_buffer = (short *) calloc(samples_per_frame+16, 2 + usestereo * 2);
-  if (!usestereo) conversion_buffer = (short *) calloc(samples_per_frame+16, 4);
+  /* samples_buffer is always allocated stereo-sized regardless of the
+     game's native sound layout: libretro always consumes stereo via
+     audio_batch_cb, and the mixer (src/sound/mixer.c:mixer_sh_update)
+     writes interleaved L/R directly into it -- mono games duplicate the
+     sample into both channels at the clip step.  Eliminates the
+     mono->stereo conversion buffer and its per-frame copy loop that used
+     to run in osd_update_audio_stream(). */
+  samples_buffer = (short *) calloc((samples_per_frame+16) * 2, sizeof(short));
 
   return samples_per_frame;
 }
@@ -753,25 +756,14 @@ int osd_start_audio_stream(int stereo)
 
 int osd_update_audio_stream(int16_t *buffer)
 {
-	int i,j;
 	if ( Machine->sample_rate !=0 && buffer)
 	{
-		if (usestereo)
-			/* MAME already produces interleaved stereo S16, which is exactly
-			   what audio_batch_cb expects, so hand it the mix buffer directly
-			   instead of copying through samples_buffer first. */
-			audio_batch_cb(buffer, samples_per_frame);
-		else
-		{
-			/* Mono: duplicate each sample across both channels, reading
-			   straight from the mix buffer (no intermediate copy). */
-			for (i = 0, j = 0; i < samples_per_frame; i++)
-			{
-				conversion_buffer[j++] = buffer[i];
-				conversion_buffer[j++] = buffer[i];
-			}
-			audio_batch_cb(conversion_buffer,samples_per_frame);
-		}
+		/* buffer is samples_buffer, which the mixer (src/sound/mixer.c)
+		   has already filled as interleaved L/R stereo -- mono games are
+		   duplicated to both channels at the clip step.  No mono->stereo
+		   conversion or intermediate copy is needed here; hand it to the
+		   frontend directly. */
+		audio_batch_cb(buffer, samples_per_frame);
 
 		/*process next frame */
 
@@ -801,20 +793,13 @@ int osd_update_audio_stream(int16_t *buffer)
 
 void osd_update_silent_stream(void)
 {
-	int length = samples_per_frame * (usestereo ? 4 : 2);
-
 	if (Machine->sample_rate !=0)
 	{
-		if (usestereo)
-		{
-			memset(samples_buffer, 0, length);
-			audio_batch_cb(samples_buffer, samples_per_frame);
-		}
-		else
-		{
-			memset(conversion_buffer, 0, length * 2);
-			audio_batch_cb(conversion_buffer,samples_per_frame);
-		}
+		/* samples_buffer is always stereo-sized now -- zero it and
+		   dispatch directly, no separate mono-path conversion buffer
+		   needed. */
+		memset(samples_buffer, 0, samples_per_frame * 2 * sizeof(short));
+		audio_batch_cb(samples_buffer, samples_per_frame);
 	}
 }
 
@@ -822,9 +807,7 @@ void osd_update_silent_stream(void)
 void osd_stop_audio_stream(void)
 {
 	free(samples_buffer);
-	free(conversion_buffer);
 	samples_buffer    = NULL;
-	conversion_buffer = NULL;
 }
 
 
