@@ -509,18 +509,21 @@ static struct retro_core_option_v2_definition option_def_nvram_bootstraps = {
 
 static struct retro_core_option_v2_definition option_def_sample_rate = {
    APPNAME"_sample_rate",
-   "Sample Rate (Hint)",
+   "Sample rate hint (Restart)",
    NULL,
-   "Preferred output sample rate. This is only a hint: games whose sound hardware has a fixed native rate are always output at that rate so no resampling is needed, and ignore this setting. It applies to the remaining games, where it trades audio quality for performance (lower rates are lighter).",
+   "Preferred output sample rate. This is only a hint: games whose sound hardware has a fixed native rate are always output at that rate so no resampling is needed, and ignore this setting. It applies to the remaining games, where it trades audio quality for performance (lower rates are lighter). \"Auto\" asks the frontend for its target rate and rounds to the nearest standard rate, falling back to 48000; \"Manual\" currently behaves like \"Auto\".",
    NULL,
    "cat_key_audio",
    {
+      { "auto",   "Auto" },
+      { "manual", "Manual" },
       { "8000",   "8000 Hz" },
       { "11025", "11025 Hz" },
       { "22050", "22050 Hz" },
       { "30000", "30000 Hz" },
       { "44100", "44100 Hz" },
       { "48000", "48000 Hz" },
+      { "96000", "96000 Hz" },
       { NULL, NULL },
    },
    "48000"
@@ -913,6 +916,48 @@ static void set_variables()
 }
 
 
+/* Older libretro.h revisions predate this environment call.  Define it
+ * defensively; on frontends that do not implement it the callback simply
+ * returns false and we fall back to a sensible default. */
+#ifndef RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE
+#define RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE (81 | 0x10000)
+#endif
+
+/* Snap an arbitrary rate to the nearest entry on the standard ladder. */
+static int snap_to_standard_rate(int rate)
+{
+   static const int ladder[] = { 8000, 11025, 22050, 32000, 44100, 48000, 96000 };
+   int      best      = ladder[0];
+   int      best_dist = (rate > ladder[0]) ? (rate - ladder[0]) : (ladder[0] - rate);
+   unsigned i;
+
+   for (i = 1; i < sizeof(ladder) / sizeof(ladder[0]); i++)
+   {
+      int dist = (rate > ladder[i]) ? (rate - ladder[i]) : (ladder[i] - rate);
+      if (dist < best_dist)
+      {
+         best_dist = dist;
+         best      = ladder[i];
+      }
+   }
+   return best;
+}
+
+/* Resolve the "auto"/"manual" option to a concrete rate.  MAME 0.78 reads
+ * the option before machine init, so no per-machine native rate is known
+ * here; both query the frontend's target rate and round it to the nearest
+ * standard rate, falling back to 48000.  A true native "manual" rate is a
+ * future change. */
+static int resolve_auto_sample_rate(void)
+{
+   unsigned target = 0;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE, &target) && target != 0)
+      return snap_to_standard_rate((int)target);
+
+   return 48000;
+}
+
 void update_variables(bool first_time)
 {
   struct retro_led_interface ledintf;
@@ -1152,7 +1197,10 @@ void update_variables(bool first_time)
           break;
 
         case OPT_SAMPLE_RATE:
-          options.samplerate = atoi(var.value);
+          if (!strcmp(var.value, "auto") || !strcmp(var.value, "manual"))
+            options.samplerate = resolve_auto_sample_rate();
+          else
+            options.samplerate = atoi(var.value);
           break;
 
         case OPT_DCS_SPEEDHACK:
