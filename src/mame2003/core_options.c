@@ -731,6 +731,7 @@ static struct retro_core_option_v2_definition option_def_cpu_clock_scale = {
    "default"
 };
 
+#if (HAS_CYCLONE || HAS_DRZ80)
 static struct retro_core_option_v2_definition option_def_cyclone_mode = {
    APPNAME"_cyclone_mode",
    "Cyclone Mode",
@@ -750,6 +751,7 @@ static struct retro_core_option_v2_definition option_def_cyclone_mode = {
    },
    "default"
 };
+#endif
 
 static struct retro_core_option_v2_definition option_def_null = {
    NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL
@@ -1111,11 +1113,18 @@ void update_variables(bool first_time)
             {
               char cfg_file_path[PATH_MAX_LENGTH];
               char buffer[PATH_MAX_LENGTH];
+              int  cfg_len;
               osd_get_path(FILETYPE_CONFIG, buffer);
-              snprintf(cfg_file_path, sizeof(cfg_file_path), "%s%s%s.cfg", buffer, PATH_DEFAULT_SLASH(), options.romset_filename_noext);
+              /* Use a width-limited conversion for the directory portion so
+               * the result provably fits in cfg_file_path and the compiler
+               * can see it cannot be truncated.  osd_get_path still receives
+               * a full PATH_MAX_LENGTH buffer, as it requires. */
+              cfg_len = snprintf(cfg_file_path, sizeof(cfg_file_path), "%.*s%s%s.cfg",
+                                 (int)(sizeof(cfg_file_path) / 2), buffer,
+                                 PATH_DEFAULT_SLASH(), options.romset_filename_noext);
               buffer[0] = '\0';
 
-              if(path_is_valid(cfg_file_path))
+              if(cfg_len > 0 && (size_t)cfg_len < sizeof(cfg_file_path) && path_is_valid(cfg_file_path))
               {
                 if(remove(cfg_file_path) != 0)
                   snprintf(buffer, sizeof(buffer), "%s.cfg exists but cannot be deleted!", options.romset_filename_noext);
@@ -1254,7 +1263,7 @@ void update_variables(bool first_time)
           if(strcmp(var.value, "default") == 0)
             options.cpu_clock_scale = 1;
           else
-            options.cpu_clock_scale = (double) atoi(var.value) / 100;
+            options.cpu_clock_scale = atoi(var.value) / 100.0;
           break;
 
         case OPT_CORE_SYS_SUBFOLDER:
