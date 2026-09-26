@@ -60,8 +60,8 @@ int config_read_ports(config_file *file, struct InputPort *input_ports_default, 
 int config_read_default_ports(config_file *cfg, struct ipd *input_ports_default);
 
 /* reads coin and ticket counters (arrays of length COIN_COUNTERS, except for dispensed_tickets) */
-int config_read_coin_and_ticket_counters(config_file *file, unsigned int *coins, unsigned int *lastcoin,
-	unsigned int *coinlockedout, unsigned int *dispensed_tickets);
+int config_read_coin_and_ticket_counters(config_file *file, uint32_t *coins, unsigned int *lastcoin,
+	unsigned int *coinlockedout, uint32_t *dispensed_tickets);
 
 /* reads mixer configuration */
 int config_read_mixer_config(config_file *file, struct mixer_config *mixercfg);

@@ -449,6 +449,7 @@ else ifeq ($(platform), psp1)
 	AR = psp-ar$(EXE_EXT)
 	PLATCFLAGS += -DPSP
 	CFLAGS += -G0
+	CFLAGS += -Wno-incompatible-pointer-types
 	STATIC_LINKING = 1
 
 # Vita
