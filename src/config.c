@@ -323,7 +323,7 @@ void config_close(config_file *cfg)
 int config_read_ports(config_file *cfg, struct InputPort *input_ports_default, struct InputPort *input_ports)
 {
 	unsigned int total;
-	unsigned int saved_total;
+	uint32_t saved_total;
 	struct InputPort *in;
 	struct InputPort saved;
 	int (*read_input_port)(mame_file *, struct InputPort *);
@@ -428,8 +428,8 @@ int config_read_default_ports(config_file *cfg, struct ipd *input_ports_default)
 	config_read_coin_and_ticket_counters
 ***************************************************************************/
 
-int config_read_coin_and_ticket_counters(config_file *cfg, unsigned int *coins, unsigned int *lastcoin,
-	unsigned int *coinlockedout, unsigned int *dispensed_tickets)
+int config_read_coin_and_ticket_counters(config_file *cfg, uint32_t *coins, unsigned int *lastcoin,
+	unsigned int *coinlockedout, uint32_t *dispensed_tickets)
 {
 	int coin_counters;
 	int i;
