@@ -6,9 +6,9 @@
 
 #include <chd.h>
 #include <retro_inline.h>
-#include <utils/md5.h>
+#include <lrc_hash.h>
 #include "mame_sha1.h"
-#include <compat/zlib.h>
+#include <zlib.h>
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>

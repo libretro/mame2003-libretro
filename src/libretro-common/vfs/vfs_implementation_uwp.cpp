@@ -20,18 +20,16 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <retro_environment.h>
-
 #include <ppl.h>
 #include <ppltasks.h>
 #include <stdio.h>
+#include <string.h>
 #include <wrl.h>
 #include <wrl/implements.h>
 #include <robuffer.h>
-#include <collection.h>
 #include <functional>
 #include <fileapifromapp.h>
-#include <AclAPI.h>
+#include <aclapi.h>
 #include <sddl.h>
 #include <io.h>
 #include <fcntl.h>
@@ -46,57 +44,35 @@
 #include <vfs/vfs_implementation.h>
 #include <libretro.h>
 #include <encodings/utf.h>
+#include <compat/strl.h>
 #include <retro_miscellaneous.h>
 #include <file/file_path.h>
-#include <retro_assert.h>
-#include <string/stdstring.h>
 #include <retro_environment.h>
-#include <uwp/uwp_async.h>
 #include <uwp/std_filesystem_compat.h>
 
-// define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING to silence warnings
-// idk why this warning happens considering we can't use the non experimental version but whatever ig
+#ifdef HAVE_SMBCLIENT
+#include "vfs_implementation_smb.h"
+#endif
 
 namespace
 {
-   void windowsize_path(wchar_t* path)
+   /* UWP deals with paths containing / instead of
+    * \ way worse than normal Windows */
+   /* and RetroArch may sometimes mix them
+    * (e.g. on archive extraction) */
+   static void windowsize_path(wchar_t* path)
    {
-      /* UWP deals with paths containing / instead of 
-       * \ way worse than normal Windows */
-      /* and RetroArch may sometimes mix them 
-       * (e.g. on archive extraction) */
-      if (!path)
-         return;
-
-      while (*path)
+      if (path)
       {
-         if (*path == '/')
-            *path = '\\';
-         ++path;
+         while (*path)
+         {
+            if (*path == '/')
+               *path = '\\';
+            ++path;
+         }
       }
    }
 }
-
-
-
-#ifdef VFS_FRONTEND
-struct retro_vfs_file_handle
-#else
-struct libretro_vfs_implementation_file
-#endif
-{
-    int64_t size;
-    uint64_t mappos;
-    uint64_t mapsize;
-    FILE* fp;
-    HANDLE fh;
-    char* buf;
-    char* orig_path;
-    uint8_t* mapped;
-    int fd;
-    unsigned hints;
-    enum vfs_scheme scheme;
-};
 
 #define RFILE_HINT_UNBUFFERED (1 << 8)
 
@@ -105,19 +81,14 @@ int retro_vfs_file_close_impl(libretro_vfs_implementation_file* stream)
     if (!stream)
         return -1;
 
-    /*if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-    {
-        if (stream->fp)
-            fclose(stream->fp);
-    }*/
+#ifdef HAVE_SMBCLIENT
+    if (stream->scheme == VFS_SCHEME_SMB)
+        retro_vfs_file_close_smb(stream);
+#endif
 
     if (stream->fp)
         fclose(stream->fp);
 
-    /*if (stream->fd > 0)
-    {
-        fclose(stream->fd);
-    }*/
     if (stream->buf != NULL)
     {
         free(stream->buf);
@@ -131,9 +102,13 @@ int retro_vfs_file_close_impl(libretro_vfs_implementation_file* stream)
     return 0;
 }
 
-
 int retro_vfs_file_error_impl(libretro_vfs_implementation_file* stream)
 {
+#ifdef HAVE_SMBCLIENT
+    if (stream->scheme == VFS_SCHEME_SMB)
+        return retro_vfs_file_error_smb(stream);
+#endif
+
     return ferror(stream->fp);
 }
 
@@ -144,18 +119,12 @@ int64_t retro_vfs_file_size_impl(libretro_vfs_implementation_file* stream)
     return 0;
 }
 
-
 int64_t retro_vfs_file_truncate_impl(libretro_vfs_implementation_file* stream, int64_t length)
 {
-    if (!stream)
-        return -1;
-
-    if (_chsize(_fileno(stream->fp), length) != 0)
-        return -1;
-
-    return 0;
+   if (stream && _chsize(_fileno(stream->fp), length) == 0)
+      return 0;
+   return -1;
 }
-
 
 int64_t retro_vfs_file_tell_impl(libretro_vfs_implementation_file* stream)
 {
@@ -164,12 +133,13 @@ int64_t retro_vfs_file_tell_impl(libretro_vfs_implementation_file* stream)
 
     if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
     {
+#ifdef HAVE_SMBCLIENT
+        if (stream->scheme == VFS_SCHEME_SMB)
+           return retro_vfs_file_tell_smb(stream);
+#endif
         return _ftelli64(stream->fp);
     }
-    if (lseek(stream->fd, 0, SEEK_CUR) < 0)
-        return -1;
-
-    return 0;
+    return lseek(stream->fd, 0, SEEK_CUR);
 }
 
 int64_t retro_vfs_file_seek_internal(
@@ -181,60 +151,86 @@ int64_t retro_vfs_file_seek_internal(
 
     if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
     {
+#ifdef HAVE_SMBCLIENT
+        if (stream->scheme == VFS_SCHEME_SMB)
+            return retro_vfs_file_seek_smb(stream, offset, whence);
+#endif
         return _fseeki64(stream->fp, offset, whence);
     }
-
-
-    if (lseek(stream->fd, (off_t)offset, whence) < 0)
-        return -1;
-
-    return 0;
+    return lseek(stream->fd, (off_t)offset, whence) == -1 ? -1 : 0;
 }
 
 int64_t retro_vfs_file_seek_impl(libretro_vfs_implementation_file* stream,
     int64_t offset, int seek_position)
 {
-    int whence = -1;
-    switch (seek_position)
-    {
-    case RETRO_VFS_SEEK_POSITION_START:
-        whence = SEEK_SET;
-        break;
-    case RETRO_VFS_SEEK_POSITION_CURRENT:
-        whence = SEEK_CUR;
-        break;
-    case RETRO_VFS_SEEK_POSITION_END:
-        whence = SEEK_END;
-        break;
-    }
+    return retro_vfs_file_seek_internal(stream, offset, seek_position);
+}
 
-    return retro_vfs_file_seek_internal(stream, offset, whence);
+int64_t retro_vfs_file_view_impl(libretro_vfs_implementation_file *stream,
+      uint64_t len, const uint8_t **ptr)
+{
+   /* Local files are never mapped here (see
+    * retro_vfs_file_get_mapped_ptr_impl), so only an smb:// stream's
+    * read-ahead window can be lent; anything else answers -1 and the
+    * caller reads. */
+   if (!stream || !ptr)
+      return -1;
+#ifdef HAVE_SMBCLIENT
+   if (stream->scheme == VFS_SCHEME_SMB)
+      return retro_vfs_file_view_smb(stream, len, ptr);
+#endif
+   return -1;
 }
 
 int64_t retro_vfs_file_read_impl(libretro_vfs_implementation_file* stream,
     void* s, uint64_t len)
 {
-    if (!stream || (!stream->fp && stream->fh == INVALID_HANDLE_VALUE) || !s)
-      return -1;
+    if (!stream)
+        return -1;
 
-   if (stream->fh != INVALID_HANDLE_VALUE)
-   {
-      DWORD _bytes_read;
-      ReadFile(stream->fh, (char*)s, len, &_bytes_read, NULL);
-      return (int64_t)_bytes_read;
-   }
+#ifdef HAVE_SMBCLIENT
+    if (stream->scheme == VFS_SCHEME_SMB)
+        return retro_vfs_file_read_smb(stream, s, len);
+#endif
+
+    if ((!stream->fp && stream->fh == INVALID_HANDLE_VALUE) || !s)
+        return -1;
+
+    if (stream->fh != INVALID_HANDLE_VALUE)
+    {
+        DWORD _bytes_read;
+        ReadFile(stream->fh, (char*)s, len, &_bytes_read, NULL);
+        return (int64_t)_bytes_read;
+    }
 
     if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-       return fread(s, 1, (size_t)len, stream->fp);
+        return fread(s, 1, (size_t)len, stream->fp);
     return read(stream->fd, s, (size_t)len);
 }
 
 
 int64_t retro_vfs_file_write_impl(libretro_vfs_implementation_file* stream, const void* s, uint64_t len)
 {
-    if (!stream || (!stream->fp && stream->fh == INVALID_HANDLE_VALUE) || !s)
+    if (!stream)
         return -1;
 
+#ifdef HAVE_SMBCLIENT
+    if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0 &&
+        stream->scheme == VFS_SCHEME_SMB)
+    {
+        int64_t pos = 0;
+        ssize_t ret = -1;
+
+        pos = retro_vfs_file_tell_smb(stream);
+        ret = retro_vfs_file_write_smb(stream, s, len);
+        if (ret != -1 && pos + ret > stream->size)
+            stream->size = pos + ret;
+        return ret;
+    }
+#endif
+
+    if ((!stream->fp && stream->fh == INVALID_HANDLE_VALUE) || !s)
+        return -1;
 
     if (stream->fh != INVALID_HANDLE_VALUE)
     {
@@ -244,24 +240,68 @@ int64_t retro_vfs_file_write_impl(libretro_vfs_implementation_file* stream, cons
     }
 
     if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-    {
         return fwrite(s, 1, (size_t)len, stream->fp);
-    }
 
     return write(stream->fd, s, (size_t)len);
-    //return write(stream->fd, s, (size_t)len);
+}
+
+
+/* No gathered write here: one write per piece, as the C backend does
+ * where the platform has no writev() */
+int64_t retro_vfs_file_writev_impl(libretro_vfs_implementation_file *stream,
+      const struct retro_vfs_span *spans, size_t count)
+{
+   int64_t total = 0;
+   size_t  i;
+   if (!stream || (count && !spans))
+      return -1;
+   for (i = 0; i < count; i++)
+   {
+      int64_t one;
+      if (!spans[i].len)
+         continue;
+      if ((one = retro_vfs_file_write_impl(stream, spans[i].data,
+                  spans[i].len)) < 0)
+         return total ? total : -1;
+      total += one;
+      if ((uint64_t)one < spans[i].len)
+         break;
+   }
+   return total;
+}
+
+/* No positional I/O here: one handle, one position. The caller seeks and
+ * reads, as the C backend's callers do where it answers -1. */
+int64_t retro_vfs_file_read_at_impl(libretro_vfs_implementation_file *stream,
+      void *s, uint64_t len, int64_t offset)
+{
+   (void)stream;
+   (void)s;
+   (void)len;
+   (void)offset;
+   return -1;
+}
+
+int64_t retro_vfs_file_write_at_impl(libretro_vfs_implementation_file *stream,
+      const void *s, uint64_t len, int64_t offset)
+{
+   (void)stream;
+   (void)s;
+   (void)len;
+   (void)offset;
+   return -1;
 }
 
 int retro_vfs_file_flush_impl(libretro_vfs_implementation_file* stream)
 {
-    if (!stream)
-        return -1;
-    return fflush(stream->fp) == 0 ? 0 : -1;
+    if (stream && fflush(stream->fp) == 0)
+       return 0;
+    return -1;
 }
 
 int retro_vfs_file_remove_impl(const char *path)
 {
-   BOOL result;
+   BOOL ret;
    wchar_t *path_wide;
 
    if (!path || !*path)
@@ -271,9 +311,9 @@ int retro_vfs_file_remove_impl(const char *path)
    windowsize_path(path_wide);
 
    /* Try Win32 first, this should work in AppData */
-   result = DeleteFileFromAppW(path_wide);
+   ret = DeleteFileFromAppW(path_wide);
    free(path_wide);
-   if (result)
+   if (ret)
       return 0;
 
    return -1;
@@ -282,17 +322,13 @@ int retro_vfs_file_remove_impl(const char *path)
 libretro_vfs_implementation_file* retro_vfs_file_open_impl(
     const char* path, unsigned mode, unsigned hints)
 {
-#if defined(VFS_FRONTEND) || defined(HAVE_CDROM)
-    int                             path_len = (int)strlen(path);
-#endif
-#ifdef VFS_FRONTEND
-    const char* dumb_prefix = "vfsonly://";
-    size_t                   dumb_prefix_siz = STRLEN_CONST("vfsonly://");
-    int                      dumb_prefix_len = (int)dumb_prefix_siz;
-#endif
-    wchar_t* path_wide;
+    HANDLE file_handle;
+    std::wstring path_wstring;
+    DWORD desireAccess;
+    DWORD creationDisposition;
+    wchar_t                       *path_wide = NULL;
     int                                flags = 0;
-    const char* mode_str = NULL;
+    const char                     *mode_str = NULL;
     libretro_vfs_implementation_file* stream =
         (libretro_vfs_implementation_file*)
         malloc(sizeof(*stream));
@@ -300,136 +336,179 @@ libretro_vfs_implementation_file* retro_vfs_file_open_impl(
     if (!stream)
         return NULL;
 
-    stream->fd = 0;
-    stream->hints = hints;
-    stream->size = 0;
-    stream->buf = NULL;
-    stream->fp = NULL;
-    stream->fh = 0;
-    stream->orig_path = NULL;
-    stream->mappos = 0;
-    stream->mapsize = 0;
-    stream->mapped = NULL;
-    stream->scheme = VFS_SCHEME_NONE;
+    /* A stable open promises what this backend can't keep (a handle no
+     * one else can write through, a regular file vouched for by its
+     * handle), so it is refused rather than quietly opened */
+    if (hints & RETRO_VFS_FILE_ACCESS_HINT_IMPL_STABLE)
+    {
+        free(stream);
+        return NULL;
+    }
 
-#ifdef VFS_FRONTEND
-    if (path_len >= dumb_prefix_len)
-        if (!memcmp(path, dumb_prefix, dumb_prefix_len))
-            path += dumb_prefix_siz;
+    stream->fd        = 0;
+    stream->hints     = hints;
+    stream->size      = 0;
+    stream->buf       = NULL;
+    stream->fp        = NULL;
+    stream->fh        = 0;
+    stream->orig_path = NULL;
+    stream->mappos    = 0;
+    stream->mapsize   = 0;
+    stream->mapped    = NULL;
+    stream->scheme    = VFS_SCHEME_NONE;
+#ifdef HAVE_SMBCLIENT
+    stream->smb_fh    = 0;
 #endif
 
-    path_wide = utf8_to_utf16_string_alloc(path);
+#ifdef VFS_FRONTEND
+   if (     path
+         && path[0] == 'v'
+         && path[1] == 'f'
+         && path[2] == 's'
+         && path[3] == 'o'
+         && path[4] == 'n'
+         && path[5] == 'l'
+         && path[6] == 'y'
+         && path[7] == ':'
+         && path[8] == '/'
+         && path[9] == '/')
+         path             += sizeof("vfsonly://")-1;
+#endif
+
+#ifdef HAVE_SMBCLIENT
+   if (     path
+         && path[0] == 's'
+         && path[1] == 'm'
+         && path[2] == 'b'
+         && path[3] == ':'
+         && path[4] == '/'
+         && path[5] == '/'
+         && path[6] != '\0')
+   {
+        stream->scheme    = VFS_SCHEME_SMB;
+   }
+#endif
+
+    path_wide    = utf8_to_utf16_string_alloc(path);
     windowsize_path(path_wide);
-    std::wstring path_wstring = path_wide;
+    path_wstring = path_wide;
     free(path_wide);
-    while (true) {
-        size_t p = path_wstring.find(L"\\\\");
-        if (p == std::wstring::npos) break;
-        path_wstring.replace(p, 2, L"\\");
+
+    for (;;)
+    {
+       size_t p = path_wstring.find(L"\\\\");
+       if (p == std::wstring::npos)
+          break;
+       path_wstring.replace(p, 2, L"\\");
     }
 
-    path_wstring = L"\\\\?\\" + path_wstring;
+    path_wstring      = L"\\\\?\\" + path_wstring;
     stream->orig_path = strdup(path);
 
-    stream->hints &= ~RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS;
-
-    DWORD desireAccess;
-    DWORD creationDisposition;
+    stream->hints    &= ~RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS;
 
     switch (mode)
     {
-    case RETRO_VFS_FILE_ACCESS_READ:
-        mode_str = "rb";
-        flags = O_RDONLY | O_BINARY;
-        break;
+       case RETRO_VFS_FILE_ACCESS_READ:
+          mode_str = "rb";
+          flags    = O_RDONLY | O_BINARY;
+          break;
 
-    case RETRO_VFS_FILE_ACCESS_WRITE:
-        mode_str = "wb";
-        flags = O_WRONLY | O_CREAT | O_TRUNC | O_BINARY;
-        break;
+       case RETRO_VFS_FILE_ACCESS_WRITE:
+          mode_str = "wb";
+          flags    = O_WRONLY | O_CREAT | O_TRUNC | O_BINARY;
+          break;
 
-    case RETRO_VFS_FILE_ACCESS_READ_WRITE:
-        mode_str = "w+b";
-        flags = O_RDWR | O_CREAT | O_TRUNC | O_BINARY;
-        break;
+       case RETRO_VFS_FILE_ACCESS_READ_WRITE:
+          mode_str = "w+b";
+          flags    = O_RDWR | O_CREAT | O_TRUNC | O_BINARY;
+          break;
 
-    case RETRO_VFS_FILE_ACCESS_WRITE | RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING:
-    case RETRO_VFS_FILE_ACCESS_READ_WRITE | RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING:
-        mode_str = "r+b";
-        flags = O_RDWR | O_BINARY;
-        break;
+       case RETRO_VFS_FILE_ACCESS_WRITE | RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING:
+       case RETRO_VFS_FILE_ACCESS_READ_WRITE | RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING:
+          mode_str = "r+b";
+          flags    = O_RDWR | O_BINARY;
+          break;
 
-    default:
-        goto error;
+       default:
+          goto error;
     }
 
     switch (mode)
     {
-    case RETRO_VFS_FILE_ACCESS_READ_WRITE:
-        desireAccess = GENERIC_READ | GENERIC_WRITE;
-        break;
-    case RETRO_VFS_FILE_ACCESS_WRITE:
-        desireAccess = GENERIC_WRITE;
-        break;
-    case RETRO_VFS_FILE_ACCESS_READ:
-        desireAccess = GENERIC_READ;
-        break;
+       case RETRO_VFS_FILE_ACCESS_READ_WRITE:
+          desireAccess = GENERIC_READ | GENERIC_WRITE;
+          break;
+       case RETRO_VFS_FILE_ACCESS_WRITE:
+          desireAccess = GENERIC_WRITE;
+          break;
+       case RETRO_VFS_FILE_ACCESS_READ:
+          desireAccess = GENERIC_READ;
+          break;
     }
     if (mode == RETRO_VFS_FILE_ACCESS_READ)
         creationDisposition = OPEN_EXISTING;
     else
+        creationDisposition = (mode & RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING) != 0
+           ? OPEN_ALWAYS
+           : CREATE_ALWAYS;
+
+#ifdef HAVE_SMBCLIENT
+    if (stream->scheme == VFS_SCHEME_SMB)
     {
-        creationDisposition = (mode & RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING) != 0 ?
-            OPEN_ALWAYS : CREATE_ALWAYS;
+        if (!retro_vfs_file_open_smb(stream, path, mode, hints))
+            goto error;
+
+        return stream;
     }
-    HANDLE file_handle = CreateFile2FromAppW(path_wstring.data(), desireAccess, FILE_SHARE_READ, creationDisposition, NULL);
-    if (file_handle != INVALID_HANDLE_VALUE)
-        stream->fh = file_handle;
-    else
+#endif
+
+    if ((file_handle = CreateFile2FromAppW(path_wstring.data(), desireAccess,
+                FILE_SHARE_READ, creationDisposition, NULL)) == INVALID_HANDLE_VALUE)
+       goto error;
+
+    stream->fh      = file_handle;
+    if ((stream->fd = _open_osfhandle((uintptr_t)stream->fh, flags)) == -1)
         goto error;
-    stream->fd = _open_osfhandle((uint64)stream->fh, flags);
-    if (stream->fd == -1)
-        goto error;
-    else
+
     {
         FILE *fp = _fdopen(stream->fd, mode_str);
 
         if (!fp)
-        {
-            int gamingerror = errno;
             goto error;
-        }
         stream->fp = fp;
     }
+
     /* Regarding setvbuf:
         *
-        * https://www.freebsd.org/cgi/man.cgi?query=setvbuf&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE&arch=default&format=html
-        *
-        * If the size argument is not zero but buf is NULL,
-        * a buffer of the given size will be allocated immediately, and
-        * released on close. This is an extension to ANSI C.
-        *
-        * Since C89 does not support specifying a NULL buffer
-        * with a non-zero size, we create and track our own buffer for it.
+        * A NULL buffer with a non-zero size asks the C library to
+        * allocate one of that size and release it with the stream.
+        * That is an extension to ANSI C, which is why this used to
+        * supply a buffer of its own instead; it is honoured by every
+        * runtime this backend is built against, and unlike the
+        * portable VFS this one targets a single known runtime.
         */
-        /* TODO: this is only useful for a few platforms,
-        * find which and add ifdef */
     if (stream->scheme != VFS_SCHEME_CDROM)
     {
-        stream->buf = (char*)calloc(1, 0x4000);
+        /* NULL, so the C runtime allocates and owns the buffer: it is
+         * then released with the stream and there is nothing to track
+         * here.  Kept in step with retro_vfs_file_open_impl(), where
+         * ownership also decides whether Apple's fread() may use its
+         * large-read fast path - not a concern on this backend, but
+         * two implementations of the same VFS differing in how they
+         * buffer is a trap for whoever reads one and edits the
+         * other. */
         if (stream->fp)
-            setvbuf(stream->fp, stream->buf, _IOFBF, 0x4000);
+            setvbuf(stream->fp, NULL, _IOFBF, 0x4000);
     }
 
+    retro_vfs_file_seek_internal(stream, 0, SEEK_SET);
+    retro_vfs_file_seek_internal(stream, 0, SEEK_END);
 
-    {
-        retro_vfs_file_seek_internal(stream, 0, SEEK_SET);
-        retro_vfs_file_seek_internal(stream, 0, SEEK_END);
+    stream->size = retro_vfs_file_tell_impl(stream);
 
-        stream->size = retro_vfs_file_tell_impl(stream);
+    retro_vfs_file_seek_internal(stream, 0, SEEK_SET);
 
-        retro_vfs_file_seek_internal(stream, 0, SEEK_SET);
-    }
     return stream;
 
 error:
@@ -437,133 +516,29 @@ error:
     return NULL;
 }
 
-//this is enables you to copy access permissions from one file/folder to another
-//however depending on the target and where the file is being transferred to and from it may not be needed.
-//(use disgression)
-int uwp_copy_acl(const wchar_t* source, const wchar_t* target)
+static int uwp_mkdir_impl(std::filesystem::path dir)
 {
-    PSECURITY_DESCRIPTOR sidOwnerDescriptor = nullptr;
-    PSECURITY_DESCRIPTOR sidGroupDescriptor = nullptr;
-    PSECURITY_DESCRIPTOR daclDescriptor = nullptr;
-    PSID sidOwner;
-    PSID sidGroup;
-    PACL dacl;
-    PACL sacl;
-    DWORD result;
-    HANDLE original_file = CreateFileFromAppW(source, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, nullptr);
-    if (original_file != INVALID_HANDLE_VALUE)
-    {
-        result = GetSecurityInfo(original_file, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, &sidOwner, &sidGroup, &dacl, &sacl, &daclDescriptor);
-        if (result != 0)
-        {
-            LocalFree(daclDescriptor);
-            CloseHandle(original_file);
-            return result;
-        }
-
-        result = GetSecurityInfo(original_file, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, &sidOwner, &sidGroup, &dacl, &sacl, &sidOwnerDescriptor);
-        if (result != 0)
-        {
-            LocalFree(sidOwnerDescriptor);
-            LocalFree(daclDescriptor);
-            CloseHandle(original_file);
-            return result;
-        }
-
-        result = GetSecurityInfo(original_file, SE_FILE_OBJECT, GROUP_SECURITY_INFORMATION, &sidOwner, &sidGroup, &dacl, &sacl, &sidGroupDescriptor);
-
-        //close file handle regardless of result
-        CloseHandle(original_file);
-
-        if (result != 0)
-        {
-            LocalFree(sidOwnerDescriptor);
-            LocalFree(sidGroupDescriptor);
-            LocalFree(daclDescriptor);
-            return result;
-        }
-    }
-    else
-    {
-        result = GetNamedSecurityInfoW(source, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, &sidOwner, &sidGroup, &dacl, &sacl, &daclDescriptor);
-        if (result != 0)
-        {
-            LocalFree(daclDescriptor);
-            return result;
-        }
-        result = GetNamedSecurityInfoW(source, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, &sidOwner, &sidGroup, &dacl, &sacl, &sidOwnerDescriptor);
-        if (result != 0)
-        {
-            LocalFree(sidOwnerDescriptor);
-            LocalFree(daclDescriptor);
-            return result;
-        }
-        result = GetNamedSecurityInfoW(source, SE_FILE_OBJECT, GROUP_SECURITY_INFORMATION, &sidOwner, &sidGroup, &dacl, &sacl, &sidGroupDescriptor);
-        if (result != 0)
-        {
-            LocalFree(sidOwnerDescriptor);
-            LocalFree(sidGroupDescriptor);
-            LocalFree(daclDescriptor);
-            return result;
-        }
-    }
-    SECURITY_INFORMATION info = DACL_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION;
-    HANDLE target_file = CreateFileFromAppW(target, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
-    if (target_file != INVALID_HANDLE_VALUE)
-    {
-        result = SetSecurityInfo(target_file, SE_FILE_OBJECT, info, sidOwner, sidGroup, dacl, sacl);
-        CloseHandle(target_file);
-    }
-    else
-    {
-        wchar_t* temp = wcsdup(target);
-        result = SetNamedSecurityInfoW(temp, SE_FILE_OBJECT, info, sidOwner, sidGroup, dacl, sacl);
-        free(temp);
-    }
-
-    if (result != 0)
-    {
-        LocalFree(sidOwnerDescriptor);
-        LocalFree(sidGroupDescriptor);
-        LocalFree(daclDescriptor);
-        return result;
-    }
-
-    if ((sidOwnerDescriptor != nullptr && LocalFree(sidOwnerDescriptor) != nullptr) || (daclDescriptor != nullptr && LocalFree(daclDescriptor) != nullptr) || (daclDescriptor != nullptr && LocalFree(daclDescriptor) != nullptr))
-    {
-        //an error occured but idk what error code is right so we just return -1
-        return -1;
-    }
-
-    //woo we made it all the way to the end so we can return success
-    return 0;
-}
-
-int uwp_mkdir_impl(std::experimental::filesystem::path dir)
-{
-    //I feel like this should create the directory recursively but the existing implementation does not so this update won't
-    //I put in the work but I just commented out the stuff you would need
+    /*I feel like this should create the directory recursively but the existing implementation does not so this update won't
+     *I put in the work but I just commented out the stuff you would need */
     WIN32_FILE_ATTRIBUTE_DATA lpFileInfo;
     bool parent_dir_exists = false;
 
     if (dir.empty())
         return -1;
 
-    //check if file attributes can be gotten successfully 
+    /* Check if file attributes can be gotten successfully  */
     if (GetFileAttributesExFromAppW(dir.parent_path().wstring().c_str(), GetFileExInfoStandard, &lpFileInfo))
     {
-        //check that the files attributes are not null or empty
+        /* Check that the files attributes are not null or empty */
         if (lpFileInfo.dwFileAttributes != INVALID_FILE_ATTRIBUTES && lpFileInfo.dwFileAttributes != 0)
         {
             if (lpFileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-            {
                 parent_dir_exists = true;
-            }
         }
     }
     if (!parent_dir_exists)
     {
-        //try to create parent dir
+        /* Try to create parent dir */
         int success = uwp_mkdir_impl(dir.parent_path());
         if (success != 0 && success != -2)
             return success;
@@ -571,9 +546,7 @@ int uwp_mkdir_impl(std::experimental::filesystem::path dir)
 
 
     /* Try Win32 first, this should work in AppData */
-    bool create_dir = CreateDirectoryFromAppW(dir.wstring().c_str(), NULL);
-
-    if (create_dir)
+    if (CreateDirectoryFromAppW(dir.wstring().c_str(), NULL))
         return 0;
 
     if (GetLastError() == ERROR_ALREADY_EXISTS)
@@ -587,176 +560,361 @@ int retro_vfs_mkdir_impl(const char* dir)
     return uwp_mkdir_impl(std::filesystem::path(dir));
 }
 
-//the first run paramater is used to avoid error checking when doing recursion
-//unlike the initial implementation this can move folders even empty ones when you want to move a directory structure
-//this will fail even if a single file cannot be moved
-int uwp_move_path(std::filesystem::path old_path, std::filesystem::path new_path,  bool firstrun = true)
+/* Removes the empty directory @dir: 0 on success, -1 otherwise,
+ * including a directory that is not empty */
+int retro_vfs_rmdir_impl(const char *dir)
+{
+   BOOL ret;
+   wchar_t *dir_wide;
+
+   if (!dir || !*dir)
+      return -1;
+
+   if (!(dir_wide = utf8_to_utf16_string_alloc(dir)))
+      return -1;
+   windowsize_path(dir_wide);
+
+   ret = RemoveDirectoryFromAppW(dir_wide);
+   free(dir_wide);
+   return ret ? 0 : -1;
+}
+
+int retro_vfs_restrict_permissions_impl(const char* path)
+{
+    /* UWP app data is already private to the package; there is no
+     * per-user permission model to tighten. Nothing to do. */
+    (void)path;
+    return 0;
+}
+
+/* MoveFileFromAppW cannot replace an existing file, so a destination in
+ * the way is moved aside, the source moved into place, and the moved-aside
+ * copy deleted only then - or put back if the source could not be moved.
+ * A leftover aside from an interrupted run is removed only when it is in
+ * the way, and never if it is the source being restored. */
+static bool uwp_move_file_replacing(const std::wstring &old_path,
+      const std::wstring &new_path)
+{
+    WIN32_FILE_ATTRIBUTE_DATA target_info;
+    std::wstring aside;
+
+    /* Names differing only in case are one file here: moving it aside
+     * would take the source along. */
+    if (     _wcsicmp(old_path.c_str(), new_path.c_str()) != 0
+          && GetFileAttributesExFromAppW(new_path.c_str(),
+                GetFileExInfoStandard, &target_info)
+          && target_info.dwFileAttributes != INVALID_FILE_ATTRIBUTES
+          && target_info.dwFileAttributes != 0
+          && !(target_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+    {
+        aside = new_path + L".old";
+        if (_wcsicmp(aside.c_str(), old_path.c_str()) == 0)
+            aside += L"2";
+        /* All three return nonzero on success. */
+        if (     !MoveFileFromAppW(new_path.c_str(), aside.c_str())
+              && (     !DeleteFileFromAppW(aside.c_str())
+                    || !MoveFileFromAppW(new_path.c_str(), aside.c_str())))
+            return false;
+    }
+
+    if (!MoveFileFromAppW(old_path.c_str(), new_path.c_str()))
+    {
+        if (!aside.empty())
+            MoveFileFromAppW(aside.c_str(), new_path.c_str());
+        return false;
+    }
+
+    if (!aside.empty())
+        DeleteFileFromAppW(aside.c_str());
+    /* Set ACL */
+    uwp_set_acl(new_path.c_str(), L"S-1-15-2-1");
+    return true;
+}
+
+/* The first run parameter is used to avoid error checking
+ * when doing recursion.
+ * Unlike the initial implementation, this can move folders
+ * even empty ones when you want to move a directory structure.
+ *
+ * This will fail even if a single file cannot be moved.
+ */
+static int uwp_move_path(
+      std::filesystem::path old_path,
+      std::filesystem::path new_path,
+      bool firstrun)
 {
     if (old_path.empty() || new_path.empty())
         return -1;
 
     if (firstrun)
     {
-        WIN32_FILE_ATTRIBUTE_DATA lpFileInfo, targetfileinfo;
+        WIN32_FILE_ATTRIBUTE_DATA lpFileInfo;
         bool parent_dir_exists = false;
 
-
-        //make sure that parent path exists
-        if (GetFileAttributesExFromAppW(new_path.parent_path().wstring().c_str(), GetFileExInfoStandard, &lpFileInfo))
+        /* Make sure that parent path exists */
+        if (GetFileAttributesExFromAppW(
+                 new_path.parent_path().wstring().c_str(),
+                 GetFileExInfoStandard, &lpFileInfo))
         {
-            //check that the files attributes are not null or empty
-            if (lpFileInfo.dwFileAttributes != INVALID_FILE_ATTRIBUTES && lpFileInfo.dwFileAttributes != 0)
+            /* Check that the files attributes are not null or empty */
+            if (     lpFileInfo.dwFileAttributes
+                  != INVALID_FILE_ATTRIBUTES
+                  && lpFileInfo.dwFileAttributes != 0)
             {
+               /* Parent path doesn't exist, so we gotta create it  */
                 if (!(lpFileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-                {
-                    //parent path doesn't exist ;-; so we gotta create it 
                     uwp_mkdir_impl(new_path.parent_path());
-                }
             }
         }
 
-        //make sure that source path exists
+        /* Make sure that source path exists */
         if (GetFileAttributesExFromAppW(old_path.wstring().c_str(), GetFileExInfoStandard, &lpFileInfo))
         {
-            //check that the files attributes are not null or empty
-            if (lpFileInfo.dwFileAttributes != INVALID_FILE_ATTRIBUTES && lpFileInfo.dwFileAttributes != 0)
+            /* Check that the files attributes are not null or empty */
+            if (     lpFileInfo.dwFileAttributes != INVALID_FILE_ATTRIBUTES
+                  && lpFileInfo.dwFileAttributes != 0)
             {
-                //check if source path is a dir
+                /* Check if source path is a dir */
                 if (lpFileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 {
-                    //create the target dir
-                    CreateDirectoryFromAppW(new_path.wstring().c_str(), NULL);
-                    //call move function again but with first run disabled in order to move the folder
-                    int result = uwp_move_path(old_path, new_path, false);
-                    if (result != 0)
-                    {
-                        //return the error 
-                        return result;
-                    }
+                   int ret;
+                   /* create the target dir */
+                   CreateDirectoryFromAppW(new_path.wstring().c_str(), NULL);
+                   /* Call move function again but with first run disabled in
+                    * order to move the folder */
+                   if ((ret = uwp_move_path(old_path, new_path, false)) != 0)
+                      return ret;
                 }
                 else
                 {
-                    //the file that we want to move exists so we can copy it now
-                    //check if target file already exists
-                    if (GetFileAttributesExFromAppW(new_path.wstring().c_str(), GetFileExInfoStandard, &targetfileinfo))
-                    {
-                        if (targetfileinfo.dwFileAttributes != INVALID_FILE_ATTRIBUTES && targetfileinfo.dwFileAttributes != 0 && (!(targetfileinfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)))
-                        {
-                            //delete target file
-                            if (DeleteFileFromAppW(new_path.wstring().c_str()))
-                            {
-                                //return an error if we can't successfully delete the target file 
-                                return -1;
-                            }
-                        }
-                    }
-
-                    //move the file
-                    if (!MoveFileFromAppW(old_path.wstring().c_str(), new_path.wstring().c_str()))
-                    {
-                        //failed to move the file
+                    if (!uwp_move_file_replacing(old_path.wstring(), new_path.wstring()))
                         return -1;
-                    }
-                    //set acl - this step fucking sucks or at least to before I made a whole ass function
-                    //idk if we actually "need" to set the acl though
-                    if (uwp_copy_acl(new_path.parent_path().wstring().c_str(), new_path.wstring().c_str()) != 0)
-                    {
-                        //setting acl failed
-                        return -1;
-                    }
                 }
             }
+            else
+                return -1; /* source attributes unusable */
         }
+        else
+            return -1; /* source does not exist */
 
     }
     else
     {
-        //we are bypassing error checking and moving a dir
-        //first we gotta get a list of files in the dir
-        wchar_t* filteredPath = wcsdup(old_path.wstring().c_str());
-        wcscat_s(filteredPath, sizeof(L"\\*.*"), L"\\*.*");
-        WIN32_FIND_DATA findDataResult;
-        HANDLE searchResults = FindFirstFileExFromAppW(filteredPath, FindExInfoBasic, &findDataResult, FindExSearchNameMatch, nullptr, FIND_FIRST_EX_LARGE_FETCH);
-        if (searchResults != INVALID_HANDLE_VALUE)
-        {
-            bool fail = false;
-            do
-            {
-                if (wcscmp(findDataResult.cFileName, L".") != 0 && wcscmp(findDataResult.cFileName, L"..") != 0)
-                {
-                    std::filesystem::path temp_old = old_path;
-                    std::filesystem::path temp_new = new_path;
-                    temp_old /= findDataResult.cFileName;
-                    temp_new /= findDataResult.cFileName;
-                    if (findDataResult.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-                    {
-                        CreateDirectoryFromAppW(temp_new.wstring().c_str(), NULL);
-                        int result = uwp_move_path(temp_old, temp_new, false);
-                        if (result != 0)
-                            fail = true;
-                        
-                    }
-                    else
-                    {
-                        WIN32_FILE_ATTRIBUTE_DATA targetfileinfo;
-                        //the file that we want to move exists so we can copy it now
-                        //check if target file already exists
-                        if (GetFileAttributesExFromAppW(temp_new.wstring().c_str(), GetFileExInfoStandard, &targetfileinfo))
-                        {
-                            if (targetfileinfo.dwFileAttributes != INVALID_FILE_ATTRIBUTES && targetfileinfo.dwFileAttributes != 0 && (!(targetfileinfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)))
-                            {
-                                //delete target file
-                                if (DeleteFileFromAppW(temp_new.wstring().c_str()))
-                                {
-                                    //return an error if we can't successfully delete the target file 
-                                    fail = true;
-                                }
-                            }
-                        }
+       HANDLE searchResults;
+       WIN32_FIND_DATA findDataResult;
+       /* We are bypassing error checking and moving a dir.
+        * First we have to get a list of files in the dir. */
+       wchar_t* filteredPath = wcsdup(old_path.wstring().c_str());
+       wcscat_s(filteredPath, sizeof(L"\\*.*"), L"\\*.*");
+       searchResults         = FindFirstFileExFromAppW(
+             filteredPath, FindExInfoBasic, &findDataResult,
+             FindExSearchNameMatch, NULL, FIND_FIRST_EX_LARGE_FETCH);
 
-                        //move the file
-                        if (!MoveFileFromAppW(temp_old.wstring().c_str(), temp_new.wstring().c_str()))
-                        {
-                            //failed to move the file
-                            fail = true;
-                        }
-                        //set acl - this step fucking sucks or at least to before I made a whole ass function
-                        //idk if we actually "need" to set the acl though
-                        if (uwp_copy_acl(new_path.wstring().c_str(), temp_new.wstring().c_str()) != 0)
-                        {
-                            //setting acl failed
-                            fail = true;
-                        }
-                    }
+       if (searchResults != INVALID_HANDLE_VALUE)
+       {
+          bool fail = false;
+          do
+          {
+             if (     wcscmp(findDataResult.cFileName, L".")  != 0
+                   && wcscmp(findDataResult.cFileName, L"..") != 0)
+             {
+                std::filesystem::path temp_old = old_path;
+                std::filesystem::path temp_new = new_path;
+                temp_old /= findDataResult.cFileName;
+                temp_new /= findDataResult.cFileName;
+                if (    findDataResult.dwFileAttributes
+                      & FILE_ATTRIBUTE_DIRECTORY)
+                {
+                   CreateDirectoryFromAppW(temp_new.wstring().c_str(), NULL);
+                   if (uwp_move_path(temp_old, temp_new, false) != 0)
+                      fail = true;
                 }
-            } while (FindNextFile(searchResults, &findDataResult));
-            FindClose(searchResults);
-            if (fail)
-                return -1;
-        }
-        free(filteredPath);
+                else
+                {
+                   if (!uwp_move_file_replacing(temp_old.wstring(), temp_new.wstring()))
+                      fail = true;
+                }
+             }
+          } while (FindNextFile(searchResults, &findDataResult));
+          FindClose(searchResults);
+          if (fail)
+             return -1;
+       }
+       free(filteredPath);
     }
-    //yooooooo we finally made it all the way to the end
-    //we can now return success
     return 0;
 }
 
-//c doesn't support default arguments so we wrap it up in a shell to enable us to use default arguments
-//default arguments mean that we can do better recursion
+/* C doesn't support default arguments so we wrap it up in a shell to enable
+ * us to use default arguments.
+ * Default arguments mean that we can do better recursion */
 int retro_vfs_file_rename_impl(const char* old_path, const char* new_path)
 {
-    return uwp_move_path(std::filesystem::path(old_path), std::filesystem::path(old_path));
+    /* A self-rename is a no-op; it must not reach the replace logic,
+     * which would delete the destination - and the source with it. */
+    if (old_path && new_path && strcmp(old_path, new_path) == 0)
+        return 0;
+    return uwp_move_path(std::filesystem::path(old_path),
+          std::filesystem::path(new_path), true);
 }
 
 const char *retro_vfs_file_get_path_impl(libretro_vfs_implementation_file *stream)
 {
-   /* should never happen, do something noisy so caller can be fixed */
+   /* Should never happen, do something noisy so caller can be fixed */
    if (!stream)
       abort();
    return stream->orig_path;
 }
 
-int retro_vfs_stat_impl(const char *path, int32_t *size)
+int64_t retro_vfs_file_get_sparse_granularity_impl(
+      libretro_vfs_implementation_file *stream)
+{
+   /* No sparse support here, so no granularity to report; see
+    * retro_vfs_file_punch_hole_impl below. 0 is the documented "unknown"
+    * answer and callers must not read it as "no alignment needed".
+    *
+    * Defined rather than omitted because this backend REPLACES
+    * vfs_implementation.c on UWP: a missing definition is a link error at
+    * the end of a long MSVC build, not a fallback. */
+   (void)stream;
+   return 0;
+}
+
+int retro_vfs_file_punch_hole_impl(libretro_vfs_implementation_file *stream,
+      int64_t offset, int64_t len)
+{
+   /* UWP cannot punch holes. FSCTL_SET_ZERO_DATA is issued through
+    * DeviceIoControl, which is not in the app container's API surface,
+    * and this backend's handle comes from a StorageFile rather than
+    * being one a filesystem control code can be sent to.
+    *
+    * -1 is the documented "not available" answer: filestream_punch_hole
+    * is a capability, so callers write zeroes instead and lose the space
+    * saving and nothing else. Defined here rather than omitted because
+    * this backend REPLACES vfs_implementation.c on UWP, so a missing
+    * definition is a link error at the end of a long MSVC build. */
+   (void)stream;
+   (void)offset;
+   (void)len;
+   return -1;
+}
+
+const uint8_t *retro_vfs_file_get_mapped_ptr_impl(
+      libretro_vfs_implementation_file *stream, int64_t *len)
+{
+   /* This backend never maps a file: retro_vfs_file_open_impl() above
+    * nulls 'mapped' and clears
+    * RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS unconditionally.  NULL
+    * is the documented answer for "no mapping here", and every caller
+    * must already handle it - the hint is advisory on every backend -
+    * so there is nothing to implement beyond saying so.
+    *
+    * It has to be said out loud rather than omitted, though:
+    * filestream_get_mapped_ptr() calls this whenever no frontend VFS
+    * is installed, and this file replaces vfs_implementation.c
+    * wholesale on UWP, so leaving it out is a link error rather than
+    * a fallback. */
+   (void)stream;
+   if (len)
+      *len = 0;
+   return NULL;
+}
+
+bool retro_vfs_file_identity_impl(libretro_vfs_implementation_file *stream,
+      struct retro_vfs_file_identity *id)
+{
+   /* Only a stable or descriptor-path stream has one, and this backend
+    * opens neither. Defined because it replaces vfs_implementation.c. */
+   (void)stream;
+   if (id)
+      memset(id, 0, sizeof(*id));
+   return false;
+}
+
+libretro_vfs_implementation_file *retro_vfs_file_open_stable_impl(
+      const char *path, struct retro_vfs_file_identity *id)
+{
+   /* No stable open on this backend: see retro_vfs_file_open_impl() */
+   (void)path;
+   if (id)
+      memset(id, 0, sizeof(*id));
+   return NULL;
+}
+
+int retro_vfs_stat_identity_impl(const char *path,
+      struct retro_vfs_file_identity *id)
+{
+   /* Not on this backend: it can't be told */
+   (void)path;
+   if (id)
+      memset(id, 0, sizeof(*id));
+   return -1;
+}
+
+bool retro_vfs_file_volume_impl(libretro_vfs_implementation_file *stream,
+      unsigned want, struct retro_vfs_volume *vol)
+{
+   /* Not on this backend */
+   (void)stream;
+   (void)want;
+   if (vol)
+      memset(vol, 0, sizeof(*vol));
+   return false;
+}
+
+int retro_vfs_stat_volume_impl(const char *path, unsigned want,
+      struct retro_vfs_volume *vol)
+{
+   (void)path;
+   (void)want;
+   if (vol)
+      memset(vol, 0, sizeof(*vol));
+   return -1;
+}
+
+size_t retro_vfs_file_verity_measure_impl(
+      libretro_vfs_implementation_file *stream, uint8_t *digest, size_t cap)
+{
+   /* No fs-verity here */
+   (void)stream;
+   (void)digest;
+   (void)cap;
+   return 0;
+}
+
+int retro_vfs_file_verity_enable_impl(
+      libretro_vfs_implementation_file *stream)
+{
+   return stream ? 0 : -1;
+}
+
+const uint8_t *retro_vfs_file_map_impl(libretro_vfs_implementation_file *stream,
+      int64_t *len)
+{
+   /* No mapping on this backend, as retro_vfs_file_get_mapped_ptr_impl */
+   (void)stream;
+   if (len)
+      *len = 0;
+   return NULL;
+}
+
+void retro_vfs_file_prefetch_impl(
+      libretro_vfs_implementation_file *stream, uint64_t offset,
+      uint64_t len)
+{
+   /* A hint, and one this backend has nothing to give: it never maps a
+    * file, so there is no mapping to make resident, and its handles
+    * come from the app's brokered file calls, which offer no read-ahead
+    * request. Doing nothing is the documented answer where the OS has
+    * none. Defined all the same, for the reason above:
+    * filestream_prefetch() calls it whenever no frontend VFS is
+    * installed. */
+   (void)stream;
+   (void)offset;
+   (void)len;
+}
+
+int retro_vfs_stat_64_impl(const char *path, int64_t *size)
 {
    wchar_t *path_wide;
    _WIN32_FILE_ATTRIBUTE_DATA attribdata;
@@ -768,7 +926,8 @@ int retro_vfs_stat_impl(const char *path, int32_t *size)
    windowsize_path(path_wide);
 
    /* Try Win32 first, this should work in AppData */
-   if (GetFileAttributesExFromAppW(path_wide, GetFileExInfoStandard, &attribdata))
+   if (GetFileAttributesExFromAppW(path_wide,
+            GetFileExInfoStandard, &attribdata))
    {
        if (attribdata.dwFileAttributes != INVALID_FILE_ATTRIBUTES)
        {
@@ -783,11 +942,320 @@ int retro_vfs_stat_impl(const char *path, int32_t *size)
                }
            }
            free(path_wide);
-           return (attribdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? RETRO_VFS_STAT_IS_VALID | RETRO_VFS_STAT_IS_DIRECTORY : RETRO_VFS_STAT_IS_VALID;
+           {
+               int ret = RETRO_VFS_STAT_IS_VALID;
+               if (attribdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+                   ret |= RETRO_VFS_STAT_IS_DIRECTORY;
+               if (attribdata.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+                   ret |= RETRO_VFS_STAT_IS_READONLY;
+               return ret;
+           }
        }
    }
    free(path_wide);
    return 0;
+}
+
+/* VFS API v5 ------------------------------------------------------- */
+
+/* FILETIME is 100 ns ticks since 1601-01-01; Unix time is seconds
+ * since 1970-01-01.  Kept in uint64_t so the offset is never a
+ * signed-overflow site.  Same helpers as vfs_implementation.c. */
+static const uint64_t UWP_FILETIME_EPOCH_DIFF  = 116444736000000000ULL;
+static const uint64_t UWP_FILETIME_TICKS_PER_S = 10000000ULL;
+
+static int64_t uwp_filetime_to_unix(const FILETIME &ft)
+{
+    uint64_t t = ((uint64_t)ft.dwHighDateTime << 32) | (uint64_t)ft.dwLowDateTime;
+    if (t < UWP_FILETIME_EPOCH_DIFF)
+        return -(int64_t)((UWP_FILETIME_EPOCH_DIFF - t) / UWP_FILETIME_TICKS_PER_S);
+    return (int64_t)((t - UWP_FILETIME_EPOCH_DIFF) / UWP_FILETIME_TICKS_PER_S);
+}
+
+/* FILETIME covers 1601-01-01 .. ~30828 AD; out-of-range values clamp
+ * to the nearest end rather than wrapping.  -unix_s is never formed. */
+static void uwp_unix_to_filetime(int64_t unix_s, FILETIME &ft)
+{
+    const int64_t min_unix = -(int64_t)(UWP_FILETIME_EPOCH_DIFF / UWP_FILETIME_TICKS_PER_S);
+    const int64_t max_unix = (int64_t)((0x7fffffffffffffffULL - UWP_FILETIME_EPOCH_DIFF) / UWP_FILETIME_TICKS_PER_S);
+    uint64_t t;
+    if (unix_s <= min_unix)
+        t = 0;
+    else if (unix_s >= max_unix)
+        t = 0x7fffffffffffffffULL;
+    else if (unix_s < 0)
+        t = UWP_FILETIME_EPOCH_DIFF - ((uint64_t)0 - (uint64_t)unix_s) * UWP_FILETIME_TICKS_PER_S;
+    else
+        t = UWP_FILETIME_EPOCH_DIFF + (uint64_t)unix_s * UWP_FILETIME_TICKS_PER_S;
+    ft.dwLowDateTime  = (DWORD)(t & 0xffffffffULL);
+    ft.dwHighDateTime = (DWORD)(t >> 32);
+}
+
+int retro_vfs_set_readonly_impl(const char *path, int readonly)
+{
+    wchar_t *path_wide;
+    _WIN32_FILE_ATTRIBUTE_DATA attribdata;
+    DWORD attrs;
+    BOOL ok = FALSE;
+
+    if (!path || !*path)
+        return -1;
+
+    path_wide = utf8_to_utf16_string_alloc(path);
+    windowsize_path(path_wide);
+
+    if (GetFileAttributesExFromAppW(path_wide, GetFileExInfoStandard, &attribdata)
+            && attribdata.dwFileAttributes != INVALID_FILE_ATTRIBUTES)
+    {
+        attrs = attribdata.dwFileAttributes;
+        if (readonly)
+            attrs |=  FILE_ATTRIBUTE_READONLY;
+        else
+            attrs &= ~FILE_ATTRIBUTE_READONLY;
+        /* No FromApp variant exists; the plain call is in the UWP API
+         * set and works on any path the app already has access to. */
+        ok = SetFileAttributesW(path_wide, attrs);
+    }
+    free(path_wide);
+    return ok ? 0 : -1;
+}
+
+int retro_vfs_get_mtime_impl(const char *path, int64_t *mtime)
+{
+    wchar_t *path_wide;
+    _WIN32_FILE_ATTRIBUTE_DATA attribdata;
+    BOOL ok;
+
+    if (!path || !*path || !mtime)
+        return -1;
+
+    path_wide = utf8_to_utf16_string_alloc(path);
+    windowsize_path(path_wide);
+    ok = GetFileAttributesExFromAppW(path_wide, GetFileExInfoStandard, &attribdata);
+    free(path_wide);
+    if (!ok || attribdata.dwFileAttributes == INVALID_FILE_ATTRIBUTES)
+        return -1;
+    *mtime = uwp_filetime_to_unix(attribdata.ftLastWriteTime);
+    return 0;
+}
+
+int retro_vfs_set_mtime_impl(const char *path, int64_t mtime)
+{
+    wchar_t *path_wide;
+    HANDLE h;
+    FILETIME ft;
+    BOOL ok;
+
+    if (!path || !*path)
+        return -1;
+
+    uwp_unix_to_filetime(mtime, ft);
+    path_wide = utf8_to_utf16_string_alloc(path);
+    windowsize_path(path_wide);
+    h = CreateFile2FromAppW(path_wide, FILE_WRITE_ATTRIBUTES,
+            FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING, NULL);
+    free(path_wide);
+    if (h == INVALID_HANDLE_VALUE)
+        return -1;
+    ok = SetFileTime(h, NULL, NULL, &ft);
+    CloseHandle(h);
+    return ok ? 0 : -1;
+}
+
+/* copy: begin / step / close.  A resumable state machine the caller
+ * advances; no thread, no lock in here.  Both ends go through this
+ * backend's own file I/O (CreateFile2FromAppW underneath) with one
+ * transfer buffer; a step moves at most the requested bytes. */
+/* Same sizing as the C backend: 128 KiB is as fast as 1 MiB and small
+ * files get only what they need. */
+#define UWP_COPY_BUF_MAX      (128 * 1024)
+#define UWP_COPY_BUF_MIN      (16 * 1024)
+#define UWP_COPY_DEFAULT_STEP ((int64_t)4 * 1024 * 1024)
+
+struct retro_vfs_copy_handle
+{
+    char     *src;
+    char     *dst;
+    int64_t   total;
+    int64_t   done;
+    int       status;
+    libretro_vfs_implementation_file *in;
+    libretro_vfs_implementation_file *out;
+    char     *buf;
+    size_t    buf_len;
+};
+
+static void uwp_copy_release_ends(struct retro_vfs_copy_handle *h)
+{
+    if (h->in)  { retro_vfs_file_close_impl(h->in);  h->in  = NULL; }
+    if (h->out) { retro_vfs_file_close_impl(h->out); h->out = NULL; }
+}
+
+static void uwp_copy_handle_free(struct retro_vfs_copy_handle *h)
+{
+    if (!h)
+        return;
+    uwp_copy_release_ends(h);
+    free(h->buf);
+    free(h->src);
+    free(h->dst);
+    free(h);
+}
+
+struct retro_vfs_copy_handle *retro_vfs_copy_begin_impl(
+        const char *src, const char *dst, unsigned flags)
+{
+    struct retro_vfs_copy_handle *h;
+    int64_t src_size = 0;
+    int sflags, dflags;
+
+    if (!src || !*src || !dst || !*dst)
+        return NULL;
+    if (_stricmp(src, dst) == 0)
+        return NULL;
+
+    sflags = retro_vfs_stat_64_impl(src, &src_size);
+    if (!(sflags & RETRO_VFS_STAT_IS_VALID) || (sflags & RETRO_VFS_STAT_IS_DIRECTORY))
+        return NULL;
+
+    dflags = retro_vfs_stat_64_impl(dst, NULL);
+    if (dflags & RETRO_VFS_STAT_IS_VALID)
+    {
+        if (dflags & RETRO_VFS_STAT_IS_DIRECTORY)
+            return NULL;
+        if (!(flags & RETRO_VFS_COPY_OVERWRITE))
+            return NULL;
+        /* cp -f: a read-only stale dst must not defeat an explicit
+         * overwrite; Windows refuses to delete a read-only file, so
+         * clear the attribute and try once more. */
+        if (retro_vfs_file_remove_impl(dst) != 0)
+        {
+            if (   !(dflags & RETRO_VFS_STAT_IS_READONLY)
+                || retro_vfs_set_readonly_impl(dst, 0) != 0
+                || retro_vfs_file_remove_impl(dst) != 0)
+                return NULL;
+        }
+    }
+    else
+    {
+        std::filesystem::path parent = std::filesystem::path(dst).parent_path();
+        if (!parent.empty())
+        {
+            uwp_mkdir_impl(parent);
+            if (!(retro_vfs_stat_64_impl(parent.string().c_str(), NULL) & RETRO_VFS_STAT_IS_DIRECTORY))
+                return NULL;
+        }
+    }
+
+    h = (struct retro_vfs_copy_handle*)calloc(1, sizeof(*h));
+    if (!h)
+        return NULL;
+    h->src    = strdup(src);
+    h->dst    = strdup(dst);
+    h->total  = src_size;
+    h->status = RETRO_VFS_COPY_RUNNING;
+    if (!h->src || !h->dst)
+        goto fail;
+    h->buf_len = UWP_COPY_BUF_MAX;
+    if (src_size > 0 && src_size < (int64_t)h->buf_len)
+        h->buf_len = (size_t)src_size;
+    if (h->buf_len < UWP_COPY_BUF_MIN)
+        h->buf_len = UWP_COPY_BUF_MIN;
+    if (!(h->buf = (char*)malloc(h->buf_len)))
+    {
+        h->buf_len = UWP_COPY_BUF_MIN;
+        if (!(h->buf = (char*)malloc(h->buf_len)))
+            goto fail;
+    }
+    h->in = retro_vfs_file_open_impl(src, RETRO_VFS_FILE_ACCESS_READ,
+            RETRO_VFS_FILE_ACCESS_HINT_SEQUENTIAL_BULK);
+    if (!h->in)
+        goto fail;
+    h->out = retro_vfs_file_open_impl(dst, RETRO_VFS_FILE_ACCESS_WRITE,
+            RETRO_VFS_FILE_ACCESS_HINT_SEQUENTIAL_BULK);
+    if (!h->out)
+        goto fail;
+    return h;
+
+fail:
+    uwp_copy_handle_free(h);
+    retro_vfs_file_remove_impl(dst);
+    return NULL;
+}
+
+int retro_vfs_copy_step_impl(struct retro_vfs_copy_handle *h,
+        int64_t max_bytes, int64_t *bytes_done, int64_t *bytes_total)
+{
+    if (!h)
+        return RETRO_VFS_COPY_FAILED;
+    if (h->status == RETRO_VFS_COPY_RUNNING)
+    {
+        int64_t budget = max_bytes > 0 ? max_bytes : UWP_COPY_DEFAULT_STEP;
+        while (budget > 0 && h->status == RETRO_VFS_COPY_RUNNING)
+        {
+            size_t  want = h->buf_len;
+            int64_t n;
+            if ((int64_t)want > budget)
+                want = (size_t)budget;
+            n = retro_vfs_file_read_impl(h->in, h->buf, want);
+            if (n < 0)
+                h->status = RETRO_VFS_COPY_FAILED;
+            else if (n == 0)
+            {
+                libretro_vfs_implementation_file *out = h->out;
+                h->out = NULL;
+                h->status = (retro_vfs_file_close_impl(out) == 0)
+                        ? RETRO_VFS_COPY_DONE : RETRO_VFS_COPY_FAILED;
+            }
+            else if (retro_vfs_file_write_impl(h->out, h->buf, (uint64_t)n) != n)
+                h->status = RETRO_VFS_COPY_FAILED;
+            else
+            {
+                h->done += n;
+                budget  -= n;
+            }
+        }
+        if (h->status == RETRO_VFS_COPY_FAILED)
+        {
+            uwp_copy_release_ends(h);
+            retro_vfs_file_remove_impl(h->dst);
+        }
+    }
+    if (bytes_done)
+        *bytes_done  = h->done;
+    if (bytes_total)
+        *bytes_total = h->total;
+    return h->status;
+}
+
+int retro_vfs_copy_close_impl(struct retro_vfs_copy_handle *h)
+{
+    int status;
+    if (!h)
+        return -1;
+    status = h->status;
+    if (status == RETRO_VFS_COPY_RUNNING)
+    {
+        uwp_copy_release_ends(h);
+        retro_vfs_file_remove_impl(h->dst);
+    }
+    uwp_copy_handle_free(h);
+    return status == RETRO_VFS_COPY_DONE ? 0 : -1;
+}
+
+int retro_vfs_stat_impl(const char *path, int32_t *size)
+{
+   int64_t size64 = 0;
+   int ret = retro_vfs_stat_64_impl(path, size ? &size64 : NULL);
+
+   /* if a file is larger than 2 GB, size64 will hold the correct value
+    * but the cast to int32_t will truncate it.
+    * new code should migrate to retro_vfs_stat_64_t
+   */
+   if (size)
+      *size = (int32_t)size64;
+
+   return ret;
 }
 
 #ifdef VFS_FRONTEND
@@ -801,42 +1269,62 @@ struct libretro_vfs_implementation_dir
     HANDLE directory;
     bool next;
     char path[PATH_MAX_LENGTH];
+#ifdef HAVE_SMBCLIENT
+    smb_dir_handle* smb_handle;
+    char smb_path[PATH_MAX_LENGTH];
+    bool smb_is_dir;
+#endif
 };
 
 libretro_vfs_implementation_dir* retro_vfs_opendir_impl(
     const char* name, bool include_hidden)
 {
-    unsigned path_len;
+    size_t _len;
     char path_buf[1024];
-    size_t copied = 0;
     wchar_t* path_wide = NULL;
     libretro_vfs_implementation_dir* rdir;
 
-    /*Reject null or empty string paths*/
+    /* Reject NULL or empty string paths*/
     if (!name || (*name == 0))
         return NULL;
 
     /*Allocate RDIR struct. Tidied later with retro_closedir*/
-    rdir = (libretro_vfs_implementation_dir*)calloc(1, sizeof(*rdir));
-    if (!rdir)
+    if (!(rdir = (libretro_vfs_implementation_dir*)calloc(1, sizeof(*rdir))))
         return NULL;
 
     rdir->orig_path = strdup(name);
 
-    path_buf[0] = '\0';
-    path_len = strlen(name);
+    _len = strlcpy(path_buf, name, sizeof(path_buf));
 
-    copied = strlcpy(path_buf, name, sizeof(path_buf));
+#ifdef HAVE_SMBCLIENT
+    if (name[0]=='s' && name[1]=='m' && name[2]=='b' &&
+        name[3]==':' && name[4]=='/' && name[5]=='/' && name[6] != '\0')
+    {
+        smb_dir_handle *dh = retro_vfs_opendir_smb(name, include_hidden);
+        if (!dh)
+        {
+            free(rdir->orig_path);
+            free(rdir);
+            return NULL;
+        }
+        rdir->smb_handle = dh;
+        rdir->smb_path[0] = '\0';
+        rdir->smb_is_dir = false;
+        return rdir;
+    }
+#endif
 
     /* Non-NT platforms don't like extra slashes in the path */
-    if (name[path_len - 1] != '\\')
-        path_buf[copied++] = '\\';
+    if (path_buf[_len - 1] != '\\')
+        path_buf[_len++]   = '\\';
 
-    path_buf[copied] = '*';
-    path_buf[copied + 1] = '\0';
+    path_buf[_len]         = '*';
+    path_buf[_len + 1]     = '\0';
 
-    path_wide = utf8_to_utf16_string_alloc(path_buf);
-    rdir->directory = FindFirstFileExFromAppW(path_wide, FindExInfoStandard, &rdir->entry, FindExSearchNameMatch, nullptr, FIND_FIRST_EX_LARGE_FETCH);
+    path_wide              = utf8_to_utf16_string_alloc(path_buf);
+    rdir->directory        = FindFirstFileExFromAppW(
+          path_wide, FindExInfoStandard, &rdir->entry,
+          FindExSearchNameMatch, NULL, FIND_FIRST_EX_LARGE_FETCH);
 
     if (path_wide)
         free(path_wide);
@@ -855,6 +1343,24 @@ libretro_vfs_implementation_dir* retro_vfs_opendir_impl(
 
 bool retro_vfs_readdir_impl(libretro_vfs_implementation_dir* rdir)
 {
+#ifdef HAVE_SMBCLIENT
+    if (rdir && rdir->smb_handle)
+    {
+        struct smbc_dirent *de = retro_vfs_readdir_smb(rdir->smb_handle);
+        if (!de)
+            return false;
+
+        strlcpy(rdir->smb_path, de->name, sizeof(rdir->smb_path));
+        rdir->smb_is_dir = (de->type == RETRO_SMB_DIRENT_DIR);
+       return true;
+    }
+    /* If we opened an SMB path but failed, do not fall through to native readdir */
+    if (rdir->orig_path &&
+        rdir->orig_path[0] == 's' && rdir->orig_path[1] == 'm' && rdir->orig_path[2] == 'b' &&
+        rdir->orig_path[3] == ':' && rdir->orig_path[4] == '/' && rdir->orig_path[5] == '/')
+        return false;
+#endif
+
     if (rdir->next)
         return (FindNextFileW(rdir->directory, &rdir->entry) != 0);
 
@@ -864,6 +1370,10 @@ bool retro_vfs_readdir_impl(libretro_vfs_implementation_dir* rdir)
 
 const char* retro_vfs_dirent_get_name_impl(libretro_vfs_implementation_dir* rdir)
 {
+#ifdef HAVE_SMBCLIENT
+    if (rdir && rdir->smb_handle)
+       return rdir->smb_path;
+#endif
     char* name = utf16_to_utf8_string_alloc(rdir->entry.cFileName);
     memset(rdir->entry.cFileName, 0, sizeof(rdir->entry.cFileName));
     strlcpy((char*)rdir->entry.cFileName, name, sizeof(rdir->entry.cFileName));
@@ -874,8 +1384,44 @@ const char* retro_vfs_dirent_get_name_impl(libretro_vfs_implementation_dir* rdir
 
 bool retro_vfs_dirent_is_dir_impl(libretro_vfs_implementation_dir* rdir)
 {
+#ifdef HAVE_SMBCLIENT
+    if (rdir && rdir->smb_handle)
+       return rdir->smb_is_dir;
+#endif
     const WIN32_FIND_DATA* entry = (const WIN32_FIND_DATA*)&rdir->entry;
     return entry->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
+}
+
+int retro_vfs_dirent_stat_impl(libretro_vfs_implementation_dir* rdir,
+        int64_t *size, int64_t *mtime)
+{
+    int ret = RETRO_VFS_STAT_IS_VALID;
+
+    if (!rdir)
+        return 0;
+#ifdef HAVE_SMBCLIENT
+    if (rdir->smb_handle)
+    {
+       char full[PATH_MAX_LENGTH];
+       const char *name = retro_vfs_dirent_get_name_impl(rdir);
+       if (!name)
+          return 0;
+       fill_pathname_join_special(full, rdir->orig_path, name, sizeof(full));
+       /* The SMB stat helper carries no mtime. */
+       return retro_vfs_stat_smb(full, size);
+    }
+#endif
+    /* All of it is already in the find data: no I/O. */
+    if (size)
+        *size = (int64_t)(((uint64_t)rdir->entry.nFileSizeHigh << 32)
+                | (uint64_t)rdir->entry.nFileSizeLow);
+    if (mtime)
+        *mtime = uwp_filetime_to_unix(rdir->entry.ftLastWriteTime);
+    if (rdir->entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        ret |= RETRO_VFS_STAT_IS_DIRECTORY;
+    if (rdir->entry.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+        ret |= RETRO_VFS_STAT_IS_READONLY;
+    return ret;
 }
 
 int retro_vfs_closedir_impl(libretro_vfs_implementation_dir* rdir)
@@ -883,7 +1429,15 @@ int retro_vfs_closedir_impl(libretro_vfs_implementation_dir* rdir)
     if (!rdir)
         return -1;
 
-    if (rdir->directory != INVALID_HANDLE_VALUE)
+#ifdef HAVE_SMBCLIENT
+    if (rdir->smb_handle)
+    {
+        retro_vfs_closedir_smb(rdir->smb_handle);
+        rdir->smb_handle = NULL;
+    }
+#endif
+
+    if (rdir->directory && rdir->directory != INVALID_HANDLE_VALUE)
         FindClose(rdir->directory);
 
     if (rdir->orig_path)
@@ -894,70 +1448,65 @@ int retro_vfs_closedir_impl(libretro_vfs_implementation_dir* rdir)
 
 void uwp_set_acl(const wchar_t* path, const wchar_t* AccessString)
 {
-    PSECURITY_DESCRIPTOR SecurityDescriptor = nullptr;
-    EXPLICIT_ACCESSW ExplicitAccess = { 0 };
+    PSECURITY_DESCRIPTOR SecurityDescriptor = NULL;
+    EXPLICIT_ACCESSW ExplicitAccess         = { 0 };
+    ACL* AccessControlCurrent               = NULL;
+    ACL* AccessControlNew                   = NULL;
+    SECURITY_INFORMATION SecurityInfo       = DACL_SECURITY_INFORMATION;
+    PSID SecurityIdentifier                 = NULL;
+    HANDLE original_file                    = CreateFileFromAppW(path,
+          GENERIC_READ    | GENERIC_WRITE | WRITE_DAC,
+          FILE_SHARE_READ | FILE_SHARE_WRITE,
+          NULL, OPEN_EXISTING, 0, NULL);
 
-    ACL* AccessControlCurrent = nullptr;
-    ACL* AccessControlNew = nullptr;
-
-    SECURITY_INFORMATION SecurityInfo = DACL_SECURITY_INFORMATION;
-    PSID SecurityIdentifier = nullptr;
-
-    HANDLE original_file = CreateFileFromAppW(path, GENERIC_READ | GENERIC_WRITE | WRITE_DAC, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
-
-    if (original_file != INVALID_HANDLE_VALUE) {
-        if (
-            GetSecurityInfo(
+    if (original_file != INVALID_HANDLE_VALUE)
+    {
+       if (
+             GetSecurityInfo(
                 original_file,
                 SE_FILE_OBJECT,
                 DACL_SECURITY_INFORMATION,
-                nullptr,
-                nullptr,
+                NULL,
+                NULL,
                 &AccessControlCurrent,
-                nullptr,
+                NULL,
                 &SecurityDescriptor
-            ) == ERROR_SUCCESS
-            )
-        {
-            ConvertStringSidToSidW(AccessString, &SecurityIdentifier);
-            if (SecurityIdentifier != nullptr)
-            {
-                ExplicitAccess.grfAccessPermissions = GENERIC_READ | GENERIC_EXECUTE | GENERIC_WRITE;
-                ExplicitAccess.grfAccessMode = SET_ACCESS;
-                ExplicitAccess.grfInheritance = SUB_CONTAINERS_AND_OBJECTS_INHERIT;
-                ExplicitAccess.Trustee.TrusteeForm = TRUSTEE_IS_SID;
-                ExplicitAccess.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
-                ExplicitAccess.Trustee.ptstrName = reinterpret_cast<wchar_t*>(SecurityIdentifier);
+                ) == ERROR_SUCCESS
+          )
+       {
+          ConvertStringSidToSidW(AccessString, &SecurityIdentifier);
+          if (SecurityIdentifier)
+          {
+             ExplicitAccess.grfAccessPermissions= GENERIC_READ | GENERIC_EXECUTE | GENERIC_WRITE;
+             ExplicitAccess.grfAccessMode       = SET_ACCESS;
+             ExplicitAccess.grfInheritance      = SUB_CONTAINERS_AND_OBJECTS_INHERIT;
+             ExplicitAccess.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+             ExplicitAccess.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
+             ExplicitAccess.Trustee.ptstrName   = reinterpret_cast<wchar_t*>(SecurityIdentifier);
 
-                if (
-                    SetEntriesInAclW(
-                        1,
-                        &ExplicitAccess,
-                        AccessControlCurrent,
-                        &AccessControlNew
-                    ) == ERROR_SUCCESS
-                    )
-                {
-                    SetSecurityInfo(
-                        original_file,
-                        SE_FILE_OBJECT,
-                        SecurityInfo,
-                        nullptr,
-                        nullptr,
-                        AccessControlNew,
-                        nullptr
-                    );
-                }
-            }
-        }
-        if (SecurityDescriptor)
-        {
-            LocalFree(reinterpret_cast<HLOCAL>(SecurityDescriptor));
-        }
-        if (AccessControlNew)
-        {
-            LocalFree(reinterpret_cast<HLOCAL>(AccessControlNew));
-        }
-        CloseHandle(original_file);
+             if (
+                   SetEntriesInAclW(
+                      1,
+                      &ExplicitAccess,
+                      AccessControlCurrent,
+                      &AccessControlNew
+                      ) == ERROR_SUCCESS
+                )
+                SetSecurityInfo(
+                      original_file,
+                      SE_FILE_OBJECT,
+                      SecurityInfo,
+                      NULL,
+                      NULL,
+                      AccessControlNew,
+                      NULL
+                      );
+          }
+       }
+       if (SecurityDescriptor)
+          LocalFree(reinterpret_cast<HLOCAL>(SecurityDescriptor));
+       if (AccessControlNew)
+          LocalFree(reinterpret_cast<HLOCAL>(AccessControlNew));
+       CloseHandle(original_file);
     }
 }

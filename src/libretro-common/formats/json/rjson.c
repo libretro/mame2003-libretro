@@ -20,18 +20,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/* rjson -- streaming JSON parser and writer.
+ *
+ * What it implements: a pull (SAX-style) parser over strings, buffers,
+ * or a user I/O callback, delivering the
+ * element stream through rjson_next with string/double/int accessors
+ * and the callback-driven rjson_parse convenience driver; UTF-8
+ * validation with
+ * configurable handling of invalid input; opt-in extensions
+ * (JavaScript comments, UTF-8 BOM, unescaped control characters,
+ * trailing data - see enum rjson_option); a depth limit; and a
+ * matching writer (rjsonwriter_*) with the same sink choices and
+ * proper string escaping.
+ *
+ * What it does not implement: an in-memory DOM (callers consume the
+ * event stream), JSON5/NaN/Infinity extensions beyond the listed
+ * options, and sorting or pretty-printing beyond the writer's simple
+ * indentation helpers.
+ */
+
 /* The parser is based on Public Domain JSON Parser for C by Christopher Wellons - https://github.com/skeeto/pdjson */
 
 #include <stdio.h>  /* snprintf, vsnprintf */
 #include <stdarg.h> /* va_list */
-#include <string.h> /* memcpy, strlen */
-#include <stdint.h> /* int64_t */
+#include <string.h> /* memcpy */
+#include <stdint.h> /* int64_t, SIZE_MAX */
 #include <stdlib.h> /* malloc, realloc, atof, atoi */
+#include <limits.h> /* INT_MAX */
 
+/* Ceiling for the parser's growing string buffer and the writer's
+ * in-memory buffer.  Reached in practice only by pathologically large
+ * (and almost certainly malformed) JSON inputs on a 32-bit system,
+ * but having an explicit cap avoids undefined behaviour in the
+ * signed-int arithmetic of the writer and the size_t doubling in the
+ * parser wrapping past SIZE_MAX / 2.  Callers with legitimate giant
+ * payloads should not be using these APIs in the first place --
+ * stream in chunks. */
+#define _RJSON_MAX_SIZE ((size_t)256 * 1024 * 1024)
+
+#include <retro_inline.h> /* INLINE - was reached transitively
+                            * through the stream headers before the
+                            * I/O adapters moved out */
 #include <formats/rjson.h>
+#include <string/rstrtod.h>
 #include <compat/posix_string.h>
-#include <streams/interface_stream.h>
-#include <streams/file_stream.h>
 
 struct _rjson_stack { enum rjson_type type; size_t count; };
 
@@ -58,7 +90,6 @@ struct rjson
    int input_len;
 
    char option_flags;
-   char decimal_sep;
    char error_text[80];
    char inline_string[512];
 
@@ -88,764 +119,81 @@ typedef unsigned int _rjson_char_t;
 #define _rJSON_LIKELY(x) (x)
 #endif
 
-/* These 3 error functions return RJSON_ERROR for convenience */
-static enum rjson_type _rjson_error(rjson_t *json, const char *fmt, ...)
-{
-   va_list ap;
-   if (json->stack_top->type == RJSON_ERROR) return RJSON_ERROR;
-   json->stack_top->type = RJSON_ERROR;
-   va_start(ap, fmt);
-   vsnprintf(json->error_text, sizeof(json->error_text), fmt, ap);
-   va_end(ap);
-   return RJSON_ERROR;
-}
+/* Compile the same grammar without mode checks in the buffered path. */
+#include "rjson_parser.h"
 
-static enum rjson_type _rjson_error_char(rjson_t *json,
-      const char *fmt, _rjson_char_t chr)
-{
-   char buf[16];
-   if (json->stack_top->type == RJSON_ERROR) return RJSON_ERROR;
-   snprintf(buf, sizeof(buf),
-         (chr == _rJSON_EOF ? "end of stream" :
-         (chr >= ' ' && chr <= '~' ? "'%c'" : "byte 0x%02X")), chr);
-   return _rjson_error(json, fmt, buf);
-}
-
-static enum rjson_type _rjson_error_token(rjson_t *json,
-   const char *fmt, enum _rjson_token tok)
-{
-   return _rjson_error_char(json, fmt,
-         (tok == _rJSON_TOK_EOF ? _rJSON_EOF : json->input_p[-1]));
-}
-
-static bool _rjson_io_input(rjson_t *json)
-{
-   if (json->input_end == json->input_buf) return false;
-   json->source_column_p -= (json->input_end - json->input_buf);
-   json->input_p = json->input_buf;
-   json->input_end = json->input_buf +
-         json->io(json->input_buf, json->input_len, json->user_data);
-   if (json->input_end < json->input_buf)
-   {
-      _rjson_error(json, "input stream read error");
-      json->input_end = json->input_buf;
-   }
-   return (json->input_end != json->input_p);
-}
-
-static bool _rjson_grow_string(rjson_t *json)
-{
-   char *string;
-   size_t new_string_cap = json->string_cap * 2;
-   if (json->string != json->inline_string)
-      string = (char*)realloc(json->string, new_string_cap);
-   else if ((string = (char*)malloc(new_string_cap)) != NULL)
-      memcpy(string, json->inline_string, sizeof(json->inline_string));
-   if (string == NULL)
-   {
-      _rjson_error(json, "out of memory");
-      return false;
-   }
-   json->string_cap = new_string_cap;
-   json->string = string;
-   return true;
-}
-
-static INLINE bool _rjson_pushchar(rjson_t *json, _rjson_char_t c)
-{
-   json->string[json->string_len++] = (char)c;
-   return (json->string_len != json->string_cap || _rjson_grow_string(json));
-}
-
-static INLINE bool _rjson_pushchars(rjson_t *json,
-      const unsigned char *from, const unsigned char *to)
-{
-   size_t len = json->string_len, new_len = len + (to - from);
-   unsigned char* string;
-   while (new_len >= json->string_cap)
-      if (!_rjson_grow_string(json))
-         return false;
-   string = (unsigned char *)json->string;
-   while (len != new_len) string[len++] = *(from++);
-   json->string_len = new_len;
-   return true;
-}
-
-static INLINE _rjson_char_t _rjson_char_get(rjson_t *json)
-{
-   return (json->input_p != json->input_end || _rjson_io_input(json)
-        ? *json->input_p++ : _rJSON_EOF);
-}
-
-static unsigned int _rjson_get_unicode_cp(rjson_t *json)
-{
-   unsigned int cp = 0, shift = 16;
-   for (;;)
-   {
-      _rjson_char_t c = _rjson_char_get(json);
-      switch (c)
-      {
-         case '0': case '1': case '2': case '3': case '4':
-         case '5': case '6': case '7': case '8': case '9':
-            c -= '0'; break;
-         case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-            c -= ('a' - 10); break;
-         case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-            c -= ('A' - 10); break;
-         case _rJSON_EOF:
-            _rjson_error(json, "unterminated string literal in Unicode");
-            return (unsigned int)-1;
-         default:
-            _rjson_error_char(json, "invalid Unicode escape hexadecimal %s", c);
-            return (unsigned int)-1;
-      }
-      shift -= 4;
-      cp |= ((unsigned int)c << shift);
-      if (!shift) return cp;
-   }
-}
-
-static bool _rjson_read_unicode(rjson_t *json)
-{
-   #define _rJSON_READ_UNICODE_REPLACE_OR_IGNORE \
-      if (json->option_flags & (RJSON_OPTION_IGNORE_INVALID_ENCODING \
-            | RJSON_OPTION_REPLACE_INVALID_ENCODING)) goto replace_or_ignore;
-
-   unsigned int cp;
-
-   if ((cp = _rjson_get_unicode_cp(json)) == (unsigned int)-1)
-      return false;
-
-   if (cp >= 0xd800 && cp <= 0xdbff)
-   {
-      /* This is the high portion of a surrogate pair; we need to read the
-       * lower portion to get the codepoint */
-      unsigned int l, h = cp;
-
-      _rjson_char_t c = _rjson_char_get(json);
-      if (c == _rJSON_EOF)
-      {
-         _rjson_error(json, "unterminated string literal in Unicode");
-         return false;
-      }
-      if (c != '\\')
-      {
-         _rjson_error_char(json, "invalid continuation %s"
-               " for surrogate pair, expected '\\'", c);
-         return false;
-      }
-
-      c = _rjson_char_get(json);
-      if (c == _rJSON_EOF)
-      {
-         _rjson_error(json, "unterminated string literal in Unicode");
-         return false;
-      }
-      if (c != 'u')
-      {
-         _rjson_error_char(json, "invalid continuation %s"
-               " for surrogate pair, expected 'u'", c);
-         return false;
-      }
-      if ((l = _rjson_get_unicode_cp(json)) == (unsigned int)-1)
-         return false;
-      if (l < 0xdc00 || l > 0xdfff)
-      {
-         _rJSON_READ_UNICODE_REPLACE_OR_IGNORE
-         _rjson_error(json, "surrogate pair continuation \\u%04x out "
-            "of range (dc00-dfff)", l);
-         return false;
-      }
-      cp = ((h - 0xd800) * 0x400) + ((l - 0xdc00) + 0x10000);
-   }
-   else if (cp >= 0xdc00 && cp <= 0xdfff)
-   {
-      _rJSON_READ_UNICODE_REPLACE_OR_IGNORE
-      _rjson_error(json, "dangling surrogate \\u%04x", cp);
-      return false;
-   }
-
-   if (cp < 0x80UL)
-      return _rjson_pushchar(json, cp);
-
-   if (cp < 0x0800UL)
-      return (_rjson_pushchar(json, (cp >> 6 & 0x1F) | 0xC0) &&
-              _rjson_pushchar(json, (cp >> 0 & 0x3F) | 0x80));
-
-   if (cp < 0x010000UL)
-   {
-      if (cp >= 0xd800 && cp <= 0xdfff)
-      {
-         _rJSON_READ_UNICODE_REPLACE_OR_IGNORE
-         _rjson_error(json, "invalid codepoint %04x", cp);
-         return false;
-      }
-      return (_rjson_pushchar(json, (cp >> 12 & 0x0F) | 0xE0) &&
-              _rjson_pushchar(json, (cp >>  6 & 0x3F) | 0x80) &&
-              _rjson_pushchar(json, (cp >>  0 & 0x3F) | 0x80));
-   }
-   if (cp < 0x110000UL)
-      return (_rjson_pushchar(json, (cp >> 18 & 0x07) | 0xF0) &&
-              _rjson_pushchar(json, (cp >> 12 & 0x3F) | 0x80) &&
-              _rjson_pushchar(json, (cp >>  6 & 0x3F) | 0x80) &&
-              _rjson_pushchar(json, (cp >>  0 & 0x3F) | 0x80));
-
-   _rJSON_READ_UNICODE_REPLACE_OR_IGNORE
-   _rjson_error(json, "unable to encode %04x as UTF-8", cp);
-   return false;
-   replace_or_ignore:
-   return ((json->option_flags & RJSON_OPTION_IGNORE_INVALID_ENCODING) ||
-         _rjson_pushchar(json, '?'));
-   #undef _rJSON_READ_UNICODE_REPLACE_OR_IGNORE
-}
-
-static bool _rjson_validate_utf8(rjson_t *json)
-{
-   unsigned char first, c;
-   unsigned char *p;
-   unsigned char *from = (unsigned char *)
-         (json->string_pass_through ? json->string_pass_through : json->string);
-   unsigned char *to = from + json->string_len;
-
-   if (json->option_flags & RJSON_OPTION_IGNORE_INVALID_ENCODING)
-      return true;
-
-   for (;;)
-   {
-      if (from == to) return true;
-      first = *from;
-      if (first <= 0x7F) { from++; continue; } /* ascii */
-      p = from;
-      if (first <= 0xC1)
-      {
-         /* continuation or overlong encoding of an ASCII byte */
-         goto invalid_utf8;
-      }
-      if (first <= 0xDF)
-      {
-         if ((from = p + 2) > to) goto invalid_utf8;
-         continue_length_2:
-         c = p[1];
-         switch (first)
-         {
-            case 0xE0: c = (c < 0xA0 || c > 0xBF); break;
-            case 0xED: c = (c < 0x80 || c > 0x9F); break;
-            case 0xF0: c = (c < 0x90 || c > 0xBF); break;
-            case 0xF4: c = (c < 0x80 || c > 0x8F); break;
-            default:   c = (c < 0x80 || c > 0xBF); break;
-         }
-         if (c) goto invalid_utf8;
-      }
-      else if (first <= 0xEF)
-      {
-         if ((from = p + 3) > to) goto invalid_utf8;
-         continue_length_3:
-         if ((c = p[2]) < 0x80 || c > 0xBF) goto invalid_utf8;
-         goto continue_length_2;
-      }
-      else if (first <= 0xF4)
-      {
-         if ((from = p + 4) > to) goto invalid_utf8;
-         if ((c = p[3]) < 0x80 || c > 0xBF) goto invalid_utf8;
-         goto continue_length_3;
-      }
-      else goto invalid_utf8; /* length 5 or 6 or invalid UTF-8 */
-      continue;
-      invalid_utf8:
-      if (!(json->option_flags & RJSON_OPTION_REPLACE_INVALID_ENCODING))
-      {
-         _rjson_error(json, "invalid UTF-8 character in string");
-         return false;
-      }
-      from = p;
-      *from++ = '?';
-      while (from != to && (*from & 0x80)) *from++ = '?';
-   }
-}
-
-static enum rjson_type _rjson_read_string(rjson_t *json)
-{
-   const unsigned char *p   = json->input_p, *raw = p;
-   const unsigned char *end = json->input_end;
-   unsigned char utf8mask = 0;
-   json->string_pass_through = NULL;
-   json->string_len = 0;
-   for (;;)
-   {
-      if (_rJSON_LIKELY(p != end))
-      {
-         unsigned char c = *p;
-         if (_rJSON_LIKELY(c != '"' && c != '\\' && c >= 0x20))
-         {
-            /* handle most common case first, it's faster */
-            utf8mask |= c;
-            p++;
-         }
-         else if (c == '"')
-         {
-            json->input_p = p + 1;
-            if (json->string_len == 0 && p + 1 != end)
-            {
-               /* raw string fully inside input buffer, pass through */
-               json->string_len = p - raw;
-               json->string_pass_through = (char*)raw;
-            }
-            else if (raw != p && !_rjson_pushchars(json, raw, p))
-            {
-               /* out of memory */
-               return RJSON_ERROR;
-            }
-            if ((utf8mask & 0x80) && !_rjson_validate_utf8(json))
-            {
-               /* contains invalid UTF-8 byte sequences */
-               return RJSON_ERROR;
-            }
-            return RJSON_STRING;
-         }
-         else if (c == '\\')
-         {
-            _rjson_char_t esc;
-            if (raw != p)
-            {
-               /* can't pass through string with escapes, use string buffer */
-               if (!_rjson_pushchars(json, raw, p)) return RJSON_ERROR;
-            }
-            json->input_p = p + 1;
-            esc = _rjson_char_get(json);
-            switch (esc)
-            {
-               case 'u':
-                  if (!_rjson_read_unicode(json))
-                     return RJSON_ERROR;
-                  break;
-
-               case 'b': esc = '\b'; goto escape_pushchar;
-               case 'f': esc = '\f'; goto escape_pushchar;
-               case 'n': esc = '\n'; goto escape_pushchar;
-               case 'r': 
-                  if (!(json->option_flags & RJSON_OPTION_IGNORE_STRING_CARRIAGE_RETURN))
-                  {
-                     esc = '\r';
-                     goto escape_pushchar;
-                  }
-                  break;
-               case 't': esc = '\t'; goto escape_pushchar;
-
-               case '/': case '"': case '\\':
-                  escape_pushchar:
-                  if (!_rjson_pushchar(json, esc))
-                     return RJSON_ERROR;
-                  break;
-
-               case _rJSON_EOF:
-                  return _rjson_error(json, "unterminated string literal in escape");
-
-               default:
-                  return _rjson_error_char(json, "invalid escaped %s", esc);
-            }
-            raw = p = json->input_p;
-            end     = json->input_end;
-         }
-         else if (!(json->option_flags & RJSON_OPTION_ALLOW_UNESCAPED_CONTROL_CHARACTERS))
-            return _rjson_error_char(json, "unescaped control character %s in string", c);
-         else
-            p++;
-      }
-      else
-      {
-         if (raw != p)
-         {
-            /* not fully inside input buffer, copy to string buffer */
-            if (!_rjson_pushchars(json, raw, p)) return RJSON_ERROR;
-         }
-         if (!_rjson_io_input(json))
-            return _rjson_error(json, "unterminated string literal");
-         raw = p = json->input_p;
-         end     = json->input_end;
-      }
-   }
-}
-
-static enum rjson_type _rjson_read_number(rjson_t *json)
-{
-   const unsigned char *p     = json->input_p - 1;
-   const unsigned char *end   = json->input_end;
-   const unsigned char *start = p;
-
-   json->string_len = 0;
-   json->string_pass_through = NULL;
-   for (;;)
-   {
-      if (_rJSON_LIKELY(p != end))
-      {
-         switch (*p++)
-         {
-            case '+': case '-': case '.':
-            case '0': case '1': case '2': case '3': case '4':
-            case '5': case '6': case '7': case '8': case '9':
-            case 'E': case 'e':
-               continue;
-         }
-         p--;
-         json->input_p = p;
-         if (!_rjson_pushchars(json, start, p))
-            return RJSON_ERROR; /* out of memory */
-         break;
-      }
-      else
-      {
-         /* number sequences are always copied to the string buffer */
-         if (!_rjson_pushchars(json, start, p)) return RJSON_ERROR;
-         if (!_rjson_io_input(json))
-         {
-            /* EOF here is not an error for a number */
-            json->input_p = json->input_end;
-            break;
-         }
-         start = p = json->input_p;
-         end = json->input_end;
-      }
-   }
-
-   p = (const unsigned char *)json->string;
-   end = (p + json->string_len);
-
-   /* validate json number */
-   if (*p == '-' && ++p == end) goto invalid_number;
-   if (*p == '0')
-   {
-      if (++p == end) return RJSON_NUMBER;
-   }
-   else
-   {
-      if (*p < '1' || *p > '9') goto invalid_number;
-      do { if (++p == end) return RJSON_NUMBER; }
-      while (*p >= '0' && *p <= '9');
-   }
-   if (*p == '.')
-   {
-      if (++p == end) goto invalid_number;
-      if (*p < '0' || *p > '9') goto invalid_number;
-      do { if (++p == end) return RJSON_NUMBER; }
-      while (*p >= '0' && *p <= '9');
-   }
-   if (((*p)|0x20) == 'e')
-   {
-      if (++p == end) goto invalid_number;
-      if ((*p == '-' || *p == '+') && ++p == end) goto invalid_number;
-      if (*p < '0' || *p > '9') goto invalid_number;
-      do { if (++p == end) return RJSON_NUMBER; }
-      while (*p >= '0' && *p <= '9');
-   }
-   invalid_number:
-   return _rjson_error_char(json, "unexpected %s in number",
-         (p == json->input_end ? _rJSON_EOF : p[p == end ? -1 : 0]));
-}
-
-static enum rjson_type _rjson_push_stack(rjson_t *json, enum _rjson_token t)
-{
-   if (json->stack_top + 1 == json->stack + json->stack_cap)
-   {
-      /* reached allocated stack size, either reallocate or abort */
-      unsigned int new_stack_cap;
-      struct _rjson_stack *new_stack;
-      size_t stack_alloc;
-      if (json->stack_cap == json->stack_max)
-         return _rjson_error(json, "maximum depth of nesting reached");
-
-      new_stack_cap = json->stack_cap + 4;
-      if (new_stack_cap > json->stack_max)
-         new_stack_cap = json->stack_max;
-      stack_alloc = new_stack_cap * sizeof(struct _rjson_stack);
-      if (json->stack != json->inline_stack)
-         new_stack = (struct _rjson_stack *)realloc(json->stack, stack_alloc);
-      else if ((new_stack = (struct _rjson_stack*)malloc(stack_alloc)) != NULL)
-         memcpy(new_stack, json->inline_stack, sizeof(json->inline_stack));
-      if (new_stack == NULL)
-         return _rjson_error(json, "out of memory");
-
-      json->stack = new_stack;
-      json->stack_top = new_stack + json->stack_cap - 1;
-      json->stack_cap = new_stack_cap;
-   }
-   json->stack_top++;
-   json->stack_top->count = 0;
-   return (json->stack_top->type =
-            (t == _rJSON_TOK_ARRAY ? RJSON_ARRAY : RJSON_OBJECT));
-}
-
-static enum rjson_type _rjson_read_name(rjson_t *json, const char *pattern, enum rjson_type type)
-{
-   _rjson_char_t c;
-   const char *p;
-   for (p = pattern; *p; p++)
-      if ((_rjson_char_t)*p != (c = _rjson_char_get(json)))
-         return _rjson_error_char(json, "unexpected %s in value", c);
-   return type;
-}
-
-static bool _rjson_optional_skip(rjson_t *json, const unsigned char **p, const unsigned char **end)
-{
-   unsigned char c, skip = (*p)[-1];
-   int state = 0;
-
-   if (skip == '/' && !(json->option_flags & RJSON_OPTION_ALLOW_COMMENTS))
-      return false;
-
-   if (skip == 0xEF && (!(json->option_flags & RJSON_OPTION_ALLOW_UTF8BOM) ||
-         json->source_line != 1 || json->source_column_p != json->input_p))
-      return false;
-
-   for (;;)
-   {
-      if (*p == *end)
-      {
-         if (!_rjson_io_input(json))
-         {
-            _rjson_error(json, "unfinished %s",
-                  (skip == '/' ? "comment" : "utf8 byte order mark"));
-            return false;
-         }
-         *p   = json->input_p;
-         *end = json->input_end;
-      }
-      c = *(*p)++;
-      if (skip == '/')
-      {
-         if      (state == 0 && c == '/') state = 1;
-         else if (state == 0 && c == '*') state = 2;
-         else if (state == 0) return false;
-         else if (state == 1 && c == '\n') return true;
-         else if (state == 2 && c == '*') state = 3;
-         else if (state == 3 && c == '/') return true;
-         else if (state == 3 && c != '*') state = 2;
-      }
-      else if (skip == 0xEF)
-      {
-         if      (state == 0 && c == 0xBB) state = 1;
-         else if (state == 1 && c == 0xBF) return true;
-         else return false;
-      }
-   }
-   return false;
-}
-
-enum rjson_type rjson_next(rjson_t *json)
-{
-   struct _rjson_stack *stack = json->stack_top;
-   const unsigned char *p   = json->input_p;
-   const unsigned char *end = json->input_end;
-   unsigned char tok;
-   unsigned char passed_token = false;
-
-   /* JSON token look-up-table */
-   static const unsigned char token_lut[256] =
-   {
-      #define i _rJSON_TOK_ERROR
-      /*   0 | 0x00 |   */ i,i,i,i,i,i,i,i,i,
-      /*   9 | 0x09 |\t */ _rJSON_TOK_WHITESPACE,
-      /*  10 | 0x0A |\n */ _rJSON_TOK_NEWLINE, i,i,
-      /*  13 | 0x0D |\r */ _rJSON_TOK_WHITESPACE, i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,
-      /*  32 | 0x20 |   */ _rJSON_TOK_WHITESPACE, i,
-      /*  34 | 0x22 | " */ _rJSON_TOK_STRING, i,i,i,i,i,i,i,i,i,
-      /*  44 | 0x2C | , */ _rJSON_TOK_COMMA,
-      /*  45 | 0x2D | - */ _rJSON_TOK_NUMBER, i,
-      /*  47 | 0x2F | / */ _rJSON_TOK_OPTIONAL_SKIP,
-      /*  48 | 0x30 | 0 */ _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER,
-      /*  53 | 0x35 | 5 */ _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER, _rJSON_TOK_NUMBER,
-      /*  58 | 0x3A | : */ _rJSON_TOK_COLON, i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,
-      /*  91 | 0x5B | [ */ _rJSON_TOK_ARRAY, i,
-      /*  93 | 0x5D | ] */ _rJSON_TOK_ARRAY_END, i,i,i,i,i,i,i,i,
-      /* 102 | 0x66 | f */ _rJSON_TOK_FALSE, i,i,i,i,i,i,i,
-      /* 110 | 0x6E | n */ _rJSON_TOK_NULL, i,i,i,i,i,
-      /* 116 | 0x74 | t */ _rJSON_TOK_TRUE, i,i,i,i,i,i,
-      /* 123 | 0x7B | { */ _rJSON_TOK_OBJECT, i,
-      /* 125 | 0x7D | } */ _rJSON_TOK_OBJECT_END,
-      /* 126 | 0x7E | ~ */ i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,
-      /* 164 | 0xA4 |   */ i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,
-      /* 202 | 0xCA |   */ i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,
-      /* 239 | 0xEF |   */ _rJSON_TOK_OPTIONAL_SKIP, i,i,i,i,i,i,i,i,i,i,i,i,i,i,i,i
-      #undef i
-   };
-
-   if (_rJSON_LIKELY(stack->type != RJSON_ERROR))
-   {
-      for (;;)
-      {
-         if (_rJSON_LIKELY(p != end))
-         {
-            tok = token_lut[*p++];
-            if (_rJSON_LIKELY(tok > _rJSON_TOK_OPTIONAL_SKIP))
-            {
-               /* actual JSON token, process below */
-            }
-            else if (_rJSON_LIKELY(tok == _rJSON_TOK_WHITESPACE))
-            {
-               continue;
-            }
-            else if (tok == _rJSON_TOK_NEWLINE)
-            {
-               json->source_line++;
-               json->source_column_p = p;
-               continue;
-            }
-            else if (tok == _rJSON_TOK_OPTIONAL_SKIP)
-            {
-               if (_rjson_optional_skip(json, &p, &end))
-                  continue;
-            }
-         }
-         else if (_rJSON_LIKELY(_rjson_io_input(json)))
-         {
-            p   = json->input_p;
-            end = json->input_end;
-            continue;
-         }
-         else
-         {
-            p = json->input_end;
-            tok = _rJSON_TOK_EOF;
-         }
-
-         if (stack->type == RJSON_OBJECT)
-         {
-            if (stack->count & 1)
-            {
-               /* Expecting colon followed by value. */
-               if (passed_token)
-                  goto read_value;
-               if (_rJSON_LIKELY(tok == _rJSON_TOK_COLON))
-               {
-                  passed_token = true;
-                  continue;
-               }
-               json->input_p = p;
-               return _rjson_error_token(json,
-                     "expected ':' not %s after member name", (enum _rjson_token)tok);
-            }
-            if (passed_token)
-            {
-               if (_rJSON_LIKELY(tok == _rJSON_TOK_STRING))
-                  goto read_value;
-               json->input_p = p;
-               return _rjson_error(json, "expected member name after ','");
-            }
-            if (tok == _rJSON_TOK_OBJECT_END)
-            {
-               json->input_p = p;
-               json->stack_top--;
-               return RJSON_OBJECT_END;
-            }
-            if (stack->count == 0)
-            {
-               /* No member name/value pairs yet. */
-               if (_rJSON_LIKELY(tok == _rJSON_TOK_STRING))
-                  goto read_value;
-               json->input_p = p;
-               return _rjson_error(json, "expected member name or '}'");
-            }
-            /* Expecting comma followed by member name. */
-            if (_rJSON_LIKELY(tok == _rJSON_TOK_COMMA))
-            {
-               passed_token = true;
-               continue;
-            }
-            json->input_p = p;
-            return _rjson_error_token(json,
-                  "expected ',' or '}' not %s after member value", (enum _rjson_token)tok);
-         }
-         else if (stack->type == RJSON_ARRAY)
-         {
-            if (passed_token)
-               goto read_value;
-            if (tok == _rJSON_TOK_ARRAY_END)
-            {
-               json->input_p = p;
-               json->stack_top--;
-               return RJSON_ARRAY_END;
-            }
-            if (stack->count == 0)
-               goto read_value;
-            if (_rJSON_LIKELY(tok == _rJSON_TOK_COMMA))
-            {
-               passed_token = true;
-               continue;
-            }
-            json->input_p = p;
-            return _rjson_error_token(json,
-                  "expected ',' or ']' not %s in array", (enum _rjson_token)tok);
-         }
-         else
-         {
-            if (_rJSON_LIKELY(!stack->count && tok != _rJSON_TOK_EOF))
-               goto read_value;
-            json->input_p = p;
-            if (!stack->count)
-               return _rjson_error(json, "reached end without any data");
-            if (tok == _rJSON_TOK_EOF)
-               return RJSON_DONE;
-            if (!(json->option_flags & RJSON_OPTION_ALLOW_TRAILING_DATA))
-               return _rjson_error_token(json,
-                     "expected end of stream instead of %s", (enum _rjson_token)tok);
-            json->input_p--;
-            return RJSON_DONE;
-         }
-
-         /* read value for current token */
-         read_value:
-         json->input_p = p;
-         stack->count++;
-         /* This is optimal when there are many strings, otherwise a switch statement
-          * or a function pointer table is better (depending on compiler/cpu) */
-         if      (tok == _rJSON_TOK_STRING)
-            return _rjson_read_string(json);
-         else if (tok == _rJSON_TOK_NUMBER)
-            return _rjson_read_number(json);
-         else if (tok == _rJSON_TOK_OBJECT)
-            return _rjson_push_stack(json, _rJSON_TOK_OBJECT);
-         else if (tok == _rJSON_TOK_ARRAY)
-            return _rjson_push_stack(json, _rJSON_TOK_ARRAY);
-         else if (tok == _rJSON_TOK_TRUE)
-            return _rjson_read_name(json, "rue", RJSON_TRUE);
-         else if (tok == _rJSON_TOK_FALSE)
-            return _rjson_read_name(json, "alse", RJSON_FALSE);
-         else if (tok == _rJSON_TOK_NULL)
-            return _rjson_read_name(json, "ull", RJSON_NULL);
-         else return _rjson_error_token(json,
-               "unexpected %s in value", (enum _rjson_token)tok);
-      }
-   }
-   return RJSON_ERROR;
-}
+#define RJSON_BORROWED
+#define _rjson_error _rjson_error_borrowed
+#define _rjson_error_char _rjson_error_char_borrowed
+#define _rjson_error_token _rjson_error_token_borrowed
+#define _rjson_io_input _rjson_io_input_borrowed
+#define _rjson_grow_string _rjson_grow_string_borrowed
+#define _rjson_pushchar _rjson_pushchar_borrowed
+#define _rjson_pushchars _rjson_pushchars_borrowed
+#define _rjson_char_get _rjson_char_get_borrowed
+#define _rjson_get_unicode_cp _rjson_get_unicode_cp_borrowed
+#define _rjson_read_unicode _rjson_read_unicode_borrowed
+#define _rjson_validate_utf8 _rjson_validate_utf8_borrowed
+#define _rjson_read_string _rjson_read_string_borrowed
+#define _rjson_read_number _rjson_read_number_borrowed
+#define _rjson_push_stack _rjson_push_stack_borrowed
+#define _rjson_read_name _rjson_read_name_borrowed
+#define _rjson_optional_skip _rjson_optional_skip_borrowed
+#define rjson_next _rjson_next_borrowed
+#include "rjson_parser.h"
+#undef _rjson_error
+#undef _rjson_error_char
+#undef _rjson_error_token
+#undef _rjson_io_input
+#undef _rjson_grow_string
+#undef _rjson_pushchar
+#undef _rjson_pushchars
+#undef _rjson_char_get
+#undef _rjson_get_unicode_cp
+#undef _rjson_read_unicode
+#undef _rjson_validate_utf8
+#undef _rjson_read_string
+#undef _rjson_read_number
+#undef _rjson_push_stack
+#undef _rjson_read_name
+#undef _rjson_optional_skip
+#undef rjson_next
+#undef RJSON_BORROWED
 
 void _rjson_setup(rjson_t *json, rjson_io_t io, void *user_data, int input_len)
 {
-   json->io = io;
-   json->user_data = user_data;
-   json->input_len = input_len;
-   json->input_p = json->input_end = json->input_buf + input_len;
+   json->io                  = io;
+   json->user_data           = user_data;
+   json->input_len           = input_len;
+   json->input_p             = json->input_end = json->input_buf + input_len;
 
-   json->stack = json->inline_stack;
-   json->stack_top = json->stack;
-   json->stack_top->type = RJSON_DONE;
-   json->stack_top->count = 0;
-   json->stack_cap = (unsigned int)(sizeof(json->inline_stack) / sizeof(json->inline_stack[0]));
-   json->stack_max = (unsigned int)50;
+   json->stack               = json->inline_stack;
+   json->stack_top           = json->stack;
+   json->stack_top->type     = RJSON_DONE;
+   json->stack_top->count    = 0;
+   json->stack_cap           = (unsigned int)(sizeof(json->inline_stack) / sizeof(json->inline_stack[0]));
+   json->stack_max           = (unsigned int)50;
 
-   json->string = json->inline_string;
+   json->string              = json->inline_string;
    json->string_pass_through = NULL;
-   json->string_len = 0;
-   json->string_cap = sizeof(json->inline_string);
+   json->string_len          = 0;
+   json->string_cap          = sizeof(json->inline_string);
 
-   json->source_line = 1;
-   json->source_column_p = json->input_p;
-   json->option_flags = 0;
-   json->decimal_sep = 0;
+   json->source_line         = 1;
+   json->source_column_p     = json->input_p;
+   json->option_flags        = 0;
 }
 
 rjson_t *rjson_open_user(rjson_io_t io, void *user_data, int io_block_size)
 {
-   rjson_t* json = (rjson_t*)malloc(
+   rjson_t* json;
+   /* Clamp io_block_size against negative / tiny / oversized values:
+    * this function is public and can be reached with anything. */
+   if (io_block_size < 16)
+      io_block_size = 16;
+   else if ((size_t)io_block_size > _RJSON_MAX_SIZE)
+      io_block_size = (int)_RJSON_MAX_SIZE;
+   json = (rjson_t*)malloc(
          sizeof(rjson_t) - sizeof(((rjson_t*)0)->input_buf) + io_block_size);
    if (json) _rjson_setup(json, io, user_data, io_block_size);
    return json;
@@ -860,50 +208,21 @@ static int _rjson_buffer_io(void* buf, int len, void *user)
    return len;
 }
 
-rjson_t *rjson_open_buffer(const void *buffer, size_t size)
+rjson_t *rjson_open_buffer(const void *buffer, size_t len)
 {
-   rjson_t *json = (rjson_t *)malloc(sizeof(rjson_t) + sizeof(const char *)*2);
+   rjson_t *json   = (rjson_t *)malloc(sizeof(rjson_t) + sizeof(const char *)*2);
    const char **ud = (const char **)(json + 1);
-   if (!json) return NULL;
+   if (!json)
+      return NULL;
    ud[0] = (const char *)buffer;
-   ud[1] = ud[0] + size;
+   ud[1] = ud[0] + len;
    _rjson_setup(json, _rjson_buffer_io, (void*)ud, sizeof(json->input_buf));
    return json;
 }
 
-rjson_t *rjson_open_string(const char *string)
+rjson_t *rjson_open_string(const char *string, size_t len)
 {
-   return rjson_open_buffer(string, strlen(string));
-}
-
-static int _rjson_stream_io(void* buf, int len, void *user)
-{
-   return (int)intfstream_read((intfstream_t*)user, buf, (uint64_t)len);
-}
-
-rjson_t *rjson_open_stream(struct intfstream_internal *stream)
-{
-   /* Allocate an input buffer based on the file size */
-   int64_t size = intfstream_get_size(stream);
-   int io_size =
-         (size > 1024*1024 ? 4096 :
-         (size >  256*1024 ? 2048 : 1024));
-   return rjson_open_user(_rjson_stream_io, stream, io_size);
-}
-
-static int _rjson_rfile_io(void* buf, int len, void *user)
-{
-   return (int)filestream_read((RFILE*)user, buf, (int64_t)len);
-}
-
-rjson_t *rjson_open_rfile(RFILE *rfile)
-{
-   /* Allocate an input buffer based on the file size */
-   int64_t size = filestream_get_size(rfile);
-   int io_size =
-         (size > 1024*1024 ? 4096 :
-         (size >  256*1024 ? 2048 : 1024));
-   return rjson_open_user(_rjson_rfile_io, rfile, io_size);
+   return rjson_open_buffer(string, len);
 }
 
 void rjson_set_options(rjson_t *json, char rjson_option_flags)
@@ -916,11 +235,12 @@ void rjson_set_max_depth(rjson_t *json, unsigned int max_depth)
    json->stack_max = max_depth;
 }
 
-const char *rjson_get_string(rjson_t *json, size_t *length)
+const char *rjson_get_string(rjson_t *json, size_t *len)
 {
-   char* str = (json->string_pass_through ? json->string_pass_through : json->string);
-   if (length != NULL)
-      *length = json->string_len;
+   char* str             = (json->string_pass_through
+         ? json->string_pass_through : json->string);
+   if (len)
+      *len               = json->string_len;
    str[json->string_len] = '\0';
    return str;
 }
@@ -929,26 +249,9 @@ double rjson_get_double(rjson_t *json)
 {
    char* str = (json->string_pass_through ? json->string_pass_through : json->string);
    str[json->string_len] = '\0';
-   if (json->decimal_sep != '.')
-   {
-      /* handle locale that uses a non-standard decimal separator */
-      char *p;
-      if (json->decimal_sep == 0)
-      {
-         char test[4];
-         snprintf(test, sizeof(test), "%.1f", 0.0f);
-         json->decimal_sep = test[1];
-      }
-      if (json->decimal_sep != '.' && (p = strchr(str, '.')) != NULL)
-      {
-         double res;
-         *p = json->decimal_sep;
-         res = atof(str);
-         *p = '.';
-         return res;
-      }
-   }
-   return atof(str);
+   /* rstrtod reads the '.' the JSON grammar requires in any locale, so
+    * the old sniff-the-separator-and-rewrite-the-buffer dance is gone. */
+   return rstrtod(str, NULL);
 }
 
 int rjson_get_int(rjson_t *json)
@@ -982,7 +285,7 @@ size_t rjson_get_source_column(rjson_t *json)
 int rjson_get_source_context_len(rjson_t *json)
 {
    const unsigned char *from = json->input_buf, *to = json->input_end, *p = json->input_p;
-   return ((p + 256 < to ? p + 256 : to) - (p > from + 256 ? p - 256 : from));
+   return (int)(((p + 256 < to ? p + 256 : to) - (p > from + 256 ? p - 256 : from)));
 }
 
 const char* rjson_get_source_context_buf(rjson_t *json)
@@ -990,7 +293,11 @@ const char* rjson_get_source_context_buf(rjson_t *json)
    /* inside the input buffer, some " may have been replaced with \0. */
    const unsigned char *p = json->input_p, *from = json->input_buf;
    unsigned char *i = json->input_buf;
-   for (; i != json->input_end; i++) if (*i == '\0') *i = '"';
+   for (; i != json->input_end; i++)
+   {
+      if (*i == '\0')
+         *i = '"';
+   }
    return (const char*)(p > from + 256 ? p - 256 : from);
 }
 
@@ -1013,7 +320,7 @@ bool rjson_check_context(rjson_t *json, unsigned int depth, ...)
 
 unsigned int rjson_get_context_depth(rjson_t *json)
 {
-   return json->stack_top - json->stack;
+   return (unsigned int)(json->stack_top - json->stack);
 }
 
 size_t rjson_get_context_count(rjson_t *json)
@@ -1026,17 +333,295 @@ enum rjson_type rjson_get_context_type(rjson_t *json)
    return json->stack_top->type;
 }
 
-void rjson_free(rjson_t *json)
+/* Release the two buffers that can outgrow their inline storage.
+ * Split out of rjson_free() because a stack-allocated rjson_t has
+ * the same buffers to release but must not have free() called on
+ * the handle itself. */
+static void _rjson_free_buffers(rjson_t *json)
 {
    if (json->stack != json->inline_stack)
+   {
       free(json->stack);
+      json->stack = json->inline_stack;
+   }
    if (json->string != json->inline_string)
+   {
       free(json->string);
+      json->string = json->inline_string;
+   }
+}
+
+void rjson_free(rjson_t *json)
+{
+   _rjson_free_buffers(json);
    free(json);
 }
 
+
+static void _rjson_setup_borrowed(rjson_t *json, const char *data, size_t length)
+{
+   _rjson_setup(json, NULL, NULL, 0);
+   json->input_p = (const unsigned char *)data;
+   json->input_end = json->input_p + length;
+   json->source_column_p = json->input_p;
+}
+
+static enum rjson_type _rjson_next_span(rjson_t *json, rjson_span_t *span)
+{
+   const unsigned char *start = json->input_p;
+   while (start != json->input_end &&
+         (*start == ' ' || *start == '\t' || *start == '\n' ||
+          *start == '\r' || *start == ',' || *start == ':'))
+      start++;
+   span->data = (const char *)start;
+   span->count = 0;
+   span->type = _rjson_next_borrowed(json);
+   span->length = (size_t)(json->input_p - start);
+   return span->type;
+}
+
+static bool _rjson_finish_span(rjson_t *json, rjson_span_t *span)
+{
+   if (span->type == RJSON_OBJECT || span->type == RJSON_ARRAY)
+   {
+      size_t depth = (size_t)(json->stack_top - json->stack);
+      while ((size_t)(json->stack_top - json->stack) >= depth)
+         if (_rjson_next_borrowed(json) == RJSON_ERROR)
+            return false;
+      span->count = json->stack[depth].count;
+      if (span->type == RJSON_OBJECT)
+         span->count /= 2;
+      span->length = (size_t)((const char *)json->input_p - span->data);
+   }
+   return span->type != RJSON_ERROR && span->type != RJSON_DONE;
+}
+
+bool rjson_read_span(const void *data, size_t length, rjson_span_t *value,
+      rjson_span_member_t member, void *context)
+{
+   rjson_t json;
+   bool ok = false;
+   if (!data || !length || !value)
+      return false;
+   _rjson_setup_borrowed(&json, (const char *)data, length);
+   json.input_len = -1; /* Validate spans without materializing token text. */
+   _rjson_next_span(&json, value);
+   if (value->type == RJSON_OBJECT && member)
+   {
+      rjson_span_t name, child;
+      for (;;)
+      {
+         enum rjson_type type = _rjson_next_span(&json, &name);
+         if (type == RJSON_OBJECT_END)
+         {
+            value->length = (size_t)((const char *)json.input_p - value->data);
+            ok = true;
+            break;
+         }
+         if (type != RJSON_STRING)
+            break;
+         _rjson_next_span(&json, &child);
+         if (!_rjson_finish_span(&json, &child) || !member(context, &name, &child))
+            break;
+         value->count++;
+      }
+   }
+   else
+      ok = _rjson_finish_span(&json, value);
+   _rjson_free_buffers(&json);
+   return ok;
+}
+
+static const char *_rjson_span_space(const char *p, const char *end)
+{
+   while (p != end && (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r'))
+      p++;
+   return p;
+}
+
+static const char *_rjson_span_string(const char *p, const char *end)
+{
+   const char *begin = p + 1;
+   p = begin;
+   while (p != end)
+   {
+      const char *escape;
+      p = (const char *)memchr(p, '"', (size_t)(end - p));
+      if (!p)
+         return NULL;
+      escape = p;
+      while (escape != begin && escape[-1] == '\\')
+         escape--;
+      if (!((size_t)(p - escape) & 1))
+         return p + 1;
+      p++;
+   }
+   return NULL;
+}
+
+/* Only delimiters need inspecting after the grammar has accepted the input. */
+static const char *_rjson_span_value(const char *p, const char *end,
+      rjson_span_t *value)
+{
+   const char *start = p;
+   size_t depth = 1;
+   value->data  = p;
+   value->count = 0;
+   switch (*p)
+   {
+      case '"':
+         value->type = RJSON_STRING;
+         p = _rjson_span_string(p, end);
+         if (!p)
+            return NULL;
+         break;
+      case '{':
+      case '[':
+         value->type = *p == '{' ? RJSON_OBJECT : RJSON_ARRAY;
+         p = _rjson_span_space(p + 1, end);
+         if (p == end)
+            return NULL;
+         if (*p != '}' && *p != ']')
+            value->count = 1;
+         for (; p != end; p++)
+         {
+            switch (*p)
+            {
+               case '"':
+                  p = _rjson_span_string(p, end);
+                  if (!p)
+                     return NULL;
+                  p--;
+                  break;
+               case '{':
+               case '[':
+                  depth++;
+                  break;
+               case '}':
+               case ']':
+                  if (!--depth)
+                  {
+                     p++;
+                     goto finished;
+                  }
+                  break;
+               case ',':
+                  if (depth == 1)
+                     value->count++;
+                  break;
+            }
+         }
+         return NULL;
+      default:
+         value->type = *p == 't' ? RJSON_TRUE : *p == 'f' ? RJSON_FALSE :
+               *p == 'n' ? RJSON_NULL : RJSON_NUMBER;
+         while (p != end && (unsigned char)*p > ' ' &&
+               *p != ',' && *p != '}' && *p != ']')
+            p++;
+         if (p == start)
+            return NULL;
+         break;
+   }
+finished:
+   value->length = (size_t)(p - start);
+   return p;
+}
+
+bool rjson_read_span_validated(const void *data, size_t length,
+      rjson_span_t *value, rjson_span_member_t member, void *context)
+{
+   const char *p, *end;
+   if (!data || !length || !value)
+      return false;
+   end = (const char *)data + length;
+   p   = _rjson_span_space((const char *)data, end);
+   if (p == end)
+      return false;
+   if (*p != '{' || !member)
+      return _rjson_span_value(p, end, value) != NULL;
+
+   value->data  = p;
+   value->count = 0;
+   value->type  = RJSON_OBJECT;
+   p = _rjson_span_space(p + 1, end);
+   while (p != end && *p != '}')
+   {
+      rjson_span_t name, child;
+      if (*p != '"')
+         return false;
+      name.data  = p;
+      name.count = 0;
+      name.type  = RJSON_STRING;
+      p = _rjson_span_string(p, end);
+      if (!p)
+         return false;
+      name.length = (size_t)(p - name.data);
+      p = _rjson_span_space(p, end);
+      if (p == end || *p++ != ':')
+         return false;
+      p = _rjson_span_space(p, end);
+      if (p == end)
+         return false;
+      p = _rjson_span_value(p, end, &child);
+      if (!p || !member(context, &name, &child))
+         return false;
+      value->count++;
+      p = _rjson_span_space(p, end);
+      if (p != end && *p == ',')
+         p = _rjson_span_space(p + 1, end);
+      else
+         break;
+   }
+   if (p == end || *p != '}')
+      return false;
+   value->length = (size_t)(p + 1 - value->data);
+   return true;
+}
+
+bool rjson_decode_string(const char *data, size_t length,
+      char *output, size_t capacity, size_t *written)
+{
+   rjson_t json;
+   bool ok;
+   if (!data || length < 2 || *data != '"' || data[length - 1] != '"' || !output || capacity < length - 1)
+      return false;
+   _rjson_setup_borrowed(&json, data, length);
+   json.string = output;
+   json.string_cap = capacity;
+   json.input_p++; /* The opening quote was checked above. */
+   ok = _rjson_read_string_borrowed(&json) == RJSON_STRING && json.input_p == json.input_end;
+   if (ok)
+   {
+      if (json.string_pass_through)
+         memcpy(output, json.string_pass_through, json.string_len);
+      output[json.string_len] = '\0';
+      if (written)
+         *written = json.string_len;
+   }
+   /* The output belongs to the caller, not the parser. */
+   json.string = json.inline_string;
+   _rjson_free_buffers(&json);
+   return ok;
+}
+
+bool rjson_string_equal(const char *data, size_t length, const char *text)
+{
+   rjson_t json;
+   bool equal;
+   if (!data || length < 2 || *data != '"' || !text)
+      return false;
+   _rjson_setup_borrowed(&json, data, length);
+   equal = _rjson_next_borrowed(&json) == RJSON_STRING && json.input_p == json.input_end;
+   if (equal)
+      equal = strlen(text) == json.string_len &&
+            !memcmp(json.string_pass_through ? json.string_pass_through :
+                  json.string, text, json.string_len);
+   _rjson_free_buffers(&json);
+   return equal;
+}
+
 static bool _rjson_nop_default(void *context) { return true; }
-static bool _rjson_nop_string(void *context, const char *value, size_t length) { return true; }
+static bool _rjson_nop_string(void *context, const char *value, size_t len) { return true; }
 static bool _rjson_nop_bool(void *context, bool value) { return true; }
 
 enum rjson_type rjson_parse(rjson_t *json, void* context,
@@ -1051,7 +636,7 @@ enum rjson_type rjson_parse(rjson_t *json, void* context,
       bool (*null_handler         )(void *context))
 {
    bool in_object = false;
-   size_t len;
+   size_t _len;
    const char* string;
    if (!object_member_handler) object_member_handler = _rjson_nop_string;
    if (!string_handler       ) string_handler        = _rjson_nop_string;
@@ -1067,16 +652,16 @@ enum rjson_type rjson_parse(rjson_t *json, void* context,
       switch (rjson_next(json))
       {
          case RJSON_STRING:
-            string = rjson_get_string(json, &len);
+            string = rjson_get_string(json, &_len);
             if (_rJSON_LIKELY(
                   (in_object && (json->stack_top->count & 1) ?
                      object_member_handler : string_handler)
-                     (context, string, len)))
+                     (context, string, _len)))
                continue;
             return RJSON_STRING;
          case RJSON_NUMBER:
-            string = rjson_get_string(json, &len);
-            if (_rJSON_LIKELY(number_handler(context, string, len)))
+            string = rjson_get_string(json, &_len);
+            if (_rJSON_LIKELY(number_handler(context, string, _len)))
                continue;
             return RJSON_NUMBER;
          case RJSON_OBJECT:
@@ -1123,7 +708,7 @@ enum rjson_type rjson_parse(rjson_t *json, void* context,
    }
 }
 
-bool rjson_parse_quick(const char *string, void* context, char option_flags,
+bool rjson_parse_quick(const char *string, size_t len, void* context, char option_flags,
       bool (*object_member_handler)(void *context, const char *str, size_t len),
       bool (*string_handler       )(void *context, const char *str, size_t len),
       bool (*number_handler       )(void *context, const char *str, size_t len),
@@ -1138,7 +723,7 @@ bool rjson_parse_quick(const char *string, void* context, char option_flags,
    const char *user_data[2];
    rjson_t json;
    user_data[0] = string;
-   user_data[1] = string + strlen(string);
+   user_data[1] = string + len;
    _rjson_setup(&json, _rjson_buffer_io, (void*)user_data, sizeof(json.input_buf));
    rjson_set_options(&json, option_flags);
    if (rjson_parse(&json, context,
@@ -1146,12 +731,27 @@ bool rjson_parse_quick(const char *string, void* context, char option_flags,
          start_object_handler, end_object_handler,
          start_array_handler, end_array_handler,
          boolean_handler, null_handler) == RJSON_DONE)
+   {
+      /* The handle is on the stack, but its string and stack buffers
+       * are not: either outgrows its inline storage onto the heap - a
+       * long string token, or deep nesting - and nothing released
+       * them on the way out.  rjson_free() cannot be used here
+       * because it frees the handle too, so the buffer release is
+       * split out.
+       *
+       * The one caller in the tree parses netplay lobby responses,
+       * so the input is a remote server's and the growth is its
+       * choice, up to _RJSON_MAX_SIZE.  That made this leak per
+       * refresh and sized by whatever the other end sent. */
+      _rjson_free_buffers(&json);
       return true;
+   }
    if (error_handler)
       error_handler(context,
             (int)rjson_get_source_line(&json),
             (int)rjson_get_source_column(&json),
             rjson_get_error(&json));
+   _rjson_free_buffers(&json);
    return false;
 }
 
@@ -1173,69 +773,70 @@ struct rjsonwriter
 rjsonwriter_t *rjsonwriter_open_user(rjsonwriter_io_t io, void *user_data)
 {
    rjsonwriter_t* writer = (rjsonwriter_t*)malloc(sizeof(rjsonwriter_t));
-   if (!writer) return NULL;
+   if (!writer)
+      return NULL;
 
-   writer->buf = writer->inline_buf;
-   writer->buf_num = 0;
-   writer->buf_cap = sizeof(writer->inline_buf);
+   writer->buf           = writer->inline_buf;
+   writer->buf_num       = 0;
+   writer->buf_cap       = sizeof(writer->inline_buf);
 
-   writer->error_text = NULL;
-   writer->option_flags = writer->decimal_sep = 0;
+   writer->error_text    = NULL;
+   writer->option_flags  = writer->decimal_sep = 0;
    writer->buf_is_output = writer->final_flush = false;
 
-   writer->io = io;
-   writer->user_data = user_data;
+   writer->io            = io;
+   writer->user_data     = user_data;
 
    return writer;
-}
-
-static int _rjsonwriter_stream_io(const void* buf, int len, void *user)
-{
-   return (int)intfstream_write((intfstream_t*)user, buf, (uint64_t)len);
-}
-
-rjsonwriter_t *rjsonwriter_open_stream(struct intfstream_internal *stream)
-{
-   return rjsonwriter_open_user(_rjsonwriter_stream_io, stream);
-}
-
-static int _rjsonwriter_rfile_io(const void* buf, int len, void *user)
-{
-   return (int)filestream_write((RFILE*)user, buf, (int64_t)len);
-}
-
-rjsonwriter_t *rjsonwriter_open_rfile(RFILE *rfile)
-{
-   return rjsonwriter_open_user(_rjsonwriter_rfile_io, rfile);
 }
 
 static int _rjsonwriter_memory_io(const void* buf, int len, void *user)
 {
    rjsonwriter_t *writer = (rjsonwriter_t *)user;
-   bool is_append    = (buf != writer->buf);
-   bool can_realloc  = (writer->buf != writer->inline_buf);
-   int new_cap       = writer->buf_num + (is_append ? len : 0) + 512;
+   bool is_append        = (buf != writer->buf);
+   size_t append_len     = (is_append ? (size_t)len : 0);
+   size_t target;
+   int    new_cap;
+   /* Detect the int-overflow pre-patch, where buf_num + len + 512
+    * wrapped past INT_MAX and new_cap went negative.  The subsequent
+    * "new_cap > buf_cap" comparison then misbehaved and memcpy wrote
+    * past the existing allocation on a post-overflow buffer that
+    * hadn't been grown.  Do the arithmetic in size_t and cap at
+    * _RJSON_MAX_SIZE (which also fits comfortably in int). */
+   if (len < 0 || (size_t)writer->buf_num > _RJSON_MAX_SIZE - append_len
+                                           - 512)
+   {
+      if (!writer->error_text)
+         writer->error_text = "output buffer too large";
+      return 0;
+   }
+   target = (size_t)writer->buf_num + append_len + 512;
+   new_cap = (int)target;
    if (!writer->final_flush && (is_append || new_cap > writer->buf_cap))
    {
-      char* new_buf = (char*)(can_realloc ? realloc(writer->buf, new_cap) : malloc(new_cap));
-      if (!new_buf) return 0;
-      if (!can_realloc) memcpy(new_buf, writer->buf, writer->buf_num);
+      bool can_realloc   = (writer->buf != writer->inline_buf);
+      char* new_buf      = (char*)(can_realloc ? realloc(writer->buf, new_cap) : malloc(new_cap));
+      if (!new_buf)
+         return 0;
+      if (!can_realloc)
+         memcpy(new_buf, writer->buf, writer->buf_num);
       if (is_append)
       {
          memcpy(new_buf + writer->buf_num, buf, len);
          writer->buf_num += len;
       }
-      writer->buf = new_buf;
-      writer->buf_cap = new_cap;
+      writer->buf        = new_buf;
+      writer->buf_cap    = new_cap;
    }
    return len;
 }
 
-rjsonwriter_t *rjsonwriter_open_memory()
+rjsonwriter_t *rjsonwriter_open_memory(void)
 {
    rjsonwriter_t *writer = rjsonwriter_open_user(_rjsonwriter_memory_io, NULL);
-   if (!writer) return NULL;
-   writer->user_data = writer;
+   if (!writer)
+      return NULL;
+   writer->user_data     = writer;
    writer->buf_is_output = true;
    return writer;
 }
@@ -1247,8 +848,20 @@ char* rjsonwriter_get_memory_buffer(rjsonwriter_t *writer, int* len)
    if (writer->buf_num == writer->buf_cap)
       rjsonwriter_flush(writer);
    writer->buf[writer->buf_num] = '\0';
-   if (len) *len = writer->buf_num;
+   if (len)
+      *len = writer->buf_num;
    return writer->buf;
+}
+
+int rjsonwriter_count_memory_buffer(rjsonwriter_t *writer)
+{
+   return writer->buf_num;
+}
+
+void rjsonwriter_erase_memory_buffer(rjsonwriter_t *writer, int keep_len)
+{
+   if (keep_len <= writer->buf_num)
+      writer->buf_num = (keep_len < 0 ? 0 : keep_len);
 }
 
 bool rjsonwriter_free(rjsonwriter_t *writer)
@@ -1284,7 +897,13 @@ const char *rjsonwriter_get_error(rjsonwriter_t *writer)
 
 void rjsonwriter_raw(rjsonwriter_t *writer, const char *buf, int len)
 {
-   if (writer->buf_num + len > writer->buf_cap)
+   /* Guard against negative len and against buf_num+len signed
+    * overflow.  A caller that somehow passes a huge len would
+    * pre-patch compute a negative sum, skip the flush, then memcpy
+    * past the existing buffer below. */
+   if (len < 0)
+      return;
+   if ((size_t)writer->buf_num + (size_t)len > (size_t)writer->buf_cap)
       rjsonwriter_flush(writer);
    if (len == 1)
    {
@@ -1295,10 +914,12 @@ void rjsonwriter_raw(rjsonwriter_t *writer, const char *buf, int len)
    else
    {
       int add = writer->buf_cap - writer->buf_num;
-      if (add > len) add = len;
+      if (add > len)
+         add = len;
       memcpy(writer->buf + writer->buf_num, buf, add);
       writer->buf_num += add;
-      if (len == add) return;
+      if (len == add)
+         return;
       rjsonwriter_flush(writer);
       len -= add;
       buf += add;
@@ -1322,23 +943,34 @@ void rjsonwriter_rawf(rjsonwriter_t *writer, const char *fmt, ...)
    va_start(ap, fmt);
    need = vsnprintf(writer->buf + writer->buf_num, available, fmt, ap);
    va_end(ap);
-   if (need <= 0) return;
+   if (need <= 0)
+      return;
    if (need < available)
    {
       writer->buf_num += need;
       return;
    }
    rjsonwriter_flush(writer);
+   /* Guard signed-int overflow on newcap: buf_num + need + 1 could
+    * wrap past INT_MAX for a single very large formatted value. */
+   if ((size_t)writer->buf_num + (size_t)need + 1 > _RJSON_MAX_SIZE)
+   {
+      if (!writer->error_text)
+         writer->error_text = "output buffer too large";
+      return;
+   }
    if (writer->buf_num + need >= writer->buf_cap)
    {
-      int newcap = writer->buf_num + need + 1;
+      int newcap   = writer->buf_num + need + 1;
       char* newbuf = (char*)malloc(newcap);
       if (!newbuf)
       {
-         if (!writer->error_text) writer->error_text = "out of memory";
+         if (!writer->error_text)
+            writer->error_text = "out of memory";
          return;
       }
-      if (writer->buf_num) memcpy(newbuf, writer->buf, writer->buf_num);
+      if (writer->buf_num)
+         memcpy(newbuf, writer->buf, writer->buf_num);
       if (writer->buf != writer->inline_buf)
          free(writer->buf);
       writer->buf = newbuf;
@@ -1356,17 +988,33 @@ void _rjsonwriter_add_escaped(rjsonwriter_t *writer, unsigned char c)
    const char* esc;
    switch (c)
    {
-      case '\b': esc = "\\b"; break;
-      case '\t': esc = "\\t"; break;
-      case '\n': esc = "\\n"; break;
-      case '\f': esc = "\\f"; break;
-      case '\r': esc = "\\r"; break;
-      case '\"': esc = "\\\""; break;
-      case '\\': esc = "\\\\"; break;
-      case '/': esc = "\\/"; break;
+      case '\b':
+         esc = "\\b";
+         break;
+      case '\t':
+         esc = "\\t";
+         break;
+      case '\n':
+         esc = "\\n";
+         break;
+      case '\f':
+         esc = "\\f";
+         break;
+      case '\r':
+         esc = "\\r";
+         break;
+      case '\"':
+         esc = "\\\"";
+         break;
+      case '\\':
+         esc = "\\\\";
+         break;
+      case '/':
+         esc = "\\/";
+         break;
       default:
          snprintf(esc_buf, sizeof(esc_buf), "\\u%04x", c);
-         esc = esc_buf;
+         esc     = esc_buf;
          esc_len = 6;
    }
    rjsonwriter_raw(writer, esc, esc_len);
@@ -1377,19 +1025,23 @@ void rjsonwriter_add_string(rjsonwriter_t *writer, const char *value)
    const char *p = (const char*)value, *raw = p;
    unsigned char c;
    rjsonwriter_raw(writer, "\"", 1);
-   if (!p) goto string_end;
+   if (!p)
+      goto string_end;
    while ((c = (unsigned char)*p++) != '\0')
    {
       /* forward slash is special, it should be escaped if the previous character
        * was a < (intended to avoid having </script> html tags in JSON files) */
-      if (c >= 0x20 && c != '\"' && c != '\\' &&
-            (c != '/' || p < value + 2 || p[-2] != '<')) continue;
-      if (raw != p - 1) rjsonwriter_raw(writer, raw, (int)(p - 1 - raw));
+      if (   c >= 0x20 && c != '\"' && c != '\\' &&
+            (c != '/' || p < value + 2 || p[-2] != '<'))
+         continue;
+      if (raw != p - 1)
+         rjsonwriter_raw(writer, raw, (int)(p - 1 - raw));
       _rjsonwriter_add_escaped(writer, c);
       raw = p;
    }
-   if (raw != p - 1) rjsonwriter_raw(writer, raw, (int)(p - 1 - raw));
-   string_end:
+   if (raw != p - 1)
+      rjsonwriter_raw(writer, raw, (int)(p - 1 - raw));
+string_end:
    rjsonwriter_raw(writer, "\"", 1);
 }
 
@@ -1400,13 +1052,16 @@ void rjsonwriter_add_string_len(rjsonwriter_t *writer, const char *value, int le
    while (p != end)
    {
       unsigned char c = (unsigned char)*p++;
-      if (c >= 0x20 && c != '\"' && c != '\\' &&
-            (c != '/' || p < value + 2 || p[-2] != '<')) continue;
-      if (raw != p - 1) rjsonwriter_raw(writer, raw, (int)(p - 1 - raw));
+      if (      c >= 0x20 && c != '\"' && c != '\\'
+            && (c != '/' || p < value + 2 || p[-2] != '<'))
+         continue;
+      if (raw != p - 1)
+         rjsonwriter_raw(writer, raw, (int)(p - 1 - raw));
       _rjsonwriter_add_escaped(writer, c);
       raw = p;
    }
-   if (raw != end) rjsonwriter_raw(writer, raw, (int)(end - raw));
+   if (raw != end)
+      rjsonwriter_raw(writer, raw, (int)(end - raw));
    rjsonwriter_raw(writer, "\"", 1);
 }
 
@@ -1422,10 +1077,12 @@ void rjsonwriter_add_double(rjsonwriter_t *writer, double value)
       {
          char test[4];
          snprintf(test, sizeof(test), "%.1f", 0.0f);
-         if ((writer->decimal_sep = test[1]) == '.') return;
+         if ((writer->decimal_sep = test[1]) == '.')
+            return;
       }
       str = writer->buf + (old_buf_num > writer->buf_num ? 0 : old_buf_num);
-      if ((p = strchr(str, writer->decimal_sep)) != NULL) *p = '.';
+      if ((p = strchr(str, writer->decimal_sep)) != NULL)
+         *p = '.';
    }
 }
 

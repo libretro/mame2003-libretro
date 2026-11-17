@@ -24,7 +24,6 @@
 #define __LIBRETRO_SDK_FORMAT_RJSON_H__
 
 #include <retro_common_api.h>
-#include <retro_inline.h> /* INLINE */
 #include <boolean.h> /* bool */
 #include <stddef.h> /* size_t */
 
@@ -62,14 +61,44 @@ enum rjson_option
  * Should return > 0 and <= len on success, 0 on file end and < 0 on error. */
 typedef int (*rjson_io_t)(void* buf, int len, void *user_data);
 typedef struct rjson rjson_t;
-struct intfstream_internal;
-struct RFILE;
+
+typedef struct rjson_span
+{
+   const char *data;
+   size_t length;
+   size_t count;
+   enum rjson_type type;
+} rjson_span_t;
+
+typedef bool (*rjson_span_member_t)(void *context,
+      const rjson_span_t *name, const rjson_span_t *value);
+
+/* Read one value without copying or modifying the input. Spans include quotes
+ * and container delimiters and stay valid while the caller retains the input.
+ * count is the number of immediate array elements or object members.
+ * An optional visitor receives only the root object's members; returning false
+ * aborts the scan. On failure discard all visited spans. Trailing input is left
+ * unread; length excludes leading whitespace and ends after the value. */
+bool rjson_read_span(const void *data, size_t length, rjson_span_t *value,
+      rjson_span_member_t member, void *context);
+
+/* Navigate values inside immutable input already accepted by rjson_read_span.
+ * No syntax or encoding validation is repeated. The input must start at a
+ * complete value (optionally preceded by whitespace) within that validated
+ * document; the entire supplied range must be inside a validated span.
+ * Span lifetimes and visitor behavior match rjson_read_span. */
+bool rjson_read_span_validated(const void *data, size_t length,
+      rjson_span_t *value, rjson_span_member_t member, void *context);
+
+/* Decode a quoted span directly into caller storage. Capacity must be at least
+ * length - 1 (the maximum decoded size plus NUL). written excludes the NUL. */
+bool rjson_decode_string(const char *data, size_t length,
+      char *output, size_t capacity, size_t *written);
+bool rjson_string_equal(const char *data, size_t length, const char *text);
 
 /* Create a new parser instance from various sources */
-rjson_t *rjson_open_stream(struct intfstream_internal *stream);
-rjson_t *rjson_open_rfile(struct RFILE *rfile);
-rjson_t *rjson_open_buffer(const void *buffer, size_t size);
-rjson_t *rjson_open_string(const char *string);
+rjson_t *rjson_open_buffer(const void *buffer, size_t len);
+rjson_t *rjson_open_string(const char *string, size_t len);
 rjson_t *rjson_open_user(rjson_io_t io, void *user_data, int io_block_size);
 
 /* Free the parser instance created with rjson_open_* */
@@ -107,7 +136,7 @@ const char *rjson_get_error(rjson_t *json);
 void rjson_set_error(rjson_t *json, const char* error);
 
 /* Functions to get the current position in the source stream as well as */
-/* a bit of source json arround the current position for additional detail
+/* a bit of source json around the current position for additional detail
  * when parsing has failed with RJSON_ERROR.
  * Intended to be used with printf style formatting like:
  * printf("Invalid JSON at line %d, column %d - %s - Source: ...%.*s...\n",
@@ -128,7 +157,7 @@ bool rjson_check_context(rjson_t *json, unsigned int depth, ...);
 unsigned int rjson_get_context_depth(rjson_t *json);
 
 /* Return the current parsing context, that is, RJSON_OBJECT if we are inside
- * an object, RJSON_ARRAY if we are inside an array, and RJSON_DONE or 
+ * an object, RJSON_ARRAY if we are inside an array, and RJSON_DONE or
  * RJSON_ERROR if we are not yet/anymore in either. */
 enum rjson_type rjson_get_context_type(rjson_t *json);
 
@@ -157,7 +186,7 @@ enum rjson_type rjson_parse(rjson_t *json, void* context,
 /* A simpler interface to parse a JSON in memory. This will avoid any memory
  * allocations unless the document contains strings longer than 512 characters.
  * In the error handler, error will be "" if any of the other handlers aborted. */
-bool rjson_parse_quick(const char *string, void* context, char option_flags,
+bool rjson_parse_quick(const char *string, size_t len, void* context, char option_flags,
       bool (*object_member_handler)(void *context, const char *str, size_t len),
       bool (*string_handler       )(void *context, const char *str, size_t len),
       bool (*number_handler       )(void *context, const char *str, size_t len),
@@ -184,8 +213,6 @@ typedef int (*rjsonwriter_io_t)(const void* buf, int len, void *user_data);
 typedef struct rjsonwriter rjsonwriter_t;
 
 /* Create a new writer instance to various targets */
-rjsonwriter_t *rjsonwriter_open_stream(struct intfstream_internal *stream);
-rjsonwriter_t *rjsonwriter_open_rfile(struct RFILE *rfile);
 rjsonwriter_t *rjsonwriter_open_memory(void);
 rjsonwriter_t *rjsonwriter_open_user(rjsonwriter_io_t io, void *user_data);
 
@@ -195,6 +222,14 @@ rjsonwriter_t *rjsonwriter_open_user(rjsonwriter_io_t io, void *user_data);
  * Returns NULL if writing ran out of memory or not opened from memory.
  * Returned buffer is only valid until writer is modified or freed. */
 char* rjsonwriter_get_memory_buffer(rjsonwriter_t *writer, int* len);
+
+/* When opened with rjsonwriter_open_memory, will return current length */
+int rjsonwriter_count_memory_buffer(rjsonwriter_t *writer);
+
+/* When opened with rjsonwriter_open_memory, will clear the buffer.
+   The buffer will be partially erased if keep_len is > 0.
+   No memory is freed or re-allocated with this function. */
+void rjsonwriter_erase_memory_buffer(rjsonwriter_t *writer, int keep_len);
 
 /* Free rjsonwriter handle and return result of final rjsonwriter_flush call */
 bool rjsonwriter_free(rjsonwriter_t *writer);
@@ -224,49 +259,9 @@ void rjsonwriter_rawf(rjsonwriter_t *writer, const char *fmt, ...);
 void rjsonwriter_add_string(rjsonwriter_t *writer, const char *value);
 void rjsonwriter_add_string_len(rjsonwriter_t *writer, const char *value, int len);
 
-/* Add a signed or unsigned integer or a double number */
-static INLINE void rjsonwriter_add_int(rjsonwriter_t *writer, int value)
-      { rjsonwriter_rawf(writer, "%d", value); }
-
-static INLINE void rjsonwriter_add_unsigned(rjsonwriter_t *writer, unsigned value)
-      { rjsonwriter_rawf(writer, "%u", value); }
-
 void rjsonwriter_add_double(rjsonwriter_t *writer, double value);
 
-/* Functions to add JSON token characters */
-static INLINE void rjsonwriter_add_start_object(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, "{", 1); }
-
-static INLINE void rjsonwriter_add_end_object(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, "}", 1); }
-
-static INLINE void rjsonwriter_add_start_array(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, "[", 1); }
-
-static INLINE void rjsonwriter_add_end_array(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, "]", 1); }
-
-static INLINE void rjsonwriter_add_colon(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, ":", 1); }
-
-static INLINE void rjsonwriter_add_comma(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, ",", 1); }
-
-static INLINE void rjsonwriter_add_bool(rjsonwriter_t *writer, bool value)
-      { rjsonwriter_raw(writer, (value ? "true" : "false"), (value ? 4 : 5)); }
-
-/* Functions to add whitespace characters */
-/* These do nothing with the option RJSONWRITER_OPTION_SKIP_WHITESPACE */
-static INLINE void rjsonwriter_add_newline(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, "\n", 1); }
-
-static INLINE void rjsonwriter_add_space(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, " ", 1); }
-
 void rjsonwriter_add_spaces(rjsonwriter_t *writer, int count);
-
-static INLINE void rjsonwriter_add_tab(rjsonwriter_t *writer)
-      { rjsonwriter_raw(writer, "\t", 1); }
 
 void rjsonwriter_add_tabs(rjsonwriter_t *writer, int count);
 

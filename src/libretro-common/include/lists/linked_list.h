@@ -50,7 +50,7 @@ linked_list_t *linked_list_new(void);
 
 /**
  * @brief frees the memory used by the linked list
- * 
+ *
  * Frees all of the memory used by this linked list. The values of all
  * remaining elements are freed using the "free_value" function. Does
  * nothing if "list" is NULL.
@@ -62,7 +62,7 @@ void linked_list_free(linked_list_t *list, void (*free_value)(void *value));
 
 /**
  * @brief adds an element to the linked list
- * 
+ *
  * Add a new element to the end of this linked list. Does nothing if
  * "list" is NULL.
  *
@@ -173,7 +173,8 @@ void *linked_list_remove_all(linked_list_t *list, void *value);
  * @brief Remove the first matching element
  *
  * Removes the first matching element from the linked list. The "matches" function
- * is used to test for matching element values. Does nothing if "list" is NULL.
+ * is used to test for matching element values. Does nothing if "list" or
+ * "matches" is NULL.
  *
  * @param list linked list to remove the element from
  * @param matches function to use for testing element values for a match
@@ -185,7 +186,8 @@ void *linked_list_remove_first_matching(linked_list_t *list, bool (*matches)(voi
  * @brief Remove the last matching element
  *
  * Removes the last matching element from the linked list. The "matches" function
- * is used to test for matching element values.
+ * is used to test for matching element values. Does nothing if "list" or
+ * "matches" is NULL.
  *
  * @param list linked list to remove the element from
  * @param matches function to use for testing element value for a match
@@ -197,7 +199,8 @@ void *linked_list_remove_last_matching(linked_list_t *list, bool (*matches)(void
  * @brief Remove all matching elements
  *
  * Removes all matching elements from the linked list. The "matches" function
- * is used to test for matching element values. Does nothing if "list" is NULL.
+ * is used to test for matching element values. Does nothing if "list" or
+ * "matches" is NULL.
  *
  * @param list linked list to remove the elements from
  * @param matches function to use for testing element values for a match
@@ -285,7 +288,7 @@ void linked_list_iterator_free(linked_list_iterator_t *iterator);
 /**
  * @brief Apply the provided function to all values in the linked list
  *
- * Apply the provied function to all values in the linked list. The values are applied
+ * Apply the provided function to all values in the linked list. The values are applied
  * in the forward direction. Does nothing if "list" is NULL.
  *
  * @param list linked list to apply the function to

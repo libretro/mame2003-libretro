@@ -23,6 +23,7 @@
 #ifndef __LIBRETRO_SDK_FILE_LIST_H__
 #define __LIBRETRO_SDK_FILE_LIST_H__
 
+#include <stdint.h>
 #include <retro_common_api.h>
 
 RETRO_BEGIN_DECLS
@@ -39,8 +40,12 @@ struct item_file
    char *path;
    char *label;
    char *alt;
-   size_t directory_ptr;
    size_t entry_idx;
+   /* An index into the list this item belongs to, so 32 bits covers
+    * any list that fits in memory. Sitting next to 'type' it costs
+    * nothing the padding was not already taking: one of these exists
+    * per menu row, and a playlist view has one row per entry. */
+   uint32_t directory_ptr;
    unsigned type;
 };
 
@@ -50,6 +55,33 @@ typedef struct file_list
 
    size_t capacity;
    size_t size;
+   /* Optional destructor for item_file::actiondata.  NULL means the
+    * actiondata is a plain block and free() is enough, which is what
+    * every user outside the menu wants.  The menu sets this because
+    * its actiondata owns further allocations; without it every path
+    * that can destroy a list -- and there are seven, spread across
+    * menu_driver.c, xmb.c and ozone.c -- would have to know how to
+    * take one apart.
+    *
+    * Every file_list_t in tree is either calloc()ed, memset() to zero,
+    * embedded in a calloc()ed handle, or field-initialised in
+    * menu_list_new(), so this defaults to NULL without any caller
+    * change. */
+   void (*actiondata_free)(void *actiondata);
+
+   /* Optional destructor for item_file::userdata, on the same terms as
+    * actiondata_free above.  NULL means the userdata is a plain block
+    * and free() is enough.
+    *
+    * The menu drivers set this because their userdata -- an xmb_node_t
+    * or an ozone_node_t -- owns further allocations.  Without it, the
+    * two of them had to reach every list that could hold a node and
+    * free it themselves before handing the list on, which is what
+    * xmb_free_list_nodes() and ozone_free_list_nodes() exist for; any
+    * path that reached file_list_free_userdata() without that pairing
+    * -- file_list_pop() on the menu stack, among others -- free()d the
+    * node and leaked the strings inside it. */
+   void (*userdata_free)(void *userdata);
 } file_list_t;
 
 void *file_list_get_userdata_at_offset(const file_list_t *list,
@@ -72,8 +104,6 @@ void file_list_free(file_list_t *list);
 
 bool file_list_deinitialize(file_list_t *list);
 
-bool file_list_initialize(file_list_t *list);
-
 /**
  * @brief makes the list big enough to contain at least nitems
  *
@@ -90,11 +120,6 @@ bool file_list_append(file_list_t *userdata, const char *path,
       const char *label, unsigned type, size_t current_directory_ptr,
       size_t entry_index);
 
-bool file_list_prepend(file_list_t *list,
-      const char *path, const char *label,
-      unsigned type, size_t directory_ptr,
-      size_t entry_idx);
-
 bool file_list_insert(file_list_t *list,
       const char *path, const char *label,
       unsigned type, size_t directory_ptr,
@@ -105,36 +130,35 @@ void file_list_pop(file_list_t *list, size_t *directory_ptr);
 
 void file_list_clear(file_list_t *list);
 
-void file_list_get_last(const file_list_t *list,
-      const char **path, const char **label,
-      unsigned *type, size_t *entry_idx);
-
-void *file_list_get_last_actiondata(const file_list_t *list);
-
-size_t file_list_get_size(const file_list_t *list);
-
-size_t file_list_get_directory_ptr(const file_list_t *list);
-
-void file_list_get_at_offset(const file_list_t *list, size_t index,
-      const char **path, const char **label,
-      unsigned *type, size_t *entry_idx);
-
 void file_list_free_userdata(const file_list_t *list, size_t index);
 
 void file_list_free_actiondata(const file_list_t *list, size_t idx);
 
-void file_list_set_label_at_offset(file_list_t *list, size_t index,
-      const char *label);
-
-void file_list_get_label_at_offset(const file_list_t *list, size_t index,
-      const char **label);
-
 void file_list_set_alt_at_offset(file_list_t *list, size_t index,
       const char *alt);
 
-void file_list_set_userdata(const file_list_t *list, size_t idx, void *ptr);
+/**
+ * @brief sets the label of the entry at the given offset
+ *
+ * The previous label (if any) is freed and replaced with a copy of
+ * the supplied string.
+ *
+ * @param list The list containing the entry
+ * @param index Offset of the entry whose label should be set
+ * @param label Label to copy into the entry
+ */
+/**
+ * Releases entry @index's label and clears the slot.
+ *
+ * The label may be a shared empty string rather than an allocation of
+ * its own, so free()ing it directly is not safe; relabelling from
+ * outside file_list.c goes through here or through
+ * file_list_set_label_at_offset().
+ */
+void file_list_free_label(file_list_t *list, size_t index);
 
-void file_list_set_actiondata(const file_list_t *list, size_t idx, void *ptr);
+void file_list_set_label_at_offset(file_list_t *list, size_t index,
+      const char *label);
 
 void file_list_sort_on_alt(file_list_t *list);
 

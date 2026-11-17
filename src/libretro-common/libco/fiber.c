@@ -6,8 +6,12 @@
 
 #define LIBCO_C
 #include <libco.h>
+#ifndef WINVER
 #define WINVER 0x0400
+#endif
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0400
+#endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -24,7 +28,7 @@ static void __stdcall co_thunk(void *coentry)
 
 cothread_t co_active(void)
 {
-   if(!co_active_)
+   if (!co_active_)
    {
 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
       ConvertThreadToFiberEx(0, FIBER_FLAG_FLOAT_SWITCH);
@@ -38,7 +42,7 @@ cothread_t co_active(void)
 
 cothread_t co_create(unsigned int heapsize, void (*coentry)(void))
 {
-   if(!co_active_)
+   if (!co_active_)
    {
 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
       ConvertThreadToFiberEx(0, FIBER_FLAG_FLOAT_SWITCH);
