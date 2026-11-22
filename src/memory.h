@@ -897,12 +897,14 @@ uint16_t	cpu_readop_arg16_safe(uint32_t offset);
 uint32_t	cpu_readop_arg32_safe(uint32_t offset);
 
 /* ----- unsafe opcode and opcode argument reading ----- */
+/* Opcode words are read in place, at the alignment the CPU cores
+ * fetch them at */
 #define cpu_readop_unsafe(A)		(OP_ROM[(A) & mem_amask])
-#define cpu_readop16_unsafe(A)		(*(uint16_t *)&OP_ROM[(A) & mem_amask])
-#define cpu_readop32_unsafe(A)		(*(uint32_t *)&OP_ROM[(A) & mem_amask])
+#define cpu_readop16_unsafe(A)		(*(const uint16_t *)(const void *)&OP_ROM[(A) & mem_amask])
+#define cpu_readop32_unsafe(A)		(*(const uint32_t *)(const void *)&OP_ROM[(A) & mem_amask])
 #define cpu_readop_arg_unsafe(A)	(OP_RAM[(A) & mem_amask])
-#define cpu_readop_arg16_unsafe(A)	(*(uint16_t *)&OP_RAM[(A) & mem_amask])
-#define cpu_readop_arg32_unsafe(A)	(*(uint32_t *)&OP_RAM[(A) & mem_amask])
+#define cpu_readop_arg16_unsafe(A)	(*(const uint16_t *)(const void *)&OP_RAM[(A) & mem_amask])
+#define cpu_readop_arg32_unsafe(A)	(*(const uint32_t *)(const void *)&OP_RAM[(A) & mem_amask])
 
 /* ----- opcode and opcode argument reading ----- */
 void activecpu_set_op_base(unsigned val);
