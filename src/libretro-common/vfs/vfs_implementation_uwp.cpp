@@ -42,6 +42,7 @@
 
 #include <vfs/vfs.h>
 #include <vfs/vfs_implementation.h>
+#include <vfs/vfs_implementation_file.h>
 #include <libretro.h>
 #include <encodings/utf.h>
 #include <compat/strl.h>
@@ -764,6 +765,23 @@ const char *retro_vfs_file_get_path_impl(libretro_vfs_implementation_file *strea
    if (!stream)
       abort();
    return stream->orig_path;
+}
+
+/* Neither is answerable from inside the app container. */
+int retro_vfs_file_get_real_path_impl(libretro_vfs_implementation_file *stream,
+      char *s, size_t len)
+{
+   (void)stream;
+   (void)s;
+   (void)len;
+   return -1;
+}
+
+int retro_vfs_resolve_path_impl(char *s, size_t len)
+{
+   (void)s;
+   (void)len;
+   return -1;
 }
 
 int64_t retro_vfs_file_get_sparse_granularity_impl(
